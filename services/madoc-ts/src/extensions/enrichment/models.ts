@@ -2,11 +2,12 @@ import { EnrichmentEntity, EnrichmentEntityType } from './authority/types';
 import { CaptureModelShorthand } from '../../frontend/shared/capture-models/types/capture-model-shorthand';
 
 export const entityTypeModel: CaptureModelShorthand<EnrichmentEntityType> = {
+  label: { type: 'text-field', label: 'Slug' },
   title: { type: 'international-field', label: 'Title' },
   description: { type: 'international-field', label: 'Description' },
   image_url: { type: 'madoc-media-explorer', label: 'Image', valueAsString: true },
   // featured_topics: { type: 'topic-explorer', label: 'featured topics' },
-  };
+};
 
 export const entityModel: CaptureModelShorthand<EnrichmentEntity> = {
   title: { type: 'international-field', label: 'Title' },
@@ -22,10 +23,10 @@ export const entityModel: CaptureModelShorthand<EnrichmentEntity> = {
   'authorities.authority': { type: 'text-field', label: 'Authority label' },
   'authorities.identifier': { type: 'text-field', label: 'Authority identifier' },
 
-  'other_data.main_image': { type: 'madoc-media-explorer', label: 'Image', valueAsString: true },
-  'other_data.thumbnail': { type: 'madoc-media-explorer', label: 'Thumbnail', valueAsString: true },
-  'other_data.topic_summary': { type: 'international-field', label: 'Summary', allowMultiple: false },
-  'other_data.secondary_heading': { type: 'international-field', label: 'Secondary Heading', allowMultiple: false },
+  'other_data.topic_summary': { type: 'international-field', label: 'Summary' },
+  'other_data.secondary_heading': { type: 'international-field', label: 'Secondary heading' },
+  'other_data.main_image': { type: 'madoc-media-explorer', label: 'Hero image' },
+  'other_data.thumbnail.alt': { type: 'international-field', label: 'alt text' },
 
   type: {
     type: 'autocomplete-field',

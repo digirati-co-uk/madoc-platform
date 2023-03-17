@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useApi } from '../../../shared/hooks/use-api';
 import { useMutation } from 'react-query';
 import { Button } from '../../../shared/navigation/Button';
@@ -11,6 +11,7 @@ import { entityTypeModel } from '../../../../extensions/enrichment/models';
 export function EditTopicType() {
   const api = useApi();
   const { data, refetch } = useTopicType();
+
   const [createNewEntityType, status] = useMutation(async (updatedData: any) => {
     if (!data) return;
     if (typeof updatedData.image_url !== 'string' || !updatedData.image_url.startsWith('http')) {
@@ -24,6 +25,14 @@ export function EditTopicType() {
 
     return resp;
   });
+
+  const model = useMemo(() => {
+    const copy: any = {
+      ...entityTypeModel,
+    };
+    delete copy.label;
+    return copy;
+  }, []);
 
   if (!data) {
     return <div>Loading...</div>;
@@ -49,7 +58,7 @@ export function EditTopicType() {
     <div>
       <CustomEditorTypes>
         <EditShorthandCaptureModel
-          template={entityTypeModel}
+          template={model}
           data={data}
           onSave={async d => {
             await createNewEntityType(d);

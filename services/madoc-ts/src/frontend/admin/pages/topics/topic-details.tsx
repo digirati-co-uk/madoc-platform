@@ -46,7 +46,7 @@ export function TopicDetails() {
     <>
       <TopicContainer>
         <TopicImage>
-          <img src={data?.other_data?.main_image.url} />
+          <img src={data?.other_data?.main_image?.url} />
 
           <Details>
             <Heading1 as={LocaleString}>{data?.title || { none: ['...'] }}</Heading1>

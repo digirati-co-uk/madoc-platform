@@ -127,6 +127,5 @@ function parseChosenMedia(
       thumbnail: `/public/storage/urn:madoc:site:${siteId}/media/public/${imageId}/256/${fileNameWithoutExtension}.jpg`,
     };
   }
-
-  return null;
+  return media;
 }

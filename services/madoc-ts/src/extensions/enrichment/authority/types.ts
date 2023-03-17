@@ -211,26 +211,27 @@ export interface EnrichmentEntity {
   featured_resources: FeaturedResource[];
   related_topics: EnrichmentEntitySnippet[];
   authorities: AuthoritySnippet[];
-  other_data?: {
-    main_image: {
-      id?: string;
-      alt: InternationalString;
-      height?: string;
-      width?: string;
-      url: string;
-    };
-    thumbnail: {
-      id?: string;
-      alt: InternationalString;
-      height?: string;
-      width?: string;
-      url: string;
-    };
-    topic_summary?: InternationalString;
-    secondary_heading?: InternationalString;
-  };
+  other_data?: EntityOtherData;
 }
 
+export interface EntityOtherData {
+  main_image?: {
+    id?: string;
+    alt?: InternationalString;
+    height?: string;
+    width?: string;
+    url: string;
+  };
+  thumbnail?: {
+    id?: string;
+    alt?: InternationalString;
+    height?: string;
+    width?: string;
+    url: string;
+  };
+  topic_summary?: InternationalString;
+  secondary_heading?: InternationalString;
+}
 /**
  * Entity - List
  * Definition: https://github.com/digirati-co-uk/madoc-enrichment/blob/main/endpoint_docs.md#entity---list
@@ -278,24 +279,7 @@ export interface EntityMadocResponse {
   featured_resources: FeaturedResource[];
   related_topics: EnrichmentEntitySnippet[];
   authorities: AuthoritySnippet[];
-  other_data?: {
-    main_image: {
-      id?: string;
-      alt: InternationalString;
-      height?: string;
-      width?: string;
-      url: string;
-    };
-    thumbnail: {
-      id?: string;
-      alt: InternationalString;
-      height?: string;
-      width?: string;
-      url: string;
-    };
-    topic_summary?: InternationalString;
-    secondary_heading?: InternationalString;
-  };
+  other_data?: EntityOtherData;
 }
 
 export interface FeaturedResource {
