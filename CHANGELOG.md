@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.1.0...main)
 
+### Fixed
+
+- Fixed bug with single line transcriptions in preview mode (NS-11)
+
 <!-- 
 ### Fixed
 ### Added
