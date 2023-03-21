@@ -70,8 +70,9 @@ export const indexManifest: RouteMiddleware<{ id: string }> = async context => {
 
   await userApi.enrichmentIngestResource(searchPayload);
 
-  await userApi.triggerSearchIndex(manifestId, 'manifest');
+  // await userApi.triggerSearchIndex(manifestId, 'manifest');
 
+  context.response.body = await userApi.triggerSearchIndex(manifestId, 'manifest');
   // try {
   //   await api.searchGetIIIF(`urn:madoc:manifest:${manifestId}`);
   //
