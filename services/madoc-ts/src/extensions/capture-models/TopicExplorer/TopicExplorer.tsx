@@ -1,15 +1,12 @@
 import React, { useRef } from 'react';
-import { LocaleString, useCreateLocaleString } from '../../../frontend/shared/components/LocaleString';
-import { CroppedImage } from '../../../frontend/shared/atoms/Images';
-import { ImageStripBox } from '../../../frontend/shared/atoms/ImageStrip';
 import { ImageGrid } from '../../../frontend/shared/atoms/ImageGrid';
-import { Heading5 } from '../../../frontend/shared/typography/Heading5';
-import { EnrichmentEntitySnippet } from '../../enrichment/authority/types';
 import { FieldComponent } from '../../../frontend/shared/capture-models/types/field-types';
 import { useTopicType } from '../../../frontend/site/pages/loaders/topic-type-loader';
 import { TopicSnippetCard } from '../../../frontend/shared/components/TopicSnippet';
 import { Subheading3 } from '../../../frontend/shared/typography/Heading3';
-import {extractIdFromUrn} from "../../../utility/parse-urn";
+import { RoundedCard } from '../../../frontend/shared/capture-models/editor/components/RoundedCard/RoundedCard';
+import { useApiTopic } from '../../../frontend/shared/hooks/use-api-topic';
+import { useParams } from 'react-router-dom';
 
 export type TopicExplorerProps = {
   id: string;
@@ -20,52 +17,33 @@ export type TopicExplorerProps = {
 
 export const TopicExplorer: FieldComponent<TopicExplorerProps> = ({ value, updateValue }) => {
   const container = useRef<HTMLDivElement>(null);
-  const createLocaleString = useCreateLocaleString();
+  const { topicType } = useParams<Record<'topicType', any>>();
 
   const { data } = useTopicType();
+  const { data: topicDetails } = useApiTopic(topicType, value);
 
-  const topicId = parseTopicId(value);
-
-  if (value) {
+  if (value && topicDetails) {
     return (
-      <div>
-        <pre>{JSON.stringify(value, null, 2)}</pre>
-        {/*<TopicSnippetCard topic={value} cardBorder="black" size={'small'} />*/}
-      </div>
+      <RoundedCard interactive size="small" onClick={() => updateValue(null)}>
+        <TopicSnippetCard topic={topicDetails} cardBorder="black" size={'small'} />
+      </RoundedCard>
     );
   }
 
   return (
     <div ref={container} style={{ maxHeight: 500, overflowY: 'scroll', border: '1px solid grey', padding: '0.5em' }}>
-      <ImageGrid $size="small">
+      <ImageGrid>
         {data?.pagination.totalResults === 0 && <Subheading3>No topics in this type</Subheading3>}
         {data?.topics.map(topic => (
-          <ImageStripBox
+          <TopicSnippetCard
             key={topic.id}
-            $border={'#000000'}
-            $bgColor={'#eee'}
+            topic={topic}
             onClick={() => {
-              updateValue(topic);
+              updateValue(topic.slug);
             }}
-          >
-            <CroppedImage>
-              {topic.other_data.thumbnail ? (
-                <img alt={createLocaleString(topic.other_data.thumbnail.alt)} src={topic.other_data.thumbnail.url} />
-              ) : null}
-            </CroppedImage>
-            <LocaleString as={Heading5}>{topic.title}</LocaleString>
-          </ImageStripBox>
+          />
         ))}
       </ImageGrid>
     </div>
   );
 };
-function parseTopicId(topic: null | any): number | null {
-  if (!topic) {
-    return null;
-  }
-  if (topic.id) {
-    return topic.id;
-  }
-  return topic;
-}

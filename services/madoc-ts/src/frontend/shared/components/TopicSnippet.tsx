@@ -7,6 +7,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { SnippetContainer } from '../atoms/SnippetLarge';
+import {EntityMadocResponse} from "../../../extensions/enrichment/authority/types";
 
 const TopicSnippetContainer = styled(SnippetContainer)`
   height: 250px;
@@ -38,12 +39,13 @@ const TypePill = styled.div`
 `;
 
 export const TopicSnippetCard: React.FC<{
-  topic: TopicSnippet;
+  topic: TopicSnippet | EntityMadocResponse;
   background?: string;
   textColor?: string;
   cardBorder?: string;
   size?: string;
-}> = ({ topic, cardBorder, textColor, background, size }) => {
+  onClick?: any;
+}> = ({ topic, cardBorder, textColor, background, size, onClick }) => {
   const createLocaleString = useCreateLocaleString();
   const { t } = useTranslation();
 
@@ -53,6 +55,7 @@ export const TopicSnippetCard: React.FC<{
       style={{ border: cardBorder ? `1px solid ${cardBorder}` : '', backgroundColor: background ? background : '' }}
       interactive
       flat
+      onClick={onClick}
     >
       <CroppedImage $size="small" $covered>
         {topic.other_data.thumbnail ? (

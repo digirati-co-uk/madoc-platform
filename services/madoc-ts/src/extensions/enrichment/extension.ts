@@ -113,10 +113,6 @@ export class EnrichmentExtension extends BaseDjangoExtension {
     return this.api.publicRequest<TopicTypeListResponse>(`/madoc/api/topic-types?page=${page}`);
   }
 
-  getTopicBySlug(type: string, slug: string) {
-    // @todo
-  }
-
   tagMadocResource(entityId: string, type: string, id: number, selector?: any) {
     return this.api.request(`/api/enrichment/resource_tag/`, {
       method: 'POST',
