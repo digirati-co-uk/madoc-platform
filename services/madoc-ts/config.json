@@ -56,6 +56,7 @@
       "hideSearchButton": false,
       "hideRandomManifest": false,
       "hideRandomCanvas": false,
+      "generatePDF": false,
       "reviewerDashboard": false
     },
     "manifestPageOptions": {

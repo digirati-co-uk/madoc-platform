@@ -25,6 +25,12 @@ export const ResetPasswordEmail: React.FC<{ installationTitle: string; username:
             <Email.MjmlButton backgroundColor="#3579f6" href={resetLink} fontSize={16}>
               Reset your password
             </Email.MjmlButton>
+            <Email.MjmlText color="#333" fontSize={14} lineHeight="1.5">
+              Or copy and paste this link into your browser
+            </Email.MjmlText>
+            <Email.MjmlText color="#333" fontSize={14} lineHeight="1.5">
+              <a href={resetLink}>{resetLink}</a>
+            </Email.MjmlText>
           </Email.MjmlColumn>
         </Email.MjmlSection>
       </Email.MjmlBody>

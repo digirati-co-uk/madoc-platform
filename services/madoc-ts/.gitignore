@@ -6,3 +6,4 @@ storybook-static
 stats.json
 .cache
 coverage
+stories/capture-models/interactions/example.stories.tsx

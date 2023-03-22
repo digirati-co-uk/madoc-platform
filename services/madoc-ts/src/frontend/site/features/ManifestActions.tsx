@@ -95,7 +95,7 @@ export const ManifestActions: React.FC<props> = ({ alignment }) => {
           <ManifestItemFilter />
         ) : null}
 
-        <GenerateManifestPdf />
+        {options.generatePDF ? <GenerateManifestPdf /> : null}
 
         <ManifestTaskProgress />
         {!showCaptureModelOnManifest ? <AssignManifestToUser /> : null}
