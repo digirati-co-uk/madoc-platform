@@ -6,7 +6,7 @@ import { LocaleString } from './LocaleString';
 import { HrefLink } from '../utility/href-link';
 
 export const ManifestSnippet: React.FC<{
-  id: number;
+  id: number | string;
   collectionId?: number;
 } & Partial<SnippetLargeProps>> = ({ id, collectionId, ...props }) => {
   const { data } = useApiManifest(id);

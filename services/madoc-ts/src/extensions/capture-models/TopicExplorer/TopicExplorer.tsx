@@ -9,12 +9,13 @@ import { FieldComponent } from '../../../frontend/shared/capture-models/types/fi
 import { useTopicType } from '../../../frontend/site/pages/loaders/topic-type-loader';
 import { TopicSnippetCard } from '../../../frontend/shared/components/TopicSnippet';
 import { Subheading3 } from '../../../frontend/shared/typography/Heading3';
+import {extractIdFromUrn} from "../../../utility/parse-urn";
 
 export type TopicExplorerProps = {
   id: string;
   label: string;
   type: string;
-  value: EnrichmentEntitySnippet | null;
+  value: string | null;
 };
 
 export const TopicExplorer: FieldComponent<TopicExplorerProps> = ({ value, updateValue }) => {
@@ -23,10 +24,13 @@ export const TopicExplorer: FieldComponent<TopicExplorerProps> = ({ value, updat
 
   const { data } = useTopicType();
 
+  const topicId = parseTopicId(value);
+
   if (value) {
     return (
       <div>
-        <TopicSnippetCard topic={value} cardBorder="black" size={'small'} />
+        <pre>{JSON.stringify(value, null, 2)}</pre>
+        {/*<TopicSnippetCard topic={value} cardBorder="black" size={'small'} />*/}
       </div>
     );
   }
@@ -56,3 +60,12 @@ export const TopicExplorer: FieldComponent<TopicExplorerProps> = ({ value, updat
     </div>
   );
 };
+function parseTopicId(topic: null | any): number | null {
+  if (!topic) {
+    return null;
+  }
+  if (topic.id) {
+    return topic.id;
+  }
+  return topic;
+}

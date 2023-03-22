@@ -6,7 +6,7 @@ export const entityTypeModel: CaptureModelShorthand<EnrichmentEntityType> = {
   title: { type: 'international-field', label: 'Title' },
   description: { type: 'international-field', label: 'Description' },
   image_url: { type: 'madoc-media-explorer', label: 'Image', valueAsString: true },
-  // featured_topics: { type: 'topic-explorer', label: 'featured topics' },
+  'featured_topics.id': { type: 'topic-explorer', label: 'featured topics' },
 };
 
 export const entityModel: CaptureModelShorthand<EnrichmentEntity> = {

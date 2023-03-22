@@ -14,12 +14,14 @@ import { useInfiniteAction } from '../../../frontend/site/hooks/use-infinite-act
 import { Button } from '../../../frontend/shared/navigation/Button';
 import { FeaturedResource } from '../../enrichment/authority/types';
 import { FieldComponent } from '../../../frontend/shared/capture-models/types/field-types';
+import { ManifestSnippet } from '../../../frontend/shared/components/ManifestSnippet';
+import { extractIdFromUrn } from '../../../utility/parse-urn';
 
 export type TopicItemExplorerProps = {
   id: string;
   label: string;
   type: string;
-  value: FeaturedResource | null;
+  value: string | number | null;
 };
 
 export const TopicItemExplorer: FieldComponent<TopicItemExplorerProps> = ({ value, updateValue }) => {
@@ -53,16 +55,19 @@ export const TopicItemExplorer: FieldComponent<TopicItemExplorerProps> = ({ valu
     container: container,
   });
 
-  if (value) {
+  const manifestID = parseManifestId(value);
+
+  if (manifestID) {
     return (
       <div>
         <RoundedCard interactive size="small" onClick={() => updateValue(null)}>
-          <CroppedImage data-size="small">
-            {value.thumbnail ? (
-              <img alt={createLocaleString(value.label, t('Item thumbnail'))} src={value.thumbnail} />
-            ) : null}
-          </CroppedImage>
-          <LocaleString as={Heading5}>{value.label}</LocaleString>
+          <ManifestSnippet id={manifestID} />
+          {/*<CroppedImage data-size="small">*/}
+          {/*  {value.thumbnail ? (*/}
+          {/*    <img alt={createLocaleString(value.label, t('Item thumbnail'))} src={value.thumbnail} />*/}
+          {/*  ) : null}*/}
+          {/*</CroppedImage>*/}
+          {/*<LocaleString as={Heading5}>{value.label}</LocaleString>*/}
         </RoundedCard>
       </div>
     );
@@ -75,31 +80,14 @@ export const TopicItemExplorer: FieldComponent<TopicItemExplorerProps> = ({ valu
           return (
             <React.Fragment key={key}>
               {page.results.map(item => (
-                <ImageStripBox
-                  $border={'#000000'}
-                  $bgColor={'#eee'}
-                  onClick={() =>
-                    updateValue({
-                      madoc_id: item.resource_id,
-                      label: item.label,
-                      thumbnail: item.madoc_thumbnail,
-                      type: item.resource_type,
-                      url: item.url,
-                      created: 'anything',
-                      modified: 'anythign',
-                      metadata: null,
-                      count: 1,
-                    })
-                  }
+                <RoundedCard
+                  interactive
+                  size="small"
+                  onClick={() => updateValue(item.resource_id)}
                   key={item.resource_id}
                 >
-                  <CroppedImage>
-                    {item.madoc_thumbnail ? (
-                      <img alt={createLocaleString(item.label, t('Item thumbnail'))} src={item.madoc_thumbnail} />
-                    ) : null}
-                  </CroppedImage>
-                  <LocaleString as={Heading5}>{item.label}</LocaleString>
-                </ImageStripBox>
+                  <ManifestSnippet id={item.resource_isd} />
+                </RoundedCard>
               ))}
             </React.Fragment>
           );
@@ -111,3 +99,17 @@ export const TopicItemExplorer: FieldComponent<TopicItemExplorerProps> = ({ valu
     </div>
   );
 };
+
+function parseManifestId(id: null | string | number): number | null {
+  if (!id) {
+    return null;
+  }
+  if (typeof id === 'string') {
+    if (id.toUpperCase().includes('URN')) {
+      const parsedId = extractIdFromUrn(id);
+      return parsedId !== undefined ? parsedId : null;
+    }
+    return Number(id);
+  }
+  return id;
+}
