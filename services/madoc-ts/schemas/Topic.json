@@ -79,29 +79,13 @@
     "authorities": {
       "type": "array",
       "items": {
-        "type": "object",
-        "properties": {
-          "authority": {
-            "type": "string"
-          },
-          "id": {
-            "type": "string"
-          },
-          "url": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "authority",
-          "id",
-          "url"
-        ]
+        "$ref": "#/definitions/AuthoritySnippet"
       }
     },
     "featured_resources": {
       "type": "array",
       "items": {
-        "$ref": "#/definitions/FeatureResource"
+        "$ref": "#/definitions/FeaturedResource"
       }
     },
     "related_topics": {

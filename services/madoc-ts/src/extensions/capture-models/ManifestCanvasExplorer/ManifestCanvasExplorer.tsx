@@ -10,7 +10,7 @@ import { ImageGrid } from '../../../frontend/shared/atoms/ImageGrid';
 import { Heading5 } from '../../../frontend/shared/typography/Heading5';
 import { CanvasSnippet } from '../../../frontend/shared/components/CanvasSnippet';
 
-export type CanvasExplorerProps = {
+export type ManifestCanvasExplorerProps = {
   id: string;
   label: string;
   thumbnail?: string;
@@ -22,8 +22,8 @@ export type CanvasExplorerProps = {
   } | null;
 };
 
-export const CanvasExplorer: React.FC<CanvasExplorerProps & {
-  updateValue: (value: CanvasExplorerProps['value']) => void;
+export const ManifestCanvasExplorer: React.FC<ManifestCanvasExplorerProps & {
+  updateValue: (value: ManifestCanvasExplorerProps['value']) => void;
 }> = props => {
   const { t } = useTranslation();
   const createLocaleString = useCreateLocaleString();

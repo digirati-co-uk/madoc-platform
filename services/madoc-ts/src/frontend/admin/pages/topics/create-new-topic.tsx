@@ -17,21 +17,30 @@ export function CreateNewTopic() {
   const hasTopic = data || isLoading;
 
   const [createNewEntityType, status] = useMutation(async (input: any) => {
-    // input.other_labels = (input.other_labels || []).filter((e: any) => e.value !== '');
-
-    if (hasTopic) {
-      if (!data) {
-        return;
-      }
-      // @todo can change later.
-      input.image_url = `${window.location.protocol}//${window.location.host}${input.image_url.publicLink ||
-        input.image_url}`;
-      // @todo this will hopefully change.
-      input.type = getValue(data.label);
-      input.type_slug = data.slug;
+    if (input.other_data.main_image) {
+      const imageData = input.other_data.main_image;
+      input.other_data.thumbnail = {
+        id: imageData.id,
+        alt: input.other_data.thumbnail.alt,
+        url: imageData.thumbnail,
+      };
+      input.other_data.main_image = {
+        id: imageData.id,
+        alt: input.other_data.thumbnail.alt,
+        url: imageData.image,
+      };
     }
+
+    //todo hopfully will change
+    if (data && hasTopic) {
+      input.type = getValue(data.label);
+      input.type_slug = getValue(data.slug);
+    } else {
+      input.type = input.type.label;
+    }
+
     return {
-      response: await api.enrichment.upsertTopic(input),
+      response: await api.enrichment.upsertTopic({ type_slug: input.type.toLowerCase(), ...input }),
       topicType: input.type_slug,
     };
   });
@@ -55,7 +64,6 @@ export function CreateNewTopic() {
       <div>
         Added!
         <pre>{JSON.stringify(status.data?.response)}</pre>
-        {/* @todo hopefully this will change to slug field. */}
         {status.data ? (
           <Button $primary as={HrefLink} href={`/topics/${status.data.topicType}/${status.data.response.label}`}>
             Go to topic
@@ -75,10 +83,7 @@ export function CreateNewTopic() {
         <EditShorthandCaptureModel
           template={model}
           data={{
-            label: '',
-            other_labels: { en: [''] },
-            description: { en: [''] },
-            image_url: '',
+            ...data,
             type: topicType,
           }}
           onSave={async input => {

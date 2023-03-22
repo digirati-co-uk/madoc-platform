@@ -7,24 +7,35 @@ import { CustomEditorTypes } from '../../../shared/page-blocks/custom-editor-typ
 import { EditShorthandCaptureModel } from '../../../shared/capture-models/EditorShorthandCaptureModel';
 import { useTopic } from '../../../site/pages/loaders/topic-loader';
 import { entityModel } from '../../../../extensions/enrichment/models';
-import { useRouteContext } from '../../../site/hooks/use-route-context';
 
 export function EditTopic() {
   const api = useApi();
-  const { topicType } = useRouteContext();
   const { data, refetch } = useTopic();
-
-  const [createNewEntityType, status] = useMutation(async (updatedData: any) => {
+  const [createNewEntity, status] = useMutation(async (updatedData: any) => {
     if (!data) return;
-    if (typeof updatedData.image_url !== 'string' || !updatedData.image_url.startsWith('http')) {
-      // @todo can change later.
-      updatedData.image_url = `${window.location.protocol}//${window.location.host}${updatedData.image_url}`;
+
+    if (updatedData.other_data.main_image) {
+      const imageData = updatedData.other_data.main_image;
+      updatedData.other_data.thumbnail = {
+        id: imageData.id,
+        alt: updatedData.other_data.thumbnail.alt,
+        url: imageData.thumbnail,
+      };
+      updatedData.other_data.main_image = {
+        id: imageData.id,
+        alt: updatedData.other_data.thumbnail.alt,
+        url: imageData.image,
+      };
     }
+    // if (typeof imageData.image !== 'string' || !imageData.image.startsWith('http')) {
+    //   // @todo can change later.
+    //   imageData.image = `${window.location.protocol}//${window.location.host}${imageData.image}`;
+    //   imageData.thumbnail = `${window.location.protocol}//${window.location.host}${imageData.thumbnail}`;
+    // }
 
-    // data.other_labels = (data.other_labels || []).filter((e: any) => e.value !== '');
-    const resp = api.enrichment.upsertTopicType({ id: data.id, ...updatedData });
+    const resp = api.enrichment.upsertTopic({ id: data.id, ...updatedData });
 
-    refetch();
+    await refetch();
 
     return resp;
   });
@@ -56,7 +67,7 @@ export function EditTopic() {
           template={entityModel}
           data={data}
           onSave={async input => {
-            await createNewEntityType(input);
+            await createNewEntity(input);
           }}
           keepExtraFields
         />

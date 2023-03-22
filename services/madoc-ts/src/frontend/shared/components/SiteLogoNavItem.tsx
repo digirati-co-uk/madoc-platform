@@ -7,6 +7,8 @@ import { HrefLink } from '../utility/href-link';
 import { useSiteConfiguration } from '../../site/features/SiteConfigurationContext';
 
 const SiteLogoContainer = styled.div<{ $padding?: boolean; $margin?: boolean; $maxWidth?: number }>`
+position: relative;
+  z-index: 2;
   ${props =>
     props.$padding &&
     css`

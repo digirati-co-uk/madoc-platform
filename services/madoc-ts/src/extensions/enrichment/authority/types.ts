@@ -5,7 +5,7 @@ export interface AuthoritySnippet {
   id: string;
   url: string;
   authority: string;
-  identifier: string;
+  // identifier: string;
 }
 
 export interface Authority extends AuthoritySnippet {
@@ -14,8 +14,6 @@ export interface Authority extends AuthoritySnippet {
 }
 
 export interface EnrichmentEntitySnippet {
-  description: any;
-  count: number;
   /**
    * URL of the Entity (won't resolve due to Gateway)
    */
@@ -39,11 +37,6 @@ export interface EnrichmentEntitySnippet {
    * and the label to display to the user may be simply "Tribe"
    */
   label: string;
-  /**
-   * A unique slug, derived from the label
-   */
-  slug: string;
-
   /**
    * [SpaCy NER type](https://github.com/digirati-co-uk/madoc-enrichment/blob/main/endpoint_docs.md#spacy-named-entity-recognition-ner-types)
    *
@@ -76,7 +69,12 @@ export interface EnrichmentEntitySnippet {
   /**
    * Readable labels for the Entity's Type.
    */
-  type_other_labels: InternationalString;
+  type_title: InternationalString;
+
+  /**
+   * A unique slug, derived from the label
+   */
+  slug: string;
 
   /**
    * Readable title for the Entity.
@@ -84,10 +82,20 @@ export interface EnrichmentEntitySnippet {
   title: InternationalString;
 
   /**
-   * Unknown image url or list of urls.
-   * @todo will change.
+   *  Number of tagged Resources on each Entity.
    */
-  image_url: string | string[];
+  tagged_resource_count: number;
+
+  /**
+   * contains thumbnail data
+   */
+  other_data: {
+    thumbnail: {
+      id: string;
+      url: string;
+      alt: InternationalString;
+    };
+  };
 }
 
 export interface EnrichmentEntityAuthority {
@@ -134,7 +142,7 @@ export interface EnrichmentEntityTypeSnippet {
   /**
    * Readable labels for the Entity's Type.
    */
-  other_labels: InternationalString;
+  title: InternationalString;
 }
 
 export type SpaCyNERType =
@@ -157,17 +165,10 @@ export type SpaCyNERType =
   | 'ORDINAL'
   | 'CARDINAL';
 
-// @todo probably will change.
-type OtherLabels = Array<{
-  value: string;
-  language: string;
-}>;
-
 export interface EnrichmentEntityType extends EnrichmentEntityTypeSnippet {
-  created: string;
-  modified: string;
-
   description: InternationalString;
+
+  featured_topics?: EnrichmentEntitySnippet[];
 
   image_url: string;
 
@@ -197,24 +198,40 @@ export interface ResourceTag extends ResourceTagSnippet {
 export interface EnrichmentEntity {
   url: string;
   id: string;
-  type: {
-    url: string;
-    id: string;
-    label: string;
-  };
-  description: InternationalString;
-  image_url: string;
-  label: string;
-  other_labels: InternationalString;
-  authorities: AuthoritySnippet[]; // Can't remember what this should be...
-  other_data: {
-    example_data: string;
-  };
-
   modified: string;
   created: string;
+  label: string;
+  type: SpaCyNERType | null;
+  type_slug: string;
+  type_title: InternationalString;
+  slug: string;
+  title: InternationalString;
+  tagged_resource_count: number;
+  description: InternationalString;
+  featured_resources: FeaturedResource[];
+  related_topics: EnrichmentEntitySnippet[];
+  authorities: AuthoritySnippet[];
+  other_data?: EntityOtherData;
 }
 
+export interface EntityOtherData {
+  main_image?: {
+    id?: string;
+    alt?: InternationalString;
+    height?: string;
+    width?: string;
+    url: string;
+  };
+  thumbnail?: {
+    id?: string;
+    alt?: InternationalString;
+    height?: string;
+    width?: string;
+    url: string;
+  };
+  topic_summary?: InternationalString;
+  secondary_heading?: InternationalString;
+}
 /**
  * Entity - List
  * Definition: https://github.com/digirati-co-uk/madoc-enrichment/blob/main/endpoint_docs.md#entity---list
@@ -238,44 +255,42 @@ export interface EntityTypeMadocResponse {
   modified: string;
   label: string;
   slug: string;
-  other_labels?: InternationalString;
-  other_data?: any;
-  image_url?: string;
+  title?: InternationalString;
   description?: InternationalString;
+  image_url?: string;
+  other_data?: any;
+  featured_topics?: EnrichmentEntitySnippet[];
 }
 
 // Entity - Retrieve
 export interface EntityMadocResponse {
   url: string;
   id: string;
-  created: string;
   modified: string;
-
-  type: string;
-  type_slug: string;
-  type_other_labels: InternationalString;
-
+  created: string;
   label: string;
+  type: SpaCyNERType | null;
+  type_slug: string;
+  type_title: InternationalString;
   slug: string;
   title: InternationalString;
+  tagged_resource_count: number;
   description: InternationalString;
-  topic_summary?: InternationalString;
-  image_url: string;
-  image_caption: InternationalString;
-  secondary_heading: string;
-  authorities: { authority: string; id: string; url: string }[];
-
-  featured_resources: FeatureResource[];
+  featured_resources: FeaturedResource[];
   related_topics: EnrichmentEntitySnippet[];
-  other_data: any;
+  authorities: AuthoritySnippet[];
+  other_data?: EntityOtherData;
 }
-export interface FeatureResource {
+
+export interface FeaturedResource {
   url: string;
   created: string;
   modified: string;
+  type: string;
   madoc_id: string;
-  label: InternationalString;
-  thumbnail: string;
-  metadata: any; // ?
+  label?: InternationalString;
+  thumbnail?: string;
+  metadata?: any; // ?
+  other_data?: any; // ?
   count: number;
 }

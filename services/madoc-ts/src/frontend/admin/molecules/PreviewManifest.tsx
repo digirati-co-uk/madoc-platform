@@ -91,7 +91,7 @@ export const PreviewManifest: React.FC<{
                     }
                   }}
                 >
-                  <CroppedImage $size="small">
+                  <CroppedImage data-size="small">
                     <CanvasContext canvas={canvas.id}>
                       <CanvasThumbnail height={100} />
                     </CanvasContext>

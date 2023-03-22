@@ -5,7 +5,7 @@ import { useApi } from '../../../shared/hooks/use-api';
 import { Button } from '../../../shared/navigation/Button';
 import { HrefLink } from '../../../shared/utility/href-link';
 import { CustomEditorTypes } from '../../../shared/page-blocks/custom-editor-types';
-import { entityTypeModel } from '../../../../extensions/enrichment/models';
+import { entityModel, entityTypeModel } from '../../../../extensions/enrichment/models';
 
 export function CreateNewTopicType() {
   const api = useApi();
@@ -39,7 +39,7 @@ export function CreateNewTopicType() {
       <CustomEditorTypes>
         <EditShorthandCaptureModel
           template={entityTypeModel}
-          data={{ label: '', other_labels: { en: [''] }, description: { en: [''] }, image_url: '' }}
+          data={{ label: '', title: { en: [''] }, description: { en: [''] }, image_url: '' }}
           onSave={async data => {
             await createNewEntityType(data);
           }}

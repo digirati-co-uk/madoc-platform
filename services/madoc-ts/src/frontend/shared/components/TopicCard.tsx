@@ -38,25 +38,26 @@ export const TopicCard: React.FC<{
 }> = ({ topic, cardBorder, textColor, background }) => {
   const createLocaleString = useCreateLocaleString();
   const { t } = useTranslation();
-
   return (
     <TopicStripBox $border={cardBorder} $color={textColor} $bgColor={background}>
       <CroppedImage $covered>
-        {topic.image_url ? (
+        {topic.other_data.thumbnail ? (
           <img
             style={{ objectPosition: 'top' }}
-            alt={createLocaleString(topic.label, t('Topic thumbnail'))}
-            src={topic.image_url}
+            alt={createLocaleString(topic.other_data.thumbnail.alt)}
+            src={topic.other_data.thumbnail.url}
           />
         ) : null}
       </CroppedImage>
       <div style={{ margin: '1em' }}>
         <LocaleString as={SingleLineHeading3}>{topic.title}</LocaleString>
 
-        <Subheading3>{topic.count} Objects</Subheading3>
+        <Subheading3>
+          {topic.tagged_resource_count} {t('Resources')}
+        </Subheading3>
 
-        <Heading5 style={{ padding: 0 }}>PART OF</Heading5>
-        <TypePill>{topic.type}</TypePill>
+        <Heading5 style={{ padding: 0 }}>{t('PART OF')}</Heading5>
+        <TypePill as={LocaleString}>{topic.type_title}</TypePill>
       </div>
     </TopicStripBox>
   );

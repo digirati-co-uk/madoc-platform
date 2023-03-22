@@ -9,6 +9,7 @@ import { AppliedFacets } from '../features/AppliedFacets';
 import { SearchPageResults } from '../features/SearchPageResults';
 import { SearchPageFilters } from '../features/SearchPageFilters';
 import { TopicActions } from '../features/TopicActions';
+import { TopicAuthorities } from '../features/TopicAuthorities';
 
 export const ViewTopic = () => {
   return (
@@ -19,14 +20,14 @@ export const ViewTopic = () => {
 
       <Slot name="topic-hero-head">
         <TopicHero />
+        <TopicAuthorities />
       </Slot>
 
       <Slot name="topic-featured">
         <FeaturedTopicItems />
       </Slot>
 
-      <Slot name="topic-result-heading">
-        <h3 style={{ fontSize: '1.5em', color: 'inherit' }}>Explore all resources</h3>
+      <Slot name="topics-result-heading">
         <TopicActions />
       </Slot>
 
@@ -47,7 +48,6 @@ export const ViewTopic = () => {
             <SearchPagination />
           </Slot>
         </div>
-
       </div>
 
       <Slot name="topic-related">

@@ -1,7 +1,6 @@
 import React from 'react';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
 import { ImageStripBox } from '../../shared/atoms/ImageStrip';
 import { CroppedImage } from '../../shared/atoms/Images';
 import { LocaleString, useCreateLocaleString } from '../../shared/components/LocaleString';
@@ -9,9 +8,10 @@ import { SingleLineHeading5 } from '../../shared/typography/Heading5';
 import { useTranslation } from 'react-i18next';
 import { SnippetContainer } from '../../shared/atoms/SnippetLarge';
 import { useTopic } from '../pages/loaders/topic-loader';
-import { useApiCanvas } from '../../shared/hooks/use-api-canvas';
 import { extractIdFromUrn } from '../../../utility/parse-urn';
-import { FeatureResource } from '../../../extensions/enrichment/authority/types';
+import { FeaturedResource } from '../../../extensions/enrichment/authority/types';
+import { createLink } from '../../shared/utility/create-link';
+import { HrefLink } from '../../shared/utility/href-link';
 
 const FeaturedItemsContainer = styled.div`
   display: flex;
@@ -48,7 +48,7 @@ export const FeaturedTopicItems: React.FC<{
   textColor?: string;
   cardBorder?: string;
   imageStyle?: string;
-}> = ({ cardBackground = '#ffffff', textColor = '#002D4B', cardBorder = '#002D4B', imageStyle = 'covered' }) => {
+}> = ({ cardBackground, textColor, cardBorder, imageStyle }) => {
   const { data } = useTopic();
   const items = data?.featured_resources ? data?.featured_resources : [];
   const createLocaleString = useCreateLocaleString();
@@ -59,12 +59,16 @@ export const FeaturedTopicItems: React.FC<{
   if (!items || items.length === 0) {
     return null;
   }
+  const RenderItemSnippet = (item: FeaturedResource) => {
+    const manifestId = extractIdFromUrn(item.madoc_id);
 
-  const RenderItemSnippet = (item: FeatureResource) => {
-    const { data: itemData } = useApiCanvas(extractIdFromUrn(item.madoc_id));
-    // todo backend needs to give more data
     return (
-      <Link key={itemData?.canvas.id} to={'1234'}>
+      <HrefLink
+        href={createLink({
+          manifestId,
+        })}
+        style={{ textDecoration: 'none' }}
+      >
         <FeatureCard
           style={{
             backgroundColor: cardBackground,
@@ -75,15 +79,15 @@ export const FeaturedTopicItems: React.FC<{
           <ImageStripBox $size="small" $bgColor={cardBackground}>
             <CroppedImage $size="small" $covered={imageStyle === 'covered'}>
               {item.thumbnail ? (
-                <img alt={createLocaleString(itemData?.canvas.label, t('item thumbnail'))} src={item.thumbnail} />
+                <img alt={createLocaleString(item.label, t('item thumbnail'))} src={item.thumbnail} />
               ) : null}
             </CroppedImage>
           </ImageStripBox>
           <LocaleString style={{ padding: '1em' }} as={SingleLineHeading5}>
-            {itemData?.canvas.label}
+            {item.label}
           </LocaleString>
         </FeatureCard>
-      </Link>
+      </HrefLink>
     );
   };
   return (
@@ -104,8 +108,8 @@ blockEditorFor(FeaturedTopicItems, {
   defaultProps: {
     header: 'Featured Items',
     cardBackground: '#ffffff',
-    textColor: '',
-    cardBorder: '',
+    textColor: '#002D4B',
+    cardBorder: '#002D4B',
     imageStyle: 'cover',
   },
   editor: {
@@ -122,6 +126,6 @@ blockEditorFor(FeaturedTopicItems, {
       ],
     },
   },
-  anyContext: [],
-  requiredContext: [],
+  anyContext: ['topic'],
+  requiredContext: ['topic'],
 });

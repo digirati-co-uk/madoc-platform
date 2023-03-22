@@ -6,7 +6,13 @@ import { useRouteContext } from '../hooks/use-route-context';
 import { useLocationQuery } from '../../shared/hooks/use-location-query';
 import { Link } from 'react-router-dom';
 import { createLink } from '../../shared/utility/create-link';
+import styled from 'styled-components';
 
+const TopicActionWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-content: center;
+`;
 export type props = {
   alignment?: string;
 };
@@ -16,7 +22,8 @@ export const TopicActions: React.FC<props> = ({ alignment }) => {
   const query = useLocationQuery();
 
   return (
-    <>
+    <TopicActionWrapper>
+      <h3 style={{ fontSize: '1.5em' }}>{t('Explore all resources')}</h3>
       {/*might be more to add here in the future */}
       <ButtonRow $center={alignment === 'center'} $right={alignment === 'right'}>
         <Button
@@ -27,15 +34,15 @@ export const TopicActions: React.FC<props> = ({ alignment }) => {
           {t('View in search')}
         </Button>
       </ButtonRow>
-    </>
+    </TopicActionWrapper>
   );
 };
 
 blockEditorFor(TopicActions, {
   type: 'default.TopicActions',
   label: 'Topic actions',
-  anyContext: [],
-  requiredContext: [],
+  anyContext: ['topic'],
+  requiredContext: ['topic'],
   defaultProps: {
     alignment: '',
   },

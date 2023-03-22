@@ -121,7 +121,7 @@ export const ViewMedia: UniversalComponent<ViewMediaType> = createUniversalCompo
     return (
       <div>
         <ImageStripBox $size="large">
-          <CroppedImage $size="large">{media.thumbnail ? <img src={media.thumbnail} /> : null}</CroppedImage>
+          <CroppedImage>{media.thumbnail ? <img src={media.thumbnail} /> : null}</CroppedImage>
           <Heading5>{media.displayName}</Heading5>
         </ImageStripBox>
         <ButtonRow>
