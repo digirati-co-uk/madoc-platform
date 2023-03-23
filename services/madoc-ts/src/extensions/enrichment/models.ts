@@ -7,6 +7,10 @@ export const entityTypeModel: CaptureModelShorthand<EnrichmentEntityType> = {
   image_url: { type: 'madoc-media-explorer', label: 'Image', valueAsString: true },
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
+  __nested__: {
+    featured_topics: { allowMultiple: true, label: 'Featured topic', pluralLabel: 'Featured topics', labelledBy: 'label' },
+  },
+  // featured_topics: { type: 'topic-explorer', label: 'featured topic' },
   'featured_topics.slug': { type: 'topic-explorer', label: 'featured topics' },
 };
 

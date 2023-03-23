@@ -7,12 +7,16 @@ import { Subheading3 } from '../../../frontend/shared/typography/Heading3';
 import { RoundedCard } from '../../../frontend/shared/capture-models/editor/components/RoundedCard/RoundedCard';
 import { useApiTopic } from '../../../frontend/shared/hooks/use-api-topic';
 import { useParams } from 'react-router-dom';
+import { extractIdFromUrn } from '../../../utility/parse-urn';
 
 export type TopicExplorerProps = {
   id: string;
   label: string;
   type: string;
-  value: string | null;
+  value: {
+    slug: string;
+    id?: string;
+  } | null;
 };
 
 export const TopicExplorer: FieldComponent<TopicExplorerProps> = ({ value, updateValue }) => {
@@ -20,7 +24,7 @@ export const TopicExplorer: FieldComponent<TopicExplorerProps> = ({ value, updat
   const { topicType } = useParams<Record<'topicType', any>>();
 
   const { data } = useTopicType();
-  const { data: topicDetails } = useApiTopic(topicType, value);
+  const { data: topicDetails } = useApiTopic(topicType, value?.slug);
 
   if (value && topicDetails) {
     return (
@@ -40,7 +44,7 @@ export const TopicExplorer: FieldComponent<TopicExplorerProps> = ({ value, updat
             topic={topic}
             size="small"
             onClick={() => {
-              updateValue(topic.slug);
+              updateValue({ slug: topic.slug, id: topic.id });
             }}
           />
         ))}
