@@ -5,7 +5,7 @@ import { TopicExplorerProps } from './TopicExplorer';
 
 export const TopicExplorerPreview: React.FC<TopicExplorerProps> = props => {
   if (props.value) {
-    return <Heading5 as={LocaleString}>{props.value.label}</Heading5>;
+    return <Heading5 as={LocaleString}>{props.value.slug}</Heading5>;
   }
 
   return null;
