@@ -2,10 +2,10 @@ import { Pagination } from '../../../types/schemas/_pagination';
 import { InternationalString } from '@iiif/presentation-3';
 
 export interface AuthoritySnippet {
-  id: string;
+  // id: string;
   url: string;
   authority: string;
-  // identifier: string;
+  identifier: string;
 }
 
 export interface Authority extends AuthoritySnippet {

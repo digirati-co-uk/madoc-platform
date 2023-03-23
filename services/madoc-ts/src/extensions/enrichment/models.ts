@@ -5,12 +5,16 @@ export const entityTypeModel: CaptureModelShorthand<EnrichmentEntityType> = {
   title: { type: 'international-field', label: 'Title' },
   description: { type: 'international-field', label: 'Description' },
   image_url: { type: 'madoc-media-explorer', label: 'Image', valueAsString: true },
+  __nested__: {
+    featured_topics: {
+      allowMultiple: true,
+      label: 'Featured topic',
+      pluralLabel: 'Featured topics',
+      labelledBy: 'label',
+    },
+  },
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  __nested__: {
-    featured_topics: { allowMultiple: true, label: 'Featured topic', pluralLabel: 'Featured topics', labelledBy: 'label' },
-  },
-  // featured_topics: { type: 'topic-explorer', label: 'featured topic' },
   'featured_topics.slug': { type: 'topic-explorer', label: 'featured topics' },
 };
 
@@ -18,15 +22,20 @@ export const entityModel: CaptureModelShorthand<EnrichmentEntity> = {
   label: { type: 'text-field', label: 'Slug' },
   title: { type: 'international-field', label: 'Title' },
   description: { type: 'international-field', label: 'Description' },
-  // featured_resources: { type: 'topic-item-explorer', label: 'featured resources' },
   __nested__: {
     authorities: { allowMultiple: true, label: 'Authority', pluralLabel: 'Authorities', labelledBy: 'value' },
+    featured_resources: {
+      allowMultiple: true,
+      label: 'featured resource',
+      pluralLabel: 'featured resources',
+      labelledBy: 'madoc_id',
+    },
   },
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   'featured_resources.madoc_id': { type: 'topic-item-explorer', label: 'featured resources' },
 
-  'authorities.uri': { type: 'text-field', label: 'URI / URL' },
+  'authorities.url': { type: 'text-field', label: 'URI / URL' },
   'authorities.authority': { type: 'text-field', label: 'Authority label' },
   'authorities.identifier': { type: 'text-field', label: 'Authority identifier' },
 
