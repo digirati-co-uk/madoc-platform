@@ -72,6 +72,7 @@ export type ProjectConfiguration = {
     hideOpenInMirador?: boolean;
     hideSearchButton?: boolean;
     hideRandomCanvas?: boolean;
+    generatePDF?: boolean;
     hideFilterImages?: boolean;
     directModelPage?: boolean;
     showIIIFLogo?: boolean;

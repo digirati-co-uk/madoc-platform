@@ -5,7 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased (2.1.0)](https://github.com/digirati-co-uk/madoc-platform/compare/v2.0.8...main)
+## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.1.0...main)
+
+### Fixed
+
+- Fixed bug with single line transcriptions in preview mode (NS-11)
+
+<!-- 
+### Fixed
+### Added
+### Changed
+### Removed
+-->
+ 
+
+## [v2.1.0](https://github.com/digirati-co-uk/madoc-platform/compare/v2.0.8...v2.1.0)
 
 This is a larger release and include changes to bring Madoc inline with Canvas Panel and Manifest Editor, and
 supports a wider range of IIIF resources as a result.
@@ -28,8 +42,8 @@ supports a wider range of IIIF resources as a result.
 * Fixed bug with viewing IIIF media items
 * Fixed bug where Capture model previewing in the backend would not refresh correctly
 * Fixed bug where space-bar could not be used if region had not been confirmed in capture model editor
-* Fixed bug with first entity selector not being revised correctly (and not saving) [@todo jira link]
-* Fixed bug with capture model selectors self-referencing after being cloned [@todo jira link]
+* Fixed bug with first entity selector not being revised correctly (and not saving)
+* Fixed bug with capture model selectors self-referencing after being cloned
 * Fixed bug with `hydrateCaptureModel` helper producing invalid entities
 * Fixed missing labels when viewing "Document" in sidebar
 * Fixed incorrect selector shown in "Preview" modal and "Document" sidebar.
@@ -56,7 +70,8 @@ supports a wider range of IIIF resources as a result.
 * Fixed "Maximise window" to avoid cutting off the top section of the header
 * Fixed firefox bug where "Define window" button was disabled if selector required
 * Fixed Annotation styled hidden by default 
-* Fixed some fields showing in submision if empty 
+* Fixed some fields showing in submission if empty 
+* Fixed email links sometimes not working in email clients - with option link to paste
 
 
 ### Added
@@ -128,11 +143,12 @@ supports a wider range of IIIF resources as a result.
     * Simple CSV export - exports all capture models into a csv file.
 * Added new interactions in the Document panel for annotations
 * Added secondary view for "X hours ago" to show the date and time on click (browser preference)
-* Added "Generate PDF" option for manifests using PDiiif
+* Added "Generate PDF" option for manifests using [pdiiif](https://pdiiif.jbaiter.de/) from (@jbaiter - [Repository](https://github.com/jbaiter/pdiiif))
 * Added small indication under choices in the capture model UI with number of previous submissions
 * Added new auto-complete endpoints migrated from Madoc 1.x
   * [searchFAST](http://fast.oclc.org/searchfast/)
   * [WikiData](https://www.wikidata.org)
+* Added more Dutch translations (Thanks Davy Verbeke)
 
 ### Changed
 
