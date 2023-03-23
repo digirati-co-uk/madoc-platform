@@ -60,7 +60,8 @@ export const FeaturedTopicItems: React.FC<{
     return null;
   }
   const RenderItemSnippet = (item: FeaturedResource) => {
-    const manifestId = extractIdFromUrn(item.madoc_id);
+    const itemId = item.madoc_id ? item.madoc_id : '';
+    const manifestId = extractIdFromUrn(itemId);
 
     return (
       <HrefLink

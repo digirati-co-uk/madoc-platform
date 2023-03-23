@@ -85,7 +85,6 @@ export const TopicTypeHero: React.FC<{ textColor?: string; overlayColor?: string
   const { data } = useTopicType();
   const [isExpanded, setIsExpanded] = useState(false);
 
-  console.log(data)
   const ref = useRef<HTMLDivElement>(null);
 
   const [isClamped, setIsClamped] = useState(false);
@@ -105,7 +104,11 @@ export const TopicTypeHero: React.FC<{ textColor?: string; overlayColor?: string
       <BackgroundImage $overlay={overlayColor} style={{ backgroundImage: `url("${data.image_url}")` }} />
       <TextBox data-is-expanded={isExpanded}>
         <TopWrapper>
-          <HeroHeading as={LocaleString}>{data.title}</HeroHeading>
+          {data.title?.length ? (
+            <HeroHeading as={LocaleString}>{data.title}</HeroHeading>
+          ) : (
+            <HeroHeading>{data.label}</HeroHeading>
+          )}
         </TopWrapper>
         <HeroSubHeading ref={ref}>
           <LocaleString>{data.description}</LocaleString>
