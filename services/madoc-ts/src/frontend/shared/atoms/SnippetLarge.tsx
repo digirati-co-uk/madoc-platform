@@ -23,6 +23,7 @@ export type SnippetLargeProps = {
   fluid?: boolean;
   interactive?: boolean;
   query?: any;
+  hideButton?: boolean;
 };
 
 const sizeMap = {
@@ -295,14 +296,16 @@ export const SnippetLarge: React.FC<SnippetLargeProps> = props => {
         <SnippetLabel small={props.smallLabel}>{props.label}</SnippetLabel>
         <SnippetSubtitle>{props.subtitle}</SnippetSubtitle>
         {!props.portrait ? <SnippetSummary>{props.summary}</SnippetSummary> : null}
-        <SnippetButton
-          as={props.linkAs}
-          role={buttonRole}
-          href={props.query ? `${props.link}?${stringify(props.query)}` : props.link}
-          $center={props.center}
-        >
-          {props.buttonText}
-        </SnippetButton>
+        {!props.hideButton && (
+          <SnippetButton
+            as={props.linkAs}
+            role={buttonRole}
+            href={props.query ? `${props.link}?${stringify(props.query)}` : props.link}
+            $center={props.center}
+          >
+            {props.buttonText}
+          </SnippetButton>
+        )}
       </SnippetMetadata>
     </SnippetContainer>
   );

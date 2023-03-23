@@ -276,7 +276,7 @@ export interface EntityMadocResponse {
   title: InternationalString;
   tagged_resource_count: number;
   description: InternationalString;
-  featured_resources: FeaturedResource[];
+  featured_resources?: FeaturedResource[];
   related_topics: EnrichmentEntitySnippet[];
   authorities: AuthoritySnippet[];
   other_data?: EntityOtherData;
@@ -287,7 +287,7 @@ export interface FeaturedResource {
   created: string;
   modified: string;
   type: string;
-  madoc_id: string;
+  madoc_id?: string;
   label?: InternationalString;
   thumbnail?: string;
   metadata?: any; // ?

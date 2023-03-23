@@ -2,20 +2,16 @@ import { EnrichmentEntity, EnrichmentEntityType } from './authority/types';
 import { CaptureModelShorthand } from '../../frontend/shared/capture-models/types/capture-model-shorthand';
 
 export const entityTypeModel: CaptureModelShorthand<EnrichmentEntityType> = {
-  label: { type: 'text-field', label: 'Slug' },
   title: { type: 'international-field', label: 'Title' },
   description: { type: 'international-field', label: 'Description' },
   image_url: { type: 'madoc-media-explorer', label: 'Image', valueAsString: true },
-  // featured_topics: { type: 'topic-explorer', label: 'feat'},
-  // __nested__: {
-  //   featured_topics: { allowMultiple: true, label: 'Featured Topic', pluralLabel: 'Featured Topics' },
-  // },
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   'featured_topics.slug': { type: 'topic-explorer', label: 'featured topics' },
 };
 
 export const entityModel: CaptureModelShorthand<EnrichmentEntity> = {
+  label: { type: 'text-field', label: 'Slug' },
   title: { type: 'international-field', label: 'Title' },
   description: { type: 'international-field', label: 'Description' },
   // featured_resources: { type: 'topic-item-explorer', label: 'featured resources' },
@@ -24,6 +20,8 @@ export const entityModel: CaptureModelShorthand<EnrichmentEntity> = {
   },
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
+  'featured_resources.madoc_id': { type: 'topic-item-explorer', label: 'featured resources' },
+
   'authorities.uri': { type: 'text-field', label: 'URI / URL' },
   'authorities.authority': { type: 'text-field', label: 'Authority label' },
   'authorities.identifier': { type: 'text-field', label: 'Authority identifier' },

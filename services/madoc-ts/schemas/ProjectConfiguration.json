@@ -262,6 +262,9 @@
         "hideRandomCanvas": {
           "type": "boolean"
         },
+        "generatePDF": {
+          "type": "boolean"
+        },
         "hideFilterImages": {
           "type": "boolean"
         },

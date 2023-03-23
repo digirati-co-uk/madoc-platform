@@ -26,7 +26,7 @@
       "description": "A unique slug, derived from the label",
       "type": "string"
     },
-    "other_labels": {
+    "title": {
       "description": "Readable labels for the Entity's Type.",
       "type": "object",
       "additionalProperties": {
@@ -42,8 +42,8 @@
     "id",
     "label",
     "modified",
-    "other_labels",
     "slug",
+    "title",
     "url"
   ],
   "$schema": "http://json-schema.org/draft-07/schema#"

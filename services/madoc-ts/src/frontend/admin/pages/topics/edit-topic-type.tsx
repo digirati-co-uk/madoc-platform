@@ -21,7 +21,7 @@ export function EditTopicType() {
     if (updatedData.featured_topics) {
       updatedData.featured_topics = updatedData.featured_topics.map((f: { id: any }) => f.id);
     }
-        const resp = api.enrichment.upsertTopicType({
+    const resp = api.enrichment.upsertTopicType({
       id: data.id,
       label: data.label,
       ...updatedData,

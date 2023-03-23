@@ -7,7 +7,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { SnippetContainer } from '../atoms/SnippetLarge';
-import {EntityMadocResponse} from "../../../extensions/enrichment/authority/types";
+import { EntityMadocResponse } from '../../../extensions/enrichment/authority/types';
 
 const TopicSnippetContainer = styled(SnippetContainer)`
   height: 250px;
@@ -15,7 +15,7 @@ const TopicSnippetContainer = styled(SnippetContainer)`
   padding: 0;
   margin-left: auto;
   margin-right: auto;
-    
+
   &[data-is-small='true'] {
     height: 150px;
     margin: 1em 0 1em 0;

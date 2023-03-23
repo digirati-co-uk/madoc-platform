@@ -38,6 +38,7 @@ export const TopicExplorer: FieldComponent<TopicExplorerProps> = ({ value, updat
           <TopicSnippetCard
             key={topic.id}
             topic={topic}
+            size='small'
             onClick={() => {
               updateValue(topic.slug);
             }}
