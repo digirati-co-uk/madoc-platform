@@ -1,22 +1,15 @@
-import { InternationalString } from '@iiif/presentation-3';
 import React, { useRef } from 'react';
 import { RoundedCard } from '../../../frontend/shared/capture-models/editor/components/RoundedCard/RoundedCard';
-import { LocaleString, useCreateLocaleString } from '../../../frontend/shared/components/LocaleString';
-import { CroppedImage } from '../../../frontend/shared/atoms/Images';
-import { useTranslation } from 'react-i18next';
-import { ImageStripBox } from '../../../frontend/shared/atoms/ImageStrip';
 import { ImageGrid } from '../../../frontend/shared/atoms/ImageGrid';
-import { Heading5, SingleLineHeading5 } from '../../../frontend/shared/typography/Heading5';
 import { useParams } from 'react-router-dom';
 import { useInfiniteQuery } from 'react-query';
 import { useApi } from '../../../frontend/shared/hooks/use-api';
 import { useInfiniteAction } from '../../../frontend/site/hooks/use-infinite-action';
 import { Button } from '../../../frontend/shared/navigation/Button';
-import { FeaturedResource } from '../../enrichment/authority/types';
 import { FieldComponent } from '../../../frontend/shared/capture-models/types/field-types';
 import { ManifestSnippet } from '../../../frontend/shared/components/ManifestSnippet';
-import { extractIdFromUrn, parseUrn } from '../../../utility/parse-urn';
-import {Subheading3} from "../../../frontend/shared/typography/Heading3";
+import { extractIdFromUrn } from '../../../utility/parse-urn';
+import { Subheading3 } from '../../../frontend/shared/typography/Heading3';
 
 export type TopicItemExplorerProps = {
   id: string;
@@ -27,12 +20,9 @@ export type TopicItemExplorerProps = {
 
 export const TopicItemExplorer: FieldComponent<TopicItemExplorerProps> = ({ value, updateValue }) => {
   const api = useApi();
-  const { t } = useTranslation();
   const container = useRef<HTMLDivElement>(null);
-  const createLocaleString = useCreateLocaleString();
   const { topic } = useParams<Record<'topic', any>>();
 
-  console.log(value);
   const { data: pages, fetchMore, canFetchMore, isFetchingMore } = useInfiniteQuery(
     ['topic-items', {}],
     async (key, _, page?: number) => {
@@ -58,7 +48,6 @@ export const TopicItemExplorer: FieldComponent<TopicItemExplorerProps> = ({ valu
   });
 
   if (value) {
-    // const valueId = value.madoc_id !== null ? value.madoc_id : value.resource_id;
     const manifestID = parseManifestId(value);
 
     if (manifestID) {

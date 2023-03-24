@@ -7,7 +7,6 @@ import { Subheading3 } from '../../../frontend/shared/typography/Heading3';
 import { RoundedCard } from '../../../frontend/shared/capture-models/editor/components/RoundedCard/RoundedCard';
 import { useApiTopic } from '../../../frontend/shared/hooks/use-api-topic';
 import { useParams } from 'react-router-dom';
-import { extractIdFromUrn } from '../../../utility/parse-urn';
 
 export type TopicExplorerProps = {
   id: string;

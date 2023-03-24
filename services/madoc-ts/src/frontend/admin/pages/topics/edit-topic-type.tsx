@@ -37,7 +37,6 @@ export function EditTopicType() {
       label: data.label,
       ...updatedData,
     });
-    console.log(updatedData.featured_topics)
 
     refetch();
 

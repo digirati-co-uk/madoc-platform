@@ -41,7 +41,6 @@ export function EditTopic() {
       } else {
         updatedData.featured_resources = Object.values(ftRes);
       }
-      console.log(updatedData.featured_resources);
     }
 
     const resp = api.enrichment.upsertTopic({ id: data.id, ...updatedData });
