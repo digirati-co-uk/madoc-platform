@@ -34,7 +34,7 @@ blockEditorFor(SearchPagination, {
   label: 'Search pagination',
   anyContext: ['page', 'topic'],
   defaultProps: {
-    paginationStyle: false,
+    paginationStyle: true,
     position: 'flex-end',
   },
   editor: {

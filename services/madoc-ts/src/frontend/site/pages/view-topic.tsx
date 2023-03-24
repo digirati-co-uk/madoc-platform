@@ -10,8 +10,7 @@ import { SearchPageResults } from '../features/SearchPageResults';
 import { SearchPageFilters } from '../features/SearchPageFilters';
 import { TopicActions } from '../features/TopicActions';
 import { TopicAuthorities } from '../features/TopicAuthorities';
-import { useTopic } from './loaders/topic-loader';
-import {TopicHeroImage} from "../features/TopicHeroImage";
+import { TopicHeroImage } from '../features/TopicHeroImage';
 export const ViewTopic = () => {
   return (
     <>
