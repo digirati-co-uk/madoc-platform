@@ -66,6 +66,8 @@ export const FeaturedTopicItems: React.FC<{
     return (
       <HrefLink
         href={createLink({
+          topicType: data.type_slug,
+          topic: data.slug,
           manifestId,
         })}
         style={{ textDecoration: 'none' }}

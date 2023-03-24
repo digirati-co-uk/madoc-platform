@@ -137,6 +137,10 @@ export const SearchItem: React.FC<{
   const snippet = result.hits && result.hits[0] && result.hits[0].snippet ? result.hits[0].snippet : undefined;
   const isManifest = result.resource_type === 'Manifest';
 
+  const topic = routeContext.topic;
+  const topicType = routeContext.topicType;
+
+  console.log(things)
   return (
     <>
       <HrefLink
@@ -145,6 +149,8 @@ export const SearchItem: React.FC<{
           manifestId,
           canvasId,
           collectionId,
+          topic,
+          topicType,
           query: { searchText },
           admin,
         })}

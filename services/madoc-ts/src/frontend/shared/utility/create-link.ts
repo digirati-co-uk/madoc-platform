@@ -23,6 +23,12 @@ export function createLink(opt: {
   // Topics.
   if (opt.topicType) {
     if (opt.topic) {
+      if (opt.manifestId) {
+        if (opt.canvasId) {
+          return `/topics/${opt.topicType}/${opt.topic}/m/${opt.manifestId}/c/${opt.canvasId}/${suffix}`;
+        }
+        return `/topics/${opt.topicType}/${opt.topic}/m/${opt.manifestId}/${suffix}`;
+      }
       return `/topics/${opt.topicType}/${opt.topic}${suffix}`;
     }
     return `/topics/${opt.topicType}${suffix}`;
@@ -73,7 +79,6 @@ export function createLink(opt: {
     if (opt.collectionId && !opt.admin) {
       path.push(`/collections/${opt.collectionId}`);
     }
-
     path.push(`/manifests/${opt.manifestId}`);
 
     return `${path.join('')}${suffix}`;

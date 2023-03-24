@@ -570,6 +570,78 @@ export function createRoutes(Components: RouteComponents): CreateRouteType {
               element: <Components.Search />,
             },
             {
+              path: '/topics/:topicType/:topic/m/:manifestId',
+              element: <Components.ManifestLoader />,
+              children: [
+                {
+                  path: '/topics/:topicType/:topic/m/:manifestId',
+                  exact: true,
+                  element: <Components.ViewManifest />,
+                },
+                {
+                  path: '/topics/:topicType/:topic/m/:manifestId/search',
+                  exact: true,
+                  element: <Components.Search />,
+                },
+                {
+                  path: '/topics/:topicType/:topic/m/:manifestId/edit',
+                  exact: true,
+                  element: <Components.SuggestMetadata />,
+                },
+                {
+                  path: '/topics/:topicType/:topic/m/:manifestId/mirador',
+                  exact: true,
+                  element: <Components.ViewManifestMirador />,
+                },
+                {
+                  path: '/topics/:topicType/:topic/m/:manifestId/uv',
+                  exact: true,
+                  element: <Components.ViewManifestUV />,
+                },
+                {
+                  path: '/topics/:topicType/:topic/m/:manifestId/c/:canvasId',
+                  element: <Components.CanvasLoader />,
+                  children: [
+                    {
+                      path: '/topics/:topicType/:topic/m/:manifestId/c/:canvasId',
+                      exact: true,
+                      element: <Components.ViewCanvas />,
+                    },
+                    {
+                      path: '/topics/:topicType/:topic/m/:manifestId/c/:canvasId/model',
+                      exact: true,
+                      element: <Components.ViewCanvasModel />,
+                    },
+                    {
+                      path: '/topics/:topicType/:topic/m/:manifestId/c/:canvasId/metadata/edit',
+                      exact: true,
+                      element: <Components.SuggestMetadata />,
+                    },
+                    {
+                      path: '*',
+                      element: <Components.PageLoader />,
+                      children: [
+                        {
+                          path: '*',
+                          element: <Components.ViewPage />,
+                        },
+                      ],
+                    },
+                  ],
+                },
+                {
+                  path: '*',
+                  element: <Components.PageLoader />,
+                  children: [
+                    {
+                      path: '*',
+                      element: <Components.ViewPage />,
+                    },
+                  ],
+                },
+              ],
+            },
+            {
               path: '*',
               element: <Components.PageLoader />,
               children: [
