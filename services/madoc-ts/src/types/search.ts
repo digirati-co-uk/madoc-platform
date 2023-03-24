@@ -117,6 +117,10 @@ export type SearchQuery = {
         indexable_date_range_start?: string;
         indexable_date_range_end?: string;
       }
+    | {
+        type: string;
+        indexable_text: string;
+      }
     // Unknown if this is supported.
     | {
         type: string;

@@ -51,7 +51,7 @@ const ResultText = styled.span`
 
 export const ResultTitle = styled.div`
   text-decoration: none;
-  color: #2962ff;
+  color: inherit;
   font-size: 1.25rem;
   padding-bottom: 0.625rem;
 `;
@@ -140,7 +140,6 @@ export const SearchItem: React.FC<{
   const topic = routeContext.topic;
   const topicType = routeContext.topicType;
 
-  console.log(things)
   return (
     <>
       <HrefLink

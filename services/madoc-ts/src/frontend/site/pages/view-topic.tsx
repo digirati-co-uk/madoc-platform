@@ -6,11 +6,12 @@ import { FeaturedTopicItems } from '../features/FeaturedTopicItems';
 import { RelatedTopics } from '../features/RelatedTopics';
 import { SearchPagination } from '../features/SearchPagination';
 import { AppliedFacets } from '../features/AppliedFacets';
-import { SearchPageResults } from '../features/SearchPageResults';
 import { SearchPageFilters } from '../features/SearchPageFilters';
 import { TopicActions } from '../features/TopicActions';
 import { TopicAuthorities } from '../features/TopicAuthorities';
 import { TopicHeroImage } from '../features/TopicHeroImage';
+import { SearchPageResults } from '../features/SearchPageResults';
+import {TopicItemsResults} from "../features/TopicItemsResults";
 export const ViewTopic = () => {
   return (
     <>
@@ -50,7 +51,7 @@ export const ViewTopic = () => {
         <div style={{ width: '100%' }}>
           <Slot name="topic-item-results">
             <AppliedFacets />
-            <SearchPageResults />
+            <TopicItemsResults />
           </Slot>
 
           <Slot name="topic-items-pagination">

@@ -1,10 +1,10 @@
 import { InternationalString } from '@iiif/presentation-3';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { FacetConfig } from '../../shared/components/MetadataFacetEditor';
 import { apiHooks, paginatedApiHooks } from '../../shared/hooks/use-api-query';
 import { useSiteConfiguration } from '../features/SiteConfigurationContext';
 import { useRouteContext } from './use-route-context';
-import { useSearchQuery } from './use-search-query';
+import { FacetQueryValue, useSearchQuery } from './use-search-query';
 
 function normalizeDotKey(key: string) {
   return key.startsWith('metadata.') ? key.slice('metadata.'.length).toLowerCase() : key.toLowerCase();

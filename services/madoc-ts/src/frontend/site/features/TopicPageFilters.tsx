@@ -18,15 +18,18 @@ import { CheckboxBtn } from '../../shared/atoms/CheckboxBtn';
 import { useSearch } from '../hooks/use-search';
 import { SearchBox } from '../../shared/atoms/SearchBox';
 import { Accordion } from '../../shared/atoms/Accordion';
+import {useParams} from "react-router-dom";
 import {useTopicItems} from "../../shared/hooks/use-topic-items";
 
-interface SearchPageFiltersProps {
+interface TopicPageFilters {
   checkBoxColor?: string;
   filterHeader?: string;
 }
 
-export const SearchPageFilters: React.FC<SearchPageFiltersProps> = ({ checkBoxColor, filterHeader }) => {
-  const [{}, displayFacets, isLoading] = useTopicItems('white');
+export const TopicPageFilters: React.FC<TopicPageFilters> = ({ checkBoxColor, filterHeader }) => {
+    const { topic } = useParams<Record<'topic', any>>();
+    const [{ data, isLoading, latestData }, { query, page }] = useTopicItems(topic);
+
 
   const { t } = useTranslation();
   const { appliedFacets, fulltext } = useSearchQuery();
@@ -40,9 +43,6 @@ export const SearchPageFilters: React.FC<SearchPageFiltersProps> = ({ checkBoxCo
     setFullTextQuery,
   } = useSearchFacets();
 
-  if (!displayFacets) {
-    return null;
-  }
   return (
     <SearchFilterContainer>
       <SearchFilterTitle>{filterHeader}</SearchFilterTitle>
@@ -58,7 +58,7 @@ export const SearchPageFilters: React.FC<SearchPageFiltersProps> = ({ checkBoxCo
         </TinyButton>
       </ButtonRow>
 
-      {displayFacets?.map(facet => {
+      {latestData?.facets?.map(facet => {
         if (facet.items.length === 0) {
           return null;
         }
@@ -95,10 +95,10 @@ export const SearchPageFilters: React.FC<SearchPageFiltersProps> = ({ checkBoxCo
   );
 };
 
-blockEditorFor(SearchPageFilters, {
-  label: 'Search Page Filters',
-  type: 'default.SearchPageFilters',
-  anyContext: [],
+blockEditorFor(TopicPageFilters, {
+  label: 'Topic Page Filters',
+  type: 'default.TopicPageFilters',
+  anyContext: ['topic'],
   requiredContext: [],
   defaultProps: {
     checkBoxColor: '',
