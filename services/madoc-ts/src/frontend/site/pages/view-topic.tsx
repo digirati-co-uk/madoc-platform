@@ -10,7 +10,8 @@ import { SearchPageResults } from '../features/SearchPageResults';
 import { SearchPageFilters } from '../features/SearchPageFilters';
 import { TopicActions } from '../features/TopicActions';
 import { TopicAuthorities } from '../features/TopicAuthorities';
-
+import { useTopic } from './loaders/topic-loader';
+import {TopicHeroImage} from "../features/TopicHeroImage";
 export const ViewTopic = () => {
   return (
     <>
@@ -18,10 +19,19 @@ export const ViewTopic = () => {
         <DisplayBreadcrumbs />
       </Slot>
 
-      <Slot name="topic-hero-head">
-        <TopicHero />
-        <TopicAuthorities />
-      </Slot>
+      <div style={{ display: 'flex' }}>
+        <div style={{ width: '100%' }}>
+          <Slot name="topic-hero-left">
+            <TopicHero />
+            <TopicAuthorities />
+          </Slot>
+        </div>
+        <div style={{ maxWidth: 400 }}>
+          <Slot name="topic-hero-right" small>
+            <TopicHeroImage />
+          </Slot>
+        </div>
+      </div>
 
       <Slot name="topic-featured">
         <FeaturedTopicItems />
@@ -32,7 +42,7 @@ export const ViewTopic = () => {
       </Slot>
 
       <div style={{ display: 'flex' }}>
-        <div style={{ maxWidth: 300 }}>
+        <div style={{ maxWidth: 500 }}>
           <Slot name="topic-results-filters" small>
             <SearchPageFilters />
           </Slot>
