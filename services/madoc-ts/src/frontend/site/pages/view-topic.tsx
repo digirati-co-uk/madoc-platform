@@ -11,7 +11,7 @@ import { TopicActions } from '../features/TopicActions';
 import { TopicAuthorities } from '../features/TopicAuthorities';
 import { TopicHeroImage } from '../features/TopicHeroImage';
 import { SearchPageResults } from '../features/SearchPageResults';
-import {TopicItemsResults} from "../features/TopicItemsResults";
+
 export const ViewTopic = () => {
   return (
     <>
@@ -51,7 +51,7 @@ export const ViewTopic = () => {
         <div style={{ width: '100%' }}>
           <Slot name="topic-item-results">
             <AppliedFacets />
-            <TopicItemsResults />
+            <SearchPageResults />
           </Slot>
 
           <Slot name="topic-items-pagination">

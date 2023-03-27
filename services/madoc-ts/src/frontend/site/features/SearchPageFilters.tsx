@@ -5,8 +5,6 @@ import {
   SearchFilterItem,
   SearchFilterItemList,
   SearchFilterLabel,
-  SearchFilterSection,
-  SearchFilterSectionTitle,
   SearchFilterTitle,
 } from '../../shared/components/SearchFilters';
 import { ButtonRow, TinyButton } from '../../shared/navigation/Button';
@@ -18,8 +16,6 @@ import { CheckboxBtn } from '../../shared/atoms/CheckboxBtn';
 import { useSearch } from '../hooks/use-search';
 import { SearchBox } from '../../shared/atoms/SearchBox';
 import { Accordion } from '../../shared/atoms/Accordion';
-import {useTopicItems} from "../../shared/hooks/use-topic-items";
-import {useRouteContext} from "../hooks/use-route-context";
 
 interface SearchPageFiltersProps {
   checkBoxColor?: string;
@@ -30,7 +26,7 @@ export const SearchPageFilters: React.FC<SearchPageFiltersProps> = ({ checkBoxCo
   // const { topic } = useRouteContext();
   // const [{}, displayFacets, isLoading] = useTopicItems(topic);
 
-  const [{}, displayFacets, isLoading] = useSearch();
+  const [{ resolvedData: searchResponse, latestData }, displayFacets, isLoading] = useSearch();
   const { t } = useTranslation();
   const { appliedFacets, fulltext } = useSearchQuery();
 
