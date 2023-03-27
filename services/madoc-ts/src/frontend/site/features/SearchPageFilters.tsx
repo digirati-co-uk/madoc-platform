@@ -23,9 +23,6 @@ interface SearchPageFiltersProps {
 }
 
 export const SearchPageFilters: React.FC<SearchPageFiltersProps> = ({ checkBoxColor, filterHeader }) => {
-  // const { topic } = useRouteContext();
-  // const [{}, displayFacets, isLoading] = useTopicItems(topic);
-
   const [{ resolvedData: searchResponse, latestData }, displayFacets, isLoading] = useSearch();
   const { t } = useTranslation();
   const { appliedFacets, fulltext } = useSearchQuery();
