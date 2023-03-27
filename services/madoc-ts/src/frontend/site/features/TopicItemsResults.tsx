@@ -27,11 +27,11 @@ export const TopicItemsResults: React.FC<TopicItemsResults> = ({
   imageStyle,
 }) => {
   const { topic } = useParams<Record<'topic', any>>();
-  const [{ data, isLoading, latestData }, { query, page }] = useTopicItems(topic);
+  const [{ data, isLoading, latestData }] = useTopicItems(topic);
+
   const { t } = useTranslation();
   const searchResults = data?.results ? data.results : [];
 
-  console.log(data, page);
   if (data?.pagination.totalResults === 0) {
     return <EmptyState>Nothing tagged yet</EmptyState>;
   }

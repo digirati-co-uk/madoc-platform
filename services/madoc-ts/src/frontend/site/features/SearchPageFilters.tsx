@@ -19,6 +19,7 @@ import { useSearch } from '../hooks/use-search';
 import { SearchBox } from '../../shared/atoms/SearchBox';
 import { Accordion } from '../../shared/atoms/Accordion';
 import {useTopicItems} from "../../shared/hooks/use-topic-items";
+import {useRouteContext} from "../hooks/use-route-context";
 
 interface SearchPageFiltersProps {
   checkBoxColor?: string;
@@ -26,10 +27,13 @@ interface SearchPageFiltersProps {
 }
 
 export const SearchPageFilters: React.FC<SearchPageFiltersProps> = ({ checkBoxColor, filterHeader }) => {
-  const [{}, displayFacets, isLoading] = useTopicItems('white');
+  // const { topic } = useRouteContext();
+  // const [{}, displayFacets, isLoading] = useTopicItems(topic);
 
+  const [{}, displayFacets, isLoading] = useSearch();
   const { t } = useTranslation();
   const { appliedFacets, fulltext } = useSearchQuery();
+
   const {
     inQueue,
     queueSingleFacet,
