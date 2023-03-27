@@ -10,7 +10,6 @@ export function ListTopicItems() {
   const { topic } = useParams<Record<'topic', any>>();
   const [{ data, isLoading, latestData }, { query, page }] = useTopicItems(topic);
 
-  console.log(query, 'd')
   if (data?.pagination.totalResults === 0) {
     return <EmptyState>Nothing tagged yet</EmptyState>;
   }
