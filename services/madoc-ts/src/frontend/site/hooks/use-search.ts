@@ -7,6 +7,8 @@ import { useRouteContext } from './use-route-context';
 import { FacetQueryValue, useSearchQuery } from './use-search-query';
 import { usePaginatedQuery } from 'react-query';
 import { useApi } from '../../shared/hooks/use-api';
+import { useTopic } from '../pages/loaders/topic-loader';
+import { useBreadcrumbs } from '../../shared/components/Breadcrumbs';
 
 function normalizeDotKey(key: string) {
   return key.startsWith('metadata.') ? key.slice('metadata.'.length).toLowerCase() : key.toLowerCase();
@@ -15,6 +17,7 @@ function normalizeDotKey(key: string) {
 export function useSearch() {
   const { projectId, collectionId, manifestId, topic } = useRouteContext();
   const { fulltext, appliedFacets, page } = useSearchQuery();
+  const breads = useBreadcrumbs();
   const {
     project: { searchStrategy, claimGranularity, searchOptions },
   } = useSiteConfiguration();
@@ -75,11 +78,11 @@ export function useSearch() {
   );
 
   useEffect(() => {
-    if (topic) {
-      appliedFacets.push({ k: 'entity', v: topic });
+    if (topic && breads && breads.topic?.id) {
+      appliedFacets.push({ k: 'entity', v: breads.topic?.id });
     }
     return;
-  }, [topic]);
+  }, [breads, topic]);
 
   const topicResults = usePaginatedQuery(
     ['topic-items', { id: topic, page }],
@@ -91,7 +94,7 @@ export function useSearch() {
             facet.k === 'entity'
               ? {
                   type: 'entity',
-                  indexable_text: facet.v,
+                  subtype: facet.v,
                 }
               : {
                   type: 'metadata',
@@ -109,6 +112,7 @@ export function useSearch() {
   );
 
   const searchResponse = topic ? topicResults : searchResults;
+
   const displayFacets = useMemo(() => {
     // We need to display the facets. We have two lists.
     // mappedFacets:
@@ -132,11 +136,16 @@ export function useSearch() {
     const mappedSearchResponseMetadata: {
       [key: string]: Array<{ key: string; value: string; count: number; configuration?: FacetConfig }>;
     } = {};
+
     const metadataFacets = searchResponse.resolvedData?.facets?.metadata || {};
+    // todo dont think this is in the right format
+    const entityFacets = searchResponse.resolvedData?.facets?.entity || {};
+
+    const facetType = topic ? entityFacets : metadataFacets;
 
     const showAllFacets = facetDisplayOrder.length === 0;
-    for (const facet of Object.keys(metadataFacets)) {
-      const values = Object.keys(metadataFacets[facet]);
+    for (const facet of Object.keys(facetType)) {
+      const values = Object.keys(facetType[facet]);
       const normalisedKey = facet.toLowerCase();
 
       if (showAllFacets) {
@@ -152,15 +161,13 @@ export function useSearch() {
         facetDisplayOrder.push(facet);
       }
 
-
-
       for (const value of values) {
         mappedSearchResponseMetadata[normalisedKey] = mappedSearchResponseMetadata[normalisedKey]
           ? mappedSearchResponseMetadata[normalisedKey]
           : [];
         mappedSearchResponseMetadata[normalisedKey].push({
           value,
-          count: metadataFacets[facet] ? (metadataFacets[facet] as any)[value] || 0 : 0,
+          count: facetType[facet] ? (facetType[facet] as any)[value] || 0 : 0,
           key: normalisedKey,
         });
       }

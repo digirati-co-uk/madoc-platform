@@ -19,6 +19,7 @@ import { useMetadataMenu } from '../hooks/canvas-menu/metadata-panel';
 import { usePersonalNotesMenu } from '../hooks/canvas-menu/personal-notes';
 import { useRevisionPanel } from '../hooks/canvas-menu/revision-panel';
 import { useTranscriptionMenu } from '../hooks/canvas-menu/transcription-panel';
+import { useTaggingPanel } from '../hooks/canvas-menu/tagging-panel';
 import { CanvasMenuHook } from '../hooks/canvas-menu/types';
 import { useViewerHeight } from '../hooks/use-viewer-height';
 import { ButtonIcon } from '../../shared/navigation/Button';
@@ -41,6 +42,7 @@ export interface CanvasViewerProps {
     disableDocumentPanel?: boolean;
     disableRevisionPanel?: boolean;
     disablePersonalNotes?: boolean;
+    disableTagPanel?: boolean;
   };
 
   children?: React.ReactNode;
@@ -67,7 +69,10 @@ export function CanvasViewer({
     disableAnnotationPanel,
     disableTranscriptionMenu,
     disableMetadata,
+    disableTagPanel,
   } = pins;
+
+  console.log(pins)
 
   // @todo this needs a re-think.
   const menuItems = [
@@ -83,6 +88,8 @@ export function CanvasViewer({
     disableRevisionPanel ? null : useRevisionPanel(),
     // eslint-disable-next-line react-hooks/rules-of-hooks
     disablePersonalNotes ? null : usePersonalNotesMenu(),
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    disableTagPanel ? null : useTaggingPanel(),
   ].filter(Boolean) as CanvasMenuHook[];
 
   const currentMenuItem = menuItems.find(e => e.id === openPanel);

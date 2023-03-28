@@ -28,7 +28,7 @@ export function useTopic() {
 export const TopicLoader: UniversalComponent<TopicLoaderType> = createUniversalComponent<TopicLoaderType>(
   () => {
     const { data } = useTopic();
-    const ctx = useMemo(() => (data ? { id: data.slug, name: data.title } : undefined), [data]);
+    const ctx = useMemo(() => (data ? { id: data.id, name: data.title } : undefined), [data]);
 
     return (
       <AutoSlotLoader>
