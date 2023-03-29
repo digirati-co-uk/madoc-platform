@@ -110,7 +110,9 @@ export const ModalButton: React.FC<{
                     <ModalCloseIcon onClick={closeModal} />
                   </ModalHeader>
                   <BrowserComponent fallback={<Spinner />}>
-                    <ModalBody>{render({ close: closeModal })}</ModalBody>
+                    <ModalBody style={{ minHeight: autoHeight ? 'auto' : '' }}>
+                      {render({ close: closeModal })}
+                    </ModalBody>
                     {renderFooter ? (
                       <ModalFooter $footerAlignRight={footerAlignRight}>
                         {renderFooter({ close: closeModal })}

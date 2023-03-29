@@ -25,9 +25,9 @@ export function createLink(opt: {
     if (opt.topic) {
       if (opt.manifestId) {
         if (opt.canvasId) {
-          return `/topics/${opt.topicType}/${opt.topic}/m/${opt.manifestId}/c/${opt.canvasId}/${suffix}`;
+          return `/topics/${opt.topicType}/${opt.topic}/manifests/${opt.manifestId}/c/${opt.canvasId}/${suffix}`;
         }
-        return `/topics/${opt.topicType}/${opt.topic}/m/${opt.manifestId}/${suffix}`;
+        return `/topics/${opt.topicType}/${opt.topic}/manifests/${opt.manifestId}/${suffix}`;
       }
       return `/topics/${opt.topicType}/${opt.topic}${suffix}`;
     }

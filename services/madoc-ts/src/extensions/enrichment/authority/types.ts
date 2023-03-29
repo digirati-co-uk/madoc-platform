@@ -296,6 +296,7 @@ export interface FeaturedResource {
 }
 
 export interface EntityTagSnippet {
+  tag_id: string;
   entity: {
     type_slug: string;
     slug: string;

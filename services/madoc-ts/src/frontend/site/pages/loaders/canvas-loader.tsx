@@ -13,6 +13,7 @@ export type CanvasLoaderType = {
   params: {
     slug?: string;
     collectionId?: string;
+    topic?: string;
     manifestId?: string;
     canvasId: string;
   };

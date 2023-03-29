@@ -570,52 +570,42 @@ export function createRoutes(Components: RouteComponents): CreateRouteType {
               element: <Components.Search />,
             },
             {
-              path: '/topics/:topicType/:topic/m/:manifestId',
+              path: '/topics/:topicType/:topic/manifests/:manifestId',
               element: <Components.ManifestLoader />,
               children: [
                 {
-                  path: '/topics/:topicType/:topic/m/:manifestId',
+                  path: '/topics/:topicType/:topic/manifests/:manifestId',
                   exact: true,
                   element: <Components.ViewManifest />,
                 },
                 {
-                  path: '/topics/:topicType/:topic/m/:manifestId/search',
+                  path: '/topics/:topicType/:topic/manifests/:manifestId/search',
                   exact: true,
                   element: <Components.Search />,
                 },
                 {
-                  path: '/topics/:topicType/:topic/m/:manifestId/edit',
-                  exact: true,
-                  element: <Components.SuggestMetadata />,
-                },
-                {
-                  path: '/topics/:topicType/:topic/m/:manifestId/mirador',
+                  path: '/topics/:topicType/:topic/manifests/:manifestId/mirador',
                   exact: true,
                   element: <Components.ViewManifestMirador />,
                 },
                 {
-                  path: '/topics/:topicType/:topic/m/:manifestId/uv',
+                  path: '/topics/:topicType/:topic/manifests/:manifestId/uv',
                   exact: true,
                   element: <Components.ViewManifestUV />,
                 },
                 {
-                  path: '/topics/:topicType/:topic/m/:manifestId/c/:canvasId',
+                  path: '/topics/:topicType/:topic/manifests/:manifestId/c/:canvasId',
                   element: <Components.CanvasLoader />,
                   children: [
                     {
-                      path: '/topics/:topicType/:topic/m/:manifestId/c/:canvasId',
+                      path: '/topics/:topicType/:topic/manifests/:manifestId/c/:canvasId',
                       exact: true,
                       element: <Components.ViewCanvas />,
                     },
                     {
-                      path: '/topics/:topicType/:topic/m/:manifestId/c/:canvasId/model',
+                      path: '/topics/:topicType/:topic/manifests/:manifestId/c/:canvasId/edit',
                       exact: true,
-                      element: <Components.ViewCanvasModel />,
-                    },
-                    {
-                      path: '/topics/:topicType/:topic/m/:manifestId/c/:canvasId/metadata/edit',
-                      exact: true,
-                      element: <Components.SuggestMetadata />,
+                      element: <Components.EditCanvas />,
                     },
                     {
                       path: '*',

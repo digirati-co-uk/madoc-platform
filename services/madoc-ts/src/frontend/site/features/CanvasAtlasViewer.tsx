@@ -12,6 +12,7 @@ export const CanvasAtlasViewer: React.FC<{
   sidebarSpace?: boolean;
   verticalButtons?: boolean;
   buttonBackground?: string;
+  topic?: boolean;
 }> = ({
   rendering = 'canvas',
   tabsTop,
@@ -21,7 +22,19 @@ export const CanvasAtlasViewer: React.FC<{
   sidebarSpace,
   verticalButtons,
   buttonBackground,
+  topic,
 }) => {
+  const pins = topic
+    ? {
+        disableMetadata: true,
+        disableAnnotationPanel: true,
+        disableTranscriptionMenu: true,
+        disableDocumentPanel: true,
+        disableRevisionPanel: true,
+        disablePersonalNotes: true,
+        disableTagPanel: false,
+      }
+    : {};
   return (
     <CanvasViewer
       border={borderColor}
@@ -31,6 +44,7 @@ export const CanvasAtlasViewer: React.FC<{
       sidebarSpace={sidebarSpace}
       verticalButtons={verticalButtons}
       btnColor={buttonBackground}
+      pins={pins}
     >
       <CanvasImageViewer rendering={rendering} />
     </CanvasViewer>

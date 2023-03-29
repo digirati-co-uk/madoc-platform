@@ -4,11 +4,13 @@ import { CanvasAtlasViewer } from './CanvasAtlasViewer';
 import { CanvasMiradorViewer } from './CanvasMiradorViewer';
 import { CanvasUniversalViewer } from './CanvasUniversalViewer';
 import { useSiteConfiguration } from './SiteConfigurationContext';
+import { useRouteContext } from '../hooks/use-route-context';
 
 export const CanvasConfigurationViewer: React.FC = () => {
   const {
     project: { miradorCanvasPage = false, universalViewerCanvasPage = false },
   } = useSiteConfiguration();
+  const { topic } = useRouteContext();
 
   return (
     <>
@@ -17,7 +19,7 @@ export const CanvasConfigurationViewer: React.FC = () => {
       ) : miradorCanvasPage ? (
         <CanvasMiradorViewer />
       ) : (
-        <CanvasAtlasViewer />
+        <CanvasAtlasViewer topic={!!topic} />
       )}
     </>
   );

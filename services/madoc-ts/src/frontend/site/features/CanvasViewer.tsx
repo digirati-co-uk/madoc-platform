@@ -49,7 +49,7 @@ export interface CanvasViewerProps {
 }
 
 export function CanvasViewer({
-  pins = {},
+  pins,
   border,
   sidebarHeading,
   tabsTop,
@@ -62,32 +62,32 @@ export function CanvasViewer({
   const [openPanel, setOpenPanel] = useLocalStorage<string>(`canvas-page-selected`, 'metadata');
   const [isOpen, setIsOpen] = useLocalStorage<boolean>(`canvas-page-sidebar`, false);
   const height = useViewerHeight();
-  const {
-    disableDocumentPanel,
-    disablePersonalNotes,
-    disableRevisionPanel,
-    disableAnnotationPanel,
-    disableTranscriptionMenu,
-    disableMetadata,
-    disableTagPanel,
-  } = pins;
+  // const {
+  //   disableDocumentPanel,
+  //   disablePersonalNotes,
+  //   disableRevisionPanel,
+  //   disableAnnotationPanel,
+  //   disableTranscriptionMenu,
+  //   disableMetadata,
+  //   disableTagPanel,
+  // } = pins;
 
   // @todo this needs a re-think.
   const menuItems = [
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    disableMetadata ? null : useMetadataMenu(),
+    pins?.disableMetadata ? null : useMetadataMenu(),
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    disableAnnotationPanel ? null : useAnnotationPanel(openPanel === 'annotations' && isOpen),
+    pins?.disableAnnotationPanel ? null : useAnnotationPanel(openPanel === 'annotations' && isOpen),
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    disableTranscriptionMenu ? null : useTranscriptionMenu(),
+    pins?.disableTranscriptionMenu ? null : useTranscriptionMenu(),
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    disableDocumentPanel ? null : useDocumentPanel(),
+    pins?.disableDocumentPanel ? null : useDocumentPanel(),
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    disableRevisionPanel ? null : useRevisionPanel(),
+    pins?.disableRevisionPanel ? null : useRevisionPanel(),
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    disablePersonalNotes ? null : usePersonalNotesMenu(),
+    pins?.disablePersonalNotes ? null : usePersonalNotesMenu(),
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    disableTagPanel ? null : useTaggingPanel(),
+    pins?.disableTagPanel ? null : useTaggingPanel(),
   ].filter(Boolean) as CanvasMenuHook[];
 
   const currentMenuItem = menuItems.find(e => e.id === openPanel);

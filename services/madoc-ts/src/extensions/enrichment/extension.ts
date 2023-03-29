@@ -3,7 +3,7 @@ import { BaseDjangoExtension } from './base-django-extension';
 import { EnrichmentIndexPayload } from './types';
 import { ApiKey } from '../../types/api-key';
 import { SearchQuery, SearchResponse } from '../../types/search';
-import {EnrichmentResourceResponse, EntityMadocResponse, EntityTypeMadocResponse} from './authority/types';
+import { EnrichmentResourceResponse, EntityMadocResponse, EntityTypeMadocResponse } from './authority/types';
 
 export class EnrichmentExtension extends BaseDjangoExtension {
   // /api/madoc/indexable_data/
@@ -128,10 +128,24 @@ export class EnrichmentExtension extends BaseDjangoExtension {
     // @todo
   }
 
-  getResourceTags(id: string) {
+  getEnrichmentResource(id: string) {
     return this.api.request<EnrichmentResourceResponse>(`/api/enrichment/resource/${id}/`);
   }
 
+  // TODO type for this
+  getAllTags() {
+    return this.api.request<any>(`/api/enrichment/resource_tag/`);
+  }
+
+  getResourceTag(id: string) {
+    return this.api.request<any>(`/api/enrichment/resource_tag/${id}/`);
+  }
+
+  async removeResourceTag(id: string) {
+    return this.api.request(`/api/enrichment/resource_tag/${id}/`, {
+      method: 'DELETE',
+    });
+  }
   getCanvasTags(id: number) {
     // @todo
   }

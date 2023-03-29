@@ -1,16 +1,7 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { ButtonRow, SmallButton } from '../../../shared/navigation/Button';
-import {
-  MetadataCard,
-  MetadataCardItem,
-  MetadataCardLabel,
-  MetadataEmptyState,
-} from '../../../shared/atoms/MetadataConfiguration';
-import { useHighlightedRegions } from '../../../shared/hooks/use-highlighted-regions';
-import { AnnotationsIcon } from '../../../shared/icons/AnnotationsIcon';
-import { useProjectAnnotationStyles } from '../use-project-annotation-styles';
+import { MetadataEmptyState } from '../../../shared/atoms/MetadataConfiguration';
 import { CanvasMenuHook } from './types';
 import { useEnrichmentResource } from '../../pages/loaders/enrichment-resource-loader';
 import { EntityTagSnippet } from '../../../../extensions/enrichment/authority/types';
@@ -52,18 +43,6 @@ export function useTaggingPanel(): CanvasMenuHook {
   const { data } = useEnrichmentResource();
   const tags = data?.entity_tags;
 
-  // not sure we have regions yet...
-  const {
-    currentCollection,
-    regionCollections,
-    setHighlightStatus,
-    regions,
-    setCurrentCollection,
-    setIsActive,
-  } = useHighlightedRegions();
-  const styles = useProjectAnnotationStyles();
-
-  //tag.entity.type
   const tagTypes = tags?.reduce((tag, elem) => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
@@ -98,7 +77,7 @@ export function useTaggingPanel(): CanvasMenuHook {
     label: t('Tags'),
     icon: <TaggingIcon />,
     isLoaded: true,
-    notifications: regions.length,
+    notifications: 0,
     content,
   };
 }

@@ -18,6 +18,7 @@ export { AllManifests } from './pages/all-manifests';
 export { ManifestListLoader } from './pages/loaders/manifest-list-loader';
 export { UserHomepage } from './pages/user-homepage';
 export { ViewCanvasModel } from './pages/view-canvas-model';
+export { EditCanvas } from './pages/edit-canvas';
 export { ViewManifestMirador } from './pages/view-manifest-mirador';
 export { ViewManifestUV } from './pages/view-manifest-uv';
 export { ViewUser } from './pages/view-user';
