@@ -295,7 +295,6 @@ export interface FeaturedResource {
   count: number;
 }
 
-
 export interface EntityTagSnippet {
   entity: {
     type_slug: string;

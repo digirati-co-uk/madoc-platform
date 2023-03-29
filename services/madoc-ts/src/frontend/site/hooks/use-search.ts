@@ -7,17 +7,14 @@ import { useRouteContext } from './use-route-context';
 import { FacetQueryValue, useSearchQuery } from './use-search-query';
 import { usePaginatedQuery } from 'react-query';
 import { useApi } from '../../shared/hooks/use-api';
-import { useTopic } from '../pages/loaders/topic-loader';
-import { useBreadcrumbs } from '../../shared/components/Breadcrumbs';
 
 function normalizeDotKey(key: string) {
   return key.startsWith('metadata.') ? key.slice('metadata.'.length).toLowerCase() : key.toLowerCase();
 }
 
-export function useSearch() {
-  const { projectId, collectionId, manifestId, topic } = useRouteContext();
+export function useSearch(topic?: string) {
+  const { projectId, collectionId, manifestId } = useRouteContext();
   const { fulltext, appliedFacets, page } = useSearchQuery();
-  const breads = useBreadcrumbs();
   const {
     project: { searchStrategy, claimGranularity, searchOptions },
   } = useSiteConfiguration();
@@ -78,11 +75,11 @@ export function useSearch() {
   );
 
   useEffect(() => {
-    if (topic && breads && breads.topic?.id) {
-      appliedFacets.push({ k: 'entity', v: breads.topic?.id });
+    if (topic) {
+      appliedFacets.push({ k: 'entity', v: topic });
     }
     return;
-  }, [breads, topic]);
+  }, [topic]);
 
   const topicResults = usePaginatedQuery(
     ['topic-items', { id: topic, page }],
@@ -141,6 +138,7 @@ export function useSearch() {
     // todo dont think this is in the right format
     const entityFacets = searchResponse.resolvedData?.facets?.entity || {};
 
+    console.log(topic)
     const facetType = topic ? entityFacets : metadataFacets;
 
     const showAllFacets = facetDisplayOrder.length === 0;
@@ -238,7 +236,7 @@ export function useSearch() {
     }
 
     return displayList;
-  }, [facetDisplayOrder, facetIdMap, searchResponse.resolvedData]);
+  }, [facetDisplayOrder, facetIdMap, searchResponse.resolvedData, topic]);
 
   return [searchResponse, displayFacets, searchFacetConfig.isLoading || searchResponse.isLoading] as const;
 }

@@ -11,8 +11,9 @@ import { TopicActions } from '../features/TopicActions';
 import { TopicAuthorities } from '../features/TopicAuthorities';
 import { TopicHeroImage } from '../features/TopicHeroImage';
 import { SearchPageResults } from '../features/SearchPageResults';
-
+import { useTopic } from './loaders/topic-loader';
 export const ViewTopic = () => {
+  const { data } = useTopic();
   return (
     <>
       <Slot name="common-breadcrumbs">
@@ -41,25 +42,26 @@ export const ViewTopic = () => {
         <TopicActions />
       </Slot>
 
-      <div style={{ display: 'flex' }}>
-        <div style={{ maxWidth: 500 }}>
-          <Slot name="topic-results-filters" small>
-            <SearchPageFilters />
-          </Slot>
+      {data && (
+        <div style={{ display: 'flex' }}>
+          <div style={{ maxWidth: 500 }}>
+            <Slot name="topic-results-filters" small>
+              <SearchPageFilters topicId={data.id} />
+            </Slot>
+          </div>
+
+          <div style={{ width: '100%' }}>
+            <Slot name="topic-item-results">
+              <AppliedFacets />
+              <SearchPageResults topicId={data.id} />
+            </Slot>
+
+            <Slot name="topic-items-pagination">
+              <SearchPagination topicId={data.id} />
+            </Slot>
+          </div>
         </div>
-
-        <div style={{ width: '100%' }}>
-          <Slot name="topic-item-results">
-            <AppliedFacets />
-            <SearchPageResults />
-          </Slot>
-
-          <Slot name="topic-items-pagination">
-            <SearchPagination />
-          </Slot>
-        </div>
-      </div>
-
+      )}
       <Slot name="topic-related">
         <RelatedTopics />
       </Slot>

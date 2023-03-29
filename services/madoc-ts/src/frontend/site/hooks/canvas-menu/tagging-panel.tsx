@@ -82,10 +82,7 @@ export function useTaggingPanel(): CanvasMenuHook {
           <PillContainer>
             {tagType[1].map((tag: EntityTagSnippet) =>
               tag.entity && tag.entity.label ? (
-                <TagPill
-                  as={Link}
-                  to={createLink({ topicType: tag.entity.type_slug, topic: tag.entity.slug })}
-                >
+                <TagPill as={Link} to={createLink({ topicType: tag.entity.type_slug, topic: tag.entity.slug })}>
                   {tag.entity.label}
                 </TagPill>
               ) : null
