@@ -72,8 +72,6 @@ export function CanvasViewer({
     disableTagPanel,
   } = pins;
 
-  console.log(pins)
-
   // @todo this needs a re-think.
   const menuItems = [
     // eslint-disable-next-line react-hooks/rules-of-hooks

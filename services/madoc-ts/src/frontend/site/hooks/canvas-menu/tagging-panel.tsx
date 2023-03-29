@@ -14,7 +14,9 @@ import { useProjectAnnotationStyles } from '../use-project-annotation-styles';
 import { CanvasMenuHook } from './types';
 import { useEnrichmentResource } from '../../pages/loaders/enrichment-resource-loader';
 import { EntityTagSnippet } from '../../../../extensions/enrichment/authority/types';
-import TaggingIcon from "../../../shared/icons/TaggingIcon";
+import TaggingIcon from '../../../shared/icons/TaggingIcon';
+import { Link } from 'react-router-dom';
+import { createLink } from '../../../shared/utility/create-link';
 
 const TaggingContainer = styled.div`
   padding: 0.5em;
@@ -42,7 +44,7 @@ const TagPill = styled.div`
   border-radius: 4px;
   color: #004761;
   padding: 0.2em;
-  margin-right: 1em;
+  margin: 0 1em 1em 0;
 `;
 
 export function useTaggingPanel(): CanvasMenuHook {
@@ -79,7 +81,14 @@ export function useTaggingPanel(): CanvasMenuHook {
           <TagTitle>{tagType[0]}</TagTitle>
           <PillContainer>
             {tagType[1].map((tag: EntityTagSnippet) =>
-              tag.entity && tag.entity.label ? <TagPill>{tag.entity.label}</TagPill> : null
+              tag.entity && tag.entity.label ? (
+                <TagPill
+                  as={Link}
+                  to={createLink({ topicType: tag.entity.type_slug, topic: tag.entity.slug })}
+                >
+                  {tag.entity.label}
+                </TagPill>
+              ) : null
             )}
           </PillContainer>
         </TagBox>

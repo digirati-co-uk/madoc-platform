@@ -298,6 +298,8 @@ export interface FeaturedResource {
 
 export interface EntityTagSnippet {
   entity: {
+    type_slug: string;
+    slug: string;
     url: string;
     id: string;
     type: string;

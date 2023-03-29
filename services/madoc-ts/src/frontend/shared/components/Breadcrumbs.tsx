@@ -18,7 +18,11 @@ type BreadcrumbContextType = {
   task?: { name: string; id: string };
   subpage?: { name: InternationalString; path: string };
   topicType?: { name: InternationalString | string; id: string };
-  topic?: { name: InternationalString; id: string };
+  topic?: {
+    slug: string;
+    name: InternationalString;
+    id: string;
+  };
 };
 
 const Helmet: any = _Helmet;
@@ -200,7 +204,7 @@ export const DisplayBreadcrumbs: React.FC<BreadcrumbProps> = ({
         if (breads.topic) {
           flatList.push({
             label: breads.topic.name,
-            url: `/topics/${breads.topicType.id}/${breads.topic.id}`,
+            url: `/topics/${breads.topicType.id}/${breads.topic.slug}`,
           });
         }
       }
@@ -266,7 +270,7 @@ export const DisplayBreadcrumbs: React.FC<BreadcrumbProps> = ({
         // 3. Just under topics
         flatList.push({
           label: breads.manifest.name,
-          url: `/topics/${breads.topicType.id}/${breads.topic.id}/m/${breads.manifest.id}`,
+          url: `/topics/${breads.topicType.id}/${breads.topic.slug}/m/${breads.manifest.id}`,
         });
       } else {
         flatList.push({
