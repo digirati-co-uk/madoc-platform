@@ -2,10 +2,10 @@ import { Pagination } from '../../../types/schemas/_pagination';
 import { InternationalString } from '@iiif/presentation-3';
 
 export interface AuthoritySnippet {
-  id: string;
+  // id: string;
   url: string;
   authority: string;
-  // identifier: string;
+  identifier: string;
 }
 
 export interface Authority extends AuthoritySnippet {
@@ -276,7 +276,7 @@ export interface EntityMadocResponse {
   title: InternationalString;
   tagged_resource_count: number;
   description: InternationalString;
-  featured_resources: FeaturedResource[];
+  featured_resources?: FeaturedResource[];
   related_topics: EnrichmentEntitySnippet[];
   authorities: AuthoritySnippet[];
   other_data?: EntityOtherData;
@@ -287,7 +287,7 @@ export interface FeaturedResource {
   created: string;
   modified: string;
   type: string;
-  madoc_id: string;
+  madoc_id?: string;
   label?: InternationalString;
   thumbnail?: string;
   metadata?: any; // ?

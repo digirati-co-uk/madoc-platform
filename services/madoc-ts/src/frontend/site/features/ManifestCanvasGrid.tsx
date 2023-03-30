@@ -69,7 +69,6 @@ export function ManifestCanvasGrid(props: {
   const renderCanvasSnippet = (canvas: { id: number; label: InternationalString; thumbnail: string | null }) => {
     return (
       <ImageStripBox
-        data-view-list={props.list}
         $border={props.cardBorder}
         $color={props.textColor}
         $bgColor={props.background}

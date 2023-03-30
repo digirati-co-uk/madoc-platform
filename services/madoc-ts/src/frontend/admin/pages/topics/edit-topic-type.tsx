@@ -18,8 +18,25 @@ export function EditTopicType() {
       // @todo can change later.
       updatedData.image_url = `${window.location.protocol}//${window.location.host}${updatedData.image_url}`;
     }
+    // @todo can hopfully change this
+    if (updatedData.featured_topics) {
+      const unEdited = updatedData.featured_topics.filter((f: { slug: { id: any } }) => !f.slug.id);
 
-    const resp = api.enrichment.upsertTopicType({ id: data.id, label: data.label, ...updatedData });
+      const ogItems = data.featured_topics?.filter(g => {
+        return unEdited.some((t: { slug: string }) => g.slug.includes(t.slug));
+      });
+      const ogIds = ogItems?.map((f: { id: any }) => f.id);
+      const newIds = updatedData.featured_topics
+        .map((f: { slug: { id: any } }) => f.slug.id)
+        .filter((f: string) => f !== undefined);
+
+      updatedData.featured_topics = ogIds?.concat(newIds);
+    }
+    const resp = api.enrichment.upsertTopicType({
+      id: data.id,
+      label: data.label,
+      ...updatedData,
+    });
 
     refetch();
 

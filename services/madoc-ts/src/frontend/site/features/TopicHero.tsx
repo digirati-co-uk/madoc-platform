@@ -125,7 +125,7 @@ export const TopicHero: React.FC<{ h1Color?: string; h2Color?: string }> = ({ h1
         )}
       </HeroText>
       <Right>
-        {data.other_data?.main_image.url && (
+        {data.other_data?.main_image?.url && (
           <ImageMask style={{ backgroundImage: `url("${data.other_data?.main_image.url}")` }} />
         )}
       </Right>

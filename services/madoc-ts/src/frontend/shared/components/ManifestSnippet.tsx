@@ -6,9 +6,10 @@ import { LocaleString } from './LocaleString';
 import { HrefLink } from '../utility/href-link';
 
 export const ManifestSnippet: React.FC<{
-  id: number;
+  id: number | string;
   collectionId?: number;
-} & Partial<SnippetLargeProps>> = ({ id, collectionId, ...props }) => {
+  hideButton?: boolean;
+} & Partial<SnippetLargeProps>> = ({ id, collectionId, hideButton, ...props }) => {
   const { data } = useApiManifest(id);
   const { t } = useTranslation();
 
@@ -25,6 +26,7 @@ export const ManifestSnippet: React.FC<{
         buttonText={t('view manifest')}
         link={link}
         {...props}
+        hideButton={hideButton}
       />
     );
   }
@@ -46,6 +48,7 @@ export const ManifestSnippet: React.FC<{
       buttonText={t('view manifest')}
       link={link}
       {...props}
+      hideButton={hideButton}
     />
   );
 };

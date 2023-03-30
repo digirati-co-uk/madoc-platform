@@ -115,7 +115,7 @@ export function useLocaleString(inputText: InternationalString | string | null |
         if (typeof candidateText === 'string') {
           return candidateText;
         }
-        // return candidateText.join('\n');
+        return candidateText.join('\n');
       }
 
       return '';

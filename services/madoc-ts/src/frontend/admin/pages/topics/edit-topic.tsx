@@ -27,11 +27,21 @@ export function EditTopic() {
         url: imageData.image,
       };
     }
-    // if (typeof imageData.image !== 'string' || !imageData.image.startsWith('http')) {
-    //   // @todo can change later.
-    //   imageData.image = `${window.location.protocol}//${window.location.host}${imageData.image}`;
-    //   imageData.thumbnail = `${window.location.protocol}//${window.location.host}${imageData.thumbnail}`;
-    // }
+
+    if (updatedData.featured_resources) {
+      const ftRes = updatedData.featured_resources;
+      if (Array.isArray(ftRes)) {
+        const newArr = ftRes.map((f: { madoc_id?: string; resource_id?: string }) =>
+          typeof f === 'object' ? (f.resource_id ? f.resource_id : f.madoc_id) : f
+        );
+        updatedData.featured_resources = newArr.filter(x => x !== undefined || null);
+      }
+      if (typeof ftRes === 'string') {
+        updatedData.featured_resources = [ftRes];
+      } else {
+        updatedData.featured_resources = Object.values(ftRes);
+      }
+    }
 
     const resp = api.enrichment.upsertTopic({ id: data.id, ...updatedData });
 

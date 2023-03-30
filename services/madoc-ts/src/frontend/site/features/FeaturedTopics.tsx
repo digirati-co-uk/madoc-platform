@@ -23,12 +23,10 @@ export const FeaturedTopics: React.FC<{
   textColor?: string;
   cardBorder?: string;
   controlColor?: string;
-}> = ({ cardBackground, textColor, cardBorder , controlColor }) => {
-
+}> = ({ cardBackground, textColor, cardBorder, controlColor }) => {
   const { data } = useTopicType();
   const createLink = useRelativeLinks();
-  // todo change when backend has featured items
-  const items = data?.topics.length ? [data?.topics[0], data?.topics[1], data?.topics[2]] : [];
+  const items = data?.featured_topics;
 
   if (!data) {
     return null;
@@ -67,7 +65,7 @@ export const FeaturedTopics: React.FC<{
 blockEditorFor(FeaturedTopics, {
   type: 'default.FeaturedTopics',
   label: 'Featured Topics',
-  anyContext: ['topicType'],
+  anyContext: ['topicType', 'topic'],
   requiredContext: ['topicType'],
   defaultProps: {
     cardBackground: '#ffffff',

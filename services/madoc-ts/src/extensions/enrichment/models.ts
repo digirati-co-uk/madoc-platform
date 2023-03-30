@@ -2,24 +2,40 @@ import { EnrichmentEntity, EnrichmentEntityType } from './authority/types';
 import { CaptureModelShorthand } from '../../frontend/shared/capture-models/types/capture-model-shorthand';
 
 export const entityTypeModel: CaptureModelShorthand<EnrichmentEntityType> = {
-  label: { type: 'text-field', label: 'Slug' },
   title: { type: 'international-field', label: 'Title' },
   description: { type: 'international-field', label: 'Description' },
   image_url: { type: 'madoc-media-explorer', label: 'Image', valueAsString: true },
-  // featured_topics: { type: 'topic-explorer', label: 'featured topics' },
+  __nested__: {
+    featured_topics: {
+      allowMultiple: true,
+      label: 'Featured topic',
+      pluralLabel: 'Featured topics',
+      labelledBy: 'label',
+    },
+  },
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  'featured_topics.slug': { type: 'topic-explorer', label: 'featured topics' },
 };
 
 export const entityModel: CaptureModelShorthand<EnrichmentEntity> = {
+  label: { type: 'text-field', label: 'Slug' },
   title: { type: 'international-field', label: 'Title' },
   description: { type: 'international-field', label: 'Description' },
-  // featured_resources: { type: 'topic-item-explorer', label: 'featured resources' },
   __nested__: {
     authorities: { allowMultiple: true, label: 'Authority', pluralLabel: 'Authorities', labelledBy: 'value' },
+    featured_resources: {
+      allowMultiple: true,
+      label: 'featured resource',
+      pluralLabel: 'featured resources',
+      labelledBy: 'madoc_id',
+    },
   },
-  //links
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  'authorities.uri': { type: 'text-field', label: 'URI / URL' },
+  'featured_resources.madoc_id': { type: 'topic-item-explorer', label: 'featured resources' },
+
+  'authorities.url': { type: 'text-field', label: 'URI / URL' },
   'authorities.authority': { type: 'text-field', label: 'Authority label' },
   'authorities.identifier': { type: 'text-field', label: 'Authority identifier' },
 

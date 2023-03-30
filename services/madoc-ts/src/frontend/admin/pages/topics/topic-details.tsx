@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTopic } from '../../../site/pages/loaders/topic-loader';
-import { Heading1 } from '../../../shared/typography/Heading1';
+import { Heading1, Subheading1 } from '../../../shared/typography/Heading1';
 import { LocaleString } from '../../../shared/components/LocaleString';
 import styled from 'styled-components';
 
@@ -42,38 +42,38 @@ const Details = styled.div`
 export function TopicDetails() {
   const { data } = useTopic();
 
+  if (!data) {
+    return null
+  }
   return (
     <>
       <TopicContainer>
         <TopicImage>
-          <img src={data?.other_data?.main_image?.url} />
+          <img src={data.other_data?.main_image?.url} />
 
           <Details>
-            <Heading1 as={LocaleString}>{data?.title || { none: ['...'] }}</Heading1>
+            <Heading1 as={LocaleString}>{data.title || { none: ['...'] }}</Heading1>
             <ul style={{ listStyle: 'none' }}>
               <li>
-                <b>ID</b>: {data?.id}
+                <b>ID</b>: {data.id}
               </li>
               <li>
-                <b>Slug</b>: {data?.slug}
+                <b>Slug</b>: {data.slug}
               </li>
               <li>
-                <b>Title</b>: <LocaleString>{data?.title}</LocaleString>
+                <b>Title</b>: <Subheading1 as={LocaleString}>{data.title}</Subheading1>
               </li>
               <li>
-                <b>Label</b>: <LocaleString>{data?.label}</LocaleString>
+                <b>Description</b>: <LocaleString>{data.description}</LocaleString>
               </li>
               <li>
-                <b>Description</b>: <LocaleString>{data?.description}</LocaleString>
+                <b>Summary</b>: <LocaleString>{data.other_data?.topic_summary}</LocaleString>
               </li>
               <li>
-                <b>Summary</b>: <LocaleString>{data?.other_data?.topic_summary}</LocaleString>
+                <b>Secondary Heading</b>: <LocaleString>{data.other_data?.secondary_heading}</LocaleString>
               </li>
               <li>
-                <b>secondary Heading</b>: <LocaleString>{data?.other_data?.secondary_heading}</LocaleString>
-              </li>
-              <li>
-                <b>Type</b>: {data?.type}
+                <b>Type</b>: {data.type}
               </li>
             </ul>
           </Details>

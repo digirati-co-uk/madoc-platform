@@ -1,32 +1,26 @@
-import { InternationalString } from '@iiif/presentation-3';
 import React, { useRef } from 'react';
 import { RoundedCard } from '../../../frontend/shared/capture-models/editor/components/RoundedCard/RoundedCard';
-import { LocaleString, useCreateLocaleString } from '../../../frontend/shared/components/LocaleString';
-import { CroppedImage } from '../../../frontend/shared/atoms/Images';
-import { useTranslation } from 'react-i18next';
-import { ImageStripBox } from '../../../frontend/shared/atoms/ImageStrip';
 import { ImageGrid } from '../../../frontend/shared/atoms/ImageGrid';
-import { Heading5 } from '../../../frontend/shared/typography/Heading5';
 import { useParams } from 'react-router-dom';
 import { useInfiniteQuery } from 'react-query';
 import { useApi } from '../../../frontend/shared/hooks/use-api';
 import { useInfiniteAction } from '../../../frontend/site/hooks/use-infinite-action';
 import { Button } from '../../../frontend/shared/navigation/Button';
-import { FeaturedResource } from '../../enrichment/authority/types';
 import { FieldComponent } from '../../../frontend/shared/capture-models/types/field-types';
+import { ManifestSnippet } from '../../../frontend/shared/components/ManifestSnippet';
+import { extractIdFromUrn } from '../../../utility/parse-urn';
+import { Subheading3 } from '../../../frontend/shared/typography/Heading3';
 
 export type TopicItemExplorerProps = {
   id: string;
   label: string;
   type: string;
-  value: FeaturedResource | null;
+  value: string | null;
 };
 
 export const TopicItemExplorer: FieldComponent<TopicItemExplorerProps> = ({ value, updateValue }) => {
   const api = useApi();
-  const { t } = useTranslation();
   const container = useRef<HTMLDivElement>(null);
-  const createLocaleString = useCreateLocaleString();
   const { topic } = useParams<Record<'topic', any>>();
 
   const { data: pages, fetchMore, canFetchMore, isFetchingMore } = useInfiniteQuery(
@@ -54,52 +48,32 @@ export const TopicItemExplorer: FieldComponent<TopicItemExplorerProps> = ({ valu
   });
 
   if (value) {
-    return (
-      <div>
-        <RoundedCard interactive size="small" onClick={() => updateValue(null)}>
-          <CroppedImage data-size="small">
-            {value.thumbnail ? (
-              <img alt={createLocaleString(value.label, t('Item thumbnail'))} src={value.thumbnail} />
-            ) : null}
-          </CroppedImage>
-          <LocaleString as={Heading5}>{value.label}</LocaleString>
-        </RoundedCard>
-      </div>
-    );
-  }
+    const manifestID = parseManifestId(value);
 
+    if (manifestID) {
+      return (
+        <RoundedCard interactive size="small" onClick={() => updateValue(null)}>
+          <ManifestSnippet id={manifestID} hideButton />
+        </RoundedCard>
+      );
+    }
+  }
   return (
     <div ref={container} style={{ maxHeight: 500, overflowY: 'scroll', border: '1px solid grey', padding: '0.5em' }}>
-      <ImageGrid $size="small">
+      <ImageGrid>
+        {pages && pages[0].pagination.totalResults === 0 && <Subheading3>No items tagged in this type</Subheading3>}
         {pages?.map((page, key) => {
           return (
             <React.Fragment key={key}>
               {page.results.map(item => (
-                <ImageStripBox
-                  $border={'#000000'}
-                  $bgColor={'#eee'}
-                  onClick={() =>
-                    updateValue({
-                      madoc_id: item.resource_id,
-                      label: item.label,
-                      thumbnail: item.madoc_thumbnail,
-                      type: item.resource_type,
-                      url: item.url,
-                      created: 'anything',
-                      modified: 'anythign',
-                      metadata: null,
-                      count: 1,
-                    })
-                  }
+                <RoundedCard
                   key={item.resource_id}
+                  interactive
+                  size="small"
+                  onClick={() => updateValue(item.resource_id)}
                 >
-                  <CroppedImage>
-                    {item.madoc_thumbnail ? (
-                      <img alt={createLocaleString(item.label, t('Item thumbnail'))} src={item.madoc_thumbnail} />
-                    ) : null}
-                  </CroppedImage>
-                  <LocaleString as={Heading5}>{item.label}</LocaleString>
-                </ImageStripBox>
+                  <ManifestSnippet id={parseManifestId(item.resource_id)} hideButton />
+                </RoundedCard>
               ))}
             </React.Fragment>
           );
@@ -111,3 +85,17 @@ export const TopicItemExplorer: FieldComponent<TopicItemExplorerProps> = ({ valu
     </div>
   );
 };
+
+function parseManifestId(id: null | string | number): number | string {
+  if (!id) {
+    return '';
+  }
+  if (typeof id === 'string') {
+    if (id.toUpperCase().includes('URN')) {
+      const parsedId = extractIdFromUrn(id);
+      return parsedId !== undefined ? parsedId : '';
+    }
+    return Number(id);
+  }
+  return id;
+}

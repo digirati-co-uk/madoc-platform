@@ -53,6 +53,7 @@ export const RelatedTopics: React.FC<{
               <Link
                 key={item.id}
                 to={createLink({
+                  topicType: item.type_slug,
                   topic: item.slug,
                 })}
               >
