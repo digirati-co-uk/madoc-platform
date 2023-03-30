@@ -4,6 +4,7 @@ import { EnrichmentIndexPayload } from './types';
 import { ApiKey } from '../../types/api-key';
 import { SearchQuery, SearchResponse } from '../../types/search';
 import { EnrichmentResourceResponse, EntityMadocResponse, EntityTypeMadocResponse } from './authority/types';
+import {stringify} from "query-string";
 
 export class EnrichmentExtension extends BaseDjangoExtension {
   // /api/madoc/indexable_data/
@@ -124,8 +125,20 @@ export class EnrichmentExtension extends BaseDjangoExtension {
     });
   }
 
-  topicAutoComplete(type: string, query: string) {
-    // @todo
+  topicAutoComplete(type: string, fullText: string, page = 1) {
+    return this.api.request(`/api/enrichment/entity_autocomplete/?${stringify({ page })}`, {
+      method: 'POST',
+      body: {
+        fulltext: fullText,
+        facets: [
+          {
+            type: 'metadata',
+            subtype: 'entity_type',
+            indexable_text: type,
+          },
+        ],
+      },
+    });
   }
 
   getEnrichmentResource(id: string) {

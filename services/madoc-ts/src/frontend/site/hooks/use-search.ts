@@ -111,6 +111,7 @@ export function useSearch(topic?: string) {
   const searchResponse = topic ? topicResults : searchResults;
 
   const displayFacets = useMemo(() => {
+
     // We need to display the facets. We have two lists.
     // mappedFacets:
     // {
@@ -138,7 +139,6 @@ export function useSearch(topic?: string) {
     // todo dont think this is in the right format
     const entityFacets = searchResponse.resolvedData?.facets?.entity || {};
 
-    console.log(topic)
     const facetType = topic ? entityFacets : metadataFacets;
 
     const showAllFacets = facetDisplayOrder.length === 0;

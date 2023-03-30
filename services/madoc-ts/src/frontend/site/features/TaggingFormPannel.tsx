@@ -1,14 +1,26 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { MetadataEmptyState } from '../../shared/atoms/MetadataConfiguration';
 import { useEnrichmentResource } from '../pages/loaders/enrichment-resource-loader';
 import { EntityTagSnippet } from '../../../extensions/enrichment/authority/types';
-import { Button, ButtonRow } from '../../shared/navigation/Button';
+import { Button, ButtonRow, TextButton } from '../../shared/navigation/Button';
 import { CloseIcon } from '../../shared/icons/CloseIcon';
 import { ModalButton } from '../../shared/components/Modal';
 import { useApi } from '../../shared/hooks/use-api';
-import { useMutation, useQuery } from 'react-query';
+import { useInfiniteQuery, useMutation, useQuery } from 'react-query';
+import { PlusIcon } from '../../shared/icons/PlusIcon';
+import { EmptyState } from '../../shared/layout/EmptyState';
+import { Spinner } from '../../shared/icons/Spinner';
+import {
+  AutocompleteField,
+  CompletionItem,
+} from '../../shared/capture-models/editor/input-types/AutocompleteField/AutocompleteField';
+import { useSearchQuery } from '../hooks/use-search-query';
+import { Select } from 'react-functional-select';
+import { ErrorMessage } from '../../shared/capture-models/editor/atoms/Message';
+import { useInfiniteAction } from '../hooks/use-infinite-action';
+import { Input, InputContainer, InputLabel } from '../../shared/form/Input';
 
 const TaggingContainer = styled.div`
   padding: 0.5em;
@@ -57,6 +69,97 @@ const TagPill = styled.div`
   }
 `;
 
+const AddTags: React.FC<{ topicType: string }> = ({ topicType }) => {
+  const container = useRef<HTMLDivElement>(null);
+  const [value, setValue] = React.useState<CompletionItem | undefined>();
+  const [fullText, setFulltext] = React.useState('');
+  const api = useApi();
+
+  const { data: pages, fetchMore, canFetchMore, isFetchingMore } = useInfiniteQuery(
+    ['topic-autocomplete', fullText],
+    async (key, _, vars: { page?: number } = { page: 1 }) => {
+      return api.enrichment.topicAutoComplete(topicType, fullText, vars.page);
+    },
+    {
+      getFetchMore: lastPage => {
+        if (lastPage.pagination.totalPages === lastPage.pagination.page) {
+          return undefined;
+        }
+        return {
+          page: lastPage.pagination.page + 1,
+        };
+      },
+    }
+  );
+  const [loadMoreButton] = useInfiniteAction({
+    fetchMore,
+    canFetchMore,
+    isFetchingMore,
+    container: container,
+  });
+
+  if (!pages || !pages[0].results || isFetchingMore) {
+    return (
+      <EmptyState>
+        <Spinner />
+      </EmptyState>
+    );
+  }
+  return (
+    <form>
+      <InputContainer>
+        <InputLabel htmlFor="tagAuto">something</InputLabel>
+        <Input
+          type="text"
+          required
+          value={fullText}
+          onChange={e => {
+            setFulltext(e.target.value);
+          }}
+        />
+      </InputContainer>
+      <div ref={container} style={{ maxHeight: 500, overflowY: 'scroll' }}>
+        {pages?.map((page, key) => {
+          return (
+            <React.Fragment key={key}>
+              {page.results.map((result, key) => (
+                // eslint-disable-next-line react/jsx-key
+                <TagPill key={key} onClick={() => {setSelected(result.id)}>{result.slug}</TagPill>
+              ))}
+            </React.Fragment>
+          );
+        })}
+        <Button ref={loadMoreButton} onClick={() => fetchMore()} style={{ display: canFetchMore ? 'block' : 'none' }}>
+          Load more
+        </Button>
+      </div>
+    </form>
+  );
+};
+
+const AddTagsBottom: React.FC<{
+  tagId: string;
+  close: () => void;
+  addTag: (id: string) => Promise<void>;
+  isLoading?: boolean;
+}> = ({ tagId, close, remove, isLoading }) => {
+  // const api = useApi();
+  // const { data } = useQuery(['remove-tag', { tagId }], async () => {
+  //   return api.enrichment.getResourceTag(tagId);
+  // });
+  // if (!data) {
+  //   return null;
+  // }
+
+  return (
+    <ButtonRow $noMargin>
+      <Button onClick={() => close()}>Cancel</Button>
+      {/*<Button disabled={isLoading} onClick={() => add(tagId).then(close)}>*/}
+      {/*  Submit*/}
+      {/*</Button>*/}
+    </ButtonRow>
+  );
+};
 const ConfirmDeletion: React.FC<{ tagLabel: string }> = ({ tagLabel }) => {
   return (
     <PillContainer>
@@ -107,13 +210,31 @@ export const TaggingFormPannel = () => {
     await api.enrichment.removeResourceTag(id);
     await refetch();
   });
+  const [add, addStatus] = useMutation(async (id: string) => {
+    // await api.enrichment.removeResourceTag(id);
+    await refetch();
+  });
 
   return (
     <TaggingContainer>
       {newTags.length === 0 ? <MetadataEmptyState style={{ marginTop: 100 }}>{t('No tags')}</MetadataEmptyState> : null}
       {newTags.map((tagType: any) => (
         <TagBox key={tagType[0]}>
-          <TagTitle>{tagType[0]}</TagTitle>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <TagTitle>{tagType[0]}</TagTitle>
+
+            <ModalButton
+              title="Create tag"
+              render={() => {
+                return <AddTags topicType={tagType[0]} />;
+              }}
+              footerAlignRight
+              renderFooter={({ close }) =>
+                  <AddTagsBottom addTag={add} close={close} isLoading={addStatus.isLoading} tagId={selected}/>}
+            >
+              <PlusIcon /> Add
+            </ModalButton>
+          </div>
           <PillContainer>
             {tagType[1].map((tag: EntityTagSnippet) =>
               tag.entity && tag.entity.label ? (
