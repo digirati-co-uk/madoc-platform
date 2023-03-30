@@ -5,7 +5,7 @@ import { useApi } from '../../../../shared/hooks/use-api';
 import { useData } from '../../../../shared/hooks/use-data';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
 import { useParams } from 'react-router-dom';
-import {ManageTags} from "../../../molecules/ManageTags";
+import { ManageTags } from '../../../molecules/ManageTags';
 
 type CanvasSearchIndexType = {
   params: { id: string };
@@ -22,6 +22,11 @@ export const CanvasSearchIndex = createUniversalComponent<CanvasSearchIndexType>
     const api = useApi();
     const [indexContext, { isLoading }] = useMutation(async () => {
       await api.indexCanvas(Number(id));
+      await refetch();
+    });
+
+    const [invokeEnrichment, { isLoading: enrichLoading }] = useMutation(async () => {
+      await api.triggerSearchIndex(Number(id), 'canvas');
       await refetch();
     });
 
@@ -46,6 +51,10 @@ export const CanvasSearchIndex = createUniversalComponent<CanvasSearchIndexType>
         <hr />
         <Button disabled={isLoading} onClick={() => indexContext()}>
           Reindex canvas
+        </Button>
+        {'  '}
+        <Button disabled={isLoading} onClick={() => invokeEnrichment()}>
+          {enrichLoading ? `...loading` : 'Invoke enrichment'}
         </Button>
         <hr />
         <ManageTags data={data} type="canvas" id={Number(id)} refresh={refetch} />

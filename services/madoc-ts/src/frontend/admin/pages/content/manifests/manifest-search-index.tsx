@@ -30,6 +30,12 @@ export const ManifestSearchIndex = createUniversalComponent<ManifestSearchIndexT
       await refetch();
     });
 
+    const api = useApi();
+    const [invokeEnrichment, { isLoading: enrichLoading }] = useMutation(async () => {
+      await api.triggerSearchIndex(Number(id), 'manifest');
+      await refetch();
+    });
+
     if (isError) {
       return (
         <div>
@@ -51,6 +57,10 @@ export const ManifestSearchIndex = createUniversalComponent<ManifestSearchIndexT
         <hr />
         <Button disabled={isLoading} onClick={() => indexContext()}>
           Reindex manifest {isLoading && percent ? ` ${percent}%` : null}
+        </Button>
+        {'  '}
+        <Button disabled={enrichLoading} onClick={() => invokeEnrichment()}>
+          {enrichLoading ? `...loading` : 'Invoke enrichment'}
         </Button>
         <hr />
         <ManageTags data={data} type="manifest" id={Number(id)} refresh={refetch} />
