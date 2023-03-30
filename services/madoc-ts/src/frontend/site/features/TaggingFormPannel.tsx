@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { MetadataEmptyState } from '../../shared/atoms/MetadataConfiguration';
@@ -21,6 +21,9 @@ import { Select } from 'react-functional-select';
 import { ErrorMessage } from '../../shared/capture-models/editor/atoms/Message';
 import { useInfiniteAction } from '../hooks/use-infinite-action';
 import { Input, InputContainer, InputLabel } from '../../shared/form/Input';
+import { useRefetch } from '../../shared/utility/refetch-context';
+import { useLocationQuery } from '../../shared/hooks/use-location-query';
+import { buttons } from '../../../../stories/legacy/atoms.stories';
 
 const TaggingContainer = styled.div`
   padding: 0.5em;
@@ -51,11 +54,17 @@ const TagPill = styled.div`
   margin: 0 1em 1em 0.5em;
   display: flex;
 
+  &[data-is-button='true'] {
+    font-size: 1em;
+    padding: 0.4em;
+    margin: 0.5em;
+  }
   span {
     display: block;
     max-width: 20px;
     max-height: 20px;
   }
+
   svg {
     max-width: 18px;
     max-height: 18px;
@@ -71,11 +80,13 @@ const TagPill = styled.div`
 
 const AddTags: React.FC<{ topicType: string }> = ({ topicType }) => {
   const container = useRef<HTMLDivElement>(null);
-  const [value, setValue] = React.useState<CompletionItem | undefined>();
   const [fullText, setFulltext] = React.useState('');
-  const api = useApi();
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [selected, setSelected] = React.useState(null);
 
-  const { data: pages, fetchMore, canFetchMore, isFetchingMore } = useInfiniteQuery(
+  const api = useApi();
+  console.log(selected);
+  const { data: pages, fetchMore, canFetchMore, isFetchingMore, isLoading: queryLoading } = useInfiniteQuery(
     ['topic-autocomplete', fullText],
     async (key, _, vars: { page?: number } = { page: 1 }) => {
       return api.enrichment.topicAutoComplete(topicType, fullText, vars.page);
@@ -98,7 +109,13 @@ const AddTags: React.FC<{ topicType: string }> = ({ topicType }) => {
     container: container,
   });
 
-  if (!pages || !pages[0].results || isFetchingMore) {
+  const startAutoComplete = val => {
+    setIsLoading(true);
+    setFulltext(val);
+    setIsLoading(false);
+  };
+
+  if (!pages || !pages[0].results) {
     return (
       <EmptyState>
         <Spinner />
@@ -106,34 +123,46 @@ const AddTags: React.FC<{ topicType: string }> = ({ topicType }) => {
     );
   }
   return (
-    <form>
+    <div>
+      {selected && (
+        <TagPill>
+          <CloseIcon onClick={() => {setSelected(null)}} /> {selected.slug}
+        </TagPill>
+      )}
       <InputContainer>
         <InputLabel htmlFor="tagAuto">something</InputLabel>
         <Input
+          onChange={e => startAutoComplete(e.target.value)}
+          onBlur={e => startAutoComplete(e.target.value)}
           type="text"
           required
           value={fullText}
-          onChange={e => {
-            setFulltext(e.target.value);
-          }}
         />
       </InputContainer>
-      <div ref={container} style={{ maxHeight: 500, overflowY: 'scroll' }}>
-        {pages?.map((page, key) => {
-          return (
-            <React.Fragment key={key}>
-              {page.results.map((result, key) => (
-                // eslint-disable-next-line react/jsx-key
-                <TagPill key={key} onClick={() => {setSelected(result.id)}>{result.slug}</TagPill>
-              ))}
-            </React.Fragment>
-          );
-        })}
-        <Button ref={loadMoreButton} onClick={() => fetchMore()} style={{ display: canFetchMore ? 'block' : 'none' }}>
-          Load more
-        </Button>
-      </div>
-    </form>
+      {isLoading || queryLoading ? (
+        <EmptyState>
+          <Spinner /> ...loading
+        </EmptyState>
+      ) : (
+        <div ref={container} style={{ maxHeight: 500, overflowY: 'scroll', display: 'flex', flexWrap: 'wrap' }}>
+          {pages?.map((page, key) => {
+            return (
+              <React.Fragment key={key}>
+                {page.results.map((result, key) => (
+                  // eslint-disable-next-line react/jsx-key
+                  <TagPill as={Button} key={key} data-is-button={true} onClick={() => setSelected(result)}>
+                    {result.slug}
+                  </TagPill>
+                ))}
+              </React.Fragment>
+            );
+          })}
+          <Button ref={loadMoreButton} onClick={() => fetchMore()} style={{ display: canFetchMore ? 'block' : 'none' }}>
+            Load more
+          </Button>
+        </div>
+      )}
+    </div>
   );
 };
 
@@ -142,7 +171,7 @@ const AddTagsBottom: React.FC<{
   close: () => void;
   addTag: (id: string) => Promise<void>;
   isLoading?: boolean;
-}> = ({ tagId, close, remove, isLoading }) => {
+}> = ({ tagId, close, addTag, isLoading }) => {
   // const api = useApi();
   // const { data } = useQuery(['remove-tag', { tagId }], async () => {
   //   return api.enrichment.getResourceTag(tagId);
@@ -229,8 +258,9 @@ export const TaggingFormPannel = () => {
                 return <AddTags topicType={tagType[0]} />;
               }}
               footerAlignRight
-              renderFooter={({ close }) =>
-                  <AddTagsBottom addTag={add} close={close} isLoading={addStatus.isLoading} tagId={selected}/>}
+              renderFooter={({ close }) => (
+                <AddTagsBottom addTag={add} close={close} isLoading={addStatus.isLoading} tagId={'selected'} />
+              )}
             >
               <PlusIcon /> Add
             </ModalButton>
