@@ -104,7 +104,9 @@ export function CanvasViewer({
   });
 
   const sidebar = (
-    <LayoutSidebarMenu style={{ display: tabsTop ? 'flex' : '', borderRight: tabsTop ? 'none' : '1px solid #bcbcbc' }}>
+    <LayoutSidebarMenu
+      style={{ display: tabsTop ? 'flex' : '', borderRight: tabsTop ? '1px solid transparent' : '1px solid #bcbcbc' }}
+    >
       {menuItems.map(menuItem => {
         if (menuItem.isHidden) {
           return null;
@@ -152,7 +154,7 @@ export function CanvasViewer({
               <LayoutSidebar
                 ref={refs.resizableDiv as any}
                 data-space={sidebarSpace}
-                style={{ width: widthB, border: `1px solid ${borderColor}` }}
+                style={{ width: widthB }}
               >
                 {currentMenuItem.content}
               </LayoutSidebar>

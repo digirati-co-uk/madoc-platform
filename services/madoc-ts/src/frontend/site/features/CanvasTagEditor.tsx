@@ -19,7 +19,6 @@ import ReactTooltip from 'react-tooltip';
 import { CanvasImageViewer } from './CanvasImageViewer';
 import { TaggingFormPannel } from './TaggingFormPannel';
 
-
 export const CanvasTagEditor: React.FC<{
   rendering?: 'webgl' | 'canvas';
   tabsTop?: boolean;
@@ -27,14 +26,7 @@ export const CanvasTagEditor: React.FC<{
   sidebarSpace?: boolean;
   verticalButtons?: boolean;
   buttonBackground?: string;
-}> = ({
-  rendering = 'canvas',
-  tabsTop,
-  borderColor,
-  sidebarSpace,
-  verticalButtons,
-  buttonBackground,
-}) => {
+}> = ({ rendering = 'canvas', tabsTop, borderColor, sidebarSpace, verticalButtons, buttonBackground }) => {
   const { showCanvasNavigation } = useCanvasNavigation();
   const user = useUser();
   const [isOpen, setIsOpen] = useLocalStorage<boolean>(`canvas-page-sidebar`, false);
@@ -123,7 +115,7 @@ blockEditorFor(CanvasTagEditor, {
     buttonBackground: { label: 'button background color', type: 'color-field' },
   },
   defaultProps: {
-    rendering: 'webgl',
+    rendering: 'canvas',
     tabsTop: false,
     borderColor: '',
     sidebarSpace: false,

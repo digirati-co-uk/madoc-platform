@@ -2,15 +2,12 @@ import React from 'react';
 import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
 import { CanvasVaultContext } from '../../shared/components/CanvasVaultContext';
 import { useCurrentUser } from '../../shared/hooks/use-current-user';
-import { AutoSlotLoader } from '../../shared/page-blocks/auto-slot-loader';
 import { Slot } from '../../shared/page-blocks/slot';
 import { CanvasModelReadOnlyViewer } from '../features/CanvasModelReadOnlyViewer';
 import { CanvasPageHeader } from '../features/CanvasPageHeader';
 import { useCanvasUserTasks } from '../hooks/use-canvas-user-tasks';
 import { useRouteContext } from '../hooks/use-route-context';
 import { CanvasTagEditor } from '../features/CanvasTagEditor';
-import { CanvasHighlightedRegions } from '../features/CanvasHighlightedRegions';
-
 export const EditCanvas: React.FC = () => {
   const { canvasId } = useRouteContext();
   const { canUserSubmit, isLoading: isLoadingTasks, completedAndHide } = useCanvasUserTasks();
@@ -28,7 +25,7 @@ export const EditCanvas: React.FC = () => {
   }
 
   return (
-    <AutoSlotLoader>
+    <>
       <Slot name="common-breadcrumbs">
         <DisplayBreadcrumbs currentPage={'edit tags'} />
       </Slot>
@@ -49,6 +46,6 @@ export const EditCanvas: React.FC = () => {
       </CanvasVaultContext>
 
       <Slot name="canvas-model-footer"></Slot>
-    </AutoSlotLoader>
+    </>
   );
 };
