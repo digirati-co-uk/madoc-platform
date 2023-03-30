@@ -51,7 +51,7 @@ const ResultText = styled.span`
 
 export const ResultTitle = styled.div`
   text-decoration: none;
-  color: #2962ff;
+  color: inherit;
   font-size: 1.25rem;
   padding-bottom: 0.625rem;
 `;
@@ -137,6 +137,9 @@ export const SearchItem: React.FC<{
   const snippet = result.hits && result.hits[0] && result.hits[0].snippet ? result.hits[0].snippet : undefined;
   const isManifest = result.resource_type === 'Manifest';
 
+  const topic = routeContext.topic;
+  const topicType = routeContext.topicType;
+
   return (
     <>
       <HrefLink
@@ -145,6 +148,8 @@ export const SearchItem: React.FC<{
           manifestId,
           canvasId,
           collectionId,
+          topic,
+          topicType,
           query: { searchText },
           admin,
         })}

@@ -53,10 +53,27 @@ export const FeaturedTopics: React.FC<{
   return (
     <>
       <h3 style={{ fontSize: '1.5em', color: textColor, textAlign: 'center' }}>
-        Featured in: <LocaleString>{data.title}</LocaleString>
+        Featured in: {data.title?.length ? <LocaleString>{data.title}</LocaleString> : data.label}
       </h3>
+
       <FeaturesContainer>
-        <Carousel controlColor={controlColor}>{Items}</Carousel>
+        {items.length > 1 ? (
+          <Carousel controlColor={controlColor}>{Items}</Carousel>
+        ) : (
+          <Link
+            key={items[0].id}
+            to={createLink({
+              topic: items[0].slug,
+            })}
+          >
+            <TopicSnippetCard
+              topic={items[0]}
+              cardBorder={cardBorder}
+              textColor={textColor}
+              background={cardBackground}
+            />
+          </Link>
+        )}
       </FeaturesContainer>
     </>
   );

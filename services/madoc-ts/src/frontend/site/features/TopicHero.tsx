@@ -1,5 +1,5 @@
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
-import React, { useLayoutEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { useTopic } from '../pages/loaders/topic-loader';
 import { LocaleString } from '../../shared/components/LocaleString';
@@ -50,7 +50,7 @@ const HeroDescription = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
   transition: max-height 0.8s;
-  
+
   &[data-is-expanded='true'] {
     transition: max-height 0.8s;
     display: flex;
@@ -58,7 +58,7 @@ const HeroDescription = styled.div`
   }
 `;
 
-const ImageMask = styled.div`
+export const ImageMask = styled.div`
   height: 400px;
   width: 400px;
   border-radius: 100%;
@@ -66,7 +66,7 @@ const ImageMask = styled.div`
   background-position: center;
   margin-left: 4em;
 `;
-const Right = styled.div`
+export const Right = styled.div`
   margin-left: auto;
   display: flex;
   flex-direction: column;
@@ -78,7 +78,7 @@ export const TopicHero: React.FC<{ h1Color?: string; h2Color?: string }> = ({ h1
   const [isExpanded, setIsExpanded] = useState(false);
   const [isClamped, setIsClamped] = useState(false);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const el = ref.current;
     const initClamped = el ? el.offsetHeight < el.scrollHeight || el.offsetWidth < el.scrollWidth : false;
     setIsClamped(initClamped);
@@ -124,11 +124,6 @@ export const TopicHero: React.FC<{ h1Color?: string; h2Color?: string }> = ({ h1
           </HeroSummary>
         )}
       </HeroText>
-      <Right>
-        {data.other_data?.main_image?.url && (
-          <ImageMask style={{ backgroundImage: `url("${data.other_data?.main_image.url}")` }} />
-        )}
-      </Right>
     </TopicHeroWrapper>
   );
 };
@@ -136,7 +131,8 @@ export const TopicHero: React.FC<{ h1Color?: string; h2Color?: string }> = ({ h1
 blockEditorFor(TopicHero, {
   type: 'default.TopicHero',
   label: 'Topic hero',
-  anyContext: [],
+  anyContext: ['topic'],
+  requiredContext: ['topic'],
   defaultProps: {
     h1Color: '#000000',
     h2Color: '#000000',

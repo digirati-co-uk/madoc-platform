@@ -1,17 +1,19 @@
 import { InternationalString } from '@iiif/presentation-3';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { FacetConfig } from '../../shared/components/MetadataFacetEditor';
 import { apiHooks, paginatedApiHooks } from '../../shared/hooks/use-api-query';
 import { useSiteConfiguration } from '../features/SiteConfigurationContext';
 import { useRouteContext } from './use-route-context';
-import { useSearchQuery } from './use-search-query';
+import { FacetQueryValue, useSearchQuery } from './use-search-query';
+import { usePaginatedQuery } from 'react-query';
+import { useApi } from '../../shared/hooks/use-api';
 
 function normalizeDotKey(key: string) {
   return key.startsWith('metadata.') ? key.slice('metadata.'.length).toLowerCase() : key.toLowerCase();
 }
 
 export function useSearch() {
-  const { projectId, collectionId, manifestId } = useRouteContext();
+  const { projectId, collectionId, manifestId, topic } = useRouteContext();
   const { fulltext, appliedFacets, page } = useSearchQuery();
   const {
     project: { searchStrategy, claimGranularity, searchOptions },
@@ -19,6 +21,7 @@ export function useSearch() {
   const { searchMultipleFields, nonLatinFulltext, onlyShowManifests } = searchOptions || {};
   const searchFacetConfig = apiHooks.getSiteSearchFacetConfiguration(() => []);
 
+  const api = useApi();
   const [facetsToRequest, facetDisplayOrder, facetIdMap] = useMemo(() => {
     const facets = searchFacetConfig.data ? searchFacetConfig.data.facets : [];
     const returnList: string[] = [];
@@ -41,7 +44,7 @@ export function useSearch() {
     return [returnList, displayOrder, idMap];
   }, [searchFacetConfig.data]);
 
-  const searchResponse = paginatedApiHooks.getSiteSearchQuery(
+  const searchResults = paginatedApiHooks.getSiteSearchQuery(
     () => [
       {
         projectId,
@@ -71,6 +74,41 @@ export function useSearch() {
     }
   );
 
+  useEffect(() => {
+    if (topic) {
+      appliedFacets.push({ k: 'entity', v: topic });
+    }
+    return;
+  }, [topic]);
+
+  const topicResults = usePaginatedQuery(
+    ['topic-items', { id: topic, page }],
+    async () => {
+      return api.getSearchQuery(
+        {
+          query: { fulltext: fulltext, page: page },
+          facets: appliedFacets.map(facet =>
+            facet.k === 'entity'
+              ? {
+                  type: 'entity',
+                  indexable_text: facet.v,
+                }
+              : {
+                  type: 'metadata',
+                  subtype: facet.k,
+                  value: facet.v,
+                }
+          ),
+        } as any,
+        page
+      );
+    },
+    {
+      enabled: !searchFacetConfig.isLoading && (!!facetsToRequest.length || !!topic),
+    }
+  );
+
+  const searchResponse = topic ? topicResults : searchResults;
   const displayFacets = useMemo(() => {
     // We need to display the facets. We have two lists.
     // mappedFacets:
@@ -97,7 +135,6 @@ export function useSearch() {
     const metadataFacets = searchResponse.resolvedData?.facets?.metadata || {};
 
     const showAllFacets = facetDisplayOrder.length === 0;
-
     for (const facet of Object.keys(metadataFacets)) {
       const values = Object.keys(metadataFacets[facet]);
       const normalisedKey = facet.toLowerCase();
@@ -114,6 +151,8 @@ export function useSearch() {
         };
         facetDisplayOrder.push(facet);
       }
+
+
 
       for (const value of values) {
         mappedSearchResponseMetadata[normalisedKey] = mappedSearchResponseMetadata[normalisedKey]

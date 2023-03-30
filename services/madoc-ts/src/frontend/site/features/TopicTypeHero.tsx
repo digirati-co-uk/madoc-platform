@@ -1,5 +1,5 @@
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
-import React, { useLayoutEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { LocaleString } from '../../shared/components/LocaleString';
 import { useTopicType } from '../pages/loaders/topic-type-loader';
@@ -89,7 +89,7 @@ export const TopicTypeHero: React.FC<{ textColor?: string; overlayColor?: string
 
   const [isClamped, setIsClamped] = useState(false);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const el = ref.current;
     const initClamped = el ? el.offsetHeight < el.scrollHeight || el.offsetWidth < el.scrollWidth : false;
     setIsClamped(initClamped);

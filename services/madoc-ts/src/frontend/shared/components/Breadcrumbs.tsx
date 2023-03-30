@@ -262,6 +262,12 @@ export const DisplayBreadcrumbs: React.FC<BreadcrumbProps> = ({
           label: breads.manifest.name,
           url: `/collections/${breads.collection.id}/manifests/${breads.manifest.id}`,
         });
+      } else if (breads.topicType && breads.topic) {
+        // 3. Just under topics
+        flatList.push({
+          label: breads.manifest.name,
+          url: `/topics/${breads.topicType.id}/${breads.topic.id}/m/${breads.manifest.id}`,
+        });
       } else {
         flatList.push({
           label: { none: [t('breadcrumbs__Manifests', { defaultValue: t('Manifests') })] },

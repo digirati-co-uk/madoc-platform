@@ -5,8 +5,6 @@ import {
   SearchFilterItem,
   SearchFilterItemList,
   SearchFilterLabel,
-  SearchFilterSection,
-  SearchFilterSectionTitle,
   SearchFilterTitle,
 } from '../../shared/components/SearchFilters';
 import { ButtonRow, TinyButton } from '../../shared/navigation/Button';
@@ -28,6 +26,7 @@ export const SearchPageFilters: React.FC<SearchPageFiltersProps> = ({ checkBoxCo
   const [{ resolvedData: searchResponse, latestData }, displayFacets, isLoading] = useSearch();
   const { t } = useTranslation();
   const { appliedFacets, fulltext } = useSearchQuery();
+
   const {
     inQueue,
     queueSingleFacet,

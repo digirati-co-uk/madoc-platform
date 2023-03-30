@@ -8,7 +8,7 @@ import { useSiteConfiguration } from '../../site/features/SiteConfigurationConte
 
 const SiteLogoContainer = styled.div<{ $padding?: boolean; $margin?: boolean; $maxWidth?: number }>`
 position: relative;
-  z-index: 2;
+  z-index: 12;
   ${props =>
     props.$padding &&
     css`
