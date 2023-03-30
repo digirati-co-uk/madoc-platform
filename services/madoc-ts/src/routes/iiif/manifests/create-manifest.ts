@@ -1,4 +1,5 @@
 import { sql } from 'slonik';
+import { api } from '../../../gateway/api.server';
 import { userWithScope } from '../../../utility/user-with-scope';
 import { RouteMiddleware } from '../../../types/route-middleware';
 import { CreateManifest } from '../../../types/schemas/create-manifest';
@@ -36,7 +37,10 @@ export const createManifest: RouteMiddleware<{}, CreateManifest> = async context
     console.log(err);
   }
 
-  await context.connection.query(sql`select refresh_item_counts()`);
+  await Promise.all([
+    context.connection.query(sql`select refresh_item_counts()`),
+    api.asUser({ siteId }).indexManifest(canonical_id),
+  ]);
 
   context.response.body = { id: canonical_id };
   context.response.status = 201;

@@ -35,6 +35,7 @@ export const indexManifest: RouteMiddleware<{ id: string }> = async context => {
   const table = mapManifestSnippets(rows);
 
   if (!table.manifests[`${manifestId}`]) {
+    context.response.body = {};
     return; // no metadata to index.
   }
 

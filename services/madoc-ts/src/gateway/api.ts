@@ -1921,6 +1921,29 @@ export class ApiClient {
     });
   }
 
+  async batchSearchIngestManifestCanvases(manifestId: number, canvasesToAdd: number[], canvasesToRemove: number[]) {
+    const manifest = `urn:madoc:manifest:${manifestId}`;
+    const toAdd = canvasesToAdd.map(c => `urn:madoc:canvas:${c}`);
+    const toRemove = canvasesToRemove.map(c => `urn:madoc:canvas:${c}`);
+
+    if (toAdd.length === 0 && toRemove.length === 0) {
+      return null;
+    }
+
+    const body: any = {};
+    if (toAdd.length) {
+      body.add = [{ source: manifest, targets: toAdd, type: 'hasCanvas' }];
+    }
+    if (toRemove.length) {
+      body.remove = [{ source: manifest, targets: toRemove, type: 'hasCanvas' }];
+    }
+
+    return this.request(`/api/enrichment/relationship/batch/`, {
+      method: 'POST',
+      body,
+    });
+  }
+
   // Search API
   async searchQuery(query: SearchQuery, page = 1, madoc_id?: string) {
     return this.request<SearchResponse>(`/api/enrichment/search/`, {
