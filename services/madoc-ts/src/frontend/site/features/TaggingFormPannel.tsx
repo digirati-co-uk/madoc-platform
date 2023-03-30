@@ -87,7 +87,7 @@ const AddTags: React.FC<{ topicType: string }> = ({ topicType }) => {
   const api = useApi();
   console.log(selected);
   const { data: pages, fetchMore, canFetchMore, isFetchingMore, isLoading: queryLoading } = useInfiniteQuery(
-    ['topic-autocomplete', fullText],
+    ['topic-autocomplete', fullText, topicType],
     async (key, _, vars: { page?: number } = { page: 1 }) => {
       return api.enrichment.topicAutoComplete(topicType, fullText, vars.page);
     },
@@ -126,7 +126,12 @@ const AddTags: React.FC<{ topicType: string }> = ({ topicType }) => {
     <div>
       {selected && (
         <TagPill>
-          <CloseIcon onClick={() => {setSelected(null)}} /> {selected.slug}
+          <CloseIcon
+            onClick={() => {
+              setSelected(null);
+            }}
+          />
+          {selected.slug}
         </TagPill>
       )}
       <InputContainer>
