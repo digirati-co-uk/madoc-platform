@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, ButtonIcon } from '../../shared/navigation/Button';
-import { useUserDetails } from '../../shared/hooks/use-user-details';;
+import { useUserDetails } from '../../shared/hooks/use-user-details';
 import { useRouteContext } from '../hooks/use-route-context';
 import { HrefLink } from '../../shared/utility/href-link';
 import TaggingIcon from '../../shared/icons/TaggingIcon';
