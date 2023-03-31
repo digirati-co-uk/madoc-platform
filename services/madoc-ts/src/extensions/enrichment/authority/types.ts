@@ -334,3 +334,19 @@ export interface EnrichmentResourceResponse {
   ocr_resources?: any;
   entity_tags?: EntityTagSnippet[];
 }
+
+export interface AutoCompleteEntitySnippet {
+  url: string;
+  id: string;
+  created: string;
+  modified: string;
+  type_slug: string;
+  type_title?: InternationalString;
+  slug?: string;
+  title?: InternationalString;
+}
+export interface EnrichmentEntityAutoCompleteResponse {
+  pagination: Pagination;
+  results: AutoCompleteEntitySnippet[];
+  facets: any;
+}

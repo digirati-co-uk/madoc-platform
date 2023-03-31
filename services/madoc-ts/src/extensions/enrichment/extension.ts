@@ -3,7 +3,12 @@ import { BaseDjangoExtension } from './base-django-extension';
 import { EnrichmentIndexPayload } from './types';
 import { ApiKey } from '../../types/api-key';
 import { SearchQuery, SearchResponse } from '../../types/search';
-import { EnrichmentResourceResponse, EntityMadocResponse, EntityTypeMadocResponse } from './authority/types';
+import {
+  EnrichmentEntityAutoCompleteResponse,
+  EnrichmentResourceResponse,
+  EntityMadocResponse,
+  EntityTypeMadocResponse,
+} from './authority/types';
 import { stringify } from 'query-string';
 
 export class EnrichmentExtension extends BaseDjangoExtension {
@@ -114,7 +119,7 @@ export class EnrichmentExtension extends BaseDjangoExtension {
     return this.api.publicRequest<TopicTypeListResponse>(`/madoc/api/topic-types?page=${page}`);
   }
 
-  tagMadocResource(entityId: string, type: string, id: number, selector?: any) {
+  tagMadocResource(entityId: string, type: string, id?: number, selector?: any) {
     return this.api.request(`/api/enrichment/resource_tag/`, {
       method: 'POST',
       body: {
@@ -126,13 +131,16 @@ export class EnrichmentExtension extends BaseDjangoExtension {
   }
 
   topicAutoComplete(type: string, fullText: string, page = 1) {
-    return this.api.request(`/api/enrichment/entity_autocomplete/?${stringify({ page })}`, {
-      method: 'POST',
-      body: {
-        type: type,
-        fulltext: fullText,
-      },
-    });
+    return this.api.request<EnrichmentEntityAutoCompleteResponse>(
+      `/api/enrichment/entity_autocomplete/?${stringify({ page })}`,
+      {
+        method: 'POST',
+        body: {
+          type: type,
+          fulltext: fullText,
+        },
+      }
+    );
   }
 
   getEnrichmentResource(id: string) {

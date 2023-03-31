@@ -9,33 +9,57 @@ import TaggingIcon from '../../../shared/icons/TaggingIcon';
 import { Link } from 'react-router-dom';
 import { createLink } from '../../../shared/utility/create-link';
 
-const TaggingContainer = styled.div`
+export const TaggingContainer = styled.div`
   padding: 0.5em;
 `;
-const TagBox = styled.div`
+export const TagBox = styled.div`
   padding: 0.3em;
   margin: 1em 0;
   border: 1px solid #002d4b;
 `;
-const TagTitle = styled.div`
+export const TagTitle = styled.div`
   font-size: 1em;
   color: #004761;
   text-transform: uppercase;
 `;
 
-const PillContainer = styled.div`
+export const PillContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
   padding: 1em 0;
 `;
 
-const TagPill = styled.div`
+export const TagPill = styled.div`
   font-size: 0.8em;
   border: 2px solid #009f18;
   border-radius: 4px;
   color: #004761;
   padding: 0.2em;
-  margin: 0 1em 1em 0;
+  margin: 0 1em 1em 0.5em;
+  display: flex;
+
+  &[data-is-button='true'] {
+    font-size: 1em;
+    padding: 0.4em;
+    margin: 0.5em;
+  }
+  span {
+    display: block;
+    max-width: 20px;
+    max-height: 20px;
+  }
+
+  svg {
+    max-width: 18px;
+    max-height: 18px;
+    padding: 0;
+    margin: 0;
+    fill: #002d4b;
+
+    :hover {
+      fill: #009f18;
+    }
+  }
 `;
 
 export function useTaggingPanel(): CanvasMenuHook {
