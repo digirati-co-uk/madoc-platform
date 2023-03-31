@@ -15,6 +15,7 @@ interface SearchPageResultsProps {
   textColor?: string;
   cardBorder?: string;
   imageStyle?: string;
+  topicId?: string;
 }
 
 export const SearchPageResults: React.FC<SearchPageResultsProps> = ({
@@ -24,8 +25,9 @@ export const SearchPageResults: React.FC<SearchPageResultsProps> = ({
   textColor,
   background,
   imageStyle,
+  topicId,
 }) => {
-  const [{ resolvedData: searchResponse, latestData }, displayFacets, isLoading] = useSearch();
+  const [{ resolvedData: searchResponse, latestData }, displayFacets, isLoading] = useSearch(topicId);
   const { rawQuery, page, fulltext } = useSearchQuery();
   const { t } = useTranslation();
   const searchResults = searchResponse ? searchResponse.results : [];

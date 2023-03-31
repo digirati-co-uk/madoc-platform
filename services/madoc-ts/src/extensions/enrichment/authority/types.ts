@@ -1,5 +1,5 @@
 import { Pagination } from '../../../types/schemas/_pagination';
-import { InternationalString } from '@iiif/presentation-3';
+import {Canvas, Collection, InternationalString, Manifest} from '@iiif/presentation-3';
 
 export interface AuthoritySnippet {
   // id: string;
@@ -293,4 +293,60 @@ export interface FeaturedResource {
   metadata?: any; // ?
   other_data?: any; // ?
   count: number;
+}
+
+export interface EntityTagSnippet {
+  tag_id: string;
+  entity: {
+    type_slug: string;
+    slug: string;
+    url: string;
+    id: string;
+    type: string;
+    label: string;
+  };
+  selector?: any;
+}
+export interface EnrichmentResourceResponse {
+  url: string;
+  created: string;
+  modified: string;
+  madoc_id?: string;
+  type?: string;
+  thumbnail?: string;
+  iiif_json: Manifest | Canvas | Collection;
+  canvases?: {
+    url: string;
+    created: string;
+    modified: string;
+    madoc_id?: string;
+    type?: string;
+    thumbnail?: string;
+  }[];
+  manifests?: {
+    url: string;
+    created: string;
+    modified: string;
+    madoc_id?: string;
+    type?: string;
+    thumbnail?: string;
+  }[];
+  ocr_resources?: any;
+  entity_tags?: EntityTagSnippet[];
+}
+
+export interface AutoCompleteEntitySnippet {
+  url: string;
+  id: string;
+  created: string;
+  modified: string;
+  type_slug: string;
+  type_title?: InternationalString;
+  slug?: string;
+  title?: InternationalString;
+}
+export interface EnrichmentEntityAutoCompleteResponse {
+  pagination: Pagination;
+  results: AutoCompleteEntitySnippet[];
+  facets: any;
 }

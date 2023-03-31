@@ -20,10 +20,11 @@ import { Accordion } from '../../shared/atoms/Accordion';
 interface SearchPageFiltersProps {
   checkBoxColor?: string;
   filterHeader?: string;
+  topicId?: string;
 }
 
-export const SearchPageFilters: React.FC<SearchPageFiltersProps> = ({ checkBoxColor, filterHeader }) => {
-  const [{ resolvedData: searchResponse, latestData }, displayFacets, isLoading] = useSearch();
+export const SearchPageFilters: React.FC<SearchPageFiltersProps> = ({ checkBoxColor, filterHeader, topicId }) => {
+  const [{ resolvedData: searchResponse, latestData }, displayFacets, isLoading] = useSearch(topicId);
   const { t } = useTranslation();
   const { appliedFacets, fulltext } = useSearchQuery();
 

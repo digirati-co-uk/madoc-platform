@@ -11,7 +11,7 @@ export const topicTypeAutocomplete: RouteMiddleware = async context => {
   context.response.body = {
     completions: items.results.map(item => ({
       uri: item.slug,
-      label: getValue(item.other_labels) || item.label,
+      label: getValue(item.title) || item.label,
     })) as { uri: string; label: string; resource_class?: string; score?: number }[],
   };
 };
