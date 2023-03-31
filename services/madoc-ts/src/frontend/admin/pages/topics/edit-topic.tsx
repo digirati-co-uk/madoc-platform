@@ -71,7 +71,7 @@ export function EditTopic() {
   }
 
   return (
-    <div>
+    <div style={{ padding: '1em 0' }}>
       <CustomEditorTypes>
         <EditShorthandCaptureModel
           template={entityModel}
