@@ -10,11 +10,11 @@ import { Link } from 'react-router-dom';
 import { createLink } from '../../../shared/utility/create-link';
 
 export const TaggingContainer = styled.div`
-  padding: 0.5em;
+  padding: 0;
 `;
 export const TagBox = styled.div`
   padding: 0.3em;
-  margin: 1em 0;
+  margin-bottom: 1em;
   border: 1px solid #002d4b;
 `;
 export const TagTitle = styled.div`
@@ -97,7 +97,7 @@ export function useTaggingPanel(): CanvasMenuHook {
   );
 
   return {
-    id: 'tagging',
+    id: 'Tags',
     label: t('Tags'),
     icon: <TaggingIcon />,
     isLoaded: true,

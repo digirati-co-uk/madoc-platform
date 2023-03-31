@@ -19,7 +19,7 @@ export const CanvasConfigurationViewer: React.FC = () => {
       ) : miradorCanvasPage ? (
         <CanvasMiradorViewer />
       ) : (
-        <CanvasAtlasViewer topic={!!topic} />
+        <CanvasAtlasViewer />
       )}
     </>
   );
