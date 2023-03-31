@@ -62,7 +62,6 @@ export function CanvasViewer({
 }: CanvasViewerProps) {
   const [openPanel, setOpenPanel] = useLocalStorage<string>(`canvas-page-selected`, 'metadata');
   const [isOpen, setIsOpen] = useLocalStorage<boolean>(`canvas-page-sidebar`, false);
-
   const { topic } = useRouteContext();
 
   const height = useViewerHeight();
