@@ -23,7 +23,7 @@ export function useSearch(topic?: string) {
 
   const api = useApi();
   const [facetsToRequest, facetDisplayOrder, facetIdMap] = useMemo(() => {
-    const facets = searchFacetConfig.data ? searchFacetConfig.data.facets : [];
+    const facets = !topic && searchFacetConfig.data ? searchFacetConfig.data.facets : [];
     const returnList: string[] = [];
     const idMap: { [id: string]: { config: FacetConfig; keys: string[] } } = {};
     const displayOrder: string[] = [];
@@ -91,12 +91,12 @@ export function useSearch(topic?: string) {
             facet.k === 'entity'
               ? {
                   type: 'entity',
-                  subtype: facet.v,
+                  group_id: facet.v,
                 }
               : {
                   type: 'metadata',
                   subtype: facet.k,
-                  value: facet.v,
+                  indexable_text: facet.v,
                 }
           ),
         } as any,
@@ -111,7 +111,6 @@ export function useSearch(topic?: string) {
   const searchResponse = topic ? topicResults : searchResults;
 
   const displayFacets = useMemo(() => {
-
     // We need to display the facets. We have two lists.
     // mappedFacets:
     // {
@@ -136,7 +135,6 @@ export function useSearch(topic?: string) {
     } = {};
 
     const metadataFacets = searchResponse.resolvedData?.facets?.metadata || {};
-    // todo dont think this is in the right format
     const entityFacets = searchResponse.resolvedData?.facets?.entity || {};
 
     const facetType = topic ? entityFacets : metadataFacets;
