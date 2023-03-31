@@ -29,6 +29,7 @@ export const entityModel: CaptureModelShorthand<EnrichmentEntity> = {
       label: 'featured resource',
       pluralLabel: 'featured resources',
       labelledBy: 'madoc_id',
+      description: 'Note: only manifests can be featured resources',
     },
   },
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment

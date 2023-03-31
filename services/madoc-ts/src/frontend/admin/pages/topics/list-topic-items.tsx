@@ -4,11 +4,13 @@ import { Pagination } from '../../../shared/components/Pagination';
 import { SearchResults } from '../../../shared/components/SearchResults';
 import { useTopicItems } from '../../../shared/hooks/use-topic-items';
 import { EmptyState } from '../../../shared/layout/EmptyState';
+
 import { useParams } from 'react-router-dom';
 
 export function ListTopicItems() {
   const { topic } = useParams<Record<'topic', any>>();
-  const [{ data, isLoading, latestData }, { query, page }] = useTopicItems(topic);
+  const { topicType } = useParams<Record<'topicType', any>>();
+  const [{ data, isLoading, latestData }, { query, page }] = useTopicItems(topic, topicType);
 
   if (data?.pagination.totalResults === 0) {
     return <EmptyState>Nothing tagged yet</EmptyState>;

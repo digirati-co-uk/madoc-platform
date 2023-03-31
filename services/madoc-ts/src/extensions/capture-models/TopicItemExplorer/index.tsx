@@ -21,7 +21,7 @@ export const specification: FieldSpecification<TopicItemExplorerProps> = {
   Editor: React.lazy(() => import(/* webpackChunkName: "field-editors" */ './TopicItemExplorer.editor')),
   TextPreview: TopicItemExplorerPreview,
 };
-//
-// registerField(specification);
-//
-// export default specification;
+
+registerField(specification);
+
+export default specification;
