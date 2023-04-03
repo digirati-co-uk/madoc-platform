@@ -77,8 +77,6 @@ export function useSearch(topic?: string) {
     {
       enabled:
         !searchFacetConfig.isLoading &&
-        !topic &&
-        !rscType &&
         (!!facetsToRequest.length || !!fulltext || collectionId || manifestId || projectId),
     }
   );
@@ -88,7 +86,8 @@ export function useSearch(topic?: string) {
     async () => {
       return api.getSearchQuery(
         {
-          query: { fulltext: fulltext, page: page, resource_type: '' },
+          fulltext: fulltext,
+          resource_type: rscType,
           facets: appliedFacets.map(facet =>
             facet.k === 'entity'
               ? {

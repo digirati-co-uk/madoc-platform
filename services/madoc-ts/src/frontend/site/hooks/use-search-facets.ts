@@ -46,6 +46,7 @@ export function useSearchFacets() {
   };
 
   const clearAllFacets = (key?: string[]) => {
+    console.log(appliedFacets)
     if (key) {
       setQuery(
         fulltext,
