@@ -4,7 +4,7 @@ import { FacetConfig } from '../../shared/components/MetadataFacetEditor';
 import { apiHooks, paginatedApiHooks } from '../../shared/hooks/use-api-query';
 import { useSiteConfiguration } from '../features/SiteConfigurationContext';
 import { useRouteContext } from './use-route-context';
-import { FacetQueryValue, useSearchQuery } from './use-search-query';
+import { useSearchQuery } from './use-search-query';
 import { usePaginatedQuery } from 'react-query';
 import { useApi } from '../../shared/hooks/use-api';
 
@@ -42,7 +42,7 @@ export function useSearch(topic?: string) {
       }
     }
     return [returnList, displayOrder, idMap];
-  }, [searchFacetConfig.data]);
+  }, [searchFacetConfig.data, topic]);
 
   const searchResults = paginatedApiHooks.getSiteSearchQuery(
     () => [
@@ -70,16 +70,16 @@ export function useSearch(topic?: string) {
     {
       enabled:
         !searchFacetConfig.isLoading &&
+        !topic &&
         (!!facetsToRequest.length || !!fulltext || collectionId || manifestId || projectId),
     }
   );
-
   useEffect(() => {
     if (topic) {
       appliedFacets.push({ k: 'entity', v: topic });
     }
     return;
-  }, [topic]);
+  }, [appliedFacets, topic]);
 
   const topicResults = usePaginatedQuery(
     ['topic-items', { id: topic, page }],
@@ -94,7 +94,7 @@ export function useSearch(topic?: string) {
                   group_id: facet.v,
                 }
               : {
-                  type: 'metadata',
+                  type: 'entity',
                   subtype: facet.k,
                   indexable_text: facet.v,
                 }
@@ -104,7 +104,7 @@ export function useSearch(topic?: string) {
       );
     },
     {
-      enabled: !searchFacetConfig.isLoading && (!!facetsToRequest.length || !!topic),
+      enabled: !searchFacetConfig.isLoading && (!!facetsToRequest.length || !!fulltext || !!topic),
     }
   );
 
@@ -216,7 +216,8 @@ export function useSearch(topic?: string) {
         }
       } else {
         for (const field of fieldsToMap.keys) {
-          const searchResultFacetValues = mappedSearchResponseMetadata[field];
+          const normalisedField = field.toLowerCase();
+          const searchResultFacetValues = mappedSearchResponseMetadata[normalisedField];
           if (searchResultFacetValues) {
             displayItem.items.push(
               ...searchResultFacetValues.map(fieldValue => ({
@@ -235,6 +236,5 @@ export function useSearch(topic?: string) {
 
     return displayList;
   }, [facetDisplayOrder, facetIdMap, searchResponse.resolvedData, topic]);
-
   return [searchResponse, displayFacets, searchFacetConfig.isLoading || searchResponse.isLoading] as const;
 }

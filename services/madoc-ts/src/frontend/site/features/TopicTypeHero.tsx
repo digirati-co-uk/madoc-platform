@@ -90,7 +90,8 @@ export const TopicTypeHero: React.FC<{ textColor?: string; overlayColor?: string
   const [isClamped, setIsClamped] = useState(false);
 
   useEffect(() => {
-    if (data?.description) {
+    const desc = Object.keys(data?.description ? data.description : {});
+    if (desc && desc.length) {
       const el = ref.current;
       const initClamped = el ? el.offsetHeight < el.scrollHeight || el.offsetWidth < el.scrollWidth : false;
       setIsClamped(initClamped);

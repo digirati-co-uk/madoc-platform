@@ -29,7 +29,7 @@ export function useSearchQuery() {
         })}${hash}`
       );
     },
-    [pathname]
+    [navigate, pathname, topic]
   );
 
   const rawQuery = useMemo(
