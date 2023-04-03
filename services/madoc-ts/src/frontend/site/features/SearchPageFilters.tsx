@@ -69,8 +69,8 @@ export const SearchPageFilters: React.FC<SearchPageFiltersProps> = ({ checkBoxCo
           }}
           options={[
             {
-              value: 'all',
-              text: '',
+              value: '',
+              text: 'All',
             },
             {
               value: 'manifest',
