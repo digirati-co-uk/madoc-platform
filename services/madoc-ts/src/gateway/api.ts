@@ -45,6 +45,7 @@ import { SearchIngestRequest, SearchResponse, SearchQuery } from '../types/searc
 import { SearchIndexable } from '../utility/capture-model-to-indexables';
 import { NotFound } from '../utility/errors/not-found';
 import { parseUrn } from '../utility/parse-urn';
+import { WebhookExtension } from '../webhooks/webhook-extension';
 import { ApiRequest } from './api-definitions/_meta';
 import { fetchJson } from './fetch-json';
 import { BaseTask } from './tasks/base-task';
@@ -119,6 +120,7 @@ export class ApiClient {
   projectTemplates!: ProjectTemplateExtension;
   projectExport!: ProjectExportExtension;
   crowdsourcing!: CrowdsourcingApi;
+  webhooks!: WebhookExtension;
 
   constructor(options: {
     gateway: string;
@@ -147,6 +149,7 @@ export class ApiClient {
       return;
     }
 
+    this.webhooks = new WebhookExtension(this);
     this.pageBlocks = new PageBlockExtension(this, getDefaultPageBlockDefinitions());
     this.media = new MediaExtension(this);
     this.system = new SystemExtension(this);
