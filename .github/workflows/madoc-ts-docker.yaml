@@ -65,7 +65,7 @@ jobs:
         with:
           builder: ${{ steps.buildx.outputs.name }}
           context: services/madoc-ts
-          push: true
+          push: ${{ github.actor != 'dependabot[bot]' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
