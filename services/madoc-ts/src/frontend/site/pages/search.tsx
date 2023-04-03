@@ -8,8 +8,7 @@ import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
 import { SearchHeading } from '../features/SearchPageHeading';
 import { StaticPage } from '../features/StaticPage';
 import { useRouteContext } from '../hooks/use-route-context';
-import { useLocationQuery } from '../../shared/hooks/use-location-query';
-import {useLocation} from "react-router-dom";
+import { useLocation } from 'react-router-dom';
 
 export const Search = () => {
   const { topic } = useRouteContext();

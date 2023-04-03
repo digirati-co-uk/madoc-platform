@@ -14,12 +14,19 @@ function normalizeDotKey(key: string) {
 
 export function useSearch(topic?: string) {
   const { projectId, collectionId, manifestId } = useRouteContext();
-  const { fulltext, appliedFacets, page } = useSearchQuery();
+  const { fulltext, appliedFacets, page, rscType } = useSearchQuery();
   const {
     project: { searchStrategy, claimGranularity, searchOptions },
   } = useSiteConfiguration();
   const { searchMultipleFields, nonLatinFulltext, onlyShowManifests } = searchOptions || {};
   const searchFacetConfig = apiHooks.getSiteSearchFacetConfiguration(() => []);
+
+  useEffect(() => {
+    if (topic) {
+      appliedFacets.push({ k: 'entity', v: topic });
+    }
+    return;
+  }, [appliedFacets, topic]);
 
   const api = useApi();
   const [facetsToRequest, facetDisplayOrder, facetIdMap] = useMemo(() => {
@@ -71,22 +78,17 @@ export function useSearch(topic?: string) {
       enabled:
         !searchFacetConfig.isLoading &&
         !topic &&
+        !rscType &&
         (!!facetsToRequest.length || !!fulltext || collectionId || manifestId || projectId),
     }
   );
-  useEffect(() => {
-    if (topic) {
-      appliedFacets.push({ k: 'entity', v: topic });
-    }
-    return;
-  }, [appliedFacets, topic]);
 
   const topicResults = usePaginatedQuery(
-    ['topic-items', { id: topic, page, appliedFacets }],
+    ['topic-items', { id: topic, page, appliedFacets, fulltext, rscType }],
     async () => {
       return api.getSearchQuery(
         {
-          query: { fulltext: fulltext, page: page },
+          query: { fulltext: fulltext, page: page, resource_type: '' },
           facets: appliedFacets.map(facet =>
             facet.k === 'entity'
               ? {

@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import {
   SearchFilterContainer,
@@ -16,7 +17,18 @@ import { CheckboxBtn } from '../../shared/atoms/CheckboxBtn';
 import { useSearch } from '../hooks/use-search';
 import { SearchBox } from '../../shared/atoms/SearchBox';
 import { Accordion } from '../../shared/atoms/Accordion';
+import { Dropdown } from '../../shared/capture-models/editor/atoms/Dropdown';
 
+const DropdownContainer = styled.div`
+  margin: 1em 1em 1em 0;
+  font-size: 0.9em;
+  font-weight: 400;
+
+  & strong {
+    font-size: 0.9em;
+    font-weight: 400;
+  }
+`;
 interface SearchPageFiltersProps {
   checkBoxColor?: string;
   filterHeader?: string;
@@ -26,7 +38,7 @@ interface SearchPageFiltersProps {
 export const SearchPageFilters: React.FC<SearchPageFiltersProps> = ({ checkBoxColor, filterHeader, topicId }) => {
   const [{ resolvedData: searchResponse, latestData }, displayFacets, isLoading] = useSearch(topicId);
   const { t } = useTranslation();
-  const { appliedFacets, fulltext } = useSearchQuery();
+  const { appliedFacets, fulltext, rscType } = useSearchQuery();
 
   const {
     inQueue,
@@ -36,6 +48,7 @@ export const SearchPageFilters: React.FC<SearchPageFiltersProps> = ({ checkBoxCo
     applyAllFacets,
     clearAllFacets,
     setFullTextQuery,
+    setResourceType,
   } = useSearchFacets();
 
   if (!displayFacets) {
@@ -47,11 +60,34 @@ export const SearchPageFilters: React.FC<SearchPageFiltersProps> = ({ checkBoxCo
 
       <SearchBox onSearch={setFullTextQuery} placeholder="Keywords" value={fulltext} />
 
+      <DropdownContainer>
+        <Dropdown
+          placeholder={t('Type')}
+          value={rscType}
+          onChange={val => {
+            setResourceType(val || '');
+          }}
+          options={[
+            {
+              value: 'all',
+              text: 'All',
+            },
+            {
+              value: 'manifest',
+              text: 'Manifests',
+            },
+            {
+              value: 'canvas',
+              text: 'Canvass',
+            },
+          ]}
+        />
+      </DropdownContainer>
       <ButtonRow>
         <TinyButton disabled={!inQueue} onClick={() => applyAllFacets()}>
           {t('Apply')}
         </TinyButton>
-        <TinyButton disabled={!appliedFacets.length} onClick={() => clearAllFacets()}>
+        <TinyButton disabled={!appliedFacets.length && !fulltext} onClick={() => clearAllFacets()}>
           {t('Clear')}
         </TinyButton>
       </ButtonRow>

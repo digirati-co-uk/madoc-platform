@@ -28,7 +28,7 @@ export const TopicActions: React.FC<props> = ({ alignment }) => {
       <h3 style={{ fontSize: '1.5em' }}>{t('Explore all resources')}</h3>
       {/*might be more to add here in the future */}
       <ButtonRow $center={alignment === 'center'} $right={alignment === 'right'}>
-        {data &&
+        {data && (
           <Button
             as={Link}
             to={createLink({
@@ -42,7 +42,7 @@ export const TopicActions: React.FC<props> = ({ alignment }) => {
             {/*  todo - better language here ???*/}
             {t('View in search')}
           </Button>
-        }
+        )}
       </ButtonRow>
     </TopicActionWrapper>
   );
