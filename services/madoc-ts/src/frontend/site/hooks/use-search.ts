@@ -82,7 +82,7 @@ export function useSearch(topic?: string) {
   }, [appliedFacets, topic]);
 
   const topicResults = usePaginatedQuery(
-    ['topic-items', { id: topic, page }],
+    ['topic-items', { id: topic, page, appliedFacets }],
     async () => {
       return api.getSearchQuery(
         {
