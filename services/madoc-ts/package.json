@@ -294,7 +294,7 @@
     "react-refresh": "^0.10.0",
     "storybook": "^7.0.0-beta.45",
     "strip-indent": "^4.0.0",
-    "terser": "^5.14.1",
+    "terser": "^5.14.2",
     "thread-loader": "^3.0.4",
     "traverse": "^0.6.6",
     "ts-jest": "^29.0.5",
