@@ -7,6 +7,7 @@ import { useLocationQuery } from '../../shared/hooks/use-location-query';
 import { Link } from 'react-router-dom';
 import { createLink } from '../../shared/utility/create-link';
 import styled from 'styled-components';
+import { useTopic } from '../pages/loaders/topic-loader';
 
 const TopicActionWrapper = styled.div`
   display: flex;
@@ -20,19 +21,28 @@ export const TopicActions: React.FC<props> = ({ alignment }) => {
   const { t } = useTranslation();
   const router = useRouteContext();
   const query = useLocationQuery();
+  const { data } = useTopic();
 
   return (
     <TopicActionWrapper>
       <h3 style={{ fontSize: '1.5em' }}>{t('Explore all resources')}</h3>
       {/*might be more to add here in the future */}
       <ButtonRow $center={alignment === 'center'} $right={alignment === 'right'}>
-        <Button
-          as={Link}
-          to={createLink({ topicType: router.topicType, topic: router.topic, subRoute: 'search', query: query })}
-        >
-          {/*  todo - better language here ???*/}
-          {t('View in search')}
-        </Button>
+        {data && (
+          <Button
+            as={Link}
+            to={createLink({
+              topicType: router.topicType,
+              topic: router.topic,
+              subRoute: 'search',
+              query: query,
+              hash: data.id,
+            })}
+          >
+            {/*  todo - better language here ???*/}
+            {t('View in search')}
+          </Button>
+        )}
       </ButtonRow>
     </TopicActionWrapper>
   );

@@ -10,6 +10,7 @@ import { FieldComponent } from '../../../frontend/shared/capture-models/types/fi
 import { ManifestSnippet } from '../../../frontend/shared/components/ManifestSnippet';
 import { extractIdFromUrn } from '../../../utility/parse-urn';
 import { Subheading3 } from '../../../frontend/shared/typography/Heading3';
+import {useTopic} from "../../../frontend/site/pages/loaders/topic-loader";
 
 export type TopicItemExplorerProps = {
   id: string;
@@ -22,14 +23,18 @@ export const TopicItemExplorer: FieldComponent<TopicItemExplorerProps> = ({ valu
   const api = useApi();
   const container = useRef<HTMLDivElement>(null);
   const { topic } = useParams<Record<'topic', any>>();
+  const { data } = useTopic();
 
   const { data: pages, fetchMore, canFetchMore, isFetchingMore } = useInfiniteQuery(
     ['topic-items', {}],
     async (key, _, page?: number) => {
-      return api.getSearchQuery({ facets: [{ type: 'entity', indexable_text: topic }] } as any, page);
+      return api.getSearchQuery(
+        { facets: [{ type: 'entity', group_id: data?.id }], resource_type: 'manifest' } as any,
+        page
+      );
     },
     {
-      enabled: !!topic,
+      enabled: !!topic || !!data,
       getFetchMore: lastPage => {
         if (lastPage.pagination.totalPages === lastPage.pagination.page) {
           return undefined;

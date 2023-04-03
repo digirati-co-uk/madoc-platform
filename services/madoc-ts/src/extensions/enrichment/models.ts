@@ -22,6 +22,13 @@ export const entityModel: CaptureModelShorthand<EnrichmentEntity> = {
   label: { type: 'text-field', label: 'Slug' },
   title: { type: 'international-field', label: 'Title' },
   description: { type: 'international-field', label: 'Description' },
+  type: {
+    type: 'autocomplete-field',
+    label: 'Topic type',
+    dataSource: 'madoc-api://topic-types/autocomplete?q=%',
+    requestInitial: true,
+    outputIdAsString: false,
+  },
   __nested__: {
     authorities: { allowMultiple: true, label: 'Authority', pluralLabel: 'Authorities', labelledBy: 'value' },
     featured_resources: {
@@ -29,6 +36,7 @@ export const entityModel: CaptureModelShorthand<EnrichmentEntity> = {
       label: 'featured resource',
       pluralLabel: 'featured resources',
       labelledBy: 'madoc_id',
+      description: 'Note: only manifests can be featured resources',
     },
   },
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -43,12 +51,4 @@ export const entityModel: CaptureModelShorthand<EnrichmentEntity> = {
   'other_data.secondary_heading': { type: 'international-field', label: 'Secondary heading' },
   'other_data.main_image': { type: 'madoc-media-explorer', label: 'Hero image' },
   'other_data.thumbnail.alt': { type: 'international-field', label: 'alt text' },
-
-  type: {
-    type: 'autocomplete-field',
-    label: 'Topic type',
-    dataSource: 'madoc-api://topic-types/autocomplete?q=%',
-    requestInitial: true,
-    outputIdAsString: false,
-  },
 };

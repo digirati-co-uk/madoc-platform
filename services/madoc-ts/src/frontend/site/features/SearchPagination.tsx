@@ -13,9 +13,9 @@ export const SearchPagination: React.FC<{
   const [{ resolvedData: searchResponse, latestData }, displayFacets, isLoading] = useSearch(topicId);
   const PaginationComponent = paginationStyle ? PaginationNumbered : Pagination;
 
-  const pagination = latestData?.pagination;
+  const pagination = searchResponse?.pagination;
 
-  if (!pagination || !latestData) {
+  if (!pagination || !latestData || !searchResponse) {
     return null;
   }
 

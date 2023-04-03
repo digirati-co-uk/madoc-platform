@@ -79,14 +79,18 @@ export const TopicHero: React.FC<{ h1Color?: string; h2Color?: string }> = ({ h1
   const [isClamped, setIsClamped] = useState(false);
 
   useEffect(() => {
-    const el = ref.current;
-    const initClamped = el ? el.offsetHeight < el.scrollHeight || el.offsetWidth < el.scrollWidth : false;
-    setIsClamped(initClamped);
-  }, []);
+    const desc = Object.keys(data?.description ? data.description : {});
+    if (desc && desc.length) {
+      const el = ref.current;
+      const initClamped = el ? el.offsetHeight < el.scrollHeight || el.offsetWidth < el.scrollWidth : false;
+      setIsClamped(initClamped);
+    }
+  }, [data?.description]);
 
   if (!data) {
     return null;
   }
+
   return (
     <TopicHeroWrapper>
       <HeroText>

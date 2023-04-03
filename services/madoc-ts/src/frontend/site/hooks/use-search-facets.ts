@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { FacetQueryValue, useSearchQuery } from './use-search-query';
 
 export function useSearchFacets() {
-  const { fulltext, page, appliedFacets, setQuery } = useSearchQuery();
+  const { fulltext, rscType, page, appliedFacets, setQuery } = useSearchQuery();
   const [appliedFacetQueue, setAppliedFacetQueue] = useState<Array<FacetQueryValue>>([]);
   const [toRemoveFacetQueue, setToRemoveFacetQueue] = useState<Array<FacetQueryValue>>([]);
 
@@ -33,26 +33,29 @@ export function useSearchFacets() {
       return;
     }
 
-    setQuery(fulltext, [...appliedFacets, ...values.map(value => ({ k: key, v: value }))], 1);
+    setQuery(fulltext, [...appliedFacets, ...values.map(value => ({ k: key, v: value }))], rscType, 1);
   };
 
   const clearSingleFacet = (key: string, values: string[]) => {
     setQuery(
       fulltext,
       appliedFacets.filter(facet => !(facet.k === key && values.indexOf(facet.v) !== -1)),
+      rscType,
       page
     );
   };
 
   const clearAllFacets = (key?: string[]) => {
+    console.log(appliedFacets)
     if (key) {
       setQuery(
         fulltext,
         appliedFacets.filter(facet => key.indexOf(facet.k) !== -1),
+        rscType,
         page
       );
     } else {
-      setQuery(fulltext, [], page);
+      setQuery('', [], 'all', page);
     }
 
     setToRemoveFacetQueue([]);
@@ -92,6 +95,7 @@ export function useSearchFacets() {
       [...appliedFacets, ...appliedFacetQueue].filter(queue => {
         return removeQueueHash.indexOf(`${queue.k}::${queue.v}`) === -1;
       }),
+      rscType,
       page
     );
     setAppliedFacetQueue([]);
@@ -99,7 +103,11 @@ export function useSearchFacets() {
   };
 
   const setFullTextQuery = (newFullText: string) => {
-    setQuery(newFullText, appliedFacets, 1);
+    setQuery(newFullText, appliedFacets, rscType, 1);
+  };
+
+  const setResourceType = (newRscType: string) => {
+    setQuery(fulltext, appliedFacets, newRscType, 1);
   };
 
   return {
@@ -112,5 +120,6 @@ export function useSearchFacets() {
     applyAllFacets,
     isFacetSelected,
     setFullTextQuery,
+    setResourceType,
   };
 }
