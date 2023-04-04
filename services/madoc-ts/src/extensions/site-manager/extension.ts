@@ -1,5 +1,4 @@
 import { stringify } from 'query-string';
-import { sql } from 'slonik';
 import { ApiClient } from '../../gateway/api';
 import { Pagination } from '../../types/schemas/_pagination';
 import { BaseExtension, defaultDispose } from '../extension-manager';

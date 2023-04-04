@@ -11,6 +11,7 @@ import { ProjectRepository } from '../repository/project-repository';
 import { ThemeRepository } from '../repository/theme-repository';
 import { ApiKeyRepository } from '../repository/api-key-repository';
 import { EnvConfig } from '../types/env-config';
+import { WebhookRepository } from '../webhooks/webhook-repository';
 
 export const postgresConnection = (
   pool: DatabasePoolType,
@@ -33,6 +34,7 @@ export const postgresConnection = (
     context.captureModels = new CaptureModelRepository(connection, {
       capture_model_api_migrated: env.flags.capture_model_api_migrated,
     });
+    context.webhooks = new WebhookRepository(connection);
 
     await next();
   }

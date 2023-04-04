@@ -32,6 +32,7 @@ import k2c from 'koa2-connect';
 import cookieParser from 'cookie-parser';
 import schedule from 'node-schedule';
 import passport from 'koa-passport';
+import { WebhookServerExtension } from './webhooks/webhook-server-extension';
 
 const { readFile, readdir } = promises;
 
@@ -54,6 +55,7 @@ export async function createApp(config: ExternalConfig, env: EnvConfig) {
   app.context.routes = router;
   app.context.cron = new CronJobs();
   app.context.completions = new CompletionsExtension();
+  app.context.webhookExtension = new WebhookServerExtension();
 
   awaitProperty(createPluginManager(pool), manager => {
     app.context.pluginManager = manager;

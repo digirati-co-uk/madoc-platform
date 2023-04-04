@@ -60,8 +60,8 @@ export const errorHandler: Middleware = async (context, next) => {
       context.response.body = `
         <h1>Server error</h1>
         <p>This will only appear in development.</p>
-        <pre>${err.message}</pre>
-        <pre>${err.stack}</pre>
+        <pre>${(err as any).message}</pre>
+        <pre>${(err as any).stack}</pre>
       `;
     }
   }

@@ -151,6 +151,9 @@ export const Homepage: UniversalComponent<HomepageType> = createUniversalCompone
                 <li>
                   <Link to="/site/invitations">{t('User invitations')}</Link>
                 </li>
+                <li>
+                  <Link to="/system/webhooks">{t('Webhooks')}</Link>
+                </li>
               </MenuList>
             </AdminSection>
             {isGlobal ? (
