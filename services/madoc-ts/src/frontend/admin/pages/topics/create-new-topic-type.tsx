@@ -5,7 +5,7 @@ import { useApi } from '../../../shared/hooks/use-api';
 import { Button } from '../../../shared/navigation/Button';
 import { HrefLink } from '../../../shared/utility/href-link';
 import { CustomEditorTypes } from '../../../shared/page-blocks/custom-editor-types';
-import { entityModel, entityTypeModel } from '../../../../extensions/enrichment/models';
+import { entityTypeModel } from '../../../../extensions/enrichment/models';
 
 export function CreateNewTopicType() {
   const api = useApi();
@@ -15,6 +15,17 @@ export function CreateNewTopicType() {
     data.image_url = `${window.location.protocol}//${window.location.host}${data.image_url.publicLink ||
       data.image_url}`;
     // data.other_labels = (data.other_labels || []).filter((e: any) => e.value !== '');
+
+    if (data.featured_topics) {
+      if (data.featured_topics[0].length) {
+        console.log(data.featured_topics);
+        data.featured_topics = data.featured_topics
+          .map((f: { slug: { id: any } }) => f.slug.id)
+          .filter((f: string) => f !== undefined);
+      }
+      delete data.featured_topics;
+    }
+
     return api.enrichment.upsertTopicType(data);
   });
 
