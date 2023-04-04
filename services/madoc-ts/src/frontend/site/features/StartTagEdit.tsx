@@ -6,14 +6,23 @@ import { useRouteContext } from '../hooks/use-route-context';
 import { HrefLink } from '../../shared/utility/href-link';
 import TaggingIcon from '../../shared/icons/TaggingIcon';
 import { createLink } from '../../shared/utility/create-link';
+import { useCurrentUser } from '../../shared/hooks/use-current-user';
 
 export const StartTagEdit: React.FC<{ isEdit?: boolean }> = ({ isEdit }) => {
   const { t } = useTranslation();
   const { manifestId, topicType, topic, canvasId } = useRouteContext();
 
   const details = useUserDetails();
+  const user = useCurrentUser(true);
 
-  if (!details || !details.user || !topic) {
+  const canEdit =
+    user &&
+    user.scope &&
+    (user.scope.indexOf('site.admin') !== -1 ||
+      user.scope.indexOf('models.admin') !== -1 ||
+      user.scope.indexOf('models.contribute') !== -1);
+
+  if (!details || !details.user || !canEdit || !topic) {
     return null;
   }
 

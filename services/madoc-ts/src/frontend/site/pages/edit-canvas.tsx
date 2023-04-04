@@ -10,7 +10,6 @@ import { useRouteContext } from '../hooks/use-route-context';
 import { CanvasTagEditor } from '../features/CanvasTagEditor';
 export const EditCanvas: React.FC = () => {
   const { canvasId } = useRouteContext();
-  const { canUserSubmit, isLoading: isLoadingTasks, completedAndHide } = useCanvasUserTasks();
   const user = useCurrentUser(true);
 
   const canEdit =
