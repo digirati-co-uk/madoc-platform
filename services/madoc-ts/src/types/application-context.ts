@@ -14,6 +14,8 @@ import { SiteUserRepository } from '../repository/site-user-repository';
 import { ThemeRepository } from '../repository/theme-repository';
 import { CronJobs } from '../utility/cron-jobs';
 import { Mailer } from '../utility/mailer';
+import { WebhookRepository } from '../webhooks/webhook-repository';
+import { WebhookServerExtension } from '../webhooks/webhook-server-extension';
 import { ExternalConfig } from './external-config';
 import { router } from '../router';
 import { DatabasePoolConnectionType } from 'slonik';
@@ -40,10 +42,12 @@ declare module 'koa' {
     changeDiscovery: ChangeDiscoveryRepository;
     captureModels: CaptureModelRepository;
     siteManager: SiteUserRepository;
+    webhooks: WebhookRepository;
     pluginManager: PluginManager;
     cron: CronJobs;
 
     completions: CompletionsExtension;
+    webhookExtension: WebhookServerExtension;
     ajv: Ajv;
     staticPage?: string | ((token: string) => Promise<string | undefined>) | ((token: string) => undefined | string);
     disposableApis: ApiClient[];

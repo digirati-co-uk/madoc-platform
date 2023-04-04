@@ -75,6 +75,11 @@ import { KeyRegen } from './pages/system/key-regen';
 import { ListApiKeys } from './pages/system/list-api-keys';
 import { SystemStatus } from './pages/system/system-status';
 import { ListThemes } from './pages/system/themes/list-themes';
+import { CreateWebhook } from './pages/system/webhooks/create-webhook';
+import { EditWebhook } from './pages/system/webhooks/edit-webhook';
+import { ListWebhookCalls } from './pages/system/webhooks/list-webhook-calls';
+import { ListWebhooks } from './pages/system/webhooks/list-webhooks';
+import { SingleWebhook } from './pages/system/webhooks/single-webhook';
 import { TaskRouter } from './pages/tasks/task-router';
 import { ProjectContent } from './pages/crowdsourcing/projects/project-content';
 import { ProjectMetadata } from './pages/crowdsourcing/projects/project-metadata';
@@ -512,6 +517,26 @@ export const routes: RouteObject[] = [
   {
     path: '/system/plugins',
     element: <ListPlugins />,
+  },
+  {
+    path: '/system/webhooks',
+    element: <ListWebhooks />,
+  },
+  {
+    path: '/system/webhooks/calls',
+    element: <ListWebhookCalls />,
+  },
+  {
+    path: '/system/webhooks/create',
+    element: <CreateWebhook />,
+  },
+  {
+    path: '/system/webhooks/:webhook',
+    element: <SingleWebhook />,
+  },
+  {
+    path: '/system/webhooks/:webhook/edit',
+    element: <EditWebhook />,
   },
   {
     path: '/system/plugins/external/:owner/:repo',
