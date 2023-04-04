@@ -31,6 +31,23 @@ export function CreateNewTopic() {
       };
     }
 
+    if (input.featured_resources) {
+      if (input.featured_resources[0].length) {
+        const ftRes = input.featured_resources;
+        if (Array.isArray(ftRes)) {
+          const newArr = ftRes.map((f: { madoc_id?: string; resource_id?: string }) =>
+            typeof f === 'object' ? (f.resource_id ? f.resource_id : f.madoc_id) : f
+          );
+          input.featured_resources = newArr.filter(x => x !== undefined || null);
+        } else if (typeof ftRes === 'string') {
+          input.featured_resources = [ftRes];
+        } else {
+          input.featured_resources = Object.values(ftRes);
+        }
+      }
+      delete input.featured_resources;
+    }
+
     //todo hopfully will change
     if (data && hasTopic) {
       input.type = getValue(data.label);
