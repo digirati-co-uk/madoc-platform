@@ -46,18 +46,18 @@ export const ViewTopic = () => {
         <div style={{ display: 'flex' }}>
           <div style={{ maxWidth: 500 }}>
             <Slot name="topic-results-filters" small>
-              <SearchPageFilters topicId={data.id} />
+              <SearchPageFilters />
             </Slot>
           </div>
 
           <div style={{ width: '100%' }}>
             <Slot name="topic-item-results">
               <AppliedFacets />
-              <SearchPageResults topicId={data.id} />
+              <SearchPageResults />
             </Slot>
 
             <Slot name="topic-items-pagination">
-              <SearchPagination topicId={data.id} />
+              <SearchPagination />
             </Slot>
           </div>
         </div>

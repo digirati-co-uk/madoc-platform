@@ -7,10 +7,9 @@ import { useSearch } from '../hooks/use-search';
 export const SearchPagination: React.FC<{
   paginationStyle?: boolean;
   position?: 'flex-end' | 'flex-start' | 'center';
-  topicId?: string;
-}> = ({ paginationStyle, position, topicId }) => {
+}> = ({ paginationStyle, position }) => {
   const { rawQuery, page } = useSearchQuery();
-  const [{ resolvedData: searchResponse, latestData }, displayFacets, isLoading] = useSearch(topicId);
+  const [{ resolvedData: searchResponse, latestData }, displayFacets, isLoading] = useSearch();
   const PaginationComponent = paginationStyle ? PaginationNumbered : Pagination;
 
   const pagination = searchResponse?.pagination;
