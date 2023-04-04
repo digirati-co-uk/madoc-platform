@@ -9,8 +9,3 @@ export const api = new ApiClient({
   jwt,
   publicSiteSlug: slug,
 });
-
-if (process.env.NODE_ENV !== 'production') {
-  // @ts-ignore
-  globalThis.MadocApi = api;
-}
