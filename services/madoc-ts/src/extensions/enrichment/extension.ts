@@ -92,15 +92,18 @@ export class EnrichmentExtension extends BaseDjangoExtension {
   }
 
   enrichManifestInternal(id: number, callback?: string) {
-    return this.api.request<EnrichmentTask>(`/api/enrichment/tasks/madoc_manifest_enrichment_pipeline/`, {
-      method: 'POST',
-      body: {
-        task: {
-          subject: `urn:madoc:manifest:${id}`,
-          parameters: [{ callback_url: callback }],
+    return this.api.request<EnrichmentTask>(
+      `/api/enrichment/internal/madoc/tasks/madoc_manifest_enrichment_pipeline/`,
+      {
+        method: 'POST',
+        body: {
+          task: {
+            subject: `urn:madoc:manifest:${id}`,
+            parameters: [{ callback_url: callback }],
+          },
         },
-      },
-    });
+      }
+    );
   }
 
   allTasks = [
