@@ -5,9 +5,7 @@ import { apiHooks, paginatedApiHooks } from '../../shared/hooks/use-api-query';
 import { useSiteConfiguration } from '../features/SiteConfigurationContext';
 import { useRouteContext } from './use-route-context';
 import { useSearchQuery } from './use-search-query';
-import { usePaginatedQuery } from 'react-query';
-import { useApi } from '../../shared/hooks/use-api';
-import { useBreadcrumbs } from "../../shared/components/Breadcrumbs";
+import { useBreadcrumbs } from '../../shared/components/Breadcrumbs';
 
 function normalizeDotKey(key: string) {
   return key.startsWith('metadata.') ? key.slice('metadata.'.length).toLowerCase() : key.toLowerCase();
@@ -32,7 +30,6 @@ export function useSearch() {
     return;
   }, [appliedFacets, topicId]);
 
-  const api = useApi();
   const [facetsToRequest, facetDisplayOrder, facetIdMap] = useMemo(() => {
     const facets = !topicId && searchFacetConfig.data ? searchFacetConfig.data.facets : [];
     const returnList: string[] = [];
@@ -55,6 +52,27 @@ export function useSearch() {
     return [returnList, displayOrder, idMap];
   }, [searchFacetConfig.data, topicId]);
 
+  const topicFacets = appliedFacets.map(facet =>
+    facet.k === 'entity'
+      ? {
+          type: 'entity',
+          group_id: facet.v,
+        }
+      : {
+          type: 'entity',
+          subtype: facet.k,
+          indexable_text: facet.v,
+        }
+  );
+
+  const searchQFacets = appliedFacets.map(facet => ({
+    type: 'metadata',
+    subtype: facet.k,
+    value: facet.v,
+  }));
+
+  const facets = topic ? topicFacets : searchQFacets;
+
   const searchResults = paginatedApiHooks.getSiteSearchQuery(
     () => [
       {
@@ -64,11 +82,8 @@ export function useSearch() {
         fulltext: fulltext,
         facet_fields: facetsToRequest.length ? facetsToRequest : undefined,
         //  @todo stringify facets.
-        facets: appliedFacets.map(facet => ({
-          type: 'metadata',
-          subtype: facet.k,
-          value: facet.v,
-        })),
+        facets: facets,
+        resource_type: rscType,
         facet_on_manifests: true,
         search_type: searchStrategy as any,
         number_of_facets: searchFacetConfig.data?.facets.length ? 100 : undefined,
@@ -81,39 +96,9 @@ export function useSearch() {
     {
       enabled:
         !searchFacetConfig.isLoading &&
-        (!!facetsToRequest.length || !!fulltext || collectionId || manifestId || projectId),
+        (!!facetsToRequest.length || !!fulltext || !!rscType || collectionId || manifestId || projectId || topicId),
     }
   );
-
-  const topicResults = usePaginatedQuery(
-    ['topic-items', { id: topicId, page, appliedFacets, fulltext, rscType }],
-    async () => {
-      return api.getSearchQuery(
-        {
-          fulltext: fulltext,
-          resource_type: rscType,
-          facets: appliedFacets.map(facet =>
-            facet.k === 'entity'
-              ? {
-                  type: 'entity',
-                  group_id: facet.v,
-                }
-              : {
-                  type: 'entity',
-                  subtype: facet.k,
-                  indexable_text: facet.v,
-                }
-          ),
-        } as any,
-        page
-      );
-    },
-    {
-      enabled: !searchFacetConfig.isLoading && (!!facetsToRequest.length || !!fulltext || !!topicId),
-    }
-  );
-
-  const searchResponse = topicId ? topicResults : searchResults;
 
   const displayFacets = useMemo(() => {
     // We need to display the facets. We have two lists.
@@ -139,8 +124,8 @@ export function useSearch() {
       [key: string]: Array<{ key: string; value: string; count: number; configuration?: FacetConfig }>;
     } = {};
 
-    const metadataFacets = searchResponse.resolvedData?.facets?.metadata || {};
-    const entityFacets = searchResponse.resolvedData?.facets?.entity || {};
+    const metadataFacets = searchResults.resolvedData?.facets?.metadata || {};
+    const entityFacets = searchResults.resolvedData?.facets?.entity || {};
 
     const facetType = topicId ? entityFacets : metadataFacets;
 
@@ -240,6 +225,6 @@ export function useSearch() {
     }
 
     return displayList;
-  }, [facetDisplayOrder, facetIdMap, searchResponse.resolvedData, topicId]);
-  return [searchResponse, displayFacets, searchFacetConfig.isLoading || searchResponse.isLoading] as const;
+  }, [facetDisplayOrder, facetIdMap, searchResults.resolvedData, topicId]);
+  return [searchResults, displayFacets, searchFacetConfig.isLoading || searchResults.isLoading] as const;
 }

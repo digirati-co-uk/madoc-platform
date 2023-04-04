@@ -121,6 +121,15 @@ export type SearchQuery = {
         type: string;
         indexable_text: string;
       }
+    | {
+        type: string;
+        subtype: string;
+        indexable_text: string;
+      }
+    | {
+        type: string;
+        group_id: string;
+      }
     // Unknown if this is supported.
     | {
         type: string;
