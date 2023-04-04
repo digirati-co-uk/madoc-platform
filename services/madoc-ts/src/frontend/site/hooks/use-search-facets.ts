@@ -54,7 +54,7 @@ export function useSearchFacets() {
         page
       );
     } else {
-      setQuery('', [], '', page);
+      setQuery(fulltext, [], rscType, page);
     }
 
     setToRemoveFacetQueue([]);

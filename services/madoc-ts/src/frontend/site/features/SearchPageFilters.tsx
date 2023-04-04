@@ -86,7 +86,7 @@ export const SearchPageFilters: React.FC<SearchPageFiltersProps> = ({ checkBoxCo
         <TinyButton disabled={!inQueue} onClick={() => applyAllFacets()}>
           {t('Apply')}
         </TinyButton>
-        <TinyButton disabled={!appliedFacets.length && !fulltext} onClick={() => clearAllFacets()}>
+        <TinyButton disabled={!appliedFacets.length} onClick={() => clearAllFacets()}>
           {t('Clear')}
         </TinyButton>
       </ButtonRow>
