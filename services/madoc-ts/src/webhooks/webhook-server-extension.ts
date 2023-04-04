@@ -97,7 +97,7 @@ export class WebhookServerExtension extends RegistryExtension<IncomingWebhook | 
     invariant(payload.expires, 'Invalid webhook');
     invariant(siteId === payload.siteId);
     invariant(eventId === payload.eventId, 'Invalid webhook');
-    invariant(payload.created + payload.expires < time, 'Webhook has expired');
+    invariant(payload.created + payload.expires > time, 'Webhook has expired');
 
     return true;
   }
