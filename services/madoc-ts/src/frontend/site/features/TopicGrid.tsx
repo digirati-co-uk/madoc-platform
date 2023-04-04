@@ -16,6 +16,7 @@ export const TopicGrid: React.FC<{
   const items = data?.topics;
   const createLink = useRelativeLinks();
 
+  console.log(items)
   if (!data) {
     return null;
   }

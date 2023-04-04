@@ -9,7 +9,8 @@ const TopicHeroWrapper = styled.div`
   margin-left: -2.3em;
   margin-right: -2.3em;
   position: relative;
-  min-height: 600px;
+  //min-height: 600px;
+  //max-height: 300px;
   display: flex;
   align-items: end;
   justify-content: center;
@@ -81,7 +82,7 @@ export const HeroHeading = styled.h1`
   margin: 0;
 `;
 
-export const TopicTypeHero: React.FC<{ textColor?: string; overlayColor?: string }> = ({ textColor, overlayColor }) => {
+export const TopicTypeHero: React.FC<{ textColor?: string; overlayColor?: string; imageHeight?: string }> = ({ textColor, overlayColor, imageHeight }) => {
   const { data } = useTopicType();
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -103,7 +104,7 @@ export const TopicTypeHero: React.FC<{ textColor?: string; overlayColor?: string
   }
 
   return (
-    <TopicHeroWrapper style={{ color: textColor }}>
+    <TopicHeroWrapper style={{ color: textColor, maxHeight: imageHeight ? `${imageHeight}px` : '400px' }}>
       <BackgroundImage $overlay={overlayColor} style={{ backgroundImage: `url("${data.image_url}")` }} />
       <TextBox data-is-expanded={isExpanded}>
         <TopWrapper>
@@ -139,9 +140,11 @@ blockEditorFor(TopicTypeHero, {
   defaultProps: {
     textColor: '#002d4b',
     overlayColor: '#002d4b',
+    imageHeight: '400',
   },
   editor: {
     textColor: { label: 'Heading and summary color', type: 'color-field' },
     overlayColor: { label: 'Overlay color', type: 'color-field' },
+    imageHeight: { label: 'Max image height in px', type: 'text-field' },
   },
 });

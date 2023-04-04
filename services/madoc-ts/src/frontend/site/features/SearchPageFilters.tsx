@@ -32,11 +32,10 @@ const DropdownContainer = styled.div`
 interface SearchPageFiltersProps {
   checkBoxColor?: string;
   filterHeader?: string;
-  topicId?: string;
 }
 
-export const SearchPageFilters: React.FC<SearchPageFiltersProps> = ({ checkBoxColor, filterHeader, topicId }) => {
-  const [{ resolvedData: searchResponse, latestData }, displayFacets, isLoading] = useSearch(topicId);
+export const SearchPageFilters: React.FC<SearchPageFiltersProps> = ({ checkBoxColor, filterHeader }) => {
+  const [{ resolvedData: searchResponse, latestData }, displayFacets, isLoading] = useSearch();
   const { t } = useTranslation();
   const { appliedFacets, fulltext, rscType } = useSearchQuery();
 

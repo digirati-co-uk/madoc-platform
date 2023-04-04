@@ -7,12 +7,16 @@ import { useRouteContext } from './use-route-context';
 import { useSearchQuery } from './use-search-query';
 import { usePaginatedQuery } from 'react-query';
 import { useApi } from '../../shared/hooks/use-api';
+import { useBreadcrumbs } from "../../shared/components/Breadcrumbs";
 
 function normalizeDotKey(key: string) {
   return key.startsWith('metadata.') ? key.slice('metadata.'.length).toLowerCase() : key.toLowerCase();
 }
 
-export function useSearch(topic?: string) {
+export function useSearch() {
+  const { topic } = useBreadcrumbs();
+  const topicId = topic?.id;
+
   const { projectId, collectionId, manifestId } = useRouteContext();
   const { fulltext, appliedFacets, page, rscType } = useSearchQuery();
   const {
@@ -22,15 +26,15 @@ export function useSearch(topic?: string) {
   const searchFacetConfig = apiHooks.getSiteSearchFacetConfiguration(() => []);
 
   useEffect(() => {
-    if (topic) {
-      appliedFacets.push({ k: 'entity', v: topic });
+    if (topicId) {
+      appliedFacets.push({ k: 'entity', v: topicId });
     }
     return;
-  }, [appliedFacets, topic]);
+  }, [appliedFacets, topicId]);
 
   const api = useApi();
   const [facetsToRequest, facetDisplayOrder, facetIdMap] = useMemo(() => {
-    const facets = !topic && searchFacetConfig.data ? searchFacetConfig.data.facets : [];
+    const facets = !topicId && searchFacetConfig.data ? searchFacetConfig.data.facets : [];
     const returnList: string[] = [];
     const idMap: { [id: string]: { config: FacetConfig; keys: string[] } } = {};
     const displayOrder: string[] = [];
@@ -49,7 +53,7 @@ export function useSearch(topic?: string) {
       }
     }
     return [returnList, displayOrder, idMap];
-  }, [searchFacetConfig.data, topic]);
+  }, [searchFacetConfig.data, topicId]);
 
   const searchResults = paginatedApiHooks.getSiteSearchQuery(
     () => [
@@ -82,7 +86,7 @@ export function useSearch(topic?: string) {
   );
 
   const topicResults = usePaginatedQuery(
-    ['topic-items', { id: topic, page, appliedFacets, fulltext, rscType }],
+    ['topic-items', { id: topicId, page, appliedFacets, fulltext, rscType }],
     async () => {
       return api.getSearchQuery(
         {
@@ -105,11 +109,11 @@ export function useSearch(topic?: string) {
       );
     },
     {
-      enabled: !searchFacetConfig.isLoading && (!!facetsToRequest.length || !!fulltext || !!topic),
+      enabled: !searchFacetConfig.isLoading && (!!facetsToRequest.length || !!fulltext || !!topicId),
     }
   );
 
-  const searchResponse = topic ? topicResults : searchResults;
+  const searchResponse = topicId ? topicResults : searchResults;
 
   const displayFacets = useMemo(() => {
     // We need to display the facets. We have two lists.
@@ -138,7 +142,7 @@ export function useSearch(topic?: string) {
     const metadataFacets = searchResponse.resolvedData?.facets?.metadata || {};
     const entityFacets = searchResponse.resolvedData?.facets?.entity || {};
 
-    const facetType = topic ? entityFacets : metadataFacets;
+    const facetType = topicId ? entityFacets : metadataFacets;
 
     const showAllFacets = facetDisplayOrder.length === 0;
     for (const facet of Object.keys(facetType)) {
@@ -236,6 +240,6 @@ export function useSearch(topic?: string) {
     }
 
     return displayList;
-  }, [facetDisplayOrder, facetIdMap, searchResponse.resolvedData, topic]);
+  }, [facetDisplayOrder, facetIdMap, searchResponse.resolvedData, topicId]);
   return [searchResponse, displayFacets, searchFacetConfig.isLoading || searchResponse.isLoading] as const;
 }

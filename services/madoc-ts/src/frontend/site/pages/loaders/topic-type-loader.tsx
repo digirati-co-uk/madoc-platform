@@ -17,7 +17,6 @@ export type TopicTypeLoaderType = {
 export function useTopicType() {
   const params = useParams<{ topicType?: string }>();
   return usePaginatedData(TopicTypeLoader, undefined, { enabled: params.topicType && params.topicType !== '_' });
-
 }
 
 export const TopicTypeLoader: UniversalComponent<TopicTypeLoaderType> = createUniversalComponent<TopicTypeLoaderType>(
@@ -36,7 +35,7 @@ export const TopicTypeLoader: UniversalComponent<TopicTypeLoaderType> = createUn
   },
   {
     getKey: (params, query) => {
-      return ['site-topic-type', { topicType: params.topicType, page: Number(query.page) || 1 }];
+      return ['site-topic-type', { topicType: params.topicType, page: Number(query.page) || 0 }];
     },
     getData: async (key, vars, api) => {
       return await api.enrichment.getSiteTopicType(vars.topicType, vars.page);
