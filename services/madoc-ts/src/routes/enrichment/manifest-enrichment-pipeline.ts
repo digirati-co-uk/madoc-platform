@@ -14,7 +14,8 @@ export const manifestEnrichmentPipeline: RouteMiddleware<{ id: number }> = async
   const webhook = await context.webhookExtension.generateWebhookUrl(
     site,
     manifestEnrichmentPipelineEvent.event_id,
-    12 * 3600
+    12 * 3600,
+    true
   );
   context.response.body = await siteApi.enrichment.enrichManifestInternal(context.params.id, webhook);
 };
