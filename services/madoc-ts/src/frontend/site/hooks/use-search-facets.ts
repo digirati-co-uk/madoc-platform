@@ -46,7 +46,6 @@ export function useSearchFacets() {
   };
 
   const clearAllFacets = (key?: string[]) => {
-    console.log(appliedFacets)
     if (key) {
       setQuery(
         fulltext,
@@ -55,7 +54,7 @@ export function useSearchFacets() {
         page
       );
     } else {
-      setQuery('', [], 'all', page);
+      setQuery('', [], '', page);
     }
 
     setToRemoveFacetQueue([]);
