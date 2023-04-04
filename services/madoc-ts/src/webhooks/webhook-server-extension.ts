@@ -41,7 +41,7 @@ export class WebhookServerExtension extends RegistryExtension<IncomingWebhook | 
       code: await this.sign({ eventId, expires, siteId: site.id }),
     };
 
-    return `${internal ? apiGateway : gatewayHost}/s/${site.slug}/madoc/api/webhook?${stringify(query)}}`;
+    return `${internal ? apiGateway : gatewayHost}/s/${site.slug}/madoc/api/webhook?${stringify(query)}`;
   }
 
   getHooksForEvents(eventId: string, siteId: number): Array<IncomingWebhook | OutgoingWebhook> {
