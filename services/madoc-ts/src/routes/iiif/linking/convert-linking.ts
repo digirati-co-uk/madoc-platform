@@ -7,7 +7,7 @@ import { RequestError } from '../../../utility/errors/request-error';
 import { userWithScope } from '../../../utility/user-with-scope';
 import contentType from 'content-type';
 
-function linkHash(uri: string) {
+export function linkHash(uri: string) {
   return createHash('sha1')
     .update(uri)
     .digest('hex');

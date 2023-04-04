@@ -4,8 +4,10 @@ import { keyRegenerate } from './routes/admin/key-regenerate';
 import { listApiKeys } from './routes/admin/list-api-keys';
 import { getProjectAnnotationStyle } from './routes/annotation-styles/get-project-annotation-style';
 import { annotationStyles } from './routes/annotation-styles/index';
+import { manifestEnrichmentPipeline } from "./routes/enrichment/manifest-enrichment-pipeline";
 import { searchAllUsers } from './routes/global/search-all-users';
 import { systemCheck } from './routes/global/system-check';
+import { addPlaintext } from './routes/iiif/linking/add-plaintext';
 import { getAutomatedUsers } from './routes/manage-site/get-automated-users';
 import { createProjectExport } from './routes/projects/create-project-export';
 import { getProjectRawData } from './routes/projects/get-project-raw-data';
@@ -415,6 +417,7 @@ export const router = new TypedRouter({
   'get-manifest-linking': [TypedRouter.GET, '/api/madoc/iiif/manifests/:id/linking', getLinking],
   'get-manifest-canvas-linking': [TypedRouter.GET, '/api/madoc/iiif/manifests/:id/canvas-linking', getParentLinking],
   'search-index-manifest': [TypedRouter.POST, '/api/madoc/iiif/manifests/:id/index', indexManifest],
+  'search-enrich-manifest': [TypedRouter.POST, '/api/madoc/iiif/manifests/:id/enrichment', manifestEnrichmentPipeline],
 
   // Canvas API
   'list-canvases': [TypedRouter.GET, '/api/madoc/iiif/canvases', listCanvases],
@@ -432,6 +435,7 @@ export const router = new TypedRouter({
   'search-index-canvas': [TypedRouter.POST, '/api/madoc/iiif/canvases/:id/index', indexCanvas],
   'convert-linking-property': [TypedRouter.POST, '/api/madoc/iiif/linking/:id/convert', convertLinking],
   'get-canvas-plaintext': [TypedRouter.GET, '/api/madoc/iiif/canvases/:id/plaintext', getCanvasPlaintext],
+  'update-canvas-plaintext': [TypedRouter.POST, '/api/madoc/iiif/canvases/:id/plaintext', addPlaintext],
   'get-canvas-source': [TypedRouter.GET, '/api/madoc/iiif/canvas-source', getCanvasReference],
   'get-canvas-deletion-summary': [
     TypedRouter.GET,

@@ -1,3 +1,5 @@
+import { ApiClient } from '../gateway/api';
+
 export interface WebhookRow {
   id: string;
   event_id: string;
@@ -43,6 +45,6 @@ export interface IncomingWebhook {
   is_outgoing: false;
   type: string;
   event_id: string;
-  execute: (request: any) => any | Promise<any>;
+  execute: (request: any, api: ApiClient) => any | Promise<any>;
   source?: { type: string; id?: string; name: string };
 }

@@ -1,4 +1,5 @@
 import { generateId } from '../../frontend/shared/capture-models/helpers/generate-id';
+import { api } from '../../gateway/api.server';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { optionalUserWithScope } from '../../utility/user-with-scope';
 import { WebhookCallRow } from '../webhook-types';
@@ -13,6 +14,8 @@ export const executeWebhookInternal: RouteMiddleware<{ event_id: string }> = asy
   const hooks = context.webhookExtension.getHooksForEvents(eventId, siteId);
   const results = { success: 0, fail: 0 };
   const callId = generateId();
+
+  const siteApi = api.asUser({ siteId }, {}, true);
 
   const databaseHooks = await context.webhooks.listWebhooksByEvent(eventId, siteId);
 
@@ -64,7 +67,7 @@ export const executeWebhookInternal: RouteMiddleware<{ event_id: string }> = asy
         continue;
       } else {
         // Do internal thing.
-        result.response = (await hook.execute(body)) || {};
+        result.response = (await hook.execute(body, siteApi)) || {};
       }
       results.success++;
     } catch (e) {

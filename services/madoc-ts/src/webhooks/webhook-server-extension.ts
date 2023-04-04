@@ -3,6 +3,7 @@ import invariant from 'tiny-invariant';
 import { RegistryExtension } from '../extensions/registry-extension';
 import { generateId } from '../frontend/shared/capture-models/helpers/generate-id';
 import { apiGateway, gatewayHost } from '../gateway/api.server';
+import { manifestEnrichmentHook } from '../routes/enrichment/manifest-enrichment-pipeline';
 import { getPem, getPublicPem } from '../utility/get-pem';
 import { IncomingWebhook, OutgoingWebhook } from './webhook-types';
 import { JWK, JWS } from 'jose';
@@ -13,12 +14,14 @@ export class WebhookServerExtension extends RegistryExtension<IncomingWebhook | 
       registryName: 'webhook',
     });
 
+    WebhookServerExtension.register(manifestEnrichmentHook);
+
     WebhookServerExtension.register({
       is_outgoing: false,
       type: 'example-test',
       event_id: 'test-event',
       execute: body => {
-        console.log('Did this work?', body);
+        console.log('WebHooks - test event:', body);
       },
     });
   }

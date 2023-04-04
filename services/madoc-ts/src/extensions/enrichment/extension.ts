@@ -1,6 +1,6 @@
 import { Topic, TopicType, TopicTypeListResponse } from '../../types/schemas/topics';
 import { BaseDjangoExtension } from './base-django-extension';
-import { EnrichmentIndexPayload } from './types';
+import { EnrichmentIndexPayload, EnrichmentPlaintext, EnrichmentTask } from './types';
 import { ApiKey } from '../../types/api-key';
 import { SearchQuery, SearchResponse } from '../../types/search';
 import {
@@ -79,7 +79,28 @@ export class EnrichmentExtension extends BaseDjangoExtension {
   }
 
   getEnrichmentTask(id: string) {
-    return this.api.request(`/api/enrichment/task_log/${id}`);
+    return this.api.request<EnrichmentTask>(`/api/enrichment/task_log/${id}`);
+  }
+  getEnrichmentPlaintext(id: string) {
+    return this.api.request<EnrichmentPlaintext>(`/api/enrichment/plaintext/${id}`);
+  }
+
+  enrichManifest(id: number) {
+    return this.api.request<EnrichmentTask>(`/api/madoc/iiif/manifests/${id}/enrichment`, {
+      method: 'POST',
+    });
+  }
+
+  enrichManifestInternal(id: number, callback?: string) {
+    return this.api.request<EnrichmentTask>(`/api/enrichment/tasks/madoc_manifest_enrichment_pipeline`, {
+      method: 'POST',
+      body: {
+        task: {
+          subject: `urn:madoc:manifest:${id}`,
+          parameters: [{ callback_url: callback }],
+        },
+      },
+    });
   }
 
   allTasks = [

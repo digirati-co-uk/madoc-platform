@@ -153,6 +153,7 @@ export class ApiClient {
     // Enrichment
     this.authority = new AuthorityExtension(this);
     this.enrichment = new EnrichmentExtension(this);
+    this.webhooks = new WebhookExtension(this);
     this.search = new SearchExtension(this);
 
     if (options.withoutExtensions) {
@@ -160,7 +161,6 @@ export class ApiClient {
       return;
     }
 
-    this.webhooks = new WebhookExtension(this);
     this.pageBlocks = new PageBlockExtension(this, getDefaultPageBlockDefinitions());
     this.media = new MediaExtension(this);
     this.system = new SystemExtension(this);
@@ -1077,6 +1077,13 @@ export class ApiClient {
     return this.request<{ found: boolean; transcription: string }>(`/api/madoc/iiif/canvases/${id}/plaintext`);
   }
 
+  async updateCanvasPlaintext(id: number, plaintext: string) {
+    return this.request<{ success: boolean; empty: boolean }>(`/api/madoc/iiif/canvases/${id}/plaintext`, {
+      method: 'POST',
+      body: { plaintext },
+    });
+  }
+
   async getCanvasDeletionSummary(id: number) {
     return this.request<CanvasDeletionSummary>(`/api/madoc/iiif/canvases/${id}/deletion-summary`);
   }
@@ -1754,6 +1761,12 @@ export class ApiClient {
       link: ResourceLinkRow;
     }>(`/api/madoc/iiif/linking/${id}/convert`, {
       method: 'POST',
+    });
+  }
+
+  async deleteLinkingProperty(id: number) {
+    return this.request(`/api/madoc/iiif/linking/${id}`, {
+      method: 'DELETE',
     });
   }
 
