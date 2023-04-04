@@ -23,9 +23,6 @@ export function ViewTopicType() {
 
       <Slot name="topics-grid">
         <TopicGrid />
-      </Slot>
-
-      <Slot name="topic-type-pagination">
         <TopicTypePagination />
       </Slot>
     </>
