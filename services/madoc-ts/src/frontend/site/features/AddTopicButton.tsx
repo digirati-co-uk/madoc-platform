@@ -77,7 +77,7 @@ export const AddTopicButton: React.FC<{
       ) : (
         <>
           <InputContainer>
-            <InputLabel htmlFor="tagAuto">Search topic</InputLabel>
+            <InputLabel htmlFor="tagAuto">Search topic type</InputLabel>
             <Input
               onChange={e => startAutoComplete(e.target.value)}
               onBlur={e => startAutoComplete(e.target.value)}
