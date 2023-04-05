@@ -61,6 +61,7 @@ export const SearchPageFilters: React.FC<SearchPageFiltersProps> = ({ checkBoxCo
 
       <DropdownContainer>
         <Dropdown
+          key={fulltext}
           placeholder={t('Type')}
           value={rscType}
           onChange={val => {

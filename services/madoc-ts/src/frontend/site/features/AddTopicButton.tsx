@@ -1,4 +1,5 @@
 import React, { useRef } from 'react';
+import styled from 'styled-components';
 import { Button, ButtonRow } from '../../shared/navigation/Button';
 import { CloseIcon } from '../../shared/icons/CloseIcon';
 import { useApi } from '../../shared/hooks/use-api';
@@ -9,12 +10,16 @@ import { useInfiniteAction } from '../hooks/use-infinite-action';
 import { Input, InputContainer, InputLabel } from '../../shared/form/Input';
 import { TagPill } from '../hooks/canvas-menu/tagging-panel';
 import { AutoCompleteEntitySnippet } from '../../../extensions/enrichment/authority/types';
+import { AddTagButton } from './AddTagButton';
 
-export const AddTagButton: React.FC<{
-  topicType: string;
+const TopicPill = styled(TagPill)`
+  border-color: orange;
+  text-transform: capitalize;
+`;
+export const AddTopicButton: React.FC<{
   statusLoading: boolean;
   addTag: (id: string | undefined) => Promise<void>;
-}> = ({ topicType, addTag, statusLoading }) => {
+}> = ({ addTag, statusLoading }) => {
   const container = useRef<HTMLDivElement>(null);
   const [fullText, setFulltext] = React.useState('');
   const [isLoading, setIsLoading] = React.useState(false);
@@ -22,9 +27,9 @@ export const AddTagButton: React.FC<{
   const api = useApi();
 
   const { data: pages, fetchMore, canFetchMore, isFetchingMore, isLoading: queryLoading } = useInfiniteQuery(
-    ['topic-autocomplete', { fullText, topicType }],
+    ['topic-type-autocomplete', fullText],
     async (key, _, vars: { page?: number } = { page: 1 }) => {
-      return api.enrichment.topicAutoComplete(topicType, fullText, vars.page);
+      return api.enrichment.topicTypeAutoComplete(fullText, vars.page);
     },
     {
       getFetchMore: lastPage => {
@@ -51,47 +56,28 @@ export const AddTagButton: React.FC<{
   };
 
   return (
-    <div>
-      {selected && (
+    <div style={{ maxWidth: '100%' }}>
+      {selected && selected.slug ? (
         <>
           <div style={{ display: 'flex' }}>
-            <p> Tag this canvas with </p>
-            <TagPill style={{ alignSelf: 'end' }}>
+            <p> Topic Type: </p>
+            <TopicPill style={{ alignSelf: 'end' }}>
               <CloseIcon
                 onClick={() => {
                   setSelected(null);
                 }}
               />
               {selected.slug}
-            </TagPill>
+            </TopicPill>
           </div>
           <ButtonRow>
-            <Button
-              onClick={() => {
-                setSelected(null);
-              }}
-            >
-              Cancel
-            </Button>
-            <Button
-              disabled={statusLoading}
-              onClick={() =>
-                addTag(selected?.id).then(() => {
-                  setSelected(null);
-                })
-              }
-            >
-              Submit
-            </Button>
+            <AddTagButton topicType={selected.slug} statusLoading={statusLoading} addTag={addTag} />
           </ButtonRow>
         </>
-      )}
-      {queryLoading && (!pages || pages[0].pagination.totalResults === 0) ? (
-        <p color={'grey'}>This type has no topics</p>
       ) : (
         <>
           <InputContainer>
-            <InputLabel htmlFor="tagAuto">Search topics</InputLabel>
+            <InputLabel htmlFor="tagAuto">Search topic type</InputLabel>
             <Input
               onChange={e => startAutoComplete(e.target.value)}
               onBlur={e => startAutoComplete(e.target.value)}
@@ -109,10 +95,10 @@ export const AddTagButton: React.FC<{
               {pages?.map((page, key) => {
                 return (
                   <React.Fragment key={key}>
-                    {page.results.map(result => (
-                      <TagPill as={Button} key={result.id} data-is-button={true} onClick={() => setSelected(result)}>
+                    {page.results.map((result: any) => (
+                      <TopicPill as={Button} key={result.id} data-is-button={true} onClick={() => setSelected(result)}>
                         {result.slug}
-                      </TagPill>
+                      </TopicPill>
                     ))}
                   </React.Fragment>
                 );

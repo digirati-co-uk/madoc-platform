@@ -130,6 +130,15 @@ export class EnrichmentExtension extends BaseDjangoExtension {
     });
   }
 
+  topicTypeAutoComplete(fullText: string, page = 1) {
+    return this.api.request<any>(`/api/enrichment/entity_type_autocomplete/?${stringify({ page })}`, {
+      method: 'POST',
+      body: {
+        fulltext: fullText,
+      },
+    });
+  }
+
   topicAutoComplete(type: string, fullText: string, page = 1) {
     return this.api.request<EnrichmentEntityAutoCompleteResponse>(
       `/api/enrichment/entity_autocomplete/?${stringify({ page })}`,

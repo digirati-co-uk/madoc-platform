@@ -35,7 +35,7 @@ export const TopicTypeLoader: UniversalComponent<TopicTypeLoaderType> = createUn
   },
   {
     getKey: (params, query) => {
-      return ['site-topic-type', { topicType: params.topicType, page: Number(query.page) || 0 }];
+      return ['site-topic-type', { topicType: params.topicType, page: Number(query.page) || 1 }];
     },
     getData: async (key, vars, api) => {
       return await api.enrichment.getSiteTopicType(vars.topicType, vars.page);
