@@ -12,6 +12,7 @@ import { PlusIcon } from '../../shared/icons/PlusIcon';
 import { useRouteContext } from '../hooks/use-route-context';
 import { TagPill, PillContainer, TagTitle, TagBox, TaggingContainer } from '../hooks/canvas-menu/tagging-panel';
 import { AddTagButton } from './AddTagButton';
+import { AddTopicButton } from './AddTopicButton';
 
 const ConfirmDeletion: React.FC<{ tagLabel: string }> = ({ tagLabel }) => {
   return (
@@ -69,9 +70,18 @@ export const TaggingFormPannel = () => {
     await refetch();
   });
 
+  // edit tags here
   return (
     <TaggingContainer>
+      <ModalButton
+        style={{ fontWeight: '500', display: 'block', marginBottom: '0.5em' }}
+        title="Add new tag"
+        render={() => <AddTopicButton addTag={addTag} statusLoading={addStatus.isLoading} />}
+      >
+        Add new
+      </ModalButton>
       {newTags.length === 0 ? <MetadataEmptyState style={{ marginTop: 100 }}>{t('No tags')}</MetadataEmptyState> : null}
+
       {newTags.map((tagType: any) => (
         <TagBox key={tagType[0]}>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
