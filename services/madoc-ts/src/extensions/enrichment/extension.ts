@@ -75,14 +75,14 @@ export class EnrichmentExtension extends BaseDjangoExtension {
   }
 
   getAllEnrichmentTasks(page = 1) {
-    return this.api.request(`/api/enrichment/task_log?page=${page}`);
+    return this.api.request(`/api/enrichment/task_log/?page=${page}`);
   }
 
   getEnrichmentTask(id: string) {
-    return this.api.request<EnrichmentTask>(`/api/enrichment/task_log/${id}`);
+    return this.api.request<EnrichmentTask>(`/api/enrichment/task_log/${id}/`);
   }
   getEnrichmentPlaintext(id: string) {
-    return this.api.request<EnrichmentPlaintext>(`/api/enrichment/plaintext/${id}`);
+    return this.api.request<EnrichmentPlaintext>(`/api/enrichment/plaintext/${id}/`);
   }
 
   enrichManifest(id: number) {
