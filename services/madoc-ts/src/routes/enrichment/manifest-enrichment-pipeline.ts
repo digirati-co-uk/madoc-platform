@@ -30,7 +30,7 @@ export const manifestEnrichmentHook: IncomingWebhook = {
   event_id: 'manifest-enrichment-pipeline.complete',
   is_outgoing: false,
   execute: async (resp, siteApi) => {
-    const response: any = {};
+    const response: any = { warnings: [] };
 
     invariant(resp.id, 'Expected response to contain `id`');
 
@@ -48,6 +48,14 @@ export const manifestEnrichmentHook: IncomingWebhook = {
       invariant(parsed, 'Invalid subject');
       invariant(parsed.type === 'canvas', 'Can only process canvases');
 
+      if (!task.state) {
+        response.warnings.push(`Task state not found`);
+      }
+
+      if (!task.state?.ocr_resources) {
+        response.warnings.push(`Expected "ocr_resources" in state`);
+      }
+
       if (task.state && task.state.ocr_resources && task.state.ocr_resources[0]) {
         const first = task.state.ocr_resources[0];
         const enrichmentPlaintext = await siteApi.enrichment.getEnrichmentPlaintext(first);
@@ -56,9 +64,12 @@ export const manifestEnrichmentHook: IncomingWebhook = {
           const canvasId = parsed.id; // ??
           response.plaintext = await siteApi.updateCanvasPlaintext(canvasId, enrichmentPlaintext.plaintext);
           return response;
+        } else {
+          response.warnings.push(`Plaintext not found`);
         }
       }
     } else {
+      response.warnings.push(`Unknown task ${task.task_type}`);
       response.empty = true;
     }
 
