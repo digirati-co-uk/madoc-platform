@@ -30,11 +30,18 @@ export const manifestEnrichmentHook: IncomingWebhook = {
   event_id: 'manifest-enrichment-pipeline.complete',
   is_outgoing: false,
   execute: async (resp, siteApi) => {
+    const response: any = {};
+
     invariant(resp.id, 'Expected response to contain `id`');
 
     const task = await siteApi.enrichment.getEnrichmentTask(resp.id);
+
     invariant(task.subject, 'Missing subject on task');
     invariant(task.status === 3, 'Task is not yet complete');
+
+    response.taskId = task.id;
+    response.subject = task.subject;
+    response.task_type = task.task_type;
 
     if (task.task_type === 'ocr_madoc_resource') {
       const parsed = parseUrn(task.subject);
@@ -47,9 +54,14 @@ export const manifestEnrichmentHook: IncomingWebhook = {
         invariant(enrichmentPlaintext, 'Missing plaintext from enrichment');
         if (enrichmentPlaintext.plaintext) {
           const canvasId = parsed.id; // ??
-          return await siteApi.updateCanvasPlaintext(canvasId, enrichmentPlaintext.plaintext);
+          response.plaintext = await siteApi.updateCanvasPlaintext(canvasId, enrichmentPlaintext.plaintext);
+          return response;
         }
       }
+    } else {
+      response.empty = true;
     }
+
+    return response;
   },
 };
