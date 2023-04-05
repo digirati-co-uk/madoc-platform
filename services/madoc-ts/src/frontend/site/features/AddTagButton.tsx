@@ -21,11 +21,10 @@ export const AddTagButton: React.FC<{
   const [selected, setSelected] = React.useState<AutoCompleteEntitySnippet | null>(null);
   const api = useApi();
 
-
   const { data: pages, fetchMore, canFetchMore, isFetchingMore, isLoading: queryLoading } = useInfiniteQuery(
-    ['topic-autocomplete', {}, topicType, fullText],
+    ['topic-autocomplete', { fullText, topicType }],
     async (key, _, vars: { page?: number } = { page: 1 }) => {
-      return api.enrichment.topicAutoComplete(fullText, topicType, vars.page);
+      return api.enrichment.topicAutoComplete(topicType, fullText, vars.page);
     },
     {
       getFetchMore: lastPage => {
@@ -87,7 +86,7 @@ export const AddTagButton: React.FC<{
           </ButtonRow>
         </>
       )}
-      {!queryLoading && (!pages || pages[0].pagination.totalResults === 0) ? (
+      {queryLoading && (!pages || pages[0].pagination.totalResults === 0) ? (
         <p color={'grey'}>This type has no topics</p>
       ) : (
         <>

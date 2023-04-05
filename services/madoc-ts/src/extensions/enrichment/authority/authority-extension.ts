@@ -64,7 +64,7 @@ export class AuthorityExtension extends BaseDjangoExtension {
 
   // Entity - List, filtered by chosen Entity Type
   getEntities(slug: string, page?: number) {
-    return this.api.request<EntitiesMadocResponse>(`/api/enrichment/entity/${slug}/?page=${page}/`);
+    return this.api.request<EntitiesMadocResponse>(`/api/enrichment/entity/${slug}/?page=${page}`);
   }
 
   // Entity - Retrieve
