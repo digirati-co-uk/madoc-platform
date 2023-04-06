@@ -93,6 +93,7 @@ const ReviewActionBar = styled.div`
   width: 100%;
   padding: 0.6em;
   min-height: 42px;
+  overflow: auto;
 `;
 
 const ReviewActions = styled.div`
@@ -133,6 +134,7 @@ const ReviewDropdownPopup = styled.div<{ $visible?: boolean }>`
 const ReviewPreview = styled.div`
   display: flex;
   overflow-y: scroll;
+  flex-wrap: wrap;
   flex: 1;
 
   > div {
@@ -146,6 +148,7 @@ const Assignee = styled.div`
   color: #575757;
   align-self: center;
   margin-left: 0.5em;
+  min-width: 200px;
 `;
 
 function ViewSingleReview({
@@ -308,13 +311,13 @@ function ViewSingleReview({
           ) : null}
         </ReviewActionBar>
         <ReviewPreview>
-          <div style={{ width: '40%', maxWidth: 420 }}>
+          <div style={{ flexGrow: 1, maxWidth: 300 }}>
             <CanvasViewerEditorStyleReset>
               <EditorSlots.TopLevelEditor />
             </CanvasViewerEditorStyleReset>
             <EditorSlots.SubmitButton captureModel={captureModel} />
           </div>
-          <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
+          <div style={{ flex: 1, minWidth: 200, display: 'flex', flexDirection: 'column' }}>
             <ReviewDropdownContainer>
               <Button $link {...buttonProps}>
                 View options
