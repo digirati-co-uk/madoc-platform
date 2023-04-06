@@ -23,10 +23,10 @@ export const ReviewerTasks: React.FC = () => {
 
   return (
     <>
-      <Heading3>{t('Reviews')}</Heading3>
+      <Heading3>{t('Review tasks')}</Heading3>
       <ButtonRow>
         <TinyButton as={HrefLink} href={`/tasks?type=crowdsourcing-review`}>
-          {t('Browse all reviews')}
+          {t('Browse all review tasks')}
         </TinyButton>
       </ButtonRow>
       <TableContainer>

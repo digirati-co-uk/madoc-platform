@@ -22,7 +22,7 @@ export const Inspector: React.FC<{ captureModel: CaptureModel }> = props => {
           <li onClick={() => setTab('viewDocument')}>View document</li>
           <li onClick={() => setTab('browseStructure')}>Browse structure</li>
           <li onClick={() => setTab('contributions')}>Contributions</li>
-          <li onClick={() => setTab('reviews')}>Reviews</li>
+          <li onClick={() => setTab('reviews')}>Review tasks</li>
           <li onClick={() => setTab('manageModel')}>Manage model</li>
         </ul>
       </div>
