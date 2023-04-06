@@ -28,9 +28,9 @@ export const CanvasModelPrepareActions: React.FC = () => {
 };
 
 blockEditorFor(CanvasModelPrepareActions, {
-  type: 'default.CanvasModelPrepareActions',
-  label: 'Canvas model prepare actions',
-  editor: {},
-  requiredContext: ['project', 'manifest', 'canvas'],
-  anyContext: ['canvas'],
+    type: 'default.CanvasModelPrepareActions',
+    label: 'Canvas model prepare actions',
+    editor: {},
+    requiredContext: ['project', 'manifest', 'canvas'],
+    anyContext: ['canvas'],
 });

@@ -104,9 +104,9 @@ export const ManifestUserNotification: React.FC = () => {
 };
 
 blockEditorFor(ManifestUserNotification, {
-  type: 'default.ManifestUserNotification',
-  label: 'Manifest user notifications',
-  anyContext: ['manifest'],
-  requiredContext: ['project', 'manifest'],
-  editor: {},
+    type: 'default.ManifestUserNotification',
+    label: 'Manifest user notifications',
+    anyContext: ['manifest'],
+    requiredContext: ['project', 'manifest'],
+    editor: {},
 });

@@ -154,37 +154,37 @@ export function ManifestCanvasGrid(props: {
 }
 
 blockEditorFor(ManifestCanvasGrid, {
-  type: 'default.ManifestCanvasGrid',
-  label: 'Manifest canvas grid',
-  defaultProps: {
-    background: '',
-    popup: false,
-    list: false,
-    enableSearch: false,
-    textColor: '',
-    cardBorder: '',
-    imageStyle: 'fit',
-  },
-  editor: {
-    popup: { type: 'checkbox-field', label: 'Popup', inlineLabel: 'Show canvases in popup' },
-    list: { type: 'checkbox-field', label: 'View', inlineLabel: 'Display as list' },
-    background: { label: 'Card background color', type: 'color-field' },
-    textColor: { label: 'Card text color', type: 'color-field' },
-    cardBorder: { label: 'Card border', type: 'color-field' },
-    enableSearch: {
-      label: 'Enable search',
-      type: 'checkbox-field',
-      inlineLabel: 'Show search box to filter canvas labels',
+    type: 'default.ManifestCanvasGrid',
+    label: 'Manifest canvas grid',
+    defaultProps: {
+        background: '',
+        popup: false,
+        list: false,
+        enableSearch: false,
+        textColor: '',
+        cardBorder: '',
+        imageStyle: 'fit',
     },
-    imageStyle: {
-      label: 'Image Style',
-      type: 'dropdown-field',
-      options: [
-        { value: 'covered', text: 'covered' },
-        { value: 'fit', text: 'fit' },
-      ],
+    editor: {
+        popup: {type: 'checkbox-field', label: 'Popup', inlineLabel: 'Show canvases in popup'},
+        list: {type: 'checkbox-field', label: 'View', inlineLabel: 'Display as list'},
+        background: {label: 'Card background color', type: 'color-field'},
+        textColor: {label: 'Card text color', type: 'color-field'},
+        cardBorder: {label: 'Card border', type: 'color-field'},
+        enableSearch: {
+            label: 'Enable search',
+            type: 'checkbox-field',
+            inlineLabel: 'Show search box to filter canvas labels',
+        },
+        imageStyle: {
+            label: 'Image Style',
+            type: 'dropdown-field',
+            options: [
+                {value: 'covered', text: 'covered'},
+                {value: 'fit', text: 'fit'},
+            ],
+        },
     },
-  },
-  requiredContext: ['manifest'],
-  anyContext: ['collection', 'manifest'],
+    requiredContext: ['manifest'],
+    anyContext: ['collection', 'manifest'],
 });

@@ -40,20 +40,20 @@ export const ManifestHero: React.FC<{
 };
 
 blockEditorFor(ManifestHero, {
-  type: 'default.ManifestHero',
-  label: 'Manifest hero image',
-  anyContext: ['manifest'],
-  requiredContext: ['manifest'],
-  defaultProps: {
-    backgroundColor: '#000',
-    hideAsset: false,
-    titleOverride: '',
-    fullWidth: true,
-  },
-  editor: {
-    titleOverride: { type: 'text-field', label: 'Override the hero title' },
-    backgroundColor: { type: 'text-field', label: 'Background color (right side)' },
-    hideAsset: { type: 'checkbox-field', label: 'Hide asset', inlineLabel: 'Check this to hide asset on the right' },
-    fullWidth: { type: 'checkbox-field', label: 'Full width', inlineLabel: 'Show full width' },
-  },
+    type: 'default.ManifestHero',
+    label: 'Manifest hero image',
+    anyContext: ['manifest'],
+    requiredContext: ['manifest'],
+    defaultProps: {
+        backgroundColor: '#000',
+        hideAsset: false,
+        titleOverride: '',
+        fullWidth: true,
+    },
+    editor: {
+        titleOverride: {type: 'text-field', label: 'Override the hero title'},
+        backgroundColor: {type: 'text-field', label: 'Background color (right side)'},
+        hideAsset: {type: 'checkbox-field', label: 'Hide asset', inlineLabel: 'Check this to hide asset on the right'},
+        fullWidth: {type: 'checkbox-field', label: 'Full width', inlineLabel: 'Show full width'},
+    },
 });

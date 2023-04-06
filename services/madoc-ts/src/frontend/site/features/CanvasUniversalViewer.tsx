@@ -49,9 +49,9 @@ export const CanvasUniversalViewer: React.FC = () => {
 };
 
 blockEditorFor(CanvasUniversalViewer, {
-  type: 'CanvasUniversalViewer',
-  label: 'UniversalViewer (single canvas)',
-  requiredContext: ['manifest', 'canvas'],
-  anyContext: ['canvas'],
-  editor: {},
+    type: 'CanvasUniversalViewer',
+    label: 'UniversalViewer (single canvas)',
+    requiredContext: ['manifest', 'canvas'],
+    anyContext: ['canvas'],
+    editor: {},
 });

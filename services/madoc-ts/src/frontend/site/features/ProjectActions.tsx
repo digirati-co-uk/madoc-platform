@@ -77,9 +77,9 @@ export const ProjectActions: React.FC = () => {
 };
 
 blockEditorFor(ProjectActions, {
-  type: 'default.ProjectActions',
-  label: 'Project actions',
-  anyContext: ['project'],
-  requiredContext: ['project'],
-  editor: {},
+    type: 'default.ProjectActions',
+    label: 'Project actions',
+    anyContext: ['project'],
+    requiredContext: ['project'],
+    editor: {},
 });

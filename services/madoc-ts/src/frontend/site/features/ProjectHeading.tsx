@@ -20,9 +20,9 @@ export const ProjectHeading: React.FC = () => {
 };
 
 blockEditorFor(ProjectHeading, {
-  type: 'default.ProjectHeading',
-  label: 'Project heading',
-  anyContext: ['project'],
-  requiredContext: ['project'],
-  editor: {},
+    type: 'default.ProjectHeading',
+    label: 'Project heading',
+    anyContext: ['project'],
+    requiredContext: ['project'],
+    editor: {},
 });

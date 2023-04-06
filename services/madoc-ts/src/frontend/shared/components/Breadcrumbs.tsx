@@ -342,15 +342,15 @@ export const DisplayBreadcrumbs: React.FC<BreadcrumbProps> = ({ currentPage, tex
 };
 
 blockEditorFor(DisplayBreadcrumbs, {
-  type: 'default.DisplayBreadcrumbs',
-  label: 'Display breadcrumbs',
-  anyContext: ['collection', 'manifest', 'canvas', 'project'],
-  defaultProps: {
-    textColor: '',
-    textColorActive: '',
-  },
-  editor: {
-    textColor: { label: 'Text color', type: 'color-field' },
-    textColorActive: { label: 'Text color active', type: 'color-field' },
-  },
+    type: 'default.DisplayBreadcrumbs',
+    label: 'Display breadcrumbs',
+    anyContext: ['collection', 'manifest', 'canvas', 'project'],
+    defaultProps: {
+        textColor: '',
+        textColorActive: '',
+    },
+    editor: {
+        textColor: {label: 'Text color', type: 'color-field'},
+        textColorActive: {label: 'Text color active', type: 'color-field'},
+    },
 });

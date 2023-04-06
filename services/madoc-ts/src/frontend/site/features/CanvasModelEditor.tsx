@@ -22,9 +22,9 @@ export const CanvasModelEditor: React.FC = () => {
 };
 
 blockEditorFor(CanvasModelEditor, {
-  type: 'default.CanvasModelEditor',
-  label: 'Canvas model editor',
-  requiredContext: ['project', 'manifest', 'canvas'],
-  anyContext: ['canvas'],
-  editor: {},
+    type: 'default.CanvasModelEditor',
+    label: 'Canvas model editor',
+    requiredContext: ['project', 'manifest', 'canvas'],
+    anyContext: ['canvas'],
+    editor: {},
 });

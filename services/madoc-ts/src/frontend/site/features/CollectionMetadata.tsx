@@ -42,9 +42,9 @@ export const CollectionMetadata: React.FC<{ compact?: boolean; showEmptyMessage?
 };
 
 blockEditorFor(CollectionMetadata, {
-  type: 'default.CollectionMetadata',
-  label: 'Collection metadata',
-  anyContext: ['collection'],
-  requiredContext: ['collection'],
-  editor: {},
+    type: 'default.CollectionMetadata',
+    label: 'Collection metadata',
+    anyContext: ['collection'],
+    requiredContext: ['collection'],
+    editor: {},
 });

@@ -109,15 +109,15 @@ export const AllCollectionsPaginatedItems: React.FC = () => {
 };
 
 blockEditorFor(AllCollectionsPaginatedItems, {
-  type: 'default.AllCollectionsPaginatedItems',
-  label: 'All collections grid',
-  internal: true,
-  source: {
-    name: 'All collections page',
-    type: 'custom-page',
-    id: '/collections',
-  },
-  anyContext: [],
-  requiredContext: [],
-  editor: {},
+    type: 'default.AllCollectionsPaginatedItems',
+    label: 'All collections grid',
+    internal: true,
+    source: {
+        name: 'All collections page',
+        type: 'custom-page',
+        id: '/collections',
+    },
+    anyContext: [],
+    requiredContext: [],
+    editor: {},
 });

@@ -24,9 +24,9 @@ export const CanvasConfigurationViewer: React.FC = () => {
 };
 
 blockEditorFor(CanvasConfigurationViewer, {
-  type: 'default.CanvasConfigurationViewer',
-  label: 'Canvas viewer based on config',
-  anyContext: ['canvas'],
-  requiredContext: ['canvas'],
-  editor: {},
+    type: 'default.CanvasConfigurationViewer',
+    label: 'Canvas viewer based on config',
+    anyContext: ['canvas'],
+    requiredContext: ['canvas'],
+    editor: {},
 });

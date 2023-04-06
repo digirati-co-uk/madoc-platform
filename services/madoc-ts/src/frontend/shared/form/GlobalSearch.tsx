@@ -42,10 +42,10 @@ export const GlobalSearch: React.FC = () => {
 };
 
 blockEditorFor(GlobalSearch, {
-  type: 'default.GlobalSearch',
-  internal: true,
-  label: 'Global site search',
-  svgIcon: SearchIcon as any,
-  source: { id: 'global-header', type: 'global', name: 'Global header' },
-  editor: {},
+    type: 'default.GlobalSearch',
+    internal: true,
+    label: 'Global site search',
+    svgIcon: SearchIcon as any,
+    source: {id: 'global-header', type: 'global', name: 'Global header'},
+    editor: {},
 });

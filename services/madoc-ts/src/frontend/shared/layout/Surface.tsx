@@ -108,71 +108,71 @@ export const Surface: React.FC<SurfaceProps> = ({
 };
 
 blockEditorFor(Surface, {
-  label: 'Surface',
-  type: 'surface',
-  internal: true,
-  defaultProps: {
-    textColor: '',
-    background: '',
-    font: '',
-    padding: 'none',
-    fontSize: 'md',
-    fontWeight: '400',
-    textAlign: 'left',
-    marginBottom: 'none',
-  },
-  editor: {
-    textColor: { label: 'Text color', type: 'color-field' },
-    background: { label: 'Background color', type: 'color-field' },
-    font: { label: 'Font (from google)', type: 'text-field' },
-    padding: {
-      label: 'Padding size',
-      description: 'How much padding should the surface have. (default: none)',
-      type: 'dropdown-field',
-      options: [
-        { value: 'none', text: 'No padding' },
-        { value: 'sm', text: 'Small' },
-        { value: 'md', text: 'Medium' },
-        { value: 'lg', text: 'Large' },
-      ],
+    label: 'Surface',
+    type: 'surface',
+    internal: true,
+    defaultProps: {
+        textColor: '',
+        background: '',
+        font: '',
+        padding: 'none',
+        fontSize: 'md',
+        fontWeight: '400',
+        textAlign: 'left',
+        marginBottom: 'none',
     },
-    textAlign: {
-      label: 'Text align',
-      type: 'dropdown-field',
-      options: [
-        { value: 'left', text: 'Left aligned' },
-        { value: 'center', text: 'Center aligned' },
-        { value: 'right', text: 'Right aligned' },
-      ],
+    editor: {
+        textColor: {label: 'Text color', type: 'color-field'},
+        background: {label: 'Background color', type: 'color-field'},
+        font: {label: 'Font (from google)', type: 'text-field'},
+        padding: {
+            label: 'Padding size',
+            description: 'How much padding should the surface have. (default: none)',
+            type: 'dropdown-field',
+            options: [
+                {value: 'none', text: 'No padding'},
+                {value: 'sm', text: 'Small'},
+                {value: 'md', text: 'Medium'},
+                {value: 'lg', text: 'Large'},
+            ],
+        },
+        textAlign: {
+            label: 'Text align',
+            type: 'dropdown-field',
+            options: [
+                {value: 'left', text: 'Left aligned'},
+                {value: 'center', text: 'Center aligned'},
+                {value: 'right', text: 'Right aligned'},
+            ],
+        },
+        fontSize: {
+            label: 'Font size',
+            type: 'dropdown-field',
+            options: [
+                {value: 'sm', text: 'Small'},
+                {value: 'md', text: 'Medium'},
+                {value: 'lg', text: 'Large'},
+            ],
+        },
+        fontWeight: {
+            label: 'Font Weight',
+            type: 'dropdown-field',
+            options: [
+                {value: '400', text: 'Regular'},
+                {value: '500', text: 'Medium'},
+                {value: '600', text: 'Bold'},
+                {value: '300', text: 'Light'},
+            ],
+        },
+        marginBottom: {
+            label: 'Bottom margin',
+            type: 'dropdown-field',
+            options: [
+                {value: 'none', text: 'No margin'},
+                {value: 'sm', text: 'Small'},
+                {value: 'md', text: 'Medium'},
+                {value: 'lg', text: 'Large'},
+            ],
+        },
     },
-    fontSize: {
-      label: 'Font size',
-      type: 'dropdown-field',
-      options: [
-        { value: 'sm', text: 'Small' },
-        { value: 'md', text: 'Medium' },
-        { value: 'lg', text: 'Large' },
-      ],
-    },
-    fontWeight: {
-      label: 'Font Weight',
-      type: 'dropdown-field',
-      options: [
-        { value: '400', text: 'Regular' },
-        { value: '500', text: 'Medium' },
-        { value: '600', text: 'Bold' },
-        { value: '300', text: 'Light' },
-      ],
-    },
-    marginBottom: {
-      label: 'Bottom margin',
-      type: 'dropdown-field',
-      options: [
-        { value: 'none', text: 'No margin' },
-        { value: 'sm', text: 'Small' },
-        { value: 'md', text: 'Medium' },
-        { value: 'lg', text: 'Large' },
-      ],
-    },
-  },
 });

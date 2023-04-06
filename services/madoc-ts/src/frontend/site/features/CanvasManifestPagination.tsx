@@ -50,21 +50,21 @@ export const CanvasManifestPagination: React.FC<{ subRoute?: string; size?: stri
 };
 
 blockEditorFor(CanvasManifestPagination, {
-  type: 'default.CanvasManifestPagination',
-  label: 'Canvas manifest navigation',
-  anyContext: ['canvas'],
-  requiredContext: ['canvas'],
-  defaultProps: {
-    size: 'full',
-  },
-  editor: {
-    size: {
-      label: 'component size',
-      type: 'dropdown-field',
-      options: [
-        { value: 'full', text: 'Full size' },
-        { value: 'small', text: 'Small' },
-      ],
+    type: 'default.CanvasManifestPagination',
+    label: 'Canvas manifest navigation',
+    anyContext: ['canvas'],
+    requiredContext: ['canvas'],
+    defaultProps: {
+        size: 'full',
     },
-  },
+    editor: {
+        size: {
+            label: 'component size',
+            type: 'dropdown-field',
+            options: [
+                {value: 'full', text: 'Full size'},
+                {value: 'small', text: 'Small'},
+            ],
+        },
+    },
 });

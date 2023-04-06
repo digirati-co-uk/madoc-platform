@@ -20,9 +20,9 @@ export const RequiredStatement: React.FC = () => {
 };
 
 blockEditorFor(RequiredStatement, {
-  type: 'default.ManifestRequiredStatement',
-  label: 'Manifest required statement',
-  anyContext: ['manifest', 'canvas'],
-  requiredContext: ['manifest'],
-  editor: {},
+    type: 'default.ManifestRequiredStatement',
+    label: 'Manifest required statement',
+    anyContext: ['manifest', 'canvas'],
+    requiredContext: ['manifest'],
+    editor: {},
 });

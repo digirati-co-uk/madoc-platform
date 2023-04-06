@@ -16,9 +16,9 @@ export const CanvasNotAvailableToBrowse: React.FC = () => {
 };
 
 blockEditorFor(CanvasNotAvailableToBrowse, {
-  type: 'default.CanvasNotAvailableToBrowse',
-  label: 'Canvas not available to browse',
-  anyContext: ['canvas'],
-  requiredContext: ['canvas'],
-  editor: {},
+    type: 'default.CanvasNotAvailableToBrowse',
+    label: 'Canvas not available to browse',
+    anyContext: ['canvas'],
+    requiredContext: ['canvas'],
+    editor: {},
 });

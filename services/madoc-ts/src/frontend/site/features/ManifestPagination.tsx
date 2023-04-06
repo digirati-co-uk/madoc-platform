@@ -36,28 +36,28 @@ export const ManifestPagination: React.FC<{
 };
 
 blockEditorFor(ManifestPagination, {
-  type: 'default.ManifestPagination',
-  label: 'Manifest pagination',
-  anyContext: ['manifest'],
-  requiredContext: ['manifest'],
-  defaultProps: {
-    paginationStyle: false,
-    position: 'flex-end',
-  },
-  editor: {
-    paginationStyle: {
-      type: 'checkbox-field',
-      inlineLabel: 'Pagination as Numbered?',
-      label: 'Pagination Numbered',
+    type: 'default.ManifestPagination',
+    label: 'Manifest pagination',
+    anyContext: ['manifest'],
+    requiredContext: ['manifest'],
+    defaultProps: {
+        paginationStyle: false,
+        position: 'flex-end',
     },
-    position: {
-      label: 'Position',
-      type: 'dropdown-field',
-      options: [
-        { value: 'flex-start', text: 'Start' },
-        { value: 'center', text: 'Center' },
-        { value: 'flex-end', text: 'End' },
-      ],
+    editor: {
+        paginationStyle: {
+            type: 'checkbox-field',
+            inlineLabel: 'Pagination as Numbered?',
+            label: 'Pagination Numbered',
+        },
+        position: {
+            label: 'Position',
+            type: 'dropdown-field',
+            options: [
+                {value: 'flex-start', text: 'Start'},
+                {value: 'center', text: 'Center'},
+                {value: 'flex-end', text: 'End'},
+            ],
+        },
     },
-  },
 });

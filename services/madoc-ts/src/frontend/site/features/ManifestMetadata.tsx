@@ -49,18 +49,18 @@ export const ManifestMetadata: React.FC<{ hidden?: boolean; compact?: boolean; s
 };
 
 blockEditorFor(ManifestMetadata, {
-  type: 'default.ManifestMetadata',
-  label: 'Manifest metadata',
-  anyContext: ['manifest', 'canvas'],
-  requiredContext: ['manifest'],
-  editor: {
-    hidden: { type: 'checkbox-field', inlineLabel: 'Hide on page', label: 'Hide' },
-    compact: { type: 'checkbox-field', inlineLabel: 'Show as compact', label: 'Display options' },
-    showEmptyMessage: { type: 'checkbox-field', inlineLabel: 'Show empty message', label: 'Empty message' },
-  },
-  defaultProps: {
-    hidden: true,
-    compact: true,
-    showEmptyMessage: false,
-  },
+    type: 'default.ManifestMetadata',
+    label: 'Manifest metadata',
+    anyContext: ['manifest', 'canvas'],
+    requiredContext: ['manifest'],
+    editor: {
+        hidden: {type: 'checkbox-field', inlineLabel: 'Hide on page', label: 'Hide'},
+        compact: {type: 'checkbox-field', inlineLabel: 'Show as compact', label: 'Display options'},
+        showEmptyMessage: {type: 'checkbox-field', inlineLabel: 'Show empty message', label: 'Empty message'},
+    },
+    defaultProps: {
+        hidden: true,
+        compact: true,
+        showEmptyMessage: false,
+    },
 });

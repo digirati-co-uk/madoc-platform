@@ -21,14 +21,16 @@ const LogoContainer = styled.div`
 
 export const FooterImageGrid: React.FC<{
   images?: {
+    text?: string;
     logo?: {
       id: string;
       image: string;
       thumbnail: string;
     };
-    label?: string;
+    url?: string;
   }[];
 }> = ({ images }) => {
+  console.log(images);
   return (
     <GridWrapper>
       {images
@@ -55,62 +57,31 @@ blockEditorFor(FooterImageGrid, {
   label: 'Image Grid for footer',
   requiredContext: ['project'],
   defaultProps: {
-    logo1: null,
-    title1: '',
-    logo2: null,
-    title2: '',
-    logo3: null,
-    title3: '',
-    logo4: null,
-    title4: '',
+    images: {
+      text: '',
+      url: '',
+      logo: null,
+    },
   },
   editor: {
-    logo1: {
-      label: 'Logo 1',
-      type: 'madoc-media-explorer',
+    images: {
+      allowMultiple: true,
+      label: 'logo',
+      pluralLabel: 'Logos',
+      labelledBy: 'text',
     },
-    title1: {
-      label: 'Label',
+
+    'images.text': {
+      label: 'text',
       type: 'text-field',
     },
-    logo2: {
-      label: 'Logo 2',
-      type: 'madoc-media-explorer',
-    },
-    title2: {
-      label: 'Label',
+    'images.url': {
+      label: 'url',
       type: 'text-field',
     },
-    logo3: {
-      label: 'Logo 3',
+    'images.logo': {
+      label: 'image',
       type: 'madoc-media-explorer',
     },
-    title3: {
-      label: 'Label',
-      type: 'text-field',
-    },
-    logo4: {
-      label: 'Logo 4',
-      type: 'madoc-media-explorer',
-    },
-    title4: {
-      label: 'Label',
-      type: 'text-field',
-    },
-  },
-  mapToProps(formInput: any) {
-    const images: {
-      logo?: {
-        id: string;
-        image: string;
-        thumbnail: string;
-      };
-      label?: string;
-    }[] = [];
-    if (formInput.logo1) images.push({ logo: formInput.logo1, label: formInput.title1 });
-    if (formInput.logo2) images.push({ logo: formInput.logo2, label: formInput.title2 });
-    if (formInput.logo3) images.push({ logo: formInput.logo3, label: formInput.title3 });
-    if (formInput.logo4) images.push({ logo: formInput.logo4, label: formInput.title4 });
-    return { images };
   },
 });

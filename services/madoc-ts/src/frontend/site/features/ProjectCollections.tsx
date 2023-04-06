@@ -49,9 +49,9 @@ export const ProjectCollections: React.FC = () => {
 };
 
 blockEditorFor(ProjectCollections, {
-  type: 'default.ProjectCollections',
-  label: 'Project collections',
-  anyContext: ['project'],
-  requiredContext: ['project'],
-  editor: {},
+    type: 'default.ProjectCollections',
+    label: 'Project collections',
+    anyContext: ['project'],
+    requiredContext: ['project'],
+    editor: {},
 });

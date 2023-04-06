@@ -16,15 +16,15 @@ export const AllCollectionsPagination: React.FC = () => {
 };
 
 blockEditorFor(AllCollectionsPagination, {
-  type: 'default.AllCollectionsPagination',
-  label: 'All collections pagination',
-  internal: true,
-  source: {
-    name: 'All collections page',
-    type: 'custom-page',
-    id: '/collections',
-  },
-  anyContext: [],
-  requiredContext: [],
-  editor: {},
+    type: 'default.AllCollectionsPagination',
+    label: 'All collections pagination',
+    internal: true,
+    source: {
+        name: 'All collections page',
+        type: 'custom-page',
+        id: '/collections',
+    },
+    anyContext: [],
+    requiredContext: [],
+    editor: {},
 });

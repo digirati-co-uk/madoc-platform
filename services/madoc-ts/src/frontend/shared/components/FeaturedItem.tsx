@@ -133,82 +133,82 @@ export function FeaturedItem(props: FeaturedItemProps) {
 }
 
 blockEditorFor(FeaturedItem, {
-  label: 'Featured Items',
-  type: 'default.featuredItem',
-  defaultProps: {
-    header: 'Featured Items',
-    canvas: null,
-    canvas2: null,
-    canvas3: null,
-    snippet: false,
-    column: false,
-    cardBackground: '',
-    textColor: '',
-    cardBorder: '',
-    imageStyle: 'fit',
-    align: 'start',
-    carousel: 'false',
-  },
-  editor: {
-    header: { label: 'label', type: 'text-field' },
-    canvas: {
-      label: 'Canvas',
-      type: 'canvas-explorer',
+    label: 'Featured Items',
+    type: 'default.featuredItem',
+    defaultProps: {
+        header: 'Featured Items',
+        canvas: null,
+        canvas2: null,
+        canvas3: null,
+        snippet: false,
+        column: false,
+        cardBackground: '',
+        textColor: '',
+        cardBorder: '',
+        imageStyle: 'fit',
+        align: 'start',
+        carousel: 'false',
     },
-    canvas2: {
-      label: 'Canvas 2',
-      type: 'canvas-explorer',
+    editor: {
+        header: {label: 'label', type: 'text-field'},
+        canvas: {
+            label: 'Canvas',
+            type: 'canvas-explorer',
+        },
+        canvas2: {
+            label: 'Canvas 2',
+            type: 'canvas-explorer',
+        },
+        canvas3: {
+            label: 'Canvas 3',
+            type: 'canvas-explorer',
+        },
+        snippet: {type: 'checkbox-field', label: 'Snippet', inlineLabel: 'Show as snippet'},
+        column: {type: 'checkbox-field', label: 'Column', inlineLabel: 'Show in column'},
+        carousel: {type: 'checkbox-field', label: 'Carousel', inlineLabel: 'Show in carousel'},
+        align: {
+            label: 'Align items',
+            type: 'dropdown-field',
+            options: [
+                {value: 'center', text: 'centered'},
+                {value: 'start', text: 'start'},
+            ],
+        },
+        cardBackground: {label: 'Card background color', type: 'color-field'},
+        textColor: {label: 'Card text color', type: 'color-field'},
+        cardBorder: {label: 'Card border', type: 'color-field'},
+        imageStyle: {
+            label: 'Image Style',
+            type: 'dropdown-field',
+            options: [
+                {value: 'covered', text: 'covered'},
+                {value: 'fit', text: 'fit'},
+            ],
+        },
     },
-    canvas3: {
-      label: 'Canvas 3',
-      type: 'canvas-explorer',
-    },
-    snippet: { type: 'checkbox-field', label: 'Snippet', inlineLabel: 'Show as snippet' },
-    column: { type: 'checkbox-field', label: 'Column', inlineLabel: 'Show in column' },
-    carousel: { type: 'checkbox-field', label: 'Carousel', inlineLabel: 'Show in carousel' },
-    align: {
-      label: 'Align items',
-      type: 'dropdown-field',
-      options: [
-        { value: 'center', text: 'centered' },
-        { value: 'start', text: 'start' },
-      ],
-    },
-    cardBackground: { label: 'Card background color', type: 'color-field' },
-    textColor: { label: 'Card text color', type: 'color-field' },
-    cardBorder: { label: 'Card border', type: 'color-field' },
-    imageStyle: {
-      label: 'Image Style',
-      type: 'dropdown-field',
-      options: [
-        { value: 'covered', text: 'covered' },
-        { value: 'fit', text: 'fit' },
-      ],
-    },
-  },
-  anyContext: ['manifest'],
-  requiredContext: ['manifest'],
-  hooks: [
-    {
-      name: 'getSiteCanvas',
-      creator: props => (props.canvas ? [props.canvas.id] : undefined),
-      mapToProps: (props, canvasData) => {
-        return { ...props, canvasData };
-      },
-    },
-    {
-      name: 'getSiteCanvas',
-      creator: props => (props.canvas2 ? [props.canvas2.id] : undefined),
-      mapToProps: (props, canvas2Data) => {
-        return { ...props, canvas2Data };
-      },
-    },
-    {
-      name: 'getSiteCanvas',
-      creator: props => (props.canvas3 ? [props.canvas3.id] : undefined),
-      mapToProps: (props, canvas3Data) => {
-        return { ...props, canvas3Data };
-      },
-    },
-  ],
+    anyContext: ['manifest'],
+    requiredContext: ['manifest'],
+    hooks: [
+        {
+            name: 'getSiteCanvas',
+            creator: props => (props.canvas ? [props.canvas.id] : undefined),
+            mapToProps: (props, canvasData) => {
+                return {...props, canvasData};
+            },
+        },
+        {
+            name: 'getSiteCanvas',
+            creator: props => (props.canvas2 ? [props.canvas2.id] : undefined),
+            mapToProps: (props, canvas2Data) => {
+                return {...props, canvas2Data};
+            },
+        },
+        {
+            name: 'getSiteCanvas',
+            creator: props => (props.canvas3 ? [props.canvas3.id] : undefined),
+            mapToProps: (props, canvas3Data) => {
+                return {...props, canvas3Data};
+            },
+        },
+    ],
 });

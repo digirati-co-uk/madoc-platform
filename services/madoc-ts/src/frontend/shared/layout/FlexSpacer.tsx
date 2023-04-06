@@ -31,26 +31,26 @@ export const FlexSpacer = styled.div<{ size?: string; divider?: boolean }>`
 `;
 
 blockEditorFor(FlexSpacer, {
-  type: 'default.FlexSpacer',
-  label: 'Spacer',
-  defaultProps: {
-    size: '',
-    divider: false,
-  },
-  editor: {
-    size: {
-      label: 'size',
-      type: 'dropdown-field',
-      options: [
-        { value: 'sm', text: 'Small' },
-        { value: 'md', text: 'Medium' },
-        { value: 'lg', text: 'Large' },
-      ],
+    type: 'default.FlexSpacer',
+    label: 'Spacer',
+    defaultProps: {
+        size: '',
+        divider: false,
     },
-    divider: {
-      label: 'divider',
-      type: 'checkbox-field',
-      inlineLabel: 'Show divider',
+    editor: {
+        size: {
+            label: 'size',
+            type: 'dropdown-field',
+            options: [
+                {value: 'sm', text: 'Small'},
+                {value: 'md', text: 'Medium'},
+                {value: 'lg', text: 'Large'},
+            ],
+        },
+        divider: {
+            label: 'divider',
+            type: 'checkbox-field',
+            inlineLabel: 'Show divider',
+        },
     },
-  },
 });

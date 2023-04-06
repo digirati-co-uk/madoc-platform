@@ -16,15 +16,15 @@ export const AllProjectsPagination: React.FC = () => {
 };
 
 blockEditorFor(AllProjectsPagination, {
-  type: 'default.AllProjectsPagination',
-  label: 'All projects pagination',
-  internal: true,
-  source: {
-    name: 'All projects page',
-    type: 'custom-page',
-    id: '/projects',
-  },
-  anyContext: [],
-  requiredContext: [],
-  editor: {},
+    type: 'default.AllProjectsPagination',
+    label: 'All projects pagination',
+    internal: true,
+    source: {
+        name: 'All projects page',
+        type: 'custom-page',
+        id: '/projects',
+    },
+    anyContext: [],
+    requiredContext: [],
+    editor: {},
 });

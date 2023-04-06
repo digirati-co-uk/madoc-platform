@@ -1,8 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import SimpleMarkdownBlock from '../../../extensions/page-blocks/simple-markdown-block/simple-markdown-block';
-import { StaticMarkdownBlock } from '../../../extensions/page-blocks/simple-markdown-block/static-markdown-block';
 import { FooterImageGrid } from '../../shared/components/FooterImageGrid';
 import { RenderFragment } from '../../shared/components/RenderFragment';
 import { GlobalSearch } from '../../shared/form/GlobalSearch';

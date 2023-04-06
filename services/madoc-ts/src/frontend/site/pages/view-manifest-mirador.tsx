@@ -76,8 +76,8 @@ export const ViewManifestMirador: React.FC<{
 };
 
 blockEditorFor(ViewManifestMirador, {
-  type: 'ViewManifestMirador',
-  label: 'Mirador manifest viewer',
-  requiredContext: ['manifest'],
-  editor: {},
+    type: 'ViewManifestMirador',
+    label: 'Mirador manifest viewer',
+    requiredContext: ['manifest'],
+    editor: {},
 });

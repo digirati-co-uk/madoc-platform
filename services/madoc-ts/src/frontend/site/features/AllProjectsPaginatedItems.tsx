@@ -34,24 +34,24 @@ export const AllProjectsPaginatedItems: React.FC<AllProjectPaginatedItemsProps> 
 };
 
 blockEditorFor(AllProjectsPaginatedItems, {
-  type: 'default.AllProjectsPaginatedItems',
-  label: 'All projects listing',
-  internal: true,
-  defaultProps: {
-    customButtonLabel: '',
-    background: null,
-    radius: null,
-  },
-  source: {
-    name: 'All projects page',
-    type: 'custom-page',
-    id: '/projects',
-  },
-  anyContext: [],
-  requiredContext: [],
-  editor: {
-    customButtonLabel: { type: 'text-field', label: 'Custom button label' },
-    background: { type: 'color-field', label: 'Background color', defaultValue: '#eeeeee' },
-    radius: { type: 'text-field', label: 'Border radius', defaultValue: '' },
-  },
+    type: 'default.AllProjectsPaginatedItems',
+    label: 'All projects listing',
+    internal: true,
+    defaultProps: {
+        customButtonLabel: '',
+        background: null,
+        radius: null,
+    },
+    source: {
+        name: 'All projects page',
+        type: 'custom-page',
+        id: '/projects',
+    },
+    anyContext: [],
+    requiredContext: [],
+    editor: {
+        customButtonLabel: {type: 'text-field', label: 'Custom button label'},
+        background: {type: 'color-field', label: 'Background color', defaultValue: '#eeeeee'},
+        radius: {type: 'text-field', label: 'Border radius', defaultValue: ''},
+    },
 });

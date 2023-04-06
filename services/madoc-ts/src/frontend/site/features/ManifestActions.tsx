@@ -105,22 +105,22 @@ export const ManifestActions: React.FC<props> = ({ alignment }) => {
 };
 
 blockEditorFor(ManifestActions, {
-  type: 'default.ManifestActions',
-  label: 'Manifest actions',
-  anyContext: ['manifest'],
-  requiredContext: ['manifest'],
-  defaultProps: {
-    alignment: '',
-  },
-  editor: {
-    alignment: {
-      label: 'alignment',
-      type: 'dropdown-field',
-      options: [
-        { value: 'left', text: 'Left aligned' },
-        { value: 'center', text: 'Center aligned' },
-        { value: 'right', text: 'Right aligned' },
-      ],
+    type: 'default.ManifestActions',
+    label: 'Manifest actions',
+    anyContext: ['manifest'],
+    requiredContext: ['manifest'],
+    defaultProps: {
+        alignment: '',
     },
-  },
+    editor: {
+        alignment: {
+            label: 'alignment',
+            type: 'dropdown-field',
+            options: [
+                {value: 'left', text: 'Left aligned'},
+                {value: 'center', text: 'Center aligned'},
+                {value: 'right', text: 'Right aligned'},
+            ],
+        },
+    },
 });

@@ -15,9 +15,9 @@ export const ManifestHeading: React.FC = () => {
 };
 
 blockEditorFor(ManifestHeading, {
-  type: 'default.ManifestHeading',
-  label: 'Manifest heading',
-  anyContext: ['manifest'],
-  requiredContext: ['manifest'],
-  editor: {},
+    type: 'default.ManifestHeading',
+    label: 'Manifest heading',
+    anyContext: ['manifest'],
+    requiredContext: ['manifest'],
+    editor: {},
 });

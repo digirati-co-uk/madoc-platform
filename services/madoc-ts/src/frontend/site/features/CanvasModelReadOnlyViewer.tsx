@@ -18,9 +18,9 @@ export const CanvasModelReadOnlyViewer: React.FC = () => {
 };
 
 blockEditorFor(CanvasModelReadOnlyViewer, {
-  type: 'default.CanvasModelReadOnlyViewer',
-  label: 'Canvas model read-only viewer',
-  anyContext: ['canvas'],
-  requiredContext: ['project', 'manifest', 'canvas'],
-  editor: {},
+    type: 'default.CanvasModelReadOnlyViewer',
+    label: 'Canvas model read-only viewer',
+    anyContext: ['canvas'],
+    requiredContext: ['project', 'manifest', 'canvas'],
+    editor: {},
 });

@@ -161,49 +161,49 @@ export function SingleCollection(props: SingleCollectionProps) {
 }
 
 blockEditorFor(SingleCollection, {
-  label: 'Single collection',
-  type: 'SingleCollection',
-  defaultProps: {
-    customButtonLabel: '',
-    collection: null,
-    background: null,
-    radius: null,
-    snippet: false,
-    cardBackground: '',
-    textColor: '',
-    cardBorder: '',
-    imageStyle: 'fit',
-  },
-  hooks: [
-    {
-      name: 'getSiteCollection',
-      creator: props => (props.collection ? [props.collection.id] : undefined),
-      mapToProps: (props, data) => {
-        return { ...props, data };
-      },
+    label: 'Single collection',
+    type: 'SingleCollection',
+    defaultProps: {
+        customButtonLabel: '',
+        collection: null,
+        background: null,
+        radius: null,
+        snippet: false,
+        cardBackground: '',
+        textColor: '',
+        cardBorder: '',
+        imageStyle: 'fit',
     },
-  ],
-  editor: {
-    customButtonLabel: { type: 'text-field', label: 'Custom button label' },
-    background: { type: 'color-field', label: 'Background color', defaultValue: '#eeeeee' },
-    radius: { type: 'text-field', label: 'Border radius', defaultValue: '' },
-    collection: {
-      label: 'Collection',
-      type: 'collection-explorer',
+    hooks: [
+        {
+            name: 'getSiteCollection',
+            creator: props => (props.collection ? [props.collection.id] : undefined),
+            mapToProps: (props, data) => {
+                return {...props, data};
+            },
+        },
+    ],
+    editor: {
+        customButtonLabel: {type: 'text-field', label: 'Custom button label'},
+        background: {type: 'color-field', label: 'Background color', defaultValue: '#eeeeee'},
+        radius: {type: 'text-field', label: 'Border radius', defaultValue: ''},
+        collection: {
+            label: 'Collection',
+            type: 'collection-explorer',
+        },
+        snippet: {type: 'checkbox-field', label: 'Layout', inlineLabel: 'Show as snippet'},
+        cardBackground: {label: 'Card background color', type: 'color-field'},
+        textColor: {label: 'Card text color', type: 'color-field'},
+        cardBorder: {label: 'Card border', type: 'color-field'},
+        imageStyle: {
+            label: 'Image Style',
+            type: 'dropdown-field',
+            options: [
+                {value: 'covered', text: 'covered'},
+                {value: 'fit', text: 'fit'},
+            ],
+        },
     },
-    snippet: { type: 'checkbox-field', label: 'Layout', inlineLabel: 'Show as snippet' },
-    cardBackground: { label: 'Card background color', type: 'color-field' },
-    textColor: { label: 'Card text color', type: 'color-field' },
-    cardBorder: { label: 'Card border', type: 'color-field' },
-    imageStyle: {
-      label: 'Image Style',
-      type: 'dropdown-field',
-      options: [
-        { value: 'covered', text: 'covered' },
-        { value: 'fit', text: 'fit' },
-      ],
-    },
-  },
-  requiredContext: [],
-  anyContext: [],
+    requiredContext: [],
+    anyContext: [],
 });

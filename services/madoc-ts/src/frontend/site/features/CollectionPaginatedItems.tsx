@@ -63,9 +63,9 @@ export const CollectionPaginatedItems: React.FC = () => {
 };
 
 blockEditorFor(CollectionPaginatedItems, {
-  type: 'default.CollectionPaginatedItems',
-  label: 'Collection paginated items',
-  anyContext: ['collection'],
-  requiredContext: ['collection'],
-  editor: {},
+    type: 'default.CollectionPaginatedItems',
+    label: 'Collection paginated items',
+    anyContext: ['collection'],
+    requiredContext: ['collection'],
+    editor: {},
 });

@@ -27,9 +27,9 @@ export const HighlightedCanvasSearchResults: React.FC = () => {
 };
 
 blockEditorFor(HighlightedCanvasSearchResults, {
-  type: 'default.HighlightedCanvasSearchResults',
-  label: 'Highlighted canvas search results',
-  anyContext: ['canvas'],
-  requiredContext: ['canvas'],
-  editor: {},
+    type: 'default.HighlightedCanvasSearchResults',
+    label: 'Highlighted canvas search results',
+    anyContext: ['canvas'],
+    requiredContext: ['canvas'],
+    editor: {},
 });

@@ -16,15 +16,15 @@ export const AllManifestsPagination: React.FC = () => {
 };
 
 blockEditorFor(AllManifestsPagination, {
-  type: 'default.AllManifestsPagination',
-  label: 'All manifests pagination',
-  internal: true,
-  source: {
-    name: 'All manifests page',
-    type: 'custom-page',
-    id: '/manifests',
-  },
-  anyContext: [],
-  requiredContext: [],
-  editor: {},
+    type: 'default.AllManifestsPagination',
+    label: 'All manifests pagination',
+    internal: true,
+    source: {
+        name: 'All manifests page',
+        type: 'custom-page',
+        id: '/manifests',
+    },
+    anyContext: [],
+    requiredContext: [],
+    editor: {},
 });

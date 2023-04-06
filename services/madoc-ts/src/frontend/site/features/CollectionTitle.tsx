@@ -15,8 +15,8 @@ export const CollectionTitle: React.FC = () => {
 };
 
 blockEditorFor(CollectionTitle, {
-  label: 'Collection title',
-  editor: {},
-  requiredContext: ['collection'],
-  type: 'default.CollectionTitle',
+    label: 'Collection title',
+    editor: {},
+    requiredContext: ['collection'],
+    type: 'default.CollectionTitle',
 });

@@ -47,9 +47,9 @@ export const ProjectStatistics: React.FC = () => {
 };
 
 blockEditorFor(ProjectStatistics, {
-  type: 'default.ProjectStatistics',
-  label: 'Project statistics',
-  anyContext: ['project'],
-  requiredContext: ['project'],
-  editor: {},
+    type: 'default.ProjectStatistics',
+    label: 'Project statistics',
+    anyContext: ['project'],
+    requiredContext: ['project'],
+    editor: {},
 });

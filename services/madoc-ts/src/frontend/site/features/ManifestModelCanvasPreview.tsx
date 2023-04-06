@@ -112,9 +112,9 @@ export function ManifestModelCanvasPreview(props: { isModel?: boolean }) {
 }
 
 blockEditorFor(ManifestModelCanvasPreview, {
-  type: 'default.ManifestModelCanvasPreview',
-  label: 'Manifest model canvas preview',
-  requiredContext: ['project', 'manifest', 'canvas'],
-  anyContext: [],
-  editor: {},
+    type: 'default.ManifestModelCanvasPreview',
+    label: 'Manifest model canvas preview',
+    requiredContext: ['project', 'manifest', 'canvas'],
+    anyContext: [],
+    editor: {},
 });

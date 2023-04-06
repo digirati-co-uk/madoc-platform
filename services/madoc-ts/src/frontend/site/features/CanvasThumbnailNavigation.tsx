@@ -25,20 +25,20 @@ export const CanvasThumbnailNavigation: React.FC<{ hidden?: boolean; subRoute?: 
 };
 
 blockEditorFor(CanvasThumbnailNavigation, {
-  type: 'default.CanvasThumbnailNavigation',
-  label: 'Canvas thumbnail navigation',
-  anyContext: ['canvas'],
-  requiredContext: ['manifest', 'canvas'],
-  defaultProps: {
-    hidden: false,
-    subRoute: '',
-  },
-  editor: {
-    hidden: { type: 'checkbox-field', inlineLabel: 'Hide on page', label: 'Hide' },
-    subRoute: {
-      type: 'text-field',
-      label: 'Navigation sub route',
-      description: `If you use this on a sub page (e.g. manifest/1/c/2/SUB_ROUTE) this will ensure paginated links are accurate.`,
+    type: 'default.CanvasThumbnailNavigation',
+    label: 'Canvas thumbnail navigation',
+    anyContext: ['canvas'],
+    requiredContext: ['manifest', 'canvas'],
+    defaultProps: {
+        hidden: false,
+        subRoute: '',
     },
-  },
+    editor: {
+        hidden: {type: 'checkbox-field', inlineLabel: 'Hide on page', label: 'Hide'},
+        subRoute: {
+            type: 'text-field',
+            label: 'Navigation sub route',
+            description: `If you use this on a sub page (e.g. manifest/1/c/2/SUB_ROUTE) this will ensure paginated links are accurate.`,
+        },
+    },
 });

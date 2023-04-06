@@ -94,9 +94,9 @@ export const ProjectStatus: React.FC<{ status?: number; statusMapping?: ProjectS
 };
 
 blockEditorFor(ProjectStatus, {
-  type: 'default.ProjectStatus',
-  label: 'Project status',
-  anyContext: ['project'],
-  requiredContext: ['project'],
-  editor: {},
+    type: 'default.ProjectStatus',
+    label: 'Project status',
+    anyContext: ['project'],
+    requiredContext: ['project'],
+    editor: {},
 });

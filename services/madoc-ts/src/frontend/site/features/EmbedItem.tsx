@@ -20,18 +20,18 @@ export const EmbedItem: React.FC<{
 };
 
 blockEditorFor(EmbedItem, {
-  type: 'default.EmbedItem',
-  label: 'Embed an item',
-  anyContext: [],
-  requiredContext: [],
-  defaultProps: {
-    link: '',
-    height: '200',
-    width: '400',
-  },
-  editor: {
-    link: { type: 'text-field', label: 'src or link' },
-    height: { type: 'text-field', label: 'height (px)' },
-    width: { type: 'text-field', label: 'width (px)' },
-  },
+    type: 'default.EmbedItem',
+    label: 'Embed an item',
+    anyContext: [],
+    requiredContext: [],
+    defaultProps: {
+        link: '',
+        height: '200',
+        width: '400',
+    },
+    editor: {
+        link: {type: 'text-field', label: 'src or link'},
+        height: {type: 'text-field', label: 'height (px)'},
+        width: {type: 'text-field', label: 'width (px)'},
+    },
 });

@@ -24,9 +24,9 @@ export const ManifestNotAvailableToBrowse: React.FC = () => {
 };
 
 blockEditorFor(ManifestNotAvailableToBrowse, {
-  type: 'default.ManifestNotAvailableToBrowse',
-  label: 'Manifest not available to browse fallback',
-  anyContext: ['manifest'],
-  requiredContext: ['manifest'],
-  editor: {},
+    type: 'default.ManifestNotAvailableToBrowse',
+    label: 'Manifest not available to browse fallback',
+    anyContext: ['manifest'],
+    requiredContext: ['manifest'],
+    editor: {},
 });

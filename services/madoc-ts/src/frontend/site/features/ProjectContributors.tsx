@@ -72,22 +72,22 @@ export function ProjectContributors(props: ProjectContributors) {
 }
 
 blockEditorFor(ProjectContributors, {
-  label: 'Project Contributors',
-  type: 'default.ProjectContributors',
-  defaultProps: {
-    textColor: '',
-    background: '',
-    showBots: false,
-  },
-  editor: {
-    textColor: { label: 'Text color', type: 'color-field' },
-    background: { label: 'Background color', type: 'color-field' },
-    showBots: {
-      label: 'Show bots',
-      type: 'checkbox-field',
-      inlineLabel: 'Show bots as contributors?',
+    label: 'Project Contributors',
+    type: 'default.ProjectContributors',
+    defaultProps: {
+        textColor: '',
+        background: '',
+        showBots: false,
     },
-  },
-  anyContext: ['project'],
-  requiredContext: ['project'],
+    editor: {
+        textColor: {label: 'Text color', type: 'color-field'},
+        background: {label: 'Background color', type: 'color-field'},
+        showBots: {
+            label: 'Show bots',
+            type: 'checkbox-field',
+            inlineLabel: 'Show bots as contributors?',
+        },
+    },
+    anyContext: ['project'],
+    requiredContext: ['project'],
 });

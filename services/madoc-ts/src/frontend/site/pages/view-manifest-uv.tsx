@@ -45,8 +45,8 @@ export const ViewManifestUV: React.FC<{
 };
 
 blockEditorFor(ViewManifestUV, {
-  type: 'ViewManifestUV',
-  label: 'Universal Viewer',
-  requiredContext: ['manifest'],
-  editor: {},
+    type: 'ViewManifestUV',
+    label: 'Universal Viewer',
+    requiredContext: ['manifest'],
+    editor: {},
 });

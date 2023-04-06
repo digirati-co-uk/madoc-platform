@@ -44,32 +44,32 @@ export function SingleProject(props: SingleProjectProps) {
 }
 
 blockEditorFor(SingleProject, {
-  label: 'Single project',
-  type: 'SingleProject',
-  defaultProps: {
-    customButtonLabel: '',
-    project: null,
-    background: null,
-    radius: null,
-  },
-  hooks: [
-    {
-      name: 'getSiteProject',
-      creator: props => (props.project ? [props.project.id] : undefined),
-      mapToProps: (props, data) => {
-        return { ...props, data };
-      },
+    label: 'Single project',
+    type: 'SingleProject',
+    defaultProps: {
+        customButtonLabel: '',
+        project: null,
+        background: null,
+        radius: null,
     },
-  ],
-  editor: {
-    customButtonLabel: { type: 'text-field', label: 'Custom button label' },
-    background: { type: 'color-field', label: 'Background color', defaultValue: '#eeeeee' },
-    radius: { type: 'text-field', label: 'Border radius', defaultValue: '' },
-    project: {
-      label: 'Project',
-      type: 'project-explorer',
+    hooks: [
+        {
+            name: 'getSiteProject',
+            creator: props => (props.project ? [props.project.id] : undefined),
+            mapToProps: (props, data) => {
+                return {...props, data};
+            },
+        },
+    ],
+    editor: {
+        customButtonLabel: {type: 'text-field', label: 'Custom button label'},
+        background: {type: 'color-field', label: 'Background color', defaultValue: '#eeeeee'},
+        radius: {type: 'text-field', label: 'Border radius', defaultValue: ''},
+        project: {
+            label: 'Project',
+            type: 'project-explorer',
+        },
     },
-  },
-  requiredContext: [],
-  anyContext: [],
+    requiredContext: [],
+    anyContext: [],
 });

@@ -37,9 +37,9 @@ export const CanvasMiradorViewer: React.FC = () => {
 };
 
 blockEditorFor(CanvasMiradorViewer, {
-  type: 'CanvasMiradorViewer',
-  label: 'Mirador (single canvas)',
-  requiredContext: ['manifest', 'canvas'],
-  anyContext: ['canvas'],
-  editor: {},
+    type: 'CanvasMiradorViewer',
+    label: 'Mirador (single canvas)',
+    requiredContext: ['manifest', 'canvas'],
+    anyContext: ['canvas'],
+    editor: {},
 });

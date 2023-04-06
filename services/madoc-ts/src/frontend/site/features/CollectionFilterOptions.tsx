@@ -50,8 +50,8 @@ export const CollectionFilterOptions: React.FC = () => {
 };
 
 blockEditorFor(CollectionFilterOptions, {
-  requiredContext: ['collection'],
-  editor: {},
-  label: 'Collection filter options',
-  type: 'default.CollectionFilterOptions',
+    requiredContext: ['collection'],
+    editor: {},
+    label: 'Collection filter options',
+    type: 'default.CollectionFilterOptions',
 });

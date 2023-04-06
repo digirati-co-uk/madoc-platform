@@ -87,9 +87,9 @@ export const ProjectContributionButton: React.FC = () => {
 };
 
 blockEditorFor(ProjectContributionButton, {
-  type: 'default.ProjectContributionButton',
-  label: 'Continue where you left off',
-  anyContext: ['project'],
-  requiredContext: ['project'],
-  editor: {},
+    type: 'default.ProjectContributionButton',
+    label: 'Continue where you left off',
+    anyContext: ['project'],
+    requiredContext: ['project'],
+    editor: {},
 });

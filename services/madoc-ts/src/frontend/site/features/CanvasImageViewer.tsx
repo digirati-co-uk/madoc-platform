@@ -24,22 +24,22 @@ export const CanvasImageViewer: React.FC<{ rendering?: 'webgl' | 'canvas' }> = (
 };
 
 blockEditorFor(CanvasImageViewer, {
-  type: 'CanvasImageViewer',
-  label: 'Atlas canvas viewer (no toolbar)',
-  requiredContext: ['manifest', 'canvas'],
-  anyContext: ['canvas'],
-  editor: {
-    rendering: {
-      label: 'Rendering',
-      description: 'Which rendering engine should be used for this viewer',
-      type: 'dropdown-field',
-      options: [
-        { value: 'webgl', text: 'WebGL' },
-        { value: 'canvas', text: 'Canvas' },
-      ],
+    type: 'CanvasImageViewer',
+    label: 'Atlas canvas viewer (no toolbar)',
+    requiredContext: ['manifest', 'canvas'],
+    anyContext: ['canvas'],
+    editor: {
+        rendering: {
+            label: 'Rendering',
+            description: 'Which rendering engine should be used for this viewer',
+            type: 'dropdown-field',
+            options: [
+                {value: 'webgl', text: 'WebGL'},
+                {value: 'canvas', text: 'Canvas'},
+            ],
+        },
     },
-  },
-  defaultProps: {
-    rendering: 'webgl',
-  },
+    defaultProps: {
+        rendering: 'webgl',
+    },
 });

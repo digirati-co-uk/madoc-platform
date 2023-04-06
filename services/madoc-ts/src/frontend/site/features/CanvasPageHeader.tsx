@@ -74,28 +74,28 @@ export const CanvasPageHeader: React.FC<{ subRoute?: string; title?: string }> =
 };
 
 blockEditorFor(CanvasPageHeader, {
-  type: 'default.CanvasPageHeader',
-  label: 'Canvas page header',
-  anyContext: ['canvas'],
-  requiredContext: ['manifest', 'canvas'],
-  editor: {
-    title: {
-      label: 'Canvas title',
-      type: 'dropdown-field',
-      options: [
-        { value: 'canvasTitle', text: 'Canvas title' },
-        { value: 'manifestTitle', text: 'Manifest title' },
-        { value: 'both', text: 'Manifest and Canvas titles' },
-      ],
+    type: 'default.CanvasPageHeader',
+    label: 'Canvas page header',
+    anyContext: ['canvas'],
+    requiredContext: ['manifest', 'canvas'],
+    editor: {
+        title: {
+            label: 'Canvas title',
+            type: 'dropdown-field',
+            options: [
+                {value: 'canvasTitle', text: 'Canvas title'},
+                {value: 'manifestTitle', text: 'Manifest title'},
+                {value: 'both', text: 'Manifest and Canvas titles'},
+            ],
+        },
+        subRoute: {
+            type: 'text-field',
+            label: 'Navigation sub route',
+            description: `If you use this on a sub page (e.g. manifest/1/c/2/SUB_ROUTE) this will ensure paginated links are accurate.`,
+        },
     },
-    subRoute: {
-      type: 'text-field',
-      label: 'Navigation sub route',
-      description: `If you use this on a sub page (e.g. manifest/1/c/2/SUB_ROUTE) this will ensure paginated links are accurate.`,
+    defaultProps: {
+        subRoute: '',
+        title: 'both',
     },
-  },
-  defaultProps: {
-    subRoute: '',
-    title: 'both',
-  },
 });

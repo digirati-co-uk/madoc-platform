@@ -34,20 +34,20 @@ export function CanvasPanelBlock(props: CanvasPanelBlockProps) {
 }
 
 blockEditorFor(CanvasPanelBlock, {
-  label: 'Canvas panel block',
-  requiredContext: [],
-  anyContext: [],
-  type: 'default.CanvasPanelBlock',
-  defaultProps: {
-    manifestId: '',
-    canvasId: '',
-    width: '',
-    height: '',
-  },
-  editor: {
-    manifestId: { type: 'text-field', label: 'Manifest id' },
-    canvasId: { type: 'text-field', label: 'Canvas id' },
-    width: { type: 'text-field', label: 'Width (optional)' },
-    height: { type: 'text-field', label: 'Height (optional)' },
-  },
+    label: 'Canvas panel block',
+    requiredContext: [],
+    anyContext: [],
+    type: 'default.CanvasPanelBlock',
+    defaultProps: {
+        manifestId: '',
+        canvasId: '',
+        width: '',
+        height: '',
+    },
+    editor: {
+        manifestId: {type: 'text-field', label: 'Manifest id'},
+        canvasId: {type: 'text-field', label: 'Canvas id'},
+        width: {type: 'text-field', label: 'Width (optional)'},
+        height: {type: 'text-field', label: 'Height (optional)'},
+    },
 });

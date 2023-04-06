@@ -21,9 +21,9 @@ export const CollectionItemPagination = () => {
 };
 
 blockEditorFor(CollectionItemPagination, {
-  type: 'default.CollectionItemPagination',
-  label: 'Collection pagination',
-  anyContext: ['collection'],
-  requiredContext: ['collection'],
-  editor: {},
+    type: 'default.CollectionItemPagination',
+    label: 'Collection pagination',
+    anyContext: ['collection'],
+    requiredContext: ['collection'],
+    editor: {},
 });

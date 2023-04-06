@@ -82,29 +82,29 @@ export function ProjectManifests(props: {
 }
 
 blockEditorFor(ProjectManifests, {
-  type: 'default.ProjectManifests',
-  label: 'Project manifests',
-  anyContext: ['project'],
-  requiredContext: ['project'],
-  defaultProps: {
-    background: '',
-    list: false,
-    textColor: '',
-    cardBorder: '',
-    imageStyle: 'fit',
-  },
-  editor: {
-    list: { type: 'checkbox-field', label: 'View', inlineLabel: 'Display as list' },
-    background: { label: 'Card background color', type: 'color-field' },
-    textColor: { label: 'Card text color', type: 'color-field' },
-    cardBorder: { label: 'Card border', type: 'color-field' },
-    imageStyle: {
-      label: 'Image Style',
-      type: 'dropdown-field',
-      options: [
-        { value: 'covered', text: 'covered' },
-        { value: 'fit', text: 'fit' },
-      ],
+    type: 'default.ProjectManifests',
+    label: 'Project manifests',
+    anyContext: ['project'],
+    requiredContext: ['project'],
+    defaultProps: {
+        background: '',
+        list: false,
+        textColor: '',
+        cardBorder: '',
+        imageStyle: 'fit',
     },
-  },
+    editor: {
+        list: {type: 'checkbox-field', label: 'View', inlineLabel: 'Display as list'},
+        background: {label: 'Card background color', type: 'color-field'},
+        textColor: {label: 'Card text color', type: 'color-field'},
+        cardBorder: {label: 'Card border', type: 'color-field'},
+        imageStyle: {
+            label: 'Image Style',
+            type: 'dropdown-field',
+            options: [
+                {value: 'covered', text: 'covered'},
+                {value: 'fit', text: 'fit'},
+            ],
+        },
+    },
 });

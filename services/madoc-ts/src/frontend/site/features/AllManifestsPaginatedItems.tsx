@@ -36,15 +36,15 @@ export const AllManifestsPaginatedItems: React.FC = () => {
 };
 
 blockEditorFor(AllManifestsPaginatedItems, {
-  type: 'default.AllManifestsPaginatedItems',
-  label: 'All manifests grid',
-  internal: true,
-  source: {
-    name: 'All manifests page',
-    type: 'custom-page',
-    id: '/manifests',
-  },
-  anyContext: [],
-  requiredContext: [],
-  editor: {},
+    type: 'default.AllManifestsPaginatedItems',
+    label: 'All manifests grid',
+    internal: true,
+    source: {
+        name: 'All manifests page',
+        type: 'custom-page',
+        id: '/manifests',
+    },
+    anyContext: [],
+    requiredContext: [],
+    editor: {},
 });

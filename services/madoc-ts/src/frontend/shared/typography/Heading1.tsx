@@ -179,92 +179,92 @@ export const Heading1: React.FC<{
 }) as any;
 
 blockEditorFor(Heading1, {
-  type: 'heading-1',
-  label: 'Heading 1',
-  editor: {
-    text: { label: 'Text content', type: 'text-field' },
-    fullWidth: { label: 'Full width', type: 'checkbox-field', inlineLabel: 'Show full width' },
-    background: { label: 'Background', type: 'color-field' },
-    backgroundHeight: { label: 'Background height', type: 'text-field' },
-    alignBackground: {
-      label: 'Align title (vertical)',
-      type: 'dropdown-field',
-      options: [
-        { value: 'start', text: 'Top' },
-        { value: 'center', text: 'Center' },
-        { value: 'end', text: 'Bottom' },
-      ],
+    type: 'heading-1',
+    label: 'Heading 1',
+    editor: {
+        text: {label: 'Text content', type: 'text-field'},
+        fullWidth: {label: 'Full width', type: 'checkbox-field', inlineLabel: 'Show full width'},
+        background: {label: 'Background', type: 'color-field'},
+        backgroundHeight: {label: 'Background height', type: 'text-field'},
+        alignBackground: {
+            label: 'Align title (vertical)',
+            type: 'dropdown-field',
+            options: [
+                {value: 'start', text: 'Top'},
+                {value: 'center', text: 'Center'},
+                {value: 'end', text: 'Bottom'},
+            ],
+        },
+        textAlign: {
+            label: 'Align title (vertical)',
+            type: 'dropdown-field',
+            options: [
+                {value: 'left', text: 'Left'},
+                {value: 'center', text: 'Center'},
+                {value: 'right', text: 'Right'},
+            ],
+        },
+        fontSize: {
+            label: 'Font size',
+            type: 'dropdown-field',
+            options: [
+                {value: 'sm', text: 'Small'},
+                {value: 'md', text: 'Normal'},
+                {value: 'lg', text: 'Large'},
+                {value: 'xl', text: 'Very Large'},
+            ],
+        },
+        backgroundImage: {label: 'Background image', type: 'madoc-media-explorer'},
+        imageStyle: {
+            type: 'dropdown-field',
+            options: [
+                {value: 'bgf', text: 'Full Background Image'},
+                {value: 'bgh', text: 'Half Background Image'},
+                {value: 'dim', text: 'Diamond'},
+                {value: 'cir', text: 'Circle'},
+                {value: 'oct', text: 'Octagon'},
+            ],
+        },
     },
-    textAlign: {
-      label: 'Align title (vertical)',
-      type: 'dropdown-field',
-      options: [
-        { value: 'left', text: 'Left' },
-        { value: 'center', text: 'Center' },
-        { value: 'right', text: 'Right' },
-      ],
+    defaultProps: {
+        text: 'Example header',
+        fullWidth: false,
+        background: '',
+        backgroundHeight: 200,
+        alignBackground: 'start',
+        textAlign: 'left',
+        fontSize: 'md',
+        backgroundImage: null,
+        imageStyle: 'bgf',
     },
-    fontSize: {
-      label: 'Font size',
-      type: 'dropdown-field',
-      options: [
-        { value: 'sm', text: 'Small' },
-        { value: 'md', text: 'Normal' },
-        { value: 'lg', text: 'Large' },
-        { value: 'xl', text: 'Very Large' },
-      ],
+    svgIcon: props => {
+        return (
+            <svg width="1em" height="1em" viewBox="0 0 177 127" xmlns="http://www.w3.org/2000/svg" {...props}>
+                <g fill="none" fillRule="evenodd">
+                    <path d="M0 0h177v127H0z"/>
+                    <text fontFamily="Helvetica-Bold, Helvetica" fontSize={53} fontWeight="bold" fill="#000">
+                        <tspan x={57.075} y={84}>
+                            {'h1'}
+                        </tspan>
+                    </text>
+                </g>
+            </svg>
+        );
     },
-    backgroundImage: { label: 'Background image', type: 'madoc-media-explorer' },
-    imageStyle: {
-      type: 'dropdown-field',
-      options: [
-        { value: 'bgf', text: 'Full Background Image' },
-        { value: 'bgh', text: 'Half Background Image' },
-        { value: 'dim', text: 'Diamond' },
-        { value: 'cir', text: 'Circle' },
-        { value: 'oct', text: 'Octagon' },
-      ],
-    },
-  },
-  defaultProps: {
-    text: 'Example header',
-    fullWidth: false,
-    background: '',
-    backgroundHeight: 200,
-    alignBackground: 'start',
-    textAlign: 'left',
-    fontSize: 'md',
-    backgroundImage: null,
-    imageStyle: 'bgf',
-  },
-  svgIcon: props => {
-    return (
-      <svg width="1em" height="1em" viewBox="0 0 177 127" xmlns="http://www.w3.org/2000/svg" {...props}>
-        <g fill="none" fillRule="evenodd">
-          <path d="M0 0h177v127H0z" />
-          <text fontFamily="Helvetica-Bold, Helvetica" fontSize={53} fontWeight="bold" fill="#000">
-            <tspan x={57.075} y={84}>
-              {'h1'}
-            </tspan>
-          </text>
-        </g>
-      </svg>
-    );
-  },
-  mapFromProps: props =>
-    ({
-      ...props,
-      text: convertComponentToText(props.children),
-    } as any),
-  mapToProps: props =>
-    ({
-      ...props,
-      children: <>{props.text}</>,
-      backgroundHeight:
-        Number.isFinite(Number(props.backgroundHeight)) && !Number.isNaN(Number(props.backgroundHeight))
-          ? Number(props.backgroundHeight)
-          : 200,
-    } as any),
+    mapFromProps: props =>
+        ({
+            ...props,
+            text: convertComponentToText(props.children),
+        } as any),
+    mapToProps: props =>
+        ({
+            ...props,
+            children: <>{props.text}</>,
+            backgroundHeight:
+                Number.isFinite(Number(props.backgroundHeight)) && !Number.isNaN(Number(props.backgroundHeight))
+                    ? Number(props.backgroundHeight)
+                    : 200,
+        } as any),
 });
 
 export const Subheading1 = styled.p`

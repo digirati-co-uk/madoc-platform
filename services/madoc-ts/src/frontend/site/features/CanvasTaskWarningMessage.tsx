@@ -29,9 +29,9 @@ export const CanvasTaskWarningMessage: React.FC = () => {
 };
 
 blockEditorFor(CanvasTaskWarningMessage, {
-  type: 'default.CanvasTaskWarningMessage',
-  label: 'Canvas task warning message',
-  editor: {},
-  requiredContext: ['project', 'manifest', 'canvas'],
-  anyContext: ['canvas'],
+    type: 'default.CanvasTaskWarningMessage',
+    label: 'Canvas task warning message',
+    editor: {},
+    requiredContext: ['project', 'manifest', 'canvas'],
+    anyContext: ['canvas'],
 });

@@ -20,9 +20,9 @@ export const ManifestModelEditor: React.FC = () => {
 };
 
 blockEditorFor(ManifestModelEditor, {
-  type: 'default.ManifestModelEditor',
-  label: 'Manifest model editor',
-  requiredContext: ['project', 'manifest'],
-  anyContext: ['manifest'],
-  editor: {},
+    type: 'default.ManifestModelEditor',
+    label: 'Manifest model editor',
+    requiredContext: ['project', 'manifest'],
+    anyContext: ['manifest'],
+    editor: {},
 });

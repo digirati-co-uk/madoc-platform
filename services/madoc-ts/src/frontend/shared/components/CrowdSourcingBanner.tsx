@@ -92,46 +92,47 @@ export const CrowdSourcingBanner: React.FC<CrowdSourcingBannerProps> = props => 
 };
 
 blockEditorFor(CrowdSourcingBanner, {
-  label: 'Crowdsourcing banner',
-  type: 'CrowdsourcingBanner',
-  defaultProps: {
-    title: '',
-    description: '',
-    image: null,
-    height: '550',
-    panelAlignment: 'left',
-    buttonLabel: '',
-    buttonLink: '',
-  },
-  svgIcon: props => (
-    <svg width="1em" height="1em" viewBox="0 0 151 84" xmlns="http://www.w3.org/2000/svg" {...props}>
-      <g fill="none" fillRule="evenodd">
-        <path strokeOpacity={0.088} stroke="#000" fillOpacity={0.122} fill="#000" d="M.5.5h149.316v83H.5z" />
-        <path fillOpacity={0.124} fill="#000" d="M0 0h63.663v84H0z" />
-        <path fillOpacity={0.157} fill="#000" d="M6.189 20.337h50.4v5.305h-50.4zM6.189 30.947h50.4v12.379h-50.4z" />
-        <path fill="#2B5294" d="M6.189 48.632h25.642v5.305H6.189z" />
-      </g>
-    </svg>
-  ),
-  editor: {
-    title: { type: 'text-field', label: 'Title' },
-    description: { type: 'text-field', multiline: true, minLines: 6, label: 'Description' },
-    panelAlignment: {
-      label: 'Panel alignment',
-      type: 'dropdown-field',
-      options: [
-        { value: 'left', text: 'Left aligned' },
-        { value: 'right', text: 'Right aligned' },
-      ],
+    label: 'Crowdsourcing banner',
+    type: 'CrowdsourcingBanner',
+    defaultProps: {
+        title: '',
+        description: '',
+        image: null,
+        height: '550',
+        panelAlignment: 'left',
+        buttonLabel: '',
+        buttonLink: '',
     },
-    image: {
-      label: 'Image',
-      type: 'madoc-media-explorer',
+    svgIcon: props => (
+        <svg width="1em" height="1em" viewBox="0 0 151 84" xmlns="http://www.w3.org/2000/svg" {...props}>
+            <g fill="none" fillRule="evenodd">
+                <path strokeOpacity={0.088} stroke="#000" fillOpacity={0.122} fill="#000" d="M.5.5h149.316v83H.5z"/>
+                <path fillOpacity={0.124} fill="#000" d="M0 0h63.663v84H0z"/>
+                <path fillOpacity={0.157} fill="#000"
+                      d="M6.189 20.337h50.4v5.305h-50.4zM6.189 30.947h50.4v12.379h-50.4z"/>
+                <path fill="#2B5294" d="M6.189 48.632h25.642v5.305H6.189z"/>
+            </g>
+        </svg>
+    ),
+    editor: {
+        title: {type: 'text-field', label: 'Title'},
+        description: {type: 'text-field', multiline: true, minLines: 6, label: 'Description'},
+        panelAlignment: {
+            label: 'Panel alignment',
+            type: 'dropdown-field',
+            options: [
+                {value: 'left', text: 'Left aligned'},
+                {value: 'right', text: 'Right aligned'},
+            ],
+        },
+        image: {
+            label: 'Image',
+            type: 'madoc-media-explorer',
+        },
+        height: {type: 'text-field', label: 'Height (number)'},
+        buttonLabel: {type: 'text-field', label: 'Button label'},
+        buttonLink: {type: 'text-field', label: 'Button link'},
     },
-    height: { type: 'text-field', label: 'Height (number)' },
-    buttonLabel: { type: 'text-field', label: 'Button label' },
-    buttonLink: { type: 'text-field', label: 'Button link' },
-  },
-  requiredContext: [],
-  anyContext: [],
+    requiredContext: [],
+    anyContext: [],
 });

@@ -47,9 +47,9 @@ export const CanvasModelCompleteMessage: React.FC = () => {
 };
 
 blockEditorFor(CanvasModelCompleteMessage, {
-  type: 'default.CanvasModelCompleteMessage',
-  label: 'Canvas model complete message',
-  anyContext: ['canvas'],
-  requiredContext: ['project', 'manifest', 'canvas'],
-  editor: {},
+    type: 'default.CanvasModelCompleteMessage',
+    label: 'Canvas model complete message',
+    anyContext: ['canvas'],
+    requiredContext: ['project', 'manifest', 'canvas'],
+    editor: {},
 });

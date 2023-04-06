@@ -171,10 +171,10 @@ export const ContinueCanvasSubmission: React.FC = () => {
 };
 
 blockEditorFor(ContinueCanvasSubmission, {
-  type: 'default.ContinueCanvasSubmission',
-  label: 'Canvas continue submission',
-  anyContext: ['canvas'],
-  requiredContext: ['project', 'manifest', 'canvas'],
-  editor: {},
-  defaultProps: {},
+    type: 'default.ContinueCanvasSubmission',
+    label: 'Canvas continue submission',
+    anyContext: ['canvas'],
+    requiredContext: ['project', 'manifest', 'canvas'],
+    editor: {},
+    defaultProps: {},
 });
