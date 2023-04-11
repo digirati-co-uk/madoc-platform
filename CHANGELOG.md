@@ -13,10 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Added new "webhook" data model (no usages yet)
+- Added more options to the footer grid block and nested fields (NS-14)
 
 ### Changed
 - Changed language on user dash from 'reviews' to 'review tasks' to differentiate between the two
-
 <!-- 
 ### Fixed
 ### Added
