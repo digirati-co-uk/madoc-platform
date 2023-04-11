@@ -1,6 +1,7 @@
 import React from 'react';
 import { BaseField, FieldComponent } from '../../../types/field-types';
 import { StyledFormInputElement, StyledFormMultilineInputElement } from '../../atoms/StyledForm';
+import { useModelTranslation } from '../../../hooks/use-model-translation';
 
 export interface TextFieldProps extends BaseField {
   id: string;
@@ -23,12 +24,15 @@ export const TextField: FieldComponent<TextFieldProps> = ({
   updateValue,
   disabled,
 }) => {
+  const { t: tModel } = useModelTranslation();
+  const tPlaceholder = placeholder ? tModel(placeholder) : ' ';
+
   if (multiline) {
     return (
       <StyledFormMultilineInputElement
         name={id}
         id={id}
-        placeholder={placeholder}
+        placeholder={tPlaceholder}
         value={value || ''}
         disabled={disabled}
         onChange={e => updateValue(e.currentTarget.value)}
@@ -41,7 +45,7 @@ export const TextField: FieldComponent<TextFieldProps> = ({
     <StyledFormInputElement
       name={id}
       id={id}
-      placeholder={placeholder}
+      placeholder={tPlaceholder}
       value={value || ''}
       disabled={disabled}
       onChange={e => updateValue(e.currentTarget.value)}

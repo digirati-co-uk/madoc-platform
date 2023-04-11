@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed bug with single line transcriptions in preview mode (NS-11)
 - Fixed review screen resizer min width from 400px to 200px (NS-22)
 - Fixed contributor buttons not following project config in collection (NS-23)
+- Fixed missing translations in editor (NS-20)
 
 ### Added
 - Added new "webhook" data model (no usages yet)
