@@ -11,14 +11,24 @@ import { useRelativeLinks } from '../hooks/use-relative-links';
 import { CollectionLoader } from '../pages/loaders/collection-loader';
 import { GoToRandomCanvas } from './GoToRandomCanvas';
 import { GoToRandomManifest } from './GoToRandomManifest';
+import { useProjectPageConfiguration } from '../hooks/use-project-page-configuration';
+import { useProjectStatus } from '../hooks/use-project-status';
+import { useSiteConfiguration } from './SiteConfigurationContext';
+import { useProjectShadowConfiguration } from '../hooks/use-project-shadow-configuration';
 
 export const CollectionFilterOptions: React.FC = () => {
   const { t } = useTranslation();
   const { data } = usePaginatedData(CollectionLoader);
+
   const createLink = useRelativeLinks();
   const { filter, page } = useLocationQuery();
   const [, showDoneButton] = useSubjectMap(data ? data.subjects : []);
-
+  const options = useProjectPageConfiguration();
+  const { isActive } = useProjectStatus();
+  const { showCaptureModelOnManifest } = useProjectShadowConfiguration();
+  const {
+    project: { allowCollectionNavigation = true, allowManifestNavigation = true, claimGranularity },
+  } = useSiteConfiguration();
   if (!data) {
     return null;
   }
@@ -26,7 +36,19 @@ export const CollectionFilterOptions: React.FC = () => {
   return (
     <>
       <ButtonRow>
-        <GoToRandomCanvas $primary $large label={{ none: [t('Start contributing')] }} navigateToModel />
+        {!options.hideStartContributing && isActive ? (
+          claimGranularity === 'manifest' || showCaptureModelOnManifest ? (
+            <GoToRandomManifest
+              $primary
+              $large
+              label={{ none: [t('Start contributing')] }}
+              navigateToModel
+              manifestModel={showCaptureModelOnManifest}
+            />
+          ) : (
+            <GoToRandomCanvas $primary $large label={{ none: [t('Start contributing')] }} navigateToModel />
+          )
+        ) : null}
       </ButtonRow>
       <ButtonRow>
         {showDoneButton || filter ? (
@@ -42,8 +64,8 @@ export const CollectionFilterOptions: React.FC = () => {
         <Button as={Link} to={createLink({ subRoute: 'search' })}>
           {t('Search this collection')}
         </Button>
-        <GoToRandomManifest />
-        <GoToRandomCanvas />
+        {allowCollectionNavigation && !options.hideRandomManifest && <GoToRandomManifest />}
+        {allowManifestNavigation && !options.hideRandomCanvas && <GoToRandomCanvas />}
       </ButtonRow>
     </>
   );
