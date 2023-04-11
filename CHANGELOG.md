@@ -8,13 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.1.0...main)
 
 ### Fixed
-
 - Fixed bug with single line transcriptions in preview mode (NS-11)
-
+- Fixed review screen resizer min width from 400px to 200px (NS-22)
 
 ### Added
 - Added new "webhook" data model (no usages yet)
+- Added more options to the footer grid block and nested fields (NS-14)
 
+### Changed
+- Changed language on user dash from 'reviews' to 'review tasks' to differentiate between the two
 <!-- 
 ### Fixed
 ### Added

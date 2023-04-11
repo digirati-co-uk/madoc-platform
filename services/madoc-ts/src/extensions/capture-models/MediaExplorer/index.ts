@@ -2,6 +2,7 @@ import React from 'react';
 import { FieldSpecification } from '../../../frontend/shared/capture-models/types/field-types';
 import { MediaExplorer, MediaExplorerProps } from './MediaExplorer';
 import { MediaExplorerPreview } from './MediaExplorer.preview';
+import { registerField } from '../../../frontend/shared/capture-models/plugin-api/global-store';
 
 declare module '../../../frontend/shared/capture-models/types/field-types' {
   export interface FieldTypeMap {
@@ -20,3 +21,7 @@ export const specification: FieldSpecification<MediaExplorerProps> = {
   Editor: React.lazy(() => import(/* webpackChunkName: "field-editors" */ './MediaExplorer.editor')),
   TextPreview: MediaExplorerPreview,
 };
+
+registerField(specification);
+
+export default specification;
