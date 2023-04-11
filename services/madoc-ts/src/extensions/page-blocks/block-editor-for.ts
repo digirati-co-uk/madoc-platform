@@ -1,5 +1,5 @@
 import React, { JSXElementConstructor } from 'react';
-import { BaseField } from '../../frontend/shared/capture-models/types/field-types';
+import {BaseField, FieldTypes} from '../../frontend/shared/capture-models/types/field-types';
 import { blockConfigFor } from '../../frontend/shared/plugins/external/block-config-for';
 import { BlockHook } from '../../types/block-hook';
 import { EditorialContext } from '../../types/schemas/site-page';

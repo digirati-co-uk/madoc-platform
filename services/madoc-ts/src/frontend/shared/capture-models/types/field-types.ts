@@ -1,7 +1,6 @@
 import { FC } from 'react';
 import { BaseProperty } from './base-property';
 import { CaptureModel } from './capture-model';
-import { FieldTypeMap } from './custom';
 import { MapValues } from './utility';
 
 export interface BaseField extends BaseProperty {
