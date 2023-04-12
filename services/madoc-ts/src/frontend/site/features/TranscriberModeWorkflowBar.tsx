@@ -53,6 +53,7 @@ export const TranscriberModeWorkflowBar: React.FC = () => {
       setIsUsable(newValue || false);
 
       if (newValue) {
+        console.log('here')
         await api.createResourceClaim(projectId, {
           manifestId,
           canvasId,
