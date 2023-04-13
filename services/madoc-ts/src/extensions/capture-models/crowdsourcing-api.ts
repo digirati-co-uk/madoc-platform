@@ -450,6 +450,9 @@ export class CrowdsourcingApi implements BaseExtension {
     });
   }
 
+  async updatePublic({
+
+                     })
   async reviewApproveAndRemoveSubmission({
     userTaskIds,
     revisionIdsToRemove,

@@ -82,6 +82,7 @@ import { ResourceLinkRow } from '../database/queries/linking-queries';
 import { SearchIndexTask } from './tasks/search-index-task';
 import { JsonProjectTemplate, ProjectTemplate } from '../extensions/projects/types';
 import { ApiKey } from '../types/api-key';
+import {api} from "./api.server";
 
 export type ApiClientWithoutExtensions = Omit<
   ApiClient,
@@ -1634,6 +1635,7 @@ export class ApiClient {
     return this.request<Task>(`/api/tasks/${id}`, {
       method: 'PATCH',
       body: task,
+      publicRequest: true,
     });
   }
 

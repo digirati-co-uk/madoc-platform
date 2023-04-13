@@ -1,4 +1,4 @@
-import { execBot } from '../../automation/index';
+import { execBot } from '../../automation';
 import { getSiteFromTask } from '../../utility/get-site-from-task';
 import { parseUrn } from '../../utility/parse-urn';
 import { BaseTask } from './base-task';
@@ -90,6 +90,7 @@ export function createTask(task: CrowdsourcingTask): CrowdsourcingReview {
 }
 
 export const jobHandler = async (name: string, taskId: string, api: ApiClient) => {
+  console.log('here')
   // If you throw an exception here, the crowdsourcing task will be marked as rejected. Need to be careful.
   switch (name) {
     case 'created': {
@@ -102,7 +103,7 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
           const project = projects.projects[0];
           if (project) {
             try {
-              assignee = (await api.assignUserToReview(project.id, task.id)).user;
+              assignee = (await api.crowdsourcing.assignUserToReview(project.id, task.id)).user;
             } catch (e) {
               // Only possible when the project is broken (collection removed)
               console.log(e);
@@ -120,10 +121,12 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
         }
       }
 
+      console.log('here')
       break;
     }
 
     case 'assigned': {
+      console.log('here')
       const task = await api.getTask<CrowdsourcingReview>(taskId);
 
       await api.notifications.taskAssignmentNotification('You have been assigned a review', task);
