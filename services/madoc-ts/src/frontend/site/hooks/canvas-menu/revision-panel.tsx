@@ -1,4 +1,4 @@
-import { Revisions } from '../../../shared/capture-models/editor/stores/revisions/index';
+import { Revisions } from '../../../shared/capture-models/editor/stores/revisions';
 import React, { useEffect, useState, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { RevisionRequest } from '../../../shared/capture-models/types/revision-request';
@@ -22,11 +22,13 @@ const ViewRevisions = memo(
 
     const [myUnpublished, setMyUnpublished] = useState<RevisionRequest[]>([]);
     const [mySubmitted, setMySubmitted] = useState<RevisionRequest[]>([]);
+    const [myRejected, setMyRejected] = useState<RevisionRequest[]>([]);
     const [myAcceptedRevisions, setMyAcceptedRevisions] = useState<RevisionRequest[]>([]);
 
     useEffect(() => {
       setMySubmitted([]);
       setMyUnpublished([]);
+      setMyRejected([]);
     }, [updatedAt]);
 
     useEffect(() => {
@@ -42,12 +44,23 @@ const ViewRevisions = memo(
     }, [mySubmitted.length, revisions.mySubmitted]);
 
     useEffect(() => {
+      if (revisions.myRejected.length !== myRejected.length) {
+        setMyRejected(revisions.myRejected);
+      }
+    }, [myRejected.length, revisions.myRejected]);
+
+    useEffect(() => {
       if (revisions.myAcceptedRevisions.length !== myAcceptedRevisions.length) {
         setMyAcceptedRevisions(revisions.myAcceptedRevisions);
       }
     }, [myAcceptedRevisions.length, revisions.myAcceptedRevisions]);
 
-    if (myUnpublished.length === 0 && mySubmitted.length === 0 && myAcceptedRevisions.length === 0) {
+    if (
+      myUnpublished.length === 0 &&
+      mySubmitted.length === 0 &&
+      myAcceptedRevisions.length === 0 &&
+      myRejected.length === 0
+    ) {
       return <EmptyState>{t('No submissions yet')}</EmptyState>;
     }
 
@@ -56,6 +69,7 @@ const ViewRevisions = memo(
         <RevisionList title={t('Drafts')} revisions={myUnpublished} editable />
         <RevisionList title={t('In review')} revisions={mySubmitted} />
         <RevisionList title={t('Approved')} revisions={myAcceptedRevisions} />
+        <RevisionList title={t('Rejected')} revisions={myRejected} />
       </div>
     );
   },

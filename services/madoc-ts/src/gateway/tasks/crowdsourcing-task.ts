@@ -134,20 +134,43 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
     case 'status.-1': {
       try {
         // When a task is abandoned, we should remove or update the review task.
+        // lets mark is as rejected and inform the user instead
+        console.log('crowdsourcing-task.status.1');
         const task = await api.getTask<CrowdsourcingTask>(taskId);
+        const userId = task.assignee?.id;
         const revision = task.state.revisionId;
         if (revision) {
-          const revisionRequest = await api.getCaptureModelRevision(revision);
+          const revisionRequest = await api.crowdsourcing.getCaptureModelRevision(revision);
           if (revisionRequest) {
-            await api.deleteCaptureModelRevision(revisionRequest);
+            // await api.deleteCaptureModelRevision(revisionRequest);
+            await api.updateTask(task.id, {
+              status: -1,
+              status_text: `rejected`,
+            });
           }
         }
-
         if (task.parent_task) {
           const parent = await api.getTask(task.parent_task, { detail: true, type: 'crowdsourcing-task' });
           if (parent.type === 'crowdsourcing-manifest-task') {
             // We have just rejected a manifest task.
             await syncManifestTaskStatus(parent as any, api);
+          }
+        }
+        if (userId) {
+          const user = parseUrn(userId);
+          if (user && user.id) {
+            const subject = task.metadata?.subject;
+            await api.notifications.createNotification({
+              id: generateId(),
+              title: 'Your submission was rejected.',
+              summary: task.name,
+              thumbnail: subject?.thumbnail,
+              action: {
+                id: 'crowdsourcing-task:changes',
+                link: `urn:madoc:task:${task.id}`,
+              },
+              user: user.id,
+            });
           }
         }
       } catch (err) {
