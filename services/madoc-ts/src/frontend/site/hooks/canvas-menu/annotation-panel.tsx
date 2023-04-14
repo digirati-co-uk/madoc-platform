@@ -28,6 +28,7 @@ export function useAnnotationPanel(active: boolean): CanvasMenuHook {
     setIsActive,
   } = useHighlightedRegions();
   const styles = useProjectAnnotationStyles();
+
   useEffect(() => {
     setIsActive(active);
   }, [active, setIsActive]);

@@ -26,8 +26,6 @@ export const RejectSubmission: React.FC<{ onReject: () => void; userTaskId: stri
     (message: string) => {
       if (currentRevision) {
         setIsLoading(true);
-        console.log(currentRevision)
-        console.log(userTaskId)
         api
           .reviewRejectSubmission({
             revisionRequest: currentRevision,

@@ -1,42 +1,7 @@
 import React, { createContext, useContext, useMemo } from 'react';
 import { AnnotationStyles } from '../../../types/annotation-styles';
 
-export function getDefaultAnnotationStyles(): {
-  currentLevel: { backgroundColor: string; borderColor: string; borderWidth: string };
-  rejectedSubmissions: {
-    backgroundColor: string;
-    borderColor: string;
-    ':hover': { backgroundColor: string; borderColor: string; borderWidth: string };
-    borderWidth: string;
-    interactive: boolean;
-  };
-  hidden: { borderColor: string; backgroundColor: string; borderWidth: string };
-  highlighted: { backgroundColor: string; borderColor: string; borderWidth: string };
-  topLevel: { backgroundColor: string; borderColor: string; borderWidth: string };
-  submissions: {
-    borderColor: string;
-    backgroundColor: string;
-    hidden: boolean;
-    borderWidth: string;
-    borderStyle: string;
-  };
-  contributedAnnotations: {
-    backgroundColor: string;
-    borderColor: string;
-    hidden: boolean;
-    ':hover': { backgroundColor: string; borderColor: string; borderWidth: string };
-    borderWidth: string;
-    interactive: boolean;
-  };
-  adjacent: { backgroundColor: string; borderColor: string; borderWidth: string };
-  contributedDocument: {
-    borderColor: string;
-    backgroundColor: string;
-    hidden: boolean;
-    borderWidth: string;
-    borderStyle: string;
-  };
-} {
+export function getDefaultAnnotationStyles(): AnnotationStyles['theme'] {
   return {
     highlighted: {
       backgroundColor: 'rgba(75, 103, 225, 0.4)',
@@ -49,7 +14,7 @@ export function getDefaultAnnotationStyles(): {
       backgroundColor: 'rgba(0,0,0,0)',
     },
     adjacent: {
-      backgroundColor: 'rgba(141,160,203,.1)',
+      backgroundColor: 'rgba(123,144,196,0.2)',
       borderWidth: '1px',
       borderColor: 'rgba(5, 42, 68, 0.2)',
     },
@@ -81,26 +46,13 @@ export function getDefaultAnnotationStyles(): {
       hidden: false,
       borderWidth: '1px',
       borderColor: 'rgba(87,36,203,0.5)',
-      borderStyle: 'solid',
       backgroundColor: 'rgba(87,36,203,0.2)',
     },
     submissions: {
       hidden: false,
       borderWidth: '1px',
-      borderColor: 'rgba(87,36,203,0.5)',
-      borderStyle: 'solid',
-      backgroundColor: 'rgba(87,36,203,0.2)',
-    },
-    rejectedSubmissions: {
-      interactive: true,
-      borderWidth: '1px',
-      backgroundColor: 'rgba(0,0,0,0.2)',
-      borderColor: 'rgba(5, 42, 68, 0.2)',
-      ':hover': {
-        backgroundColor: 'rgba(0,0,0,0.5)',
-        borderWidth: '1px',
-        borderColor: 'rgba(5, 42, 68, 0.5)',
-      },
+      borderColor: 'rgba(19,0,59,0.5)',
+      backgroundColor: 'rgba(87,36,203,0.27)',
     },
   };
 }
