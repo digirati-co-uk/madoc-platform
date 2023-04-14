@@ -111,11 +111,15 @@ export function useReadOnlyAnnotations(isModelPage = false): ReadOnlyAnnotation[
   const user = useUser();
   const revisions = captureModel?.revisions;
   const revisionIds = revisions?.map(r =>
-    !r.approved && r.authors?.includes(`urn:madoc:user:${user?.id}`) ? r.id : ''
+    !r.approved && r.status === 'rejected' && r.authors?.includes(`urn:madoc:user:${user?.id}`) ? r.id : ''
+  );
+  const rejectedIDs = revisions?.map(r =>
+    !r.approved && r.status === 'rejected' && r.authors?.includes(`urn:madoc:user:${user?.id}`) ? r.id : ''
   );
   const unstyledRevisions = useMemo(() => {
     const regions: ReadOnlyAnnotation[] = [];
     const rIds: string[] = revisionIds ? [...revisionIds.filter(r => r)] : [];
+    const rejIds: string[] = rejectedIDs ? [...rejectedIDs.filter(r => r)] : [];
     const ids: string[] = [];
 
     if (showRevisions && !styles.submissions?.hidden) {
@@ -124,12 +128,20 @@ export function useReadOnlyAnnotations(isModelPage = false): ReadOnlyAnnotation[
           visitSelector(_selector, revision) {
             if (revision.revision) {
               const selector = resolveSelector(_selector, revision.revision);
-              if (selector.state && rIds.indexOf(revision.revision) !== -1 && ids.indexOf(selector.id) === -1) {
+              if (selector.state && ids.indexOf(revision.revision) !== -1 && ids.indexOf(selector.id) === -1) {
                 ids.push(selector.id);
                 regions.push({
                   id: selector.id,
                   target: selector.state,
                   style: styles.submissions,
+                });
+              }
+              if (selector.state && rejIds.indexOf(revision.revision) !== -1 && rejIds.indexOf(selector.id) === -1) {
+                rejIds.push(selector.id);
+                regions.push({
+                  id: selector.id,
+                  target: selector.state,
+                  style: styles.rejectedSubmissions,
                 });
               }
             }
