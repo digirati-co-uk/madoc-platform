@@ -60,6 +60,7 @@ const statusColours: { [key in StatusTypes]: string } = {
   accepted: '#337c34',
   draft: '#4a67e4',
   submitted: '#ffc63f',
+  rejected: '#a90e21',
 };
 
 const RevisionStatus = styled.div<{ $status?: RevisionRequest['revision']['status'] }>`

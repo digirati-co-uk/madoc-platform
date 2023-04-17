@@ -12,10 +12,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed review screen resizer min width from 400px to 200px (NS-22)
 - Fixed contributor buttons not following project config in collection (NS-23)
 - Fixed missing translations in editor (NS-20)
+- Fixed rejecting a submission sometimes removes accepted annotations (MAD-1315)
 
 ### Added
 - Added new "webhook" data model (no usages yet)
 - Added more options to the footer grid block and nested fields (NS-14)
+- Added notification for rejected submission and added view for rejected in contributions panel (MAD-1315)
 
 ### Changed
 - Changed language on user dash from 'reviews' to 'review tasks' to differentiate between the two
