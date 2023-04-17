@@ -133,9 +133,6 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
   switch (name) {
     case 'status.-1': {
       try {
-        // When a task is abandoned, we should remove or update the review task.
-        // lets mark is as rejected and inform the user instead
-        console.log('crowdsourcing-task.status.1');
         const task = await api.getTask<CrowdsourcingTask>(taskId);
         const userId = task.assignee?.id;
         const revision = task.state.revisionId;
