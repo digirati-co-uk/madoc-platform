@@ -60,20 +60,20 @@ export const TaggingFormPannel = () => {
   }, {});
 
   const newTags = tagTypes ? Object.entries(tagTypes) : [];
-  const [selectedId, setSelectedId] = useState<string | undefined>(undefined);
+  const [selectedSlug, setSelectedSlug] = useState<string | undefined>(undefined);
 
   const [remove, removeStatus] = useMutation(async (id: string) => {
     await api.enrichment.removeResourceTag(id);
     await refetch();
   });
-  const [addTag, addStatus] = useMutation(async (entityId: string) => {
-    await api.enrichment.tagMadocResource(entityId, 'canvas', canvasId);
-    setSelectedId(undefined);
+  const [addTag, addStatus] = useMutation(async (entitySlug: string) => {
+    await api.enrichment.tagMadocResource(entitySlug, 'canvas', canvasId);
+    setSelectedSlug(undefined);
     await refetch();
   });
 
   const onSelect = (id: string | undefined) => {
-    setSelectedId(id);
+    setSelectedSlug(id);
   };
   return (
     <TaggingContainer>
@@ -86,16 +86,16 @@ export const TaggingFormPannel = () => {
           <ButtonRow $noMargin>
             <Button
               $primary
-              disabled={!selectedId}
+              disabled={!selectedSlug}
               onClick={() => {
-                addTag(selectedId).then(() => close());
+                addTag(selectedSlug).then(() => close());
               }}
             >
               Submit
             </Button>
             <Button
               onClick={() => {
-                setSelectedId(undefined);
+                setSelectedSlug(undefined);
                 close();
               }}
             >
@@ -112,27 +112,32 @@ export const TaggingFormPannel = () => {
         <TagBox key={tagType[0]}>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <TagTitle>{tagType[0]}</TagTitle>
+
             <ModalButton
               style={{ cursor: 'pointer' }}
               title="Tag this resource"
               render={() => (
-                <AddTagButton topicType={tagType[0]} onSelected={onSelect} statusLoading={addStatus.isLoading} />
+                <AddTagButton
+                  topicType={tagType[1][0].entity.type_slug}
+                  onSelected={onSelect}
+                  statusLoading={addStatus.isLoading}
+                />
               )}
               footerAlignRight
               renderFooter={({ close }) => (
                 <ButtonRow $noMargin>
                   <Button
                     $primary
-                    disabled={!selectedId}
+                    disabled={!selectedSlug}
                     onClick={() => {
-                      addTag(selectedId).then(() => close());
+                      addTag(selectedSlug).then(() => close());
                     }}
                   >
                     Submit
                   </Button>
                   <Button
                     onClick={() => {
-                      setSelectedId(undefined);
+                      setSelectedSlug(undefined);
                       close();
                     }}
                   >

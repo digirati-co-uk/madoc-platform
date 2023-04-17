@@ -17,7 +17,7 @@ export const TopicPill = styled(TagPill)`
 `;
 export const AddTopicButton: React.FC<{
   statusLoading: boolean;
-  onSelected: (id: string | undefined) => void;
+  onSelected: (slug: string | undefined) => void;
 }> = ({ onSelected, statusLoading }) => {
   const container = useRef<HTMLDivElement>(null);
   const [fullText, setFulltext] = React.useState('');

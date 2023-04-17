@@ -23,7 +23,7 @@ const TagResults = styled.div`
 export const AddTagButton: React.FC<{
   topicType: string;
   statusLoading: boolean;
-  onSelected: (id: string | undefined) => void;
+  onSelected: (slug: string | undefined) => void;
   hideTopic?: boolean;
 }> = ({ topicType, onSelected, statusLoading, hideTopic }) => {
   const container = useRef<HTMLDivElement>(null);
@@ -130,7 +130,7 @@ export const AddTagButton: React.FC<{
                         data-is-button={true}
                         onClick={() => {
                           setSelected(result);
-                          onSelected(result.id);
+                          onSelected(result.slug);
                         }}
                       >
                         {result.slug}
