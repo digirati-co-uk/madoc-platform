@@ -6,7 +6,7 @@ services:
     image: digirati/madoc-enrichment:qa-multiplatform
     environment:
       - BROWSABLE=False
-      - USE_DOCKER=yesç
+      - USE_DOCKER=yes
       - IPYTHONDIR=/app/.ipython
       - MIGRATE=True
       - LOAD=False

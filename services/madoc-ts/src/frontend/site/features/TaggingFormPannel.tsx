@@ -79,7 +79,7 @@ export const TaggingFormPannel = () => {
     <TaggingContainer>
       <ModalButton
         style={{ fontWeight: '500', display: 'block', marginBottom: '0.5em' }}
-        title="Tag this resource"
+        title={t('Tag this resource')}
         render={() => <AddTopicButton onSelected={onSelect} statusLoading={addStatus.isLoading} />}
         footerAlignRight
         renderFooter={({ close }) => (
@@ -91,7 +91,7 @@ export const TaggingFormPannel = () => {
                 addTag(selectedSlug).then(() => close());
               }}
             >
-              Submit
+              {t('Submit')}
             </Button>
             <Button
               onClick={() => {
@@ -99,12 +99,12 @@ export const TaggingFormPannel = () => {
                 close();
               }}
             >
-              Cancel
+              {t('Cancel')}
             </Button>
           </ButtonRow>
         )}
       >
-        <Button> Add new </Button>
+        <Button>{t('Add new')}</Button>
       </ModalButton>
       {newTags.length === 0 ? <MetadataEmptyState style={{ marginTop: 100 }}>{t('No tags')}</MetadataEmptyState> : null}
 
@@ -115,7 +115,7 @@ export const TaggingFormPannel = () => {
 
             <ModalButton
               style={{ cursor: 'pointer' }}
-              title="Tag this resource"
+              title={t('Tag this resource')}
               render={() => (
                 <AddTagButton
                   topicType={tagType[1][0].entity.type_slug}
@@ -133,7 +133,7 @@ export const TaggingFormPannel = () => {
                       addTag(selectedSlug).then(() => close());
                     }}
                   >
-                    Submit
+                    {t('Submit')}
                   </Button>
                   <Button
                     onClick={() => {
@@ -141,12 +141,12 @@ export const TaggingFormPannel = () => {
                       close();
                     }}
                   >
-                    Cancel
+                    {t('Cancel')}
                   </Button>
                 </ButtonRow>
               )}
             >
-              <PlusIcon /> Add
+              <PlusIcon /> {t('Add')}
             </ModalButton>
           </div>
           <PillContainer>
@@ -155,7 +155,7 @@ export const TaggingFormPannel = () => {
                 <TagPill>
                   <ModalButton
                     autoHeight
-                    title="Remove tag"
+                    title={t('Remove tag')}
                     render={() => {
                       return <ConfirmDeletion tagLabel={tag.entity.label} />;
                     }}

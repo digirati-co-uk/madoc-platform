@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import styled from 'styled-components';
-import { Button, ButtonRow } from '../../shared/navigation/Button';
+import { Button } from '../../shared/navigation/Button';
 import { CloseIcon } from '../../shared/icons/CloseIcon';
 import { useApi } from '../../shared/hooks/use-api';
 import { useInfiniteQuery } from 'react-query';
@@ -11,6 +11,7 @@ import { Input, InputContainer, InputLabel } from '../../shared/form/Input';
 import { TagPill } from '../hooks/canvas-menu/tagging-panel';
 import { AutoCompleteEntitySnippet } from '../../../extensions/enrichment/authority/types';
 import { AddTagButton } from './AddTagButton';
+import { useTranslation } from 'react-i18next';
 
 export const TopicPill = styled(TagPill)`
   border-color: orange;
@@ -24,6 +25,7 @@ export const AddTopicButton: React.FC<{
   const [isLoading, setIsLoading] = React.useState(false);
   const [selected, setSelected] = React.useState<AutoCompleteEntitySnippet | null>(null);
   const api = useApi();
+  const { t } = useTranslation();
 
   const { data: pages, fetchMore, canFetchMore, isFetchingMore, isLoading: queryLoading } = useInfiniteQuery(
     ['topic-type-autocomplete', fullText],
@@ -56,11 +58,11 @@ export const AddTopicButton: React.FC<{
 
   return (
     <div style={{ maxWidth: '100%' }}>
-      <p>Choose a topic type first</p>
+      <p>{t('Choose a topic type first')}</p>
       {selected && selected.slug ? (
         <>
           <div style={{ display: 'flex' }}>
-            <p> Topic Type: </p>
+            <p> {t('Topic Type')}: </p>
             <TopicPill style={{ alignSelf: 'end' }}>
               <CloseIcon
                 onClick={() => {
@@ -76,7 +78,7 @@ export const AddTopicButton: React.FC<{
       ) : (
         <>
           <InputContainer>
-            <InputLabel htmlFor="tagAuto">Search topic type</InputLabel>
+            <InputLabel htmlFor="tagAuto">{t('Search topic type')}</InputLabel>
             <Input
               onChange={e => startAutoComplete(e.target.value)}
               onBlur={e => startAutoComplete(e.target.value)}
@@ -87,7 +89,7 @@ export const AddTopicButton: React.FC<{
           </InputContainer>
           {isLoading || queryLoading ? (
             <EmptyState>
-              <Spinner /> ...loading
+              <Spinner /> ...{t('loading')}
             </EmptyState>
           ) : (
             <div ref={container} style={{ maxHeight: 500, overflowY: 'scroll', display: 'flex', flexWrap: 'wrap' }}>
@@ -107,7 +109,7 @@ export const AddTopicButton: React.FC<{
                 onClick={() => fetchMore()}
                 style={{ display: canFetchMore ? 'block' : 'none' }}
               >
-                Load more
+                {t('Load more')}
               </Button>
             </div>
           )}

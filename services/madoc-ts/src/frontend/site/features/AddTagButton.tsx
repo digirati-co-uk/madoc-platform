@@ -1,5 +1,5 @@
-import React, { useRef, useState } from 'react';
-import { Button, ButtonRow } from '../../shared/navigation/Button';
+import React, { useRef } from 'react';
+import { Button } from '../../shared/navigation/Button';
 import { CloseIcon } from '../../shared/icons/CloseIcon';
 import { useApi } from '../../shared/hooks/use-api';
 import { useInfiniteQuery } from 'react-query';
@@ -10,6 +10,7 @@ import { Input, InputContainer, InputLabel } from '../../shared/form/Input';
 import { TagPill } from '../hooks/canvas-menu/tagging-panel';
 import { AutoCompleteEntitySnippet } from '../../../extensions/enrichment/authority/types';
 import styled from 'styled-components';
+import { useTranslation } from 'react-i18next';
 
 const TagResults = styled.div`
   border: 2px solid #d3d3d3;
@@ -31,6 +32,7 @@ export const AddTagButton: React.FC<{
   const [isLoading, setIsLoading] = React.useState(false);
   const [selected, setSelected] = React.useState<AutoCompleteEntitySnippet | null>(null);
   const api = useApi();
+  const { t } = useTranslation();
 
   const { data: pages, fetchMore, canFetchMore, isFetchingMore, isLoading: queryLoading } = useInfiniteQuery(
     ['topic-autocomplete', { fullText, topicType }],
@@ -67,12 +69,12 @@ export const AddTagButton: React.FC<{
         <>
           {!hideTopic && (
             <p>
-              Topic type: <b>{topicType}</b>
+              {t('Topic type')}: <b>{topicType}</b>
             </p>
           )}
 
           <p>
-            Topic: <b>{selected.slug}</b>
+            {t('Topic')}: <b>{selected.slug}</b>
           </p>
           <div
             style={{
@@ -82,7 +84,7 @@ export const AddTagButton: React.FC<{
               borderRadius: '4px',
             }}
           >
-            <p> Tag this canvas with: </p>
+            <p> {t('Tag this canvas with')}: </p>
             <TagPill style={{ alignSelf: 'end' }}>
               <CloseIcon
                 onClick={() => {
@@ -96,27 +98,27 @@ export const AddTagButton: React.FC<{
         </>
       ) : queryLoading || !pages || pages[0].pagination.totalResults === 0 ? (
         <TagResults>
-          <EmptyState $noMargin>This type has no topics</EmptyState>
+          <EmptyState $noMargin>{t('This type has no topics')}</EmptyState>
         </TagResults>
       ) : (
         <>
           <InputContainer>
             <InputLabel htmlFor="tagAuto">
               {' '}
-              Search topics within <b>{topicType}</b>
+              {t('Search topics within')} <b>{topicType}</b>
             </InputLabel>
             <Input
               onChange={e => startAutoComplete(e.target.value)}
               onBlur={e => startAutoComplete(e.target.value)}
               type="text"
-              placeholder={'Search topics'}
+              placeholder={t('Search topics')}
               required
               value={fullText}
             />
           </InputContainer>
           {isLoading || queryLoading ? (
             <EmptyState>
-              <Spinner /> ...loading
+              <Spinner /> ...{t('loading')}
             </EmptyState>
           ) : (
             <TagResults ref={container}>
@@ -144,7 +146,7 @@ export const AddTagButton: React.FC<{
                 onClick={() => fetchMore()}
                 style={{ display: canFetchMore ? 'block' : 'none' }}
               >
-                Load more
+                {t('Load more')}
               </Button>
             </TagResults>
           )}
