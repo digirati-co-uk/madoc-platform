@@ -33,6 +33,7 @@ export const TagPill = styled.div`
   font-size: 0.8em;
   border: 2px solid #009f18;
   border-radius: 4px;
+  background-color: rgba(255, 255, 255, 0.9);
   color: #004761;
   padding: 0.2em;
   margin: 0 1em 1em 0.5em;
@@ -43,6 +44,7 @@ export const TagPill = styled.div`
     padding: 0.4em;
     margin: 0.5em;
   }
+
   span {
     display: block;
     max-width: 20px;

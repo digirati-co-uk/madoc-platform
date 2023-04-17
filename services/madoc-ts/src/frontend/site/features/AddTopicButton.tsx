@@ -12,15 +12,13 @@ import { TagPill } from '../hooks/canvas-menu/tagging-panel';
 import { AutoCompleteEntitySnippet } from '../../../extensions/enrichment/authority/types';
 import { AddTagButton } from './AddTagButton';
 
-
-const TopicPill = styled(TagPill)`
+export const TopicPill = styled(TagPill)`
   border-color: orange;
-  text-transform: capitalize;
 `;
 export const AddTopicButton: React.FC<{
   statusLoading: boolean;
-  addTag: (id: string | undefined) => Promise<void>;
-}> = ({ addTag, statusLoading }) => {
+  onSelected: (id: string | undefined) => void;
+}> = ({ onSelected, statusLoading }) => {
   const container = useRef<HTMLDivElement>(null);
   const [fullText, setFulltext] = React.useState('');
   const [isLoading, setIsLoading] = React.useState(false);
@@ -58,7 +56,7 @@ export const AddTopicButton: React.FC<{
 
   return (
     <div style={{ maxWidth: '100%' }}>
-      <p>Choose a topic type</p>
+      <p>Choose a topic type first</p>
       {selected && selected.slug ? (
         <>
           <div style={{ display: 'flex' }}>
@@ -72,9 +70,8 @@ export const AddTopicButton: React.FC<{
               {selected.slug}
             </TopicPill>
           </div>
-          <ButtonRow>
-            <AddTagButton topicType={selected.slug} statusLoading={statusLoading} addTag={addTag} />
-          </ButtonRow>
+
+          <AddTagButton topicType={selected.slug} statusLoading={statusLoading} onSelected={onSelected} hideTopic />
         </>
       ) : (
         <>
@@ -99,7 +96,7 @@ export const AddTopicButton: React.FC<{
                   <React.Fragment key={key}>
                     {page.results.map((result: any) => (
                       <TopicPill as={Button} key={result.id} data-is-button={true} onClick={() => setSelected(result)}>
-                        {result.label}
+                        {result.slug}
                       </TopicPill>
                     ))}
                   </React.Fragment>

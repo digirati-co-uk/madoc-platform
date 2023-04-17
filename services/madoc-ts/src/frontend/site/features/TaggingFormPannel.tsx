@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MetadataEmptyState } from '../../shared/atoms/MetadataConfiguration';
 import { useEnrichmentResource } from '../pages/loaders/enrichment-resource-loader';
@@ -17,7 +17,7 @@ import { AddTopicButton } from './AddTopicButton';
 const ConfirmDeletion: React.FC<{ tagLabel: string }> = ({ tagLabel }) => {
   return (
     <PillContainer>
-      Remove <TagPill> {tagLabel} </TagPill> ?{' '}
+      Remove topic tag from resource <TagPill> {tagLabel} </TagPill> ?{' '}
     </PillContainer>
   );
 };
@@ -38,10 +38,10 @@ const ConfirmDeletionBottom: React.FC<{
 
   return (
     <ButtonRow $noMargin>
-      <Button onClick={() => close()}>Cancel</Button>
-      <Button disabled={isLoading} onClick={() => remove(tagId).then(close)}>
+      <Button $primary disabled={isLoading} onClick={() => remove(tagId).then(close)}>
         Remove
       </Button>
+      <Button onClick={() => close()}>Cancel</Button>
     </ButtonRow>
   );
 };
@@ -60,6 +60,7 @@ export const TaggingFormPannel = () => {
   }, {});
 
   const newTags = tagTypes ? Object.entries(tagTypes) : [];
+  const [selectedId, setSelectedId] = useState<string | undefined>(undefined);
 
   const [remove, removeStatus] = useMutation(async (id: string) => {
     await api.enrichment.removeResourceTag(id);
@@ -67,18 +68,43 @@ export const TaggingFormPannel = () => {
   });
   const [addTag, addStatus] = useMutation(async (entityId: string) => {
     await api.enrichment.tagMadocResource(entityId, 'canvas', canvasId);
+    setSelectedId(undefined);
     await refetch();
   });
 
-  // edit tags here
+  const onSelect = (id: string | undefined) => {
+    setSelectedId(id);
+  };
   return (
     <TaggingContainer>
       <ModalButton
         style={{ fontWeight: '500', display: 'block', marginBottom: '0.5em' }}
         title="Tag this resource"
-        render={() => <AddTopicButton addTag={addTag} statusLoading={addStatus.isLoading} />}
+        render={() => <AddTopicButton onSelected={onSelect} statusLoading={addStatus.isLoading} />}
+        footerAlignRight
+        renderFooter={({ close }) => (
+          <ButtonRow $noMargin>
+            <Button
+              $primary
+              disabled={!selectedId}
+              onClick={() => {
+                addTag(selectedId).then(() => close());
+              }}
+            >
+              Submit
+            </Button>
+            <Button
+              onClick={() => {
+                setSelectedId(undefined);
+                close();
+              }}
+            >
+              Cancel
+            </Button>
+          </ButtonRow>
+        )}
       >
-        Add new
+        <Button> Add new </Button>
       </ModalButton>
       {newTags.length === 0 ? <MetadataEmptyState style={{ marginTop: 100 }}>{t('No tags')}</MetadataEmptyState> : null}
 
@@ -86,10 +112,34 @@ export const TaggingFormPannel = () => {
         <TagBox key={tagType[0]}>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <TagTitle>{tagType[0]}</TagTitle>
-
             <ModalButton
+              style={{ cursor: 'pointer' }}
               title="Tag this resource"
-              render={() => <AddTagButton topicType={tagType[0]} addTag={addTag} statusLoading={addStatus.isLoading} />}
+              render={() => (
+                <AddTagButton topicType={tagType[0]} onSelected={onSelect} statusLoading={addStatus.isLoading} />
+              )}
+              footerAlignRight
+              renderFooter={({ close }) => (
+                <ButtonRow $noMargin>
+                  <Button
+                    $primary
+                    disabled={!selectedId}
+                    onClick={() => {
+                      addTag(selectedId).then(() => close());
+                    }}
+                  >
+                    Submit
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      setSelectedId(undefined);
+                      close();
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                </ButtonRow>
+              )}
             >
               <PlusIcon /> Add
             </ModalButton>
@@ -100,7 +150,7 @@ export const TaggingFormPannel = () => {
                 <TagPill>
                   <ModalButton
                     autoHeight
-                    title="Remove tag?"
+                    title="Remove tag"
                     render={() => {
                       return <ConfirmDeletion tagLabel={tag.entity.label} />;
                     }}
