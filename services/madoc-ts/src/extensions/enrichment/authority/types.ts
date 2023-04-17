@@ -111,6 +111,7 @@ export interface EnrichmentEntityAuthority {
  * Documentation: https://github.com/digirati-co-uk/madoc-enrichment/blob/main/endpoint_docs.md#entity---list
  */
 export interface EnrichmentEntityTypeSnippet {
+    thumbnail?: any
   /**
    * URL of the Entity (won't resolve due to Gateway)
    */
