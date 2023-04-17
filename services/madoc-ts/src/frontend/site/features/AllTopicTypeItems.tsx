@@ -59,9 +59,9 @@ const TypeImage = styled.div`
 `;
 
 interface AllTopicTypeItemsProps {
-  borderColor: string;
-  textColor: string;
-  cardBackground: string;
+  borderColor?: string;
+  textColor?: string;
+  cardBackground?: string;
 }
 export function AllTopicTypeItems(props: AllTopicTypeItemsProps) {
   const { data } = usePaginatedTopicTypes();

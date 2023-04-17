@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { AllTopicTypeItems } from '../features/AllTopicTypeItems';
 import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
 import { TopicTypeListPagination } from '../features/TopicTypeListPagination';
+import { TopicTypesCount } from '../features/TopicsTypeCount';
 
 export function ViewTopicTypes() {
   const { t } = useTranslation();
@@ -16,7 +17,8 @@ export function ViewTopicTypes() {
         <DisplayBreadcrumbs />
       </Slot>
 
-      <Slot name="all-topic-types-header">
+      <Slot name="all-topic-types-header2">
+        <TopicTypesCount />
         <Heading1>{t('All Topic Types')}</Heading1>
       </Slot>
 
