@@ -44,6 +44,8 @@ export const AddTagButton: React.FC<{
     container: container,
   });
 
+  console.log('h');
+  console.log(pages);
   const startAutoComplete = (val: string) => {
     setIsLoading(true);
     setFulltext(val);
@@ -52,7 +54,7 @@ export const AddTagButton: React.FC<{
 
   return (
     <div>
-      {selected && (
+      {selected ? (
         <>
           <div style={{ display: 'flex' }}>
             <p> Tag this canvas with </p>
@@ -85,8 +87,7 @@ export const AddTagButton: React.FC<{
             </Button>
           </ButtonRow>
         </>
-      )}
-      {queryLoading && (!pages || pages[0].pagination.totalResults === 0) ? (
+      ) : queryLoading && (!pages || pages[0].pagination.totalResults === 0) ? (
         <p color={'grey'}>This type has no topics</p>
       ) : (
         <>
@@ -111,7 +112,7 @@ export const AddTagButton: React.FC<{
                   <React.Fragment key={key}>
                     {page.results.map(result => (
                       <TagPill as={Button} key={result.id} data-is-button={true} onClick={() => setSelected(result)}>
-                        {result.slug}
+                        {result.label}
                       </TagPill>
                     ))}
                   </React.Fragment>

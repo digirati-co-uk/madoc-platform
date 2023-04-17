@@ -12,6 +12,7 @@ import { TagPill } from '../hooks/canvas-menu/tagging-panel';
 import { AutoCompleteEntitySnippet } from '../../../extensions/enrichment/authority/types';
 import { AddTagButton } from './AddTagButton';
 
+
 const TopicPill = styled(TagPill)`
   border-color: orange;
   text-transform: capitalize;
@@ -57,6 +58,7 @@ export const AddTopicButton: React.FC<{
 
   return (
     <div style={{ maxWidth: '100%' }}>
+      <p>Choose a topic type</p>
       {selected && selected.slug ? (
         <>
           <div style={{ display: 'flex' }}>
@@ -97,7 +99,7 @@ export const AddTopicButton: React.FC<{
                   <React.Fragment key={key}>
                     {page.results.map((result: any) => (
                       <TopicPill as={Button} key={result.id} data-is-button={true} onClick={() => setSelected(result)}>
-                        {result.slug}
+                        {result.label}
                       </TopicPill>
                     ))}
                   </React.Fragment>

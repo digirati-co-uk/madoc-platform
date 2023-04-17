@@ -229,6 +229,7 @@ import { deleteProjectEndpoint } from './routes/projects/deleteProject';
 import { exportProjectTemplate } from './routes/projects/export-project-template';
 import { generateApiKey } from './routes/admin/generate-api-key';
 import { authenticateApi } from './routes/global/api-authentication';
+import { siteResource } from './routes/site/site-enrichment-resource';
 
 export const router = new TypedRouter({
   // Normal route
@@ -597,6 +598,7 @@ export const router = new TypedRouter({
   'site-topic': [TypedRouter.GET, '/s/:slug/madoc/api/topics/:type/:topic', siteTopic],
   'site-topic-type': [TypedRouter.GET, '/s/:slug/madoc/api/topics/:type', siteTopicType],
   'site-topic-types': [TypedRouter.GET, '/s/:slug/madoc/api/topics', siteTopicTypes],
+  'site-enrichment-resource': [TypedRouter.GET, '/s/:slug/madoc/api/resource/:id', siteResource],
   'site-published-models': [TypedRouter.GET, '/s/:slug/madoc/api/canvases/:id/models', sitePublishedModels],
   'site-canvas-models': [
     TypedRouter.GET,

@@ -75,7 +75,6 @@ export function useTaggingPanel(): CanvasMenuHook {
   }, {});
 
   const newTags = tagTypes ? Object.entries(tagTypes) : [];
-
   const content = (
     <TaggingContainer>
       {newTags.length === 0 ? <MetadataEmptyState style={{ marginTop: 100 }}>{t('No tags')}</MetadataEmptyState> : null}

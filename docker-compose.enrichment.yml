@@ -3,12 +3,10 @@ services:
   # Internal services
 
   search:
-    build:
-      context: services/enrichment
-      dockerfile: Dockerfile
+    image: digirati/madoc-enrichment:qa-multiplatform
     environment:
       - BROWSABLE=False
-      - USE_DOCKER=yes
+      - USE_DOCKER=yesç
       - IPYTHONDIR=/app/.ipython
       - MIGRATE=True
       - LOAD=False

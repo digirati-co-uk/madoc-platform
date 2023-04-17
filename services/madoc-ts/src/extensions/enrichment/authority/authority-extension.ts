@@ -13,6 +13,7 @@ import {
   EntitiesMadocResponse,
   EntityMadocResponse,
   EntityTypeMadocResponse,
+  EnrichmentResourceResponse,
 } from './types';
 
 export class AuthorityExtension extends BaseDjangoExtension {
@@ -70,6 +71,10 @@ export class AuthorityExtension extends BaseDjangoExtension {
   // Entity - Retrieve
   getEntity(entity_type_slug: string, slug: string) {
     return this.api.request<EntityMadocResponse>(`/api/enrichment/entity/${entity_type_slug}/${slug}/`);
+  }
+
+  getEnrichmentResource(id: string) {
+    return this.api.request<EnrichmentResourceResponse>(`/api/enrichment/resource/${id}/`);
   }
 
   authority = this.createServiceHelper<Authority, AuthoritySnippet>('authority_service', 'authority');

@@ -75,7 +75,7 @@ export const TaggingFormPannel = () => {
     <TaggingContainer>
       <ModalButton
         style={{ fontWeight: '500', display: 'block', marginBottom: '0.5em' }}
-        title="Add new tag"
+        title="Tag this resource"
         render={() => <AddTopicButton addTag={addTag} statusLoading={addStatus.isLoading} />}
       >
         Add new
@@ -88,7 +88,7 @@ export const TaggingFormPannel = () => {
             <TagTitle>{tagType[0]}</TagTitle>
 
             <ModalButton
-              title="Create tag"
+              title="Tag this resource"
               render={() => <AddTagButton topicType={tagType[0]} addTag={addTag} statusLoading={addStatus.isLoading} />}
             >
               <PlusIcon /> Add
