@@ -310,7 +310,6 @@ export function ReviewListingPage() {
     </RefetchProvider>
   );
 }
-
 function SingleReviewTableRow({
   task,
   active,
@@ -340,15 +339,23 @@ function SingleReviewTableRow({
     >
       {/* manifest */}
       <SimpleTable.Cell style={{ maxWidth: 300 }}>
-        {metadata.subject && metadata.subject.parent && (
+        {metadata.subject && metadata.subject.type === 'manifest' ? (
           <LocaleString style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis' }}>
-            {metadata.subject.parent.label}
+            {metadata.subject.label}
           </LocaleString>
+        ) : (
+          metadata.subject?.parent && (
+            <LocaleString style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              {metadata.subject.parent.label}
+            </LocaleString>
+          )
         )}
       </SimpleTable.Cell>
       {/* resource name */}
       <SimpleTable.Cell>
-        {metadata && metadata.subject ? <LocaleString>{metadata.subject.label}</LocaleString> : task.name}
+        {metadata.subject && metadata.subject.type === 'manifest'
+          ? ''
+          : metadata.subject?.label && <LocaleString>{metadata.subject.label}</LocaleString>}
       </SimpleTable.Cell>
       {/* date modified*/}
       <SimpleTable.Cell>

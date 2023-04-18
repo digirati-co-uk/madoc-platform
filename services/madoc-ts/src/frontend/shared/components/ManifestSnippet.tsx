@@ -8,7 +8,8 @@ import { HrefLink } from '../utility/href-link';
 export const ManifestSnippet: React.FC<{
   id: number;
   collectionId?: number;
-} & Partial<SnippetLargeProps>> = ({ id, collectionId, ...props }) => {
+  snippetExpanded?: boolean;
+} & Partial<SnippetLargeProps>> = ({ id, collectionId, snippetExpanded, ...props }) => {
   const { data } = useApiManifest(id);
   const { t } = useTranslation();
 
