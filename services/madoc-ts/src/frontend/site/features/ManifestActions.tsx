@@ -18,7 +18,6 @@ import { ManifestTaskProgress } from './ManifestTaskProgress';
 import { usePreventCanvasNavigation } from './PreventUsersNavigatingCanvases';
 import { useSiteConfiguration } from './SiteConfigurationContext';
 import { GenerateManifestPdf } from './GenerateManifestPdf';
-import { ProjectDetailWrapper } from '../../shared/components/ProjectDetailWrapper';
 import { ProjectListingDescription } from '../../shared/atoms/ProjectListing';
 import { useContinueSubmission } from '../hooks/use-continue-submission';
 import { useProject } from '../hooks/use-project';

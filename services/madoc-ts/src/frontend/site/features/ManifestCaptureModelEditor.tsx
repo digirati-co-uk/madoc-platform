@@ -25,7 +25,6 @@ import { CanvasModelUserStatus } from './CanvasModelUserStatus';
 import { CanvasViewerEditorStyleReset } from './CanvasViewerGrid';
 import { useSiteConfiguration } from './SiteConfigurationContext';
 import { useLoadedCaptureModel } from '../../shared/hooks/use-loaded-capture-model';
-import { useManifestTask } from '../hooks/use-manifest-task';
 
 export function ManifestCaptureModelEditor({ revision }: { revision: string; isSegmentation?: boolean }) {
   const { t } = useTranslation();
