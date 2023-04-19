@@ -205,9 +205,10 @@ services:
         condition: service_healthy
 
   search:
-    build:
-      context: services/enrichment
-      dockerfile: Dockerfile
+    image: digirati/madoc-enrichment:schools-multiplatform
+#    build:
+#      context: services/enrichment
+#      dockerfile: Dockerfile
     environment:
       - BROWSABLE=False
       - USE_DOCKER=yes
@@ -233,8 +234,8 @@ services:
     links:
       - shared-postgres
       - gateway-redis
-    volumes:
-      - ./services/enrichment/app:/app:delegated
+#    volumes:
+#      - ./services/enrichment/app:/app:delegated
     ports:
       - 5020:5000
   okra:

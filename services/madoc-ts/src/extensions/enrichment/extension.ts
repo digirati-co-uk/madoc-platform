@@ -1,7 +1,6 @@
 import { Topic, TopicType, TopicTypeListResponse } from '../../types/schemas/topics';
 import { BaseDjangoExtension } from './base-django-extension';
 import { EnrichmentIndexPayload } from './types';
-import { ApiKey } from '../../types/api-key';
 import { SearchQuery, SearchResponse } from '../../types/search';
 import {
   EnrichmentEntityAutoCompleteResponse,
@@ -73,7 +72,9 @@ export class EnrichmentExtension extends BaseDjangoExtension {
       },
     });
   }
-
+  getSiteResource(id: string) {
+    return this.api.publicRequest<EnrichmentResourceResponse>(`/madoc/api/resource/${id}`);
+  }
   getAllEnrichmentTasks(page = 1) {
     return this.api.request(`/api/enrichment/task_log?page=${page}`);
   }
@@ -152,25 +153,15 @@ export class EnrichmentExtension extends BaseDjangoExtension {
     );
   }
 
-  getEnrichmentResource(id: string) {
-    return this.api.request<EnrichmentResourceResponse>(`/api/enrichment/resource/${id}/`);
-  }
-
-  // TODO type for this
   getAllTags() {
     return this.api.request<any>(`/api/enrichment/resource_tag/`);
   }
-
   getResourceTag(id: string) {
     return this.api.request<any>(`/api/enrichment/resource_tag/${id}/`);
   }
-
   async removeResourceTag(id: string) {
     return this.api.request(`/api/enrichment/resource_tag/${id}/`, {
       method: 'DELETE',
     });
-  }
-  getCanvasTags(id: number) {
-    // @todo
   }
 }

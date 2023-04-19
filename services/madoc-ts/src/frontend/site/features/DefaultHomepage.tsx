@@ -18,6 +18,9 @@ export const DefaultHomepage: React.FC = () => {
         <li>
           <HrefLink href="/projects">{t('All projects')}</HrefLink>
         </li>
+        <li>
+          <HrefLink href="/topics">{t('All Topics')}</HrefLink>
+        </li>
         {user ? (
           <li>
             <HrefLink href="/dashboard">{t('User dashboard')}</HrefLink>

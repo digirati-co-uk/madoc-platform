@@ -341,12 +341,14 @@ export interface AutoCompleteEntitySnippet {
   created: string;
   modified: string;
   type_slug: string;
-  type_title?: InternationalString;
-  slug?: string;
+  type_label: string;
+  type_title: InternationalString;
+  label: string;
+  slug: string;
   title?: InternationalString;
 }
 export interface EnrichmentEntityAutoCompleteResponse {
   pagination: Pagination;
   results: AutoCompleteEntitySnippet[];
-  facets: any;
+  facets?: any;
 }
