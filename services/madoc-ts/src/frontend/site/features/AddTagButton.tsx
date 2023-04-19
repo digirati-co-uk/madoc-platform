@@ -11,6 +11,7 @@ import { TagPill } from '../hooks/canvas-menu/tagging-panel';
 import { AutoCompleteEntitySnippet } from '../../../extensions/enrichment/authority/types';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
+import { useEnrichmentResource } from '../pages/loaders/enrichment-resource-loader';
 
 const TagResults = styled.div`
   border: 2px solid #d3d3d3;
@@ -22,11 +23,12 @@ const TagResults = styled.div`
   overflow-y: scroll;
 `;
 export const AddTagButton: React.FC<{
-  topicType: string;
+  typeSlug: string;
+  typeLabel: string;
   statusLoading: boolean;
-  onSelected: (slug: string | undefined) => void;
+  onSelected: (id: string | undefined) => void;
   hideTopic?: boolean;
-}> = ({ topicType, onSelected, statusLoading, hideTopic }) => {
+}> = ({ typeSlug, typeLabel, onSelected, statusLoading, hideTopic }) => {
   const container = useRef<HTMLDivElement>(null);
   const [fullText, setFulltext] = React.useState('');
   const [isLoading, setIsLoading] = React.useState(false);
@@ -35,9 +37,9 @@ export const AddTagButton: React.FC<{
   const { t } = useTranslation();
 
   const { data: pages, fetchMore, canFetchMore, isFetchingMore, isLoading: queryLoading } = useInfiniteQuery(
-    ['topic-autocomplete', { fullText, topicType }],
+    ['topic-autocomplete', { fullText, typeSlug }],
     async (key, _, vars: { page?: number } = { page: 1 }) => {
-      return api.enrichment.topicAutoComplete(topicType, fullText, vars.page);
+      return api.enrichment.topicAutoComplete(typeSlug, fullText, vars.page);
     },
     {
       getFetchMore: lastPage => {
@@ -63,18 +65,22 @@ export const AddTagButton: React.FC<{
     setIsLoading(false);
   };
 
+  const { data } = useEnrichmentResource();
+  const tags = data?.entity_tags;
+  const appliedTagIDs = tags?.map(tag => tag.entity.id);
+
   return (
     <div>
       {selected ? (
         <>
           {!hideTopic && (
             <p>
-              {t('Topic type')}: <b>{topicType}</b>
+              {t('Topic type')}: <b>{typeLabel}</b>
             </p>
           )}
 
           <p>
-            {t('Topic')}: <b>{selected.slug}</b>
+            {t('Topic')}: <b>{selected.label}</b>
           </p>
           <div
             style={{
@@ -92,11 +98,15 @@ export const AddTagButton: React.FC<{
                   onSelected(undefined);
                 }}
               />
-              {selected.slug}
+              {selected.label}
             </TagPill>
           </div>
         </>
-      ) : queryLoading || !pages || pages[0].pagination.totalResults === 0 ? (
+      ) : queryLoading || isLoading ? (
+        <TagResults>
+          <EmptyState $noMargin>...loading</EmptyState>
+        </TagResults>
+      ) : !pages || (pages[0].pagination.totalResults === 0 && !fullText) ? (
         <TagResults>
           <EmptyState $noMargin>{t('This type has no topics')}</EmptyState>
         </TagResults>
@@ -104,8 +114,7 @@ export const AddTagButton: React.FC<{
         <>
           <InputContainer>
             <InputLabel htmlFor="tagAuto">
-              {' '}
-              {t('Search topics within')} <b>{topicType}</b>
+              {t('Search topics within')} <b style={{ textTransform: 'capitalize' }}>{typeLabel}</b>
             </InputLabel>
             <Input
               onChange={e => startAutoComplete(e.target.value)}
@@ -120,24 +129,34 @@ export const AddTagButton: React.FC<{
             <EmptyState>
               <Spinner /> ...{t('loading')}
             </EmptyState>
+          ) : !pages || (pages[0].pagination.totalResults === 0 && fullText) ? (
+            <TagResults>
+              <EmptyState $noMargin>{t('No results')}</EmptyState>
+            </TagResults>
           ) : (
             <TagResults ref={container}>
               {pages?.map((page, key) => {
                 return (
                   <React.Fragment key={key}>
-                    {page.results.map(result => (
-                      <TagPill
-                        as={Button}
-                        key={result.id}
-                        data-is-button={true}
-                        onClick={() => {
-                          setSelected(result);
-                          onSelected(result.slug);
-                        }}
-                      >
-                        {result.slug}
-                      </TagPill>
-                    ))}
+                    {page.results.map(result => {
+                      return appliedTagIDs?.includes(result.id) ? (
+                        <TagPill key={result.id} data-is-applied={true}>
+                          {result.label}
+                        </TagPill>
+                      ) : (
+                        <TagPill
+                          as={Button}
+                          key={result.id}
+                          data-is-button={true}
+                          onClick={() => {
+                            setSelected(result);
+                            onSelected(result.id);
+                          }}
+                        >
+                          {result.label}
+                        </TagPill>
+                      );
+                    })}
                   </React.Fragment>
                 );
               })}

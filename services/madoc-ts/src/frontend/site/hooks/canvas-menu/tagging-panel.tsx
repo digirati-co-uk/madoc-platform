@@ -3,11 +3,11 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { MetadataEmptyState } from '../../../shared/atoms/MetadataConfiguration';
 import { CanvasMenuHook } from './types';
-import { useEnrichmentResource } from '../../pages/loaders/enrichment-resource-loader';
 import { EntityTagSnippet } from '../../../../extensions/enrichment/authority/types';
 import TaggingIcon from '../../../shared/icons/TaggingIcon';
 import { Link } from 'react-router-dom';
 import { createLink } from '../../../shared/utility/create-link';
+import { useGetResourceTags } from './use-get-tags';
 
 export const TaggingContainer = styled.div`
   padding: 0;
@@ -38,22 +38,41 @@ export const TagPill = styled.div`
   padding: 0.2em;
   margin: 0 1em 1em 0.5em;
   display: flex;
+  text-decoration: none;
+  align-items: center;
+  text-transform: uppercase;
 
   &[data-is-button='true'] {
-    font-size: 1em;
     padding: 0.4em;
     margin: 0.5em;
+
+    :hover {
+      background-color: #009f18;
+      color: white;
+      border-color: #009f18;
+    }
+  }
+
+  &[data-is-applied='true'] {
+    border-color: #9f7400;
+    padding: 0.4em;
+    margin: 0.5em;
+    cursor: pointer;
   }
 
   span {
     display: block;
-    max-width: 20px;
-    max-height: 20px;
+    font-size: 0.8em;
+    vertical-align: middle;
+    padding: 0;
+
+    width: 18px;
+    height: 18px;
   }
 
   svg {
-    max-width: 18px;
-    max-height: 18px;
+    width: 18px;
+    height: 18px;
     padding: 0;
     margin: 0;
     fill: #002d4b;
@@ -66,25 +85,18 @@ export const TagPill = styled.div`
 
 export function useTaggingPanel(): CanvasMenuHook {
   const { t } = useTranslation();
-  const { data } = useEnrichmentResource();
-  const tags = data?.entity_tags;
+  const ResourceTags = useGetResourceTags();
 
-  const tagTypes = tags?.reduce((tag, elem) => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    tag[elem.entity.type] = (tag[elem.entity.type] || []).concat(elem);
-    return tag;
-  }, {});
-
-  const newTags = tagTypes ? Object.entries(tagTypes) : [];
   const content = (
     <TaggingContainer>
-      {newTags.length === 0 ? <MetadataEmptyState style={{ marginTop: 100 }}>{t('No tags')}</MetadataEmptyState> : null}
-      {newTags.map((tagType: any) => (
-        <TagBox key={tagType[0]}>
-          <TagTitle>{tagType[0]}</TagTitle>
+      {ResourceTags.length === 0 ? (
+        <MetadataEmptyState style={{ marginTop: 100 }}>{t('No tags')}</MetadataEmptyState>
+      ) : null}
+      {ResourceTags.map(tagType => (
+        <TagBox key={tagType.type}>
+          <TagTitle>{tagType.type}</TagTitle>
           <PillContainer>
-            {tagType[1].map((tag: EntityTagSnippet) =>
+            {tagType.tags.map((tag: EntityTagSnippet) =>
               tag.entity && tag.entity.label ? (
                 <TagPill as={Link} to={createLink({ topicType: tag.entity.type_slug, topic: tag.entity.slug })}>
                   {tag.entity.label}

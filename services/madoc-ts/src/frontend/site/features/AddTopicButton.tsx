@@ -12,9 +12,11 @@ import { TagPill } from '../hooks/canvas-menu/tagging-panel';
 import { AutoCompleteEntitySnippet } from '../../../extensions/enrichment/authority/types';
 import { AddTagButton } from './AddTagButton';
 import { useTranslation } from 'react-i18next';
+import { useEnrichmentResource } from '../pages/loaders/enrichment-resource-loader';
 
 export const TopicPill = styled(TagPill)`
   border-color: orange;
+
 `;
 export const AddTopicButton: React.FC<{
   statusLoading: boolean;
@@ -56,6 +58,10 @@ export const AddTopicButton: React.FC<{
     setIsLoading(false);
   };
 
+  const { data } = useEnrichmentResource();
+  const tags = data?.entity_tags;
+  const appliedTagTypes = [...new Set(tags?.map(tag => tag.entity.type_slug))];
+
   return (
     <div style={{ maxWidth: '100%' }}>
       <p>{t('Choose a topic type first')}</p>
@@ -69,11 +75,17 @@ export const AddTopicButton: React.FC<{
                   setSelected(null);
                 }}
               />
-              {selected.slug}
+              {selected.label}
             </TopicPill>
           </div>
 
-          <AddTagButton topicType={selected.slug} statusLoading={statusLoading} onSelected={onSelected} hideTopic />
+          <AddTagButton
+            typeSlug={selected.slug}
+            typeLabel={selected.label}
+            statusLoading={statusLoading}
+            onSelected={onSelected}
+            hideTopic
+          />
         </>
       ) : (
         <>
@@ -96,11 +108,22 @@ export const AddTopicButton: React.FC<{
               {pages?.map((page, key) => {
                 return (
                   <React.Fragment key={key}>
-                    {page.results.map((result: any) => (
-                      <TopicPill as={Button} key={result.id} data-is-button={true} onClick={() => setSelected(result)}>
-                        {result.slug}
-                      </TopicPill>
-                    ))}
+                    {page.results.map((result: any) => {
+                      return appliedTagTypes?.includes(result.slug) ? (
+                        <TopicPill key={result.id} data-is-applied={true}>
+                          {result.label}
+                        </TopicPill>
+                      ) : (
+                        <TopicPill
+                          as={Button}
+                          key={result.id}
+                          data-is-button={true}
+                          onClick={() => setSelected(result)}
+                        >
+                          {result.label}
+                        </TopicPill>
+                      );
+                    })}
                   </React.Fragment>
                 );
               })}
