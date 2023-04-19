@@ -13,6 +13,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed contributor buttons not following project config in collection (NS-23)
 - Fixed missing translations in editor (NS-20)
 - Fixed rejecting a submission sometimes removes accepted annotations (MAD-1315)
+- Fixed drafts not loading for manifest model (MAD-1316)
+- Fixed 'View contributions' on manifest button taking user to empty task list
+- Fixed review page not showing a manifest preview for manifest tasks and showing manifest title in 'canvas' column
+- Fix manifest model showing as editable for a submitted and approved manifest task
+- Fixed and updated `ManifestActions` and `ManifestUserNotifications` to allow the user to continue submissions, add another and view a completed 
+
 
 ### Added
 - Added new "webhook" data model (no usages yet)
