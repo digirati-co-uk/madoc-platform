@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Outlet, useNavigate, useParams } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 import { SubjectSnippet } from '../../../../../extensions/tasks/resolvers/subject-resolver';
 import { CrowdsourcingTask } from '../../../../../gateway/tasks/crowdsourcing-task';
@@ -36,7 +36,7 @@ const TaskListContainer = styled.div`
 
 const TaskPreviewContainer = styled.div`
   position: relative;
-  min-width: 600px;
+  min-width: 200px;
   flex: 1;
   width: 750px;
 `;
@@ -134,7 +134,7 @@ export function ReviewListingPage() {
   const { widthB, refs } = useResizeLayout(`review-dashboard-resize`, {
     left: true,
     widthB: '750px',
-    minWidthPx: 400,
+    minWidthPx: 200,
   });
 
   const { data: pages, fetchMore, refetch, canFetchMore, isFetchingMore } = useInfiniteData(

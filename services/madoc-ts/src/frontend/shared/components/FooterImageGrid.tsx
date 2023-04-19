@@ -3,11 +3,10 @@ import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for
 import styled from 'styled-components';
 import { HrefLink } from '../utility/href-link';
 
-const GridWrapper = styled.div`
+const GridWrapper = styled.div<{ $rows?: string; $cols?: string }>`
   display: grid;
-  grid-auto-flow: column;
-  grid-template-columns: repeat(2, minmax(100px 350px));
-  grid-template-rows: repeat(2, 1fr);
+  grid-template-columns: ${props => (props.$cols ? `repeat(${props.$cols}, auto)` : 'repeat(2, auto)')};
+  grid-template-rows: ${props => (props.$rows ? `repeat(${props.$rows}, auto)` : 'repeat(2, auto)')};
   grid-gap: 1em;
   justify-content: space-between;
 `;
@@ -17,32 +16,65 @@ const LogoContainer = styled.div`
   img {
     max-height: 80px;
   }
+
+  &[data-is-flex='true'] {
+    display: flex;
+    align-items: end;
+  }
 `;
 
+const LogoLabel = styled.div`
+  text-decoration: none;
+  color: inherit;
+  padding: 0 0.5em;
+`;
+
+interface ImageType {
+  text?: string;
+  logo?: {
+    id: string;
+    image: string;
+    thumbnail: string;
+  } | null;
+  url?: string;
+  labelOptions?: {
+    hide?: boolean;
+    inline?: boolean;
+  };
+  imgOptions?: {
+    padding?: boolean;
+    margin?: boolean;
+  };
+  maxHeight?: string;
+}
 export const FooterImageGrid: React.FC<{
-  images?: {
-    logo?: {
-      id: string;
-      image: string;
-      thumbnail: string;
-    };
-    label?: string;
-  }[];
-}> = ({ images }) => {
+  images?: ImageType[];
+  colNum?: string;
+  rowNum?: string;
+}> = ({ images, colNum, rowNum }) => {
+  const Logo = (image: ImageType) => (
+    <LogoContainer
+      data-is-flex={image.labelOptions?.inline}
+      style={{ padding: image.imgOptions?.padding ? '0.5em' : '', margin: image.imgOptions?.margin ? '0 0.5em' : '' }}
+    >
+      <img style={{ maxHeight: `${image.maxHeight}px` }} alt={image.text} src={image?.logo?.image} />
+      {image.labelOptions?.hide ? null : <LogoLabel>{image.text}</LogoLabel>}
+    </LogoContainer>
+  );
   return (
-    <GridWrapper>
+    <GridWrapper $rows={rowNum} $cols={colNum}>
       {images
         ? images.map((image, i) => {
             return (
-              image.logo && (
-                <div key={i}>
-                  <HrefLink href="/">
-                    <LogoContainer>
-                      <img alt={image.label} src={image?.logo?.image} />
-                    </LogoContainer>
+              <div key={i}>
+                {image.url ? (
+                  <HrefLink href={image.url}>
+                    <Logo {...image} />
                   </HrefLink>
-                </div>
-              )
+                ) : (
+                  <Logo {...image} />
+                )}
+              </div>
             );
           })
         : null}
@@ -55,62 +87,86 @@ blockEditorFor(FooterImageGrid, {
   label: 'Image Grid for footer',
   requiredContext: ['project'],
   defaultProps: {
-    logo1: null,
-    title1: '',
-    logo2: null,
-    title2: '',
-    logo3: null,
-    title3: '',
-    logo4: null,
-    title4: '',
+    images: {
+      text: '',
+      url: '',
+      logo: null,
+      textInline: false,
+      maxHeight: '80',
+      labelOptions: {
+        hide: false,
+        inline: false,
+      },
+      imgOptions: {
+        padding: false,
+        margin: false,
+      },
+    },
+    colNum: '4',
+    rowNum: '2',
   },
   editor: {
-    logo1: {
-      label: 'Logo 1',
-      type: 'madoc-media-explorer',
+    images: {
+      allowMultiple: true,
+      label: 'logo',
+      pluralLabel: 'Logos',
+      labelledBy: 'text',
     },
-    title1: {
-      label: 'Label',
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    'images.text': {
+      label: 'text',
       type: 'text-field',
     },
-    logo2: {
-      label: 'Logo 2',
+    'images.labelOptions': {
+      label: 'Label options',
+      type: 'checkbox-list-field',
+      options: [
+        {
+          label: 'Hide label?',
+          value: 'hide',
+        },
+        {
+          label: 'Show label inline?',
+          value: 'inline',
+        },
+      ],
+    },
+    'images.logo': {
+      label: 'image',
       type: 'madoc-media-explorer',
     },
-    title2: {
-      label: 'Label',
+    'images.maxHeight': {
+      label: 'Logo max height',
+      type: 'text-field',
+      description: 'Must be a valid number (pixels)',
+    },
+    'images.imgOptions': {
+      label: 'Logo options',
+      description: 'View options for the logo',
+      type: 'checkbox-list-field',
+      options: [
+        {
+          label: 'Padding around logo',
+          value: 'padding',
+        },
+        {
+          label: 'Margin left and right',
+          value: 'margin',
+        },
+      ],
+    },
+    'images.url': {
+      label: 'URL Link for image',
       type: 'text-field',
     },
-    logo3: {
-      label: 'Logo 3',
-      type: 'madoc-media-explorer',
-    },
-    title3: {
-      label: 'Label',
+    colNum: {
+      label: 'Number of columns in grid',
       type: 'text-field',
     },
-    logo4: {
-      label: 'Logo 4',
-      type: 'madoc-media-explorer',
-    },
-    title4: {
-      label: 'Label',
+    rowNum: {
+      label: 'Number of rows in grid',
       type: 'text-field',
     },
-  },
-  mapToProps(formInput: any) {
-    const images: {
-      logo?: {
-        id: string;
-        image: string;
-        thumbnail: string;
-      };
-      label?: string;
-    }[] = [];
-    if (formInput.logo1) images.push({ logo: formInput.logo1, label: formInput.title1 });
-    if (formInput.logo2) images.push({ logo: formInput.logo2, label: formInput.title2 });
-    if (formInput.logo3) images.push({ logo: formInput.logo3, label: formInput.title3 });
-    if (formInput.logo4) images.push({ logo: formInput.logo4, label: formInput.title4 });
-    return { images };
   },
 });
