@@ -90,12 +90,11 @@ export function createTask(task: CrowdsourcingTask): CrowdsourcingReview {
 }
 
 export const jobHandler = async (name: string, taskId: string, api: ApiClient) => {
-  console.log('here')
   // If you throw an exception here, the crowdsourcing task will be marked as rejected. Need to be careful.
   switch (name) {
     case 'created': {
       // When review task is created, assign to correct user.
-      const task = await api.getTaskById<CrowdsourcingReview>(taskId);
+      const task = await api.getTask<CrowdsourcingReview>(taskId);
       let assignee: any = task.assignee;
       if (task.root_task) {
         const projects = await api.getProjects(0, { root_task_id: task.root_task });
@@ -120,13 +119,9 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
           await execBot(user.id, siteId, api, task, name);
         }
       }
-
-      console.log('here')
       break;
     }
-
     case 'assigned': {
-      console.log('here')
       const task = await api.getTask<CrowdsourcingReview>(taskId);
 
       await api.notifications.taskAssignmentNotification('You have been assigned a review', task);

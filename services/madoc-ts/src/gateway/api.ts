@@ -82,7 +82,6 @@ import { ResourceLinkRow } from '../database/queries/linking-queries';
 import { SearchIndexTask } from './tasks/search-index-task';
 import { JsonProjectTemplate, ProjectTemplate } from '../extensions/projects/types';
 import { ApiKey } from '../types/api-key';
-import {api} from "./api.server";
 
 export type ApiClientWithoutExtensions = Omit<
   ApiClient,
@@ -1455,6 +1454,15 @@ export class ApiClient {
     });
   }
 
+  async updateRevisionTask(taskId: string | undefined, task: any) {
+    return this.request<{ t: CrowdsourcingTask }>(`/api/madoc/crowdsourcing/task/${taskId}`, {
+      method: 'PATCH',
+      body: {
+        task,
+      },
+    });
+  }
+
   async updateTaskStatus<Task extends BaseTask>(
     taskId: string,
     availableStatuses: any,
@@ -1627,6 +1635,13 @@ export class ApiClient {
   async getTasksByType<Task extends BaseTask>(type: Task['type']) {
     return this.request<{ tasks: Task[] }>(`/api/tasks/?type=${type}`);
   }
+
+  // async updateTask<Task extends BaseTask>(taskId: string | undefined, task: Partial<Task>) {
+  //   return this.request<Task>(`/api/madoc/crowdsourcing/task/${taskId}`, {
+  //     method: 'PATCH',
+  //     body: task,
+  //   });
+  // }
 
   async updateTask<Task extends BaseTask>(id: string | undefined, task: Partial<Task>) {
     if (!id) {

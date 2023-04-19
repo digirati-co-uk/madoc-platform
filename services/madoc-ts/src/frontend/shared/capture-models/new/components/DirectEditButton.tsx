@@ -61,7 +61,7 @@ export const DirectEditButton: EditorRenderingConfig['SubmitButton'] = ({
         currentRevision.revision.id
       );
 
-      await api.updateCaptureModel(captureModel.id, {
+      await api.crowdsourcing.updateCaptureModel(captureModel.id, {
         ...captureModel,
         document: newDocument,
       });

@@ -444,7 +444,7 @@ export class CrowdsourcingApi implements BaseExtension {
     }
 
     // Mark users task as approved.
-    await this.api.updateTask<CrowdsourcingTask>(userTaskId, {
+    await this.api.updateRevisionTask(userTaskId, {
       status: 3,
       status_text: statusText || 'Approved',
       state: {
@@ -452,10 +452,6 @@ export class CrowdsourcingApi implements BaseExtension {
       },
     });
   }
-
-  async updatePublic({
-
-                     })
   async reviewApproveAndRemoveSubmission({
     userTaskIds,
     revisionIdsToRemove,
