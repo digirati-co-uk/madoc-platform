@@ -45,7 +45,7 @@ export const CheckboxFieldList: FieldComponent<CheckboxListFieldProps> = props =
                 });
               }}
             />
-            {tModel(props.label)}
+            {tModel(option.label)}
           </StyledFormLabel>
         );
       })}

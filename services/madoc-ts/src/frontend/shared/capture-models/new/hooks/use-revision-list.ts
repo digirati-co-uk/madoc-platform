@@ -52,6 +52,7 @@ export function useRevisionList({ filterCurrentView = true }: { filterCurrentVie
   ]);
   const myUnpublished = useMemo(() => myRevisions.filter(rev => rev.revision.status === 'draft'), [myRevisions]);
   const mySubmitted = useMemo(() => myRevisions.filter(rev => rev.revision.status === 'submitted'), [myRevisions]);
+  const myRejected = useMemo(() => myRevisions.filter(rev => rev.revision.status === 'rejected'), [myRevisions]);
 
   return {
     canonicalRevision,
@@ -61,5 +62,6 @@ export function useRevisionList({ filterCurrentView = true }: { filterCurrentVie
     myAcceptedRevisions,
     myUnpublished,
     mySubmitted,
+    myRejected,
   };
 }

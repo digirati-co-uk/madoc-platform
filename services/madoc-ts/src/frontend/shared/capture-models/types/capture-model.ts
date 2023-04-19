@@ -31,7 +31,7 @@ export type Revision = {
   captureModelId?: string;
 };
 
-export type StatusTypes = 'draft' | 'submitted' | 'accepted';
+export type StatusTypes = 'draft' | 'submitted' | 'accepted' | 'rejected';
 
 export type Target = {
   id: string;

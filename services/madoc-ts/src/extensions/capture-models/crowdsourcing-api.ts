@@ -330,19 +330,22 @@ export class CrowdsourcingApi implements BaseExtension {
   }) {
     try {
       // Delete the revision
-      await this.deleteCaptureModelRevision(revisionRequest);
-    } catch (err) {
-      // No-op
-    }
+      // await this.deleteCaptureModelRevision(revisionRequest);
 
-    // Mark task as rejected
-    await this.api.updateTask<CrowdsourcingTask>(userTaskId, {
-      status: -1,
-      status_text: statusText || 'Rejected',
-      state: {
-        rejectedMessage: message,
-      },
-    });
+      // dont delete the whole revision - lets change it to rejected
+      await Promise.all([
+        this.updateCaptureModelRevision(revisionRequest, 'rejected'),
+        this.api.updateTask<CrowdsourcingTask>(userTaskId, {
+          status: -1,
+          status_text: statusText || 'Rejected',
+          state: {
+            rejectedMessage: message,
+          },
+        }),
+      ]);
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   async reviewRequestChanges({
