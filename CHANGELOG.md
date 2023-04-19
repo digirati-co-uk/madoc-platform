@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added new "webhook" data model (no usages yet)
 - Added more options to the footer grid block and nested fields (NS-14)
 - Added notification for rejected submission and added view for rejected in contributions panel (MAD-1315)
+- Ability to add custom nav items to the Global Menu block
 
 ### Changed
 - Changed language on user dash from 'reviews' to 'review tasks' to differentiate between the two

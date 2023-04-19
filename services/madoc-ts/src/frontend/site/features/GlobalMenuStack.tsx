@@ -44,11 +44,11 @@ export const GlobalMenuStack: React.FC<{
   hideSiteTitle?: boolean;
   showHomepageMenu?: boolean;
   maxWidth?: number;
-  newNavItems?: {
+  extraLinks?: {
     slug?: string;
     text?: string;
   }[];
-}> = ({ logo, hideSiteTitle, maxWidth, logoOptions = {}, menuOptions = {}, showHomepageMenu, newNavItems }) => {
+}> = ({ logo, hideSiteTitle, maxWidth, logoOptions = {}, menuOptions = {}, showHomepageMenu, extraLinks }) => {
   const site = useSite();
   const { project } = useSiteConfiguration();
   const showSiteTitle = typeof hideSiteTitle === 'undefined' ? !project.headerOptions?.hideSiteTitle : !hideSiteTitle;
@@ -71,7 +71,7 @@ export const GlobalMenuStack: React.FC<{
         </SiteTitle>
       )}
       <SiteMenuContainer data-full-width={menuOptions.fullWidth}>
-        <GlobalSiteNavigation showHomepageMenu={showHomepageMenu} extraNavItems={newNavItems} />
+        <GlobalSiteNavigation showHomepageMenu={showHomepageMenu} extraNavItems={extraLinks} />
       </SiteMenuContainer>
     </SiteDetails>
   );
@@ -93,12 +93,10 @@ blockEditorFor(GlobalMenuStack, {
       fullWidth: false,
     },
     maxWidth: null,
-    slug1: '',
-    text1: '',
-    slug2: '',
-    text2: '',
-    slug3: '',
-    text3: '',
+    extraLinks: {
+      slug: '',
+      text: '',
+    },
   },
   editor: {
     logo: {
@@ -150,32 +148,23 @@ blockEditorFor(GlobalMenuStack, {
       type: 'checkbox-field',
       inlineLabel: 'Show home as menu item',
     },
-    slug1: {
+    extraLinks: {
+      allowMultiple: true,
+      label: 'Extra Nav item',
+      pluralLabel: 'Extra Nav items',
+      labelledBy: 'text',
+      description: 'paste the relative slug as shown on the site eg: projects/project-name',
+    },
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    'extraLinks.text': {
+      type: 'text-field',
+      label: 'Extra Nav item display text',
+    },
+    'extraLinks.slug': {
       type: 'text-field',
       label: 'Extra Nav item slug',
-      description: 'paste the relative slug as shown on the site eg: topics/topic_type/topic',
     },
-    text1: { type: 'text-field', label: 'Extra Nav item display text' },
-    slug2: { type: 'text-field', label: 'Extra Nav item slug' },
-    text2: { type: 'text-field', label: 'Extra Nav item display text' },
-    slug3: { type: 'text-field', label: 'Extra Nav item slug' },
-    text3: { type: 'text-field', label: 'Extra Nav item display text' },
-  },
-  mapToProps(props: any) {
-    const maxWidth = Number(props.maxWidth);
-    const newNavItems: {
-      slug?: string;
-      text?: string;
-    }[] = [];
-
-    if (props.slug1) newNavItems.push({ slug: props.slug1, text: props.text1 });
-    if (props.slug2) newNavItems.push({ slug: props.slug2, text: props.text2 });
-    if (props.slug3) newNavItems.push({ slug: props.slug3, text: props.text3 });
-    return {
-      ...props,
-      newNavItems,
-      maxWidth: !Number.isNaN(maxWidth) && Number.isFinite(maxWidth) ? maxWidth : undefined,
-    } as any;
   },
   source: {
     id: 'global-header',
