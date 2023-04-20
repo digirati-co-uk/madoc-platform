@@ -193,7 +193,7 @@
     "use-open-seadragon": "^1.0.0",
     "uuid": "^7.0.1",
     "uuid-validate": "^0.0.3",
-    "vm2": "^3.9.6",
+    "vm2": "^3.9.17",
     "whatwg-url": "^11.0.0",
     "zustand": "^4.3.2"
   },
