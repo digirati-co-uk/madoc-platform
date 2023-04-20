@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed contributor buttons not following project config in collection (NS-23)
 - Fixed missing translations in editor (NS-20)
 - Fixed rejecting a submission sometimes removes accepted annotations (MAD-1315)
+- Fixed only admins able to review tasks (NS-17)
 
 ### Added
 - Added new "webhook" data model (no usages yet)
