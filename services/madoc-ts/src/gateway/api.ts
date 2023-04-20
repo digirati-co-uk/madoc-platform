@@ -1636,13 +1636,6 @@ export class ApiClient {
     return this.request<{ tasks: Task[] }>(`/api/tasks/?type=${type}`);
   }
 
-  // async updateTask<Task extends BaseTask>(taskId: string | undefined, task: Partial<Task>) {
-  //   return this.request<Task>(`/api/madoc/crowdsourcing/task/${taskId}`, {
-  //     method: 'PATCH',
-  //     body: task,
-  //   });
-  // }
-
   async updateTask<Task extends BaseTask>(id: string | undefined, task: Partial<Task>) {
     if (!id) {
       throw new Error('Task could not be updated');
