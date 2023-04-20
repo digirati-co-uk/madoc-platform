@@ -23,16 +23,19 @@ import {
   AnnotationStylePreviewList,
 } from '../../../molecules/AnnotationStylePreview';
 import { ListAnnotationStyles } from '../../annotation-styles/list-annotation-styles';
+import { apiHooks } from '../../../../shared/hooks/use-api-query';
 
 export function ChooseAnnotationStyle(props: any) {
   const { t } = useTranslation();
   const { data } = useData<{ styles: AnnotationStyles[] }>(ListAnnotationStyles);
   const api = useApi();
   const { id: projectId } = useParams() as { id: string };
+  const { data: project, refetch } = apiHooks.getProject(() => (projectId ? [projectId] : undefined));
+  const currentStyle = project?.style_id;
 
   const [chooseStyle, chooseStyleStatus] = useMutation(async (id: number) => {
     await api.updateProjectAnnotationStyle(projectId, id);
-    await props.refetch();
+    await refetch();
   });
 
   return (
@@ -62,9 +65,9 @@ export function ChooseAnnotationStyle(props: any) {
                 <Button
                   onClick={() => chooseStyle(style.id)}
                   $primary
-                  disabled={chooseStyleStatus.isLoading || style.id === props.styleId}
+                  disabled={chooseStyleStatus.isLoading || style.id === currentStyle}
                 >
-                  {style.id !== props.styleId ? t('Choose style') : t('This is the current style')}
+                  {style.id !== currentStyle ? t('Choose style') : t('This is the current style')}
                 </Button>
               </SystemAction>
               <SystemAction>
