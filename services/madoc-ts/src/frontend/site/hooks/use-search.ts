@@ -6,6 +6,7 @@ import { useSiteConfiguration } from '../features/SiteConfigurationContext';
 import { useRouteContext } from './use-route-context';
 import { useSearchQuery } from './use-search-query';
 import { useBreadcrumbs } from '../../shared/components/Breadcrumbs';
+import { useSearchFacets } from './use-search-facets';
 
 function normalizeDotKey(key: string) {
   return key.startsWith('metadata.') ? key.slice('metadata.'.length).toLowerCase() : key.toLowerCase();
@@ -17,6 +18,7 @@ export function useSearch() {
 
   const { projectId, collectionId, manifestId } = useRouteContext();
   const { fulltext, appliedFacets, page, rscType } = useSearchQuery();
+  const { clearAllFacets } = useSearchFacets();
   const {
     project: { searchStrategy, claimGranularity, searchOptions },
   } = useSiteConfiguration();
@@ -25,10 +27,11 @@ export function useSearch() {
 
   useEffect(() => {
     if (topicId) {
+      clearAllFacets();
       appliedFacets.push({ k: 'entity', v: topicId });
     }
     return;
-  }, [appliedFacets, topicId]);
+  }, [appliedFacets, topicId, topic]);
 
   const [facetsToRequest, facetDisplayOrder, facetIdMap] = useMemo(() => {
     const facets = !topicId && searchFacetConfig.data ? searchFacetConfig.data.facets : [];
@@ -127,8 +130,7 @@ export function useSearch() {
     const metadataFacets = searchResults.resolvedData?.facets?.metadata || {};
     const entityFacets = searchResults.resolvedData?.facets?.entity || {};
 
-    const facetType = topicId ? entityFacets : metadataFacets;
-
+    const facetType = { ...metadataFacets, ...entityFacets };
     const showAllFacets = facetDisplayOrder.length === 0;
     for (const facet of Object.keys(facetType)) {
       const values = Object.keys(facetType[facet]);
@@ -225,6 +227,6 @@ export function useSearch() {
     }
 
     return displayList;
-  }, [facetDisplayOrder, facetIdMap, searchResults.resolvedData, topicId]);
+  }, [facetDisplayOrder, facetIdMap, searchResults.resolvedData]);
   return [searchResults, displayFacets, searchFacetConfig.isLoading || searchResults.isLoading] as const;
 }
