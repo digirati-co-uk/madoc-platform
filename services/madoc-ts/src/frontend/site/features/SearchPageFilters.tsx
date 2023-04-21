@@ -57,7 +57,7 @@ export const SearchPageFilters: React.FC<SearchPageFiltersProps> = ({ checkBoxCo
     <SearchFilterContainer>
       <SearchFilterTitle>{filterHeader}</SearchFilterTitle>
 
-      <SearchBox onSearch={setFullTextQuery} placeholder="Keywords" value={fulltext} />
+      <SearchBox onSearch={setFullTextQuery} placeholder="Keywords" value={fulltext} key={fulltext} />
 
       <DropdownContainer>
         <Dropdown
