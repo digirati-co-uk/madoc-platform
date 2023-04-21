@@ -72,7 +72,6 @@ export function AllTopicTypeItems(props: AllTopicTypeItemsProps) {
   const { t } = useTranslation();
   const createLink = useRelativeLinks();
 
-  console.log(data);
   return (
     <div style={{ paddingTop: '1em' }}>
       {data?.topicTypes.map(type => (
