@@ -215,7 +215,6 @@ services:
       - IPYTHONDIR=/app/.ipython
       - MIGRATE=True
       - LOAD=False
-      - LOAD_SPACY_DEPS=True
       - DEBUG=True
       - DJANGO_DEBUG=True
       - WAITRESS=False
