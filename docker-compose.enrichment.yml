@@ -3,7 +3,7 @@ services:
   # Internal services
 
   search:
-    image: digirati/madoc-enrichment:schools-multiplatform
+    image: digirati/madoc-enrichment:qa-multiplatform
     environment:
       - BROWSABLE=False
       - USE_DOCKER=yes

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MetadataEmptyState } from '../../shared/atoms/MetadataConfiguration';
 import { useEnrichmentResource } from '../pages/loaders/enrichment-resource-loader';
@@ -13,11 +13,12 @@ import { useRouteContext } from '../hooks/use-route-context';
 import { TagPill, PillContainer, TagTitle, TagBox, TaggingContainer } from '../hooks/canvas-menu/tagging-panel';
 import { AddTagButton } from './AddTagButton';
 import { AddTopicButton } from './AddTopicButton';
+import { useGetResourceTags } from '../hooks/canvas-menu/use-get-tags';
 
 const ConfirmDeletion: React.FC<{ tagLabel: string }> = ({ tagLabel }) => {
   return (
     <PillContainer>
-      Remove <TagPill> {tagLabel} </TagPill> ?{' '}
+      Remove topic tag from resource <TagPill> {tagLabel} </TagPill> ?{' '}
     </PillContainer>
   );
 };
@@ -38,10 +39,10 @@ const ConfirmDeletionBottom: React.FC<{
 
   return (
     <ButtonRow $noMargin>
-      <Button onClick={() => close()}>Cancel</Button>
-      <Button disabled={isLoading} onClick={() => remove(tagId).then(close)}>
+      <Button $primary disabled={isLoading} onClick={() => remove(tagId).then(close)}>
         Remove
       </Button>
+      <Button onClick={() => close()}>Cancel</Button>
     </ButtonRow>
   );
 };
@@ -49,17 +50,10 @@ export const TaggingFormPannel = () => {
   const { t } = useTranslation();
   const { data, refetch } = useEnrichmentResource();
   const { canvasId } = useRouteContext();
-  const tags = data?.entity_tags;
   const api = useApi();
+  const ResourceTags = useGetResourceTags();
 
-  const tagTypes = tags?.reduce((tag, elem) => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    tag[elem.entity.type] = (tag[elem.entity.type] || []).concat(elem);
-    return tag;
-  }, {});
-
-  const newTags = tagTypes ? Object.entries(tagTypes) : [];
+  const [selectedId, setSelectedId] = useState<string | undefined>(undefined);
 
   const [remove, removeStatus] = useMutation(async (id: string) => {
     await api.enrichment.removeResourceTag(id);
@@ -67,40 +61,96 @@ export const TaggingFormPannel = () => {
   });
   const [addTag, addStatus] = useMutation(async (entityId: string) => {
     await api.enrichment.tagMadocResource(entityId, 'canvas', canvasId);
+    setSelectedId(undefined);
     await refetch();
   });
 
-  // edit tags here
+  const onSelect = (id: string | undefined) => {
+    setSelectedId(id);
+  };
   return (
     <TaggingContainer>
       <ModalButton
         style={{ fontWeight: '500', display: 'block', marginBottom: '0.5em' }}
-        title="Add new tag"
-        render={() => <AddTopicButton addTag={addTag} statusLoading={addStatus.isLoading} />}
-      >
-        Add new
-      </ModalButton>
-      {newTags.length === 0 ? <MetadataEmptyState style={{ marginTop: 100 }}>{t('No tags')}</MetadataEmptyState> : null}
-
-      {newTags.map((tagType: any) => (
-        <TagBox key={tagType[0]}>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <TagTitle>{tagType[0]}</TagTitle>
-
-            <ModalButton
-              title="Create tag"
-              render={() => <AddTagButton topicType={tagType[0]} addTag={addTag} statusLoading={addStatus.isLoading} />}
+        title={t('Tag this resource')}
+        render={() => <AddTopicButton onSelected={onSelect} statusLoading={addStatus.isLoading} />}
+        footerAlignRight
+        renderFooter={({ close }) => (
+          <ButtonRow $noMargin>
+            <Button
+              $primary
+              disabled={!selectedId}
+              onClick={() => {
+                addTag(selectedId).then(() => close());
+              }}
             >
-              <PlusIcon /> Add
+              {t('Submit')}
+            </Button>
+            <Button
+              onClick={() => {
+                setSelectedId(undefined);
+                close();
+              }}
+            >
+              {t('Cancel')}
+            </Button>
+          </ButtonRow>
+        )}
+      >
+        <Button>{t('Add new')}</Button>
+      </ModalButton>
+      {ResourceTags.length === 0 ? (
+        <MetadataEmptyState style={{ marginTop: 100 }}>{t('No tags')}</MetadataEmptyState>
+      ) : null}
+
+      {ResourceTags.map((tagType: any) => (
+        <TagBox key={tagType.type}>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <TagTitle>{tagType.type}</TagTitle>
+            <ModalButton
+              style={{ cursor: 'pointer' }}
+              title={t('Tag this resource')}
+              render={() => (
+                <AddTagButton
+                  typeSlug={tagType.tags[0].entity.type_slug}
+                  typeLabel={tagType.type}
+                  onSelected={onSelect}
+                  statusLoading={addStatus.isLoading}
+                />
+              )}
+              footerAlignRight
+              renderFooter={({ close }) => (
+                <ButtonRow $noMargin>
+                  <Button
+                    $primary
+                    disabled={!selectedId}
+                    onClick={() => {
+                      addTag(selectedId).then(() => close());
+                    }}
+                  >
+                    {t('Submit')}
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      setSelectedId(undefined);
+                      close();
+                    }}
+                  >
+                    {t('Cancel')}
+                  </Button>
+                </ButtonRow>
+              )}
+            >
+              <PlusIcon /> {t('Add')}
             </ModalButton>
           </div>
           <PillContainer>
-            {tagType[1].map((tag: EntityTagSnippet) =>
+            {tagType.tags.map((tag: EntityTagSnippet) =>
               tag.entity && tag.entity.label ? (
                 <TagPill>
                   <ModalButton
                     autoHeight
-                    title="Remove tag?"
+                    title={t('Remove tag')}
                     render={() => {
                       return <ConfirmDeletion tagLabel={tag.entity.label} />;
                     }}

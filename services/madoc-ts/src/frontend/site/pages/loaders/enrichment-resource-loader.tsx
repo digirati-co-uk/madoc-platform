@@ -28,7 +28,7 @@ export const EnrichmentResourceLoader: UniversalComponent<EnrichmentResourceLoad
       return ['site-enrichment-resource', { canvasId: params.canvasId }];
     },
     getData: async (key, vars, api) => {
-      return await api.enrichment.getEnrichmentResource(`urn:madoc:canvas:${vars.canvasId}`);
+      return await api.enrichment.getSiteResource(`urn:madoc:canvas:${vars.canvasId}`);
     },
   }
 );
