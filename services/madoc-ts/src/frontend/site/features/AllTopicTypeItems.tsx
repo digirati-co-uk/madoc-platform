@@ -22,7 +22,7 @@ const TypeCard = styled.div`
 const TypeText = styled.div`
   width: 50%;
   padding: 20px 30px;
-  
+
   h3 {
     font-weight: 500;
   }
@@ -55,7 +55,11 @@ const CountText = styled.div`
 const TypeImage = styled.div`
   width: 50%;
   overflow: hidden;
-  max-height: 250px;
+
+  ${CroppedImage} {
+    height: 250px;
+    width: 100%;
+  }
 `;
 
 interface AllTopicTypeItemsProps {
@@ -68,6 +72,7 @@ export function AllTopicTypeItems(props: AllTopicTypeItemsProps) {
   const { t } = useTranslation();
   const createLink = useRelativeLinks();
 
+  console.log(data);
   return (
     <div style={{ paddingTop: '1em' }}>
       {data?.topicTypes.map(type => (
@@ -75,15 +80,19 @@ export function AllTopicTypeItems(props: AllTopicTypeItemsProps) {
           <TypeText style={{ color: props.textColor }}>
             <LocaleString as={Heading3}>{type.label || { en: ['...'] }}</LocaleString>
             <CountText>
-              <span>1234</span> Objects
+              <span>{type.topic_count}</span> {t('Objects')}
             </CountText>
             <Button $primary as={Link} to={createLink({ topicType: type.slug })}>
-              {t('Go to Topic Type')}
+              {t('Go to topic type')}
             </Button>
           </TypeText>
 
           <TypeImage>
-            <CroppedImage $covered>{type.thumbnail ? <img src={type.thumbnail.url} /> : null}</CroppedImage>
+            <CroppedImage>
+              {type.other_data.thumbnail ? (
+                <img alt={`${t('thumbnail for ')} ${type.label}`} src={type.other_data.thumbnail.url} />
+              ) : null}
+            </CroppedImage>
           </TypeImage>
         </TypeCard>
       ))}

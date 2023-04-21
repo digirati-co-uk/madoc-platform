@@ -1,5 +1,5 @@
 import { Pagination } from '../../../types/schemas/_pagination';
-import {Canvas, Collection, InternationalString, Manifest} from '@iiif/presentation-3';
+import { Canvas, Collection, InternationalString, Manifest } from '@iiif/presentation-3';
 
 export interface AuthoritySnippet {
   // id: string;
@@ -111,7 +111,6 @@ export interface EnrichmentEntityAuthority {
  * Documentation: https://github.com/digirati-co-uk/madoc-enrichment/blob/main/endpoint_docs.md#entity---list
  */
 export interface EnrichmentEntityTypeSnippet {
-    thumbnail?: any
   /**
    * URL of the Entity (won't resolve due to Gateway)
    */
@@ -144,6 +143,14 @@ export interface EnrichmentEntityTypeSnippet {
    * Readable labels for the Entity's Type.
    */
   title: InternationalString;
+
+  topic_count: number | string;
+
+  other_data: {
+    thumbnail?: {
+      url?: string;
+    };
+  };
 }
 
 export type SpaCyNERType =
@@ -172,10 +179,6 @@ export interface EnrichmentEntityType extends EnrichmentEntityTypeSnippet {
   featured_topics?: EnrichmentEntitySnippet[];
 
   image_url: string;
-
-  other_data: {
-    example_data: string;
-  };
 }
 
 export interface ResourceTagSnippet {

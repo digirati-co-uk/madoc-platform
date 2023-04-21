@@ -205,7 +205,7 @@ services:
         condition: service_healthy
 
   search:
-    image: digirati/madoc-enrichment:schools-multiplatform
+    image: digirati/madoc-enrichment:qa-deploy
 #    build:
 #      context: services/enrichment
 #      dockerfile: Dockerfile
@@ -215,6 +215,7 @@ services:
       - IPYTHONDIR=/app/.ipython
       - MIGRATE=True
       - LOAD=False
+      - LOAD_SPACY_DEPS=True
       - DEBUG=True
       - DJANGO_DEBUG=True
       - WAITRESS=False
