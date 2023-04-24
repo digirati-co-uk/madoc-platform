@@ -41,8 +41,6 @@ export function useSearch() {
     return [returnList, displayOrder, idMap];
   }, [searchFacetConfig.data]);
 
-  console.log(!!facetsToRequest.length || fulltext )
-
   const searchResponse = paginatedApiHooks.getSiteSearchQuery(
     () => [
       {
