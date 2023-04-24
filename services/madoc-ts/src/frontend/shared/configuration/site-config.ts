@@ -45,6 +45,11 @@ export const siteConfigurationModel: {
     type: 'checkbox-field',
     inlineLabel: 'Prioritise canvases sequentially',
   },
+  randomCanvas: {
+    label: 'Randomly select canvas when randomly selecting resource',
+    type: 'checkbox-field',
+    inlineLabel: 'Randomly select canvas',
+  },
   claimGranularity: {
     label: 'Claim granularity',
     description: 'When a user claims something to work on, should they receive a single image or the whole manifest',
