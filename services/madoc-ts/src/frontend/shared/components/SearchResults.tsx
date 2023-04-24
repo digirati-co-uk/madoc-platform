@@ -89,6 +89,7 @@ const SearchItem: React.FC<{ result: SearchResult; size?: 'large' | 'small'; sea
   const snippet = result.hits && result.hits[0] && result.hits[0].snippet ? result.hits[0].snippet : undefined;
   const isManifest = result.resource_type === 'Manifest';
 
+  console.log(things)
   return (
     <ResultContainer>
       <HrefLink
