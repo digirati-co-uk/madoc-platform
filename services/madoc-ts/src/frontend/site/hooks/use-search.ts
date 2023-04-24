@@ -41,6 +41,8 @@ export function useSearch() {
     return [returnList, displayOrder, idMap];
   }, [searchFacetConfig.data]);
 
+  console.log(!!facetsToRequest.length || fulltext )
+
   const searchResponse = paginatedApiHooks.getSiteSearchQuery(
     () => [
       {
@@ -67,7 +69,7 @@ export function useSearch() {
     {
       enabled:
         !searchFacetConfig.isLoading &&
-        (!!facetsToRequest.length || !!fulltext || collectionId || manifestId || projectId),
+        (!!facetsToRequest.length || !!fulltext || fulltext === '' || collectionId || manifestId || projectId),
     }
   );
 
