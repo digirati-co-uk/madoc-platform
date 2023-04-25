@@ -33,7 +33,7 @@ export type CompletionItem = {
 
 function renderOptionLabel(option: CompletionItem) {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '25px' }}>
       <div>
         <LocaleString as="strong" style={{ lineHeight: '1.8em', verticalAlign: 'middle' }}>
           {option.label as any}
@@ -46,13 +46,16 @@ function renderOptionLabel(option: CompletionItem) {
 }
 
 export const AutocompleteField: FieldComponent<AutocompleteFieldProps> = props => {
+  // console.log(typeof props.value)
   const { t } = useTranslation();
-  const [options, setOptions] = useState<CompletionItem[]>(props.value ? [props.value] : []);
+  const [options, setOptions] = useState<CompletionItem[]>(
+    props.value ? [typeof props.value === 'string' ? { uri: props.value, label: 'unknown' } : props.value] : []
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [hasFetched, setHasFetched] = useState(false);
   const [error, setError] = useState('');
   const api = useOptionalApi();
-  const boxHeight = hasFetched && options.length && options[0].description ? 50 : undefined;
+  const boxHeight = hasFetched && options.length && options[0].description ? 55 : undefined;
   const onOptionChange = (option: CompletionItem | undefined) => {
     if (!option) {
       props.updateValue(undefined);
@@ -108,7 +111,7 @@ export const AutocompleteField: FieldComponent<AutocompleteFieldProps> = props =
           });
       }
     },
-    [props.requestInitial, props.dataSource, t]
+    [props.requestInitial, props.dataSource, hasFetched, api, t]
   );
 
   useEffect(() => {
@@ -130,10 +133,6 @@ export const AutocompleteField: FieldComponent<AutocompleteFieldProps> = props =
             focusedBorderColor: '#005cc5',
             selectedBgColor: '#005cc5',
             backgroundColor: '#fff',
-            height: `${boxHeight}px`,
-          },
-          value: {
-            height: '100%',
           },
         }}
         isDisabled={props.disabled}

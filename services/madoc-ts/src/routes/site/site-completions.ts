@@ -20,6 +20,9 @@ export const siteCompletions: RouteMiddleware<{ type: string }> = async context 
       projectId,
       language: lng || 'en',
     });
+    if (!resp) {
+      context.response.body = [];
+    }
     context.response.body = resp;
   } catch (e) {
     // no-op
