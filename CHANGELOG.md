@@ -15,13 +15,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed rejecting a submission sometimes removes accepted annotations (MAD-1315)
 - Fixed allow multiple submissions when max contributions reached (MAD-1226) 
 - Fixed not able to add or update annotation styles (MAD-1222)
-
+- Fixed autocomplete crashing (NS-28)
 ### Added
 - Added new "webhook" data model (no usages yet)
 - Added more options to the footer grid block and nested fields (NS-14)
 - Added notification for rejected submission and added view for rejected in contributions panel (MAD-1315)
 - Ability to add custom nav items to the Global Menu block
-
+- Added option item description to autocomplete (NS-26)
 ### Changed
 - Changed language on user dash from 'reviews' to 'review tasks' to differentiate between the two
 <!-- 
