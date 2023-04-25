@@ -11,13 +11,18 @@ export const siteCompletions: RouteMiddleware<{ type: string }> = async context 
   const project = parsedId ? await context.connection.one(getProject(parsedId, site.id)) : null;
   const projectId = project ? project.id : null;
 
-  context.response.body = await context.completions.doCompletion(completionType, {
-    request: context.request,
-    siteId: site.id,
-    api: siteApi,
-    userId: authenticatedUser?.id,
-    projectId,
-    language: lng || 'en',
-  });
+  try {
+    const resp = await context.completions.doCompletion(completionType, {
+      request: context.request,
+      siteId: site.id,
+      api: siteApi,
+      userId: authenticatedUser?.id,
+      projectId,
+      language: lng || 'en',
+    });
+    context.response.body = resp;
+  } catch (e) {
+    // no-op
+  }
   context.response.status = 200;
 };
