@@ -21,7 +21,9 @@ export const siteCompletions: RouteMiddleware<{ type: string }> = async context 
       language: lng || 'en',
     });
     if (!resp) {
-      context.response.body = [];
+      context.response.body = { completions: [] };
+      context.response.status = 200;
+      return;
     }
     context.response.body = resp;
   } catch (e) {
