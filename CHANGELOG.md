@@ -15,8 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed rejecting a submission sometimes removes accepted annotations (MAD-1315)
 - Fixed allow multiple submissions when max contributions reached (MAD-1226) 
 - Fixed not able to add or update annotation styles (MAD-1222)
-- Fixed only admins being able to review tasks, hide review actions if cant review (NS-17)
 - Fixed allow empty search (MAD-1342)
+- Fixed only admins being able to review tasks, hide review actions if cant review (NS-17)
 
 ### Added
 - Added new "webhook" data model (no usages yet)

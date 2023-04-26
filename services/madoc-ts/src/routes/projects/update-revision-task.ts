@@ -21,8 +21,6 @@ export const updateRevisionTask: RouteMiddleware<{ taskId: string; task: any }> 
 
   const task = await userApi.getTask(id, { all: true });
 
-  // if cant create check if assigned
-
   if (!id) {
     throw new Error('Task could not be updated');
   }
