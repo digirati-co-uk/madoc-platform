@@ -67,7 +67,7 @@ export function useSearch() {
     {
       enabled:
         !searchFacetConfig.isLoading &&
-        (!!facetsToRequest.length || !!fulltext || collectionId || manifestId || projectId),
+        (!!facetsToRequest.length || !!fulltext || fulltext === '' || collectionId || manifestId || projectId),
     }
   );
 
