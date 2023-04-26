@@ -325,7 +325,7 @@ function ViewSingleReview({
                 reviewTaskId={review.id}
               />
             </ReviewActions>
-          ) : !isDone ? (
+          ) : !isDone || !wasRejected ? (
             <ReviewActionMessage>
               {t('You do not have the correct permissions to review this task')}
             </ReviewActionMessage>
