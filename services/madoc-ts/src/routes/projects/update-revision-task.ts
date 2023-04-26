@@ -3,6 +3,7 @@ import { userWithScope } from '../../utility/user-with-scope';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { CrowdsourcingTask } from '../../gateway/tasks/crowdsourcing-task';
 import { userCan } from '../../utility/user-can';
+import { extractIdFromUrn } from '../../utility/parse-urn';
 
 export const updateRevisionTask: RouteMiddleware<{ taskId: string; task: any }> = async context => {
   const { siteId } = userWithScope(context, ['models.contribute', 'models.revision']);
@@ -11,11 +12,16 @@ export const updateRevisionTask: RouteMiddleware<{ taskId: string; task: any }> 
   const canReview = userCan('models.revision', context.state);
   const isAdmin = userCan('models.admin', context.state);
 
+  const currentUser = context.state?.jwt?.user.id;
+  const limitedReviewer = canReview && !canCreate;
+
   const userApi = api.asUser({ siteId });
   const id = context.params.taskId;
   const taskBody = context.requestBody.task;
 
-  const task = await userApi.getTask(id);
+  const task = await userApi.getTask(id, { all: true });
+
+  // if cant create check if assigned
 
   if (!id) {
     throw new Error('Task could not be updated');
@@ -28,7 +34,21 @@ export const updateRevisionTask: RouteMiddleware<{ taskId: string; task: any }> 
   if (task.type !== 'crowdsourcing-task') {
     throw new Error(`Task could not be updated, not a valid task`);
   }
-  if ((!canCreate && !canReview) || (canCreate && !canReview) || !isAdmin) {
+
+  if (limitedReviewer) {
+    if (task.delegated_task) {
+      const reviewTask = await userApi.getTask(task?.delegated_task, { all: true });
+      const assignedReviewer = reviewTask.assignee ? extractIdFromUrn(reviewTask.assignee.id) : '';
+      if (assignedReviewer !== currentUser) {
+        throw new Error('Not authorised');
+      }
+      await userApi.updateTask<CrowdsourcingTask>(id, taskBody);
+      context.response.status = 200;
+    }
+    throw new Error('Task has no delegated reviewers');
+  }
+
+  if (!isAdmin || !canReview) {
     throw new Error('Not authorised');
   }
 
