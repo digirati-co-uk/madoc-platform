@@ -9,6 +9,7 @@ export const updateRevisionTask: RouteMiddleware<{ taskId: string; task: any }> 
 
   const canCreate = userCan('models.create', context.state);
   const canReview = userCan('models.revision', context.state);
+  const isAdmin = userCan('models.admin', context.state);
 
   const userApi = api.asUser({ siteId });
   const id = context.params.taskId;
@@ -27,7 +28,7 @@ export const updateRevisionTask: RouteMiddleware<{ taskId: string; task: any }> 
   if (task.type !== 'crowdsourcing-task') {
     throw new Error(`Task could not be updated, not a valid task`);
   }
-  if (!canCreate && !canReview) {
+  if ((!canCreate && !canReview) || (canCreate && !canReview) || !isAdmin) {
     throw new Error('Not authorised');
   }
 
