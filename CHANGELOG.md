@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed and updated `ManifestActions` and `ManifestUserNotifications` to allow the user to continue submissions, add another and view a completed 
 - Fixed only admins being able to review tasks, hide review actions if cant review (NS-17)
 - Fixed autocomplete crashing (NS-28)
+- Fixed infinite requests if no data when using infinite query 
 
 ### Added
 - Added new "webhook" data model (no usages yet)
