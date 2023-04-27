@@ -1454,6 +1454,15 @@ export class ApiClient {
     });
   }
 
+  async updateRevisionTask(taskId: string | undefined, task: any) {
+    return this.request<{ t: CrowdsourcingTask }>(`/api/madoc/crowdsourcing/task/${taskId}`, {
+      method: 'PATCH',
+      body: {
+        task,
+      },
+    });
+  }
+
   async updateTaskStatus<Task extends BaseTask>(
     taskId: string,
     availableStatuses: any,
@@ -1634,6 +1643,7 @@ export class ApiClient {
     return this.request<Task>(`/api/tasks/${id}`, {
       method: 'PATCH',
       body: task,
+      publicRequest: true,
     });
   }
 

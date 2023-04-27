@@ -18,6 +18,10 @@ import { ManifestTaskProgress } from './ManifestTaskProgress';
 import { usePreventCanvasNavigation } from './PreventUsersNavigatingCanvases';
 import { useSiteConfiguration } from './SiteConfigurationContext';
 import { GenerateManifestPdf } from './GenerateManifestPdf';
+import { ProjectListingDescription } from '../../shared/atoms/ProjectListing';
+import { useContinueSubmission } from '../hooks/use-continue-submission';
+import { useProject } from '../hooks/use-project';
+import { useManifestUserTasks } from '../hooks/use-manifest-user-tasks';
 
 export type props = {
   alignment?: string;
@@ -27,7 +31,13 @@ export const ManifestActions: React.FC<props> = ({ alignment }) => {
   const createLink = useRelativeLinks();
   const options = useManifestPageConfiguration();
   const { showNavigationContent } = usePreventCanvasNavigation();
+  const { canUserSubmit, userTasks } = useManifestUserTasks();
   const { isActive, isPreparing } = useProjectStatus();
+  const { data: project } = useProject();
+  const { tasks: continueSubmission, inProgress: continueCount } = useContinueSubmission();
+  const config = useSiteConfiguration();
+  const allowMultiple = !config.project.modelPageOptions?.preventMultipleUserSubmissionsPerResource;
+  const preventFurtherSubmission = !allowMultiple && !!userTasks?.find(task => task.status === 2 || task.status === 3);
   const {
     project: { claimGranularity, manifestPageOptions },
   } = useSiteConfiguration();
@@ -55,23 +65,62 @@ export const ManifestActions: React.FC<props> = ({ alignment }) => {
     return null;
   }
 
+  const ContinueButtons = () => {
+    if (project && continueSubmission?.length) {
+      const revision = continueSubmission[0].state.revisionId;
+      const notStarted = continueSubmission[0].status === 0;
+      const started = continueSubmission[0].status === 1;
+      const isCompleted = continueSubmission[0].status === 2 || continueSubmission[0].status === 3;
+
+      return (
+        <>
+          {!continueCount && !notStarted && !isCompleted ? (
+            <ProjectListingDescription>
+              <strong>{started ? t('You have started this item') : t('You have already completed this item')}</strong>
+            </ProjectListingDescription>
+          ) : null}
+          <Button
+            $primary
+            as={HrefLink}
+            href={createLink({
+              subRoute: 'model',
+              query: { revision: continueCount ? revision : undefined },
+            })}
+            style={{ display: 'inline-block', whiteSpace: 'nowrap' }}
+          >
+            {continueCount
+              ? t('Continue submission ({{count}})', { count: continueCount || 1 })
+              : notStarted
+              ? t('Contribute')
+              : started
+              ? t('Continue submission')
+              : canUserSubmit && !preventFurtherSubmission
+              ? t('Add new submission')
+              : t('View submissions')}
+          </Button>
+        </>
+      );
+    }
+    return (
+      <Button as={HrefLink} href={createLink({ subRoute: 'model' })} $primary $large>
+        {userManifestTask && done.length ? t('View submission') : t('View submission')}
+      </Button>
+    );
+  };
   return (
     <>
-      {showButton ? (
-        <ButtonRow $center={alignment === 'center'} $right={alignment === 'right'}>
-          {showCaptureModelOnManifest ? (
-            <Button as={HrefLink} href={createLink({ subRoute: 'model' })} $primary $large>
-              {userManifestTask && done.length ? t('View submission') : t('Start contributing')}
-            </Button>
-          ) : claimGranularity === 'manifest' ? (
-            <GoToFirstCanvas $primary $large navigateToModel>
-              {userManifestTask && done.length ? t('View submission') : t('Start contributing')}
-            </GoToFirstCanvas>
-          ) : (
-            <GoToRandomCanvas $primary $large label={{ none: [t('Start contributing')] }} navigateToModel />
-          )}
-        </ButtonRow>
-      ) : null}
+      <ButtonRow $center={alignment === 'center'} $right={alignment === 'right'}>
+        {showCaptureModelOnManifest ? (
+          <ContinueButtons />
+        ) : claimGranularity === 'manifest' && showButton ? (
+          <GoToFirstCanvas $primary $large navigateToModel>
+            {userManifestTask && done.length ? t('View submission') : t('View submission')}
+          </GoToFirstCanvas>
+        ) : showButton ? (
+          <GoToRandomCanvas $primary $large label={{ none: [t('Start contributing')] }} navigateToModel />
+        ) : null}
+      </ButtonRow>
+
       <ButtonRow $center={alignment === 'center'} $right={alignment === 'right'}>
         {showIIIFLogo ? <IIIFDragIcon /> : null}
         {!options.hideOpenInMirador ? (

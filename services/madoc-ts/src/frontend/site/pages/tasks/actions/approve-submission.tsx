@@ -55,7 +55,7 @@ export const ApproveSubmission: React.FC<{
         project && project.template ? api.projectTemplates.getDefinition(project.template, site.id) : null;
 
       setIsLoading(true);
-      api
+      api.crowdsourcing
         .reviewApproveSubmission({
           revisionRequest: acceptedRevision,
           userTaskId,
@@ -72,7 +72,7 @@ export const ApproveSubmission: React.FC<{
           onApprove();
         });
     }
-  }, [acceptedRevision, api, onApprove, userTaskId]);
+  }, [acceptedRevision, api.crowdsourcing, api.projectTemplates, onApprove, project, site.id, userTaskId]);
 
   if (acceptedRevision?.revision.status === 'accepted') {
     return null;

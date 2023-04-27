@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigation } from '../../editor/hooks/useNavigation';
-import { Revisions } from '../../editor/stores/revisions/index';
+import { Revisions } from '../../editor/stores/revisions';
 import { isEntity } from '../../helpers/is-entity';
 import { EditorRenderingConfig, EditorSlots, ProfileProvider } from './EditorSlots';
 

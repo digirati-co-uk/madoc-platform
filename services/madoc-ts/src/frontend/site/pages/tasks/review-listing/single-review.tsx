@@ -35,7 +35,7 @@ import { Button } from '../../../../shared/navigation/Button';
 import useDropdownMenu from 'react-accessible-dropdown-menu-hook';
 import { EditIcon } from '../../../../shared/icons/EditIcon';
 import { DirectEditButton } from '../../../../shared/capture-models/new/components/DirectEditButton';
-import { MaximiseWindow, MaximiseWindowContainer } from '../../../../shared/layout/MaximiseWindow';
+import { MaximiseWindow } from '../../../../shared/layout/MaximiseWindow';
 import { FullScreenExitIcon } from '../../../../shared/icons/FullScreenExitIcon';
 import { FullScreenEnterIcon } from '../../../../shared/icons/FullScreenEnterIcon';
 import { Runtime } from '@atlas-viewer/atlas';
@@ -46,6 +46,12 @@ import { useTranslation } from 'react-i18next';
 import { extractIdFromUrn } from '../../../../../utility/parse-urn';
 import { useProjectAnnotationStyles } from '../../../hooks/use-project-annotation-styles';
 import UnlockSmileyIcon from '../../../../shared/icons/UnlockSmileyIcon';
+import { useCurrentUser } from '../../../../shared/hooks/use-current-user';
+import { ManifestCanvasGrid } from '../../../features/ManifestCanvasGrid';
+import { PreviewManifest } from '../../../../admin/molecules/PreviewManifest';
+import { ViewContentFetch } from '../../../../admin/molecules/ViewContentFetch';
+import { ProjectManifests } from '../../../features/ProjectManifests';
+import { ManifestSnippet } from '../../../../shared/components/ManifestSnippet';
 
 const ReviewContainer = styled.div`
   position: relative;
@@ -94,6 +100,13 @@ const ReviewActionBar = styled.div`
   padding: 0.6em;
   min-height: 42px;
   overflow: auto;
+`;
+
+const ReviewActionMessage = styled.div`
+  background-color: rgba(0, 92, 197, 0.15);
+  padding: 0.5em;
+  border-radius: 4px;
+  font-size: small;
 `;
 
 const ReviewActions = styled.div`
@@ -171,11 +184,21 @@ function ViewSingleReview({
     canvasLink,
     manifestLink,
   } = useCrowdsourcingTaskDetails(task);
+
   const refetch = useRefetch();
   const metadata = useTaskMetadata<{ subject?: SubjectSnippet }>(task);
-
   const [isEditing, setIsEditing] = useState(false);
   // const isLocked = props.lockedTasks && props.lockedTasks.indexOf(props.task.id) !== -1;
+  const user = useCurrentUser(true);
+
+  const limitedReviewer =
+    user && user.scope && user.scope.indexOf('models.revision') !== -1 && user.scope.indexOf('models.create') === -1;
+  const reviewer =
+    (user && user.scope && user.scope.indexOf('models.revision') !== -1) ||
+    user.scope.indexOf('site.admin') ||
+    (-1 && user.scope.indexOf('models.admin'));
+
+  const canReview = limitedReviewer ? review?.assignee?.id === user.user?.id : reviewer;
   const isDone = task?.status === 3;
   const { buttonProps, isOpen: isDropdownOpen } = useDropdownMenu(1, {
     disableFocusFirstItemOnClick: true,
@@ -268,7 +291,7 @@ function ViewSingleReview({
               </Assignee>
             )}
           </div>
-          {review && !wasRejected ? (
+          {review && !wasRejected && canReview ? (
             <ReviewActions>
               <RejectSubmission
                 userTaskId={task.id}
@@ -308,6 +331,10 @@ function ViewSingleReview({
                 reviewTaskId={review.id}
               />
             </ReviewActions>
+          ) : !isDone || !wasRejected ? (
+            <ReviewActionMessage>
+              {t('You do not have the correct permissions to review this task')}
+            </ReviewActionMessage>
           ) : null}
         </ReviewActionBar>
         <ReviewPreview>
@@ -348,8 +375,8 @@ function ViewSingleReview({
               </ReviewDropdownPopup>
             </ReviewDropdownContainer>
 
-            <CanvasViewerGrid ref={gridRef}>
-              {canvas ? (
+            {canvas ? (
+              <CanvasViewerGrid ref={gridRef}>
                 <EditorContentViewer
                   height={'100%' as any}
                   canvasId={canvas.id}
@@ -357,21 +384,28 @@ function ViewSingleReview({
                     return ((runtime as any).current = rt.runtime);
                   }}
                 />
-              ) : null}
-              {isOpen && (
-                <CanvasViewerControls>
-                  <CanvasViewerButton onClick={goHome}>
-                    <HomeIcon title={t('atlas__zoom_home', { defaultValue: 'Home' })} />
-                  </CanvasViewerButton>
-                  <CanvasViewerButton onClick={zoomOut}>
-                    <MinusIcon title={t('atlas__zoom_out', { defaultValue: 'Zoom out' })} />
-                  </CanvasViewerButton>
-                  <CanvasViewerButton onClick={zoomIn}>
-                    <PlusIcon title={t('atlas__zoom_in', { defaultValue: 'Zoom in' })} />
-                  </CanvasViewerButton>
-                </CanvasViewerControls>
-              )}
-            </CanvasViewerGrid>
+                {isOpen && (
+                  <CanvasViewerControls>
+                    <CanvasViewerButton onClick={goHome}>
+                      <HomeIcon title={t('atlas__zoom_home', { defaultValue: 'Home' })} />
+                    </CanvasViewerButton>
+                    <CanvasViewerButton onClick={zoomOut}>
+                      <MinusIcon title={t('atlas__zoom_out', { defaultValue: 'Zoom out' })} />
+                    </CanvasViewerButton>
+                    <CanvasViewerButton onClick={zoomIn}>
+                      <PlusIcon title={t('atlas__zoom_in', { defaultValue: 'Zoom in' })} />
+                    </CanvasViewerButton>
+                  </CanvasViewerControls>
+                )}
+              </CanvasViewerGrid>
+            ) : (
+              metadata.subject?.id &&
+              metadata.subject.type === 'manifest' && (
+                <>
+                  <ManifestSnippet id={metadata.subject?.id} stackedThumbnail flat portrait hideButton />
+                </>
+              )
+            )}
           </div>
         </ReviewPreview>
       </ReviewContainer>

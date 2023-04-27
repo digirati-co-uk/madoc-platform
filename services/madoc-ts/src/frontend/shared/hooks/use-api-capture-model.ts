@@ -7,7 +7,7 @@ export function useApiCaptureModel(modelId?: string | null) {
     ['api-capture-model', { id: modelId }],
     async () => {
       if (modelId) {
-        return api.getCaptureModel(modelId);
+        return api.crowdsourcing.getCaptureModel(modelId);
       }
     },
     {

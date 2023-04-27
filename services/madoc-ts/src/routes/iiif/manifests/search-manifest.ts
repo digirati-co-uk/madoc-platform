@@ -30,7 +30,7 @@ export const searchManifest: RouteMiddleware<{ id: number }> = async context => 
     return;
   }
 
-  const response = await siteApi.searchPublishedModelFields(
+  const response = await siteApi.crowdsourcing.searchPublishedModelFields(
     canvasUrn ? { canvas: canvasUrn } : { manifest: manifestUrn },
     q,
     {

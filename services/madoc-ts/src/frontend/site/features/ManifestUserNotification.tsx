@@ -16,8 +16,9 @@ import { useProjectStatus } from '../hooks/use-project-status';
 import { useRouteContext } from '../hooks/use-route-context';
 import { ManifestLoader } from '../pages/loaders/manifest-loader';
 import { useSiteConfiguration } from './SiteConfigurationContext';
+import { useManifestUserTasks } from '../hooks/use-manifest-user-tasks';
 
-export const ManifestUserNotification: React.FC = () => {
+export function ManifestUserNotification(props: { isModal?: boolean }) {
   const { projectId, manifestId } = useRouteContext();
   const { refetch: refetchManifest } = useData(ManifestLoader);
   const config = useSiteConfiguration();
@@ -36,6 +37,10 @@ export const ManifestUserNotification: React.FC = () => {
   const { t } = useTranslation();
   const user = useUser();
   const api = useApi();
+  const { allTasksDone } = useManifestUserTasks();
+  const allowMultiple = !config.project.modelPageOptions?.preventMultipleUserSubmissionsPerResource;
+  const preventFurtherSubmission = !allowMultiple && allTasksDone;
+  const isEdit = !preventFurtherSubmission && props.isModal;
 
   const [onSubmitForReview] = useMutation(async (tid: string) => {
     await api.updateTask(tid, {
@@ -64,7 +69,7 @@ export const ManifestUserNotification: React.FC = () => {
     return <ErrorMessage>{t('Your claim on this manifest has expired')}</ErrorMessage>;
   }
 
-  if (isManifestComplete) {
+  if (isManifestComplete && !isEdit) {
     return <InfoMessage>{t('This manifest is complete')}</InfoMessage>;
   }
 
@@ -72,7 +77,7 @@ export const ManifestUserNotification: React.FC = () => {
     return <InfoMessage>{t('Maximum number of contributors reached')}</InfoMessage>;
   }
 
-  if (inReview.length) {
+  if (inReview.length && !isEdit) {
     return <WarningMessage>{t('This manifest is currently in review')}</WarningMessage>;
   }
 
@@ -96,12 +101,12 @@ export const ManifestUserNotification: React.FC = () => {
     );
   }
 
-  if (taskIsDone) {
+  if (taskIsDone && !isEdit) {
     return <SuccessMessage>{t('You have already completed this manifest')}</SuccessMessage>;
   }
 
   return null;
-};
+}
 
 blockEditorFor(ManifestUserNotification, {
   type: 'default.ManifestUserNotification',
