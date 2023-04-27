@@ -133,6 +133,12 @@ CREATE EXTENSION IF NOT EXISTS "ltree";
 
 EOSQL
 
+psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" -d "$POSTGRES_DB" <<-"EOSQL"
+
+CREATE EXTENSION IF NOT EXISTS "postgis";
+
+EOSQL
+
 if [ $NEW_DATABASE_CREATED = 'true' ]; then
     # Restore a backup if provided.
     docker_process_init_files /docker-entrypoint-initdb.d/*

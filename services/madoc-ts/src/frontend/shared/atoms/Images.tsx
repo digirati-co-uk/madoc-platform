@@ -19,6 +19,10 @@ export const CroppedImage = styled.div<{
     width: 40px;
     height: 40px;
   }
+  &[data-size='small'] {
+    width: 100px;
+    height: 100px;
+  }
 
   ${props =>
     props.$fluid &&

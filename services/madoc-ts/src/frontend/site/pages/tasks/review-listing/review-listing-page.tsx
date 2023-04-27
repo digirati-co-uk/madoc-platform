@@ -15,7 +15,6 @@ import { HrefLink } from '../../../../shared/utility/href-link';
 import { useRelativeLinks } from '../../../hooks/use-relative-links';
 import { useTaskMetadata } from '../../../hooks/use-task-metadata';
 import { Button, ButtonIcon } from '../../../../shared/navigation/Button';
-import { Chevron } from '../../../../shared/icons/Chevron';
 import { useResizeLayout } from '../../../../shared/hooks/use-resize-layout';
 import { LayoutHandle } from '../../../../shared/layout/LayoutContainer';
 import ResizeHandleIcon from '../../../../shared/icons/ResizeHandleIcon';
@@ -26,6 +25,7 @@ import { ReviewNavigation } from './ReviewNagivation';
 import { EmptyState } from '../../../../shared/layout/EmptyState';
 import ListItemIcon from '../../../../shared/icons/ListItemIcon';
 import { useKeyboardListNavigation } from '../../../hooks/use-keyboard-list-navigation';
+import { ChevronDown } from '../../../../shared/icons/ChevronIcon';
 
 const TaskListContainer = styled.div`
   height: 80vh;
@@ -208,7 +208,7 @@ export function ReviewListingPage() {
                         data-is-active={sort_by && sort_by.includes('subject:')}
                         data-is-desc={sort_by && sort_by.includes('desc')}
                       >
-                        Manifest <Chevron />
+                        Manifest <ChevronDown />
                       </HeaderLink>
                     </SimpleTable.Header>
                     <SimpleTable.Header>
@@ -218,7 +218,7 @@ export function ReviewListingPage() {
                         data-is-active={sort_by && sort_by.includes('subject_parent')}
                         data-is-desc={sort_by && sort_by.includes('desc')}
                       >
-                        Canvas <Chevron />
+                        Canvas <ChevronDown />
                       </HeaderLink>
                     </SimpleTable.Header>
                     <SimpleTable.Header>
@@ -229,7 +229,7 @@ export function ReviewListingPage() {
                         data-is-desc={sort_by && sort_by.includes('desc')}
                         data-no-sort={!sort_by}
                       >
-                        Modified <Chevron />
+                        Modified <ChevronDown />
                       </HeaderLink>
                     </SimpleTable.Header>
                     <SimpleTable.Header>
@@ -239,7 +239,7 @@ export function ReviewListingPage() {
                         data-is-active={sort_by && sort_by.includes('status')}
                         data-is-desc={sort_by && sort_by.includes('desc')}
                       >
-                        Status <Chevron />
+                        Status <ChevronDown />
                       </HeaderLink>
                     </SimpleTable.Header>
                     <SimpleTable.Header>
@@ -249,7 +249,7 @@ export function ReviewListingPage() {
                         data-is-active={sort_by && sort_by.includes('user_identifier')}
                         data-is-desc={sort_by && sort_by.includes('desc')}
                       >
-                        Assignee <Chevron />
+                        Assignee <ChevronDown />
                       </HeaderLink>
                     </SimpleTable.Header>
                   </SimpleTable.Row>

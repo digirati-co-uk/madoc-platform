@@ -5,6 +5,8 @@ export type EditorialContext = {
   collection?: number;
   manifest?: number;
   canvas?: number;
+  topic?: string;
+  topicType?: string;
   page?: number;
   slotIds?: string[];
 };
@@ -14,6 +16,8 @@ export type ServerEditorialContext = {
   collection?: number;
   manifest?: number;
   canvas?: number;
+  topic?: string;
+  topicType?: string;
   page?: number;
   slotIds?: string[];
 };
@@ -34,6 +38,8 @@ export type SiteSlot = {
     collection?: SlotFilterConfig;
     manifest?: SlotFilterConfig;
     canvas?: SlotFilterConfig;
+    topic?: SlotFilterConfig<string>;
+    topicType?: SlotFilterConfig<string>;
   };
   pageId?: number;
   blocks: SiteBlock[];
@@ -61,12 +67,12 @@ export type CreateNormalPageRequest = {
   slug?: string;
 };
 
-export type SlotFilterConfig = {
+export type SlotFilterConfig<IDType = number> = {
   none?: boolean;
   all?: boolean;
-  exact?: number;
-  whitelist?: number[];
-  blacklist?: number[];
+  exact?: IDType;
+  whitelist?: IDType[];
+  blacklist?: IDType[];
 };
 
 export type CreateSlotRequest = {
@@ -79,6 +85,8 @@ export type CreateSlotRequest = {
     collection?: SlotFilterConfig;
     manifest?: SlotFilterConfig;
     canvas?: SlotFilterConfig;
+    topicType?: SlotFilterConfig<string>;
+    topic?: SlotFilterConfig<string>;
   };
   pageId?: number;
   blocks?: SiteBlockRequest[];
@@ -89,6 +97,8 @@ export type SlotMappingRequest = {
   collection?: { [slotName: string]: CreateSlotRequest };
   manifest?: { [slotName: string]: CreateSlotRequest };
   canvas?: { [slotName: string]: CreateSlotRequest };
+  topicType?: { [slotName: string]: CreateSlotRequest };
+  topic?: { [slotName: string]: CreateSlotRequest };
 };
 
 export type SitePageRow = {
@@ -149,6 +159,20 @@ export type SiteSlotRow = {
   filter_canvas_exact: number;
   filter_canvas_whitelist?: number[];
   filter_canvas_blacklist?: number[];
+
+  // Filter topic types
+  filter_topic_type_none: boolean;
+  filter_topic_type_all: boolean;
+  filter_topic_type_exact: string;
+  filter_topic_type_whitelist?: string[];
+  filter_topic_type_blacklist?: string[];
+
+  // Filter topics
+  filter_topic_none: boolean;
+  filter_topic_all: boolean;
+  filter_topic_exact: string;
+  filter_topic_whitelist?: string[];
+  filter_topic_blacklist?: string[];
 };
 
 export type SiteBlockRow = {

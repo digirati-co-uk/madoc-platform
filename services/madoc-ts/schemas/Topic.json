@@ -1,0 +1,97 @@
+{
+  "type": "object",
+  "properties": {
+    "url": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string"
+    },
+    "modified": {
+      "type": "string"
+    },
+    "created": {
+      "type": "string"
+    },
+    "label": {
+      "type": "string"
+    },
+    "type": {
+      "$ref": "#/definitions/SpaCyNERType"
+    },
+    "type_slug": {
+      "type": "string"
+    },
+    "type_title": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "slug": {
+      "type": "string"
+    },
+    "title": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "tagged_resource_count": {
+      "type": "number"
+    },
+    "description": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "featured_resources": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/FeaturedResource"
+      }
+    },
+    "related_topics": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/EnrichmentEntitySnippet"
+      }
+    },
+    "authorities": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/AuthoritySnippet"
+      }
+    },
+    "other_data": {
+      "$ref": "#/definitions/EntityOtherData"
+    }
+  },
+  "required": [
+    "authorities",
+    "created",
+    "description",
+    "id",
+    "label",
+    "modified",
+    "related_topics",
+    "slug",
+    "tagged_resource_count",
+    "title",
+    "type",
+    "type_slug",
+    "type_title",
+    "url"
+  ],
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

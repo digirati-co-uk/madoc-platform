@@ -31,7 +31,7 @@
     "unlink:model-editor": "yarn unlink \"@capture-models/editor\" && yarn install --force",
     "link:model-helpers": "yarn link \"@capture-models/helpers\"",
     "unlink:model-helpers": "yarn unlink \"@capture-models/helpers\" && yarn install --force",
-    "shim-modules": "rm -rf ./dist/node_modules && cp -R ./shim-modules/node_modules ./dist/node_modules",
+    "shim-modules": "mkdirp -p dist && rm -rf ./dist/node_modules && cp -R ./shim-modules/node_modules ./dist/node_modules",
     "extract:api": "tsc -p ./tsconfig.types.json"
   },
   "browserslist": "> 0.25%, not dead",

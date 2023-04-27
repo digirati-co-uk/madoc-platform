@@ -11,6 +11,7 @@ var_backup
 e2e/cypress/fixtures/madoc-test-fixtures
 services/enrichment
 services/search
+services/enrichment
 services/madoc-remix
 services/madoc-ts/service-jwts/madoc-remix.json
 e2e/test-fixtures/postgres/default/default.sql

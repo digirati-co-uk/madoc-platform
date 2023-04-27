@@ -9,6 +9,8 @@ import simpleHtmlBlock from './simple-html-block/simple-html-block';
 import currentManifest from './current-manifest-snippet-block';
 import simpleMarkdownBlock from './simple-markdown-block/simple-markdown-block';
 import { EmbedItem } from '../../frontend/site/features/EmbedItem';
+import { SiteLogoNavItem } from '../../frontend/shared/components/SiteLogoNavItem';
+import { DropDownMenu } from '../../frontend/site/features/DropdownMenu';
 
 export function getDefaultPageBlockDefinitions(): PageBlockDefinition<any, any, any, any>[] {
   return [
@@ -21,6 +23,9 @@ export function getDefaultPageBlockDefinitions(): PageBlockDefinition<any, any, 
     (SingleCollection as any)[Symbol.for('slot-model')] as any,
     (FeaturedItem as any)[Symbol.for('slot-model')] as any,
     (EmbedItem as any)[Symbol.for('slot-model')] as any,
+    (SiteLogoNavItem as any)[Symbol.for('slot-model')] as any,
+    // todo remove when plugin is updated
+    (DropDownMenu as any)[Symbol.for('slot-model')] as any,
     simpleMarkdownBlock,
   ];
 }

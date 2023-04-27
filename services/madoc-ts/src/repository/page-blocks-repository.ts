@@ -328,6 +328,16 @@ export class PageBlocksRepository extends BaseRepository {
           ss.filter_canvas_exact as slot__filter_canvas_exact, 
           ss.filter_canvas_whitelist as slot__filter_canvas_whitelist, 
           ss.filter_canvas_blacklist as slot__filter_canvas_blacklist, 
+          ss.filter_topic_type_none as slot__filter_topic_type_none, 
+          ss.filter_topic_type_all as slot__filter_topic_type_all, 
+          ss.filter_topic_type_exact as slot__filter_topic_type_exact, 
+          ss.filter_topic_type_whitelist as slot__filter_topic_type_whitelist, 
+          ss.filter_topic_type_blacklist as slot__filter_topic_type_blacklist, 
+          ss.filter_topic_none as slot__filter_topic_none, 
+          ss.filter_topic_all as slot__filter_topic_all, 
+          ss.filter_topic_exact as slot__filter_topic_exact, 
+          ss.filter_topic_whitelist as slot__filter_topic_whitelist, 
+          ss.filter_topic_blacklist as slot__filter_topic_blacklist, 
           
           -- Block properties
           sb.id as block__id,

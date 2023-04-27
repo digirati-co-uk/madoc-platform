@@ -125,7 +125,9 @@ import { siteManifestTasks } from './routes/site/site-manifest-tasks';
 import { getStaticPage, sitePages } from './routes/site/site-pages';
 import { listProjectsAutocomplete } from './routes/projects/list-projects-autocomplete';
 import { siteTaskMetadata } from './routes/site/site-task-metadata';
+import { siteTopics } from './routes/site/site-topics';
 import { siteUserAutocomplete } from './routes/site/site-user-autocomplete';
+import { topicRoutes } from './routes/topics';
 import { forgotPassword } from './routes/user/forgot-password';
 import { getSiteUser } from './routes/user/get-site-user';
 import { loginRefresh } from './routes/user/login-refresh';
@@ -227,6 +229,7 @@ import { deleteProjectEndpoint } from './routes/projects/deleteProject';
 import { exportProjectTemplate } from './routes/projects/export-project-template';
 import { generateApiKey } from './routes/admin/generate-api-key';
 import { authenticateApi } from './routes/global/api-authentication';
+import { siteResource } from './routes/site/site-enrichment-resource';
 
 export const router = new TypedRouter({
   // Normal route
@@ -591,9 +594,11 @@ export const router = new TypedRouter({
   'site-project': [TypedRouter.GET, '/s/:slug/madoc/api/projects/:projectSlug', siteProject],
   'site-projects': [TypedRouter.GET, '/s/:slug/madoc/api/projects', siteProjects],
   'site-search': [TypedRouter.POST, '/s/:slug/madoc/api/search', siteSearch],
-  'site-topic': [TypedRouter.GET, '/s/:slug/madoc/api/topics/:type/:id', siteTopic],
+  // 'site-topic-index': [TypedRouter.GET, '/s/:slug/madoc/api/topics/_all', siteTopics],
+  'site-topic': [TypedRouter.GET, '/s/:slug/madoc/api/topics/:type/:topic', siteTopic],
   'site-topic-type': [TypedRouter.GET, '/s/:slug/madoc/api/topics/:type', siteTopicType],
   'site-topic-types': [TypedRouter.GET, '/s/:slug/madoc/api/topics', siteTopicTypes],
+  'site-enrichment-resource': [TypedRouter.GET, '/s/:slug/madoc/api/resource/:id', siteResource],
   'site-published-models': [TypedRouter.GET, '/s/:slug/madoc/api/canvases/:id/models', sitePublishedModels],
   'site-canvas-models': [
     TypedRouter.GET,
@@ -647,6 +652,7 @@ export const router = new TypedRouter({
   ...captureModelRoutes,
   ...webhookRoutes,
   ...getAuthRoutes(),
+  ...topicRoutes,
 
   // Development
   'development-plugin': [TypedRouter.POST, '/api/madoc/development/plugin-token', developmentPlugin],

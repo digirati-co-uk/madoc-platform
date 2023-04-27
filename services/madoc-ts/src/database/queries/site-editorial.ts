@@ -87,6 +87,38 @@ export function getContextualSlots(context: ServerEditorialContext, siteId: numb
     `);
   }
 
+  if (context.topicType) {
+    contextQueries.push(sql`(
+        filter_topic_type_all = true or
+        filter_topic_type_exact = ${context.topicType} or
+        ${context.topicType} = any (filter_topic_type_whitelist) or
+        (
+          not ${context.topicType} = any (filter_topic_type_blacklist) and
+          filter_topic_type_none = false
+        )
+    )`);
+  } else {
+    contextQueries.push(sql`
+        filter_topic_type_none = true
+    `);
+  }
+
+  if (context.topic) {
+    contextQueries.push(sql`(
+        filter_topic_all = true or
+        filter_topic_exact = ${context.topic} or
+        ${context.topic} = any (filter_topic_whitelist) or
+        (
+          not ${context.topic} = any (filter_topic_blacklist) and
+          filter_topic_none = false
+        )
+    )`);
+  } else {
+    contextQueries.push(sql`
+        filter_topic_none = true
+    `);
+  }
+
   if (context.slotIds && context.slotIds.length) {
     if (context.slotIds.length === 1) {
       contextQueries.push(sql`
@@ -135,6 +167,16 @@ export function getContextualSlots(context: ServerEditorialContext, siteId: numb
         ss.filter_canvas_exact as slot__filter_canvas_exact,
         ss.filter_canvas_whitelist as slot__filter_canvas_whitelist,
         ss.filter_canvas_blacklist as slot__filter_canvas_blacklist,
+        ss.filter_topic_type_none as slot__filter_topic_type_none,
+        ss.filter_topic_type_all as slot__filter_topic_type_all,
+        ss.filter_topic_type_exact as slot__filter_topic_type_exact,
+        ss.filter_topic_type_whitelist as slot__filter_topic_type_whitelist,
+        ss.filter_topic_type_blacklist as slot__filter_topic_type_blacklist,
+        ss.filter_topic_none as slot__filter_topic_none,
+        ss.filter_topic_all as slot__filter_topic_all,
+        ss.filter_topic_exact as slot__filter_topic_exact,
+        ss.filter_topic_whitelist as slot__filter_topic_whitelist,
+        ss.filter_topic_blacklist as slot__filter_topic_blacklist,
 
         -- Block properties
         sb.id as block__id,
@@ -200,7 +242,7 @@ export function addPage(page: CreateNormalPageRequest, siteId: number, user: { i
 // @todo Page structure
 //   Adding / Removing slots
 
-export function getSpecificityDigitFromConfig(config: SlotFilterConfig) {
+export function getSpecificityDigitFromConfig(config: SlotFilterConfig | SlotFilterConfig<string>) {
   if (config.exact) {
     return 4;
   }
@@ -239,10 +281,18 @@ export function getSpecificity(config: CreateSlotRequest['filters']) {
     specificity += getSpecificityDigitFromConfig(config.canvas) * 1000;
   }
 
+  // These are in their own tree, similar to projects/collections.
+  if (config.topicType) {
+    specificity += getSpecificityDigitFromConfig(config.topicType) * 1;
+  }
+  if (config.topic) {
+    specificity += getSpecificityDigitFromConfig(config.topic) * 10;
+  }
+
   return specificity;
 }
 
-export function parseFilter(config?: SlotFilterConfig) {
+export function parseFilter(config?: SlotFilterConfig | SlotFilterConfig<string>, isString = false) {
   const defaultReturn = {
     exact: null,
     whitelist: null,
@@ -261,13 +311,13 @@ export function parseFilter(config?: SlotFilterConfig) {
     if (config.whitelist) {
       return {
         ...defaultReturn,
-        whitelist: sql.array(config.whitelist, 'int' as any),
+        whitelist: sql.array(config.whitelist, isString ? 'text' : ('int' as any)),
       };
     }
     if (config.blacklist) {
       return {
         ...defaultReturn,
-        blacklist: sql.array(config.blacklist, 'int' as any),
+        blacklist: sql.array(config.blacklist, isString ? 'text' : ('int' as any)),
       };
     }
     if (config.all) {
@@ -344,6 +394,20 @@ export type SlotJoinedProperties = {
   slot__filter_canvas_exact: number;
   slot__filter_canvas_whitelist?: number[];
   slot__filter_canvas_blacklist?: number[];
+
+  // Filter topic types
+  slot__filter_topic_type_none: boolean;
+  slot__filter_topic_type_all: boolean;
+  slot__filter_topic_type_exact: string;
+  slot__filter_topic_type_whitelist?: string[];
+  slot__filter_topic_type_blacklist?: string[];
+
+  // Filter topic
+  slot__filter_topic_none: boolean;
+  slot__filter_topic_all: boolean;
+  slot__filter_topic_exact: string;
+  slot__filter_topic_whitelist?: string[];
+  slot__filter_topic_blacklist?: string[];
 };
 
 export type BlockJoinedProperties = {
@@ -448,6 +512,20 @@ export function mapSlot(slot: any, prefix = ''): SiteSlot {
         exact: slot[prefix + 'filter_canvas_exact'] || undefined,
         all: slot[prefix + 'filter_canvas_all'] || undefined,
       },
+      topicType: {
+        none: slot[prefix + 'filter_topic_type_none'] || undefined,
+        blacklist: slot[prefix + 'filter_topic_type_blacklist'] || undefined,
+        whitelist: slot[prefix + 'filter_topic_type_whitelist'] || undefined,
+        exact: slot[prefix + 'filter_topic_type_exact'] || undefined,
+        all: slot[prefix + 'filter_topic_type_all'] || undefined,
+      },
+      topic: {
+        none: slot[prefix + 'filter_topic_none'] || undefined,
+        blacklist: slot[prefix + 'filter_topic_blacklist'] || undefined,
+        whitelist: slot[prefix + 'filter_topic_whitelist'] || undefined,
+        exact: slot[prefix + 'filter_topic_exact'] || undefined,
+        all: slot[prefix + 'filter_topic_all'] || undefined,
+      },
     },
   };
 }
@@ -542,6 +620,8 @@ export function addSlot(slot: CreateSlotRequest, siteId: number) {
   const collection = parseFilter(slot.filters?.collection);
   const manifest = parseFilter(slot.filters?.manifest);
   const canvas = parseFilter(slot.filters?.canvas);
+  const topicType = parseFilter(slot.filters?.topicType, true);
+  const topic = parseFilter(slot.filters?.topic, true);
 
   return sql<SiteSlotRow>`
     insert into site_slots (
@@ -568,6 +648,16 @@ export function addSlot(slot: CreateSlotRequest, siteId: number) {
       filter_canvas_exact, 
       filter_canvas_whitelist, 
       filter_canvas_blacklist, 
+      filter_topic_type_none, 
+      filter_topic_type_all, 
+      filter_topic_type_exact, 
+      filter_topic_type_whitelist, 
+      filter_topic_type_blacklist, 
+      filter_topic_none, 
+      filter_topic_all, 
+      filter_topic_exact, 
+      filter_topic_whitelist, 
+      filter_topic_blacklist, 
       specificity, 
       site_id
     ) VALUES (
@@ -597,6 +687,19 @@ export function addSlot(slot: CreateSlotRequest, siteId: number) {
       ${canvas.exact},
       ${canvas.whitelist},
       ${canvas.blacklist},
+
+      ${topicType.none},
+      ${topicType.all},
+      ${topicType.exact},
+      ${topicType.whitelist},
+      ${topicType.blacklist},
+
+      ${topic.none},
+      ${topic.all},
+      ${topic.exact},
+      ${topic.whitelist},
+      ${topic.blacklist},
+
       ${specificity},
       ${siteId}
     ) returning *
@@ -611,6 +714,8 @@ export function editSlot(id: number, slot: CreateSlotRequest, siteId: number) {
   const collection = parseFilter(slot.filters?.collection);
   const manifest = parseFilter(slot.filters?.manifest);
   const canvas = parseFilter(slot.filters?.canvas);
+  const topicType = parseFilter(slot.filters?.topicType, true);
+  const topic = parseFilter(slot.filters?.topic, true);
 
   return sql<SiteSlotRow>`
     update site_slots set
@@ -620,28 +725,41 @@ export function editSlot(id: number, slot: CreateSlotRequest, siteId: number) {
       slot_props=${sql.json(slot.props || {})},
 
       filter_project_none=${project.none}, 
-      filter_project_all=${project.all}, 
-      filter_project_exact=${project.exact}, 
+      filter_project_all=${project.all},
+      filter_project_exact=${project.exact},
       filter_project_whitelist=${project.whitelist}, 
       filter_project_blacklist=${project.blacklist},
     
       filter_collection_none=${collection.none}, 
-      filter_collection_all=${collection.all}, 
-      filter_collection_exact=${collection.exact}, 
+      filter_collection_all=${collection.all},
+      filter_collection_exact=${collection.exact},
       filter_collection_whitelist=${collection.whitelist}, 
       filter_collection_blacklist=${collection.blacklist},
     
       filter_manifest_none=${manifest.none}, 
-      filter_manifest_all=${manifest.all}, 
-      filter_manifest_exact=${manifest.exact}, 
+      filter_manifest_all=${manifest.all},
+      filter_manifest_exact=${manifest.exact},
       filter_manifest_whitelist=${manifest.whitelist}, 
       filter_manifest_blacklist=${manifest.blacklist},
     
       filter_canvas_none=${canvas.none}, 
-      filter_canvas_all=${canvas.all}, 
-      filter_canvas_exact=${canvas.exact}, 
+      filter_canvas_all=${canvas.all},
+      filter_canvas_exact=${canvas.exact},
       filter_canvas_whitelist=${canvas.whitelist}, 
       filter_canvas_blacklist=${canvas.blacklist},
+
+      filter_topic_type_none=${topicType.none}, 
+      filter_topic_type_all=${topicType.all},
+      filter_topic_type_exact=${topicType.exact},
+      filter_topic_type_whitelist=${topicType.whitelist}, 
+      filter_topic_type_blacklist=${topicType.blacklist},
+      
+      filter_topic_none=${topic.none}, 
+      filter_topic_all=${topic.all},
+      filter_topic_exact=${topic.exact},
+      filter_topic_whitelist=${topic.whitelist},
+      filter_topic_blacklist=${topic.blacklist},
+
       specificity=${specificity}
     where site_id = ${siteId} and id = ${id} returning *
   `;

@@ -7,6 +7,7 @@ import { createUniversalComponent } from '../../../../shared/utility/create-univ
 import { useParams } from 'react-router-dom';
 import { useIndexResource } from '../../../hooks/use-index-resource';
 import { EditManifestStructure } from './edit-manifest-structure';
+import { ManageTags } from '../../../molecules/ManageTags';
 
 type ManifestSearchIndexType = {
   params: { id: string };
@@ -17,11 +18,21 @@ type ManifestSearchIndexType = {
 
 export const ManifestSearchIndex = createUniversalComponent<ManifestSearchIndexType>(
   () => {
-    const { data, isError, refetch } = useData(ManifestSearchIndex, {}, { retry: 0 });
+    const { data, isError, refetch } = useData(
+      ManifestSearchIndex,
+      {},
+      { retry: 0, useErrorBoundary: false, suspense: false }
+    );
     const { data: structure } = useData(EditManifestStructure);
     const { id } = useParams<{ id: string }>();
     const totalCanvases = structure?.items.length || 0;
     const [indexContext, { isLoading, percent }] = useIndexResource(Number(id), 'manifest', totalCanvases, async () => {
+      await refetch();
+    });
+
+    const api = useApi();
+    const [invokeEnrichment, { isLoading: enrichLoading }] = useMutation(async () => {
+      await api.triggerSearchIndex(Number(id), 'manifest');
       await refetch();
     });
 
@@ -47,7 +58,12 @@ export const ManifestSearchIndex = createUniversalComponent<ManifestSearchIndexT
         <Button disabled={isLoading} onClick={() => indexContext()}>
           Reindex manifest {isLoading && percent ? ` ${percent}%` : null}
         </Button>
+        {'  '}
+        <Button disabled={enrichLoading} onClick={() => invokeEnrichment()}>
+          {enrichLoading ? `...loading` : 'Invoke enrichment'}
+        </Button>
         <hr />
+        <ManageTags data={data} type="manifest" id={Number(id)} refresh={refetch} />
         <pre>{JSON.stringify(data, null, 2)}</pre>
       </div>
     );
@@ -57,7 +73,12 @@ export const ManifestSearchIndex = createUniversalComponent<ManifestSearchIndexT
       return ['manifest-search-index', { id: Number(params.id) }];
     },
     getData: async (key, { id }, api) => {
-      return api.searchGetIIIF(`urn:madoc:manifest:${id}`);
+      try {
+        return api.searchGetIIIF(`urn:madoc:manifest:${id}`);
+      } catch (e) {
+        console.log('err', e);
+        return null;
+      }
     },
   }
 );

@@ -258,6 +258,9 @@
         "allowManifestNavigation": {
           "type": "boolean"
         },
+        "allowTopicNavigation": {
+          "type": "boolean"
+        },
         "allowCanvasNavigation": {
           "type": "boolean"
         },
@@ -464,6 +467,9 @@
               "type": "boolean"
             },
             "hideDashboardLink": {
+              "type": "boolean"
+            },
+            "hideTopicLink": {
               "type": "boolean"
             },
             "hidePageNavLinks": {

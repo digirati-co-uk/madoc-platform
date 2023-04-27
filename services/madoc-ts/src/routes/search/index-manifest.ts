@@ -4,6 +4,7 @@ import {
   getSingleManifest,
   mapManifestSnippets,
 } from '../../database/queries/get-manifest-snippets';
+import { createSearchIngest } from '../../extensions/enrichment/utilities/create-search-ingest';
 import { api } from '../../gateway/api.server';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { optionalUserWithScope } from '../../utility/user-with-scope';
@@ -12,6 +13,7 @@ export const indexManifest: RouteMiddleware<{ id: string }> = async context => {
   const { siteId, siteUrn } = optionalUserWithScope(context, []);
   const userApi = api.asUser({ siteId });
   const manifestId = Number(context.params.id);
+  const sourceId = `http://madoc.dev/urn:madoc:manifest:${manifestId}`;
 
   const rows = await context.connection.any(
     getManifestSnippets(
@@ -33,6 +35,7 @@ export const indexManifest: RouteMiddleware<{ id: string }> = async context => {
   const table = mapManifestSnippets(rows);
 
   if (!table.manifests[`${manifestId}`]) {
+    context.response.body = {};
     return; // no metadata to index.
   }
 
@@ -51,37 +54,31 @@ export const indexManifest: RouteMiddleware<{ id: string }> = async context => {
 
   const manifest = table.manifests[`${manifestId}`];
 
-  const searchPayload = {
-    id: `urn:madoc:manifest:${manifestId}`,
-    type: 'Manifest',
-    cascade: false,
-    cascade_canvases: false,
-    resource: {
+  const searchPayload = createSearchIngest(
+    manifestId,
+    'manifest',
+    {
+      id: sourceId,
       ...manifest,
-      id: `http://madoc.dev/urn:madoc:manifest:${manifestId}`,
-      type: 'Manifest',
     },
-    thumbnail: manifest.thumbnail,
-    contexts: [
-      { id: siteUrn, type: 'Site' },
-      ...projectsWithin.map(({ id }) => {
-        return { id: `urn:madoc:project:${id}`, type: 'Project' };
-      }),
-      ...collectionsWithin.map(({ resource_id }) => {
-        return { id: `urn:madoc:collection:${resource_id}`, type: 'Collection' };
-      }),
-      {
-        id: `urn:madoc:manifest:${manifestId}`,
-        type: 'Manifest',
-      },
-    ],
-  };
+    siteId,
+    manifest.thumbnail,
+    [
+      ...projectsWithin.map(({ id }) => `urn:madoc:project:${id}`),
+      ...collectionsWithin.map(({ resource_id }) => `urn:madoc:collection:${resource_id}`),
+    ]
+  );
 
-  try {
-    await api.searchGetIIIF(`urn:madoc:manifest:${manifestId}`);
+  await userApi.enrichmentIngestResource(searchPayload);
 
-    context.response.body = await userApi.searchReIngest(searchPayload);
-  } catch (err) {
-    context.response.body = await userApi.searchIngest(searchPayload);
-  }
+  // await userApi.triggerSearchIndex(manifestId, 'manifest');
+
+  context.response.body = await userApi.triggerSearchIndex(manifestId, 'manifest');
+  // try {
+  //   await api.searchGetIIIF(`urn:madoc:manifest:${manifestId}`);
+  //
+  //   context.response.body = await userApi.searchReIngest(searchPayload);
+  // } catch (err) {
+  //   context.response.body = await userApi.searchIngest(searchPayload);
+  // }
 };

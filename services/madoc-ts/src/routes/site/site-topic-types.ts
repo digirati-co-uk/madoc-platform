@@ -1,6 +1,9 @@
 import { RouteMiddleware } from '../../types/route-middleware';
+import { compatTopicTypes } from '../topics/topic-compat';
 
 export const siteTopicTypes: RouteMiddleware<{ slug: string }> = async context => {
-  context.response.status = 404;
-  context.response.body = { error: 'not implemented' };
+  const { siteApi } = context.state;
+
+  const response = await siteApi.authority.getEntityTypes();
+  context.response.body = compatTopicTypes(response);
 };

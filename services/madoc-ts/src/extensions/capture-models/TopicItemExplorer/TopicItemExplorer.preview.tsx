@@ -1,11 +1,11 @@
 import React from 'react';
 import { LocaleString } from '../../../frontend/shared/components/LocaleString';
 import { Heading5 } from '../../../frontend/shared/typography/Heading5';
-import { CanvasExplorerProps } from './CanvasExplorer';
+import { TopicItemExplorerProps } from './TopicItemExplorer';
 
-export const CanvasExplorerPreview: React.FC<CanvasExplorerProps> = props => {
+export const TopicItemExplorerPreview: React.FC<TopicItemExplorerProps> = props => {
   if (props.value) {
-    return <Heading5 as={LocaleString}>{props.value.label}</Heading5>;
+    return <Heading5 as={LocaleString}>{props.value}</Heading5>;
   }
 
   return null;

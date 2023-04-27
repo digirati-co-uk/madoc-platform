@@ -24,6 +24,7 @@ export type SnippetLargeProps = {
   fluid?: boolean;
   interactive?: boolean;
   query?: any;
+  hideButton?: boolean;
 };
 
 const sizeMap = {
@@ -214,7 +215,7 @@ export const SnippetThumbnailContainer = styled(SnippetUnconstrainedContainer)<{
               : props.portrait
               ? css`
                   margin-bottom: 1rem;
-                  max-height: 11em;
+                  max-height: 14em;
                   max-width: 11em;
                 `
               : css`
