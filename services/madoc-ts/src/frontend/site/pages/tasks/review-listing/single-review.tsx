@@ -35,7 +35,7 @@ import { Button } from '../../../../shared/navigation/Button';
 import useDropdownMenu from 'react-accessible-dropdown-menu-hook';
 import { EditIcon } from '../../../../shared/icons/EditIcon';
 import { DirectEditButton } from '../../../../shared/capture-models/new/components/DirectEditButton';
-import { MaximiseWindow, MaximiseWindowContainer } from '../../../../shared/layout/MaximiseWindow';
+import { MaximiseWindow } from '../../../../shared/layout/MaximiseWindow';
 import { FullScreenExitIcon } from '../../../../shared/icons/FullScreenExitIcon';
 import { FullScreenEnterIcon } from '../../../../shared/icons/FullScreenEnterIcon';
 import { Runtime } from '@atlas-viewer/atlas';
@@ -47,6 +47,11 @@ import { extractIdFromUrn } from '../../../../../utility/parse-urn';
 import { useProjectAnnotationStyles } from '../../../hooks/use-project-annotation-styles';
 import UnlockSmileyIcon from '../../../../shared/icons/UnlockSmileyIcon';
 import { useCurrentUser } from '../../../../shared/hooks/use-current-user';
+import { ManifestCanvasGrid } from '../../../features/ManifestCanvasGrid';
+import { PreviewManifest } from '../../../../admin/molecules/PreviewManifest';
+import { ViewContentFetch } from '../../../../admin/molecules/ViewContentFetch';
+import { ProjectManifests } from '../../../features/ProjectManifests';
+import { ManifestSnippet } from '../../../../shared/components/ManifestSnippet';
 
 const ReviewContainer = styled.div`
   position: relative;
@@ -179,6 +184,7 @@ function ViewSingleReview({
     canvasLink,
     manifestLink,
   } = useCrowdsourcingTaskDetails(task);
+
   const refetch = useRefetch();
   const metadata = useTaskMetadata<{ subject?: SubjectSnippet }>(task);
   const [isEditing, setIsEditing] = useState(false);
@@ -369,8 +375,8 @@ function ViewSingleReview({
               </ReviewDropdownPopup>
             </ReviewDropdownContainer>
 
-            <CanvasViewerGrid ref={gridRef}>
-              {canvas ? (
+            {canvas ? (
+              <CanvasViewerGrid ref={gridRef}>
                 <EditorContentViewer
                   height={'100%' as any}
                   canvasId={canvas.id}
@@ -378,21 +384,28 @@ function ViewSingleReview({
                     return ((runtime as any).current = rt.runtime);
                   }}
                 />
-              ) : null}
-              {isOpen && (
-                <CanvasViewerControls>
-                  <CanvasViewerButton onClick={goHome}>
-                    <HomeIcon title={t('atlas__zoom_home', { defaultValue: 'Home' })} />
-                  </CanvasViewerButton>
-                  <CanvasViewerButton onClick={zoomOut}>
-                    <MinusIcon title={t('atlas__zoom_out', { defaultValue: 'Zoom out' })} />
-                  </CanvasViewerButton>
-                  <CanvasViewerButton onClick={zoomIn}>
-                    <PlusIcon title={t('atlas__zoom_in', { defaultValue: 'Zoom in' })} />
-                  </CanvasViewerButton>
-                </CanvasViewerControls>
-              )}
-            </CanvasViewerGrid>
+                {isOpen && (
+                  <CanvasViewerControls>
+                    <CanvasViewerButton onClick={goHome}>
+                      <HomeIcon title={t('atlas__zoom_home', { defaultValue: 'Home' })} />
+                    </CanvasViewerButton>
+                    <CanvasViewerButton onClick={zoomOut}>
+                      <MinusIcon title={t('atlas__zoom_out', { defaultValue: 'Zoom out' })} />
+                    </CanvasViewerButton>
+                    <CanvasViewerButton onClick={zoomIn}>
+                      <PlusIcon title={t('atlas__zoom_in', { defaultValue: 'Zoom in' })} />
+                    </CanvasViewerButton>
+                  </CanvasViewerControls>
+                )}
+              </CanvasViewerGrid>
+            ) : (
+              metadata.subject?.id &&
+              metadata.subject.type === 'manifest' && (
+                <>
+                  <ManifestSnippet id={metadata.subject?.id} stackedThumbnail flat portrait hideButton />
+                </>
+              )
+            )}
           </div>
         </ReviewPreview>
       </ReviewContainer>
