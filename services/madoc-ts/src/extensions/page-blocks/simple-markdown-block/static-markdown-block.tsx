@@ -133,6 +133,12 @@ const MarkdownBlockGlobalStyles = createGlobalStyle`
       position: relative;
     }
 
+    img {
+      display: inline-block;
+      max-width: 100%;
+      max-height: 75vh;
+    }
+    
     .image {
       text-align: center;
       max-width: 100%;

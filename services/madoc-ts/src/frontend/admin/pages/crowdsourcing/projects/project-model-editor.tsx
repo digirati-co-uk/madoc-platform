@@ -142,7 +142,7 @@ export const ProjectModelEditor: UniversalComponent<ProjectModelEditorType> = cr
 
       return {
         template,
-        captureModel: await api.getCaptureModel(capture_model_id),
+        captureModel: await api.crowdsourcing.getCaptureModel(capture_model_id),
         annotationTheme,
         style_id,
       };

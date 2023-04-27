@@ -46,6 +46,7 @@ import { useTranslation } from 'react-i18next';
 import { extractIdFromUrn } from '../../../../../utility/parse-urn';
 import { useProjectAnnotationStyles } from '../../../hooks/use-project-annotation-styles';
 import UnlockSmileyIcon from '../../../../shared/icons/UnlockSmileyIcon';
+import { useCurrentUser } from '../../../../shared/hooks/use-current-user';
 import { ManifestCanvasGrid } from '../../../features/ManifestCanvasGrid';
 import { PreviewManifest } from '../../../../admin/molecules/PreviewManifest';
 import { ViewContentFetch } from '../../../../admin/molecules/ViewContentFetch';
@@ -99,6 +100,13 @@ const ReviewActionBar = styled.div`
   padding: 0.6em;
   min-height: 42px;
   overflow: auto;
+`;
+
+const ReviewActionMessage = styled.div`
+  background-color: rgba(0, 92, 197, 0.15);
+  padding: 0.5em;
+  border-radius: 4px;
+  font-size: small;
 `;
 
 const ReviewActions = styled.div`
@@ -181,6 +189,16 @@ function ViewSingleReview({
   const metadata = useTaskMetadata<{ subject?: SubjectSnippet }>(task);
   const [isEditing, setIsEditing] = useState(false);
   // const isLocked = props.lockedTasks && props.lockedTasks.indexOf(props.task.id) !== -1;
+  const user = useCurrentUser(true);
+
+  const limitedReviewer =
+    user && user.scope && user.scope.indexOf('models.revision') !== -1 && user.scope.indexOf('models.create') === -1;
+  const reviewer =
+    (user && user.scope && user.scope.indexOf('models.revision') !== -1) ||
+    user.scope.indexOf('site.admin') ||
+    (-1 && user.scope.indexOf('models.admin'));
+
+  const canReview = limitedReviewer ? review?.assignee?.id === user.user?.id : reviewer;
   const isDone = task?.status === 3;
   const { buttonProps, isOpen: isDropdownOpen } = useDropdownMenu(1, {
     disableFocusFirstItemOnClick: true,
@@ -273,7 +291,7 @@ function ViewSingleReview({
               </Assignee>
             )}
           </div>
-          {review && !wasRejected ? (
+          {review && !wasRejected && canReview ? (
             <ReviewActions>
               <RejectSubmission
                 userTaskId={task.id}
@@ -313,6 +331,10 @@ function ViewSingleReview({
                 reviewTaskId={review.id}
               />
             </ReviewActions>
+          ) : !isDone || !wasRejected ? (
+            <ReviewActionMessage>
+              {t('You do not have the correct permissions to review this task')}
+            </ReviewActionMessage>
           ) : null}
         </ReviewActionBar>
         <ReviewPreview>

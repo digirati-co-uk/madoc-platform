@@ -74,7 +74,7 @@ export const CaptureModelList: UniversalComponent<CaptureModelListType> = create
     },
     async getData(key, data, api) {
       return {
-        models: await api.getAllCaptureModels(),
+        models: await api.crowdsourcing.getAllCaptureModels(),
       };
     },
   }

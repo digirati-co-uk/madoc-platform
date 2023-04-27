@@ -93,7 +93,7 @@ export const ViewCaptureModel: UniversalComponent<ViewCaptureModelType> = create
   },
   {
     getData: async (key, { id }, api) => {
-      return api.getCaptureModel(id);
+      return api.crowdsourcing.getCaptureModel(id);
     },
     getKey: params => {
       return ['capture-model', { id: params.id }];

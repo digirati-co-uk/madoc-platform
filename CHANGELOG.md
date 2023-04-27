@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed review page not showing a manifest preview for manifest tasks and showing manifest title in 'canvas' column
 - Fix manifest model showing as editable for a submitted and approved manifest task
 - Fixed and updated `ManifestActions` and `ManifestUserNotifications` to allow the user to continue submissions, add another and view a completed 
+- Fixed only admins being able to review tasks, hide review actions if cant review (NS-17)
 
 ### Added
 - Added new "webhook" data model (no usages yet)
