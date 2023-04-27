@@ -63,6 +63,11 @@ export function useCanvasUserTasks() {
     const completedAndHide = !config.project.allowSubmissionsWhenCanvasComplete && canvasTask?.canvasTask?.status === 3;
     const completed = canvasTask?.canvasTask?.status === 3;
 
+    const maxContributorsReached =
+      canvasTask?.maxContributors && canvasTask.totalContributors
+        ? canvasTask.maxContributors <= canvasTask.totalContributors
+        : false;
+
     const canClaimCanvas =
       user && (config.project.claimGranularity ? config.project.claimGranularity === 'canvas' : true);
     const canUserSubmit = user && !!canvasTask?.canUserSubmit;
@@ -90,6 +95,7 @@ export function useCanvasUserTasks() {
       canClaimCanvas,
       canUserSubmit,
       canContribute,
+      maxContributorsReached,
       updateClaim,
       updatedAt,
       refetch,

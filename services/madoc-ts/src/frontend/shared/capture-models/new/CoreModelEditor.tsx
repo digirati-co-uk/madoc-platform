@@ -150,6 +150,7 @@ export function CoreModelEditor({
     }, 3000);
   }, []);
 
+
   const goHome = () => {
     if (runtime.current) {
       runtime.current.world.goHome();
@@ -327,7 +328,7 @@ export function CoreModelEditor({
               {enableCanvasUserStatus ? <CanvasModelUserStatus isEditing={isEditing} /> : null}
               {preventFurtherSubmission ? (
                 <>
-                  <EmptyState style={{ fontSize: '1.25em' }} $box>
+                  <EmptyState style={{ fontSize: '1.25em' }} $box $noMargin>
                     <ButtonIcon>
                       <TickIcon />
                     </ButtonIcon>

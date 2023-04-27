@@ -24,7 +24,7 @@ const ViewRevisions = memo(
     const [mySubmitted, setMySubmitted] = useState<RevisionRequest[]>([]);
     const [myRejected, setMyRejected] = useState<RevisionRequest[]>([]);
     const [myAcceptedRevisions, setMyAcceptedRevisions] = useState<RevisionRequest[]>([]);
-
+  
     useEffect(() => {
       setMySubmitted([]);
       setMyUnpublished([]);
@@ -44,7 +44,7 @@ const ViewRevisions = memo(
     }, [mySubmitted.length, revisions.mySubmitted]);
 
     useEffect(() => {
-      if (revisions.myRejected.length !== myRejected.length) {
+      if (revisions.myRejected && revisions.myRejected.length !== myRejected.length) {
         setMyRejected(revisions.myRejected);
       }
     }, [myRejected.length, revisions.myRejected]);

@@ -13,6 +13,7 @@ export type ProjectConfiguration = {
   contributionWarningTime: false | number;
   randomlyAssignCanvas?: boolean;
   priorityRandomness?: boolean;
+  randomCanvas?: boolean;
   skipAutomaticOCRImport?: boolean;
   allowPersonalNotes?: boolean;
   defaultEditorOrientation: 'vertical' | 'horizontal';

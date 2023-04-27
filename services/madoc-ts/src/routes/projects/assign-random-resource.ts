@@ -22,6 +22,7 @@ export const assignRandomResource: RouteMiddleware<
   const userApi = api.asUser({ siteId, userId: id });
   const project = await userApi.getProject(projectId);
   const priorityRandom = project.config.priorityRandomness || false;
+  const randomCanvas = project.config.randomCanvas || false;
 
   if (claim && scope.indexOf('models.contribute') === -1) {
     throw new NotFound();
@@ -180,7 +181,7 @@ export const assignRandomResource: RouteMiddleware<
 
     while (availableCanvases.length) {
       const toChooseFrom = priorityRandom ? availableCanvases.slice(0, 10) : availableCanvases;
-      const key = Math.floor(toChooseFrom.length * Math.random());
+      const key = randomCanvas ? Math.floor(toChooseFrom.length * Math.random()) : 0;
       const possibleCanvas = toChooseFrom[key];
 
       if (possibleCanvas) {

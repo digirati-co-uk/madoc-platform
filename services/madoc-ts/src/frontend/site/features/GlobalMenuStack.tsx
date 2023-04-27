@@ -44,7 +44,11 @@ export const GlobalMenuStack: React.FC<{
   hideSiteTitle?: boolean;
   showHomepageMenu?: boolean;
   maxWidth?: number;
-}> = ({ logo, hideSiteTitle, maxWidth, logoOptions = {}, menuOptions = {}, showHomepageMenu }) => {
+  extraLinks?: {
+    slug?: string;
+    text?: string;
+  }[];
+}> = ({ logo, hideSiteTitle, maxWidth, logoOptions = {}, menuOptions = {}, showHomepageMenu, extraLinks }) => {
   const site = useSite();
   const { project } = useSiteConfiguration();
   const showSiteTitle = typeof hideSiteTitle === 'undefined' ? !project.headerOptions?.hideSiteTitle : !hideSiteTitle;
@@ -67,7 +71,7 @@ export const GlobalMenuStack: React.FC<{
         </SiteTitle>
       )}
       <SiteMenuContainer data-full-width={menuOptions.fullWidth}>
-        <GlobalSiteNavigation showHomepageMenu={showHomepageMenu} />
+        <GlobalSiteNavigation showHomepageMenu={showHomepageMenu} extraNavItems={extraLinks} />
       </SiteMenuContainer>
     </SiteDetails>
   );
@@ -89,6 +93,10 @@ blockEditorFor(GlobalMenuStack, {
       fullWidth: false,
     },
     maxWidth: null,
+    extraLinks: {
+      slug: '',
+      text: '',
+    },
   },
   editor: {
     logo: {
@@ -140,13 +148,23 @@ blockEditorFor(GlobalMenuStack, {
       type: 'checkbox-field',
       inlineLabel: 'Show home as menu item',
     },
-  },
-  mapToProps(props) {
-    const maxWidth = Number(props.maxWidth);
-    return {
-      ...props,
-      maxWidth: !Number.isNaN(maxWidth) && Number.isFinite(maxWidth) ? maxWidth : undefined,
-    } as any;
+    extraLinks: {
+      allowMultiple: true,
+      label: 'Extra Nav item',
+      pluralLabel: 'Extra Nav items',
+      labelledBy: 'text',
+      description: 'paste the relative slug as shown on the site eg: projects/project-name',
+    },
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    'extraLinks.text': {
+      type: 'text-field',
+      label: 'Extra Nav item display text',
+    },
+    'extraLinks.slug': {
+      type: 'text-field',
+      label: 'Extra Nav item slug',
+    },
   },
   source: {
     id: 'global-header',
