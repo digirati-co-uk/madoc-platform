@@ -192,7 +192,7 @@ export const ManifestTaskProgress: React.FC = () => {
                   href={createLink({
                     projectId,
                     subRoute: 'tasks',
-                    query: { subject_parent: `urn:madoc:manifest:${manifestId}` },
+                    query: { subject: `urn:madoc:manifest:${manifestId}` },
                   })}
                 >
                   {t('See contributions')}
