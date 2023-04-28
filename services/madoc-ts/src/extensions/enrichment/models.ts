@@ -21,7 +21,7 @@ export const entityTypeModel: CaptureModelShorthand<EnrichmentEntityType> = {
 
 export const entityModel: CaptureModelShorthand<EnrichmentEntity> = {
   title: { type: 'international-field', label: 'Title' },
-  // label: { type: 'text-field', label: 'Slug' },
+  label: { type: 'text-field', label: 'Slug' },
   description: { type: 'international-field', label: 'Description' },
   type: {
     type: 'autocomplete-field',

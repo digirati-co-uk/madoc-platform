@@ -12,7 +12,6 @@ import { TagPill } from '../hooks/canvas-menu/tagging-panel';
 import { AutoCompleteEntitySnippet } from '../../../extensions/enrichment/authority/types';
 import { AddTagButton } from './AddTagButton';
 import { useTranslation } from 'react-i18next';
-import { useEnrichmentResource } from '../pages/loaders/enrichment-resource-loader';
 
 export const TopicPill = styled(TagPill)`
   border-color: orange;
@@ -57,10 +56,6 @@ export const AddTopicButton: React.FC<{
     setFulltext(val);
     setIsLoading(false);
   };
-
-  const { data } = useEnrichmentResource();
-  const tags = data?.entity_tags;
-  const appliedTagTypes = [...new Set(tags?.map(tag => tag.entity.type_slug))];
 
   return (
     <div style={{ maxWidth: '100%' }}>
@@ -109,11 +104,7 @@ export const AddTopicButton: React.FC<{
                 return (
                   <React.Fragment key={key}>
                     {page.results.map((result: any) => {
-                      return appliedTagTypes?.includes(result.slug) ? (
-                        <TopicPill key={result.id} data-is-applied={true}>
-                          {result.label}
-                        </TopicPill>
-                      ) : (
+                    return (
                         <TopicPill
                           as={Button}
                           key={result.id}
