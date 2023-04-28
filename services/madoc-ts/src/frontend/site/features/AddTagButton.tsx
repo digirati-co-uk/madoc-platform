@@ -140,7 +140,7 @@ export const AddTagButton: React.FC<{
                   <React.Fragment key={key}>
                     {page.results.map(result => {
                       return appliedTagIDs?.includes(result.id) ? (
-                        <TagPill key={result.id} data-is-applied={true}>
+                        <TagPill key={result.id} data-is-applied={true} title={'applied'}>
                           {result.label}
                         </TagPill>
                       ) : (

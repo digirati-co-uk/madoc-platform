@@ -21,12 +21,12 @@ export function CreateNewTopic() {
       const imageData = input.other_data.main_image;
       input.other_data.thumbnail = {
         id: imageData.id,
-        alt: input.other_data.thumbnail.alt,
+        alt: input.other_data.thumbnail ? input.other_data.thumbnail : 'thumbnail image',
         url: imageData.thumbnail,
       };
       input.other_data.main_image = {
         id: imageData.id,
-        alt: input.other_data.thumbnail.alt,
+        alt: input.other_data.thumbnail ? input.other_data.thumbnail : 'hero image',
         url: imageData.image,
       };
     }
@@ -48,6 +48,10 @@ export function CreateNewTopic() {
       delete input.featured_resources;
     }
 
+    if (!input.authorities || !input.authorities[0].url) {
+      delete input.authorities;
+    }
+
     //todo hopfully will change
     if (data && hasTopic) {
       input.type = getValue(data.label);
@@ -55,6 +59,7 @@ export function CreateNewTopic() {
     } else {
       input.type = input.type.label;
     }
+
 
     return {
       response: await api.enrichment.upsertTopic({ type_slug: input.type.toLowerCase(), ...input }),
@@ -66,6 +71,7 @@ export function CreateNewTopic() {
       ...entityModel,
     };
 
+    delete copy['featured_resources.madoc_id'];
     if (topicType && topicType !== '_') {
       delete copy.type;
     }
@@ -102,6 +108,8 @@ export function CreateNewTopic() {
           data={{
             ...data,
             type: topicType,
+            label: '',
+            title: '',
           }}
           onSave={async input => {
             await createNewEntityType(input);

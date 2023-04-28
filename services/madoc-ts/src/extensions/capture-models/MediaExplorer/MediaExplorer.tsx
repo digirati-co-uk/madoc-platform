@@ -52,6 +52,7 @@ export const MediaExplorer: React.FC<MediaExplorerProps & {
     container: container,
   });
 
+
   const chosenMedia = parseChosenMedia(props.value);
   if (chosenMedia) {
     return (
@@ -85,20 +86,21 @@ export const MediaExplorer: React.FC<MediaExplorerProps & {
                     } else {
                       props.updateValue({ id: media.id, image: media.publicLink, thumbnail: media.thumbnail });
                     }
-                    }}
-                  >
-                    <CroppedImage>{media.thumbnail ? <img src={media.thumbnail} alt="thumb" /> : null}</CroppedImage>
-                    <Heading5>{media.displayName}</Heading5>
-                  </ImageStripBox>
-                ))}
-              </React.Fragment>
-            );
-          })}
-          <Button ref={loadMoreButton} onClick={() => fetchMore()} style={{ display: canFetchMore ? 'block' : 'none' }}>
-            Load more
-          </Button>
-        </ImageGrid>
-      )}
+
+                  }}
+                >
+                  <CroppedImage>{media.thumbnail ? <img src={media.thumbnail} alt="thumb" /> : null}</CroppedImage>
+                  <Heading5>{media.displayName}</Heading5>
+                </ImageStripBox>
+              ))}
+            </React.Fragment>
+          );
+        })}
+        <Button ref={loadMoreButton} onClick={() => fetchMore()} style={{ display: canFetchMore ? 'block' : 'none' }}>
+          Load more
+        </Button>
+      </ImageGrid>
+        )}
     </div>
   );
 };

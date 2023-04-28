@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useMemo} from 'react';
 import { useMutation } from 'react-query';
 import { EditShorthandCaptureModel } from '../../../shared/capture-models/EditorShorthandCaptureModel';
 import { useApi } from '../../../shared/hooks/use-api';
@@ -14,11 +14,9 @@ export function CreateNewTopicType() {
     // @todo can change later.
     data.image_url = `${window.location.protocol}//${window.location.host}${data.image_url.publicLink ||
       data.image_url}`;
-    // data.other_labels = (data.other_labels || []).filter((e: any) => e.value !== '');
 
     if (data.featured_topics) {
       if (data.featured_topics[0].length) {
-        console.log(data.featured_topics);
         data.featured_topics = data.featured_topics
           .map((f: { slug: { id: any } }) => f.slug.id)
           .filter((f: string) => f !== undefined);
@@ -29,7 +27,16 @@ export function CreateNewTopicType() {
     return api.enrichment.upsertTopicType(data);
   });
 
-  if (status.isError) {
+    const model = useMemo(() => {
+        const copy: any = {
+            ...entityTypeModel,
+        };
+        delete copy['featured_topics.slug'];
+        return copy;
+    }, []);
+
+
+    if (status.isError) {
     return <div>Error...</div>;
   }
 
@@ -49,7 +56,7 @@ export function CreateNewTopicType() {
     <div>
       <CustomEditorTypes>
         <EditShorthandCaptureModel
-          template={entityTypeModel}
+          template={model}
           data={{ label: '', title: { en: [''] }, description: { en: [''] }, image_url: '' }}
           onSave={async data => {
             await createNewEntityType(data);

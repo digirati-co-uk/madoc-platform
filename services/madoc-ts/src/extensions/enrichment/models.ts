@@ -3,6 +3,7 @@ import { CaptureModelShorthand } from '../../frontend/shared/capture-models/type
 
 export const entityTypeModel: CaptureModelShorthand<EnrichmentEntityType> = {
   title: { type: 'international-field', label: 'Title' },
+  label: { type: 'text-field', label: 'slug' },
   description: { type: 'international-field', label: 'Description' },
   image_url: { type: 'madoc-media-explorer', label: 'Image', valueAsString: true },
   __nested__: {
@@ -10,7 +11,7 @@ export const entityTypeModel: CaptureModelShorthand<EnrichmentEntityType> = {
       allowMultiple: true,
       label: 'Featured topic',
       pluralLabel: 'Featured topics',
-      labelledBy: 'label',
+      labelledBy: 'slug',
     },
   },
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -19,8 +20,8 @@ export const entityTypeModel: CaptureModelShorthand<EnrichmentEntityType> = {
 };
 
 export const entityModel: CaptureModelShorthand<EnrichmentEntity> = {
-  label: { type: 'text-field', label: 'Slug' },
   title: { type: 'international-field', label: 'Title' },
+  label: { type: 'text-field', label: 'Slug' },
   description: { type: 'international-field', label: 'Description' },
   type: {
     type: 'autocomplete-field',
@@ -37,6 +38,10 @@ export const entityModel: CaptureModelShorthand<EnrichmentEntity> = {
       pluralLabel: 'featured resources',
       labelledBy: 'madoc_id',
       description: 'Note: only manifests can be featured resources',
+    },
+    other_data: {
+      allowMultiple: false,
+      label: 'Other data',
     },
   },
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment

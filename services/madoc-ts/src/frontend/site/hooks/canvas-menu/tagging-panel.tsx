@@ -54,7 +54,7 @@ export const TagPill = styled.div`
   }
 
   &[data-is-applied='true'] {
-    border-color: #9f7400;
+    border-color: #4d5f50;
     padding: 0.4em;
     margin: 0.5em;
     cursor: pointer;
