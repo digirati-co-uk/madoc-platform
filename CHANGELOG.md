@@ -22,15 +22,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix manifest model showing as editable for a submitted and approved manifest task
 - Fixed and updated `ManifestActions` and `ManifestUserNotifications` to allow the user to continue submissions, add another and view a completed 
 - Fixed only admins being able to review tasks, hide review actions if cant review (NS-17)
+- Fixed autocomplete crashing (NS-28)
+- Fixed infinite requests if no data when using infinite query 
 
 ### Added
 - Added new "webhook" data model (no usages yet)
 - Added more options to the footer grid block and nested fields (NS-14)
 - Added notification for rejected submission and added view for rejected in contributions panel (MAD-1315)
 - Ability to add custom nav items to the Global Menu block
+- Added option item description to autocomplete (NS-26)
 
 ### Changed
 - Changed language on user dash from 'reviews' to 'review tasks' to differentiate between the two
+
 <!-- 
 ### Fixed
 ### Added

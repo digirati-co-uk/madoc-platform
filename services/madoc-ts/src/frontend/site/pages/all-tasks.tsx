@@ -54,7 +54,7 @@ export const AllTasks: UniversalComponent<AllTasksType> = createUniversalCompone
     const isReviewer = isAdmin || (user && user.scope && user.scope.indexOf('tasks.create') !== -1);
     const { data: pages, fetchMore, canFetchMore, isFetchingMore } = useInfiniteData(AllTasks, undefined, {
       getFetchMore: lastPage => {
-        if (lastPage.pagination.totalPages === lastPage.pagination.page) {
+        if (lastPage.pagination.totalPages === 0 || lastPage.pagination.totalPages === lastPage.pagination.page) {
           return undefined;
         }
         return {

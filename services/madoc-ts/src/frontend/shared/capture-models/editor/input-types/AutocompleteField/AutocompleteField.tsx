@@ -1,9 +1,8 @@
 import { InternationalString } from '@iiif/presentation-3';
-import { getValue } from '@iiif/vault-helpers';
 import React, { useEffect, useState, useCallback } from 'react';
 import { Select } from 'react-functional-select';
 import { LocaleString } from '../../../../components/LocaleString';
-import { useApi, useOptionalApi } from '../../../../hooks/use-api';
+import { useOptionalApi } from '../../../../hooks/use-api';
 import { BaseField, FieldComponent } from '../../../types/field-types';
 import { ErrorMessage } from '../../atoms/Message';
 import { Tag } from '../../atoms/Tag';
@@ -34,16 +33,20 @@ export type CompletionItem = {
 
 function renderOptionLabel(option: CompletionItem) {
   return (
-    <>
-      <LocaleString as="strong" style={{ lineHeight: '1.8em', verticalAlign: 'middle' }}>
-        {option.label as any}
-      </LocaleString>
-      {option.resource_class ? <Tag style={{ float: 'right', marginLeft: 10 }}>{option.resource_class}</Tag> : null}
-    </>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '25px' }}>
+      <div>
+        <LocaleString as="strong" style={{ lineHeight: '1.8em', verticalAlign: 'middle' }}>
+          {option.label as any}
+        </LocaleString>
+        {option.resource_class ? <Tag style={{ float: 'right', marginLeft: 10 }}>{option.resource_class}</Tag> : null}
+      </div>
+      {option.description && <LocaleString>{option.description as any}</LocaleString>}
+    </div>
   );
 }
 
 export const AutocompleteField: FieldComponent<AutocompleteFieldProps> = props => {
+  // console.log(typeof props.value)
   const { t } = useTranslation();
   const [options, setOptions] = useState<CompletionItem[]>(
     props.value ? [typeof props.value === 'string' ? { uri: props.value, label: props.value } : props.value] : []
@@ -52,7 +55,7 @@ export const AutocompleteField: FieldComponent<AutocompleteFieldProps> = props =
   const [hasFetched, setHasFetched] = useState(false);
   const [error, setError] = useState('');
   const api = useOptionalApi();
-
+  const boxHeight = hasFetched && options.length && options[0].description ? 55 : undefined;
   const onOptionChange = (option: CompletionItem | undefined) => {
     if (!option) {
       props.updateValue(undefined);
@@ -108,7 +111,7 @@ export const AutocompleteField: FieldComponent<AutocompleteFieldProps> = props =
           });
       }
     },
-    [props.requestInitial, props.dataSource, t]
+    [props.requestInitial, props.dataSource, hasFetched, api, t]
   );
 
   useEffect(() => {
@@ -135,7 +138,7 @@ export const AutocompleteField: FieldComponent<AutocompleteFieldProps> = props =
         isDisabled={props.disabled}
         isInvalid={!!error}
         inputId={props.id}
-        initialValue={options[0]}
+        initialValue={options ? options[0] : ''}
         placeholder={props.placeholder ? t(props.placeholder) : t('Select option...')}
         options={options}
         isLoading={isLoading}
@@ -148,6 +151,7 @@ export const AutocompleteField: FieldComponent<AutocompleteFieldProps> = props =
         getOptionValue={(option: any) => option.uri}
         getOptionLabel={(option: any) => option.label}
         renderOptionLabel={renderOptionLabel}
+        menuItemSize={boxHeight}
       />
       {error ? <ErrorMessage>{error}</ErrorMessage> : null}
     </>

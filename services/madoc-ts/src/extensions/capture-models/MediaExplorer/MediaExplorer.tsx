@@ -9,6 +9,8 @@ import { useApi } from '../../../frontend/shared/hooks/use-api';
 import { useInfiniteAction } from '../../../frontend/site/hooks/use-infinite-action';
 import {useTranslation} from "react-i18next";
 import {InfoMessage} from "../../../frontend/shared/callouts/InfoMessage";
+import { useTranslation } from 'react-i18next';
+import { InfoMessage } from '../../../frontend/shared/callouts/InfoMessage';
 
 export type MediaExplorerProps = {
   id: string;
@@ -19,7 +21,6 @@ export type MediaExplorerProps = {
     image: string;
     thumbnail: string;
   } | null;
-
   valueAsString?: boolean;
   onlyThumbnail?: boolean;
 };
@@ -68,10 +69,9 @@ export const MediaExplorer: React.FC<MediaExplorerProps & {
 
   return (
     <div ref={container} style={{ maxHeight: 500, overflowY: 'scroll' }}>
-      {!(pages) || pages[0].pagination.totalResults === 0 ? (
-          <InfoMessage> {t('There are no images to chose from, you can upload media in the admin interface')}  </InfoMessage>
-      ) : (
-      <ImageGrid $size="small">
+      {!pages || pages[0].pagination.totalResults === 0 ? (
+        <InfoMessage>{t('There are no images to chose from, you can upload media in the admin interface')}</InfoMessage>
+      ) : (<ImageGrid $size="small">
         {pages?.map((page, key) => {
           return (
             <React.Fragment key={key}>
@@ -79,7 +79,7 @@ export const MediaExplorer: React.FC<MediaExplorerProps & {
                 <ImageStripBox
                   key={media.id}
                   onClick={() => {
-                    if (props.valueAsString) {
+                      if (props.valueAsString) {
                       if (props.onlyThumbnail) {
                         props.updateValue(media.thumbnail as any);
                       } else {
@@ -88,6 +88,7 @@ export const MediaExplorer: React.FC<MediaExplorerProps & {
                     } else {
                       props.updateValue({ id: media.id, image: media.publicLink, thumbnail: media.thumbnail });
                     }
+
                   }}
                 >
                   <CroppedImage>{media.thumbnail ? <img src={media.thumbnail} alt="thumb" /> : null}</CroppedImage>
