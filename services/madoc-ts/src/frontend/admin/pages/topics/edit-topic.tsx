@@ -35,8 +35,7 @@ export function EditTopic() {
           typeof f === 'object' ? (f.resource_id ? f.resource_id : f.madoc_id) : f
         );
         updatedData.featured_resources = newArr.filter(x => x !== undefined || null);
-      }
-      if (typeof ftRes === 'string') {
+      } else  if (typeof ftRes === 'string') {
         updatedData.featured_resources = [ftRes];
       } else {
         updatedData.featured_resources = Object.values(ftRes);

@@ -21,7 +21,7 @@ export const entityTypeModel: CaptureModelShorthand<EnrichmentEntityType> = {
 
 export const entityModel: CaptureModelShorthand<EnrichmentEntity> = {
   title: { type: 'international-field', label: 'Title' },
-  label: { type: 'text-field', label: 'Slug' },
+  // label: { type: 'text-field', label: 'Slug' },
   description: { type: 'international-field', label: 'Description' },
   type: {
     type: 'autocomplete-field',
@@ -41,7 +41,7 @@ export const entityModel: CaptureModelShorthand<EnrichmentEntity> = {
     },
     other_data: {
       allowMultiple: false,
-      label: 'Other data'
+      label: 'Other data',
     },
   },
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -55,5 +55,5 @@ export const entityModel: CaptureModelShorthand<EnrichmentEntity> = {
   'other_data.topic_summary': { type: 'international-field', label: 'Summary' },
   'other_data.secondary_heading': { type: 'international-field', label: 'Secondary heading' },
   'other_data.main_image': { type: 'madoc-media-explorer', label: 'Hero image' },
-  // 'other_data.thumbnail.alt': { type: 'international-field', label: 'alt text' },
+  'other_data.thumbnail.alt': { type: 'international-field', label: 'alt text' },
 };
