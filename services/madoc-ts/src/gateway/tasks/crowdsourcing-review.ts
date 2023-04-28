@@ -1,4 +1,4 @@
-import { execBot } from '../../automation/index';
+import { execBot } from '../../automation';
 import { getSiteFromTask } from '../../utility/get-site-from-task';
 import { parseUrn } from '../../utility/parse-urn';
 import { BaseTask } from './base-task';
@@ -94,7 +94,7 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
   switch (name) {
     case 'created': {
       // When review task is created, assign to correct user.
-      const task = await api.getTaskById<CrowdsourcingReview>(taskId);
+      const task = await api.getTask<CrowdsourcingReview>(taskId);
       let assignee: any = task.assignee;
       if (task.root_task) {
         const projects = await api.getProjects(0, { root_task_id: task.root_task });
@@ -102,7 +102,7 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
           const project = projects.projects[0];
           if (project) {
             try {
-              assignee = (await api.assignUserToReview(project.id, task.id)).user;
+              assignee = (await api.crowdsourcing.assignUserToReview(project.id, task.id)).user;
             } catch (e) {
               // Only possible when the project is broken (collection removed)
               console.log(e);
@@ -119,10 +119,8 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
           await execBot(user.id, siteId, api, task, name);
         }
       }
-
       break;
     }
-
     case 'assigned': {
       const task = await api.getTask<CrowdsourcingReview>(taskId);
 

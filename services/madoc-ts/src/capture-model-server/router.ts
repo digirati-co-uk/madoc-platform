@@ -18,6 +18,7 @@ import { revisionTemplate } from './routes/revision-template';
 import { searchPublished } from './routes/search-published';
 import { updateCaptureModelApi } from './routes/update-capture-model';
 import { updateRevisionApi } from './routes/update-revision';
+import { updateRevisionTask } from '../routes/projects/update-revision-task';
 
 export const router: Record<keyof any, RouteWithParams<any>> = {
   'list-capture-models': [TypedRouter.GET, '/api/madoc/crowdsourcing/model', captureModelListApi],
@@ -53,7 +54,7 @@ export const router: Record<keyof any, RouteWithParams<any>> = {
   revision: [TypedRouter.GET, '/api/madoc/crowdsourcing/revision/:id', revisionApi],
   'revision-list': [TypedRouter.GET, '/api/madoc/crowdsourcing/revision', revisionListApi],
   'search-published': [TypedRouter.GET, '/api/madoc/crowdsourcing/search/published', searchPublished],
-
+  'update-revision-task': [TypedRouter.PATCH, '/api/madoc/crowdsourcing/task/:taskId', updateRevisionTask],
   // Temporary
   'capture-model-migration': [TypedRouter.GET, '/api/madoc/crowdsourcing/model/migrate/:id', modelApiMigration],
   'capture-model-migration-post': [TypedRouter.POST, '/api/madoc/crowdsourcing/model/migrate/:id', modelApiMigration],

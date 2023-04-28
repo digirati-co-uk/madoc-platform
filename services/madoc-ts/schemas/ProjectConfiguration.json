@@ -70,6 +70,9 @@
     "priorityRandomness": {
       "type": "boolean"
     },
+    "randomCanvas": {
+      "type": "boolean"
+    },
     "skipAutomaticOCRImport": {
       "type": "boolean"
     },

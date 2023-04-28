@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Outlet, useNavigate, useParams } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 import { SubjectSnippet } from '../../../../../extensions/tasks/resolvers/subject-resolver';
 import { CrowdsourcingTask } from '../../../../../gateway/tasks/crowdsourcing-task';
@@ -36,7 +36,7 @@ const TaskListContainer = styled.div`
 
 const TaskPreviewContainer = styled.div`
   position: relative;
-  min-width: 600px;
+  min-width: 200px;
   flex: 1;
   width: 750px;
 `;
@@ -134,7 +134,7 @@ export function ReviewListingPage() {
   const { widthB, refs } = useResizeLayout(`review-dashboard-resize`, {
     left: true,
     widthB: '750px',
-    minWidthPx: 400,
+    minWidthPx: 200,
   });
 
   const { data: pages, fetchMore, refetch, canFetchMore, isFetchingMore } = useInfiniteData(
@@ -143,7 +143,7 @@ export function ReviewListingPage() {
     {
       keepPreviousData: true,
       getFetchMore: lastPage => {
-        if (lastPage.pagination.totalPages === lastPage.pagination.page) {
+        if (lastPage.pagination.totalPages === 0 || lastPage.pagination.totalPages === lastPage.pagination.page) {
           return undefined;
         }
         return {
@@ -310,7 +310,6 @@ export function ReviewListingPage() {
     </RefetchProvider>
   );
 }
-
 function SingleReviewTableRow({
   task,
   active,
@@ -340,15 +339,23 @@ function SingleReviewTableRow({
     >
       {/* manifest */}
       <SimpleTable.Cell style={{ maxWidth: 300 }}>
-        {metadata.subject && metadata.subject.parent && (
+        {metadata.subject && metadata.subject.type === 'manifest' ? (
           <LocaleString style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis' }}>
-            {metadata.subject.parent.label}
+            {metadata.subject.label}
           </LocaleString>
+        ) : (
+          metadata.subject?.parent && (
+            <LocaleString style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              {metadata.subject.parent.label}
+            </LocaleString>
+          )
         )}
       </SimpleTable.Cell>
       {/* resource name */}
       <SimpleTable.Cell>
-        {metadata && metadata.subject ? <LocaleString>{metadata.subject.label}</LocaleString> : task.name}
+        {metadata.subject && metadata.subject.type === 'manifest'
+          ? ''
+          : metadata.subject?.label && <LocaleString>{metadata.subject.label}</LocaleString>}
       </SimpleTable.Cell>
       {/* date modified*/}
       <SimpleTable.Cell>

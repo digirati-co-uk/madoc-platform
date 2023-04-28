@@ -1,8 +1,8 @@
 import React from 'react';
-import styled, { css } from 'styled-components';
 import { BaseField, FieldComponent } from '../../../types/field-types';
 import { InlineFieldContainer } from '../../atoms/InlineFieldContainer';
 import { StyledCheckbox, StyledFormLabel } from '../../atoms/StyledForm';
+import { useModelTranslation } from '../../../hooks/use-model-translation';
 
 export interface CheckboxFieldProps extends BaseField {
   type: 'checkbox-field';
@@ -12,6 +12,7 @@ export interface CheckboxFieldProps extends BaseField {
 }
 
 export const CheckboxField: FieldComponent<CheckboxFieldProps> = props => {
+  const { t: tModel } = useModelTranslation();
   if (props.inlineLabel) {
     return (
       <InlineFieldContainer>
@@ -26,7 +27,7 @@ export const CheckboxField: FieldComponent<CheckboxFieldProps> = props => {
               props.updateValue(v.target.checked);
             }}
           />
-          {props.inlineLabel}
+          {tModel(props.inlineLabel)}
         </StyledFormLabel>
       </InlineFieldContainer>
     );

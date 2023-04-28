@@ -2,6 +2,7 @@ import React from 'react';
 import styled, { css } from 'styled-components';
 import { BaseField, FieldComponent } from '../../../types/field-types';
 import { StyledCheckbox, StyledFormLabel } from '../../atoms/StyledForm';
+import { useModelTranslation } from '../../../hooks/use-model-translation';
 
 export interface CheckboxListFieldProps extends BaseField {
   type: 'checkbox-list-field';
@@ -25,6 +26,7 @@ const CheckboxContainer = styled.fieldset<{ inline?: boolean }>`
 `;
 
 export const CheckboxFieldList: FieldComponent<CheckboxListFieldProps> = props => {
+  const { t: tModel } = useModelTranslation();
   return (
     <CheckboxContainer disabled={props.disabled}>
       {(props.options || []).map(option => {
@@ -43,7 +45,7 @@ export const CheckboxFieldList: FieldComponent<CheckboxListFieldProps> = props =
                 });
               }}
             />
-            {option.label}
+            {tModel(option.label)}
           </StyledFormLabel>
         );
       })}

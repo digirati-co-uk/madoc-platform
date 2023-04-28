@@ -17,13 +17,13 @@ export type SnippetLargeProps = {
   size?: 'lg' | 'md' | 'sm';
   center?: boolean;
   buttonRole?: 'button' | 'link';
+  hideButton?: boolean;
   containThumbnail?: boolean;
   stackedThumbnail?: boolean;
   smallLabel?: boolean;
   fluid?: boolean;
   interactive?: boolean;
   query?: any;
-  hideButton?: boolean;
 };
 
 const sizeMap = {

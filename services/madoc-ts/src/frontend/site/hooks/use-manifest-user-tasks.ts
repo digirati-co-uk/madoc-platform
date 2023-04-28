@@ -16,11 +16,8 @@ export function useManifestUserTasks() {
 
   const [updateClaim] = useMutation(
     async ({ revisionRequest: response, context }: { revisionRequest: RevisionRequest; context: RouteContext }) => {
-      console.log('Updating claim Mutation');
       if (context.manifestId && context.projectId) {
         const respStatus = response.revision.status;
-
-        console.log('Revision', response.revision);
 
         if (respStatus === 'draft') {
           // Create user task and mark as in progress.

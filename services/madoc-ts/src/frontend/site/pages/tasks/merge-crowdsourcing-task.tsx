@@ -48,7 +48,7 @@ const MergeCrowdsourcingTask: React.FC<{
         return;
       }
 
-      return await api.getCaptureModelRevision(merge.mergeId);
+      return await api.crowdsourcing.getCaptureModelRevision(merge.mergeId);
     },
     {
       refetchInterval: false,

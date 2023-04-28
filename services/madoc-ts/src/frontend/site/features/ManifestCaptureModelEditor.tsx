@@ -11,11 +11,8 @@ import { SimpleSaveButton } from '../../shared/capture-models/new/components/Sim
 import { RevisionRequest } from '../../shared/capture-models/types/revision-request';
 import { LocaleString } from '../../shared/components/LocaleString';
 import { useApi } from '../../shared/hooks/use-api';
-import { apiHooks } from '../../shared/hooks/use-api-query';
 import { useCurrentUser } from '../../shared/hooks/use-current-user';
-import { TickIcon } from '../../shared/icons/TickIcon';
 import { EmptyState } from '../../shared/layout/EmptyState';
-import { ButtonIcon } from '../../shared/navigation/Button';
 import { Heading2 } from '../../shared/typography/Heading2';
 import { isEditingAnotherUsersRevision } from '../../shared/utility/is-editing-another-users-revision';
 import { useManifestModel } from '../hooks/use-manifest-model';
@@ -27,14 +24,14 @@ import { RouteContext, useRouteContext } from '../hooks/use-route-context';
 import { CanvasModelUserStatus } from './CanvasModelUserStatus';
 import { CanvasViewerEditorStyleReset } from './CanvasViewerGrid';
 import { useSiteConfiguration } from './SiteConfigurationContext';
+import { useLoadedCaptureModel } from '../../shared/hooks/use-loaded-capture-model';
 
 export function ManifestCaptureModelEditor({ revision }: { revision: string; isSegmentation?: boolean }) {
   const { t } = useTranslation();
   const { projectId, manifestId } = useRouteContext();
   const { data: projectModel } = useManifestModel();
   const { data: project } = useProject();
-  const modelId = projectModel?.model?.id;
-  const { data: captureModel } = apiHooks.getCaptureModel(() => (modelId ? [modelId] : undefined));
+  const [{ captureModel }, , modelRefetch] = useLoadedCaptureModel(projectModel?.model?.id, undefined, undefined);
   const { updateClaim, allTasksDone, markedAsUnusable } = useManifestUserTasks();
   const { isPreparing } = useProjectStatus();
   const user = useCurrentUser(true);
@@ -50,6 +47,7 @@ export function ManifestCaptureModelEditor({ revision }: { revision: string; isS
   const allowMultiple = !config.project.modelPageOptions?.preventMultipleUserSubmissionsPerResource;
   const preventFurtherSubmission = !allowMultiple && allTasksDone;
   const isEditing = isEditingAnotherUsersRevision(captureModel, revision, user.user);
+
   const canContribute =
     user &&
     user.scope &&
@@ -59,7 +57,6 @@ export function ManifestCaptureModelEditor({ revision }: { revision: string; isS
 
   const isModelAdmin =
     user && user.scope && (user.scope.indexOf('site.admin') !== -1 || user.scope.indexOf('models.admin') !== -1);
-
   const features: RevisionProviderFeatures = isPreparing
     ? {
         autosave: false,
@@ -69,6 +66,7 @@ export function ManifestCaptureModelEditor({ revision }: { revision: string; isS
       }
     : {
         preventMultiple: !allowMultiple,
+        forkMode: !!config.project.forkMode,
       };
 
   const components: Partial<EditorRenderingConfig> = isPreparing
@@ -85,6 +83,7 @@ export function ManifestCaptureModelEditor({ revision }: { revision: string; isS
     if (!isEditing && !isPreparing) {
       await updateClaim(ctx);
     }
+    await modelRefetch();
 
     // If we have disabled preview, we need to show the post-submission.
     if (disablePreview && ctx.revisionRequest.revision.status !== 'draft') {
@@ -134,18 +133,18 @@ export function ManifestCaptureModelEditor({ revision }: { revision: string; isS
         {preventFurtherSubmission ? (
           <>
             <EmptyState style={{ fontSize: '1.25em' }} $box>
-              <ButtonIcon>
-                <TickIcon />
-              </ButtonIcon>
               <strong>{t('Task is complete!')}</strong>
+              <span style={{ color: 'black', margin: 0 }}>
+                {markedAsUnusable
+                  ? t('You have marked this as unusable')
+                  : t(
+                      'Thank you for your submission. You can view your contribution below. You can continue working on another manifest'
+                    )}
+              </span>
             </EmptyState>
-            <EmptyState>
-              {markedAsUnusable
-                ? t('You have marked this as unusable')
-                : t(
-                    'Thank you for your submission. You can view your contribution below. You can continue working on another manifest'
-                  )}
-            </EmptyState>
+            <CanvasViewerEditorStyleReset>
+              <EditorSlots.TopLevelEditor />
+            </CanvasViewerEditorStyleReset>
           </>
         ) : postSubmission ? (
           <div>

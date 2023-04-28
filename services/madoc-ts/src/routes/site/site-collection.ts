@@ -78,7 +78,7 @@ function combineStatuses(
     }
 
     // Available for working on.
-    if (!userStatuses && (!projectStatus || projectStatus.status === 0 || projectStatus.status === 1)) {
+    if (!userStatus && (!projectStatus || projectStatus.status === 0 || projectStatus.status === 1)) {
       combinedStatues.push({
         subject,
         status: 1,

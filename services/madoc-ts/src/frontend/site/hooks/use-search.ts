@@ -99,7 +99,7 @@ export function useSearch() {
     {
       enabled:
         !searchFacetConfig.isLoading &&
-        (!!facetsToRequest.length || !!fulltext || !!rscType || collectionId || manifestId || projectId || topicId),
+        (!!facetsToRequest.length || !!fulltext || fulltext === '' || !!rscType || collectionId || manifestId || projectId || topicId),
     }
   );
 

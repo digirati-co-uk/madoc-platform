@@ -23,7 +23,7 @@ export const FullDocumentEditor: React.FC = () => {
   const actions = DocumentStore.useStoreActions(a => a);
   const removeStructureField = StructureStore.useStoreActions(a => a.removeField);
   const sourceTypes = useMemo(() => {
-    return api.getCaptureModelDataSources().map(source => source.definition);
+    return api.crowdsourcing.getCaptureModelDataSources().map(source => source.definition);
   }, [api]);
   const { preventChangeDocument } = useModelEditorConfig();
 

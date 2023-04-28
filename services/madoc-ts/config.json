@@ -9,6 +9,7 @@
     "allowCanvasNavigation": true,
     "randomlyAssignCanvas": false,
     "priorityRandomness": true,
+    "randomCanvas": true,
     "claimGranularity": "canvas",
     "maxContributionsPerResource": false,
     "allowSubmissionsWhenCanvasComplete": false,

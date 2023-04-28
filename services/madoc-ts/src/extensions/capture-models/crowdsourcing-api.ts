@@ -12,7 +12,6 @@ import {
   CrowdsourcingReviewMerge,
   CrowdsourcingReviewMergeComplete,
 } from '../../gateway/tasks/crowdsourcing-review';
-import { CrowdsourcingTask } from '../../gateway/tasks/crowdsourcing-task';
 import { CaptureModelSnippet } from '../../types/schemas/capture-model-snippet';
 import { ModelSearch } from '../../types/schemas/search';
 import { generateModelFields } from '../../utility/generate-model-fields';
@@ -330,19 +329,22 @@ export class CrowdsourcingApi implements BaseExtension {
   }) {
     try {
       // Delete the revision
-      await this.deleteCaptureModelRevision(revisionRequest);
-    } catch (err) {
-      // No-op
-    }
+      // await this.deleteCaptureModelRevision(revisionRequest);
 
-    // Mark task as rejected
-    await this.api.updateTask<CrowdsourcingTask>(userTaskId, {
-      status: -1,
-      status_text: statusText || 'Rejected',
-      state: {
-        rejectedMessage: message,
-      },
-    });
+      // dont delete the whole revision - lets change it to rejected
+      await Promise.all([
+        this.updateCaptureModelRevision(revisionRequest, 'rejected'),
+        await this.api.updateRevisionTask(userTaskId, {
+          status: -1,
+          status_text: statusText || 'Rejected',
+          state: {
+            rejectedMessage: message,
+          },
+        }),
+      ]);
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   async reviewRequestChanges({
@@ -359,7 +361,7 @@ export class CrowdsourcingApi implements BaseExtension {
     // Save this change to the revision.
     await this.reDraftCaptureModelRevision(revisionRequest);
 
-    await this.api.updateTask<CrowdsourcingTask>(userTaskId, {
+    await this.api.updateRevisionTask(userTaskId, {
       // Mark the task as needing changes
       status: 4,
       status_text: statusText || 'changed requested',
@@ -390,7 +392,7 @@ export class CrowdsourcingApi implements BaseExtension {
     await this.createCaptureModelRevision(req, 'draft');
 
     // Task is updated with forked version + chosen merges.
-    await this.api.updateTask<CrowdsourcingReview>(reviewTaskId, {
+    await this.api.updateRevisionTask(reviewTaskId, {
       state: {
         currentMerge: {
           revisionId: revision.revision.id,
@@ -441,7 +443,7 @@ export class CrowdsourcingApi implements BaseExtension {
     }
 
     // Mark users task as approved.
-    await this.api.updateTask<CrowdsourcingTask>(userTaskId, {
+    await this.api.updateRevisionTask(userTaskId, {
       status: 3,
       status_text: statusText || 'Approved',
       state: {
@@ -449,7 +451,6 @@ export class CrowdsourcingApi implements BaseExtension {
       },
     });
   }
-
   async reviewApproveAndRemoveSubmission({
     userTaskIds,
     revisionIdsToRemove,
@@ -466,7 +467,7 @@ export class CrowdsourcingApi implements BaseExtension {
     await Promise.all(
       userTaskIds.map(userTaskId =>
         // User tasks are marked as approved
-        this.api.updateTask<CrowdsourcingTask>(userTaskId, {
+        this.api.updateRevisionTask(userTaskId, {
           status: 3,
           status_text: statusText || 'Approved',
           state: {
@@ -484,7 +485,7 @@ export class CrowdsourcingApi implements BaseExtension {
     // The chosen revision is saved.
     await this.approveCaptureModelRevision(acceptedRevision);
     // Updated review task.
-    await this.api.updateTask(reviewTaskId, { status: 3, status_text: statusText || 'Approved' });
+    await this.api.updateRevisionTask(reviewTaskId, { status: 3, status_text: statusText || 'Approved' });
   }
 
   async reviewMergeSave(req: RevisionRequest) {
@@ -520,7 +521,7 @@ export class CrowdsourcingApi implements BaseExtension {
     ];
 
     // Revert task state to pre-merge completely.
-    await this.api.updateTask<CrowdsourcingReview>(reviewTaskId, {
+    await this.api.updateRevisionTask(reviewTaskId, {
       state: {
         currentMerge: null,
         merges,
@@ -555,7 +556,7 @@ export class CrowdsourcingApi implements BaseExtension {
       },
     ];
 
-    await this.api.updateTask<CrowdsourcingReview>(reviewTaskId, {
+    await this.api.updateRevisionTask(reviewTaskId, {
       state: {
         currentMerge: null,
         merges,
@@ -572,7 +573,7 @@ export class CrowdsourcingApi implements BaseExtension {
     // Mark tasks as accepted.
     await Promise.all(
       toMergeTaskIds.map(taskId =>
-        this.api.updateTask<CrowdsourcingTask>(taskId, {
+        this.api.updateRevisionTask(taskId, {
           status_text: 'accepted',
           status: 3,
           state: {

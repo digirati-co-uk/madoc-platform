@@ -56,7 +56,7 @@ export function ViewManifestModel() {
 
         <RequiredStatement />
 
-        <ManifestUserNotification />
+        <ManifestUserNotification isModal />
       </Slot>
 
       {showPrepareMessage ? <PrepareManifestsCaptureModel /> : null}

@@ -14,7 +14,7 @@ export function getDefaultAnnotationStyles(): AnnotationStyles['theme'] {
       backgroundColor: 'rgba(0,0,0,0)',
     },
     adjacent: {
-      backgroundColor: 'rgba(141,160,203,.1)',
+      backgroundColor: 'rgba(123,144,196,0.2)',
       borderWidth: '1px',
       borderColor: 'rgba(5, 42, 68, 0.2)',
     },
@@ -31,6 +31,7 @@ export function getDefaultAnnotationStyles(): AnnotationStyles['theme'] {
 
     // New ones, hidden by default?
     contributedAnnotations: {
+      hidden: false,
       interactive: true,
       borderWidth: '1px',
       backgroundColor: 'rgba(0,0,0,0)',
@@ -50,8 +51,8 @@ export function getDefaultAnnotationStyles(): AnnotationStyles['theme'] {
     submissions: {
       hidden: false,
       borderWidth: '1px',
-      borderColor: 'rgba(87,36,203,0.5)',
-      backgroundColor: 'rgba(87,36,203,0.2)',
+      borderColor: 'rgba(19,0,59,0.5)',
+      backgroundColor: 'rgba(87,36,203,0.27)',
     },
   };
 }
