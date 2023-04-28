@@ -24,7 +24,6 @@ export type SnippetLargeProps = {
   fluid?: boolean;
   interactive?: boolean;
   query?: any;
-  hideButton?: boolean;
 };
 
 const sizeMap = {
