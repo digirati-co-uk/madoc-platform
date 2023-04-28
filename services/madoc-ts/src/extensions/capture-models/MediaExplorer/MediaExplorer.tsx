@@ -7,8 +7,6 @@ import { CroppedImage } from '../../../frontend/shared/atoms/Images';
 import { ImageStripBox } from '../../../frontend/shared/atoms/ImageStrip';
 import { useApi } from '../../../frontend/shared/hooks/use-api';
 import { useInfiniteAction } from '../../../frontend/site/hooks/use-infinite-action';
-import {useTranslation} from "react-i18next";
-import {InfoMessage} from "../../../frontend/shared/callouts/InfoMessage";
 import { useTranslation } from 'react-i18next';
 import { InfoMessage } from '../../../frontend/shared/callouts/InfoMessage';
 
