@@ -66,6 +66,7 @@ export function CreateNewTopic() {
       ...entityModel,
     };
 
+    delete copy['featured_resources.madoc_id'];
     if (topicType && topicType !== '_') {
       delete copy.type;
     }

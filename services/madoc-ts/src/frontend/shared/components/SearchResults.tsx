@@ -11,7 +11,7 @@ import { createLink } from '../utility/create-link';
 import { HrefLink } from '../utility/href-link';
 import { LocaleString } from './LocaleString';
 
-const ResultsContainer = styled.div<{ $isFetching?: boolean }>`
+export const ResultsContainer = styled.div<{ $isFetching?: boolean }>`
   flex: 1 1 0px;
   transition: opacity 0.2s;
 

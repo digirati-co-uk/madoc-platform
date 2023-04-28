@@ -35,6 +35,25 @@
           "type": "string"
         }
       }
+    },
+    "topic_count": {
+      "type": [
+        "string",
+        "number"
+      ]
+    },
+    "other_data": {
+      "type": "object",
+      "properties": {
+        "thumbnail": {
+          "type": "object",
+          "properties": {
+            "url": {
+              "type": "string"
+            }
+          }
+        }
+      }
     }
   },
   "required": [
@@ -42,8 +61,10 @@
     "id",
     "label",
     "modified",
+    "other_data",
     "slug",
     "title",
+    "topic_count",
     "url"
   ],
   "$schema": "http://json-schema.org/draft-07/schema#"
