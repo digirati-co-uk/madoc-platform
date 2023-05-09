@@ -5,6 +5,8 @@ import { BaseField } from '../../types/field-types';
 import { useSlotConfiguration } from './EditorSlots';
 import { FieldSet } from '../../../form/FieldSet';
 import { useResolvedSelector } from '../hooks/use-resolved-selector';
+import { isRequiredSelectorIncomplete } from '../../utility/is-required-selector-incomplete';
+import { isRequiredFieldIncomplete } from '../../utility/is-required-field-incomplete';
 
 export const DefaultFieldInstance: React.FC<{
   field: BaseField;
@@ -16,9 +18,12 @@ export const DefaultFieldInstance: React.FC<{
   const [isHighlighted, setIsHighlighted] = useState(false);
   const { immutableFields = [] } = useSlotConfiguration();
   const immutable = immutableFields.indexOf(property) !== -1;
-  const [selector, { isBlockingForm: disableForm }] = useResolvedSelector(field);
+  const [selector, { isBlockingForm }] = useResolvedSelector(field);
+  const isFieldBlockingForm = isRequiredFieldIncomplete(field);
 
-    useEffect(() => {
+  const disableForm = isBlockingForm || isFieldBlockingForm;
+
+  useEffect(() => {
     if (selector) {
       if (isHighlighted) {
         return helper.highlight(selector.id);
@@ -55,7 +60,8 @@ export const DefaultFieldInstance: React.FC<{
       data-aria-description={field.description}
     >
       <FieldInstance
-        disabled={disableForm}
+        required={disableForm}
+        disabled={false}
         key={field.revises ? field.revises : field.id}
         field={field}
         property={property}

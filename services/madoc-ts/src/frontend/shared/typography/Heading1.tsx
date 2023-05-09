@@ -182,7 +182,7 @@ blockEditorFor(Heading1, {
   type: 'heading-1',
   label: 'Heading 1',
   editor: {
-    text: { label: 'Text content', type: 'text-field' },
+    text: { label: 'Text content', type: 'text-field', required: true },
     fullWidth: { label: 'Full width', type: 'checkbox-field', inlineLabel: 'Show full width' },
     background: { label: 'Background', type: 'color-field' },
     backgroundHeight: { label: 'Background height', type: 'text-field' },

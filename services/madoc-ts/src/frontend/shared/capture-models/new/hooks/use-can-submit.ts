@@ -1,9 +1,10 @@
-import { Revisions } from '../../editor/stores/revisions/index';
+import { Revisions } from '../../editor/stores/revisions';
 import { resolveSelector } from '../../helpers/resolve-selector';
 import { BaseSelector } from '../../types/selector-types';
 
 export function useCanSubmit() {
   const selectorsToValidate: BaseSelector[] = [];
+  const requiredFieldsToValidate: any[] = [];
 
   const revision = Revisions.useStoreState(state => state.currentRevision);
 
@@ -20,6 +21,9 @@ export function useCanSubmit() {
       const fieldOrEntity = revisionDocument.properties[property];
       if (fieldOrEntity && fieldOrEntity.length) {
         for (const singleFieldOrEntity of fieldOrEntity) {
+          if (singleFieldOrEntity.required) {
+            requiredFieldsToValidate.push(singleFieldOrEntity)
+          }
           if (singleFieldOrEntity.selector) {
             selectorsToValidate.push(singleFieldOrEntity.selector);
           }
@@ -35,7 +39,11 @@ export function useCanSubmit() {
         return false;
       }
     }
+    for (const field of requiredFieldsToValidate) {
+      if (!field.value || field.value === '') {
+        return false;
+      }
+    }
   }
-
   return true;
 }

@@ -39,12 +39,18 @@ export const inputCss = css`
   border: 1px solid rgba(5, 42, 68, 0.2);
   color: rgba(0, 0, 0, 0.87);
   box-shadow: 0 0 0 0 transparent inset;
+
   &:focus {
     border-color: #005cc5;
   }
+
   &:disabled {
     background: #f0f0f0;
     cursor: not-allowed;
+  }
+
+  &:not(:valid) &:not(:focus) {
+    border: 1px solid #de1010;
   }
 `;
 

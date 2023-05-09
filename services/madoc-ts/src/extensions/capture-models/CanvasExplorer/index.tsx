@@ -16,6 +16,7 @@ export const specification: FieldSpecification<CanvasExplorerProps> = {
   Component: CanvasExplorer,
   defaultValue: null,
   allowMultiple: true,
+  required: false,
   defaultProps: {},
   Editor: React.lazy(() => import(/* webpackChunkName: "field-editors" */ './CanvasExplorer.editor')),
   TextPreview: CanvasExplorerPreview,

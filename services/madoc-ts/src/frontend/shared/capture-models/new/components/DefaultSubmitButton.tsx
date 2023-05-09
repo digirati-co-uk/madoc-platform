@@ -6,7 +6,7 @@ import { Button, ButtonRow } from '../../../navigation/Button';
 import { ModalButton } from '../../../components/Modal';
 import { useViewerSaving } from '../../../hooks/use-viewer-saving';
 import { HrefLink } from '../../../utility/href-link';
-import { Revisions } from '../../editor/stores/revisions/index';
+import { Revisions } from '../../editor/stores/revisions';
 import { useDeselectRevision } from '../hooks/use-deselect-revision';
 import { EditorRenderingConfig, useSlotContext } from './EditorSlots';
 
