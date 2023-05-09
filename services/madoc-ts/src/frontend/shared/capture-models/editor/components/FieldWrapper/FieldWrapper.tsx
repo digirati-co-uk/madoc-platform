@@ -48,7 +48,6 @@ export const FieldWrapper: React.FC<Props> = ({
   disabled,
 }) => {
   const [value, setValue] = useState(field.value);
-
   const updateValue = useCallback(
     newValue => {
       setValue(newValue);
@@ -102,6 +101,7 @@ export const FieldWrapper: React.FC<Props> = ({
         )}
         {fieldComponent || ''}
       </div>
+      {field.required || selector?.required ? <small>* required</small> : null}
     </BrowserComponent>
   );
 };

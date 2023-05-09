@@ -21,7 +21,6 @@ import { ErrorBoundary } from '../utility/error-boundary';
 import { CustomEditorTypes } from './custom-editor-types';
 import { RenderBlock } from './render-block';
 import { BlockCreatorPreview } from './AddBlock';
-import { useCanSubmit } from '../capture-models/new/hooks/use-can-submit';
 
 const EditBlock = styled(TinyButton)`
   opacity: 0;
@@ -206,8 +205,6 @@ export function useBlockModel(block: SiteBlock | SiteBlockRequest, advanced?: bo
 }
 
 const OnChangeDocument: React.FC<{ onChange: (revision: CaptureModel['document']) => void }> = ({ onChange }) => {
-  // const canSubmit = useCanSubmit();
-  // console.log(canSubmit);
   const currentRevision = Revisions.useStoreState(s => s.currentRevision);
   const document = currentRevision?.document;
 
@@ -240,7 +237,8 @@ export const useBlockEditor = (
       for (const property of properties) {
         const field = latestRevision.current.properties[property];
         for (const singleField of field) {
-          if (singleField.required && singleField.value === '') {
+          // @ts-ignore
+          if (singleField.required && (!singleField.value || singleField.value === '')) {
             return false;
           }
         }
@@ -248,7 +246,6 @@ export const useBlockEditor = (
     }
     return true;
   };
-  console.log(canSubmit());
 
   useEffect(() => {
     const id = setInterval(() => {

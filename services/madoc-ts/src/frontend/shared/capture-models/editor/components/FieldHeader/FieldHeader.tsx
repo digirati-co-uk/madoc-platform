@@ -53,11 +53,6 @@ const FieldHeaderSubtitle = styled.label`
   display: block;
 `;
 
-const FieldHeaderReq = styled.sup`
-  font-size: 0.7em;
-  color: #333333;
-`;
-
 const FieldHeaderRight = styled.div`
   display: flex;
   flex-direction: column;
@@ -73,6 +68,15 @@ const FieldHeaderIcon = styled.div<{ open?: boolean }>`
   transform: translateY(0);
   &:hover {
     background: #eee;
+  }
+
+  &[data-is-required='true'] {
+    :after {
+      content: '*';
+    }
+  }
+  &[data-is-invalid='true'] {
+    color: #de1010;
   }
   ${props =>
     props.open
@@ -118,6 +122,10 @@ export const FieldHeader: React.FC<FieldHeaderProps> = ({
   const helper = useSelectorHelper();
   const { t: tModel, i18n } = useModelTranslation();
 
+  const isSelectorRequired = selectorComponent && selectorComponent.props?.required;
+  const isSelectorValue = selectorComponent && selectorComponent.props.state;
+  const isSelectorInvalid = isSelectorRequired && !isSelectorValue;
+
   const toggleSelector = useCallback(() => {
     if (open) {
       setOpen(false);
@@ -139,7 +147,7 @@ export const FieldHeader: React.FC<FieldHeaderProps> = ({
           <FieldHeaderTitle htmlFor={labelFor}>
             {tModel(label) || <span style={{ opacity: 0.5 }}>{t('Untitled')}</span>}{' '}
             {showTerm && term ? <Tag size="tiny">{term}</Tag> : null}
-            {required ? <FieldHeaderReq>* required</FieldHeaderReq> : null}
+            {required ? <span>*</span> : null}
           </FieldHeaderTitle>
           {description ? <FieldHeaderSubtitle htmlFor={labelFor}>{tModel(description)}</FieldHeaderSubtitle> : null}
         </FieldHeaderLeft>
@@ -149,7 +157,9 @@ export const FieldHeader: React.FC<FieldHeaderProps> = ({
             onMouseEnter={() => (selectorId ? helper.highlight(selectorId) : null)}
             onMouseLeave={() => (selectorId ? helper.clearHighlight(selectorId) : null)}
           >
-            <FieldHeaderIcon open={open}>{selectorLabel || t('Define region')}</FieldHeaderIcon>
+            <FieldHeaderIcon data-is-required={isSelectorRequired} data-is-invalid={isSelectorInvalid} open={open}>
+              {selectorLabel || t('Define region')}
+            </FieldHeaderIcon>
           </FieldHeaderRight>
         ) : null}
       </FieldHeaderTop>

@@ -49,7 +49,7 @@ export const inputCss = css`
     cursor: not-allowed;
   }
 
-  &:not(:valid) &:not(:focus) {
+  &:not(:valid)&:not(:focus) {
     border: 1px solid #de1010;
   }
 `;
