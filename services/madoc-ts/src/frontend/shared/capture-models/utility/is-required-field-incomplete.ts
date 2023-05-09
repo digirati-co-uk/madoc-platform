@@ -24,7 +24,6 @@ export function isRequiredDocIncomplete(revisionDocument?: RevisionRequest['docu
     }
   }
 
-  console.log(fieldsToValidate)
   for (const field of fieldsToValidate) {
     if (!field.value || field.value === '') {
       return false;
@@ -32,4 +31,3 @@ export function isRequiredDocIncomplete(revisionDocument?: RevisionRequest['docu
   }
   return true;
 }
-
