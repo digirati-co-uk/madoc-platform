@@ -39,7 +39,7 @@ export function useCanSubmit() {
   if (revision) {
     for (const selector of selectorsToValidate) {
       const resolved = resolveSelector(selector, revision?.revision.id);
-      if (resolved && !resolved.state) {
+      if (resolved && resolved.required && !resolved.state) {
         return false;
       }
     }
