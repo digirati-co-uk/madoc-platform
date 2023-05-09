@@ -21,6 +21,7 @@ import { ErrorBoundary } from '../utility/error-boundary';
 import { CustomEditorTypes } from './custom-editor-types';
 import { RenderBlock } from './render-block';
 import { BlockCreatorPreview } from './AddBlock';
+import { isRequiredDocIncomplete } from '../capture-models/utility/is-required-field-incomplete';
 
 const EditBlock = styled(TinyButton)`
   opacity: 0;
@@ -229,23 +230,7 @@ export const useBlockEditor = (
   const latestPreview = useRef<CaptureModel['document'] | undefined>();
   const [preview, setPreview] = useState<SiteBlock | SiteBlockRequest | undefined>();
 
-  const canSubmit = () => {
-    const properties =
-      latestRevision && latestRevision.current?.type === 'entity' ? Object.keys(latestRevision.current.properties) : [];
-
-    if (latestRevision.current) {
-      for (const property of properties) {
-        const field = latestRevision.current.properties[property];
-        for (const singleField of field) {
-          // @ts-ignore
-          if (singleField.required && (!singleField.value || singleField.value === '')) {
-            return false;
-          }
-        }
-      }
-    }
-    return true;
-  };
+  const canSubmit = isRequiredDocIncomplete(latestRevision.current);
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -361,7 +346,7 @@ export const BlockEditorForm: React.FC<{
         <div>
           <ButtonRow style={{ margin: '0 0 0 auto' }}>
             <Button
-              disabled={!canSubmit()}
+              disabled={!canSubmit}
               onClick={() => {
                 // On save!
                 saveChanges().then(() => {

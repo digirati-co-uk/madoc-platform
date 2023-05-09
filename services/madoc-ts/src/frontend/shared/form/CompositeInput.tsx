@@ -8,11 +8,11 @@ const Container = styled.div`
   align-items: center;
   min-height: 2.75em;
   
-  &[data-is-invalid='true'] {
-    :not(:focus-within) {
-      border: 1px solid red;
-    }
-  }
+  //&[data-is-invalid='true'] {
+  //  :not(:focus-within) {
+  //    border: 1px solid red;
+  //  }
+  //}
 `;
 
 const inputReset = css`
