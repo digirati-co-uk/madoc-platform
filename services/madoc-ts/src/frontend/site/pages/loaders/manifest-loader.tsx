@@ -8,6 +8,7 @@ import { ManifestFull } from '../../../../types/schemas/manifest-full';
 import { Outlet } from 'react-router-dom';
 import { usePaginatedManifest } from '../../hooks/use-manifest';
 import { useRouteContext } from '../../hooks/use-route-context';
+import { ItemNotFound } from '../Item-not-found';
 
 export type ManifestLoaderType = {
   params: { manifestId: string; collectionId?: string; slug?: string };
@@ -24,6 +25,16 @@ export const ManifestLoader: UniversalComponent<ManifestLoaderType> = createUniv
     });
 
     const ctx = useMemo(() => (data ? { id: data.manifest.id, name: data.manifest.label } : undefined), [data]);
+
+    if (!data || data.manifest.source === 'not-found') {
+      return (
+        <AutoSlotLoader>
+          <BreadcrumbContext manifest={ctx}>
+            <ItemNotFound />
+          </BreadcrumbContext>
+        </AutoSlotLoader>
+      );
+    }
 
     return (
       <AutoSlotLoader>
