@@ -18,7 +18,7 @@ export const registerPage: RouteMiddleware = async (context, next) => {
   const site = await context.siteManager.getSiteBySlug(context.params.slug);
   const systemConfig = await context.siteManager.getSystemConfig();
   const invitation = invitationId ? await context.siteManager.getInvitation(invitationId, site.id) : null;
-  if (!systemConfig.enableRegistrations) {
+  if (!systemConfig.enableRegistrations && !invitation) {
     return context.redirect(`/s/${site.slug}/login`);
   }
 
