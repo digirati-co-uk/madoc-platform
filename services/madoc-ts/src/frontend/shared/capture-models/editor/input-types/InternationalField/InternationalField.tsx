@@ -8,6 +8,7 @@ export interface InternationalFieldProps extends BaseField {
   id: string;
   type: 'international-field';
   placeholder?: string;
+  required?: boolean;
   multiline?: boolean;
   previewInline?: boolean;
   minLines?: number;

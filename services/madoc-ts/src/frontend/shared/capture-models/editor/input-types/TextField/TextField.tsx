@@ -7,6 +7,7 @@ export interface TextFieldProps extends BaseField {
   id: string;
   type: 'text-field';
   placeholder?: string;
+  required?: boolean;
   multiline?: boolean;
   previewInline?: boolean;
   minLines?: number;

@@ -10,6 +10,7 @@ import { StyledColor, StyledFormLabel } from '../../atoms/StyledForm';
 export interface ColorFieldProps extends BaseField {
   id: string;
   type: 'color-field';
+  required?: boolean;
   previewInline?: boolean;
   inlineLabel?: string;
   clearable?: boolean;

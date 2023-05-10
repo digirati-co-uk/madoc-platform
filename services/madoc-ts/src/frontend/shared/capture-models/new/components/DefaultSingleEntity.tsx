@@ -29,6 +29,7 @@ export const DefaultSingleEntity: EditorRenderingConfig['SingleEntity'] = props 
     <React.Fragment key={entity.id}>
       <Slots.Breadcrumbs />
 
+      {showTitle ? <FieldHeader label={entityLabel} description={entity.description} /> : null}
       <Slots.AdjacentNavigation>
         {isModified && <ModifiedStatus />}
         <Slots.InlineSelector />
