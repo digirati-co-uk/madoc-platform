@@ -3,7 +3,6 @@ import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet } from 'react-router-dom';
 import { InfoMessage } from '../../../shared/callouts/InfoMessage';
-import { NotFoundPage } from '../../../shared/components/NotFoundPage';
 import { useLoginRedirect } from '../../../shared/components/UserBar';
 import { useProjectTemplate } from '../../../shared/hooks/use-project-template';
 import { useUser } from '../../../shared/hooks/use-site';
@@ -20,6 +19,7 @@ import { ProjectFull } from '../../../../types/project-full';
 import { ConfigProvider } from '../../features/SiteConfigurationContext';
 import { FooterImageGrid } from '../../../shared/components/FooterImageGrid';
 import { Slot } from '../../../shared/page-blocks/slot';
+import { ItemNotFound } from '../Item-not-found';
 
 type ProjectLoaderType = {
   params: { slug: string };
@@ -38,8 +38,12 @@ export const ProjectLoader: UniversalComponent<ProjectLoaderType> = createUniver
     const template = useProjectTemplate(project?.template);
     useCustomTheme(project?.template ? `project-template(${project?.template})` : '', template?.theme || nullTheme);
 
-    if (isError) {
-      return <NotFoundPage />;
+    if (isError || (project?.id === -1 && project.label.none && project.label.none[0] === 'Project not found')) {
+      return (
+        <BreadcrumbContext project={ctx}>
+          <ItemNotFound />
+        </BreadcrumbContext>
+      );
     }
 
     return (
