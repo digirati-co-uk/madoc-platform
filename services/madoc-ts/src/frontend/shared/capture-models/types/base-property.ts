@@ -11,7 +11,6 @@ export interface BaseProperty {
   revises?: string;
   selector?: BaseSelector;
   allowMultiple?: boolean;
-  required?: boolean;
   immutable?: boolean;
   profile?: string;
   dataSources?: string[];

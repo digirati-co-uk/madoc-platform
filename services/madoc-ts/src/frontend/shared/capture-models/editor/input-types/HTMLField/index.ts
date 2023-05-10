@@ -16,7 +16,6 @@ const specification: FieldSpecification<HTMLFieldProps> = {
   label: 'HTML Field',
   defaultProps: {},
   allowMultiple: true,
-  required: false,
   TextPreview: HTMLFieldPreview,
   description: 'HTML WYSIWYG Editor for rich text, with custom HTML tag options',
   Component: React.lazy(() => import(/* webpackChunkName: "fields" */ './HTMLField')),

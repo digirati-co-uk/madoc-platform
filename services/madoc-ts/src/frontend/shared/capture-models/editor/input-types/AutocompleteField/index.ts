@@ -16,7 +16,6 @@ const specification: FieldSpecification<AutocompleteFieldProps> = {
   label: 'Autocomplete Field',
   defaultProps: {},
   allowMultiple: true,
-  required: false,
   TextPreview: AutocompleteFieldPreview,
   description: 'Dynamic autocomplete driven by endpoint',
   Component: AutocompleteField,

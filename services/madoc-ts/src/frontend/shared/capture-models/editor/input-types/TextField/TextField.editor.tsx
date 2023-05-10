@@ -4,7 +4,6 @@ import { StyledCheckbox, StyledFormField, StyledFormInputElement, StyledFormLabe
 
 type Props = {
   placeholder?: string;
-  required?: boolean;
   multiline?: boolean;
   previewInline?: boolean;
   minLines?: number;

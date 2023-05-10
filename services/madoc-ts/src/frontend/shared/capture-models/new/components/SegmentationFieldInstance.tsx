@@ -44,7 +44,6 @@ export const SegmentationFieldInstance: React.FC<{
   return (
     <>
       <FieldHeader
-        required={field.required}
         labelFor={field.id}
         label={field.label}
         description={field.description}

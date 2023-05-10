@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components';
 import { useModelTranslation } from '../../../hooks/use-model-translation';
 import { Tag } from '../../atoms/Tag';
 import { useTranslation } from 'react-i18next';
-import { useSelectorHelper } from '../../stores/selectors/selector-helper';
+import { useSelectorController, useSelectorHelper } from '../../stores/selectors/selector-helper';
 
 type FieldHeaderProps = {
   labelFor?: string;
@@ -16,7 +16,6 @@ type FieldHeaderProps = {
   selectorComponent?: any;
   onSelectorClose?: () => void;
   onSelectorOpen?: () => void;
-  required?: boolean;
 };
 
 export const FieldHeaderWrapper = styled.div`
@@ -51,11 +50,6 @@ const FieldHeaderSubtitle = styled.label`
   font-size: 1em;
   padding-bottom: 0.3em;
   display: block;
-`;
-
-const FieldHeaderReq = styled.sup`
-  font-size: 0.7em;
-  color: #333333;
 `;
 
 const FieldHeaderRight = styled.div`
@@ -111,7 +105,6 @@ export const FieldHeader: React.FC<FieldHeaderProps> = ({
   onSelectorOpen,
   selectorLabel,
   selectorId,
-  required,
 }) => {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
@@ -139,7 +132,6 @@ export const FieldHeader: React.FC<FieldHeaderProps> = ({
           <FieldHeaderTitle htmlFor={labelFor}>
             {tModel(label) || <span style={{ opacity: 0.5 }}>{t('Untitled')}</span>}{' '}
             {showTerm && term ? <Tag size="tiny">{term}</Tag> : null}
-            {required ? <FieldHeaderReq>* required</FieldHeaderReq> : null}
           </FieldHeaderTitle>
           {description ? <FieldHeaderSubtitle htmlFor={labelFor}>{tModel(description)}</FieldHeaderSubtitle> : null}
         </FieldHeaderLeft>

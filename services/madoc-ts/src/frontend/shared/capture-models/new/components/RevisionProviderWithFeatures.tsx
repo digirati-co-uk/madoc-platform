@@ -4,6 +4,7 @@ import { AnnotationStyleProvider } from '../../AnnotationStyleContext';
 import { WithModelNamespace } from '../../hooks/use-model-translation';
 import { CaptureModel } from '../../types/capture-model';
 import { AutosaveRevision } from '../features/AutosaveRevision';
+import { AutoSelectDefineRegion } from '../features/AutoSelectDefineRegion';
 import { AutoSelectingRevision } from '../features/AutoSelectingRevision';
 import { BasicUnNesting } from '../features/BasicUnNesting';
 import { CorrectingRevisionSubtree } from '../features/CorrectingRevisionSubtree';
@@ -11,7 +12,7 @@ import { SwitchEditMode } from '../features/SwitchEditMode';
 import { SwitchFieldAfterRevises } from '../features/SwitchFieldAfterRevises';
 import { ContributorProvider } from './ContributorContext';
 import { EditorConfig, EditorRenderingConfig, EditorSlots } from './EditorSlots';
-import { Revisions } from '../../editor/stores/revisions';
+import { Revisions } from '../../editor/stores/revisions/index';
 
 export type RevisionProviderFeatures = {
   revisionEditMode?: boolean;

@@ -34,7 +34,6 @@ export const FieldList: React.FC<{
           return (
             <div key={singleEntity.id}>
               <FieldHeader
-                required={singleEntity.required}
                 label={
                   instances.length > 1 && singleEntity.pluralLabel
                     ? singleEntity.pluralLabel

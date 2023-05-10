@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { CaptureModel } from '../../../types/capture-model';
 import { BaseField } from '../../../types/field-types';
 import { Grid, GridColumn } from '../../atoms/Grid';
 import { DocumentStore } from './document-store';
@@ -28,7 +29,6 @@ const Test: React.FC = () => {
           setLabel={actions.setLabel}
           setLabelledBy={actions.setLabelledBy}
           setAllowMultiple={actions.setAllowMultiple}
-          setRequired={actions.setRequired}
           deselectField={actions.deselectField}
           popSubtree={actions.popSubtree}
           pushSubtree={actions.pushSubtree}

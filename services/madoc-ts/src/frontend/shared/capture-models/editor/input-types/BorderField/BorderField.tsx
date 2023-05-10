@@ -7,7 +7,6 @@ import { StyledColor } from '../../atoms/StyledForm';
 export interface BorderFieldProps extends BaseField {
   id: string;
   type: 'border-field';
-  required?: boolean;
   previewInline?: boolean;
   inlineLabel?: string;
   clearable?: boolean;

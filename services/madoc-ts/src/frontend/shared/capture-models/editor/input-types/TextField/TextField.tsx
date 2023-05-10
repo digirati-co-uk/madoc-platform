@@ -7,7 +7,6 @@ export interface TextFieldProps extends BaseField {
   id: string;
   type: 'text-field';
   placeholder?: string;
-  required?: boolean;
   multiline?: boolean;
   previewInline?: boolean;
   minLines?: number;
@@ -23,7 +22,6 @@ export const TextField: FieldComponent<TextFieldProps> = ({
   multiline,
   updateValue,
   disabled,
-  required,
 }) => {
   const { t: tModel } = useModelTranslation();
   const tPlaceholder = placeholder ? tModel(placeholder) : ' ';
@@ -35,7 +33,6 @@ export const TextField: FieldComponent<TextFieldProps> = ({
         id={id}
         placeholder={tPlaceholder}
         value={value || ''}
-        required={required}
         disabled={disabled}
         onChange={e => updateValue(e.currentTarget.value)}
         minRows={Number(minLines)}
@@ -50,7 +47,6 @@ export const TextField: FieldComponent<TextFieldProps> = ({
       placeholder={tPlaceholder}
       value={value || ''}
       disabled={disabled}
-      required={required}
       onChange={e => updateValue(e.currentTarget.value)}
     />
   );

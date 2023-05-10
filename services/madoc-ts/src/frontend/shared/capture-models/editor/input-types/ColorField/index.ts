@@ -17,7 +17,6 @@ const specification: FieldSpecification<ColorFieldProps> = {
   Component: ColorField,
   defaultValue: '',
   allowMultiple: true,
-  required: false,
   defaultProps: {
     clearable: true,
   },

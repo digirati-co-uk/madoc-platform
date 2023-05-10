@@ -16,7 +16,6 @@ export const specification: FieldSpecification<ProjectExplorerProps> = {
   Component: ProjectExplorer,
   defaultValue: null,
   allowMultiple: true,
-  required: false,
   defaultProps: {},
   Editor: React.lazy(() => import(/* webpackChunkName: "field-editors" */ './ProjectExplorer.editor')),
   TextPreview: ProjectExplorerPreview,

@@ -23,7 +23,6 @@ export type FieldSpecification<Props extends BaseField = BaseField> = {
   description: string;
   defaultValue: Props['value'];
   allowMultiple: boolean;
-  required: boolean;
   defaultProps: Partial<Props>;
   Component: FC<Props & InjectedFieldProps<Props['value']>>;
   TextPreview: FC<Props>;

@@ -26,7 +26,6 @@ const Inner = () => {
     addField: a.addField,
     setSelector: a.setSelector,
     setAllowMultiple: a.setAllowMultiple,
-    setRequired: a.setRequired,
     setLabelledBy: a.setLabelledBy,
     setPluralLabel: a.setPluralLabel,
   }));
@@ -40,7 +39,6 @@ const Inner = () => {
         setDescription={actions.setDescription}
         setLabel={actions.setLabel}
         setAllowMultiple={actions.setAllowMultiple}
-        setRequired={actions.setRequired}
         setLabelledBy={actions.setLabelledBy}
         setPluralLabel={actions.setPluralLabel}
         popSubtree={actions.popSubtree}
