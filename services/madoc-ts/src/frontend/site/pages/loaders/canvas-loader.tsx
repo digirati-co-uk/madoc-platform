@@ -8,6 +8,7 @@ import { AutoSlotLoader } from '../../../shared/page-blocks/auto-slot-loader';
 import { createUniversalComponent } from '../../../shared/utility/create-universal-component';
 import { UniversalComponent } from '../../../types';
 import { Outlet } from 'react-router-dom';
+import { ItemNotFound } from '../Item-not-found';
 
 export type CanvasLoaderType = {
   params: {
@@ -29,6 +30,15 @@ export const CanvasLoader: UniversalComponent<CanvasLoaderType> = createUniversa
       [data]
     );
 
+    if (!data || data.canvas.source_id === 'not-found') {
+      return (
+        <AutoSlotLoader>
+          <BreadcrumbContext canvas={ctx}>
+            <ItemNotFound />
+          </BreadcrumbContext>
+        </AutoSlotLoader>
+      );
+    }
     return (
       <AutoSlotLoader>
         <BreadcrumbContext canvas={ctx}>
