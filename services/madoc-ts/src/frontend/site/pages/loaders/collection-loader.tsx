@@ -7,6 +7,7 @@ import { UniversalComponent } from '../../../types';
 import { usePaginatedData } from '../../../shared/hooks/use-data';
 import { BreadcrumbContext } from '../../../shared/components/Breadcrumbs';
 import { CollectionFull } from '../../../../types/schemas/collection-full';
+import { ItemNotFound } from '../Item-not-found';
 
 /**
  * Collection loader.
@@ -43,6 +44,16 @@ export const CollectionLoader: UniversalComponent<CollectionLoaderType> = create
     });
 
     const ctx = useMemo(() => (data ? { id: data.collection.id, name: data.collection.label } : undefined), [data]);
+
+    if (!data || data.collection.source === 'not-found') {
+      return (
+        <AutoSlotLoader>
+          <BreadcrumbContext collection={ctx}>
+            <ItemNotFound />
+          </BreadcrumbContext>
+        </AutoSlotLoader>
+      );
+    }
 
     return (
       <AutoSlotLoader>

@@ -165,6 +165,7 @@
   "Collection import": "Collection import",
   "Collection metadata": "Collection metadata",
   "Collection navigation": "Collection navigation",
+  "Collection not found": "Collection not found",
   "Collection with {{count}} manifests": "Collection with {{count}} manifests",
   "Collection with {{count}} manifests_plural": "Collection with {{count}} manifests",
   "Collections": "Collections",

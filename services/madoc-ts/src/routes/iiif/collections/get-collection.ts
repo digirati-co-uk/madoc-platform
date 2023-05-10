@@ -56,7 +56,8 @@ export const getCollection: RouteMiddleware<{ id: number }> = async context => {
   const returnCollections = [];
   const collection = table.collections[`${collectionId}`] || {
     id: collectionId,
-    label: { none: ['Untitled Collection'] },
+    label: { none: ['Collection not found'] },
+    source: 'not-found',
   };
   const manifestIds = table.collection_to_manifest[`${collectionId}`] || [];
   collection.items = manifestIds.map((id: number) => table.manifests[id]);
