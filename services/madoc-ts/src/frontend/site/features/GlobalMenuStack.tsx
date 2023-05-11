@@ -93,10 +93,10 @@ blockEditorFor(GlobalMenuStack, {
       fullWidth: false,
     },
     maxWidth: null,
-    extraLinks: {
+    extraLinks: [{
       slug: '',
       text: '',
-    },
+    }],
   },
   editor: {
     logo: {

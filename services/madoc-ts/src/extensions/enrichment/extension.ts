@@ -49,8 +49,8 @@ export class EnrichmentExtension extends BaseDjangoExtension {
     return this.api.request(`/api/enrichment/entity/${id}/`);
   }
 
-  upsertTopicType(topicType: Partial<EntityTypeMadocResponse>) {
-    return this.api.request<EntityTypeMadocResponse>(`/api/enrichment/entity_type/`, {
+  upsertTopicType(topicType: Partial<any>) {
+    return this.api.request<any>(`/api/enrichment/entity_type/`, {
       method: 'POST',
       body: topicType,
     });

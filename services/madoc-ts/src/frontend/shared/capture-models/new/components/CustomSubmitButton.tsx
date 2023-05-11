@@ -7,7 +7,7 @@ import { Revisions } from '../../editor/stores/revisions/index';
 import { useDeselectRevision } from '../hooks/use-deselect-revision';
 import { EditorRenderingConfig, useSlotConfiguration } from './EditorSlots';
 
-export const CustomSubmitButton: EditorRenderingConfig['SubmitButton'] = ({ afterSave, children }) => {
+export const CustomSubmitButton: EditorRenderingConfig['SubmitButton'] = ({ afterSave, children, canSubmit }) => {
   const { t } = useTranslation();
   const currentRevision = Revisions.useStoreState(s => s.currentRevision);
   const config = useSlotConfiguration();
@@ -55,7 +55,7 @@ export const CustomSubmitButton: EditorRenderingConfig['SubmitButton'] = ({ afte
 
   return (
     <ButtonRow $noMargin>
-      <Button $primary disabled={isLoading} onClick={() => saveRevision()}>
+      <Button $primary disabled={isLoading || !canSubmit } onClick={() => saveRevision()}>
         {children ? children : <>{isLoading ? t('Saving...') : isUnsaved ? t('Save') : t('Save changes')}</>}
       </Button>
     </ButtonRow>

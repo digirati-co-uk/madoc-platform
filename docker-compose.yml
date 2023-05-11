@@ -205,7 +205,7 @@ services:
         condition: service_healthy
 
   search:
-    image: digirati/madoc-enrichment:qa-deploy
+    image: digirati/madoc-enrichment:qa-multiplatform
 #    build:
 #      context: services/enrichment
 #      dockerfile: Dockerfile

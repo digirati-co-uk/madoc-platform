@@ -1,14 +1,16 @@
-import React, {useMemo} from 'react';
-import { useMutation } from 'react-query';
-import { EditShorthandCaptureModel } from '../../../shared/capture-models/EditorShorthandCaptureModel';
-import { useApi } from '../../../shared/hooks/use-api';
-import { Button } from '../../../shared/navigation/Button';
-import { HrefLink } from '../../../shared/utility/href-link';
-import { CustomEditorTypes } from '../../../shared/page-blocks/custom-editor-types';
-import { entityTypeModel } from '../../../../extensions/enrichment/models';
+import React, {useMemo, useState} from 'react';
+import {useMutation} from 'react-query';
+import {EditShorthandCaptureModel} from '../../../shared/capture-models/EditorShorthandCaptureModel';
+import {useApi} from '../../../shared/hooks/use-api';
+import {Button} from '../../../shared/navigation/Button';
+import {HrefLink} from '../../../shared/utility/href-link';
+import {CustomEditorTypes} from '../../../shared/page-blocks/custom-editor-types';
+import {entityTypeModel} from '../../../../extensions/enrichment/models';
+import {ErrorMessage} from "../../../shared/capture-models/editor/atoms/Message";
 
 export function CreateNewTopicType() {
   const api = useApi();
+  const [error, setError] = useState('');
   const [createNewEntityType, status] = useMutation(async (data: any) => {
     if (!data) return;
     // @todo can change later.
@@ -27,6 +29,7 @@ export function CreateNewTopicType() {
     return api.enrichment.upsertTopicType(data);
   });
 
+    console.log(error)
     const model = useMemo(() => {
         const copy: any = {
             ...entityTypeModel,
@@ -54,6 +57,7 @@ export function CreateNewTopicType() {
 
   return (
     <div>
+        {status.isError && (<ErrorMessage>Error... </ErrorMessage>)}
       <CustomEditorTypes>
         <EditShorthandCaptureModel
           template={model}

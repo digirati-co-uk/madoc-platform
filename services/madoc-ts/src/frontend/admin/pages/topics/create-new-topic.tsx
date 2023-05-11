@@ -9,6 +9,7 @@ import { useRouteContext } from '../../../site/hooks/use-route-context';
 import { useTopicType } from '../../../site/pages/loaders/topic-type-loader';
 import { CustomEditorTypes } from '../../../shared/page-blocks/custom-editor-types';
 import { entityModel } from '../../../../extensions/enrichment/models';
+import {ErrorMessage} from "../../../shared/capture-models/editor/atoms/Message";
 
 export function CreateNewTopic() {
   const api = useApi();
@@ -78,10 +79,6 @@ export function CreateNewTopic() {
     return copy;
   }, [topicType]);
 
-  if (status.isError) {
-    return <div>Error...</div>;
-  }
-
   if (status.isSuccess) {
     return (
       <div>
@@ -102,6 +99,7 @@ export function CreateNewTopic() {
 
   return (
     <div>
+      {status.isError && (<ErrorMessage>Error... </ErrorMessage>)}
       <CustomEditorTypes>
         <EditShorthandCaptureModel
           template={model}

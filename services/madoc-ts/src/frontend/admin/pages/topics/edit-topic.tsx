@@ -7,6 +7,7 @@ import { CustomEditorTypes } from '../../../shared/page-blocks/custom-editor-typ
 import { EditShorthandCaptureModel } from '../../../shared/capture-models/EditorShorthandCaptureModel';
 import { useTopic } from '../../../site/pages/loaders/topic-loader';
 import { entityModel } from '../../../../extensions/enrichment/models';
+import {ErrorMessage} from "../../../shared/capture-models/editor/atoms/Message";
 
 export function EditTopic() {
   const api = useApi();
@@ -53,10 +54,6 @@ export function EditTopic() {
     return <div>Loading...</div>;
   }
 
-  if (status.isError) {
-    return <div>Error...</div>;
-  }
-
   if (status.isSuccess && status.data) {
     return (
       <div>
@@ -71,6 +68,7 @@ export function EditTopic() {
 
   return (
     <div style={{ padding: '1em 0' }}>
+      {status.isError && (<ErrorMessage>Error... </ErrorMessage>)}
       <CustomEditorTypes>
         <EditShorthandCaptureModel
           template={entityModel}
