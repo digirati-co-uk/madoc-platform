@@ -16,6 +16,7 @@ export const specification: FieldSpecification<CollectionExplorerProps> = {
   Component: CollectionExplorer,
   defaultValue: null,
   allowMultiple: true,
+  required: false,
   defaultProps: {},
   Editor: React.lazy(() => import(/* webpackChunkName: "field-editors" */ './CollectionExplorer.editor')),
   TextPreview: CollectionExplorerPreview,

@@ -1,11 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { parseColor, parseRGBA, rgbToHex, stringifyColor } from '../../../../../../utility/color';
+import { parseColor, rgbToHex, stringifyColor } from '../../../../../../utility/color';
 import { CompositeInput } from '../../../../form/CompositeInput';
 import { BaseField, FieldComponent } from '../../../types/field-types';
-import { InlineFieldContainer } from '../../atoms/InlineFieldContainer';
-import { StyledColor, StyledFormLabel } from '../../atoms/StyledForm';
+import { StyledColor } from '../../atoms/StyledForm';
 
 export interface ColorFieldProps extends BaseField {
   id: string;
@@ -55,6 +54,7 @@ export const ColorField: FieldComponent<ColorFieldProps> = ({
   updateValue: _updateValue,
   isAlpha = false,
   disabled,
+  required = false,
   inlineLabel,
   clearable = true,
 }) => {
@@ -62,9 +62,12 @@ export const ColorField: FieldComponent<ColorFieldProps> = ({
   const colorValue = useRef(color);
   const [currentAlpha, setCurrentAlpha] = useState(alpha);
 
+  const isInvalid = required && (!value || value === '');
+
   const { t } = useTranslation();
   const formEl = (
     <StyledColor
+      required={required}
       name={id}
       style={{ marginRight: '1em' }}
       id={id}
@@ -78,7 +81,7 @@ export const ColorField: FieldComponent<ColorFieldProps> = ({
   );
 
   return (
-    <CompositeInput.Container>
+    <CompositeInput.Container data-is-invalid={isInvalid}>
       <CompositeInput.InnerContainer $slim>
         {formEl}
         <CompositeInput.Text> {inlineLabel ? inlineLabel : value}</CompositeInput.Text>

@@ -4,7 +4,7 @@ import { useMutation } from 'react-query';
 import styled, { ThemeProvider } from 'styled-components';
 import { PageBlockDefinition, PageBlockEditor } from '../../../extensions/page-blocks/extension';
 import { EditorialContext, SiteBlock, SiteBlockRequest } from '../../../types/schemas/site-page';
-import { Revisions } from '../capture-models/editor/stores/revisions/index';
+import { Revisions } from '../capture-models/editor/stores/revisions';
 import { defaultTheme } from '../capture-models/editor/themes';
 import { captureModelShorthand } from '../capture-models/helpers/capture-model-shorthand';
 import { hydrateCompressedModel } from '../capture-models/helpers/hydrate-compressed-model';
@@ -21,6 +21,7 @@ import { ErrorBoundary } from '../utility/error-boundary';
 import { CustomEditorTypes } from './custom-editor-types';
 import { RenderBlock } from './render-block';
 import { BlockCreatorPreview } from './AddBlock';
+import { isRequiredDocIncomplete } from '../capture-models/utility/is-required-field-incomplete';
 
 const EditBlock = styled(TinyButton)`
   opacity: 0;
@@ -229,6 +230,8 @@ export const useBlockEditor = (
   const latestPreview = useRef<CaptureModel['document'] | undefined>();
   const [preview, setPreview] = useState<SiteBlock | SiteBlockRequest | undefined>();
 
+  const canSubmit = isRequiredDocIncomplete(latestRevision.current);
+
   useEffect(() => {
     const id = setInterval(() => {
       if (latestRevision.current && latestRevision.current !== latestPreview.current) {
@@ -304,6 +307,7 @@ export const useBlockEditor = (
     saveChanges,
     setAdvanced,
     isEmpty,
+    canSubmit,
   };
 };
 
@@ -313,7 +317,7 @@ export const BlockEditorForm: React.FC<{
   onUpdateBlock?: (id: number) => void;
   as?: any;
 }> = ({ as, block, context, onUpdateBlock }) => {
-  const { editor, preview, saveChanges, isEmpty } = useBlockEditor(block, undefined, onUpdateBlock);
+  const { editor, preview, saveChanges, isEmpty, canSubmit } = useBlockEditor(block, undefined, onUpdateBlock);
 
   if (isEmpty) {
     return null;
@@ -342,6 +346,7 @@ export const BlockEditorForm: React.FC<{
         <div>
           <ButtonRow style={{ margin: '0 0 0 auto' }}>
             <Button
+              disabled={!canSubmit}
               onClick={() => {
                 // On save!
                 saveChanges().then(() => {
@@ -425,7 +430,6 @@ export const BlockEditor: React.FC<{
           ) : (
             <>
               <BlockEditorForm block={block} context={context} onUpdateBlock={onUpdateBlock} />
-
               {children}
             </>
           )}

@@ -17,6 +17,7 @@ export const specification: FieldSpecification<MediaExplorerProps> = {
   Component: MediaExplorer,
   defaultValue: null,
   allowMultiple: true,
+  required: false,
   defaultProps: {},
   Editor: React.lazy(() => import(/* webpackChunkName: "field-editors" */ './MediaExplorer.editor')),
   TextPreview: MediaExplorerPreview,

@@ -26,7 +26,7 @@ const BlockCreatorForm: React.FC<{
   onSave: (block: SiteBlock) => void | Promise<void>;
 }> = props => {
   const latestPreview = useRef<SiteBlock | SiteBlockRequest | undefined>();
-  const { saveChanges, editor, preview } = useBlockEditor(props.block, newBlock => (latestPreview.current = newBlock));
+  const { saveChanges, editor, preview, canSubmit } = useBlockEditor(props.block, newBlock => (latestPreview.current = newBlock));
   const [isSaving, setIsSaving] = useState(false);
 
   return (
@@ -38,7 +38,7 @@ const BlockCreatorForm: React.FC<{
       ) : null}
       {editor}
       <Button
-        disabled={isSaving}
+        disabled={isSaving || !canSubmit}
         onClick={() => {
           setIsSaving(true);
           saveChanges().then(block => {
@@ -52,7 +52,7 @@ const BlockCreatorForm: React.FC<{
           });
         }}
       >
-        Save
+        Saved
       </Button>
     </div>
   );
