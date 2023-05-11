@@ -1,13 +1,13 @@
 import React from 'react';
-import { useApi } from '../../../shared/hooks/use-api';
+import { useApi } from '../../../../shared/hooks/use-api';
 import { useMutation } from 'react-query';
-import { Button } from '../../../shared/navigation/Button';
-import { HrefLink } from '../../../shared/utility/href-link';
-import { CustomEditorTypes } from '../../../shared/page-blocks/custom-editor-types';
-import { EditShorthandCaptureModel } from '../../../shared/capture-models/EditorShorthandCaptureModel';
-import { useTopic } from '../../../site/pages/loaders/topic-loader';
-import { entityModel } from '../../../../extensions/enrichment/models';
-import {ErrorMessage} from "../../../shared/capture-models/editor/atoms/Message";
+import { Button } from '../../../../shared/navigation/Button';
+import { HrefLink } from '../../../../shared/utility/href-link';
+import { CustomEditorTypes } from '../../../../shared/page-blocks/custom-editor-types';
+import { EditShorthandCaptureModel } from '../../../../shared/capture-models/EditorShorthandCaptureModel';
+import { useTopic } from '../../../../site/pages/loaders/topic-loader';
+import { entityModel } from '../../../../../extensions/enrichment/models';
+import { ErrorMessage } from '../../../../shared/capture-models/editor/atoms/Message';
 
 export function EditTopic() {
   const api = useApi();
@@ -36,7 +36,7 @@ export function EditTopic() {
           typeof f === 'object' ? (f.resource_id ? f.resource_id : f.madoc_id) : f
         );
         updatedData.featured_resources = newArr.filter(x => x !== undefined || null);
-      } else  if (typeof ftRes === 'string') {
+      } else if (typeof ftRes === 'string') {
         updatedData.featured_resources = [ftRes];
       } else {
         updatedData.featured_resources = Object.values(ftRes);
@@ -68,7 +68,7 @@ export function EditTopic() {
 
   return (
     <div style={{ padding: '1em 0' }}>
-      {status.isError && (<ErrorMessage>Error... </ErrorMessage>)}
+      {status.isError && <ErrorMessage>Error... </ErrorMessage>}
       <CustomEditorTypes>
         <EditShorthandCaptureModel
           template={entityModel}

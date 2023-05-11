@@ -10,7 +10,9 @@ export function ListResourceTags() {
 
   return (
     <div>
+      {/*TODO*/}
       <Heading2>List resource tags</Heading2>
+      <p>{data?.count} total tags</p>
       <pre>{JSON.stringify(data, null, 2)}</pre>
     </div>
   );

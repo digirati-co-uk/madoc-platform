@@ -1,7 +1,7 @@
 import React from 'react';
-import { useTopic } from '../../../site/pages/loaders/topic-loader';
-import { Heading1, Subheading1 } from '../../../shared/typography/Heading1';
-import { LocaleString } from '../../../shared/components/LocaleString';
+import { useTopic } from '../../../../site/pages/loaders/topic-loader';
+import { Heading1, Subheading1 } from '../../../../shared/typography/Heading1';
+import { LocaleString } from '../../../../shared/components/LocaleString';
 import styled from 'styled-components';
 
 const TopicContainer = styled.div`

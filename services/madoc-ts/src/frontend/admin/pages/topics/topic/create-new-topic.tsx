@@ -1,15 +1,15 @@
 import { getValue } from '@iiif/vault-helpers';
 import React, { useMemo } from 'react';
 import { useMutation } from 'react-query';
-import { EditShorthandCaptureModel } from '../../../shared/capture-models/EditorShorthandCaptureModel';
-import { useApi } from '../../../shared/hooks/use-api';
-import { Button } from '../../../shared/navigation/Button';
-import { HrefLink } from '../../../shared/utility/href-link';
-import { useRouteContext } from '../../../site/hooks/use-route-context';
-import { useTopicType } from '../../../site/pages/loaders/topic-type-loader';
-import { CustomEditorTypes } from '../../../shared/page-blocks/custom-editor-types';
-import { entityModel } from '../../../../extensions/enrichment/models';
-import {ErrorMessage} from "../../../shared/capture-models/editor/atoms/Message";
+import { EditShorthandCaptureModel } from '../../../../shared/capture-models/EditorShorthandCaptureModel';
+import { useApi } from '../../../../shared/hooks/use-api';
+import { Button } from '../../../../shared/navigation/Button';
+import { HrefLink } from '../../../../shared/utility/href-link';
+import { useRouteContext } from '../../../../site/hooks/use-route-context';
+import { useTopicType } from '../../../../site/pages/loaders/topic-type-loader';
+import { CustomEditorTypes } from '../../../../shared/page-blocks/custom-editor-types';
+import { entityModel } from '../../../../../extensions/enrichment/models';
+import { ErrorMessage } from '../../../../shared/capture-models/editor/atoms/Message';
 
 export function CreateNewTopic() {
   const api = useApi();
@@ -61,7 +61,6 @@ export function CreateNewTopic() {
       input.type = input.type.label;
     }
 
-
     return {
       response: await api.enrichment.upsertTopic({ type_slug: input.type.toLowerCase(), ...input }),
       topicType: input.type_slug,
@@ -99,7 +98,7 @@ export function CreateNewTopic() {
 
   return (
     <div>
-      {status.isError && (<ErrorMessage>Error... </ErrorMessage>)}
+      {status.isError && <ErrorMessage>Error... </ErrorMessage>}
       <CustomEditorTypes>
         <EditShorthandCaptureModel
           template={model}

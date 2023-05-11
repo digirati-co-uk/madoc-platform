@@ -1,12 +1,12 @@
-import React, {useMemo, useState} from 'react';
-import {useMutation} from 'react-query';
-import {EditShorthandCaptureModel} from '../../../shared/capture-models/EditorShorthandCaptureModel';
-import {useApi} from '../../../shared/hooks/use-api';
-import {Button} from '../../../shared/navigation/Button';
-import {HrefLink} from '../../../shared/utility/href-link';
-import {CustomEditorTypes} from '../../../shared/page-blocks/custom-editor-types';
-import {entityTypeModel} from '../../../../extensions/enrichment/models';
-import {ErrorMessage} from "../../../shared/capture-models/editor/atoms/Message";
+import React, { useMemo, useState } from 'react';
+import { useMutation } from 'react-query';
+import { EditShorthandCaptureModel } from '../../../../shared/capture-models/EditorShorthandCaptureModel';
+import { useApi } from '../../../../shared/hooks/use-api';
+import { Button } from '../../../../shared/navigation/Button';
+import { HrefLink } from '../../../../shared/utility/href-link';
+import { CustomEditorTypes } from '../../../../shared/page-blocks/custom-editor-types';
+import { entityTypeModel } from '../../../../../extensions/enrichment/models';
+import { ErrorMessage } from '../../../../shared/capture-models/editor/atoms/Message';
 
 export function CreateNewTopicType() {
   const api = useApi();
@@ -29,17 +29,16 @@ export function CreateNewTopicType() {
     return api.enrichment.upsertTopicType(data);
   });
 
-    console.log(error)
-    const model = useMemo(() => {
-        const copy: any = {
-            ...entityTypeModel,
-        };
-        delete copy['featured_topics.slug'];
-        return copy;
-    }, []);
+  console.log(error);
+  const model = useMemo(() => {
+    const copy: any = {
+      ...entityTypeModel,
+    };
+    delete copy['featured_topics.slug'];
+    return copy;
+  }, []);
 
-
-    if (status.isError) {
+  if (status.isError) {
     return <div>Error...</div>;
   }
 
@@ -57,7 +56,7 @@ export function CreateNewTopicType() {
 
   return (
     <div>
-        {status.isError && (<ErrorMessage>Error... </ErrorMessage>)}
+      {status.isError && <ErrorMessage>Error... </ErrorMessage>}
       <CustomEditorTypes>
         <EditShorthandCaptureModel
           template={model}

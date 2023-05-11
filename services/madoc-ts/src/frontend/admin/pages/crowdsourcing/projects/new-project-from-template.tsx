@@ -48,7 +48,7 @@ export const NewProjectFromTemplate: React.FC = () => {
   const [saveProject, { status, data, isSuccess, reset }] = useMutation(async (config: CreateProject) => {
     try {
       return await api.createProject(config);
-    } catch (e) {
+    } catch (e:any) {
       return { error: e.message };
     }
   });

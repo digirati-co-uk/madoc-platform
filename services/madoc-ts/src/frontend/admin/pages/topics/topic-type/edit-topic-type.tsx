@@ -1,13 +1,13 @@
 import React, { useMemo } from 'react';
-import { useApi } from '../../../shared/hooks/use-api';
+import { useApi } from '../../../../shared/hooks/use-api';
 import { useMutation } from 'react-query';
-import { Button } from '../../../shared/navigation/Button';
-import { HrefLink } from '../../../shared/utility/href-link';
-import { CustomEditorTypes } from '../../../shared/page-blocks/custom-editor-types';
-import { EditShorthandCaptureModel } from '../../../shared/capture-models/EditorShorthandCaptureModel';
-import { useTopicType } from '../../../site/pages/loaders/topic-type-loader';
-import { entityTypeModel } from '../../../../extensions/enrichment/models';
-import {ErrorMessage} from "../../../shared/capture-models/editor/atoms/Message";
+import { Button } from '../../../../shared/navigation/Button';
+import { HrefLink } from '../../../../shared/utility/href-link';
+import { CustomEditorTypes } from '../../../../shared/page-blocks/custom-editor-types';
+import { EditShorthandCaptureModel } from '../../../../shared/capture-models/EditorShorthandCaptureModel';
+import { useTopicType } from '../../../../site/pages/loaders/topic-type-loader';
+import { entityTypeModel } from '../../../../../extensions/enrichment/models';
+import { ErrorMessage } from '../../../../shared/capture-models/editor/atoms/Message';
 
 export function EditTopicType() {
   const api = useApi();
@@ -70,7 +70,7 @@ export function EditTopicType() {
 
   return (
     <div>
-      {status.isError && (<ErrorMessage>Error... </ErrorMessage>)}
+      {status.isError && <ErrorMessage>Error... </ErrorMessage>}
       <CustomEditorTypes>
         <EditShorthandCaptureModel
           template={model}

@@ -1,7 +1,7 @@
 import React from 'react';
 import { FieldSpecification } from '../../../frontend/shared/capture-models/types/field-types';
 import { CanvasExplorer, CanvasExplorerProps } from './CanvasExplorer';
-import { CanvasExplorerPreview } from './CanvasExplorer.preview';
+import { CanvasExplorerPreview } from './CanvasExplorr.preview';
 
 declare module '../../../frontend/shared/capture-models/types/field-types' {
   export interface FieldTypeMap {

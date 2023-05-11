@@ -1,6 +1,6 @@
 import React from 'react';
 import { RouteObject } from 'react-router-dom';
-import { annotationStylesRoutes } from './pages/annotation-styles/index';
+import { annotationStylesRoutes } from './pages/annotation-styles';
 import { CanvasExport } from './pages/content/canvases/canvas-export';
 import { CanvasJson } from './pages/content/canvases/canvas-json';
 import { CanvasPlaintext } from './pages/content/canvases/canvas-plaintext';
@@ -105,7 +105,6 @@ import { DeleteProject } from './pages/crowdsourcing/projects/delete-project';
 import { ProjectExportTab } from './pages/crowdsourcing/projects/project-export';
 import { GenerateApiKey } from './pages/system/generate-api-key';
 import { CreateBot } from './pages/global/create-bot';
-import { authorityRoutes } from './pages/enrichment/authority';
 import { topicRoutes } from './pages/topics';
 
 export const routes: RouteObject[] = [
@@ -115,7 +114,6 @@ export const routes: RouteObject[] = [
   },
   // Aggregations.
   ...annotationStylesRoutes,
-  ...authorityRoutes,
   ...topicRoutes,
 
   // Manual routes.

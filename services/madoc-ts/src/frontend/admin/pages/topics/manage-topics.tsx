@@ -4,13 +4,13 @@ import { Outlet } from 'react-router-dom';
 import { WidePage } from '../../../shared/layout/WidePage';
 import { AdminHeader } from '../../molecules/AdminHeader';
 
-export function ManageTopicTypes() {
+export function ManageTopics() {
   const { t } = useTranslation();
 
   return (
     <>
       <AdminHeader
-        title={t('All Topic Types')}
+        title={t('All Topics')}
         breadcrumbs={[
           {
             label: t('Topics'),
@@ -20,12 +20,12 @@ export function ManageTopicTypes() {
         subtitle={t('')}
         menu={[
           {
-            label: t('All Types'),
-            link: `/topics/types`,
+            label: t('All Topics'),
+            link: `/topics/all`,
           },
           {
             label: t('Create new'),
-            link: `/topics/types/_/create-type`,
+            link: `/topics/all/_/create-topic`,
           },
         ]}
       />

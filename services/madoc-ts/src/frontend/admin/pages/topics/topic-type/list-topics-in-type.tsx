@@ -1,11 +1,11 @@
 import React from 'react';
-import { LocaleString } from '../../../shared/components/LocaleString';
-import { Heading1 } from '../../../shared/typography/Heading1';
-import { HrefLink } from '../../../shared/utility/href-link';
-import { useRelativeLinks } from '../../../site/hooks/use-relative-links';
-import { useTopicType } from '../../../site/pages/loaders/topic-type-loader';
-import { TopicSnippetCard } from '../../../shared/components/TopicSnippet';
-import { Heading3, Subheading3 } from '../../../shared/typography/Heading3';
+import { LocaleString } from '../../../../shared/components/LocaleString';
+import { Heading1 } from '../../../../shared/typography/Heading1';
+import { HrefLink } from '../../../../shared/utility/href-link';
+import { useRelativeLinks } from '../../../../site/hooks/use-relative-links';
+import { useTopicType } from '../../../../site/pages/loaders/topic-type-loader';
+import { TopicSnippetCard } from '../../../../shared/components/TopicSnippet';
+import { Heading3, Subheading3 } from '../../../../shared/typography/Heading3';
 import styled from 'styled-components';
 
 const TopicTypeContainer = styled.div`

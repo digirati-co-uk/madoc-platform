@@ -1,11 +1,11 @@
 import React from 'react';
 import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
-import { WarningMessage } from '../../../shared/callouts/WarningMessage';
-import { useApi } from '../../../shared/hooks/use-api';
-import { Button, ButtonRow } from '../../../shared/navigation/Button';
-import { useRouteContext } from '../../../shared/plugins/public-api';
-import { useTopic } from '../../../site/pages/loaders/topic-loader';
+import { WarningMessage } from '../../../../shared/callouts/WarningMessage';
+import { useApi } from '../../../../shared/hooks/use-api';
+import { Button, ButtonRow } from '../../../../shared/navigation/Button';
+import { useRouteContext } from '../../../../shared/plugins/public-api';
+import { useTopic } from '../../../../site/pages/loaders/topic-loader';
 
 export function DeleteTopic() {
   const api = useApi();
