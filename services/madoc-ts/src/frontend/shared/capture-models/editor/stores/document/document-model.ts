@@ -30,6 +30,7 @@ export type DocumentModel = {
   setSelector: Action<DocumentModel, { selector: BaseSelector | undefined }>;
   setSelectorState: Action<DocumentModel, { selectorType: string; selector: BaseSelector['state'] }>;
   setAllowMultiple: Action<DocumentModel, boolean>;
+  setRequired: Action<DocumentModel, boolean>;
   setLabelledBy: Action<DocumentModel, string>;
   setPluralLabel: Action<DocumentModel, string>;
 

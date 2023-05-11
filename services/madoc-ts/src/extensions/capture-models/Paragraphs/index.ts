@@ -18,6 +18,7 @@ const specification: FieldSpecification<ParagraphsProps> = {
   Component: Paragraphs,
   defaultValue: '',
   allowMultiple: true,
+  required: false,
   defaultProps: {},
   Editor: React.lazy(() => import(/* webpackChunkName: "field-editors" */ './Paragraphs.editor')),
   TextPreview: ParagraphsPreview,

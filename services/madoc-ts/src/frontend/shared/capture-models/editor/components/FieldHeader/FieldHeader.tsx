@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components';
 import { useModelTranslation } from '../../../hooks/use-model-translation';
 import { Tag } from '../../atoms/Tag';
 import { useTranslation } from 'react-i18next';
-import { useSelectorController, useSelectorHelper } from '../../stores/selectors/selector-helper';
+import { useSelectorHelper } from '../../stores/selectors/selector-helper';
 
 type FieldHeaderProps = {
   labelFor?: string;
@@ -16,6 +16,7 @@ type FieldHeaderProps = {
   selectorComponent?: any;
   onSelectorClose?: () => void;
   onSelectorOpen?: () => void;
+  required?: boolean;
 };
 
 export const FieldHeaderWrapper = styled.div`
@@ -68,6 +69,15 @@ const FieldHeaderIcon = styled.div<{ open?: boolean }>`
   &:hover {
     background: #eee;
   }
+
+  &[data-is-required='true'] {
+    :after {
+      content: '*';
+    }
+  }
+  &[data-is-invalid='true'] {
+    color: #de1010;
+  }
   ${props =>
     props.open
       ? css`
@@ -105,11 +115,16 @@ export const FieldHeader: React.FC<FieldHeaderProps> = ({
   onSelectorOpen,
   selectorLabel,
   selectorId,
+  required,
 }) => {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const helper = useSelectorHelper();
   const { t: tModel, i18n } = useModelTranslation();
+
+  const isSelectorRequired = selectorComponent && selectorComponent.props?.required;
+  const isSelectorValue = selectorComponent && selectorComponent.props.state;
+  const isSelectorInvalid = isSelectorRequired && !isSelectorValue;
 
   const toggleSelector = useCallback(() => {
     if (open) {
@@ -132,6 +147,7 @@ export const FieldHeader: React.FC<FieldHeaderProps> = ({
           <FieldHeaderTitle htmlFor={labelFor}>
             {tModel(label) || <span style={{ opacity: 0.5 }}>{t('Untitled')}</span>}{' '}
             {showTerm && term ? <Tag size="tiny">{term}</Tag> : null}
+            {required ? <span>*</span> : null}
           </FieldHeaderTitle>
           {description ? <FieldHeaderSubtitle htmlFor={labelFor}>{tModel(description)}</FieldHeaderSubtitle> : null}
         </FieldHeaderLeft>
@@ -141,7 +157,9 @@ export const FieldHeader: React.FC<FieldHeaderProps> = ({
             onMouseEnter={() => (selectorId ? helper.highlight(selectorId) : null)}
             onMouseLeave={() => (selectorId ? helper.clearHighlight(selectorId) : null)}
           >
-            <FieldHeaderIcon open={open}>{selectorLabel || t('Define region')}</FieldHeaderIcon>
+            <FieldHeaderIcon data-is-required={isSelectorRequired} data-is-invalid={isSelectorInvalid} open={open}>
+              {selectorLabel || t('Define region')}
+            </FieldHeaderIcon>
           </FieldHeaderRight>
         ) : null}
       </FieldHeaderTop>

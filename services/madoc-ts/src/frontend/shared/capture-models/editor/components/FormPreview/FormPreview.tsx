@@ -18,10 +18,13 @@ export const FormPreview: React.FC<{
 
   // const [field] = useField(values, value, setValue);
 
+  const displayValues = { ...values}
+  displayValues.required = false;
+
   return (
     <>
       <FieldWrapper
-        field={{ ...(mapValues && values ? mapValues(values) : values), value, type }}
+        field={{ ...(mapValues && displayValues ? mapValues(displayValues) : displayValues), value, type }}
         term={term}
         onUpdateValue={setValue}
       />
