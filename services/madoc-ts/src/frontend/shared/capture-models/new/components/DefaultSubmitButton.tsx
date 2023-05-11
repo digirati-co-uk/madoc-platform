@@ -109,7 +109,9 @@ export const DefaultSubmitButton: EditorRenderingConfig['SubmitButton'] = ({ aft
             );
           }}
         >
-          <Button $primary>{t('Submit')}</Button>
+          <Button disabled={!canSubmit} $primary>
+            {t('Submit')}
+          </Button>
         </ModalButton>
       </ButtonRow>
     </div>

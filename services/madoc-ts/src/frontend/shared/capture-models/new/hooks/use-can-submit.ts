@@ -16,13 +16,17 @@ export function useCanSubmit() {
   // 1. Find the top-level we are editing - unrolled entity/model root
   // 2. Create a list of selectors
   // 3. Make sure they are all valid.
+  // 4. Make sure fields and selectors that are required have a value
   if (revisionDocument) {
     for (const property of properties) {
       const fieldOrEntity = revisionDocument.properties[property];
       if (fieldOrEntity && fieldOrEntity.length) {
         for (const singleFieldOrEntity of fieldOrEntity) {
           if (singleFieldOrEntity.required) {
-            requiredFieldsToValidate.push(singleFieldOrEntity)
+            requiredFieldsToValidate.push(singleFieldOrEntity);
+            if (singleFieldOrEntity.selector) {
+              selectorsToValidate.push(singleFieldOrEntity.selector);
+            }
           }
           if (singleFieldOrEntity.selector) {
             selectorsToValidate.push(singleFieldOrEntity.selector);

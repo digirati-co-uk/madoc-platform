@@ -49,9 +49,9 @@ export const inputCss = css`
     cursor: not-allowed;
   }
 
-  &:not(:valid) &:not(:focus) {
-    border: 1px solid #de1010;
-  }
+  //&:not(:valid)&:not(:focus) {
+  //  border: 1px solid #de1010;
+  //}
 `;
 
 const _StyledCheckbox = styled.input`
