@@ -16,7 +16,8 @@ export const DefaultFieldInstance: React.FC<{
   const [isHighlighted, setIsHighlighted] = useState(false);
   const { immutableFields = [] } = useSlotConfiguration();
   const immutable = immutableFields.indexOf(property) !== -1;
-  const [selector, { isBlockingForm: disableForm }] = useResolvedSelector(field);
+  const [selector, { isBlockingForm }] = useResolvedSelector(field);
+  const disableForm = isBlockingForm;
 
   useEffect(() => {
     if (selector) {
