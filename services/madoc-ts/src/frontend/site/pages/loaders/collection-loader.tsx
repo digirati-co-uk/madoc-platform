@@ -39,13 +39,13 @@ export const CollectionLoader: UniversalComponent<CollectionLoaderType> = create
   CollectionLoaderType
 >(
   () => {
-    const { resolvedData: data } = usePaginatedData(CollectionLoader, [], {
+    const { resolvedData: data, status } = usePaginatedData(CollectionLoader, [], {
       cacheTime: 3600,
     });
 
     const ctx = useMemo(() => (data ? { id: data.collection.id, name: data.collection.label } : undefined), [data]);
 
-    if (!data || data.collection.source === 'not-found') {
+    if (data?.collection.source === 'not-found' || status === 'error') {
       return (
         <AutoSlotLoader>
           <BreadcrumbContext collection={ctx}>

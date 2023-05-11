@@ -38,12 +38,8 @@ export const siteCanvas: RouteMiddleware<{ slug: string; id: string }> = async c
         if (plaintext && plaintext.found) {
           context.response.body.plaintext = plaintext.transcription;
         }
-      } catch (err: any) {
-        if (err.status === 404) {
-          context.response.body = backUpBody;
-          context.response.status = 200;
-        }
-        console.log(err);
+      } catch (err) {
+        // no op
       }
     }
   } catch (err: any) {
