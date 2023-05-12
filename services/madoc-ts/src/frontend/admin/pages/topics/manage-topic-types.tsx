@@ -16,6 +16,11 @@ export function ManageTopicTypes() {
             label: t('Topics'),
             link: `/topics`,
           },
+          {
+            label: t('All Types'),
+            link: `/topics/types`,
+            active: true,
+          },
         ]}
         subtitle={t('')}
         menu={[

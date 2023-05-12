@@ -30,6 +30,10 @@ export function ManageType() {
             link: `/topics`,
           },
           {
+            label: t('All Types'),
+            link: `/topics/types`,
+          },
+          {
             label: label,
             link: `/topics/${topicType}`,
             active: true,

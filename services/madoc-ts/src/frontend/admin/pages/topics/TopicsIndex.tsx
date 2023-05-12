@@ -37,9 +37,6 @@ export const TopicsIndex: React.FC = () => {
       <HrefLink href={`/topics/all`} style={{ textDecoration: 'none' }}>
         <RoundedCard label="View all topics" interactive />
       </HrefLink>
-      <HrefLink href={`/topics/resource-tags`} style={{ textDecoration: 'none' }}>
-        <RoundedCard label="view all resource tags" interactive />
-      </HrefLink>
       <HrefLink href={`/topics/_/create-type`} style={{ textDecoration: 'none' }}>
         <RoundedCard label="Create a topic type" interactive />
       </HrefLink>

@@ -12,7 +12,6 @@ import { createUniversalComponent } from '../../../../shared/utility/create-univ
 import { useApiManifest } from '../../../../shared/hooks/use-api-manifest';
 import { AdminHeader } from '../../../molecules/AdminHeader';
 import { WidePage } from '../../../../shared/layout/WidePage';
-import { ManifestFull } from '../../../../../types/schemas/manifest-full';
 
 type CanvasViewType = {
   data: CanvasFull;

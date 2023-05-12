@@ -7,9 +7,12 @@ import { HrefLink } from '../../../../shared/utility/href-link';
 import { CustomEditorTypes } from '../../../../shared/page-blocks/custom-editor-types';
 import { entityTypeModel } from '../../../../../extensions/enrichment/models';
 import { ErrorMessage } from '../../../../shared/capture-models/editor/atoms/Message';
+import { Heading2 } from '../../../../shared/typography/Heading2';
+import { useTranslation } from 'react-i18next';
 
 export function CreateNewTopicType() {
   const api = useApi();
+  const { t } = useTranslation();
   const [error, setError] = useState('');
   const [createNewEntityType, status] = useMutation(async (data: any) => {
     if (!data) return;
@@ -56,6 +59,7 @@ export function CreateNewTopicType() {
 
   return (
     <div>
+      <Heading2>{t('Create new Topic Type')}</Heading2>
       {status.isError && <ErrorMessage>Error... </ErrorMessage>}
       <CustomEditorTypes>
         <EditShorthandCaptureModel

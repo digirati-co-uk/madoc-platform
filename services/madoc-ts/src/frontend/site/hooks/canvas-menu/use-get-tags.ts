@@ -8,7 +8,10 @@ export interface ResourceTags {
 
 export function useGetResourceTags(): ResourceTags[] {
   const { data } = useEnrichmentResource();
-  const initTags = data && data.entity_tags ? data?.entity_tags : [];
+  return ParseResourceTags(data?.entity_tags);
+}
+export function ParseResourceTags(tags: EntityTagSnippet[] | undefined): ResourceTags[] {
+  const initTags = tags ? tags : [];
 
   const tagTypes = initTags.reduce((tag, elem) => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment

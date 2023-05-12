@@ -20,7 +20,13 @@ import { EditTopicType } from './topic-type/edit-topic-type';
 import { ListTopicsInType } from './topic-type/list-topics-in-type';
 import { ListAllTopics } from './topic/list-all-topics';
 
-import { ListResourceTags } from './tags/list-resource-tags';
+import { CanvasDetails } from '../content/canvases/canvas-details';
+import { ManifestCanvases } from '../content/manifests/manifest-canvases';
+
+import { TopicManifestView } from './tags/TopicManifestView';
+import { ListManifestTags } from './tags/ListManifestTags';
+import { TopicCanvasView } from './tags/TopicCanvasview';
+import { ListCanvasTags } from './tags/ListCanvasTags';
 
 export const topicRoutes = [
   {
@@ -31,10 +37,6 @@ export const topicRoutes = [
         path: '/topics',
         index: true,
         element: <TopicsIndex />,
-      },
-      {
-        path: '/topics/resource-tags',
-        element: <ListResourceTags />,
       },
       {
         path: '/topics/_/create-type',
@@ -118,8 +120,8 @@ export const topicRoutes = [
       },
       {
         path: '/topics/:topicType/:topic/items',
-        index: true,
         element: <ListTopicResources />,
+        index: true,
       },
       {
         path: '/topics/:topicType/:topic/_/edit',
@@ -133,8 +135,39 @@ export const topicRoutes = [
       },
     ],
   },
+  {
+    path: '/topics/:topicType/:topic/manifests/:id',
+    element: <TopicManifestView />,
+    children: [
+      {
+        path: '/topics/:topicType/:topic/manifests/:id',
+        index: true,
+        element: <ManifestCanvases />,
+      },
+      {
+        path: '/topics/:topicType/:topic/manifests/:id/tags',
+        index: true,
+        element: <ListManifestTags />,
+      },
+    ],
+  },
+  {
+    path: '/topics/:topicType/:topic/manifests/:manifestId/canvases/:id',
+    element: <TopicCanvasView />,
+    children: [
+      {
+        path: '/topics/:topicType/:topic/manifests/:manifestId/canvases/:id',
+        index: true,
+        element: <CanvasDetails />,
+      },
+      {
+        path: '/topics/:topicType/:topic/manifests/:manifestId/canvases/:id/tags',
+        index: true,
+        element: <ListCanvasTags />,
+      },
+    ],
+  },
 ];
-//Todo view tags in topic
 
 export function TopicsWrapper() {
   return <Outlet />;

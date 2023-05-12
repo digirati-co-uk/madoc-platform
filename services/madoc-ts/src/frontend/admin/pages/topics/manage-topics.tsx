@@ -16,6 +16,11 @@ export function ManageTopics() {
             label: t('Topics'),
             link: `/topics`,
           },
+          {
+            label: t('All topics '),
+            link: `/topics/all`,
+            active: true,
+          },
         ]}
         subtitle={t('')}
         menu={[

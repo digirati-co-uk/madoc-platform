@@ -6,11 +6,15 @@ import { useTopicItems } from '../../../../shared/hooks/use-topic-items';
 import { EmptyState } from '../../../../shared/layout/EmptyState';
 
 import { useParams } from 'react-router-dom';
+import { useTopic } from '../../../../site/pages/loaders/topic-loader';
+import { Subheading } from '@storybook/addon-docs';
+import { Heading2 } from '../../../../shared/typography/Heading2';
 
 export function ListTopicResources() {
-  const { topic } = useParams<Record<'topic', any>>();
-  const { topicType } = useParams<Record<'topicType', any>>();
-  const [{ data, isLoading, latestData }, { query, page }] = useTopicItems(topic, topicType);
+  // const { topic } = useParams<Record<'topic', any>>();
+  // const { topicType } = useParams<Record<'topicType', any>>();
+  const { data: topic } = useTopic();
+  const [{ data, isLoading, latestData }, { query, page }] = useTopicItems(topic?.id);
 
   if (data?.pagination.totalResults === 0) {
     return <EmptyState>Nothing tagged yet</EmptyState>;
@@ -18,7 +22,7 @@ export function ListTopicResources() {
 
   return (
     <div>
-      Items : {data?.pagination.totalResults}
+      <p>Items : {data?.pagination.totalResults}</p>
       <Pagination
         page={page}
         totalPages={latestData && latestData.pagination ? latestData.pagination.totalPages : undefined}
@@ -32,7 +36,6 @@ export function ListTopicResources() {
         stale={isLoading}
         extraQuery={query}
       />
-      <pre>{JSON.stringify(data, null, 2)}</pre>
     </div>
   );
 }

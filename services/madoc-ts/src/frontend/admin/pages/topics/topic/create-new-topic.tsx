@@ -10,9 +10,12 @@ import { useTopicType } from '../../../../site/pages/loaders/topic-type-loader';
 import { CustomEditorTypes } from '../../../../shared/page-blocks/custom-editor-types';
 import { entityModel } from '../../../../../extensions/enrichment/models';
 import { ErrorMessage } from '../../../../shared/capture-models/editor/atoms/Message';
+import { Heading2 } from '../../../../shared/typography/Heading2';
+import { useTranslation } from 'react-i18next';
 
 export function CreateNewTopic() {
   const api = useApi();
+  const { t } = useTranslation();
   const { topicType } = useRouteContext();
   const { data, isLoading } = useTopicType();
   const hasTopic = data || isLoading;
@@ -98,6 +101,7 @@ export function CreateNewTopic() {
 
   return (
     <div>
+      <Heading2>{t('Create new Topic')}</Heading2>
       {status.isError && <ErrorMessage>Error... </ErrorMessage>}
       <CustomEditorTypes>
         <EditShorthandCaptureModel

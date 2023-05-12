@@ -27,7 +27,7 @@ export function useSearch() {
 
   useEffect(() => {
     if (topicId) {
-      clearAllFacets();
+      // clearAllFacets();
       appliedFacets.push({ k: 'entity', v: topicId });
     }
     return;
@@ -62,9 +62,9 @@ export function useSearch() {
           group_id: facet.v,
         }
       : {
-          type: 'entity',
+          type: 'metadata',
           subtype: facet.k,
-          indexable_text: facet.v,
+          value: facet.v,
         }
   );
 
@@ -74,6 +74,7 @@ export function useSearch() {
     value: facet.v,
   }));
 
+  console.log(topic);
   const facets = topic ? topicFacets : searchQFacets;
 
   const searchResults = paginatedApiHooks.getSiteSearchQuery(
@@ -99,7 +100,14 @@ export function useSearch() {
     {
       enabled:
         !searchFacetConfig.isLoading &&
-        (!!facetsToRequest.length || !!fulltext || fulltext === '' || !!rscType || collectionId || manifestId || projectId || topicId),
+        (!!facetsToRequest.length ||
+          !!fulltext ||
+          fulltext === '' ||
+          !!rscType ||
+          collectionId ||
+          manifestId ||
+          projectId ||
+          topicId),
     }
   );
 

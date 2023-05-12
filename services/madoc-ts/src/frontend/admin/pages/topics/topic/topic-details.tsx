@@ -11,7 +11,7 @@ const TopicContainer = styled.div`
 const TopicImage = styled.div`
   position: relative;
   width: 100vw;
-  height: 100vh;
+  height: 50vh;
   overflow: hidden;
 
   img {
@@ -43,7 +43,7 @@ export function TopicDetails() {
   const { data } = useTopic();
 
   if (!data) {
-    return null
+    return null;
   }
   return (
     <>
@@ -79,7 +79,6 @@ export function TopicDetails() {
           </Details>
         </TopicImage>
       </TopicContainer>
-      <pre>{JSON.stringify(data, null, 2)}</pre>
     </>
   );
 }
