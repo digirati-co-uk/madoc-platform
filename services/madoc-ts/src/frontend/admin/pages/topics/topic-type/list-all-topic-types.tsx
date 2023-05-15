@@ -20,7 +20,7 @@ export function ListAllTopicTypes() {
           key={topicType.id}
           label={<LocaleString>{topicType.title}</LocaleString>}
           link={topicType.slug}
-          buttonText={t('View Topic Type')}
+          buttonText={t('View Topic type')}
           subtitle={`${topicType.count} ${t('topics')}`}
           thumbnail={topicType.image_url}
           margin

@@ -59,7 +59,7 @@ export function CreateNewTopicType() {
 
   return (
     <div>
-      <Heading2>{t('Create new Topic Type')}</Heading2>
+      <Heading2>{t('Create new Topic type')}</Heading2>
       {status.isError && <ErrorMessage>{t('Error...')} </ErrorMessage>}
       <CustomEditorTypes>
         <EditShorthandCaptureModel

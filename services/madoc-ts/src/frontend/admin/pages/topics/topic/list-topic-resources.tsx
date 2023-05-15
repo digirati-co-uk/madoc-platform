@@ -32,7 +32,7 @@ export function ListTopicResources() {
         <TableRow key={item.resource_id}>
           <CroppedImage data-size={'tiny'}>
             {item.madoc_thumbnail ? (
-              <img alt={`${t('thumbnail for ')} ${item.type}`} src={item.madoc_thumbnail} />
+              <img alt={`${t('thumbnail for')} ${item.type}`} src={item.madoc_thumbnail} />
             ) : null}
           </CroppedImage>
           <TableRowLabel>

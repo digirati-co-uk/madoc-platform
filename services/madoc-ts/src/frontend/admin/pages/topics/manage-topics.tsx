@@ -17,7 +17,7 @@ export function ManageTopics() {
             link: `/topics`,
           },
           {
-            label: t('All topics '),
+            label: t('All topics'),
             link: `/topics/all`,
             active: true,
           },

@@ -11,14 +11,14 @@ export const TopicIndexWrapper: React.FC = () => {
   return (
     <>
       <AdminHeader
-        title={t('Manage Topics')}
+        title={t('Manage topics')}
         breadcrumbs={[
           {
             label: t('Topics'),
             link: `/topics`,
           },
         ]}
-        subtitle={t('Manage and view topic types, topics and resource-tags')}
+        subtitle={t('Manage and view topic types, topics and resource tags')}
       />
       <WidePage>
         <Outlet />
