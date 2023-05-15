@@ -32,16 +32,16 @@ export const TopicsIndex: React.FC = () => {
   return (
     <div style={{ maxWidth: 600 }}>
       <HrefLink href={`/topics/types`} style={{ textDecoration: 'none' }}>
-        <RoundedCard label="View all topic types" interactive />
+        <RoundedCard label={t('View all topic types')} interactive />
       </HrefLink>
       <HrefLink href={`/topics/all`} style={{ textDecoration: 'none' }}>
-        <RoundedCard label="View all topics" interactive />
+        <RoundedCard label={t('View all topics')} interactive />
       </HrefLink>
       <HrefLink href={`/topics/_/create-type`} style={{ textDecoration: 'none' }}>
-        <RoundedCard label="Create a topic type" interactive />
+        <RoundedCard label={t('Create a topic type')} interactive />
       </HrefLink>
       <HrefLink href={`/topics/_/create-topic`} style={{ textDecoration: 'none' }}>
-        <RoundedCard label="Create a topic" interactive />
+        <RoundedCard label={t('Create a topic')} interactive />
       </HrefLink>
     </div>
   );

@@ -84,11 +84,11 @@ export function CreateNewTopic() {
   if (status.isSuccess) {
     return (
       <div>
-        Added!
+        {t('Added!')}
         <pre>{JSON.stringify(status.data?.response)}</pre>
         {status.data ? (
           <Button $primary as={HrefLink} href={`/topics/${status.data.topicType}/${status.data.response.label}`}>
-            Go to topic
+            {t('Go to topic')}
           </Button>
         ) : null}
       </div>
@@ -96,13 +96,13 @@ export function CreateNewTopic() {
   }
 
   if (isLoading) {
-    return <div>loading...</div>;
+    return <div>{t('loading...')}</div>;
   }
 
   return (
     <div>
       <Heading2>{t('Create new Topic')}</Heading2>
-      {status.isError && <ErrorMessage>Error... </ErrorMessage>}
+      {status.isError && <ErrorMessage>{t('Error...')}</ErrorMessage>}
       <CustomEditorTypes>
         <EditShorthandCaptureModel
           template={model}

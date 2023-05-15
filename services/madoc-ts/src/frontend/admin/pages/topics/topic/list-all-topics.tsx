@@ -12,7 +12,9 @@ export function ListAllTopics() {
 
   return (
     <>
-      <p>{data?.pagination.totalResults} total topics</p>
+      <p>
+        {data?.pagination.totalResults} {t('total topics')}
+      </p>
       <>
         {data?.results.map(topic => (
           <SnippetLarge
@@ -21,7 +23,7 @@ export function ListAllTopics() {
             link={`${topic.type_slug}/${topic.slug}`}
             buttonText={t('View Topic')}
             hideButton={!topic.type}
-            subtitle={`${topic.tagged_resource_count} resources tagged`}
+            subtitle={`${topic.tagged_resource_count} ${t('resources tagged')}`}
             thumbnail={topic.other_data.thumbnail.url}
             margin
             fluid

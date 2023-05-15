@@ -8,10 +8,12 @@ import { EditShorthandCaptureModel } from '../../../../shared/capture-models/Edi
 import { useTopicType } from '../../../../site/pages/loaders/topic-type-loader';
 import { entityTypeModel } from '../../../../../extensions/enrichment/models';
 import { ErrorMessage } from '../../../../shared/capture-models/editor/atoms/Message';
+import { useTranslation } from 'react-i18next';
 
 export function EditTopicType() {
   const api = useApi();
   const { data, refetch } = useTopicType();
+  const { t } = useTranslation();
 
   const [createNewEntityType, status] = useMutation(async (updatedData: any) => {
     if (!data) return;
@@ -53,16 +55,16 @@ export function EditTopicType() {
   }, []);
 
   if (!data) {
-    return <div>Loading...</div>;
+    return <div>{t('Loading...')}</div>;
   }
 
   if (status.isSuccess && status.data) {
     return (
       <div>
-        Updated
+        {t('Updated')}
         <pre>{JSON.stringify(status.data, null, 2)}</pre>
         <Button $primary as={HrefLink} href={`/topics/${status.data.slug}`}>
-          Go to topic type
+          {t('Go to topic type')}
         </Button>
       </div>
     );
@@ -70,7 +72,7 @@ export function EditTopicType() {
 
   return (
     <div>
-      {status.isError && <ErrorMessage>Error... </ErrorMessage>}
+      {status.isError && <ErrorMessage>{t('Error...')} </ErrorMessage>}
       <CustomEditorTypes>
         <EditShorthandCaptureModel
           template={model}

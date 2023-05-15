@@ -12,14 +12,16 @@ export function ListAllTopicTypes() {
   // for count and thumbnail
   return (
     <>
-      <p>{data?.pagination.totalResults} total topic types</p>
+      <p>
+        {data?.pagination.totalResults} {t('total topic types')}
+      </p>
       {data?.topicTypes.map(topicType => (
         <SnippetLarge
           key={topicType.id}
           label={<LocaleString>{topicType.title}</LocaleString>}
           link={topicType.slug}
           buttonText={t('View Topic Type')}
-          subtitle={`${topicType.count} topics`}
+          subtitle={`${topicType.count} ${t('topics')}`}
           thumbnail={topicType.image_url}
           margin
         />

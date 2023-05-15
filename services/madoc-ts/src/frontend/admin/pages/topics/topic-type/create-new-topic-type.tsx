@@ -42,16 +42,16 @@ export function CreateNewTopicType() {
   }, []);
 
   if (status.isError) {
-    return <div>Error...</div>;
+    return <div>{t('Error...')}</div>;
   }
 
   if (status.isSuccess) {
     return (
       <div>
-        Added!
+        {t('Added!')}
         <pre>{JSON.stringify(status.data, null, 2)}</pre>
         <Button $primary as={HrefLink} href={`/topics/${status.data?.label}`}>
-          Go to topic type
+          {t('Go to topic type')}
         </Button>
       </div>
     );
@@ -60,7 +60,7 @@ export function CreateNewTopicType() {
   return (
     <div>
       <Heading2>{t('Create new Topic Type')}</Heading2>
-      {status.isError && <ErrorMessage>Error... </ErrorMessage>}
+      {status.isError && <ErrorMessage>{t('Error...')} </ErrorMessage>}
       <CustomEditorTypes>
         <EditShorthandCaptureModel
           template={model}

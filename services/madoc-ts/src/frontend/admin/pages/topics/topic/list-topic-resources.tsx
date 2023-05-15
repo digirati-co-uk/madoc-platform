@@ -21,11 +21,13 @@ export function ListTopicResources() {
   };
 
   if (data?.pagination.totalResults === 0) {
-    return <EmptyState>Nothing tagged yet</EmptyState>;
+    return <EmptyState>{t('Nothing tagged yet')}</EmptyState>;
   }
   return (
     <div>
-      <p>Items : {data?.pagination.totalResults}</p>
+      <p>
+        {t('Items')} : {data?.pagination.totalResults}
+      </p>
       {data?.results.map((item: any) => (
         <TableRow key={item.resource_id}>
           <CroppedImage data-size={'tiny'}>
