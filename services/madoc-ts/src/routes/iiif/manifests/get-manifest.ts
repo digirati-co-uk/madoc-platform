@@ -46,7 +46,8 @@ export const getManifest: RouteMiddleware<{ id: string }> = async context => {
 
   const manifest = table.manifests[`${manifestId}`] || {
     id: manifestId,
-    label: { none: ['Untitled manifest'] },
+    label: { none: ['Manifest not found'] },
+    source: 'not-found',
   };
   const canvasIds = table.manifest_to_canvas[`${manifestId}`] || [];
   manifest.items = canvasIds.map((id: number) => table.canvases[id]);

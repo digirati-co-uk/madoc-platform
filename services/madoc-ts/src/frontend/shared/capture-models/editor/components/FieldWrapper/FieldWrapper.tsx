@@ -1,12 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { BrowserComponent } from '../../../../utility/browser-component';
-import { useModelTranslation } from '../../../hooks/use-model-translation';
 import { useField } from '../../../plugin-api/hooks/use-field';
 import { useSelectorStatus } from '../../../plugin-api/hooks/use-selector-status';
 import { BaseField } from '../../../types/field-types';
 import { BaseSelector } from '../../../types/selector-types';
 import { FieldHeader } from '../FieldHeader/FieldHeader';
-import { FieldSet } from '../../../../form/FieldSet';
 
 type Props<T extends BaseField = BaseField> = {
   field: T;
@@ -22,6 +20,7 @@ type Props<T extends BaseField = BaseField> = {
   clearSelector?: () => void;
   selectorPreview?: any;
   disabled?: boolean;
+  required?: boolean;
   selectorLabel?: string;
 
   // @todo other things for the selector.
@@ -49,7 +48,6 @@ export const FieldWrapper: React.FC<Props> = ({
   disabled,
 }) => {
   const [value, setValue] = useState(field.value);
-
   const updateValue = useCallback(
     newValue => {
       setValue(newValue);
@@ -84,6 +82,7 @@ export const FieldWrapper: React.FC<Props> = ({
       <div style={{ marginBottom: '1em' }}>
         {hideHeader ? null : (
           <FieldHeader
+            required={field.required}
             selectorLabel={selectorLabel}
             labelFor={field.id}
             label={field.label}
@@ -102,6 +101,7 @@ export const FieldWrapper: React.FC<Props> = ({
         )}
         {fieldComponent || ''}
       </div>
+      {field.required || selector?.required ? <small>* required</small> : null}
     </BrowserComponent>
   );
 };

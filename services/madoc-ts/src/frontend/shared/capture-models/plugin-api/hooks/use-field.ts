@@ -6,7 +6,7 @@ export function useField<Props extends BaseField>(
   props: Props,
   value: Props['value'],
   updateValue: (b: Props['value']) => void,
-  options: { disabled?: boolean } = {}
+  options: { disabled?: boolean; required?: boolean } = {}
 ) {
   const field = useFieldPlugin(props.type);
 

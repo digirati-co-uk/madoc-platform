@@ -16,6 +16,7 @@ const specification: FieldSpecification<CheckboxListFieldProps> = {
   label: 'Checkbox list field',
   defaultProps: {},
   allowMultiple: true,
+  required: false,
   TextPreview: CheckboxListFieldPreview,
   description: 'List of checkboxes',
   Component: CheckboxFieldList,
