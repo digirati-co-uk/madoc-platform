@@ -72,9 +72,9 @@ export function ListManifestTags() {
         )}
       </Accordion>
       {!ResourceTags || !ResourceTags.length ? (
-        <Subheading1> This resource is not tagged with any topics</Subheading1>
+        <Subheading1>{t('This resource is not tagged with any topics')}</Subheading1>
       ) : (
-        <Subheading1>This manifest is tagged with:</Subheading1>
+        <Subheading1>{t('This manifest is tagged with')}:</Subheading1>
       )}
       <TableContainer>
         {ResourceTags.map(tagType => (
@@ -96,7 +96,7 @@ export function ListManifestTags() {
                       {removeTagStatus.isLoading ? (
                         <Spinner />
                       ) : (
-                        <SmallButton onClick={() => removeTag(tag.tag_id)}>Remove</SmallButton>
+                        <SmallButton onClick={() => removeTag(tag.tag_id)}>{t('Remove')}</SmallButton>
                       )}
                     </TableActions>
                   </>

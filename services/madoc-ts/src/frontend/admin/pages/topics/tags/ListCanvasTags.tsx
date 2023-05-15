@@ -52,7 +52,7 @@ export function ListCanvasTags() {
 
   return (
     <div>
-      {removeTagStatus.isError || createTagStatus.isError || (isError && <ErrorMessage> Error </ErrorMessage>)}
+      {removeTagStatus.isError || createTagStatus.isError || (isError && <ErrorMessage>{t('Error...')}</ErrorMessage>)}
       <Accordion title={t('Add New Tag')} defaultOpen={false}>
         {createTagStatus.isLoading ? (
           <Spinner />
@@ -72,9 +72,9 @@ export function ListCanvasTags() {
         )}
       </Accordion>
       {!ResourceTags || !ResourceTags.length ? (
-        <Subheading1> This resource is not tagged with any topics</Subheading1>
+        <Subheading1>{t('This resource is not tagged with any topics')}</Subheading1>
       ) : (
-        <Subheading1>This canvas is tagged with:</Subheading1>
+        <Subheading1>{t('This canvas is tagged with')}:</Subheading1>
       )}
 
       <TableContainer>
@@ -97,7 +97,7 @@ export function ListCanvasTags() {
                       {removeTagStatus.isLoading ? (
                         <Spinner />
                       ) : (
-                        <SmallButton onClick={() => removeTag(tag.tag_id)}>Remove</SmallButton>
+                        <SmallButton onClick={() => removeTag(tag.tag_id)}>{t('Remove')}</SmallButton>
                       )}
                     </TableActions>
                   </>
