@@ -88,7 +88,7 @@ export function AllTopicTypeItems(props: AllTopicTypeItemsProps) {
 
           <TypeImage>
             <CroppedImage>
-              {type.other_data.thumbnail ? (
+              {type.other_data?.thumbnail ? (
                 <img alt={`${t('thumbnail for ')} ${type.label}`} src={type.other_data.thumbnail.url} />
               ) : null}
             </CroppedImage>
