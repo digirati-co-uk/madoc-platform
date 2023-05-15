@@ -15,20 +15,39 @@ export const siteCanvas: RouteMiddleware<{ slug: string; id: string }> = async c
   const canvasId = context.params.id;
   const { siteApi } = context.state;
 
-  const canvas = await siteApi.getCanvasById(Number(canvasId));
-  // @todo Check if project is running (or is admin)
-  // If not running, then not found.
-  // Get project collection id passing in page, and asking for only collections.
-  // return collection id.
-  context.response.status = 200;
-  context.response.body = canvas;
+  const backUpBody = {
+    canvas: {
+      label: { none: ['Canvas not found'] },
+      id: canvasId,
+      source_id: 'not-found',
+    },
+  };
 
-  if (castBool(context.query.plaintext)) {
-    const plaintext = await siteApi.getCanvasPlaintext(Number(canvasId));
-    if (plaintext.found) {
-      context.response.body.plaintext = plaintext.transcription;
+  try {
+    const canvas = await siteApi.getCanvasById(Number(canvasId));
+    // @todo Check if project is running (or is admin)
+    // If not running, then not found.
+    // Get project collection id passing in page, and asking for only collections.
+    // return collection id.
+    context.response.status = 200;
+    context.response.body = canvas;
+
+    if (castBool(context.query.plaintext)) {
+      try {
+        const plaintext = await siteApi.getCanvasPlaintext(Number(canvasId));
+        if (plaintext && plaintext.found) {
+          context.response.body.plaintext = plaintext.transcription;
+        }
+      } catch (err) {
+        // no op
+      }
     }
+  } catch (err: any) {
+    if (err.status === 404) {
+      context.response.body = backUpBody;
+      context.response.status = 200;
+    }
+    console.log(err);
   }
-
   return;
 };

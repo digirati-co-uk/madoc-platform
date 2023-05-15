@@ -203,6 +203,12 @@ export const FieldEditor: React.FC<{
           </StyledFormField>
           <StyledFormField>
             <StyledFormLabel>
+              <Field as={StyledCheckbox} type="checkbox" name="required" style={{ marginRight: 10 }} />
+              {t('Required field')}
+            </StyledFormLabel>
+          </StyledFormField>
+          <StyledFormField>
+            <StyledFormLabel>
               {t('Plural label (used when referring to lists of this document)')}
               <Field as={StyledFormInputElement} type="text" name="pluralField" />
             </StyledFormLabel>

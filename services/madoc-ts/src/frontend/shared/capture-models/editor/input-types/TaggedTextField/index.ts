@@ -17,6 +17,7 @@ const specification: FieldSpecification<TaggedTextFieldProps> = {
   Component: React.lazy(() => import(/* webpackChunkName: "fields" */ './TaggedTextField')),
   defaultValue: '',
   allowMultiple: true,
+  required: false,
   defaultProps: {
     preset: 'bentham',
   },

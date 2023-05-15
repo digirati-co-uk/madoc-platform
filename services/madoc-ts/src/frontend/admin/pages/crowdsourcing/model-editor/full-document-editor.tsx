@@ -23,7 +23,7 @@ export const FullDocumentEditor: React.FC = () => {
   const actions = DocumentStore.useStoreActions(a => a);
   const removeStructureField = StructureStore.useStoreActions(a => a.removeField);
   const sourceTypes = useMemo(() => {
-    return api.crowdsourcing.getCaptureModelDataSources().map(source => source.definition);
+    return api.getCaptureModelDataSources().map(source => source.definition);
   }, [api]);
   const { preventChangeDocument } = useModelEditorConfig();
 
@@ -39,6 +39,7 @@ export const FullDocumentEditor: React.FC = () => {
           setDescription={actions.setDescription}
           setLabel={actions.setLabel}
           setAllowMultiple={actions.setAllowMultiple}
+          setRequired={actions.setRequired}
           setLabelledBy={actions.setLabelledBy}
           setPluralLabel={actions.setPluralLabel}
           deselectField={actions.deselectField}

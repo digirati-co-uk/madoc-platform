@@ -27,6 +27,7 @@ export type DocumentEditorProps = {
   setLabel: (label: string) => void;
   setDescription: (label: string) => void;
   setAllowMultiple: (allow: boolean) => void;
+  setRequired: (allow: boolean) => void;
   setLabelledBy: (label: string) => void;
   setPluralLabel: (label: string) => void;
   selectField: (term: string) => void;
@@ -48,6 +49,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   selectField,
   deselectField,
   setAllowMultiple,
+  setRequired,
   setPluralLabel,
   setLabelledBy,
   addField,
@@ -153,6 +155,18 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                             onChange={e => setAllowMultiple(e.currentTarget.checked)}
                           />
                           {t('Allow multiple instances')}
+                        </StyledFormLabel>
+                      </StyledFormField>
+                      <StyledFormField>
+                        <StyledFormLabel>
+                          <StyledCheckbox
+                            type="checkbox"
+                            name="isRequired"
+                            checked={!!subtree.required}
+                            value={!!subtree.required as any}
+                            onChange={e => setRequired(e.currentTarget.checked)}
+                          />
+                          {t('Required field')}
                         </StyledFormLabel>
                       </StyledFormField>
                       {subtree.allowMultiple ? (
