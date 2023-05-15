@@ -48,8 +48,12 @@ export function ManageType() {
         }
         menu={[
           {
-            label: t('Topics'),
+            label: t('Topic type'),
             link: `/topics/${data?.slug || topicType}`,
+          },
+          {
+            label: t('Topics'),
+            link: `/topics/${data?.slug || topicType}/all`,
           },
           {
             label: 'Edit',

@@ -19,6 +19,7 @@ import { ManageType } from './topic-type/manage-type';
 import { EditTopicType } from './topic-type/edit-topic-type';
 import { ListTopicsInType } from './topic-type/list-topics-in-type';
 import { ListAllTopics } from './topic/list-all-topics';
+import { TypeDetails } from './topic-type/type-details';
 
 export const topicRoutes = [
   {
@@ -81,6 +82,11 @@ export const topicRoutes = [
     children: [
       {
         path: '/topics/:topicType',
+        index: true,
+        element: <TypeDetails />,
+      },
+      {
+        path: '/topics/:topicType/all',
         index: true,
         element: <ListTopicsInType />,
       },

@@ -79,6 +79,9 @@ export function TopicDetails() {
           </Details>
         </TopicImage>
       </TopicContainer>
+      <hr />
+      <h2>JSON</h2>
+      <pre>{JSON.stringify(data, null, 2)}</pre>
     </>
   );
 }

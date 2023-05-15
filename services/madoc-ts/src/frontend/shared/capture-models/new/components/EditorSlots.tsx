@@ -284,7 +284,6 @@ const SubmitButton: EditorRenderingConfig['SubmitButton'] = props => {
   const Slots = useSlotContext();
   const canSubmit = useCanSubmit();
 
-  console.log(canSubmit)
   return (
     <Slots.SubmitButton
       saveOnNavigate={Slots.configuration.saveOnNavigate}

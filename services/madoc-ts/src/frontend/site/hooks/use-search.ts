@@ -74,7 +74,6 @@ export function useSearch() {
     value: facet.v,
   }));
 
-  console.log(topic);
   const facets = topic ? topicFacets : searchQFacets;
 
   const searchResults = paginatedApiHooks.getSiteSearchQuery(
