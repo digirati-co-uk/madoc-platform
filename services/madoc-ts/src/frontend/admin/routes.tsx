@@ -106,6 +106,8 @@ import { ProjectExportTab } from './pages/crowdsourcing/projects/project-export'
 import { GenerateApiKey } from './pages/system/generate-api-key';
 import { CreateBot } from './pages/global/create-bot';
 import { topicRoutes } from './pages/topics';
+import { ListManifestTags } from './pages/topics/tags/ListManifestTags';
+import { ListCanvasTags } from './pages/topics/tags/ListCanvasTags';
 
 export const routes: RouteObject[] = [
   {
@@ -180,6 +182,10 @@ export const routes: RouteObject[] = [
         element: <CanvasSearchIndex />,
       },
       {
+        path: '/manifests/:manifestId/canvases/:id/tags',
+        element: <ListCanvasTags />,
+      },
+      {
         path: '/manifests/:manifestId/canvases/:id/plaintext',
         element: <CanvasPlaintext />,
       },
@@ -230,6 +236,10 @@ export const routes: RouteObject[] = [
         element: <ManifestSearchIndex />,
       },
       {
+        path: '/manifests/:id/tags',
+        element: <ListManifestTags />,
+      },
+      {
         path: '/manifests/:id/ocr',
         element: <OcrManifest />,
       },
@@ -262,6 +272,10 @@ export const routes: RouteObject[] = [
       {
         path: '/canvases/:id/search',
         element: <CanvasSearchIndex />,
+      },
+      {
+        path: '/canvases/:id/tags',
+        element: <ListCanvasTags />,
       },
       {
         path: '/canvases/:id/plaintext',

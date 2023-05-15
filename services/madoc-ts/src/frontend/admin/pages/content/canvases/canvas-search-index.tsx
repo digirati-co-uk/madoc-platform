@@ -5,7 +5,6 @@ import { useApi } from '../../../../shared/hooks/use-api';
 import { useData } from '../../../../shared/hooks/use-data';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
 import { useParams } from 'react-router-dom';
-import { ManageTags } from '../../../molecules/ManageTags';
 
 type CanvasSearchIndexType = {
   params: { id: string };
@@ -57,7 +56,6 @@ export const CanvasSearchIndex = createUniversalComponent<CanvasSearchIndexType>
           {enrichLoading ? `...loading` : 'Invoke enrichment'}
         </Button>
         <hr />
-        <ManageTags data={data} type="canvas" id={Number(id)} refresh={refetch} />
         <pre>{JSON.stringify(data.canvas, null, 2)}</pre>
         <h4>Indexable</h4>
         {data && data.models

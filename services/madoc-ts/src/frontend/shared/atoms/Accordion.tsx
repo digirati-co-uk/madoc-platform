@@ -62,9 +62,10 @@ export const Content = styled.div`
 interface AccordionProps {
   children: React.ReactNode;
   title?: InternationalString;
+  defaultOpen?: boolean;
 }
-export const Accordion = ({ title, children }: AccordionProps) => {
-  const [isOpen, setIsOpen] = useState(true);
+export const Accordion = ({ title, children, defaultOpen = true }: AccordionProps) => {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
 
   return (
     <AccordionWrapper>

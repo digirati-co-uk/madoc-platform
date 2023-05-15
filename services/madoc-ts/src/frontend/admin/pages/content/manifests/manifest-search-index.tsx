@@ -7,7 +7,6 @@ import { createUniversalComponent } from '../../../../shared/utility/create-univ
 import { useParams } from 'react-router-dom';
 import { useIndexResource } from '../../../hooks/use-index-resource';
 import { EditManifestStructure } from './edit-manifest-structure';
-import { ManageTags } from '../../../molecules/ManageTags';
 
 type ManifestSearchIndexType = {
   params: { id: string };
@@ -63,7 +62,6 @@ export const ManifestSearchIndex = createUniversalComponent<ManifestSearchIndexT
           {enrichLoading ? `...loading` : 'Invoke enrichment'}
         </Button>
         <hr />
-        <ManageTags data={data} type="manifest" id={Number(id)} refresh={refetch} />
         <pre>{JSON.stringify(data, null, 2)}</pre>
       </div>
     );

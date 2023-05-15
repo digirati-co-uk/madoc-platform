@@ -6,8 +6,8 @@ import { useStaticData } from '../../../shared/hooks/use-data';
 import { EnrichmentResourceResponse } from '../../../../extensions/enrichment/authority/types';
 
 export type EnrichmentResourceLoaderType = {
-  params: { canvasId: string };
-  variables: { canvasId: string };
+  params: { manifestId?: string; canvasId?: string };
+  variables: { manifestId?: string; canvasId?: string };
   query: {};
   data: EnrichmentResourceResponse;
 };
@@ -25,10 +25,12 @@ export const EnrichmentResourceLoader: UniversalComponent<EnrichmentResourceLoad
   },
   {
     getKey: params => {
-      return ['site-enrichment-resource', { canvasId: params.canvasId }];
+      return ['site-enrichment-resource', { canvasId: params.canvasId, manifestId: params.manifestId }];
     },
     getData: async (key, vars, api) => {
-      return await api.enrichment.getSiteResource(`urn:madoc:canvas:${vars.canvasId}`);
+      return vars.canvasId
+        ? await api.enrichment.getSiteResource(`urn:madoc:canvas:${vars.canvasId}`)
+        : await api.enrichment.getSiteResource(`urn:madoc:manifest:${vars.manifestId}`);
     },
   }
 );

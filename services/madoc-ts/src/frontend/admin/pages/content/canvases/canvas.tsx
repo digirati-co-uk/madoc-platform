@@ -84,6 +84,10 @@ export const CanvasView: UniversalComponent<CanvasViewType> = createUniversalCom
               link: manifestId ? `/manifests/${manifestId}/canvases/${id}/search` : `/canvases/${id}/search`,
             },
             {
+              label: t('Manage tags'),
+              link: manifestId ? `/manifests/${manifestId}/canvases/${id}/tags` : `/canvases/${id}/tags`,
+            },
+            {
               label: t('Transcription'),
               link: manifestId ? `/manifests/${manifestId}/canvases/${id}/plaintext` : `/canvases/${id}/plaintext`,
             },
