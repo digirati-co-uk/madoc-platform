@@ -33,7 +33,6 @@ const SingleBreadcrumbItem = styled.div<{ active?: boolean; color?: string; $act
     }
     ${props =>
       props.active &&
-      props.$activeColor &&
       css`
         color: ${props.$activeColor ? props.$activeColor : `#fff`};
       `}

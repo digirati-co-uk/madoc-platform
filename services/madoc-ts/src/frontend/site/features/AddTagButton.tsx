@@ -11,7 +11,6 @@ import { TagPill } from '../hooks/canvas-menu/tagging-panel';
 import { AutoCompleteEntitySnippet } from '../../../extensions/enrichment/authority/types';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { useEnrichmentResource } from '../pages/loaders/enrichment-resource-loader';
 
 const TagResults = styled.div`
   border: 2px solid #d3d3d3;
@@ -65,9 +64,9 @@ export const AddTagButton: React.FC<{
     setIsLoading(false);
   };
 
-  const { data } = useEnrichmentResource();
-  const tags = data?.entity_tags;
-  const appliedTagIDs = tags?.map(tag => tag.entity.id);
+  // const { data } = useEnrichmentResource();
+  // const tags = data?.entity_tags;
+  // const appliedTagIDs = tags?.map(tag => tag.entity.id);
 
   return (
     <div>
@@ -139,7 +138,8 @@ export const AddTagButton: React.FC<{
                 return (
                   <React.Fragment key={key}>
                     {page.results.map(result => {
-                      return appliedTagIDs?.includes(result.id) ? (
+                      const appliedTagIDs = page.results?.map(tag => tag.id);
+                      return !appliedTagIDs?.includes(result.id) ? (
                         <TagPill key={result.id} data-is-applied={true} title={'applied'}>
                           {result.label}
                         </TagPill>

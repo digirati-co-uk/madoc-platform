@@ -1,8 +1,9 @@
 import React from 'react';
-import { useTopic } from '../../../site/pages/loaders/topic-loader';
-import { Heading1, Subheading1 } from '../../../shared/typography/Heading1';
-import { LocaleString } from '../../../shared/components/LocaleString';
+import { useTopic } from '../../../../site/pages/loaders/topic-loader';
+import { Heading1, Subheading1 } from '../../../../shared/typography/Heading1';
+import { LocaleString } from '../../../../shared/components/LocaleString';
 import styled from 'styled-components';
+import { useTranslation } from 'react-i18next';
 
 const TopicContainer = styled.div`
   display: flex;
@@ -11,7 +12,7 @@ const TopicContainer = styled.div`
 const TopicImage = styled.div`
   position: relative;
   width: 100vw;
-  height: 100vh;
+  height: 50vh;
   overflow: hidden;
 
   img {
@@ -41,9 +42,10 @@ const Details = styled.div`
 
 export function TopicDetails() {
   const { data } = useTopic();
+  const { t } = useTranslation();
 
   if (!data) {
-    return null
+    return null;
   }
   return (
     <>
@@ -55,30 +57,32 @@ export function TopicDetails() {
             <Heading1 as={LocaleString}>{data.title || { none: ['...'] }}</Heading1>
             <ul style={{ listStyle: 'none' }}>
               <li>
-                <b>ID</b>: {data.id}
+                <b>{t('ID')}</b>: {data.id}
               </li>
               <li>
-                <b>Slug</b>: {data.slug}
+                <b>{t('Slug')}</b>: {data.slug}
               </li>
               <li>
-                <b>Title</b>: <Subheading1 as={LocaleString}>{data.title}</Subheading1>
+                <b>{t('Title')}</b>: <Subheading1 as={LocaleString}>{data.title}</Subheading1>
               </li>
               <li>
-                <b>Description</b>: <LocaleString>{data.description}</LocaleString>
+                <b>{t('Description')}</b>: <LocaleString>{data.description}</LocaleString>
               </li>
               <li>
-                <b>Summary</b>: <LocaleString>{data.other_data?.topic_summary}</LocaleString>
+                <b>{t('Summary')}</b>: <LocaleString>{data.other_data?.topic_summary}</LocaleString>
               </li>
               <li>
-                <b>Secondary Heading</b>: <LocaleString>{data.other_data?.secondary_heading}</LocaleString>
+                <b>{t('Secondary Heading')}</b>: <LocaleString>{data.other_data?.secondary_heading}</LocaleString>
               </li>
               <li>
-                <b>Type</b>: {data.type}
+                <b>{t('Type')}</b>: {data.type}
               </li>
             </ul>
           </Details>
         </TopicImage>
       </TopicContainer>
+      <hr />
+      <h2>JSON</h2>
       <pre>{JSON.stringify(data, null, 2)}</pre>
     </>
   );

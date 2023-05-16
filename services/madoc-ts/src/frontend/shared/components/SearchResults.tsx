@@ -136,7 +136,7 @@ export const SearchItem: React.FC<{
   const canvasId = things.find(thing => thing?.type.toLowerCase() === 'canvas')?.id;
   const searchText = result.hits && result.hits[0] && result.hits[0].bounding_boxes ? search : undefined;
   const snippet = result.hits && result.hits[0] && result.hits[0].snippet ? result.hits[0].snippet : undefined;
-  const isManifest = result.resource_type === 'Manifest';
+  const isManifest = result.resource_type.toLowerCase() === 'manifest';
 
   const topic = routeContext.topic;
   const topicType = routeContext.topicType;

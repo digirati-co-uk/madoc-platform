@@ -157,8 +157,11 @@ export const AdminSidebar: React.FC = () => {
             <AdminMenuItemLabel>{t('Topics')}</AdminMenuItemLabel>
           </AdminMenuItem>
           <AdminMenuSubItemContainer $open={isTopics}>
-            <AdminMenuSubItem as={HrefLink} href="/topics">
+            <AdminMenuSubItem as={HrefLink} href="/topics/types">
               {t('All topic types')}
+            </AdminMenuSubItem>
+            <AdminMenuSubItem as={HrefLink} href="/topics/all">
+              {t('All topics')}
             </AdminMenuSubItem>
             <AdminMenuSubItem as={HrefLink} href="/topics/_/create-type">
               {t('Create topic type')}

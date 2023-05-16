@@ -1,28 +1,35 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
-import { CreateNewTopic } from './create-new-topic';
-import { CreateNewTopicType } from './create-new-topic-type';
-import { DeleteTopic } from './delete-topic';
-import { DeleteTopicType } from './delete-topic-type';
-import { ListTopicItems } from './list-topic-items';
-import { ListTopicTypes } from './list-topic-types';
-import { ManageTopicType } from './manage-topic-type';
+
+import { TopicIndexWrapper, TopicsIndex } from './TopicsIndex';
 import { ManageTopicTypes } from './manage-topic-types';
-import { ManageTopic } from './manage-topic';
-import { ListTopicsInType } from './list-topics-in-type';
-import { TopicDetails } from './topic-details';
-import { EditTopicType } from './edit-topic-type';
-import { EditTopic } from './edit-topic';
+import { ManageTopics } from './manage-topics';
+
+import { CreateNewTopicType } from './topic-type/create-new-topic-type';
+import { DeleteTopicType } from './topic-type/delete-topic-type';
+import { ListAllTopicTypes } from './topic-type/list-all-topic-types';
+import { ListTopicResources } from './topic/list-topic-resources';
+import { ManageTopic } from './topic/manage-topic';
+import { TopicDetails } from './topic/topic-details';
+import { EditTopic } from './topic/edit-topic';
+
+import { CreateNewTopic } from './topic/create-new-topic';
+import { DeleteTopic } from './topic/delete-topic';
+import { ManageType } from './topic-type/manage-type';
+import { EditTopicType } from './topic-type/edit-topic-type';
+import { ListTopicsInType } from './topic-type/list-topics-in-type';
+import { ListAllTopics } from './topic/list-all-topics';
+import { TypeDetails } from './topic-type/type-details';
 
 export const topicRoutes = [
   {
     path: '/topics',
-    element: <ManageTopicTypes />,
+    element: <TopicIndexWrapper />,
     children: [
       {
         path: '/topics',
         index: true,
-        element: <ListTopicTypes />,
+        element: <TopicsIndex />,
       },
       {
         path: '/topics/_/create-type',
@@ -37,11 +44,49 @@ export const topicRoutes = [
     ],
   },
   {
+    path: '/topics/types',
+    element: <ManageTopicTypes />,
+    children: [
+      {
+        path: '/topics/types',
+        index: true,
+        element: <ListAllTopicTypes />,
+      },
+      {
+        path: '/topics/types/_/create-type',
+
+        element: <CreateNewTopicType />,
+      },
+    ],
+  },
+  {
+    path: '/topics/all',
+    element: <ManageTopics />,
+    children: [
+      {
+        path: '/topics/all',
+        index: true,
+        element: <ListAllTopics />,
+      },
+      {
+        path: '/topics/all/_/create-topic',
+        exact: true,
+        element: <CreateNewTopic />,
+      },
+    ],
+  },
+
+  {
     path: '/topics/:topicType',
-    element: <ManageTopicType />,
+    element: <ManageType />,
     children: [
       {
         path: '/topics/:topicType',
+        index: true,
+        element: <TypeDetails />,
+      },
+      {
+        path: '/topics/:topicType/all',
         index: true,
         element: <ListTopicsInType />,
       },
@@ -73,8 +118,8 @@ export const topicRoutes = [
       },
       {
         path: '/topics/:topicType/:topic/items',
+        element: <ListTopicResources />,
         index: true,
-        element: <ListTopicItems />,
       },
       {
         path: '/topics/:topicType/:topic/_/edit',

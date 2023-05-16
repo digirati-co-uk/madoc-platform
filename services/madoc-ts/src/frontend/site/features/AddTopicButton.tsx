@@ -15,7 +15,6 @@ import { useTranslation } from 'react-i18next';
 
 export const TopicPill = styled(TagPill)`
   border-color: orange;
-
 `;
 export const AddTopicButton: React.FC<{
   statusLoading: boolean;
@@ -104,7 +103,7 @@ export const AddTopicButton: React.FC<{
                 return (
                   <React.Fragment key={key}>
                     {page.results.map((result: any) => {
-                    return (
+                      return (
                         <TopicPill
                           as={Button}
                           key={result.id}

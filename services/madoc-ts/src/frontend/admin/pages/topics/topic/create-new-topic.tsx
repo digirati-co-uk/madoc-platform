@@ -1,17 +1,21 @@
 import { getValue } from '@iiif/vault-helpers';
 import React, { useMemo } from 'react';
 import { useMutation } from 'react-query';
-import { EditShorthandCaptureModel } from '../../../shared/capture-models/EditorShorthandCaptureModel';
-import { useApi } from '../../../shared/hooks/use-api';
-import { Button } from '../../../shared/navigation/Button';
-import { HrefLink } from '../../../shared/utility/href-link';
-import { useRouteContext } from '../../../site/hooks/use-route-context';
-import { useTopicType } from '../../../site/pages/loaders/topic-type-loader';
-import { CustomEditorTypes } from '../../../shared/page-blocks/custom-editor-types';
-import { entityModel } from '../../../../extensions/enrichment/models';
+import { EditShorthandCaptureModel } from '../../../../shared/capture-models/EditorShorthandCaptureModel';
+import { useApi } from '../../../../shared/hooks/use-api';
+import { Button } from '../../../../shared/navigation/Button';
+import { HrefLink } from '../../../../shared/utility/href-link';
+import { useRouteContext } from '../../../../site/hooks/use-route-context';
+import { useTopicType } from '../../../../site/pages/loaders/topic-type-loader';
+import { CustomEditorTypes } from '../../../../shared/page-blocks/custom-editor-types';
+import { entityModel } from '../../../../../extensions/enrichment/models';
+import { ErrorMessage } from '../../../../shared/capture-models/editor/atoms/Message';
+import { Heading2 } from '../../../../shared/typography/Heading2';
+import { useTranslation } from 'react-i18next';
 
 export function CreateNewTopic() {
   const api = useApi();
+  const { t } = useTranslation();
   const { topicType } = useRouteContext();
   const { data, isLoading } = useTopicType();
   const hasTopic = data || isLoading;
@@ -60,7 +64,6 @@ export function CreateNewTopic() {
       input.type = input.type.label;
     }
 
-
     return {
       response: await api.enrichment.upsertTopic({ type_slug: input.type.toLowerCase(), ...input }),
       topicType: input.type_slug,
@@ -78,18 +81,14 @@ export function CreateNewTopic() {
     return copy;
   }, [topicType]);
 
-  if (status.isError) {
-    return <div>Error...</div>;
-  }
-
   if (status.isSuccess) {
     return (
       <div>
-        Added!
+        {t('Added!')}
         <pre>{JSON.stringify(status.data?.response)}</pre>
         {status.data ? (
           <Button $primary as={HrefLink} href={`/topics/${status.data.topicType}/${status.data.response.label}`}>
-            Go to topic
+            {t('Go to topic')}
           </Button>
         ) : null}
       </div>
@@ -97,11 +96,13 @@ export function CreateNewTopic() {
   }
 
   if (isLoading) {
-    return <div>loading...</div>;
+    return <div>{t('loading...')}</div>;
   }
 
   return (
     <div>
+      <Heading2>{t('Create new Topic')}</Heading2>
+      {status.isError && <ErrorMessage>{t('Error...')}</ErrorMessage>}
       <CustomEditorTypes>
         <EditShorthandCaptureModel
           template={model}

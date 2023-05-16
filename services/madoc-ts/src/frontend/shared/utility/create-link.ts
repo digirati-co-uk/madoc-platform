@@ -22,16 +22,13 @@ export function createLink(opt: {
 
   // Topics.
   if (opt.topicType) {
+    const path = [];
+
+    path.push(`/topics/${opt.topicType}`);
     if (opt.topic) {
-      if (opt.manifestId) {
-        if (opt.canvasId) {
-          return `/topics/${opt.topicType}/${opt.topic}/manifests/${opt.manifestId}/c/${opt.canvasId}/${suffix}`;
-        }
-        return `/topics/${opt.topicType}/${opt.topic}/manifests/${opt.manifestId}/${suffix}`;
-      }
-      return `/topics/${opt.topicType}/${opt.topic}${suffix}`;
+      path.push(`/${opt.topic}`);
     }
-    return `/topics/${opt.topicType}${suffix}`;
+    return `${path.join('')}${suffix}`;
   }
 
   // Tasks.
@@ -47,7 +44,6 @@ export function createLink(opt: {
     }
     return `/tasks/${opt.taskId}${suffix}`;
   }
-
   // Canvas
   if (opt.canvasId) {
     const path = [];
