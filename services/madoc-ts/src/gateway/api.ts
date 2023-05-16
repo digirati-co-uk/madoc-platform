@@ -15,7 +15,6 @@ import { plainTextSource } from '../extensions/capture-models/DynamicDataSources
 import { AuthorityExtension } from '../extensions/enrichment/authority/authority-extension';
 import { EnrichmentExtension } from '../extensions/enrichment/extension';
 import { SearchExtension } from '../extensions/enrichment/search/search-extension';
-import { EnrichmentIndexPayload } from '../extensions/enrichment/types';
 import { ExtensionManager } from '../extensions/extension-manager';
 import { NotificationExtension } from '../extensions/notifications/extension';
 import { getDefaultPageBlockDefinitions } from '../extensions/page-blocks/default-definitions';
@@ -849,7 +848,7 @@ export class ApiClient {
   }
 
   async getSearchQuery(query: SearchQuery, page = 1, madoc_id?: string) {
-    return this.searchQuery(query, page, madoc_id);
+    return this.search.searchQuery(query, page, madoc_id);
   }
 
   // IIIF.
@@ -1914,71 +1913,11 @@ export class ApiClient {
     return this.request(`/api/madoc/activity/${primaryStream}/changes`);
   }
 
-  // NEW SEARCH API.
-  async enrichmentIngestResource(request: EnrichmentIndexPayload) {
-    return this.request(`/api/enrichment/resource/`, {
-      method: 'POST',
-      body: request,
-    });
-  }
-
-  async triggerSearchIndex(id: number, type: string) {
-    return this.request(`/api/enrichment/internal/madoc/tasks/index_madoc_resource/`, {
-      method: 'POST',
-      body: {
-        task: {
-          subject: `urn:madoc:${type}:${id}`,
-          parameters: [{}],
-        },
-      },
-    });
-  }
-
-  async batchSearchIngestManifestCanvases(manifestId: number, canvasesToAdd: number[], canvasesToRemove: number[]) {
-    const manifest = `urn:madoc:manifest:${manifestId}`;
-    const toAdd = canvasesToAdd.map(c => `urn:madoc:canvas:${c}`);
-    const toRemove = canvasesToRemove.map(c => `urn:madoc:canvas:${c}`);
-
-    if (toAdd.length === 0 && toRemove.length === 0) {
-      return null;
-    }
-
-    const body: any = {};
-    if (toAdd.length) {
-      body.add = [{ source: manifest, targets: toAdd, type: 'hasCanvas' }];
-    }
-    if (toRemove.length) {
-      body.remove = [{ source: manifest, targets: toRemove, type: 'hasCanvas' }];
-    }
-
-    return this.request(`/api/enrichment/relationship/batch/`, {
-      method: 'POST',
-      body,
-    });
-  }
-
   // Search API
-  async searchQuery(query: SearchQuery, page = 1, madoc_id?: string) {
-    return this.request<SearchResponse>(`/api/enrichment/search/`, {
-      method: 'POST',
-      body: {
-        ...query,
-        page,
-        madoc_id,
-      },
-    });
-  }
   // can be used for both canvases and manifests
   async searchIngest(resource: SearchIngestRequest) {
     return this.request<SearchIndexTask>(`/api/search/iiif`, {
       method: 'POST',
-      body: resource,
-    });
-  }
-
-  async searchReIngest(resource: SearchIngestRequest) {
-    return this.request<SearchIndexTask>(`/api/enrichment/internal/madoc/resource/${resource.id}`, {
-      method: 'PUT',
       body: resource,
     });
   }
@@ -2007,6 +1946,25 @@ export class ApiClient {
     return this.request<any>(`/api/search/model`, {
       method: 'POST',
       body: modelPayload,
+    });
+  }
+
+  async searchListIndexables() {
+    return this.request(`/api/search/indexables`);
+  }
+
+  async searchListModels(query?: { iiif__madoc_id?: string }) {
+    try {
+      return this.request(`/api/search/model?${query ? stringify(query) : ''}`);
+    } catch (e) {
+      return [];
+    }
+  }
+
+  async indexRawSearchIndexable(indexable: SearchIndexable) {
+    return this.request(`/api/search/indexables`, {
+      method: 'POST',
+      body: indexable,
     });
   }
 
@@ -2051,69 +2009,6 @@ export class ApiClient {
     }
   }
 
-  async getIndexedManifestById(madoc_id: string) {
-    return this.request<SearchResponse>(`/api/search/search?${stringify({ madoc_id })}`, {
-      method: 'GET',
-    });
-  }
-
-  async searchListIndexables() {
-    return this.request(`/api/search/indexables`);
-  }
-
-  async searchGetIndexable(id: number) {
-    return this.request(`/api/search/indexables/${id}`);
-  }
-
-  async searchListModels(query?: { iiif__madoc_id?: string }) {
-    try {
-      return this.request(`/api/search/model?${query ? stringify(query) : ''}`);
-    } catch (e) {
-      return [];
-    }
-  }
-
-  async searchGetModel(id: number) {
-    return this.request(`/api/search/model/${id}`);
-  }
-
-  async searchListIIIF() {
-    return this.request(`/api/search/iiif`);
-  }
-
-  async searchGetIIIF(id: string) {
-    try {
-      return this.request(`/api/enrichment/internal/madoc/resource/${id}/`);
-    } catch (err) {
-      return undefined;
-    }
-  }
-
-  async searchDeleteIIIF(id: string) {
-    try {
-      return this.request(`/api/enrichment/internal/madoc/resource/${id}/`, {
-        method: 'DELETE',
-      });
-    } catch (err) {
-      return undefined;
-    }
-  }
-
-  async searchListContexts() {
-    return this.request(`/api/search/contexts`);
-  }
-
-  async searchGetContext(id: string) {
-    return this.request(`/api/search/contexts/${id}`);
-  }
-
-  async indexRawSearchIndexable(indexable: SearchIndexable) {
-    return this.request(`/api/search/indexables`, {
-      method: 'POST',
-      body: indexable,
-    });
-  }
-
   async indexCanvas(id: number) {
     try {
       await this.request<SearchIndexTask>(`/api/madoc/iiif/canvases/${id}/index`, {
@@ -2122,12 +2017,6 @@ export class ApiClient {
     } catch (err) {
       // no-op this will fail silently.
     }
-  }
-
-  async getIndexedCanvasById(madoc_id: string) {
-    return this.request<SearchResponse>(`/api/search/search?${stringify({ madoc_id })}`, {
-      method: 'GET',
-    });
   }
 
   async batchIndexResources(
@@ -2146,12 +2035,6 @@ export class ApiClient {
   // Public API.
   async getSiteCanvas(id: number, query?: import('../routes/site/site-canvas').SiteCanvasQuery) {
     return this.publicRequest<CanvasFull>(`/madoc/api/canvases/${id}`, query);
-  }
-
-  async getSiteCanvasSource(source: string) {
-    return this.publicRequest<{ id: number }>(`/madoc/api/canvas-source`, {
-      source_id: source,
-    });
   }
 
   async getSiteCollection(id: number, query?: import('../routes/site/site-collection').SiteCollectionQuery) {
@@ -2198,12 +2081,6 @@ export class ApiClient {
 
   async getSiteConfiguration(query?: import('../routes/site/site-configuration').SiteConfigurationQuery) {
     return this.publicRequest<ProjectConfiguration>(`/madoc/api/configuration`, query);
-  }
-
-  async getSiteModelConfiguration(
-    query: import('../routes/site/site-model-configuration').SiteModelConfigurationQuery
-  ) {
-    return this.publicRequest<ConfigInjectionSettings>(`/madoc/api/configuration/model`, query);
   }
 
   async getSiteSearchFacetConfiguration() {
@@ -2287,3 +2164,44 @@ export class ApiClient {
     return this.publicRequest<UserDetails>(`/madoc/api/me`);
   }
 }
+
+//TODO DELETE ? (unused)
+
+// async searchListContexts() {
+//   return this.request(`/api/search/contexts`);
+// }
+
+// async searchGetContext(id: string) {
+//   return this.request(`/api/search/contexts/${id}`);
+// }
+
+// async getIndexedCanvasById(madoc_id: string) {
+//   return this.request<SearchResponse>(`/api/search/search?${stringify({ madoc_id })}`, {
+//     method: 'GET',
+//   });
+// }
+// async getIndexedManifestById(madoc_id: string) {
+//   return this.request<SearchResponse>(`/api/search/search?${stringify({ madoc_id })}`, {
+//     method: 'GET',
+//   });
+// }
+//  async searchGetModel(id: number) {
+//     return this.request(`/api/search/model/${id}`);
+//   }
+//
+//   async searchListIIIF() {
+//     return this.request(`/api/search/iiif`);
+//   }
+//  async searchGetIndexable(id: number) {
+//     return this.request(`/api/search/indexables/${id}`);
+//   }
+//  async getSiteModelConfiguration(
+//     query: import('../routes/site/site-model-configuration').SiteModelConfigurationQuery
+//   ) {
+//     return this.publicRequest<ConfigInjectionSettings>(`/madoc/api/configuration/model`, query);
+//   }
+//  async getSiteCanvasSource(source: string) {
+//     return this.publicRequest<{ id: number }>(`/madoc/api/canvas-source`, {
+//       source_id: source,
+//     });
+//   }

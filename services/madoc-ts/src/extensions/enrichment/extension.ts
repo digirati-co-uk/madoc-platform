@@ -34,6 +34,7 @@ export class EnrichmentExtension extends BaseDjangoExtension {
     return 'madoc';
   }
 
+  //
   // Site APIS.
   getSiteTopic(type: string, slug: string) {
     return this.api.publicRequest<Topic>(`/madoc/api/topics/${type}/${slug}`);
@@ -110,15 +111,6 @@ export class EnrichmentExtension extends BaseDjangoExtension {
       name: 'ocr_madoc_resource',
     },
   ];
-
-  // Dev friendly helpers.
-  listAllTopics(page = 1) {
-    return this.api.publicRequest<TopicTypeListResponse>(`/madoc/api/topic-types?page=${page}`);
-  }
-
-  listAllTopicTypes(page = 1) {
-    return this.api.publicRequest<TopicTypeListResponse>(`/madoc/api/topic-types?page=${page}`);
-  }
 
   tagMadocResource(entityId: string, type: string, id?: number, selector?: any) {
     return this.api.request(`/api/enrichment/resource_tag/`, {

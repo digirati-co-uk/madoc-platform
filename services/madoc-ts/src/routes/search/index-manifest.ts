@@ -69,15 +69,15 @@ export const indexManifest: RouteMiddleware<{ id: string }> = async context => {
     ]
   );
 
-  await userApi.enrichmentIngestResource(searchPayload);
+  await userApi.search.enrichmentIngestResource(searchPayload);
 
   // await userApi.triggerSearchIndex(manifestId, 'manifest');
 
-  context.response.body = await userApi.triggerSearchIndex(manifestId, 'manifest');
+  context.response.body = await userApi.search.triggerSearchIndex(manifestId, 'manifest');
   // try {
   //   await api.searchGetIIIF(`urn:madoc:manifest:${manifestId}`);
   //
-  //   context.response.body = await userApi.searchReIngest(searchPayload);
+  //   context.response.body = await userApi.search.searchReIngest(searchPayload);
   // } catch (err) {
   //   context.response.body = await userApi.searchIngest(searchPayload);
   // }

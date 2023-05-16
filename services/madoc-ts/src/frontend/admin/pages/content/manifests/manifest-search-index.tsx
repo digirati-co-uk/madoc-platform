@@ -72,7 +72,7 @@ export const ManifestSearchIndex = createUniversalComponent<ManifestSearchIndexT
     },
     getData: async (key, { id }, api) => {
       try {
-        return api.searchGetIIIF(`urn:madoc:manifest:${id}`);
+        return api.search.searchGetIIIF(`urn:madoc:manifest:${id}`);
       } catch (e) {
         console.log('err', e);
         return null;

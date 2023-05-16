@@ -53,19 +53,18 @@ export class AuthorityExtension extends BaseDjangoExtension {
     return 'authority_service';
   }
 
-  // list of entity types
+  // Entity Type - List
   getEntityTypes() {
     return this.api.request<EntityTypesMadocResponse>(`/api/enrichment/entity_type/`);
   }
-
-  // list of all entities
-  getAllEntities(page?: number) {
-    return this.api.request<any>(`/api/enrichment/entity/?page=${page}`);
-  }
-
   // Entity Type - Retrieve
   getEntityType(slug: string) {
     return this.api.request<EntityTypeMadocResponse>(`/api/enrichment/entity_type/${slug}/`);
+  }
+
+  // Entity - list
+  getAllEntities(page?: number) {
+    return this.api.request<any>(`/api/enrichment/entity/?page=${page}`);
   }
 
   // Entity - List, filtered by chosen Entity Type
@@ -78,6 +77,7 @@ export class AuthorityExtension extends BaseDjangoExtension {
     return this.api.request<EntityMadocResponse>(`/api/enrichment/entity/${entity_type_slug}/${slug}/`);
   }
 
+  // Resource - Retrieve
   getEnrichmentResource(id: string) {
     return this.api.request<EnrichmentResourceResponse>(`/api/enrichment/resource/${id}/`);
   }

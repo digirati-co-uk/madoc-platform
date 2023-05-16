@@ -31,7 +31,7 @@ export async function deleteProject(projectId: number, siteId: number, connectio
   }
 
   if (deletionSummary.search.indexed && deletionSummary.search.id) {
-    await siteApi.searchDeleteIIIF(deletionSummary.search.id);
+    await siteApi.search.searchDeleteIIIF(deletionSummary.search.id);
   }
 
   try {
