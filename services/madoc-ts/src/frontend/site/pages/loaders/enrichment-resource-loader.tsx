@@ -3,13 +3,13 @@ import { Outlet } from 'react-router-dom';
 import { UniversalComponent } from '../../../types';
 import { createUniversalComponent } from '../../../shared/utility/create-universal-component';
 import { useStaticData } from '../../../shared/hooks/use-data';
-import { EnrichmentResourceResponse } from '../../../../extensions/enrichment/authority/types';
+import { EnrichmentResource } from '../../../../extensions/enrichment/authority/types';
 
 export type EnrichmentResourceLoaderType = {
   params: { manifestId?: string; canvasId?: string };
   variables: { manifestId?: string; canvasId?: string };
   query: {};
-  data: EnrichmentResourceResponse;
+  data: EnrichmentResource;
 };
 
 export function useEnrichmentResource() {
@@ -29,8 +29,8 @@ export const EnrichmentResourceLoader: UniversalComponent<EnrichmentResourceLoad
     },
     getData: async (key, vars, api) => {
       return vars.canvasId
-        ? await api.enrichment.getSiteResource(`urn:madoc:canvas:${vars.canvasId}`)
-        : await api.enrichment.getSiteResource(`urn:madoc:manifest:${vars.manifestId}`);
+        ? await api.getSiteEnrichmentResource(`urn:madoc:canvas:${vars.canvasId}`)
+        : await api.getSiteEnrichmentResource(`urn:madoc:manifest:${vars.manifestId}`);
     },
   }
 );

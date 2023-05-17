@@ -115,6 +115,6 @@ serverRendererFor(ListManifestTags, {
     return ['manifest-resource', { id: params.id }];
   },
   getData: async (key: string, vars, api) => {
-    return await api.enrichment.getSiteResource(`urn:madoc:manifest:${vars.id}`);
+    return await api.enrichment.getSiteEnrichmentResource(`urn:madoc:manifest:${vars.id}`);
   },
 });

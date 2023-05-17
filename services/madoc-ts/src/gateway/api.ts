@@ -85,6 +85,8 @@ import { ResourceLinkRow } from '../database/queries/linking-queries';
 import { SearchIndexTask } from './tasks/search-index-task';
 import { JsonProjectTemplate, ProjectTemplate } from '../extensions/projects/types';
 import { ApiKey } from '../types/api-key';
+import { Topic, TopicType, TopicTypeListResponse } from '../types/schemas/topics';
+import { EnrichmentResource } from '../extensions/enrichment/authority/types';
 
 export type ApiClientWithoutExtensions = Omit<
   ApiClient,
@@ -2163,45 +2165,18 @@ export class ApiClient {
   async getUserDetails() {
     return this.publicRequest<UserDetails>(`/madoc/api/me`);
   }
+
+  // TOPICS
+  getSiteTopic(type: string, slug: string) {
+    return this.publicRequest<Topic>(`/madoc/api/topics/${type}/${slug}`);
+  }
+  getSiteTopicTypes(page = 1) {
+    return this.publicRequest<TopicTypeListResponse>(`/madoc/api/topics?page=${page}`);
+  }
+  getSiteTopicType(slug: string, page: number) {
+    return this.publicRequest<TopicType>(`/madoc/api/topics/${slug}?page=${page}`);
+  }
+  getSiteEnrichmentResource(id: string) {
+    return this.publicRequest<EnrichmentResource>(`/madoc/api/resource/${id}`);
+  }
 }
-
-//TODO DELETE ? (unused)
-
-// async searchListContexts() {
-//   return this.request(`/api/search/contexts`);
-// }
-
-// async searchGetContext(id: string) {
-//   return this.request(`/api/search/contexts/${id}`);
-// }
-
-// async getIndexedCanvasById(madoc_id: string) {
-//   return this.request<SearchResponse>(`/api/search/search?${stringify({ madoc_id })}`, {
-//     method: 'GET',
-//   });
-// }
-// async getIndexedManifestById(madoc_id: string) {
-//   return this.request<SearchResponse>(`/api/search/search?${stringify({ madoc_id })}`, {
-//     method: 'GET',
-//   });
-// }
-//  async searchGetModel(id: number) {
-//     return this.request(`/api/search/model/${id}`);
-//   }
-//
-//   async searchListIIIF() {
-//     return this.request(`/api/search/iiif`);
-//   }
-//  async searchGetIndexable(id: number) {
-//     return this.request(`/api/search/indexables/${id}`);
-//   }
-//  async getSiteModelConfiguration(
-//     query: import('../routes/site/site-model-configuration').SiteModelConfigurationQuery
-//   ) {
-//     return this.publicRequest<ConfigInjectionSettings>(`/madoc/api/configuration/model`, query);
-//   }
-//  async getSiteCanvasSource(source: string) {
-//     return this.publicRequest<{ id: number }>(`/madoc/api/canvas-source`, {
-//       source_id: source,
-//     });
-//   }

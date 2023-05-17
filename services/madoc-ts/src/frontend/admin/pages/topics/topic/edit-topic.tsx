@@ -45,7 +45,7 @@ export function EditTopic() {
       }
     }
 
-    const resp = api.enrichment.upsertTopic({ id: data.id, ...updatedData });
+    const resp = api.enrichment.upsertEntity({ id: data.id, ...updatedData });
 
     await refetch();
 

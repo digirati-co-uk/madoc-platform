@@ -28,11 +28,3 @@ export function compatTopicType(topicType: EntityTypeMadocResponse, topics: Enti
     topics: topics.results,
   };
 }
-
-export function compatTopicTypes(response: EntityTypesMadocResponse): TopicTypeListResponse {
-  const { results } = response;
-  return {
-    topicTypes: results,
-    pagination: response.pagination,
-  };
-}

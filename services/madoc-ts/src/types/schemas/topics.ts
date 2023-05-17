@@ -1,12 +1,12 @@
 import { Pagination } from './_pagination';
 import {
   EnrichmentEntitySnippet,
-  EnrichmentEntityTypeSnippet,
   EntityMadocResponse,
   EntityTypeMadocResponse,
+  EntityTypesMadocResponse,
 } from '../../extensions/enrichment/authority/types';
 
-export type TopicTypeSnippet = EnrichmentEntityTypeSnippet;
+export type TopicTypeListResponse = EntityTypesMadocResponse;
 
 export type TopicType = EntityTypeMadocResponse & {
   pagination: Pagination;
@@ -16,8 +16,3 @@ export type TopicType = EntityTypeMadocResponse & {
 export type TopicSnippet = EnrichmentEntitySnippet;
 
 export type Topic = EntityMadocResponse;
-
-export interface TopicTypeListResponse {
-  topicTypes: TopicTypeSnippet[];
-  pagination: Pagination;
-}

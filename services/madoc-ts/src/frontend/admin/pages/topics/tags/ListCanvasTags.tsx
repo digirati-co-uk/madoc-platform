@@ -116,6 +116,6 @@ serverRendererFor(ListCanvasTags, {
     return ['canvas-resource', { id: params.id }];
   },
   getData: async (key: string, vars, api) => {
-    return await api.enrichment.getSiteResource(`urn:madoc:canvas:${vars.id}`);
+    return await api.enrichment.getSiteEnrichmentResource(`urn:madoc:canvas:${vars.id}`);
   },
 });

@@ -35,7 +35,7 @@ export function EditTopicType() {
 
       updatedData.featured_topics = ogIds?.concat(newIds);
     }
-    const resp = api.enrichment.upsertTopicType({
+    const resp = api.enrichment.upsertEntityType({
       id: data.id,
       label: data.label,
       ...updatedData,

@@ -15,7 +15,7 @@ export function DeleteTopicType() {
 
   const [deleteTopicType] = useMutation(async () => {
     if (data) {
-      await api.authority.entity_type.delete(data?.id);
+      await api.enrichment.deleteEntityType(data?.slug);
       navigate(`/topics`);
     }
   });

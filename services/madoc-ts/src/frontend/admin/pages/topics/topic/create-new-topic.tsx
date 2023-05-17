@@ -65,7 +65,7 @@ export function CreateNewTopic() {
     }
 
     return {
-      response: await api.enrichment.upsertTopic({ type_slug: input.type.toLowerCase(), ...input }),
+      response: await api.enrichment.upsertEntity({ type_slug: input.type.toLowerCase(), ...input }),
       topicType: input.type_slug,
     };
   });

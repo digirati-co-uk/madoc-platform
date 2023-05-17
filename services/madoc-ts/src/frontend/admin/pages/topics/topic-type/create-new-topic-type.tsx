@@ -29,7 +29,7 @@ export function CreateNewTopicType() {
       delete data.featured_topics;
     }
 
-    return api.enrichment.upsertTopicType(data);
+    return api.enrichment.upsertEntityType(data);
   });
 
   console.log(error);

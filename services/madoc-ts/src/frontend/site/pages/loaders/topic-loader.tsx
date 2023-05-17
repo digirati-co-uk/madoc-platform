@@ -43,7 +43,7 @@ export const TopicLoader: UniversalComponent<TopicLoaderType> = createUniversalC
       return ['site-topic', { topicType: params.topicType, topic: params.topic }];
     },
     getData: async (key, vars, api) => {
-      return api.enrichment.getSiteTopic(vars.topicType, vars.topic);
+      return api.getSiteTopic(vars.topicType, vars.topic);
     },
   }
 );

@@ -125,7 +125,6 @@ import { siteManifestTasks } from './routes/site/site-manifest-tasks';
 import { getStaticPage, sitePages } from './routes/site/site-pages';
 import { listProjectsAutocomplete } from './routes/projects/list-projects-autocomplete';
 import { siteTaskMetadata } from './routes/site/site-task-metadata';
-import { siteTopics } from './routes/site/site-topics';
 import { siteUserAutocomplete } from './routes/site/site-user-autocomplete';
 import { topicRoutes } from './routes/topics';
 import { forgotPassword } from './routes/user/forgot-password';
@@ -195,9 +194,6 @@ import { siteManifests } from './routes/site/site-manifests';
 import { siteProject } from './routes/site/site-project';
 import { siteProjects } from './routes/site/site-projects';
 import { siteSearch } from './routes/site/site-search';
-import { siteTopic } from './routes/site/site-topic';
-import { siteTopicType } from './routes/site/site-topic-type';
-import { siteTopicTypes } from './routes/site/site-topic-types';
 import { createResourceClaim, prepareResourceClaim } from './routes/projects/create-resource-claim';
 import { statistics } from './routes/iiif/statistics';
 import { getCanvasManifests } from './routes/iiif/canvases/get-canvas-manifests';
@@ -594,11 +590,6 @@ export const router = new TypedRouter({
   'site-project': [TypedRouter.GET, '/s/:slug/madoc/api/projects/:projectSlug', siteProject],
   'site-projects': [TypedRouter.GET, '/s/:slug/madoc/api/projects', siteProjects],
   'site-search': [TypedRouter.POST, '/s/:slug/madoc/api/search', siteSearch],
-  // 'site-topic-index': [TypedRouter.GET, '/s/:slug/madoc/api/topics/_all', siteTopics],
-  'site-topic': [TypedRouter.GET, '/s/:slug/madoc/api/topics/:type/:topic', siteTopic],
-  'site-topic-type': [TypedRouter.GET, '/s/:slug/madoc/api/topics/:type', siteTopicType],
-  'site-topic-types': [TypedRouter.GET, '/s/:slug/madoc/api/topics', siteTopicTypes],
-  'site-enrichment-resource': [TypedRouter.GET, '/s/:slug/madoc/api/resource/:id', siteResource],
   'site-published-models': [TypedRouter.GET, '/s/:slug/madoc/api/canvases/:id/models', sitePublishedModels],
   'site-canvas-models': [
     TypedRouter.GET,

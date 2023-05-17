@@ -10,7 +10,7 @@ export function useApiTopic(type?: string, slug?: string | null) {
         return undefined;
       }
 
-      return api.enrichment.getSiteTopic(type, slug);
+      return api.getSiteTopic(type, slug);
     },
     { enabled: !!type || !!slug }
   );

@@ -9,16 +9,9 @@ import {
   ResourceTag,
   ResourceTagSnippet,
   EnrichmentEntity,
-  EntityTypesMadocResponse,
-  EntitiesMadocResponse,
-  EntityMadocResponse,
-  EntityTypeMadocResponse,
-  EnrichmentResourceResponse,
 } from './types';
 
 export class AuthorityExtension extends BaseDjangoExtension {
-  static AUTHORITY = 'authority_service';
-
   // /api/authority_service/entity/
   // /api/authority_service/entity/<id>/
   // /api/authority_service/entity_authority/
@@ -51,35 +44,6 @@ export class AuthorityExtension extends BaseDjangoExtension {
 
   getServiceName() {
     return 'authority_service';
-  }
-
-  // Entity Type - List
-  getEntityTypes() {
-    return this.api.request<EntityTypesMadocResponse>(`/api/enrichment/entity_type/`);
-  }
-  // Entity Type - Retrieve
-  getEntityType(slug: string) {
-    return this.api.request<EntityTypeMadocResponse>(`/api/enrichment/entity_type/${slug}/`);
-  }
-
-  // Entity - list
-  getAllEntities(page?: number) {
-    return this.api.request<any>(`/api/enrichment/entity/?page=${page}`);
-  }
-
-  // Entity - List, filtered by chosen Entity Type
-  getEntities(slug: string, page?: number) {
-    return this.api.request<EntitiesMadocResponse>(`/api/enrichment/entity/${slug}/?page=${page}`);
-  }
-
-  // Entity - Retrieve
-  getEntity(entity_type_slug: string, slug: string) {
-    return this.api.request<EntityMadocResponse>(`/api/enrichment/entity/${entity_type_slug}/${slug}/`);
-  }
-
-  // Resource - Retrieve
-  getEnrichmentResource(id: string) {
-    return this.api.request<EnrichmentResourceResponse>(`/api/enrichment/resource/${id}/`);
   }
 
   authority = this.createServiceHelper<Authority, AuthoritySnippet>('authority_service', 'authority');
