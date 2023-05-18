@@ -41,11 +41,11 @@ export const TopicCard: React.FC<{
   return (
     <TopicStripBox $border={cardBorder} $color={textColor} $bgColor={background}>
       <CroppedImage $covered>
-        {topic.other_data.thumbnail ? (
+        {topic.other_data?.thumbnail ? (
           <img
             style={{ objectPosition: 'top' }}
-            alt={createLocaleString(topic.other_data.thumbnail.alt)}
-            src={topic.other_data.thumbnail.url}
+            alt={createLocaleString(topic.other_data?.thumbnail.alt)}
+            src={topic.other_data?.thumbnail?.url}
           />
         ) : null}
       </CroppedImage>

@@ -1,18 +1,13 @@
 import { Pagination } from './_pagination';
-import {
-  EnrichmentEntitySnippet,
-  EntityMadocResponse,
-  EntityTypeMadocResponse,
-  EntityTypesMadocResponse,
-} from '../../extensions/enrichment/authority/types';
+import { EntitySnippet, EntityFull, EntityTypeFull, EntityTypesListResponse } from '../../extensions/enrichment/types';
 
-export type TopicTypeListResponse = EntityTypesMadocResponse;
+export type TopicTypeListResponse = EntityTypesListResponse;
 
-export type TopicType = EntityTypeMadocResponse & {
+export type TopicType = EntityTypeFull & {
   pagination: Pagination;
   topics: TopicSnippet[];
 };
 
-export type TopicSnippet = EnrichmentEntitySnippet;
+export type TopicSnippet = EntitySnippet;
 
-export type Topic = EntityMadocResponse;
+export type Topic = EntityFull;

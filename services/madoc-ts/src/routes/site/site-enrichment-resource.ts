@@ -5,7 +5,7 @@ export const siteResource: RouteMiddleware<{ id: string }> = async context => {
 
   const id = context.params.id;
 
-  const response = await siteApi.authority.getEnrichmentResource(id);
+  const response = await siteApi.enrichment.getEnrichmentResource(id);
 
   context.response.body = response;
 };

@@ -1,25 +1,45 @@
 import { BaseDjangoExtension } from './base-django-extension';
-import { EnrichmentIndexPayload } from './types';
 import {
-  EnrichmentEntityAutoCompleteResponse,
+  EnrichmentIndexPayload,
+  EntityAutoCompleteResponse,
   EnrichmentResourceList,
   EnrichmentResource,
-  EntitiesMadocResponse,
-  EntityMadocResponse,
-  EntityTypeMadocResponse,
-  EntityTypesMadocResponse,
+  EntitiesListResponse,
+  EntityFull,
+  EntitySnippet,
+  EntityTypeFull,
+  EntityTypesListResponse,
   ResourceQuery,
   ResourceQueryResponse,
   ResourceTagList,
   ResourceTag,
   EntityQuery,
   EntityTypeQuery,
-} from './authority/types';
+  Authority,
+  AuthoritySnippet,
+  EnrichmentEntityAuthority,
+  EntityTypeSnippet,
+  ResourceTagSnippet,
+} from './types';
 import { stringify } from 'query-string';
 
 export class EnrichmentExtension extends BaseDjangoExtension {
   indexable_data = this.createPaginatedServiceHelper<any>('madoc', 'indexable_data');
   resource = this.createPaginatedServiceHelper<EnrichmentIndexPayload>('madoc', 'resource');
+  authority = this.createServiceHelper<Authority, AuthoritySnippet>('authority_service', 'authority');
+  entity = this.createPaginatedServiceHelper<EntityFull, EntitySnippet>('authority_service', 'entity');
+  entity_authority = this.createPaginatedServiceHelper<EnrichmentEntityAuthority>(
+    'authority_service',
+    'entity_authority'
+  );
+  entity_type = this.createPaginatedServiceHelper<EntityTypeFull, EntityTypeSnippet>(
+    'authority_service',
+    'entity_type'
+  );
+  resource_tag = this.createPaginatedServiceHelper<ResourceTag, ResourceTagSnippet>(
+    'authority_service',
+    'resource_tag'
+  );
 
   allTasks = [
     // Authority service.
@@ -108,12 +128,12 @@ export class EnrichmentExtension extends BaseDjangoExtension {
   }
 
   // ResourceTag - Create
-  tagMadocResource(entityId: string, type: string, id?: number, selector?: any) {
+  tagMadocResource(entityId: string, type: string, madocId: number, selector?: any) {
     return this.api.request(`/api/enrichment/resource_tag/`, {
       method: 'POST',
       body: {
         entity: entityId,
-        madoc_id: `urn:madoc:${type.toLowerCase()}:${id}`,
+        madoc_id: `urn:madoc:${type.toLowerCase()}:${madocId}`,
         selector,
       },
     });
@@ -129,22 +149,22 @@ export class EnrichmentExtension extends BaseDjangoExtension {
   /** ENTITY */
   // Entity - list
   getAllEntities(page?: number) {
-    return this.api.request<EntitiesMadocResponse>(`/api/enrichment/entity/?page=${page}`);
+    return this.api.request<EntitiesListResponse>(`/api/enrichment/entity/?page=${page}`);
   }
 
   // Entity - List, filtered by chosen Entity Type
   getEntities(slug: string, page?: number) {
-    return this.api.request<EntitiesMadocResponse>(`/api/enrichment/entity/${slug}/?page=${page}`);
+    return this.api.request<EntitiesListResponse>(`/api/enrichment/entity/${slug}/?page=${page}`);
   }
 
   // Entity - Retrieve
   getEntity(entity_type_slug: string, slug: string) {
-    return this.api.request<EntityMadocResponse>(`/api/enrichment/entity/${entity_type_slug}/${slug}/`);
+    return this.api.request<EntityFull>(`/api/enrichment/entity/${entity_type_slug}/${slug}/`);
   }
 
   // Entity - Upsert
   upsertEntity(query: EntityQuery) {
-    return this.api.request<EntityMadocResponse>(`/api/enrichment/entity/`, {
+    return this.api.request<EntityFull>(`/api/enrichment/entity/`, {
       method: 'POST',
       body: {
         ...query,
@@ -159,38 +179,31 @@ export class EnrichmentExtension extends BaseDjangoExtension {
     });
   }
 
-  // Entity - Fulltext Search
-  // api/enrichment/entity//entity_search/
-  // TODO - dont think this is being used ??
-
   // Entity - Autocomplete Search
   entityAutoComplete(type: string, fullText: string, page = 1) {
-    return this.api.request<EnrichmentEntityAutoCompleteResponse>(
-      `/api/enrichment/entity_autocomplete/?${stringify({ page })}`,
-      {
-        method: 'POST',
-        body: {
-          type: type,
-          fulltext: fullText,
-        },
-      }
-    );
+    return this.api.request<EntityAutoCompleteResponse>(`/api/enrichment/entity_autocomplete/?${stringify({ page })}`, {
+      method: 'POST',
+      body: {
+        type: type,
+        fulltext: fullText,
+      },
+    });
   }
 
   /** ENTITY TYPE */
   // Entity Type - List
   getEntityTypes() {
-    return this.api.request<EntityTypesMadocResponse>(`/api/enrichment/entity_type/`);
+    return this.api.request<EntityTypesListResponse>(`/api/enrichment/entity_type/`);
   }
 
   // Entity Type - Retrieve
   getEntityType(slug: string) {
-    return this.api.request<EntityTypeMadocResponse>(`/api/enrichment/entity_type/${slug}/`);
+    return this.api.request<EntityTypeFull>(`/api/enrichment/entity_type/${slug}/`);
   }
 
   // Entity Type - Upsert
   upsertEntityType(query: EntityTypeQuery) {
-    return this.api.request<EntityTypeMadocResponse>(`/api/enrichment/entity_type/`, {
+    return this.api.request<EntityTypeFull>(`/api/enrichment/entity_type/`, {
       method: 'POST',
       body: {
         ...query,

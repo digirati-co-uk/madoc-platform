@@ -1,7 +1,7 @@
-import { EnrichmentEntity, EnrichmentEntityType } from './authority/types';
+import { EntityFull, EntityTypeFull } from './types';
 import { CaptureModelShorthand } from '../../frontend/shared/capture-models/types/capture-model-shorthand';
 
-export const entityTypeModel: CaptureModelShorthand<EnrichmentEntityType> = {
+export const entityTypeModel: CaptureModelShorthand<EntityTypeFull> = {
   title: { type: 'international-field', label: 'Title', required: true },
   label: { type: 'text-field', label: 'slug', required: true },
   description: { type: 'international-field', label: 'Description' },
@@ -19,7 +19,7 @@ export const entityTypeModel: CaptureModelShorthand<EnrichmentEntityType> = {
   'featured_topics.slug': { type: 'topic-explorer', label: 'featured topics' },
 };
 
-export const entityModel: CaptureModelShorthand<EnrichmentEntity> = {
+export const entityModel: CaptureModelShorthand<EntityFull> = {
   title: { type: 'international-field', label: 'Title', required: true },
   label: { type: 'text-field', label: 'Slug', required: true },
   description: { type: 'international-field', label: 'Description' },
@@ -29,7 +29,7 @@ export const entityModel: CaptureModelShorthand<EnrichmentEntity> = {
     dataSource: 'madoc-api://topic-types/autocomplete?q=%',
     requestInitial: true,
     outputIdAsString: false,
-    required: true
+    required: true,
   },
   __nested__: {
     authorities: { allowMultiple: true, label: 'Authority', pluralLabel: 'Authorities', labelledBy: 'value' },

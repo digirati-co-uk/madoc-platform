@@ -3,7 +3,7 @@ import { Outlet } from 'react-router-dom';
 import { UniversalComponent } from '../../../types';
 import { createUniversalComponent } from '../../../shared/utility/create-universal-component';
 import { useStaticData } from '../../../shared/hooks/use-data';
-import { EnrichmentResource } from '../../../../extensions/enrichment/authority/types';
+import { EnrichmentResource } from '../../../../extensions/enrichment/types';
 
 export type EnrichmentResourceLoaderType = {
   params: { manifestId?: string; canvasId?: string };

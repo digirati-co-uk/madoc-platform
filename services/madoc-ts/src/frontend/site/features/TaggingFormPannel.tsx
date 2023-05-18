@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MetadataEmptyState } from '../../shared/atoms/MetadataConfiguration';
 import { useEnrichmentResource } from '../pages/loaders/enrichment-resource-loader';
-import { EntityTagSnippet } from '../../../extensions/enrichment/authority/types';
+import { EntityTagSnippet } from '../../../extensions/enrichment/types';
 import { Button, ButtonRow } from '../../shared/navigation/Button';
 import { CloseIcon } from '../../shared/icons/CloseIcon';
 import { ModalButton } from '../../shared/components/Modal';
@@ -60,6 +60,9 @@ export const TaggingFormPannel = () => {
     await refetch();
   });
   const [addTag, addStatus] = useMutation(async (entityId: string) => {
+    if (!canvasId) {
+      return null;
+    }
     await api.enrichment.tagMadocResource(entityId, 'canvas', canvasId);
     setSelectedId(undefined);
     await refetch();

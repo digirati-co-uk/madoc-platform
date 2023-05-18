@@ -7,7 +7,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { SnippetContainer } from '../atoms/SnippetLarge';
-import { EntityMadocResponse } from '../../../extensions/enrichment/authority/types';
+import { EntityFull } from '../../../extensions/enrichment/types';
 
 const TopicSnippetContainer = styled(SnippetContainer)`
   height: 250px;
@@ -39,7 +39,7 @@ const TypePill = styled.div`
 `;
 
 export const TopicSnippetCard: React.FC<{
-  topic: TopicSnippet | EntityMadocResponse;
+  topic: TopicSnippet | EntityFull;
   background?: string;
   textColor?: string;
   cardBorder?: string;

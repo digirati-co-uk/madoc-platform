@@ -190,7 +190,7 @@ export const indexCanvas: RouteMiddleware<{ id: string }> = async context => {
   // 6. Index any remaining capture model partials
   // @todo - this is not yet used.
 
-  await userApi.triggerSearchIndex(canvasId, 'canvas');
+  await userApi.search.triggerSearchIndex(canvasId, 'canvas');
 
   context.response.body = canvas;
 };

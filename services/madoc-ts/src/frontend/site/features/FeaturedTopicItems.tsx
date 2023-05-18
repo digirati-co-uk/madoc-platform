@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { SnippetContainer } from '../../shared/atoms/SnippetLarge';
 import { useTopic } from '../pages/loaders/topic-loader';
 import { extractIdFromUrn } from '../../../utility/parse-urn';
-import { FeaturedResource } from '../../../extensions/enrichment/authority/types';
+import { FeaturedResource } from '../../../extensions/enrichment/types';
 import { createLink } from '../../shared/utility/create-link';
 import { HrefLink } from '../../shared/utility/href-link';
 

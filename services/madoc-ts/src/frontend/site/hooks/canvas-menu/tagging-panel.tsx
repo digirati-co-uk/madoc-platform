@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { MetadataEmptyState } from '../../../shared/atoms/MetadataConfiguration';
 import { CanvasMenuHook } from './types';
-import { EntityTagSnippet } from '../../../../extensions/enrichment/authority/types';
+import { EntityTagSnippet } from '../../../../extensions/enrichment/types';
 import TaggingIcon from '../../../shared/icons/TaggingIcon';
 import { Link } from 'react-router-dom';
 import { createLink } from '../../../shared/utility/create-link';

@@ -9,7 +9,7 @@ import { Spinner } from '../../shared/icons/Spinner';
 import { useInfiniteAction } from '../hooks/use-infinite-action';
 import { Input, InputContainer, InputLabel } from '../../shared/form/Input';
 import { TagPill } from '../hooks/canvas-menu/tagging-panel';
-import { AutoCompleteEntitySnippet } from '../../../extensions/enrichment/authority/types';
+import { AutoCompleteEntitySnippet } from '../../../extensions/enrichment/types';
 import { AddTagButton } from './AddTagButton';
 import { useTranslation } from 'react-i18next';
 

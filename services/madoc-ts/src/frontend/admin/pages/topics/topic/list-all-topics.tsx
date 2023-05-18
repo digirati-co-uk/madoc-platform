@@ -1,14 +1,14 @@
 import React from 'react';
-import { EntitiesMadocResponse } from '../../../../../extensions/enrichment/authority/types';
 import { usePaginatedData } from '../../../../shared/hooks/use-data';
 import { serverRendererFor } from '../../../../shared/plugins/external/server-renderer-for';
 import { useTranslation } from 'react-i18next';
 import { SnippetLarge } from '../../../../shared/atoms/SnippetLarge';
 import { Pagination } from '../../../molecules/Pagination';
+import { EntitiesListResponse } from '../../../../../extensions/enrichment/types';
 
 export function ListAllTopics() {
   const { t } = useTranslation();
-  const { data } = usePaginatedData<EntitiesMadocResponse>(ListAllTopics);
+  const { data } = usePaginatedData<EntitiesListResponse>(ListAllTopics);
 
   return (
     <>
@@ -24,7 +24,7 @@ export function ListAllTopics() {
             buttonText={t('View Topic')}
             hideButton={!topic.type}
             subtitle={`${topic.tagged_resource_count} ${t('resources tagged')}`}
-            thumbnail={topic.other_data.thumbnail.url}
+            thumbnail={topic.other_data?.thumbnail?.url}
             margin
             fluid
           />
@@ -44,6 +44,6 @@ serverRendererFor(ListAllTopics, {
     return ['authority.entity.list', { page: query.page || 1 }];
   },
   getData(key: string, vars, api) {
-    return api.authority.getAllEntities(vars.page);
+    return api.enrichment.getAllEntities(vars.page);
   },
 });

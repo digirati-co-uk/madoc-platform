@@ -1,12 +1,7 @@
 {
+  "description": "ENTITY TYPE",
   "type": "object",
   "properties": {
-    "topicTypes": {
-      "type": "array",
-      "items": {
-        "$ref": "#/definitions/EnrichmentEntityTypeSnippet"
-      }
-    },
     "pagination": {
       "type": "object",
       "properties": {
@@ -25,11 +20,17 @@
         "totalPages",
         "totalResults"
       ]
+    },
+    "results": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/EntityTypeSnippet"
+      }
     }
   },
   "required": [
     "pagination",
-    "topicTypes"
+    "results"
   ],
   "$schema": "http://json-schema.org/draft-07/schema#"
 }

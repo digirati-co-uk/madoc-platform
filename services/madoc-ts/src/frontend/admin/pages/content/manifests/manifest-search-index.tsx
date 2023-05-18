@@ -31,7 +31,7 @@ export const ManifestSearchIndex = createUniversalComponent<ManifestSearchIndexT
 
     const api = useApi();
     const [invokeEnrichment, { isLoading: enrichLoading }] = useMutation(async () => {
-      await api.triggerSearchIndex(Number(id), 'manifest');
+      await api.search.triggerSearchIndex(Number(id), 'manifest');
       await refetch();
     });
 

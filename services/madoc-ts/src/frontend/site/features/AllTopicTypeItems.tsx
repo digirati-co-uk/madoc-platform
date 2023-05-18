@@ -74,7 +74,7 @@ export function AllTopicTypeItems(props: AllTopicTypeItemsProps) {
 
   return (
     <div style={{ paddingTop: '1em' }}>
-      {data?.topicTypes.map(type => (
+      {data?.results.map(type => (
         <TypeCard key={type.id} style={{ borderColor: props.borderColor, background: props.cardBackground }}>
           <TypeText style={{ color: props.textColor }}>
             <LocaleString as={Heading3}>{type.label || { en: ['...'] }}</LocaleString>

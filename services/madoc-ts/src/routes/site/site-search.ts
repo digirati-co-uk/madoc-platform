@@ -52,5 +52,5 @@ export const siteSearch: RouteMiddleware<
     delete searchQuery.iiif_type;
   }
 
-  context.response.body = await siteApi.searchQuery(searchQuery, page, madoc_id);
+  context.response.body = await siteApi.search.searchQuery(searchQuery, page, madoc_id);
 };

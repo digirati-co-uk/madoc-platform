@@ -71,7 +71,7 @@ export const indexManifest: RouteMiddleware<{ id: string }> = async context => {
 
   await userApi.search.enrichmentIngestResource(searchPayload);
 
-  // await userApi.triggerSearchIndex(manifestId, 'manifest');
+  // await userApi.search.triggerSearchIndex(manifestId, 'manifest');
 
   context.response.body = await userApi.search.triggerSearchIndex(manifestId, 'manifest');
   // try {

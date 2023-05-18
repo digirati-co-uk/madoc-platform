@@ -1,4 +1,4 @@
-import { EntityTagSnippet } from '../../../../extensions/enrichment/authority/types';
+import { EntityTagSnippet } from '../../../../extensions/enrichment/types';
 import { useEnrichmentResource } from '../../pages/loaders/enrichment-resource-loader';
 
 export interface ResourceTags {

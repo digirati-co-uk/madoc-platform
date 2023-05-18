@@ -8,21 +8,19 @@ import { SnippetLarge } from '../../../../shared/atoms/SnippetLarge';
 export function ListAllTopicTypes() {
   const { t } = useTranslation();
   const { data } = usePaginatedTopicTypes();
-  //TODO types need updated once backend confirms endpoints
-  // for count and thumbnail
   return (
     <>
       <p>
         {data?.pagination.totalResults} {t('total topic types')}
       </p>
-      {data?.topicTypes.map(topicType => (
+      {data?.results.map(topicType => (
         <SnippetLarge
           key={topicType.id}
           label={<LocaleString>{topicType.title}</LocaleString>}
           link={topicType.slug}
           buttonText={t('View Topic type')}
-          subtitle={`${topicType.count} ${t('topics')}`}
-          thumbnail={topicType.image_url}
+          subtitle={`${topicType.topic_count} ${t('topics')}`}
+          thumbnail={topicType.other_data?.thumbnail?.url}
           margin
         />
       ))}

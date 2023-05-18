@@ -25,7 +25,7 @@ export const CanvasSearchIndex = createUniversalComponent<CanvasSearchIndexType>
     });
 
     const [invokeEnrichment, { isLoading: enrichLoading }] = useMutation(async () => {
-      await api.triggerSearchIndex(Number(id), 'canvas');
+      await api.search.triggerSearchIndex(Number(id), 'canvas');
       await refetch();
     });
 

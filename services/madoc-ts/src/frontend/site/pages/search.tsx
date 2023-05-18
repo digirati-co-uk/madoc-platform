@@ -28,22 +28,22 @@ export const Search = () => {
       <div style={{ display: 'flex' }}>
         <div style={{ maxWidth: 300 }}>
           <Slot name="search-page-filters" small>
-            <SearchPageFilters topicId={topicId} />
+            <SearchPageFilters />
           </Slot>
         </div>
 
         <div style={{ width: '100%' }}>
           <Slot name="search-page-pagination">
-            <SearchPagination topicId={topicId} />
+            <SearchPagination />
           </Slot>
 
           <Slot name="search-page-results">
             <AppliedFacets />
-            <SearchPageResults topicId={topicId} />
+            <SearchPageResults />
           </Slot>
 
           <Slot name="search-page-footer">
-            <SearchPagination topicId={topicId} />
+            <SearchPagination />
           </Slot>
         </div>
       </div>

@@ -12,7 +12,6 @@ import { DynamicDataSourcesExtension } from '../extensions/capture-models/Dynami
 import { CaptureModelExtension } from '../extensions/capture-models/extension';
 import { Paragraphs } from '../extensions/capture-models/Paragraphs/Paragraphs.extension';
 import { plainTextSource } from '../extensions/capture-models/DynamicDataSources/sources/Plaintext.source';
-import { AuthorityExtension } from '../extensions/enrichment/authority/authority-extension';
 import { EnrichmentExtension } from '../extensions/enrichment/extension';
 import { SearchExtension } from '../extensions/enrichment/search/search-extension';
 import { ExtensionManager } from '../extensions/extension-manager';
@@ -86,7 +85,7 @@ import { SearchIndexTask } from './tasks/search-index-task';
 import { JsonProjectTemplate, ProjectTemplate } from '../extensions/projects/types';
 import { ApiKey } from '../types/api-key';
 import { Topic, TopicType, TopicTypeListResponse } from '../types/schemas/topics';
-import { EnrichmentResource } from '../extensions/enrichment/authority/types';
+import { EnrichmentResource } from '../extensions/enrichment/types';
 
 export type ApiClientWithoutExtensions = Omit<
   ApiClient,
@@ -125,7 +124,6 @@ export class ApiClient {
   projectTemplates!: ProjectTemplateExtension;
   projectExport!: ProjectExportExtension;
   crowdsourcing!: CrowdsourcingApi;
-  authority: AuthorityExtension;
   enrichment: EnrichmentExtension;
   search: SearchExtension;
   webhooks!: WebhookExtension;
@@ -152,7 +150,6 @@ export class ApiClient {
     this.notifications = new NotificationExtension(this);
     this.tasks = new TaskExtension(this);
     // Enrichment
-    this.authority = new AuthorityExtension(this);
     this.enrichment = new EnrichmentExtension(this);
     this.search = new SearchExtension(this);
 

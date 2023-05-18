@@ -8,7 +8,7 @@ import { Spinner } from '../../shared/icons/Spinner';
 import { useInfiniteAction } from '../hooks/use-infinite-action';
 import { Input, InputContainer, InputLabel } from '../../shared/form/Input';
 import { TagPill } from '../hooks/canvas-menu/tagging-panel';
-import { AutoCompleteEntitySnippet } from '../../../extensions/enrichment/authority/types';
+import { AutoCompleteEntitySnippet } from '../../../extensions/enrichment/types';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { LocaleString } from '../../shared/components/LocaleString';
