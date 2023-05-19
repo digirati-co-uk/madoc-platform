@@ -35,19 +35,22 @@ export const TopicExplorer: FieldComponent<TopicExplorerProps> = ({ value, updat
 
   return (
     <div ref={container} style={{ maxHeight: 500, overflowY: 'scroll', border: '1px solid grey', padding: '0.5em' }}>
-      <ImageGrid>
-        {data?.pagination.totalResults === 0 && <Subheading3>No topics in this type</Subheading3>}
-        {data?.topics.map(topic => (
-          <TopicSnippetCard
-            key={topic.id}
-            topic={topic}
-            size="small"
-            onClick={() => {
-              updateValue({ slug: topic.slug, id: topic.id });
-            }}
-          />
-        ))}
-      </ImageGrid>
+      {data?.pagination.totalResults === 0 ? (
+        <Subheading3>No topics in this type</Subheading3>
+      ) : (
+        <ImageGrid>
+          {data?.topics.map(topic => (
+            <TopicSnippetCard
+              key={topic.id}
+              topic={topic}
+              size="small"
+              onClick={() => {
+                updateValue({ slug: topic.slug, id: topic.id });
+              }}
+            />
+          ))}
+        </ImageGrid>
+      )}
     </div>
   );
 };

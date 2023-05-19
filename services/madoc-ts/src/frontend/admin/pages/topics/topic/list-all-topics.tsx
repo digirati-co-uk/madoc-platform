@@ -41,7 +41,7 @@ export function ListAllTopics() {
 
 serverRendererFor(ListAllTopics, {
   getKey(params, query) {
-    return ['authority.entity.list', { page: query.page || 1 }];
+    return ['enrichment-entity-list', { page: query.page || 1 }];
   },
   getData(key: string, vars, api) {
     return api.enrichment.getAllEntities(vars.page);

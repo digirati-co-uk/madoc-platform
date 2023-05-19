@@ -1,9 +1,11 @@
 import React from 'react';
 import { LocaleString } from '../../../../shared/components/LocaleString';
-import { Heading1 } from '../../../../shared/typography/Heading1';
+import { Heading1, Subheading1 } from '../../../../shared/typography/Heading1';
 import { useTopicType } from '../../../../site/pages/loaders/topic-type-loader';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
+import { Heading2 } from '../../../../shared/typography/Heading2';
+import { Heading3 } from '../../../../shared/typography/Heading3';
 
 const TopicTypeContainer = styled.div`
   display: flex;
@@ -51,10 +53,12 @@ export function TypeDetails() {
     <>
       <TopicTypeContainer>
         <TypeImage>
-          <img src={data?.image_url} />
+          <img src={data?.other_data?.main_image?.url} />
 
           <TopicTypeDetails>
-            <Heading1 as={LocaleString}>{data?.label || { none: ['...'] }}</Heading1>
+            <Heading1 as={LocaleString}>{data.title || { none: ['...'] }}</Heading1>
+            <Heading3> {data.label}</Heading3>
+
             <ul style={{ listStyle: 'none' }}>
               <li>
                 <b>{t('ID')}</b>: {data?.id}
@@ -63,13 +67,16 @@ export function TypeDetails() {
                 <b>{t('Slug')}</b>: {data?.slug}
               </li>
               <li>
+                <b>{t('Label')}</b>: {data.label}
+              </li>
+              <li>
                 <b>{t('Title')}</b>: <LocaleString>{data?.title}</LocaleString>
               </li>
               <li>
                 <b>{t('Description')}</b>: <LocaleString>{data?.description}</LocaleString>
               </li>
               <li>
-                <b>{t('Topics')}</b>: {data?.pagination.totalResults}
+                <b>{t('Topics')}</b>: {data?.topic_count}
               </li>
             </ul>
           </TopicTypeDetails>

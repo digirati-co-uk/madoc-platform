@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useApi } from '../../../../shared/hooks/use-api';
 import { useMutation } from 'react-query';
 import { Button } from '../../../../shared/navigation/Button';
@@ -51,7 +51,20 @@ export function EditTopic() {
 
     return resp;
   });
+  const model = useMemo(() => {
+    const copy: any = {
+      ...entityModel,
+    };
+    delete copy.type_slug;
+    delete copy.label;
+    // dont allow editing featured if not enough to chose from
+    // backend automatically picks first 3
+    if (data && data.tagged_resource_count < 4) {
+      delete copy['featured_resources.madoc_id'];
+    }
 
+    return copy;
+  }, [data]);
   if (!data) {
     return <div>{t('Loading...')}</div>;
   }
@@ -73,7 +86,7 @@ export function EditTopic() {
       {status.isError && <ErrorMessage>{t('Error...')}</ErrorMessage>}
       <CustomEditorTypes>
         <EditShorthandCaptureModel
-          template={entityModel}
+          template={model}
           data={data}
           onSave={async input => {
             await createNewEntity(input);

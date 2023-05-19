@@ -1,29 +1,36 @@
-import { EntityFull, EntityTypeFull } from './types';
+import { EntityFull, EntityQuery, EntityTypeFull, EntityTypeQuery } from './types';
 import { CaptureModelShorthand } from '../../frontend/shared/capture-models/types/capture-model-shorthand';
 
-export const entityTypeModel: CaptureModelShorthand<EntityTypeFull> = {
+export const entityTypeModel: CaptureModelShorthand<EntityTypeQuery> = {
   title: { type: 'international-field', label: 'Title', required: true },
   label: { type: 'text-field', label: 'slug', required: true },
   description: { type: 'international-field', label: 'Description' },
-  image_url: { type: 'madoc-media-explorer', label: 'Image', valueAsString: true },
+  featured_topics: { type: 'topic-explorer', label: 'featured topics', allowMultiple: true },
   __nested__: {
-    featured_topics: {
-      allowMultiple: true,
-      label: 'Featured topic',
-      pluralLabel: 'Featured topics',
-      labelledBy: 'slug',
+    // featured_topics: {
+    //   allowMultiple: true,
+    //   label: 'Featured topic',
+    //   pluralLabel: 'Featured topics',
+    //   labelledBy: 'slug',
+    // },
+    other_data: {
+      allowMultiple: false,
+      label: 'Images',
+      labelledBy: '',
     },
   },
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  'featured_topics.slug': { type: 'topic-explorer', label: 'featured topics' },
+  // 'featured_topics': { type: 'topic-explorer', label: 'featured topics' },
+  'other_data.main_image': { type: 'madoc-media-explorer', label: 'Hero image' },
+  'other_data.thumbnail': { type: 'madoc-media-explorer', label: 'Thumbnail' },
 };
 
-export const entityModel: CaptureModelShorthand<EntityFull> = {
+export const entityModel: CaptureModelShorthand<EntityQuery> = {
   title: { type: 'international-field', label: 'Title', required: true },
   label: { type: 'text-field', label: 'Slug', required: true },
   description: { type: 'international-field', label: 'Description' },
-  type: {
+  type_slug: {
     type: 'autocomplete-field',
     label: 'Topic type',
     dataSource: 'madoc-api://topic-types/autocomplete?q=%',
@@ -32,12 +39,10 @@ export const entityModel: CaptureModelShorthand<EntityFull> = {
     required: true,
   },
   __nested__: {
-    authorities: { allowMultiple: true, label: 'Authority', pluralLabel: 'Authorities', labelledBy: 'value' },
     featured_resources: {
       allowMultiple: true,
       label: 'featured resource',
       pluralLabel: 'featured resources',
-      labelledBy: 'madoc_id',
       description: 'Note: only manifests can be featured resources',
     },
     other_data: {
@@ -49,12 +54,9 @@ export const entityModel: CaptureModelShorthand<EntityFull> = {
   // @ts-ignore
   'featured_resources.madoc_id': { type: 'topic-item-explorer', label: 'featured resources' },
 
-  'authorities.url': { type: 'text-field', label: 'URI / URL' },
-  'authorities.authority': { type: 'text-field', label: 'Authority label' },
-  'authorities.identifier': { type: 'text-field', label: 'Authority identifier' },
-
   'other_data.topic_summary': { type: 'international-field', label: 'Summary' },
   'other_data.secondary_heading': { type: 'international-field', label: 'Secondary heading' },
+  'other_data.aliases': { type: 'international-field', label: 'Aliases', allowMultiple: true },
   'other_data.main_image': { type: 'madoc-media-explorer', label: 'Hero image' },
-  'other_data.thumbnail.alt': { type: 'international-field', label: 'alt text' },
+  'other_data.thumbnail': { type: 'madoc-media-explorer', label: 'Thumbnail' },
 };

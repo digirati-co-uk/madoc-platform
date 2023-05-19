@@ -8,6 +8,7 @@ import { useRouteContext } from '../../../../shared/plugins/public-api';
 import { useTopic } from '../../../../site/pages/loaders/topic-loader';
 import { useTranslation } from 'react-i18next';
 
+//todo nicer delete page
 export function DeleteTopic() {
   const api = useApi();
   const { topicType } = useRouteContext();

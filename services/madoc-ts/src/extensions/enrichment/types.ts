@@ -81,26 +81,20 @@ export interface EntitySnippet {
   created: string;
   modified: string;
   label: string;
-  type: SpaCyNERType | null;
+  type?: SpaCyNERType | string;
   type_slug: string;
   type_title: InternationalString;
   slug: string;
   title: InternationalString;
   tagged_resource_count: number;
-  other_data?: {
-    thumbnail?: {
-      id?: string;
-      url?: string;
-      alt?: InternationalString;
-    };
-  };
+  other_data?: EntityOtherData;
 }
 export interface EntityFull {
   url: string;
   id: string;
   created: string;
   modified: string;
-  type: SpaCyNERType | null;
+  type: SpaCyNERType | string;
   type_slug: string;
   type_title: InternationalString;
   label: string;
@@ -109,29 +103,23 @@ export interface EntityFull {
   description?: InternationalString;
   featured_resources?: FeaturedResource[];
   related_topics: EntitySnippet[];
-  authorities: AuthoritySnippet[];
+  authorities: EnrichmentEntityAuthority[];
   tagged_resource_count: number;
   other_data?: EntityOtherData;
 }
 export interface EntityOtherData {
   aliases?: InternationalString;
-  main_image?: {
-    id?: string;
-    alt?: InternationalString;
-    height?: string;
-    width?: string;
-    url?: string;
-  };
-  thumbnail?: {
-    id?: string;
-    alt?: InternationalString;
-    height?: string;
-    width?: string;
-    url: string;
-  };
+  main_image?: ImageData;
+  thumbnail?: ImageData;
   topic_summary?: InternationalString;
   secondary_heading?: InternationalString;
-  coordinates?: any; // dunno what this is yet
+  coordinates?: {
+    globe?: string;
+    altitude?: number;
+    latitude?: number;
+    longitude?: number;
+    precision?: number;
+  };
 }
 export interface FeaturedResource {
   url: string;
@@ -142,17 +130,17 @@ export interface FeaturedResource {
   label?: InternationalString;
   thumbnail?: string;
   metadata?: any; // ?
-  other_data?: any; // ?
+  other_data?: any; // ? dunno yet
   tagged_resource_count: number;
 }
 export interface EnrichmentEntityAuthority {
   id: string;
   authority: string;
-  identifier: string;
+  url: string;
 }
 export type EntityQuery = {
   id?: string; // Required for update only
-  type_slug?: string; // Required for create only (used for slug)
+  type_slug: string; // Required for create only (used for slug)
   label: string; // Uniqueness is not enforced. A unique slug is made.
   title?: InternationalString;
   description?: InternationalString;
@@ -191,11 +179,7 @@ export interface EntityTypeSnippet {
   slug: string;
   title: InternationalString;
   topic_count: number;
-  other_data?: {
-    thumbnail?: {
-      url?: string;
-    };
-  };
+  other_data?: EntityTypeOtherData;
 }
 export interface EntityTypeFull {
   url: string;
@@ -206,27 +190,22 @@ export interface EntityTypeFull {
   slug: string;
   title?: InternationalString;
   description?: InternationalString;
-  image_url?: string;
-  featured_topics?: EntitySnippet[];
+  featured_topics: EntitySnippet[];
   topic_count: number;
-  other_data?: {
-    main_image: {
-      url?: string;
-    };
-  };
+  other_data?: EntityTypeOtherData;
 }
 export type EntityTypeQuery = {
-  id?: string; // Required for Update only
+  id: string; // Required for Update only
   label: string; // Required
-  title?: InternationalString;
-  description?: InternationalString;
-  image_url?: string;
-  featured_topics?: FeaturedResource[];
-  other_data?: {
-    main_image?: string;
-    thumbnail?: string;
-  };
+  title: InternationalString;
+  description: InternationalString;
+  featured_topics: string[];
+  other_data: EntityTypeOtherData;
 };
+export interface EntityTypeOtherData {
+  main_image?: ImageData;
+  thumbnail?: ImageData;
+}
 export interface EntityTypeAutoCompleteResponse {
   pagination: Pagination;
   results: AutoCompleteEntityTypeSnippet[];
@@ -253,16 +232,6 @@ export interface EntityTagSnippet {
   };
   selector?: any;
 }
-export interface AuthoritySnippet {
-  url: string;
-  authority: string;
-  identifier: string;
-}
-export interface Authority extends AuthoritySnippet {
-  base_data_url: string;
-  base_url: string;
-}
-
 export type SpaCyNERType =
   | 'PERSON'
   | 'NORP'
@@ -298,4 +267,12 @@ export interface DjangoPagination<T> {
   next: string;
   previous: string;
   results: T[];
+}
+
+export interface ImageData {
+  id?: string;
+  alt?: InternationalString;
+  height?: string;
+  width?: string;
+  url?: string;
 }

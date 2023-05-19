@@ -17,23 +17,25 @@ export function EditTopicType() {
 
   const [createNewEntityType, status] = useMutation(async (updatedData: any) => {
     if (!data) return;
+
     if (typeof updatedData.image_url !== 'string' || !updatedData.image_url.startsWith('http')) {
       // @todo can change later.
       updatedData.image_url = `${window.location.protocol}//${window.location.host}${updatedData.image_url}`;
     }
-    // @todo can hopfully change this
-    if (updatedData.featured_topics) {
-      const unEdited = updatedData.featured_topics.filter((f: { slug: { id: any } }) => !f.slug.id);
+    if (data.topic_count > 0) {
+      if (updatedData.featured_topics) {
+        const unEdited = updatedData.featured_topics.filter((f: { slug: { id: any } }) => !f.slug.id);
+        const ogItems = data.featured_topics?.filter(g => {
+          return unEdited.some((t: { slug: string }) => g.slug.includes(t.slug));
+        });
+        const ogIds = ogItems?.map((f: { id: any }) => f.id);
+        const newIds = updatedData.featured_topics
+          .map((f: { slug: { id: any } }) => f.slug.id)
+          .filter((f: string) => f !== undefined);
 
-      const ogItems = data.featured_topics?.filter(g => {
-        return unEdited.some((t: { slug: string }) => g.slug.includes(t.slug));
-      });
-      const ogIds = ogItems?.map((f: { id: any }) => f.id);
-      const newIds = updatedData.featured_topics
-        .map((f: { slug: { id: any } }) => f.slug.id)
-        .filter((f: string) => f !== undefined);
-
-      updatedData.featured_topics = ogIds?.concat(newIds);
+        updatedData.featured_topics = ogIds?.concat(newIds);
+      }
+      updatedData.featured_topics = [];
     }
     const resp = api.enrichment.upsertEntityType({
       id: data.id,
@@ -41,8 +43,7 @@ export function EditTopicType() {
       ...updatedData,
     });
 
-    refetch();
-
+    await refetch();
     return resp;
   });
 
@@ -51,8 +52,13 @@ export function EditTopicType() {
       ...entityTypeModel,
     };
     delete copy.label;
+    // dont allow editing featured if not enough to chose from
+    // backend automatically picks first 3
+    if (data && data.topic_count < 4) {
+      delete copy.featured_topics;
+    }
     return copy;
-  }, []);
+  }, [data]);
 
   if (!data) {
     return <div>{t('Loading...')}</div>;
@@ -76,7 +82,7 @@ export function EditTopicType() {
       <CustomEditorTypes>
         <EditShorthandCaptureModel
           template={model}
-          data={data}
+          data={{ ...data }}
           onSave={async d => {
             await createNewEntityType(d);
           }}

@@ -15,23 +15,18 @@ import {
   ResourceTag,
   EntityQuery,
   EntityTypeQuery,
-  Authority,
-  AuthoritySnippet,
   EnrichmentEntityAuthority,
   EntityTypeSnippet,
   ResourceTagSnippet,
+  EntityTypeAutoCompleteResponse,
 } from './types';
 import { stringify } from 'query-string';
 
 export class EnrichmentExtension extends BaseDjangoExtension {
   indexable_data = this.createPaginatedServiceHelper<any>('madoc', 'indexable_data');
   resource = this.createPaginatedServiceHelper<EnrichmentIndexPayload>('madoc', 'resource');
-  authority = this.createServiceHelper<Authority, AuthoritySnippet>('authority_service', 'authority');
+  authority = this.createServiceHelper<EnrichmentEntityAuthority>('authority_service', 'authority');
   entity = this.createPaginatedServiceHelper<EntityFull, EntitySnippet>('authority_service', 'entity');
-  entity_authority = this.createPaginatedServiceHelper<EnrichmentEntityAuthority>(
-    'authority_service',
-    'entity_authority'
-  );
   entity_type = this.createPaginatedServiceHelper<EntityTypeFull, EntityTypeSnippet>(
     'authority_service',
     'entity_type'
@@ -174,20 +169,23 @@ export class EnrichmentExtension extends BaseDjangoExtension {
 
   // Entity - Delete
   deleteEntity(type: string, slug: string) {
-    return this.api.request(`/api/enrichment/entity/${type}/${slug}`, {
+    return this.api.request(`/api/enrichment/entity/${type}/${slug}/`, {
       method: 'DELETE',
     });
   }
 
   // Entity - Autocomplete Search
   entityAutoComplete(type: string, fullText: string, page = 1) {
-    return this.api.request<EntityAutoCompleteResponse>(`/api/enrichment/entity_autocomplete/?${stringify({ page })}`, {
-      method: 'POST',
-      body: {
-        type: type,
-        fulltext: fullText,
-      },
-    });
+    return this.api.request<EntityAutoCompleteResponse>(
+      `/api/enrichment/entity_autocomplete/?${stringify({ page })}/`,
+      {
+        method: 'POST',
+        body: {
+          type: type,
+          fulltext: fullText,
+        },
+      }
+    );
   }
 
   /** ENTITY TYPE */
@@ -212,18 +210,21 @@ export class EnrichmentExtension extends BaseDjangoExtension {
   }
   // Entity Type - Delete
   deleteEntityType(slug: string) {
-    return this.api.request(`/api/enrichment/entity_type/${slug}`, {
+    return this.api.request(`/api/enrichment/entity_type/${slug}/`, {
       method: 'DELETE',
     });
   }
 
   // Entity Type - Autocomplete Search
   entityTypeAutoComplete(fullText: string, page = 1) {
-    return this.api.request<any>(`/api/enrichment/entity_type_autocomplete/?${stringify({ page })}`, {
-      method: 'POST',
-      body: {
-        fulltext: fullText,
-      },
-    });
+    return this.api.request<EntityTypeAutoCompleteResponse>(
+      `/api/enrichment/entity_type_autocomplete/?${stringify({ page })}/`,
+      {
+        method: 'POST',
+        body: {
+          fulltext: fullText,
+        },
+      }
+    );
   }
 }

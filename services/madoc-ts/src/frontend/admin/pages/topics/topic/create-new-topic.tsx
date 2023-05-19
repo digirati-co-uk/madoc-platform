@@ -17,8 +17,8 @@ export function CreateNewTopic() {
   const api = useApi();
   const { t } = useTranslation();
   const { topicType } = useRouteContext();
-  const { data, isLoading } = useTopicType();
-  const hasTopic = data || isLoading;
+  const { data: type, isLoading } = useTopicType();
+  const hasTopic = topicType || isLoading;
 
   const [createNewEntityType, status] = useMutation(async (input: any) => {
     if (input.other_data.main_image) {
@@ -56,16 +56,13 @@ export function CreateNewTopic() {
       delete input.authorities;
     }
 
-    //todo hopfully will change
-    if (data && hasTopic) {
-      input.type = getValue(data.label);
-      input.type_slug = getValue(data.slug);
-    } else {
-      input.type = input.type.label;
+    if (!hasTopic) {
+      // input.type_slug = type?.slug;
+      input.type_slug = input.type_slug.label;
+      console.log(input.type_slug);
     }
-
     return {
-      response: await api.enrichment.upsertEntity({ type_slug: input.type.toLowerCase(), ...input }),
+      response: await api.enrichment.upsertEntity({ ...input }),
       topicType: input.type_slug,
     };
   });
@@ -75,17 +72,14 @@ export function CreateNewTopic() {
     };
 
     delete copy['featured_resources.madoc_id'];
-    if (topicType && topicType !== '_') {
-      delete copy.type;
-    }
     return copy;
-  }, [topicType]);
+  }, []);
 
   if (status.isSuccess) {
     return (
       <div>
         {t('Added!')}
-        <pre>{JSON.stringify(status.data?.response)}</pre>
+        <pre>{JSON.stringify(status.data?.response, null, 2)}</pre>
         {status.data ? (
           <Button $primary as={HrefLink} href={`/topics/${status.data.topicType}/${status.data.response.label}`}>
             {t('Go to topic')}
@@ -107,10 +101,7 @@ export function CreateNewTopic() {
         <EditShorthandCaptureModel
           template={model}
           data={{
-            ...data,
-            type: topicType,
-            label: '',
-            title: '',
+            type_slug: type?.slug,
           }}
           onSave={async input => {
             await createNewEntityType(input);

@@ -16,9 +16,9 @@ export function CreateNewTopicType() {
   const [error, setError] = useState('');
   const [createNewEntityType, status] = useMutation(async (data: any) => {
     if (!data) return;
-    // @todo can change later.
-    data.image_url = `${window.location.protocol}//${window.location.host}${data.image_url.publicLink ||
-      data.image_url}`;
+    // // @todo can change later.
+    // data.image_url = `${window.location.protocol}//${window.location.host}${data.image_url.publicLink ||
+    //   data.image_url}`;
 
     if (data.featured_topics) {
       if (data.featured_topics[0].length) {
@@ -32,12 +32,11 @@ export function CreateNewTopicType() {
     return api.enrichment.upsertEntityType(data);
   });
 
-  console.log(error);
   const model = useMemo(() => {
     const copy: any = {
       ...entityTypeModel,
     };
-    delete copy['featured_topics.slug'];
+    delete copy.featured_topics;
     return copy;
   }, []);
 
@@ -64,7 +63,7 @@ export function CreateNewTopicType() {
       <CustomEditorTypes>
         <EditShorthandCaptureModel
           template={model}
-          data={{ label: '', title: { en: [''] }, description: { en: [''] }, image_url: '' }}
+          data
           onSave={async data => {
             await createNewEntityType(data);
           }}
