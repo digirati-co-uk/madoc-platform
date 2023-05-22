@@ -16,6 +16,7 @@ const TopicHeroWrapper = styled.div`
   justify-content: center;
   height: auto;
   transition: all 0.8s;
+  color: #002d4b;
 `;
 const TopWrapper = styled.div`
   display: flex;

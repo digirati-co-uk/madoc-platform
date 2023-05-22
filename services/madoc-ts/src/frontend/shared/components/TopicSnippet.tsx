@@ -15,6 +15,8 @@ const TopicSnippetContainer = styled(SnippetContainer)`
   padding: 0;
   margin-left: auto;
   margin-right: auto;
+  border: 1px solid #002d4b;
+  background-color: white;
 
   &[data-is-small='true'] {
     height: 150px;
@@ -26,6 +28,7 @@ const CardText = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-around;
+  color: #002d4b;
 `;
 
 const TypePill = styled.div`
@@ -52,7 +55,7 @@ export const TopicSnippetCard: React.FC<{
   return (
     <TopicSnippetContainer
       data-is-small={size === 'small'}
-      style={{ border: cardBorder ? `1px solid ${cardBorder}` : '', backgroundColor: background ? background : '' }}
+      style={{ border: `1px solid ${cardBorder}`, backgroundColor: background }}
       interactive
       flat
       onClick={onClick}

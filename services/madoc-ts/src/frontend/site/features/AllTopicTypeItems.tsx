@@ -22,7 +22,7 @@ const TypeCard = styled.div`
 const TypeText = styled.div`
   width: 50%;
   padding: 20px 30px;
-
+  color: #002d4b;
   h3 {
     font-weight: 500;
   }

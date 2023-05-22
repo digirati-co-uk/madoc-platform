@@ -12,9 +12,9 @@ const LinkWrapper = styled.div`
     vertical-align: middle;
     margin: 0 1em;
     text-transform: capitalize;
-
+    color: #000000;
     :hover {
-      color: black;
+      color: #056db7;
       text-decoration: underline;
       cursor: pointer;
     }

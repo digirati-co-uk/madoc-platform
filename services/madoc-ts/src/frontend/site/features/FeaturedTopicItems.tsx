@@ -48,7 +48,7 @@ export const FeaturedTopicItems: React.FC<{
   textColor?: string;
   cardBorder?: string;
   imageStyle?: string;
-}> = ({ cardBackground, textColor, cardBorder, imageStyle }) => {
+}> = ({ cardBackground = 'white', textColor = '#002D4B', cardBorder = '#002D4B', imageStyle = 'cover' }) => {
   const { data } = useTopic();
   const items = data?.featured_resources ? data?.featured_resources : [];
   const createLocaleString = useCreateLocaleString();
@@ -62,7 +62,6 @@ export const FeaturedTopicItems: React.FC<{
   const RenderItemSnippet = (item: FeaturedResource) => {
     const itemId = item.madoc_id ? item.madoc_id : '';
     const manifestId = extractIdFromUrn(itemId);
-    console.log(manifestId);
 
     return (
       <HrefLink

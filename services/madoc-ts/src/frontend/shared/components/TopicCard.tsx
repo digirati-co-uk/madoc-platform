@@ -35,7 +35,7 @@ export const TopicCard: React.FC<{
   background?: string;
   textColor?: string;
   cardBorder?: string;
-}> = ({ topic, cardBorder, textColor, background }) => {
+}> = ({ topic, cardBorder = '#002d4b', textColor = '#002d4b', background = 'white' }) => {
   const createLocaleString = useCreateLocaleString();
   const { t } = useTranslation();
   return (
@@ -50,7 +50,9 @@ export const TopicCard: React.FC<{
         ) : null}
       </CroppedImage>
       <div style={{ margin: '1em' }}>
-        <LocaleString as={SingleLineHeading3}>{topic.title}</LocaleString>
+        <LocaleString as={SingleLineHeading3} style={{ color: textColor }}>
+          {topic.title}
+        </LocaleString>
 
         {topic.tagged_resource_count && (
           <Subheading3>

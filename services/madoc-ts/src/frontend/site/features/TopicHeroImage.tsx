@@ -21,7 +21,7 @@ export const TopicHeroImage: React.FC<{
   imageStyle?: string;
   imagePosition?: string;
   imageRepeat?: string;
-}> = ({ height, imageRepeat, imagePosition, imageStyle }) => {
+}> = ({ height, imageRepeat = 'no-repeat', imagePosition = 'center', imageStyle = 'fit' }) => {
   const { data } = useTopic();
   if (!data) {
     return null;
