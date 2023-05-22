@@ -9,6 +9,7 @@ import { useTopic } from '../../../../site/pages/loaders/topic-loader';
 import { entityModel } from '../../../../../extensions/enrichment/models';
 import { ErrorMessage } from '../../../../shared/capture-models/editor/atoms/Message';
 import { useTranslation } from 'react-i18next';
+import { ParseEntityMedia } from '../topic-type/ParseEntityMedia';
 
 export function EditTopic() {
   const api = useApi();
@@ -16,6 +17,9 @@ export function EditTopic() {
   const { t } = useTranslation();
   const [createNewEntity, status] = useMutation(async (updatedData: any) => {
     if (!data) return;
+
+    updatedData.other_data.main_image = ParseEntityMedia(updatedData.other_data.main_image);
+    updatedData.other_data.thumbnail = ParseEntityMedia(updatedData.other_data.thumbnail);
 
     if (updatedData.featured_resources) {
       const ftRes = updatedData.featured_resources;

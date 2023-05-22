@@ -14,7 +14,7 @@ export const entityTypeModel: CaptureModelShorthand<EntityTypeQuery> = {
     other_data: {
       allowMultiple: false,
       label: 'Images',
-      labelledBy: '',
+      labelledBy: 'id',
     },
   },
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment

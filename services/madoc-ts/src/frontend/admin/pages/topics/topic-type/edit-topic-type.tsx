@@ -9,6 +9,7 @@ import { useTopicType } from '../../../../site/pages/loaders/topic-type-loader';
 import { entityTypeModel } from '../../../../../extensions/enrichment/models';
 import { ErrorMessage } from '../../../../shared/capture-models/editor/atoms/Message';
 import { useTranslation } from 'react-i18next';
+import { ParseEntityMedia } from './ParseEntityMedia';
 
 export function EditTopicType() {
   const api = useApi();
@@ -18,10 +19,8 @@ export function EditTopicType() {
   const [createNewEntityType, status] = useMutation(async (updatedData: any) => {
     if (!data) return;
 
-    if (typeof updatedData.image_url !== 'string' || !updatedData.image_url.startsWith('http')) {
-      // @todo can change later.
-      updatedData.image_url = `${window.location.protocol}//${window.location.host}${updatedData.image_url}`;
-    }
+    updatedData.other_data.main_image = ParseEntityMedia(updatedData.other_data.main_image);
+    updatedData.other_data.thumbnail = ParseEntityMedia(updatedData.other_data.thumbnail);
 
     if (data.topic_count > 0) {
       if (updatedData.featured_topics) {

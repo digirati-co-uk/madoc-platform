@@ -9,6 +9,7 @@ import { useApi } from '../../../frontend/shared/hooks/use-api';
 import { useInfiniteAction } from '../../../frontend/site/hooks/use-infinite-action';
 import { useTranslation } from 'react-i18next';
 import { InfoMessage } from '../../../frontend/shared/callouts/InfoMessage';
+import validate from 'uuid-validate';
 
 export type MediaExplorerProps = {
   id: string;
@@ -16,6 +17,7 @@ export type MediaExplorerProps = {
   type: string;
   value: {
     id: string;
+    url?: string;
     image: string;
     thumbnail: string;
   } | null;
@@ -29,6 +31,7 @@ export const MediaExplorer: React.FC<MediaExplorerProps & {
   const api = useApi();
   const { t } = useTranslation();
   const container = useRef<HTMLDivElement>(null);
+  console.log(props.value);
   const { data: pages, fetchMore, canFetchMore, isFetchingMore } = useInfiniteQuery(
     ['media-explorer', {}],
     async (key, _, vars: { page?: number } = { page: 0 }) => {
@@ -52,8 +55,8 @@ export const MediaExplorer: React.FC<MediaExplorerProps & {
     container: container,
   });
 
-
-  const chosenMedia = parseChosenMedia(props.value);
+  const v = props.value?.url ? props.value.url : props.value;
+  const chosenMedia = parseChosenMedia(v);
   if (chosenMedia) {
     return (
       <div>
@@ -69,38 +72,38 @@ export const MediaExplorer: React.FC<MediaExplorerProps & {
     <div ref={container} style={{ maxHeight: 500, overflowY: 'scroll' }}>
       {!pages || pages[0].pagination.totalResults === 0 ? (
         <InfoMessage>{t('There are no images to chose from, you can upload media in the admin interface')}</InfoMessage>
-      ) : (<ImageGrid $size="small">
-        {pages?.map((page, key) => {
-          return (
-            <React.Fragment key={key}>
-              {page.mediaItems.map(media => (
-                <ImageStripBox
-                  key={media.id}
-                  onClick={() => {
+      ) : (
+        <ImageGrid $size="small">
+          {pages?.map((page, key) => {
+            return (
+              <React.Fragment key={key}>
+                {page.mediaItems.map(media => (
+                  <ImageStripBox
+                    key={media.id}
+                    onClick={() => {
                       if (props.valueAsString) {
-                      if (props.onlyThumbnail) {
-                        props.updateValue(media.thumbnail as any);
+                        if (props.onlyThumbnail) {
+                          props.updateValue(media.thumbnail as any);
+                        } else {
+                          props.updateValue(media.publicLink as any);
+                        }
                       } else {
-                        props.updateValue(media.publicLink as any);
+                        props.updateValue({ id: media.id, image: media.publicLink, thumbnail: media.thumbnail });
                       }
-                    } else {
-                      props.updateValue({ id: media.id, image: media.publicLink, thumbnail: media.thumbnail });
-                    }
-
-                  }}
-                >
-                  <CroppedImage>{media.thumbnail ? <img src={media.thumbnail} alt="thumb" /> : null}</CroppedImage>
-                  <Heading5>{media.displayName}</Heading5>
-                </ImageStripBox>
-              ))}
-            </React.Fragment>
-          );
-        })}
-        <Button ref={loadMoreButton} onClick={() => fetchMore()} style={{ display: canFetchMore ? 'block' : 'none' }}>
-          Load more
-        </Button>
-      </ImageGrid>
-        )}
+                    }}
+                  >
+                    <CroppedImage>{media.thumbnail ? <img src={media.thumbnail} alt="thumb" /> : null}</CroppedImage>
+                    <Heading5>{media.displayName}</Heading5>
+                  </ImageStripBox>
+                ))}
+              </React.Fragment>
+            );
+          })}
+          <Button ref={loadMoreButton} onClick={() => fetchMore()} style={{ display: canFetchMore ? 'block' : 'none' }}>
+            Load more
+          </Button>
+        </ImageGrid>
+      )}
     </div>
   );
 };
@@ -118,21 +121,23 @@ function parseChosenMedia(
   if (!media) {
     return null;
   }
-
   if (typeof media === 'string') {
     const parsed = /public\/storage\/urn:madoc:site:(\d)+\/media\/public\/([A-Za-z0-9-]+)\/(.*)/.exec(media);
     if (!parsed) {
       return null;
     }
+
     const [, siteId, imageId, fileName] = parsed;
     const [, ...parts] = fileName.split('.').reverse();
     const fileNameWithoutExtension = parts.reverse().join('.');
 
+    console.log('d');
     return {
       id: imageId,
       image: `/public/storage/urn:madoc:site:${siteId}/media/public/${imageId}/${fileName}`,
       thumbnail: `/public/storage/urn:madoc:site:${siteId}/media/public/${imageId}/256/${fileNameWithoutExtension}.jpg`,
     };
   }
+  console.log(media, 'mm');
   return media;
 }
