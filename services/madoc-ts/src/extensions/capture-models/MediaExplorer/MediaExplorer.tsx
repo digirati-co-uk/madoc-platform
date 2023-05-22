@@ -31,7 +31,6 @@ export const MediaExplorer: React.FC<MediaExplorerProps & {
   const api = useApi();
   const { t } = useTranslation();
   const container = useRef<HTMLDivElement>(null);
-  console.log(props.value);
   const { data: pages, fetchMore, canFetchMore, isFetchingMore } = useInfiniteQuery(
     ['media-explorer', {}],
     async (key, _, vars: { page?: number } = { page: 0 }) => {
@@ -131,13 +130,11 @@ function parseChosenMedia(
     const [, ...parts] = fileName.split('.').reverse();
     const fileNameWithoutExtension = parts.reverse().join('.');
 
-    console.log('d');
     return {
       id: imageId,
       image: `/public/storage/urn:madoc:site:${siteId}/media/public/${imageId}/${fileName}`,
       thumbnail: `/public/storage/urn:madoc:site:${siteId}/media/public/${imageId}/256/${fileNameWithoutExtension}.jpg`,
     };
   }
-  console.log(media, 'mm');
   return media;
 }

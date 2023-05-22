@@ -29,7 +29,6 @@ export function ListAllTopicTypes() {
         totalPages={data ? data.pagination.totalPages : 1}
         stale={!data}
       />
-      <pre>{JSON.stringify(data, null, 2)}</pre>
     </>
   );
 }
