@@ -8,7 +8,7 @@ jest.mock('.../../../src/frontend/shared/capture-models/helpers/generate-id', ()
 });
 
 import { captureModelShorthandText } from '../../../src/frontend/shared/capture-models/helpers/capture-model-shorthand-text';
-import { captureModelShorthand } from '../../../src/index';
+import { captureModelShorthand } from '../../../src';
 import { unindent } from '../../../test-utility/unindent';
 
 describe('Capture model shorthand (text version)', function() {

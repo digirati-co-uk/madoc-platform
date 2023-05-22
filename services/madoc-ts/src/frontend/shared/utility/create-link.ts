@@ -28,6 +28,12 @@ export function createLink(opt: {
     if (opt.topic) {
       path.push(`/${opt.topic}`);
     }
+    if (opt.manifestId) {
+      path.push(`/manifests/${opt.manifestId}`);
+    }
+    if (opt.canvasId) {
+      path.push(`/${canvasSubRoute}/${opt.canvasId}`);
+    }
     return `${path.join('')}${suffix}`;
   }
 

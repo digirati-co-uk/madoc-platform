@@ -71,7 +71,7 @@ export type GetApiMethods = keyof Pick<
   | 'getSiteProjectCanvasTasks'
   | 'getSiteProjectManifestTasks'
   | 'getUserDetails'
-  | 'searchQuery'
+  | 'getSearchQuery'
   | 'getSiteConfiguration'
   | 'getMetadataKeys'
   | 'getMetadataValues'
@@ -125,7 +125,7 @@ export const apiHooks: {
   ) => QueryResult<MethodReturn<ApiClient[Key]>>;
 } = {} as any;
 for (const key of keys) {
-  if (key.startsWith('get') || key === 'searchQuery') {
+  if (key.startsWith('get') || key === 'getSearchQuery') {
     (apiHooks as any)[key] = createApiHook(key);
   }
 }
@@ -137,7 +137,7 @@ export const paginatedApiHooks: {
   ) => PaginatedQueryResult<MethodReturn<ApiClient[Key]>>;
 } = {} as any;
 for (const key of keys) {
-  if (key.startsWith('get') || key === 'searchQuery') {
+  if (key.startsWith('get') || key === 'getSearchQuery') {
     (paginatedApiHooks as any)[key] = createApiHook(key, { queryMethod: usePaginatedQuery });
   }
 }

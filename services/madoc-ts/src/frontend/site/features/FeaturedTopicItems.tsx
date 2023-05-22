@@ -62,13 +62,14 @@ export const FeaturedTopicItems: React.FC<{
   const RenderItemSnippet = (item: FeaturedResource) => {
     const itemId = item.madoc_id ? item.madoc_id : '';
     const manifestId = extractIdFromUrn(itemId);
+    console.log(manifestId);
 
     return (
       <HrefLink
         href={createLink({
           topicType: data.type_slug,
           topic: data.slug,
-          manifestId,
+          manifestId: manifestId,
         })}
         style={{ textDecoration: 'none' }}
       >
