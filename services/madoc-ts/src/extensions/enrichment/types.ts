@@ -161,7 +161,7 @@ export interface AutoCompleteEntitySnippet {
   type_title: InternationalString;
   type_label: string;
   slug: string;
-  title: InternationalString; // in the docs but not coming back
+  title: InternationalString;
   label: string;
 }
 

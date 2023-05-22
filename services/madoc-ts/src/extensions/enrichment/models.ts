@@ -1,18 +1,16 @@
-import { EntityFull, EntityQuery, EntityTypeFull, EntityTypeQuery } from './types';
+import { EntityQuery, EntityTypeQuery } from './types';
 import { CaptureModelShorthand } from '../../frontend/shared/capture-models/types/capture-model-shorthand';
 
 export const entityTypeModel: CaptureModelShorthand<EntityTypeQuery> = {
   title: { type: 'international-field', label: 'Title', required: true },
   label: { type: 'text-field', label: 'slug', required: true },
   description: { type: 'international-field', label: 'Description' },
-  featured_topics: { type: 'topic-explorer', label: 'featured topics', allowMultiple: true },
   __nested__: {
-    // featured_topics: {
-    //   allowMultiple: true,
-    //   label: 'Featured topic',
-    //   pluralLabel: 'Featured topics',
-    //   labelledBy: 'slug',
-    // },
+    featured_topics: {
+      allowMultiple: true,
+      label: 'Featured topic',
+      pluralLabel: 'Featured topics',
+    },
     other_data: {
       allowMultiple: false,
       label: 'Images',
@@ -21,7 +19,7 @@ export const entityTypeModel: CaptureModelShorthand<EntityTypeQuery> = {
   },
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  // 'featured_topics': { type: 'topic-explorer', label: 'featured topics' },
+  'featured_topics.slug': { type: 'topic-explorer', label: 'featured topics' },
   'other_data.main_image': { type: 'madoc-media-explorer', label: 'Hero image' },
   'other_data.thumbnail': { type: 'madoc-media-explorer', label: 'Thumbnail' },
 };
@@ -50,10 +48,10 @@ export const entityModel: CaptureModelShorthand<EntityQuery> = {
       label: 'Other data',
     },
   },
+
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   'featured_resources.madoc_id': { type: 'topic-item-explorer', label: 'featured resources' },
-
   'other_data.topic_summary': { type: 'international-field', label: 'Summary' },
   'other_data.secondary_heading': { type: 'international-field', label: 'Secondary heading' },
   'other_data.aliases': { type: 'international-field', label: 'Aliases', allowMultiple: true },

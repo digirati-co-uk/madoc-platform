@@ -22,12 +22,14 @@ export function EditTopicType() {
       // @todo can change later.
       updatedData.image_url = `${window.location.protocol}//${window.location.host}${updatedData.image_url}`;
     }
+
     if (data.topic_count > 0) {
       if (updatedData.featured_topics) {
         const unEdited = updatedData.featured_topics.filter((f: { slug: { id: any } }) => !f.slug.id);
         const ogItems = data.featured_topics?.filter(g => {
-          return unEdited.some((t: { slug: string }) => g.slug.includes(t.slug));
+          return unEdited.some((topic: { slug: string }) => g.slug.includes(topic.slug));
         });
+
         const ogIds = ogItems?.map((f: { id: any }) => f.id);
         const newIds = updatedData.featured_topics
           .map((f: { slug: { id: any } }) => f.slug.id)

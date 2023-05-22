@@ -41,7 +41,6 @@ export const TagPill = styled.div`
   text-decoration: none;
   align-items: center;
   text-transform: uppercase;
-
   &[data-is-button='true'] {
     padding: 0.4em;
     margin: 0.5em;
@@ -65,8 +64,7 @@ export const TagPill = styled.div`
     font-size: 0.8em;
     vertical-align: middle;
     padding: 0;
-
-    width: 18px;
+    line-height: 16px;
     height: 18px;
   }
 

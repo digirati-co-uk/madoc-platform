@@ -80,13 +80,14 @@ export function ListManifestTags() {
         {ResourceTags.map(tagType => (
           <>
             <TableRow>
-              <TableRowLabel>{tagType.type}</TableRowLabel>
+              <TableRowLabel style={{ textTransform: 'uppercase', fontSize: '1.2em' }}>{tagType.type}</TableRowLabel>
             </TableRow>
-            <TableRow>
+            <>
               {tagType.tags.map((tag: EntityTagSnippet) =>
                 tag.entity && tag.entity.label ? (
-                  <>
+                  <TableRow>
                     <TagPill
+                      style={{ margin: 0 }}
                       as={Link}
                       to={createLink({ admin: true, topicType: tag.entity.type_slug, topic: tag.entity.slug })}
                     >
@@ -99,10 +100,10 @@ export function ListManifestTags() {
                         <SmallButton onClick={() => removeTag(tag.tag_id)}>{t('Remove')}</SmallButton>
                       )}
                     </TableActions>
-                  </>
+                  </TableRow>
                 ) : null
               )}
-            </TableRow>
+            </>
           </>
         ))}
       </TableContainer>

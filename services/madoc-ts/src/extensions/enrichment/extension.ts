@@ -103,7 +103,7 @@ export class EnrichmentExtension extends BaseDjangoExtension {
 
   // Resource - Delete
   DeleteEnrichmentResource(madoc_id: string) {
-    return this.api.request(`/api/enrichment/resource/${madoc_id}`, {
+    return this.api.request(`/api/enrichment/resource/${madoc_id}/`, {
       method: 'DELETE',
     });
   }
@@ -176,16 +176,13 @@ export class EnrichmentExtension extends BaseDjangoExtension {
 
   // Entity - Autocomplete Search
   entityAutoComplete(type: string, fullText: string, page = 1) {
-    return this.api.request<EntityAutoCompleteResponse>(
-      `/api/enrichment/entity_autocomplete/?${stringify({ page })}/`,
-      {
-        method: 'POST',
-        body: {
-          type: type,
-          fulltext: fullText,
-        },
-      }
-    );
+    return this.api.request<EntityAutoCompleteResponse>(`/api/enrichment/entity_autocomplete/?${stringify({ page })}`, {
+      method: 'POST',
+      body: {
+        type: type,
+        fulltext: fullText,
+      },
+    });
   }
 
   /** ENTITY TYPE */
@@ -218,7 +215,7 @@ export class EnrichmentExtension extends BaseDjangoExtension {
   // Entity Type - Autocomplete Search
   entityTypeAutoComplete(fullText: string, page = 1) {
     return this.api.request<EntityTypeAutoCompleteResponse>(
-      `/api/enrichment/entity_type_autocomplete/?${stringify({ page })}/`,
+      `/api/enrichment/entity_type_autocomplete/?${stringify({ page })}`,
       {
         method: 'POST',
         body: {

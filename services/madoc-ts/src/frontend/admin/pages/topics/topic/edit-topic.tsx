@@ -17,20 +17,6 @@ export function EditTopic() {
   const [createNewEntity, status] = useMutation(async (updatedData: any) => {
     if (!data) return;
 
-    if (updatedData.other_data.main_image) {
-      const imageData = updatedData.other_data.main_image;
-      updatedData.other_data.thumbnail = {
-        id: imageData.id,
-        alt: updatedData.other_data.thumbnail.alt,
-        url: imageData.thumbnail,
-      };
-      updatedData.other_data.main_image = {
-        id: imageData.id,
-        alt: updatedData.other_data.thumbnail.alt,
-        url: imageData.image,
-      };
-    }
-
     if (updatedData.featured_resources) {
       const ftRes = updatedData.featured_resources;
       if (Array.isArray(ftRes)) {
@@ -44,7 +30,6 @@ export function EditTopic() {
         updatedData.featured_resources = Object.values(ftRes);
       }
     }
-
     const resp = api.enrichment.upsertEntity({ id: data.id, ...updatedData });
 
     await refetch();
