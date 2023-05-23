@@ -97,7 +97,7 @@ export const SearchPageFilters: React.FC<SearchPageFiltersProps> = ({ checkBoxCo
           return null;
         }
         return (
-          <Accordion key={facet.id} title={facet.label} defaultOpen={false}>
+          <Accordion key={facet.id} title={facet.label} defaultOpen={appliedFacets.some(f => f.k === facet.id)}>
             <SearchFilterItemList>
               {facet.items.map(item => {
                 const isSelected = isFacetSelected(item.key, item.values);
