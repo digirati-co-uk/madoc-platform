@@ -46,6 +46,7 @@ export const ExternalLinks: React.FC<{
   );
 };
 
+//todo use nested here
 blockEditorFor(ExternalLinks, {
   type: 'default.ExternalLinks',
   label: 'External Links',

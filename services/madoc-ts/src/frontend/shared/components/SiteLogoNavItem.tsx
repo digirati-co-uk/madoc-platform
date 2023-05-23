@@ -70,6 +70,7 @@ export const SiteLogoNavItem: React.FC<{
 blockEditorFor(SiteLogoNavItem, {
   type: 'default.SiteLogoNavItem',
   label: 'Site Logo Nav Item',
+  requiredContext: ['page'],
   defaultProps: {
     logo: null,
     hideSiteTitle: false,
@@ -115,16 +116,12 @@ blockEditorFor(SiteLogoNavItem, {
       inlineLabel: 'Hide site title',
     },
   },
+  source: { id: 'global-header', type: 'global', name: 'Global header' },
   mapToProps(props) {
     const maxWidth = Number(props.maxWidth);
     return {
       ...props,
       maxWidth: !Number.isNaN(maxWidth) && Number.isFinite(maxWidth) ? maxWidth : undefined,
     } as any;
-  },
-  source: {
-    id: 'global-header',
-    type: 'global',
-    name: 'Global header',
   },
 });

@@ -17,7 +17,7 @@
       "type": "string"
     },
     "type": {
-      "$ref": "#/definitions/SpaCyNERType"
+      "type": "string"
     },
     "type_slug": {
       "type": "string"
@@ -47,29 +47,7 @@
       "type": "number"
     },
     "other_data": {
-      "type": "object",
-      "properties": {
-        "thumbnail": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "string"
-            },
-            "url": {
-              "type": "string"
-            },
-            "alt": {
-              "type": "object",
-              "additionalProperties": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        }
-      }
+      "$ref": "#/definitions/EntityOtherData"
     }
   },
   "required": [
@@ -80,7 +58,6 @@
     "slug",
     "tagged_resource_count",
     "title",
-    "type",
     "type_slug",
     "type_title",
     "url"

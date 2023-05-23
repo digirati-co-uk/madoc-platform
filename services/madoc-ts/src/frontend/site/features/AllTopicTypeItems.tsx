@@ -103,7 +103,7 @@ blockEditorFor(AllTopicTypeItems, {
   label: 'All Topic Types',
   type: 'default.AllTopicTypeItems',
   anyContext: [],
-  requiredContext: [],
+  requiredContext: ['topicType'],
   defaultProps: {
     borderColor: '#002d4b',
     textColor: '#002d4b',

@@ -97,7 +97,7 @@ export const SearchPageFilters: React.FC<SearchPageFiltersProps> = ({ checkBoxCo
           return null;
         }
         return (
-          <Accordion key={facet.id} title={facet.label}>
+          <Accordion key={facet.id} title={facet.label} defaultOpen={false}>
             <SearchFilterItemList>
               {facet.items.map(item => {
                 const isSelected = isFacetSelected(item.key, item.values);
@@ -132,8 +132,8 @@ export const SearchPageFilters: React.FC<SearchPageFiltersProps> = ({ checkBoxCo
 blockEditorFor(SearchPageFilters, {
   label: 'Search Page Filters',
   type: 'default.SearchPageFilters',
-  anyContext: [],
-  requiredContext: [],
+  anyContext: ['collection', 'manifest', 'canvas', 'project', 'topic', 'topicType'],
+  requiredContext: ['page'],
   defaultProps: {
     checkBoxColor: '',
     filterHeader: 'Refine search',

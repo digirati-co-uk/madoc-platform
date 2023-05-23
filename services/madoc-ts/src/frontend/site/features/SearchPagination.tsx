@@ -32,7 +32,8 @@ export const SearchPagination: React.FC<{
 blockEditorFor(SearchPagination, {
   type: 'default.SearchPagination',
   label: 'Search pagination',
-  anyContext: ['page', 'topic'],
+  anyContext: ['collection', 'manifest', 'canvas', 'project', 'topic', 'topicType'],
+  requiredContext: ['page'],
   defaultProps: {
     paginationStyle: true,
     position: 'flex-end',

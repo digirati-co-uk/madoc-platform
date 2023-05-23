@@ -54,7 +54,7 @@ blockEditorFor(TopicAuthorities, {
   type: 'default.TopicAuthorities',
   label: 'Topic authorities',
   anyContext: [],
-  requiredContext: [],
+  requiredContext: ['topic'],
   defaultProps: {
     textColor: '#000000',
     svgColor: '#056db7',

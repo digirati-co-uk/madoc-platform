@@ -26,7 +26,10 @@ const BlockCreatorForm: React.FC<{
   onSave: (block: SiteBlock) => void | Promise<void>;
 }> = props => {
   const latestPreview = useRef<SiteBlock | SiteBlockRequest | undefined>();
-  const { saveChanges, editor, preview, canSubmit } = useBlockEditor(props.block, newBlock => (latestPreview.current = newBlock));
+  const { saveChanges, editor, preview, canSubmit } = useBlockEditor(
+    props.block,
+    newBlock => (latestPreview.current = newBlock)
+  );
   const [isSaving, setIsSaving] = useState(false);
 
   return (
@@ -80,12 +83,15 @@ export const BlockCreator: React.FC<{
   }, [api.pageBlocks, props.context, site.id]);
 
   const availableBlocks = useMemo(() => {
+    console.log('hi');
     return blockTypes.filter(block => {
       if (sourceId) {
+        console.log(sourceId, 'hi', block?.source?.id === sourceId && block?.source?.type === sourceType);
         // We only want matching sources here.
         return block?.source?.id === sourceId && block?.source?.type === sourceType;
       }
 
+      console.log(block?.source?.id);
       if (block?.source?.type === 'custom-page') {
         return block?.source.id === props.pagePath;
       }

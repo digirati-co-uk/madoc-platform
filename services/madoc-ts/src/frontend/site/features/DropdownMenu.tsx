@@ -150,6 +150,7 @@ export const DropDownMenu: React.FC<{
 blockEditorFor(DropDownMenu, {
   type: 'default.DropDownMenu',
   label: 'Dropdown menu',
+  requiredContext: ['page'],
   defaultProps: {
     showHomepageMenu: false,
     slug1: '',

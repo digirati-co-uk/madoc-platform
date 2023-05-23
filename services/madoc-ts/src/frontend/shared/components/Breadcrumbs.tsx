@@ -399,7 +399,7 @@ export const DisplayBreadcrumbs: React.FC<BreadcrumbProps> = ({
 blockEditorFor(DisplayBreadcrumbs, {
   type: 'default.DisplayBreadcrumbs',
   label: 'Display breadcrumbs',
-  anyContext: ['collection', 'manifest', 'canvas', 'project'],
+  anyContext: ['collection', 'manifest', 'canvas', 'project', 'topic', 'topicType'],
   defaultProps: {
     textColor: '',
     textColorActive: '',

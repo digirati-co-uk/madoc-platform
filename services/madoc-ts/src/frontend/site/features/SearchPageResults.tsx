@@ -68,8 +68,8 @@ export const SearchPageResults: React.FC<SearchPageResultsProps> = ({
 blockEditorFor(SearchPageResults, {
   label: 'Search Page Results',
   type: 'default.SearchPageResults',
-  anyContext: ['page', 'topic'],
-  requiredContext: [],
+  anyContext: ['collection', 'manifest', 'canvas', 'project', 'topic', 'topicType'],
+  requiredContext: ['page'],
   defaultProps: {
     background: '',
     grid: '',
