@@ -22,6 +22,6 @@ export const specification: FieldSpecification<TopicExplorerProps> = {
   TextPreview: TopicExplorerPreview,
 };
 
-// registerField(specification);
-//
-// export default specification;
+registerField(specification);
+
+export default specification;

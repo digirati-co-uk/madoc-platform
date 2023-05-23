@@ -56,7 +56,7 @@ export async function deleteManifest(manifestId: number, siteId: number, connect
     }
 
     if (deletionSummary.search.indexed && deletionSummary.search.id) {
-      await siteApi.searchDeleteIIIF(deletionSummary.search.id);
+      await siteApi.search.searchDeleteIIIF(deletionSummary.search.id);
     }
 
     if (deletionSummary.tasks > 0 || deletionSummary.parentTasks > 0) {

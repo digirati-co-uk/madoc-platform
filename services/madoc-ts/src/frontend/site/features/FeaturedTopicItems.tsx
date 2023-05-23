@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { SnippetContainer } from '../../shared/atoms/SnippetLarge';
 import { useTopic } from '../pages/loaders/topic-loader';
 import { extractIdFromUrn } from '../../../utility/parse-urn';
-import { FeaturedResource } from '../../../extensions/enrichment/authority/types';
+import { FeaturedResource } from '../../../extensions/enrichment/types';
 import { createLink } from '../../shared/utility/create-link';
 import { HrefLink } from '../../shared/utility/href-link';
 
@@ -48,7 +48,7 @@ export const FeaturedTopicItems: React.FC<{
   textColor?: string;
   cardBorder?: string;
   imageStyle?: string;
-}> = ({ cardBackground, textColor, cardBorder, imageStyle }) => {
+}> = ({ cardBackground = 'white', textColor = '#002D4B', cardBorder = '#002D4B', imageStyle = 'cover' }) => {
   const { data } = useTopic();
   const items = data?.featured_resources ? data?.featured_resources : [];
   const createLocaleString = useCreateLocaleString();
@@ -68,7 +68,7 @@ export const FeaturedTopicItems: React.FC<{
         href={createLink({
           topicType: data.type_slug,
           topic: data.slug,
-          manifestId,
+          manifestId: manifestId,
         })}
         style={{ textDecoration: 'none' }}
       >

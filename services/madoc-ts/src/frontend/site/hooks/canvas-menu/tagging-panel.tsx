@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { MetadataEmptyState } from '../../../shared/atoms/MetadataConfiguration';
 import { CanvasMenuHook } from './types';
-import { EntityTagSnippet } from '../../../../extensions/enrichment/authority/types';
+import { EntityTagSnippet } from '../../../../extensions/enrichment/types';
 import TaggingIcon from '../../../shared/icons/TaggingIcon';
 import { Link } from 'react-router-dom';
 import { createLink } from '../../../shared/utility/create-link';
@@ -41,7 +41,6 @@ export const TagPill = styled.div`
   text-decoration: none;
   align-items: center;
   text-transform: uppercase;
-
   &[data-is-button='true'] {
     padding: 0.4em;
     margin: 0.5em;
@@ -65,8 +64,7 @@ export const TagPill = styled.div`
     font-size: 0.8em;
     vertical-align: middle;
     padding: 0;
-
-    width: 18px;
+    line-height: 16px;
     height: 18px;
   }
 

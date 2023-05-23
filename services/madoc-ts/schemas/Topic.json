@@ -7,13 +7,10 @@
     "id": {
       "type": "string"
     },
-    "modified": {
-      "type": "string"
-    },
     "created": {
       "type": "string"
     },
-    "label": {
+    "modified": {
       "type": "string"
     },
     "type": {
@@ -31,6 +28,9 @@
         }
       }
     },
+    "label": {
+      "type": "string"
+    },
     "slug": {
       "type": "string"
     },
@@ -42,9 +42,6 @@
           "type": "string"
         }
       }
-    },
-    "tagged_resource_count": {
-      "type": "number"
     },
     "description": {
       "type": "object",
@@ -64,7 +61,7 @@
     "related_topics": {
       "type": "array",
       "items": {
-        "$ref": "#/definitions/EnrichmentEntitySnippet"
+        "$ref": "#/definitions/EntitySnippet"
       }
     },
     "authorities": {
@@ -73,6 +70,9 @@
         "$ref": "#/definitions/AuthoritySnippet"
       }
     },
+    "tagged_resource_count": {
+      "type": "number"
+    },
     "other_data": {
       "$ref": "#/definitions/EntityOtherData"
     }
@@ -80,7 +80,6 @@
   "required": [
     "authorities",
     "created",
-    "description",
     "id",
     "label",
     "modified",

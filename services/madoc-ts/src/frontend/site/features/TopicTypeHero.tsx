@@ -16,6 +16,7 @@ const TopicHeroWrapper = styled.div`
   justify-content: center;
   height: auto;
   transition: all 0.8s;
+  color: #002d4b;
 `;
 const TopWrapper = styled.div`
   display: flex;
@@ -82,7 +83,11 @@ export const HeroHeading = styled.h1`
   margin: 0;
 `;
 
-export const TopicTypeHero: React.FC<{ textColor?: string; overlayColor?: string; imageHeight?: string }> = ({ textColor, overlayColor, imageHeight }) => {
+export const TopicTypeHero: React.FC<{ textColor?: string; overlayColor?: string; imageHeight?: string }> = ({
+  textColor,
+  overlayColor,
+  imageHeight,
+}) => {
   const { data } = useTopicType();
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -105,7 +110,10 @@ export const TopicTypeHero: React.FC<{ textColor?: string; overlayColor?: string
 
   return (
     <TopicHeroWrapper style={{ color: textColor, maxHeight: imageHeight ? `${imageHeight}px` : '400px' }}>
-      <BackgroundImage $overlay={overlayColor} style={{ backgroundImage: `url("${data.image_url}")` }} />
+      <BackgroundImage
+        $overlay={overlayColor}
+        style={{ backgroundImage: `url("${data.other_data?.main_image?.url}")` }}
+      />
       <TextBox data-is-expanded={isExpanded}>
         <TopWrapper>
           {data.title?.length ? (

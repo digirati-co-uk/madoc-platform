@@ -8,9 +8,10 @@ import { Spinner } from '../../shared/icons/Spinner';
 import { useInfiniteAction } from '../hooks/use-infinite-action';
 import { Input, InputContainer, InputLabel } from '../../shared/form/Input';
 import { TagPill } from '../hooks/canvas-menu/tagging-panel';
-import { AutoCompleteEntitySnippet } from '../../../extensions/enrichment/authority/types';
+import { AutoCompleteEntitySnippet } from '../../../extensions/enrichment/types';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
+import { LocaleString } from '../../shared/components/LocaleString';
 
 const TagResults = styled.div`
   border: 2px solid #d3d3d3;
@@ -38,7 +39,7 @@ export const AddTagButton: React.FC<{
   const { data: pages, fetchMore, canFetchMore, isFetchingMore, isLoading: queryLoading } = useInfiniteQuery(
     ['topic-autocomplete', { fullText, typeSlug }],
     async (key, _, vars: { page?: number } = { page: 1 }) => {
-      return api.enrichment.topicAutoComplete(typeSlug, fullText, vars.page);
+      return api.enrichment.entityAutoComplete(typeSlug, fullText, vars.page);
     },
     {
       getFetchMore: lastPage => {
@@ -79,7 +80,7 @@ export const AddTagButton: React.FC<{
           )}
 
           <p>
-            {t('Topic')}: <b>{selected.label}</b>
+            {t('Topic')}: <LocaleString>{selected.title}</LocaleString>
           </p>
           <div
             style={{
@@ -97,7 +98,7 @@ export const AddTagButton: React.FC<{
                   onSelected(undefined);
                 }}
               />
-              {selected.label}
+              <LocaleString>{selected.title}</LocaleString>
             </TagPill>
           </div>
         </>

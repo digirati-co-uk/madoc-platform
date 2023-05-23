@@ -1,5 +1,5 @@
 import { useData } from '../../../../shared/hooks/use-data';
-import { EnrichmentResourceResponse, EntityTagSnippet } from '../../../../../extensions/enrichment/authority/types';
+import { EnrichmentResource, EntityTagSnippet } from '../../../../../extensions/enrichment/types';
 import { ParseResourceTags } from '../../../../site/hooks/canvas-menu/use-get-tags';
 import { TableActions, TableContainer, TableRow, TableRowLabel } from '../../../../shared/layout/Table';
 import { TagPill } from '../../../../site/hooks/canvas-menu/tagging-panel';
@@ -18,7 +18,7 @@ import { Accordion } from '../../../../shared/atoms/Accordion';
 import { useTranslation } from 'react-i18next';
 
 export function ListManifestTags() {
-  const { data, isError, refetch } = useData<EnrichmentResourceResponse>(ListManifestTags);
+  const { data, isError, refetch } = useData<EnrichmentResource>(ListManifestTags);
   const ResourceTags = ParseResourceTags(data?.entity_tags);
   const api = useApi();
   const { t } = useTranslation();
@@ -80,13 +80,14 @@ export function ListManifestTags() {
         {ResourceTags.map(tagType => (
           <>
             <TableRow>
-              <TableRowLabel>{tagType.type}</TableRowLabel>
+              <TableRowLabel style={{ textTransform: 'uppercase', fontSize: '1.2em' }}>{tagType.type}</TableRowLabel>
             </TableRow>
-            <TableRow>
+            <>
               {tagType.tags.map((tag: EntityTagSnippet) =>
                 tag.entity && tag.entity.label ? (
-                  <>
+                  <TableRow>
                     <TagPill
+                      style={{ margin: 0 }}
                       as={Link}
                       to={createLink({ admin: true, topicType: tag.entity.type_slug, topic: tag.entity.slug })}
                     >
@@ -99,10 +100,10 @@ export function ListManifestTags() {
                         <SmallButton onClick={() => removeTag(tag.tag_id)}>{t('Remove')}</SmallButton>
                       )}
                     </TableActions>
-                  </>
+                  </TableRow>
                 ) : null
               )}
-            </TableRow>
+            </>
           </>
         ))}
       </TableContainer>
@@ -115,6 +116,6 @@ serverRendererFor(ListManifestTags, {
     return ['manifest-resource', { id: params.id }];
   },
   getData: async (key: string, vars, api) => {
-    return await api.enrichment.getSiteResource(`urn:madoc:manifest:${vars.id}`);
+    return await api.getSiteEnrichmentResource(`urn:madoc:manifest:${vars.id}`);
   },
 });

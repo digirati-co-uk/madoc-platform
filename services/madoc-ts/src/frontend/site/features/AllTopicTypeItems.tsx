@@ -22,7 +22,7 @@ const TypeCard = styled.div`
 const TypeText = styled.div`
   width: 50%;
   padding: 20px 30px;
-
+  color: #002d4b;
   h3 {
     font-weight: 500;
   }
@@ -74,7 +74,7 @@ export function AllTopicTypeItems(props: AllTopicTypeItemsProps) {
 
   return (
     <div style={{ paddingTop: '1em' }}>
-      {data?.topicTypes.map(type => (
+      {data?.results.map(type => (
         <TypeCard key={type.id} style={{ borderColor: props.borderColor, background: props.cardBackground }}>
           <TypeText style={{ color: props.textColor }}>
             <LocaleString as={Heading3}>{type.label || { en: ['...'] }}</LocaleString>
@@ -89,7 +89,7 @@ export function AllTopicTypeItems(props: AllTopicTypeItemsProps) {
           <TypeImage>
             <CroppedImage>
               {type.other_data?.thumbnail ? (
-                <img alt={`${t('thumbnail for')} ${type.label}`} src={type.other_data.thumbnail.url} />
+                <img alt={`${t('thumbnail for')} ${type.label}`} src={type?.other_data?.thumbnail?.url} />
               ) : null}
             </CroppedImage>
           </TypeImage>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { EnrichmentResourceResponse, EntityTagSnippet } from '../../../../../extensions/enrichment/authority/types';
+import { EnrichmentResource, EntityTagSnippet } from '../../../../../extensions/enrichment/types';
 import { useData } from '../../../../shared/hooks/use-data';
 import { serverRendererFor } from '../../../../shared/plugins/external/server-renderer-for';
 import { ParseResourceTags } from '../../../../site/hooks/canvas-menu/use-get-tags';
@@ -18,7 +18,7 @@ import { AddTopicButton } from '../../../../site/features/AddTopicButton';
 import { Button, SmallButton } from '../../../../shared/navigation/Button';
 
 export function ListCanvasTags() {
-  const { data, isError, refetch } = useData<EnrichmentResourceResponse>(ListCanvasTags);
+  const { data, isError, refetch } = useData<EnrichmentResource>(ListCanvasTags);
   const ResourceTags = ParseResourceTags(data?.entity_tags);
   const api = useApi();
   const { t } = useTranslation();
@@ -81,13 +81,14 @@ export function ListCanvasTags() {
         {ResourceTags.map(tagType => (
           <>
             <TableRow>
-              <TableRowLabel>{tagType.type}</TableRowLabel>
+              <TableRowLabel style={{ textTransform: 'uppercase', fontSize: '1.2em' }}>{tagType.type}</TableRowLabel>
             </TableRow>
-            <TableRow>
+            <>
               {tagType.tags.map((tag: EntityTagSnippet) =>
                 tag.entity && tag.entity.label ? (
-                  <>
+                  <TableRow>
                     <TagPill
+                      style={{ margin: 0 }}
                       as={Link}
                       to={createLink({ admin: true, topicType: tag.entity.type_slug, topic: tag.entity.slug })}
                     >
@@ -100,10 +101,10 @@ export function ListCanvasTags() {
                         <SmallButton onClick={() => removeTag(tag.tag_id)}>{t('Remove')}</SmallButton>
                       )}
                     </TableActions>
-                  </>
+                  </TableRow>
                 ) : null
               )}
-            </TableRow>
+            </>
           </>
         ))}
       </TableContainer>
@@ -116,6 +117,6 @@ serverRendererFor(ListCanvasTags, {
     return ['canvas-resource', { id: params.id }];
   },
   getData: async (key: string, vars, api) => {
-    return await api.enrichment.getSiteResource(`urn:madoc:canvas:${vars.id}`);
+    return await api.getSiteEnrichmentResource(`urn:madoc:canvas:${vars.id}`);
   },
 });

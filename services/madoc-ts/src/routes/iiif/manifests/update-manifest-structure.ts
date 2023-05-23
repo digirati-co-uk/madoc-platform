@@ -51,7 +51,7 @@ export const updateManifestStructure: RouteMiddleware<{ id: number }, UpdateStru
       const userApi = api.asUser({ userId: id, siteId });
 
       // Previously we triggered a search index, we can now just post up new search response.
-      await userApi.batchSearchIngestManifestCanvases(manifestId, toAdd, toRemove);
+      await userApi.search.batchSearchIngestManifestCanvases(manifestId, toAdd, toRemove);
 
       await userApi.postUniversalChangeToStreams({
         id: manifestId,

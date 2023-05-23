@@ -73,7 +73,7 @@ export const indexCanvas: RouteMiddleware<{ id: string }> = async context => {
     ]
   );
 
-  await userApi.enrichmentIngestResource(searchPayload);
+  await userApi.search.enrichmentIngestResource(searchPayload);
 
   // 1. Load all capture models for this canvas on this site.
   const models = await userApi.getAllCaptureModels({
@@ -190,7 +190,7 @@ export const indexCanvas: RouteMiddleware<{ id: string }> = async context => {
   // 6. Index any remaining capture model partials
   // @todo - this is not yet used.
 
-  await userApi.triggerSearchIndex(canvasId, 'canvas');
+  await userApi.search.triggerSearchIndex(canvasId, 'canvas');
 
   context.response.body = canvas;
 };

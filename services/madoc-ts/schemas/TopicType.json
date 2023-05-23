@@ -1,7 +1,7 @@
 {
   "allOf": [
     {
-      "$ref": "#/definitions/EntityTypeMadocResponse"
+      "$ref": "#/definitions/EntityTypeFull"
     },
     {
       "type": "object",
@@ -28,7 +28,7 @@
         "topics": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/EnrichmentEntitySnippet"
+            "$ref": "#/definitions/EntitySnippet"
           }
         }
       },

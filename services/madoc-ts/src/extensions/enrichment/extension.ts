@@ -1,90 +1,55 @@
-import { Topic, TopicType, TopicTypeListResponse } from '../../types/schemas/topics';
 import { BaseDjangoExtension } from './base-django-extension';
-import { EnrichmentIndexPayload } from './types';
-import { SearchQuery, SearchResponse } from '../../types/search';
 import {
-  EnrichmentEntityAutoCompleteResponse,
-  EnrichmentResourceResponse,
-  EntityMadocResponse,
-  EntityTypeMadocResponse,
-} from './authority/types';
+  EnrichmentIndexPayload,
+  EntityAutoCompleteResponse,
+  EnrichmentResourceList,
+  EnrichmentResource,
+  EntitiesListResponse,
+  EntityFull,
+  EntitySnippet,
+  EntityTypeFull,
+  EntityTypesListResponse,
+  ResourceQuery,
+  ResourceQueryResponse,
+  ResourceTagList,
+  ResourceTag,
+  EntityQuery,
+  EntityTypeQuery,
+  EnrichmentEntityAuthority,
+  EntityTypeSnippet,
+  ResourceTagSnippet,
+  EntityTypeAutoCompleteResponse,
+} from './types';
 import { stringify } from 'query-string';
 
 export class EnrichmentExtension extends BaseDjangoExtension {
-  // /api/madoc/indexable_data/
-  // /api/madoc/indexable_data/<id>/
-  // @todo /api/madoc/jwt/auth_detail/
-  // /api/madoc/resource/
-  // /api/madoc/resource/<madoc_id>/
-  // /api/madoc/resource/add_manifest/ -- FETCH MORE
-  // @todo /api/madoc/search/
-  // @todo /api/madoc/tasks/
-  // /api/madoc/tasks/index_all_madoc_resources/
-  // /api/madoc/tasks/index_madoc_resource/
-  // /api/madoc/tasks/madoc_manifest_enrichment_pipeline/
-  // /api/madoc/tasks/madoc_resource_enrichment_pipeline/
-  // /api/madoc/tasks/nlp_madoc_resource/
-  // /api/madoc/tasks/ocr_madoc_resource/
-
-  // @todo no idea what this is yet.
   indexable_data = this.createPaginatedServiceHelper<any>('madoc', 'indexable_data');
   resource = this.createPaginatedServiceHelper<EnrichmentIndexPayload>('madoc', 'resource');
-
-  getServiceName(): string {
-    return 'madoc';
-  }
-
-  // Site APIS.
-  getSiteTopic(type: string, slug: string) {
-    return this.api.publicRequest<Topic>(`/madoc/api/topics/${type}/${slug}`);
-  }
-  getSiteTopicTypes(page = 1) {
-    return this.api.publicRequest<TopicTypeListResponse>(`/madoc/api/topics?page=${page}`);
-  }
-  getSiteTopicType(slug: string, page: number) {
-    return this.api.publicRequest<TopicType>(`/madoc/api/topics/${slug}?page=${page}`);
-  }
-
-  getTopicType(id: string) {
-    return this.api.request(`/api/enrichment/entity/${id}/`);
-  }
-
-  upsertTopicType(topicType: Partial<any>) {
-    return this.api.request<any>(`/api/enrichment/entity_type/`, {
-      method: 'POST',
-      body: topicType,
-    });
-  }
-
-  upsertTopic(topic: Partial<EntityMadocResponse>) {
-    return this.api.request<EntityMadocResponse>(`/api/enrichment/entity/`, {
-      method: 'POST',
-      body: topic,
-    });
-  }
-  getTopicItems(query: SearchQuery, page = 1, madoc_id?: string) {
-    return this.api.request<SearchResponse>(`/madoc/api/search`, {
-      method: 'POST',
-      body: {
-        ...query,
-        page,
-        madoc_id,
-      },
-    });
-  }
-  getSiteResource(id: string) {
-    return this.api.publicRequest<EnrichmentResourceResponse>(`/madoc/api/resource/${id}`);
-  }
-  getAllEnrichmentTasks(page = 1) {
-    return this.api.request(`/api/enrichment/task_log?page=${page}`);
-  }
-
-  getEnrichmentTask(id: string) {
-    return this.api.request(`/api/enrichment/task_log/${id}`);
-  }
+  authority = this.createServiceHelper<EnrichmentEntityAuthority>('authority_service', 'authority');
+  entity = this.createPaginatedServiceHelper<EntityFull, EntitySnippet>('authority_service', 'entity');
+  entity_type = this.createPaginatedServiceHelper<EntityTypeFull, EntityTypeSnippet>(
+    'authority_service',
+    'entity_type'
+  );
+  resource_tag = this.createPaginatedServiceHelper<ResourceTag, ResourceTagSnippet>(
+    'authority_service',
+    'resource_tag'
+  );
 
   allTasks = [
     // Authority service.
+    {
+      service: 'authority_service',
+      name: 'populate_entity',
+    },
+    {
+      service: 'authority_service',
+      name: 'fetch_authority_data',
+    },
+    {
+      service: 'authority_service',
+      name: 'populate_entity_authority',
+    },
     {
       service: 'madoc',
       name: 'index_all_madoc_resources',
@@ -111,57 +76,152 @@ export class EnrichmentExtension extends BaseDjangoExtension {
     },
   ];
 
-  // Dev friendly helpers.
-  listAllTopics(page = 1) {
-    return this.api.publicRequest<TopicTypeListResponse>(`/madoc/api/topic-types?page=${page}`);
+  getServiceName(): string {
+    return 'madoc';
   }
 
-  listAllTopicTypes(page = 1) {
-    return this.api.publicRequest<TopicTypeListResponse>(`/madoc/api/topic-types?page=${page}`);
+  /** RESOURCE */
+  // Resource - List
+  getEnrichmentResourceList(id: string) {
+    return this.api.request<EnrichmentResourceList>(`/api/enrichment/resource/${id}/`);
   }
 
-  tagMadocResource(entityId: string, type: string, id?: number, selector?: any) {
+  // Resource - Retrieve
+  getEnrichmentResource(id: string) {
+    return this.api.request<EnrichmentResource>(`/api/enrichment/resource/${id}/`);
+  }
+
+  // Resource - Upsert
+  UpsertEnrichmentResource(query: ResourceQuery) {
+    return this.api.request<ResourceQueryResponse>(`/api/enrichment/resource/`, {
+      method: 'POST',
+      body: {
+        ...query,
+      },
+    });
+  }
+
+  // Resource - Delete
+  DeleteEnrichmentResource(madoc_id: string) {
+    return this.api.request(`/api/enrichment/resource/${madoc_id}/`, {
+      method: 'DELETE',
+    });
+  }
+
+  // Resource - Search: Return all of the resources for a given topic
+  /** this is covered in searchQuery in the search extention */
+
+  /** RESOURCE TAG */
+  //ResourceTag - List
+  getAllTags() {
+    return this.api.request<ResourceTagList>(`/api/enrichment/resource_tag/`);
+  }
+
+  // ResourceTag - Retrieve
+  getResourceTag(id: string) {
+    return this.api.request<ResourceTag>(`/api/enrichment/resource_tag/${id}/`);
+  }
+
+  // ResourceTag - Create
+  tagMadocResource(entityId: string, type: string, madocId: number, selector?: any) {
     return this.api.request(`/api/enrichment/resource_tag/`, {
       method: 'POST',
       body: {
         entity: entityId,
-        madoc_id: `urn:madoc:${type.toLowerCase()}:${id}`,
+        madoc_id: `urn:madoc:${type.toLowerCase()}:${madocId}`,
         selector,
       },
     });
   }
 
-  topicTypeAutoComplete(fullText: string, page = 1) {
-    return this.api.request<any>(`/api/enrichment/entity_type_autocomplete/?${stringify({ page })}`, {
+  // ResourceTag - Delete
+  removeResourceTag(id: string) {
+    return this.api.request(`/api/enrichment/resource_tag/${id}/`, {
+      method: 'DELETE',
+    });
+  }
+
+  /** ENTITY */
+  // Entity - list
+  getAllEntities(page?: number) {
+    return this.api.request<EntitiesListResponse>(`/api/enrichment/entity/?page=${page}`);
+  }
+
+  // Entity - List, filtered by chosen Entity Type
+  getEntities(slug: string, page?: number) {
+    return this.api.request<EntitiesListResponse>(`/api/enrichment/entity/${slug}/?page=${page}`);
+  }
+
+  // Entity - Retrieve
+  getEntity(entity_type_slug: string, slug: string) {
+    return this.api.request<EntityFull>(`/api/enrichment/entity/${entity_type_slug}/${slug}/`);
+  }
+
+  // Entity - Upsert
+  upsertEntity(query: EntityQuery) {
+    return this.api.request<EntityFull>(`/api/enrichment/entity/`, {
       method: 'POST',
       body: {
+        ...query,
+      },
+    });
+  }
+
+  // Entity - Delete
+  deleteEntity(type: string, slug: string) {
+    return this.api.request(`/api/enrichment/entity/${type}/${slug}/`, {
+      method: 'DELETE',
+    });
+  }
+
+  // Entity - Autocomplete Search
+  entityAutoComplete(type: string, fullText: string, page = 1) {
+    return this.api.request<EntityAutoCompleteResponse>(`/api/enrichment/entity_autocomplete/?${stringify({ page })}`, {
+      method: 'POST',
+      body: {
+        type: type,
         fulltext: fullText,
       },
     });
   }
 
-  topicAutoComplete(type: string, fullText: string, page = 1) {
-    return this.api.request<EnrichmentEntityAutoCompleteResponse>(
-      `/api/enrichment/entity_autocomplete/?${stringify({ page })}`,
+  /** ENTITY TYPE */
+  // Entity Type - List
+  getEntityTypes() {
+    return this.api.request<EntityTypesListResponse>(`/api/enrichment/entity_type/`);
+  }
+
+  // Entity Type - Retrieve
+  getEntityType(slug: string) {
+    return this.api.request<EntityTypeFull>(`/api/enrichment/entity_type/${slug}/`);
+  }
+
+  // Entity Type - Upsert
+  upsertEntityType(query: EntityTypeQuery) {
+    return this.api.request<EntityTypeFull>(`/api/enrichment/entity_type/`, {
+      method: 'POST',
+      body: {
+        ...query,
+      },
+    });
+  }
+  // Entity Type - Delete
+  deleteEntityType(slug: string) {
+    return this.api.request(`/api/enrichment/entity_type/${slug}/`, {
+      method: 'DELETE',
+    });
+  }
+
+  // Entity Type - Autocomplete Search
+  entityTypeAutoComplete(fullText: string, page = 1) {
+    return this.api.request<EntityTypeAutoCompleteResponse>(
+      `/api/enrichment/entity_type_autocomplete/?${stringify({ page })}`,
       {
         method: 'POST',
         body: {
-          type: type,
           fulltext: fullText,
         },
       }
     );
-  }
-
-  getAllTags() {
-    return this.api.request<any>(`/api/enrichment/resource_tag/`);
-  }
-  getResourceTag(id: string) {
-    return this.api.request<any>(`/api/enrichment/resource_tag/${id}/`);
-  }
-  async removeResourceTag(id: string) {
-    return this.api.request(`/api/enrichment/resource_tag/${id}/`, {
-      method: 'DELETE',
-    });
   }
 }

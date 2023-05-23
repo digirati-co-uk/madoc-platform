@@ -7,7 +7,7 @@ export const siteTopic: RouteMiddleware<{ type: string; topic: string }> = async
   const slug = context.params.topic;
   const topicTypeSlug = context.params.type;
 
-  const response = await siteApi.authority.getEntity(topicTypeSlug, slug);
+  const response = await siteApi.enrichment.getEntity(topicTypeSlug, slug);
 
   if (response.type_slug !== topicTypeSlug) {
     throw new NotFound();

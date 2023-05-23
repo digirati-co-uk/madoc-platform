@@ -174,7 +174,7 @@ export function CanvasViewer({
             ) : null}
 
             <LayoutHandle
-              style={{ background: border, opacity: border ? 0.5 : 0}}
+              style={{ background: border, opacity: border ? 0.5 : 0 }}
               data-space={sidebarSpace}
               ref={refs.resizer as any}
               onClick={() => setIsOpen(o => !o)}

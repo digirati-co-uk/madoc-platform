@@ -1,9 +1,5 @@
-import {
-  EntitiesMadocResponse,
-  EntityTypeMadocResponse,
-  EntityTypesMadocResponse,
-} from '../../extensions/enrichment/authority/types';
-import { TopicType, TopicTypeListResponse } from '../../types/schemas/topics';
+import { EntityTypeFull, EntitiesListResponse } from '../../extensions/enrichment/types';
+import { TopicType } from '../../types/schemas/topics';
 import { InternationalString } from '@iiif/presentation-3';
 
 export function getLabel(snippet: {
@@ -21,18 +17,10 @@ export function getLabel(snippet: {
 }
 
 // @todo remove once in the backend.
-export function compatTopicType(topicType: EntityTypeMadocResponse, topics: EntitiesMadocResponse): TopicType {
+export function compatTopicType(topicType: EntityTypeFull, topics: EntitiesListResponse): TopicType {
   return {
     ...topicType,
     pagination: topics.pagination,
     topics: topics.results,
-  };
-}
-
-export function compatTopicTypes(response: EntityTypesMadocResponse): TopicTypeListResponse {
-  const { results } = response;
-  return {
-    topicTypes: results,
-    pagination: response.pagination,
   };
 }

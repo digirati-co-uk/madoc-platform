@@ -24,12 +24,14 @@ const HeroHeading = styled.h1`
   line-height: 56px;
   font-weight: 700;
   margin-bottom: 12px;
+  color: #002d4b;
 `;
 
 const HeroSummary = styled.p`
   font-size: 1em;
   line-height: 30px;
   font-weight: 500;
+  color: #004761;
 `;
 
 const HeroSubHeading = styled.h2`
@@ -37,11 +39,13 @@ const HeroSubHeading = styled.h2`
   line-height: 36px;
   font-weight: 600;
   margin-bottom: 12px;
+  color: #004761;
 `;
 const HeroDescription = styled.div`
   font-size: 1em;
   line-height: 28px;
   font-weight: 400;
+  color: #002d4b;
 
   max-height: 300px;
   display: -webkit-box;
@@ -138,8 +142,8 @@ blockEditorFor(TopicHero, {
   anyContext: ['topic'],
   requiredContext: ['topic'],
   defaultProps: {
-    h1Color: '#000000',
-    h2Color: '#000000',
+    h1Color: '#002D4B',
+    h2Color: '#004761',
   },
   editor: {
     h1Color: { label: 'Heading and summary color', type: 'color-field' },

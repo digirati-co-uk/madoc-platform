@@ -8,6 +8,7 @@ import { useRouteContext } from '../../../../shared/plugins/public-api';
 import { useTopic } from '../../../../site/pages/loaders/topic-loader';
 import { useTranslation } from 'react-i18next';
 
+//todo nicer delete page
 export function DeleteTopic() {
   const api = useApi();
   const { topicType } = useRouteContext();
@@ -17,7 +18,7 @@ export function DeleteTopic() {
 
   const [deleteTopic] = useMutation(async () => {
     if (data) {
-      await api.authority.entity.delete(data?.id);
+      await api.enrichment.deleteEntity(data.type_slug, data.slug);
       navigate(`/topics/${topicType}?deleted=true`);
     }
   });

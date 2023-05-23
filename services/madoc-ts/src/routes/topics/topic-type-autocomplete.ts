@@ -6,7 +6,7 @@ import { getValue } from '@iiif/vault-helpers';
 export const topicTypeAutocomplete: RouteMiddleware = async context => {
   const { siteId, id } = userWithScope(context, ['site.admin']);
 
-  const items = await api.asUser({ userId: id, siteId }).authority.entity_type.list(1);
+  const items = await api.asUser({ userId: id, siteId }).enrichment.entity_type.list(1);
 
   context.response.body = {
     completions: items.results.map(item => ({

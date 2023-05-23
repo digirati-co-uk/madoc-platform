@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useApi } from '../../../../shared/hooks/use-api';
 import { useMutation } from 'react-query';
 import { Button } from '../../../../shared/navigation/Button';
@@ -9,6 +9,7 @@ import { useTopic } from '../../../../site/pages/loaders/topic-loader';
 import { entityModel } from '../../../../../extensions/enrichment/models';
 import { ErrorMessage } from '../../../../shared/capture-models/editor/atoms/Message';
 import { useTranslation } from 'react-i18next';
+import { ParseEntityMedia } from '../topic-type/ParseEntityMedia';
 
 export function EditTopic() {
   const api = useApi();
@@ -17,19 +18,8 @@ export function EditTopic() {
   const [createNewEntity, status] = useMutation(async (updatedData: any) => {
     if (!data) return;
 
-    if (updatedData.other_data.main_image) {
-      const imageData = updatedData.other_data.main_image;
-      updatedData.other_data.thumbnail = {
-        id: imageData.id,
-        alt: updatedData.other_data.thumbnail.alt,
-        url: imageData.thumbnail,
-      };
-      updatedData.other_data.main_image = {
-        id: imageData.id,
-        alt: updatedData.other_data.thumbnail.alt,
-        url: imageData.image,
-      };
-    }
+    updatedData.other_data.main_image = ParseEntityMedia(updatedData.other_data.main_image);
+    updatedData.other_data.thumbnail = ParseEntityMedia(updatedData.other_data.thumbnail);
 
     if (updatedData.featured_resources) {
       const ftRes = updatedData.featured_resources;
@@ -44,14 +34,26 @@ export function EditTopic() {
         updatedData.featured_resources = Object.values(ftRes);
       }
     }
-
-    const resp = api.enrichment.upsertTopic({ id: data.id, ...updatedData });
+    const resp = api.enrichment.upsertEntity({ id: data.id, ...updatedData });
 
     await refetch();
 
     return resp;
   });
+  const model = useMemo(() => {
+    const copy: any = {
+      ...entityModel,
+    };
+    delete copy.type_slug;
+    delete copy.label;
+    // dont allow editing featured if not enough to chose from
+    // backend automatically picks first 3
+    if (data && data.tagged_resource_count < 4) {
+      delete copy['featured_resources.madoc_id'];
+    }
 
+    return copy;
+  }, [data]);
   if (!data) {
     return <div>{t('Loading...')}</div>;
   }
@@ -73,7 +75,7 @@ export function EditTopic() {
       {status.isError && <ErrorMessage>{t('Error...')}</ErrorMessage>}
       <CustomEditorTypes>
         <EditShorthandCaptureModel
-          template={entityModel}
+          template={model}
           data={data}
           onSave={async input => {
             await createNewEntity(input);

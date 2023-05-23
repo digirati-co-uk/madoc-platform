@@ -10,7 +10,7 @@ import { FieldComponent } from '../../../frontend/shared/capture-models/types/fi
 import { ManifestSnippet } from '../../../frontend/shared/components/ManifestSnippet';
 import { extractIdFromUrn } from '../../../utility/parse-urn';
 import { Subheading3 } from '../../../frontend/shared/typography/Heading3';
-import {useTopic} from "../../../frontend/site/pages/loaders/topic-loader";
+import { useTopic } from '../../../frontend/site/pages/loaders/topic-loader';
 
 export type TopicItemExplorerProps = {
   id: string;
