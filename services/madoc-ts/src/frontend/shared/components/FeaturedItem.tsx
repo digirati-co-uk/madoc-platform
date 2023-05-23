@@ -1,6 +1,5 @@
 import React from 'react';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
-import { CanvasFull } from '../../../types/canvas-full';
 import { CanvasSnippet } from './CanvasSnippet';
 import { useRouteContext } from '../../site/hooks/use-route-context';
 import styled from 'styled-components';
@@ -13,6 +12,7 @@ import { useTranslation } from 'react-i18next';
 import { SnippetContainer } from '../atoms/SnippetLarge';
 import { useRelativeLinks } from '../../site/hooks/use-relative-links';
 import { Carousel } from '../atoms/Carousel';
+import { InternationalString } from '@iiif/presentation-3';
 
 const FeaturesContainer = styled.div`
   display: flex;
@@ -51,12 +51,11 @@ const FeatureCard = styled.div`
 interface FeaturedItemProps {
   carousel?: boolean;
   header?: string;
-  canvas?: { id: string };
-  canvas2?: { id: string };
-  canvas3?: { id: string };
-  canvasData?: CanvasFull & { canvas: CanvasFull['canvas'] };
-  canvas2Data?: CanvasFull & { canvas2: CanvasFull['canvas'] };
-  canvas3Data?: CanvasFull & { canvas3: CanvasFull['canvas'] };
+  canvases: Array<{
+    id: string;
+    thumbnail?: string | null;
+    label: InternationalString;
+  }>;
   snippet?: boolean;
   column?: boolean;
   imageStyle?: string;
@@ -68,51 +67,54 @@ interface FeaturedItemProps {
 
 export function FeaturedItem(props: FeaturedItemProps) {
   const { manifestId } = useRouteContext();
-  const { canvasData, canvas2Data, canvas3Data } = props;
-  const items = [canvasData?.canvas, canvas2Data?.canvas, canvas3Data?.canvas];
+
   const createLink = useRelativeLinks();
   const createLocaleString = useCreateLocaleString();
   const { t } = useTranslation();
+  const canvases = Array.isArray(props.canvases) ? props.canvases : [props.canvases];
 
-  const Items = items.map(
-    item =>
-      item &&
-      (!props.snippet ? (
-        <Link
-          key={item.id}
-          to={createLink({
-            canvasId: item.id,
-            manifestId: manifestId,
-          })}
-        >
-          <FeatureCard
-            style={{
-              backgroundColor: props.cardBackground,
-              borderColor: props.cardBorder,
-              color: props.textColor,
-            }}
-          >
-            <ImageStripBox $size="small" $bgColor={props.cardBackground}>
-              <CroppedImage $size="small" $covered={props.imageStyle === 'covered'}>
-                {item.thumbnail ? (
-                  <img alt={createLocaleString(item.label, t('item thumbnail'))} src={item.thumbnail[0].id} />
-                ) : null}
-              </CroppedImage>
-            </ImageStripBox>
-            <LocaleString style={{ padding: '1em' }} as={SingleLineHeading5}>
-              {item.label}
-            </LocaleString>
-          </FeatureCard>
-        </Link>
-      ) : (
-        <CanvasSnippet key={item.id} id={item.id} manifestId={manifestId} />
-      ))
-  );
+  const Items =
+    canvases && canvases.length
+      ? canvases.map(
+          canvas =>
+            canvas &&
+            (!props.snippet ? (
+              <Link
+                key={canvas.id}
+                to={createLink({
+                  canvasId: canvas.id,
+                  manifestId: manifestId,
+                })}
+              >
+                <FeatureCard
+                  style={{
+                    backgroundColor: props.cardBackground,
+                    borderColor: props.cardBorder,
+                    color: props.textColor,
+                  }}
+                >
+                  <ImageStripBox $size="small" $bgColor={props.cardBackground}>
+                    <CroppedImage $size="small" $covered={props.imageStyle === 'covered'}>
+                      {canvas.thumbnail ? (
+                        <img alt={createLocaleString(canvas.label, t('item thumbnail'))} src={canvas.thumbnail} />
+                      ) : null}
+                    </CroppedImage>
+                  </ImageStripBox>
+                  <LocaleString style={{ padding: '1em' }} as={SingleLineHeading5}>
+                    {canvas.label}
+                  </LocaleString>
+                </FeatureCard>
+              </Link>
+            ) : (
+              <CanvasSnippet key={canvas.id} id={Number(canvas.id)} manifestId={manifestId} />
+            ))
+        )
+      : null;
 
-  if (!items || items.length === 0) {
+  if (!props.canvases || props.canvases.length === 0) {
     return null;
   }
-  if (!props.carousel || props.column) {
+  if (!props.carousel || props.column || canvases.length < 3) {
     return (
       <>
         <h3 style={{ fontSize: '1.5em', color: 'inherit' }}>{props.header}</h3>
@@ -137,10 +139,15 @@ blockEditorFor(FeaturedItem, {
   type: 'default.featuredItem',
   defaultProps: {
     header: 'Featured Items',
-    canvas: null,
-    canvas2: null,
-    canvas3: null,
-    snippet: false,
+    canvases: [
+      {
+        id: '',
+        label: {
+          en: [''],
+        },
+      },
+    ],
+    snippet: true,
     column: false,
     cardBackground: '',
     textColor: '',
@@ -151,16 +158,10 @@ blockEditorFor(FeaturedItem, {
   },
   editor: {
     header: { label: 'label', type: 'text-field' },
-    canvas: {
+    canvases: {
+      allowMultiple: true,
       label: 'Canvas',
-      type: 'manifest-canvas-explorer',
-    },
-    canvas2: {
-      label: 'Canvas 2',
-      type: 'manifest-canvas-explorer',
-    },
-    canvas3: {
-      label: 'Canvas 3',
+      pluralLabel: 'Canvases',
       type: 'manifest-canvas-explorer',
     },
     snippet: { type: 'checkbox-field', label: 'Snippet', inlineLabel: 'Show as snippet' },
@@ -188,27 +189,4 @@ blockEditorFor(FeaturedItem, {
   },
   anyContext: ['manifest'],
   requiredContext: ['manifest'],
-  hooks: [
-    {
-      name: 'getSiteCanvas',
-      creator: props => (props.canvas ? [props.canvas.id] : undefined),
-      mapToProps: (props, canvasData) => {
-        return { ...props, canvasData };
-      },
-    },
-    {
-      name: 'getSiteCanvas',
-      creator: props => (props.canvas2 ? [props.canvas2.id] : undefined),
-      mapToProps: (props, canvas2Data) => {
-        return { ...props, canvas2Data };
-      },
-    },
-    {
-      name: 'getSiteCanvas',
-      creator: props => (props.canvas3 ? [props.canvas3.id] : undefined),
-      mapToProps: (props, canvas3Data) => {
-        return { ...props, canvas3Data };
-      },
-    },
-  ],
 });

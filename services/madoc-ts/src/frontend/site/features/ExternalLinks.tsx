@@ -46,36 +46,35 @@ export const ExternalLinks: React.FC<{
   );
 };
 
-//todo use nested here
 blockEditorFor(ExternalLinks, {
   type: 'default.ExternalLinks',
   label: 'External Links',
   anyContext: [],
   requiredContext: [],
   defaultProps: {
-    url1: '',
-    text1: '',
-    url2: '',
-    text2: '',
-    url3: '',
-    text3: '',
+    links: [
+      {
+        url: '',
+        text: '',
+      },
+    ],
   },
   editor: {
-    url1: { type: 'text-field', label: 'URL' },
-    text1: { type: 'text-field', label: 'Link text' },
-    url2: { type: 'text-field', label: 'URL' },
-    text2: { type: 'text-field', label: 'Link text' },
-    url3: { type: 'text-field', label: 'URL' },
-    text3: { type: 'text-field', label: 'Link text' },
-  },
-  mapToProps(formInput: any) {
-    const links: {
-      url?: string;
-      text?: string;
-    }[] = [];
-    if (formInput.url1) links.push({ url: formInput.url1, text: formInput.text1 });
-    if (formInput.url2) links.push({ url: formInput.url2, text: formInput.text2 });
-    if (formInput.url3) links.push({ url: formInput.url3, text: formInput.text3 });
-    return { links };
+    links: {
+      allowMultiple: true,
+      label: 'Link',
+      pluralLabel: 'Links',
+      labelledBy: 'text',
+    },
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    'links.text': {
+      type: 'text-field',
+      label: 'Display text',
+    },
+    'links.url': {
+      type: 'text-field',
+      label: 'URL',
+    },
   },
 });
