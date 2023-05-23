@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useSearchQuery } from '../hooks/use-search-query';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import { SearchResult } from '../../../types/search';
@@ -7,6 +7,11 @@ import { ResultsContainer, SearchItem, TotalResults } from '../../shared/compone
 import { ImageGrid } from '../../shared/atoms/ImageGrid';
 import { LoadingBlock } from '../../shared/callouts/LoadingBlock';
 import { useTranslation } from 'react-i18next';
+import { SimpleDropdown } from '../../shared/atoms/SimpleDropdown';
+import { Button, ButtonIcon } from '../../shared/navigation/Button';
+import { GridIcon } from '../../shared/icons/GridIcon';
+import { ListIcon } from '../../shared/icons/ListIcon';
+import useDropdownMenu from 'react-accessible-dropdown-menu-hook';
 
 interface SearchPageResultsProps {
   background?: string;
@@ -18,7 +23,6 @@ interface SearchPageResultsProps {
 }
 
 export const SearchPageResults: React.FC<SearchPageResultsProps> = ({
-  grid,
   snippet,
   cardBorder,
   textColor,
@@ -30,6 +34,7 @@ export const SearchPageResults: React.FC<SearchPageResultsProps> = ({
   const { rawQuery, page, fulltext } = useSearchQuery();
   const searchResults = searchResponse ? searchResponse.results : [];
 
+  const [resultsView, setResultsView] = useState('list');
   if (!searchResults) {
     return null;
   }
@@ -37,13 +42,43 @@ export const SearchPageResults: React.FC<SearchPageResultsProps> = ({
     <LoadingBlock />
   ) : (
     <>
-      <TotalResults>
-        {t('Found {{count}} results', {
-          count: searchResponse && searchResponse.pagination ? searchResponse.pagination.totalResults : 0,
-        })}
-      </TotalResults>
+      <div style={{ justifyContent: 'space-between', display: 'flex' }}>
+        <TotalResults>
+          {t('Found {{count}} results', {
+            count: searchResponse && searchResponse.pagination ? searchResponse.pagination.totalResults : 0,
+          })}
+        </TotalResults>
+
+        <SimpleDropdown buttonText={<ButtonIcon>{resultsView === 'list' ? <ListIcon /> : <GridIcon />}</ButtonIcon>}>
+          <Button
+            $link
+            style={{ display: 'flex', justifyContent: 'space-evenly' }}
+            onClick={() => {
+              setResultsView('list');
+            }}
+          >
+            List
+            <ButtonIcon>
+              <ListIcon />
+            </ButtonIcon>
+          </Button>
+
+          <Button
+            $link
+            style={{ display: 'flex', justifyContent: 'space-evenly' }}
+            onClick={() => {
+              setResultsView('grid');
+            }}
+          >
+            Grid
+            <ButtonIcon>
+              <GridIcon />
+            </ButtonIcon>
+          </Button>
+        </SimpleDropdown>
+      </div>
       <ResultsContainer $isFetching={isLoading}>
-        <ImageGrid data-view-list={!grid} $size={'small'}>
+        <ImageGrid data-view-list={resultsView === 'list'} $size={'small'}>
           {searchResults.map((result: SearchResult, index: number) => {
             return result ? (
               <SearchItem
@@ -53,7 +88,7 @@ export const SearchPageResults: React.FC<SearchPageResultsProps> = ({
                 background={background}
                 border={cardBorder}
                 textColor={textColor}
-                list={!grid}
+                list={resultsView === 'list'}
                 hideSnippet={snippet}
                 imageStyle={imageStyle}
               />
@@ -72,14 +107,12 @@ blockEditorFor(SearchPageResults, {
   requiredContext: ['page'],
   defaultProps: {
     background: '',
-    grid: '',
     snippet: '',
     textColor: '',
     cardBorder: '',
     imageStyle: 'fit',
   },
   editor: {
-    grid: { type: 'checkbox-field', label: 'Display as', inlineLabel: 'Display as grid' },
     snippet: { type: 'checkbox-field', label: 'Snippet', inlineLabel: 'Hide snippet?' },
     background: { label: 'Card background color', type: 'color-field' },
     textColor: { label: 'Card text color', type: 'color-field' },
