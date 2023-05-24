@@ -14,7 +14,7 @@ import { iiifGetLabel } from '../../utility/iiif-get-label';
 import { ApiClient } from '../api';
 import { ContentResource } from '@iiif/presentation-3';
 import del from 'del';
-
+import { trimInternationalString } from '../helpers/trim-international-string';
 export const type = 'madoc-manifest-import';
 
 export const status = [
@@ -90,6 +90,15 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
       // 2. Save manifest to disk, IF it does not already exist.
       const fileLocation = await tasks.saveManifestToDisk(idHash, text);
 
+      // trim very long strings to 3000 characters
+      const label = iiifManifest.label;
+      const summary = iiifManifest.label;
+      const metadata = iiifManifest.metadata;
+
+      metadata.map(item => {
+        item.value = trimInternationalString(item.value);
+      });
+
       // 3. POST request to `/api/madoc/iiif/manifests`
       let retries = 3;
       let item;
@@ -98,8 +107,8 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
         try {
           manifestToAdd = {
             id: iiifManifest.id,
-            label: iiifManifest.label || { none: ['Untitled Manifest'] },
-            summary: iiifManifest.summary || undefined,
+            label: label ? trimInternationalString(label) : { none: ['Untitled Manifest'] },
+            summary: summary ? trimInternationalString(summary) : undefined,
             metadata: iiifManifest.metadata || undefined,
             requiredStatement: iiifManifest.requiredStatement || undefined,
             viewingDirection: iiifManifest.viewingDirection || undefined,
@@ -124,8 +133,8 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
             ? manifestToAdd
             : {
                 id: iiifManifest.id,
-                label: iiifManifest.label || { none: ['Untitled Manifest'] },
-                summary: iiifManifest.summary || undefined,
+                label: label ? trimInternationalString(label) : { none: ['Untitled Manifest'] },
+                summary: summary ? trimInternationalString(summary) : undefined,
                 metadata: iiifManifest.metadata || undefined,
                 requiredStatement: iiifManifest.requiredStatement || undefined,
                 viewingDirection: iiifManifest.viewingDirection || undefined,
