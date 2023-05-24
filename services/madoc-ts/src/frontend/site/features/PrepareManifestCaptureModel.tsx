@@ -32,8 +32,6 @@ export function PrepareManifestsCaptureModel() {
         <Spinner style={{ marginRight: 10 }} /> {t('Preparing this manifest')}
       </InfoMessage>
     );
-    return null;
   }
-
   return null;
 }
