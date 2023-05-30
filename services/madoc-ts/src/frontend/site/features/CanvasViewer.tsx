@@ -19,10 +19,12 @@ import { useMetadataMenu } from '../hooks/canvas-menu/metadata-panel';
 import { usePersonalNotesMenu } from '../hooks/canvas-menu/personal-notes';
 import { useRevisionPanel } from '../hooks/canvas-menu/revision-panel';
 import { useTranscriptionMenu } from '../hooks/canvas-menu/transcription-panel';
+import { useTaggingPanel } from '../hooks/canvas-menu/tagging-panel';
 import { CanvasMenuHook } from '../hooks/canvas-menu/types';
 import { useViewerHeight } from '../hooks/use-viewer-height';
 import { ButtonIcon } from '../../shared/navigation/Button';
 import ResizeHandleIcon from '../../shared/icons/ResizeHandleIcon';
+import { useRouteContext } from '../hooks/use-route-context';
 
 export interface CanvasViewerProps {
   border?: string;
@@ -41,6 +43,7 @@ export interface CanvasViewerProps {
     disableDocumentPanel?: boolean;
     disableRevisionPanel?: boolean;
     disablePersonalNotes?: boolean;
+    disableTagPanel?: boolean;
   };
 
   children?: React.ReactNode;
@@ -59,6 +62,8 @@ export function CanvasViewer({
 }: CanvasViewerProps) {
   const [openPanel, setOpenPanel] = useLocalStorage<string>(`canvas-page-selected`, 'metadata');
   const [isOpen, setIsOpen] = useLocalStorage<boolean>(`canvas-page-sidebar`, false);
+  const { topic } = useRouteContext();
+
   const height = useViewerHeight();
   const {
     disableDocumentPanel,
@@ -67,10 +72,11 @@ export function CanvasViewer({
     disableAnnotationPanel,
     disableTranscriptionMenu,
     disableMetadata,
+    disableTagPanel,
   } = pins;
 
   // @todo this needs a re-think.
-  const menuItems = [
+  const menuItemsFull = [
     // eslint-disable-next-line react-hooks/rules-of-hooks
     disableMetadata ? null : useMetadataMenu(),
     // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -83,7 +89,19 @@ export function CanvasViewer({
     disableRevisionPanel ? null : useRevisionPanel(),
     // eslint-disable-next-line react-hooks/rules-of-hooks
     disablePersonalNotes ? null : usePersonalNotesMenu(),
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    disableTagPanel ? null : useTaggingPanel(),
   ].filter(Boolean) as CanvasMenuHook[];
+
+  // only show these items if viewing a canvas from a topic sub route
+  const menuItemsTopic = [
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    disableTranscriptionMenu ? null : useTranscriptionMenu(),
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    disableTagPanel ? null : useTaggingPanel(),
+  ].filter(Boolean) as CanvasMenuHook[];
+
+  const menuItems = topic ? menuItemsTopic : menuItemsFull;
 
   const currentMenuItem = menuItems.find(e => e.id === openPanel);
   const borderColor = border ? border : 'transparent';
@@ -99,7 +117,7 @@ export function CanvasViewer({
   });
 
   const sidebar = (
-    <LayoutSidebarMenu style={{ display: tabsTop ? 'flex' : '', borderRight: tabsTop ? 'none' : '1px solid #bcbcbc' }}>
+    <LayoutSidebarMenu style={{ display: tabsTop ? 'flex' : '' }}>
       {menuItems.map(menuItem => {
         if (menuItem.isHidden) {
           return null;
@@ -146,14 +164,21 @@ export function CanvasViewer({
             {currentMenuItem && isOpen && !currentMenuItem.isDisabled && !currentMenuItem.isHidden ? (
               <LayoutSidebar
                 ref={refs.resizableDiv as any}
-                data-space={sidebarSpace}
-                style={{ width: widthB, border: `1px solid ${borderColor}` }}
+                style={{
+                  width: widthB,
+                  border: currentMenuItem.id !== 'Tags' && tabsTop ? `1px solid ${border}` : '',
+                }}
               >
                 {currentMenuItem.content}
               </LayoutSidebar>
             ) : null}
 
-            <LayoutHandle ref={refs.resizer as any} onClick={() => setIsOpen(o => !o)}>
+            <LayoutHandle
+              style={{ background: border, opacity: border ? 0.5 : 0 }}
+              data-space={sidebarSpace}
+              ref={refs.resizer as any}
+              onClick={() => setIsOpen(o => !o)}
+            >
               <ButtonIcon>
                 <ResizeHandleIcon />
               </ButtonIcon>

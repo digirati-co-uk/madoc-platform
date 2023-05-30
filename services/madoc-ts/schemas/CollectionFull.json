@@ -85,6 +85,9 @@
             }
           }
         },
+        "source": {
+          "type": "string"
+        },
         "published": {
           "type": "boolean"
         },

@@ -19,9 +19,11 @@ export const updateManifestStructure: RouteMiddleware<{ id: number }, UpdateStru
     `)
   ).map(({ id }) => id);
 
+  const toRemove = ids.filter(id => canvasIds.indexOf(id) === -1);
+  const toAdd = canvasIds.filter(id => ids.indexOf(id) === -1);
+
   await context.connection.transaction(async handler => {
     // First remove.
-    const toRemove = ids.filter(id => canvasIds.indexOf(id) === -1);
     if (toRemove.length) {
       const removeQuery = sql`
         delete
@@ -47,7 +49,10 @@ export const updateManifestStructure: RouteMiddleware<{ id: number }, UpdateStru
   (async () => {
     try {
       const userApi = api.asUser({ userId: id, siteId });
-      await userApi.indexManifest(manifestId);
+
+      // Previously we triggered a search index, we can now just post up new search response.
+      await userApi.search.batchSearchIngestManifestCanvases(manifestId, toAdd, toRemove);
+
       await userApi.postUniversalChangeToStreams({
         id: manifestId,
         type: 'manifest',
@@ -56,7 +61,9 @@ export const updateManifestStructure: RouteMiddleware<{ id: number }, UpdateStru
     } catch (e) {
       console.log(e);
     }
-  })();
+  })().then(() => {
+    // completed
+  });
 
   await context.connection.query(sql`select refresh_item_counts()`);
 

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { RouteObject } from 'react-router-dom';
 import { CurrentUserWithScope, Site, SystemConfig } from '../../extensions/site-manager/types';
 import { ApiClient } from '../../gateway/api';
@@ -42,6 +42,11 @@ const AdminApp: React.FC<AdminAppProps> = ({
   const viewingDirection = useMemo(() => i18n.dir(i18n.language), [i18n.language]);
   const [updatedSite, setSite] = useState(site);
   const [updatedSystemConfig, updateSystemConfig] = useState(systemConfig);
+
+  useEffect(() => {
+      // @ts-ignore
+      globalThis.MadocApi = api;
+  }, [])
 
   return (
     <div lang={i18n.language} dir={viewingDirection}>

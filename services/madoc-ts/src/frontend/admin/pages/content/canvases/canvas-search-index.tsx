@@ -24,6 +24,11 @@ export const CanvasSearchIndex = createUniversalComponent<CanvasSearchIndexType>
       await refetch();
     });
 
+    const [invokeEnrichment, { isLoading: enrichLoading }] = useMutation(async () => {
+      await api.search.triggerSearchIndex(Number(id), 'canvas');
+      await refetch();
+    });
+
     if (isError) {
       return (
         <div>
@@ -46,10 +51,14 @@ export const CanvasSearchIndex = createUniversalComponent<CanvasSearchIndexType>
         <Button disabled={isLoading} onClick={() => indexContext()}>
           Reindex canvas
         </Button>
+        {'  '}
+        <Button disabled={isLoading} onClick={() => invokeEnrichment()}>
+          {enrichLoading ? `...loading` : 'Invoke enrichment'}
+        </Button>
         <hr />
         <pre>{JSON.stringify(data.canvas, null, 2)}</pre>
         <h4>Indexable</h4>
-        {data
+        {data && data.models
           ? data.models.results.map((result: any, key: number) => {
               return (
                 <div key={key}>
@@ -70,10 +79,18 @@ export const CanvasSearchIndex = createUniversalComponent<CanvasSearchIndexType>
       return ['canvas-search-index', { id: Number(params.id) }];
     },
     getData: async (key, { id }, api) => {
-      return {
-        canvas: await api.searchGetIIIF(`urn:madoc:canvas:${id}`),
-        models: await api.searchListModels({ iiif__madoc_id: `urn:madoc:canvas:${id}` }),
-      };
+      try {
+        return {
+          canvas: await api.search.searchGetIIIF(`urn:madoc:canvas:${id}`),
+          models: { results: [] },
+          // models: await api.searchListModels({ iiif__madoc_id: `urn:madoc:canvas:${id}` }),
+        };
+      } catch (e) {
+        return {
+          canvas: null,
+          models: { results: [] },
+        };
+      }
     },
   }
 );

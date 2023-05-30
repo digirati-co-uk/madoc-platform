@@ -25,13 +25,13 @@ export function createNewFieldInstance(
   // Clone the template field.
   const newField = copy<BaseField>(template as BaseField);
   const description = pluginStore.fields[newField.type];
-  if (!description) {
-    throw new Error(`field plugin not found of type ${newField.type}`);
-  }
+  // if (!description) {
+  //   throw new Error(`field plugin not found of type ${newField.type}`);
+  // }
 
   // Modify the new field with defaults form the plugin store
   newField.id = generateId();
-  newField.value = copy(description.defaultValue);
+  newField.value = copy(description ? description.defaultValue : null);
   if (newField.selector) {
     newField.selector.id = generateId();
     newField.selector.state = null;

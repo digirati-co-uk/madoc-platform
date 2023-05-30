@@ -1,6 +1,7 @@
 {
   "allowCollectionNavigation": true,
   "allowManifestNavigation": true,
+  "allowTopicNavigation": true,
   "allowCanvasNavigation": true,
   "randomlyAssignCanvas": false,
   "priorityRandomness": true,

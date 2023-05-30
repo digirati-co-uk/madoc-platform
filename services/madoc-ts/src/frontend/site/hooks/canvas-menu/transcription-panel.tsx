@@ -6,7 +6,6 @@ import { TranscriptionIcon } from '../../../shared/icons/TranscriptionIcon';
 import { CanvasPlaintext } from '../../features/CanvasPlaintext';
 import { CanvasLoader } from '../../pages/loaders/canvas-loader';
 import { CanvasMenuHook } from './types';
-import {LayoutSidebarMenu, NavIconContainer, NavIconNotifcation} from "../../../shared/layout/LayoutContainer";
 
 export function useTranscriptionMenu(): CanvasMenuHook {
   const { data } = useData(CanvasLoader, []);

@@ -97,6 +97,7 @@ services:
         condition: service_healthy
 
   tasks-api:
+    platform: linux/x86_64/v8
     tty: true
     image: ghcr.io/digirati-co-uk/tasks-api:latest
     environment:
@@ -192,6 +193,7 @@ services:
       - ./configuration/defaults:/app/configurator/default_config
 
   storage-api:
+    platform: linux/x86_64/v8
     tty: true
     image: ghcr.io/digirati-co-uk/storage-api:main
     environment:
@@ -203,9 +205,9 @@ services:
         condition: service_healthy
 
   search:
-    image: ghcr.io/digirati-co-uk/madoc-search-service:247f854b1258e3971907e6912cef2374a1da8474
+    image: digirati/madoc-enrichment:qa-deploy
 #    build:
-#      context: services/search
+#      context: services/enrichment
 #      dockerfile: Dockerfile
     environment:
       - BROWSABLE=False
@@ -219,15 +221,25 @@ services:
       - POSTGRES_HOST=shared-postgres
       - POSTGRES_PORT=${POSTGRES_PORT}
       - POSTGRES_USER=${POSTGRES_SEARCH_API_USER}
+      - REDIS_URL=redis://gateway-redis:6379
+      - APPEND_SLASH=False
+      - ALLOWED_HOSTS=gateway,madoc.local
       - POSTGRES_PASSWORD=${POSTGRES_SEARCH_API_PASSWORD}
       - POSTGRES_SCHEMA=${POSTGRES_SEARCH_API_SCHEMA}
       - POSTGRES_DB=${POSTGRES_DB}
       - DATABASE_URL=postgres://${POSTGRES_SEARCH_API_USER}:${POSTGRES_SEARCH_API_PASSWORD}@shared-postgres:${POSTGRES_PORT}/${POSTGRES_DB}
+      - INLINE_WORKER=True
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/starsky_google_credentials
+      - OCR_ENGINE=Google
     links:
       - shared-postgres
+      - gateway-redis
 #    volumes:
-#      - ./services/search/search_service:/app
-
+#      - ./services/enrichment/app:/app:delegated
+    ports:
+      - 5020:5000
   okra:
-    image: digirati/okra:latest
-
+    image: digirati/okra:uwsgi
+    sysctls:
+      - net.core.somaxconn=1024
+      - net.ipv4.tcp_syncookies=0

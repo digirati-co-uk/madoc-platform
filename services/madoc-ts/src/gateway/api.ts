@@ -12,6 +12,8 @@ import { DynamicDataSourcesExtension } from '../extensions/capture-models/Dynami
 import { CaptureModelExtension } from '../extensions/capture-models/extension';
 import { Paragraphs } from '../extensions/capture-models/Paragraphs/Paragraphs.extension';
 import { plainTextSource } from '../extensions/capture-models/DynamicDataSources/sources/Plaintext.source';
+import { EnrichmentExtension } from '../extensions/enrichment/extension';
+import { SearchExtension } from '../extensions/enrichment/search/search-extension';
 import { ExtensionManager } from '../extensions/extension-manager';
 import { NotificationExtension } from '../extensions/notifications/extension';
 import { getDefaultPageBlockDefinitions } from '../extensions/page-blocks/default-definitions';
@@ -82,6 +84,8 @@ import { ResourceLinkRow } from '../database/queries/linking-queries';
 import { SearchIndexTask } from './tasks/search-index-task';
 import { JsonProjectTemplate, ProjectTemplate } from '../extensions/projects/types';
 import { ApiKey } from '../types/api-key';
+import { Topic, TopicType, TopicTypeListResponse } from '../types/schemas/topics';
+import { EnrichmentResource } from '../extensions/enrichment/types';
 
 export type ApiClientWithoutExtensions = Omit<
   ApiClient,
@@ -120,6 +124,8 @@ export class ApiClient {
   projectTemplates!: ProjectTemplateExtension;
   projectExport!: ProjectExportExtension;
   crowdsourcing!: CrowdsourcingApi;
+  enrichment: EnrichmentExtension;
+  search: SearchExtension;
   webhooks!: WebhookExtension;
 
   constructor(options: {
@@ -143,6 +149,9 @@ export class ApiClient {
     // This extension will be fine.
     this.notifications = new NotificationExtension(this);
     this.tasks = new TaskExtension(this);
+    // Enrichment
+    this.enrichment = new EnrichmentExtension(this);
+    this.search = new SearchExtension(this);
 
     if (options.withoutExtensions) {
       this.crowdsourcing = new CrowdsourcingApi(this, null, captureModelDataSources);
@@ -837,27 +846,8 @@ export class ApiClient {
     });
   }
 
-  /// Search
-
-  async search(searchTerm: string, pageQuery = 1, facetType?: string, facetValue?: string) {
-    // Facet Types these are just one at a time for now, may switch to a post query with the json if a list!
-    if (!searchTerm)
-      return {
-        results: [],
-        pagination: {
-          page: 1,
-          totalResults: 0,
-          totalPages: 1,
-        },
-        facets: [],
-      };
-    return await this.request<SearchResponse>(
-      `/api/search/search?${stringify({ fulltext: searchTerm, page: pageQuery, facetType, facetValue })}`
-    );
-  }
-
   async getSearchQuery(query: SearchQuery, page = 1, madoc_id?: string) {
-    return this.searchQuery(query, page, madoc_id);
+    return this.search.searchQuery(query, page, madoc_id);
   }
 
   // IIIF.
@@ -1923,23 +1913,10 @@ export class ApiClient {
   }
 
   // Search API
-  async searchQuery(query: SearchQuery, page = 1, madoc_id?: string) {
-    return this.request<SearchResponse>(`/api/search/search?${stringify({ page, madoc_id })}`, {
-      method: 'POST',
-      body: query,
-    });
-  }
   // can be used for both canvases and manifests
   async searchIngest(resource: SearchIngestRequest) {
     return this.request<SearchIndexTask>(`/api/search/iiif`, {
       method: 'POST',
-      body: resource,
-    });
-  }
-
-  async searchReIngest(resource: SearchIngestRequest) {
-    return this.request<SearchIndexTask>(`/api/search/iiif/${resource.id}`, {
-      method: 'PUT',
       body: resource,
     });
   }
@@ -1968,6 +1945,25 @@ export class ApiClient {
     return this.request<any>(`/api/search/model`, {
       method: 'POST',
       body: modelPayload,
+    });
+  }
+
+  async searchListIndexables() {
+    return this.request(`/api/search/indexables`);
+  }
+
+  async searchListModels(query?: { iiif__madoc_id?: string }) {
+    try {
+      return this.request(`/api/search/model?${query ? stringify(query) : ''}`);
+    } catch (e) {
+      return [];
+    }
+  }
+
+  async indexRawSearchIndexable(indexable: SearchIndexable) {
+    return this.request(`/api/search/indexables`, {
+      method: 'POST',
+      body: indexable,
     });
   }
 
@@ -2012,65 +2008,6 @@ export class ApiClient {
     }
   }
 
-  async getIndexedManifestById(madoc_id: string) {
-    return this.request<SearchResponse>(`/api/search/search?${stringify({ madoc_id })}`, {
-      method: 'GET',
-    });
-  }
-
-  async searchListIndexables() {
-    return this.request(`/api/search/indexables`);
-  }
-
-  async searchGetIndexable(id: number) {
-    return this.request(`/api/search/indexables/${id}`);
-  }
-
-  async searchListModels(query?: { iiif__madoc_id?: string }) {
-    return this.request(`/api/search/model?${query ? stringify(query) : ''}`);
-  }
-
-  async searchGetModel(id: number) {
-    return this.request(`/api/search/model/${id}`);
-  }
-
-  async searchListIIIF() {
-    return this.request(`/api/search/iiif`);
-  }
-
-  async searchGetIIIF(id: string) {
-    try {
-      return this.request(`/api/search/iiif/${id}`);
-    } catch (err) {
-      return undefined;
-    }
-  }
-
-  async searchDeleteIIIF(id: string) {
-    try {
-      return this.request(`/api/search/iiif/${id}`, {
-        method: 'DELETE',
-      });
-    } catch (err) {
-      return undefined;
-    }
-  }
-
-  async searchListContexts() {
-    return this.request(`/api/search/contexts`);
-  }
-
-  async searchGetContext(id: string) {
-    return this.request(`/api/search/contexts/${id}`);
-  }
-
-  async indexRawSearchIndexable(indexable: SearchIndexable) {
-    return this.request(`/api/search/indexables`, {
-      method: 'POST',
-      body: indexable,
-    });
-  }
-
   async indexCanvas(id: number) {
     try {
       await this.request<SearchIndexTask>(`/api/madoc/iiif/canvases/${id}/index`, {
@@ -2079,12 +2016,6 @@ export class ApiClient {
     } catch (err) {
       // no-op this will fail silently.
     }
-  }
-
-  async getIndexedCanvasById(madoc_id: string) {
-    return this.request<SearchResponse>(`/api/search/search?${stringify({ madoc_id })}`, {
-      method: 'GET',
-    });
   }
 
   async batchIndexResources(
@@ -2103,12 +2034,6 @@ export class ApiClient {
   // Public API.
   async getSiteCanvas(id: number, query?: import('../routes/site/site-canvas').SiteCanvasQuery) {
     return this.publicRequest<CanvasFull>(`/madoc/api/canvases/${id}`, query);
-  }
-
-  async getSiteCanvasSource(source: string) {
-    return this.publicRequest<{ id: number }>(`/madoc/api/canvas-source`, {
-      source_id: source,
-    });
   }
 
   async getSiteCollection(id: number, query?: import('../routes/site/site-collection').SiteCollectionQuery) {
@@ -2155,12 +2080,6 @@ export class ApiClient {
 
   async getSiteConfiguration(query?: import('../routes/site/site-configuration').SiteConfigurationQuery) {
     return this.publicRequest<ProjectConfiguration>(`/madoc/api/configuration`, query);
-  }
-
-  async getSiteModelConfiguration(
-    query: import('../routes/site/site-model-configuration').SiteModelConfigurationQuery
-  ) {
-    return this.publicRequest<ConfigInjectionSettings>(`/madoc/api/configuration/model`, query);
   }
 
   async getSiteSearchFacetConfiguration() {
@@ -2242,5 +2161,19 @@ export class ApiClient {
 
   async getUserDetails() {
     return this.publicRequest<UserDetails>(`/madoc/api/me`);
+  }
+
+  // TOPICS
+  getSiteTopic(type: string, slug: string) {
+    return this.publicRequest<Topic>(`/madoc/api/topics/${type}/${slug}`);
+  }
+  getSiteTopicTypes(page = 1) {
+    return this.publicRequest<TopicTypeListResponse>(`/madoc/api/topics?page=${page}`);
+  }
+  getSiteTopicType(slug: string, page: number) {
+    return this.publicRequest<TopicType>(`/madoc/api/topics/${slug}?page=${page}`);
+  }
+  getSiteEnrichmentResource(id: string) {
+    return this.publicRequest<EnrichmentResource>(`/madoc/api/resource/${id}`);
   }
 }

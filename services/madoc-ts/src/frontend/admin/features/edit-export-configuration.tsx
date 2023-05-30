@@ -32,8 +32,6 @@ export function EditExportConfiguration(props: EditExportConfigurationProps) {
     return selected.configuration;
   }, [selected.configuration]);
 
-  console.log(props);
-
   if (!editorConfig) {
     // No config.
     return null;

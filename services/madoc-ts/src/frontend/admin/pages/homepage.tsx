@@ -1,5 +1,5 @@
 import React from 'react';
-import { useSite, useUser } from '../../shared/hooks/use-site';
+import { useUser } from '../../shared/hooks/use-site';
 import { UniversalComponent } from '../../types';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
@@ -124,6 +124,17 @@ export const Homepage: UniversalComponent<HomepageType> = createUniversalCompone
                 </li>
                 <li>
                   <Link to="/system/activity-streams">{t('Activity streams')}</Link>
+                </li>
+              </MenuList>
+            </AdminSection>
+            <AdminSection>
+              <MenuTitle>{t('Enrichment')}</MenuTitle>
+              <MenuList>
+                <li>
+                  <Link to={`/topics`}>{t('Manage topics')}</Link>
+                </li>
+                <li>
+                  <Link to={`/authority`}>{t('Authority')}</Link>
                 </li>
               </MenuList>
             </AdminSection>

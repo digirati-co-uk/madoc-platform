@@ -22,6 +22,7 @@ export const Slot: React.FC<{
 
   const slotId = slot ? slot.id : undefined;
   const updateSlot = useCallback(() => (slotId ? onUpdateSlot(slotId) : undefined), [onUpdateSlot, slotId]);
+
   const onError = (e: any) => {
     return (
       <ErrorMessage $banner $margin>

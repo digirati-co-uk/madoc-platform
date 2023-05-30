@@ -63,7 +63,7 @@ export async function deleteCollection(
     }
 
     if (deletionSummary.search.indexed && deletionSummary.search.id) {
-      await siteApi.searchDeleteIIIF(deletionSummary.search.id);
+      await siteApi.search.searchDeleteIIIF(deletionSummary.search.id);
     }
 
     await connection().any(deleteIiifMetadata(collectionId));

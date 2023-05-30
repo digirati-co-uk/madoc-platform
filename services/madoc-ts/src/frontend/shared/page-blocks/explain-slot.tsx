@@ -7,6 +7,8 @@ export const ExplainSlot: React.FC<{ slot: SiteSlot; context?: EditorialContext 
     (slot.filters.project?.none &&
       slot.filters.collection?.none &&
       slot.filters.manifest?.none &&
+      slot.filters.topicType?.none &&
+      slot.filters.topic?.none &&
       slot.filters.canvas?.none)
   ) {
     return (

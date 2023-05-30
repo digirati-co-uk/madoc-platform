@@ -8,7 +8,7 @@ export function useCanvasSearchText(id?: number | string, queryParam = 'searchTe
 
 export function useCanvasSearch(id?: number | string, queryParam = 'searchText') {
   const searchText = useCanvasSearchText(id, queryParam);
-  const { data: search } = apiHooks.searchQuery(() =>
+  const { data: search } = apiHooks.getSearchQuery(() =>
     searchText && id ? [{ fulltext: searchText }, 1, `urn:madoc:canvas:${id}`] : undefined
   );
 

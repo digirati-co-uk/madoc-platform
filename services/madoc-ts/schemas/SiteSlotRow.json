@@ -106,6 +106,48 @@
       "items": {
         "type": "number"
       }
+    },
+    "filter_topic_type_none": {
+      "type": "boolean"
+    },
+    "filter_topic_type_all": {
+      "type": "boolean"
+    },
+    "filter_topic_type_exact": {
+      "type": "string"
+    },
+    "filter_topic_type_whitelist": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "filter_topic_type_blacklist": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "filter_topic_none": {
+      "type": "boolean"
+    },
+    "filter_topic_all": {
+      "type": "boolean"
+    },
+    "filter_topic_exact": {
+      "type": "string"
+    },
+    "filter_topic_whitelist": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "filter_topic_blacklist": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
     }
   },
   "required": [
@@ -121,6 +163,12 @@
     "filter_project_all",
     "filter_project_exact",
     "filter_project_none",
+    "filter_topic_all",
+    "filter_topic_exact",
+    "filter_topic_none",
+    "filter_topic_type_all",
+    "filter_topic_type_exact",
+    "filter_topic_type_none",
     "id",
     "site_id",
     "slot_layout",

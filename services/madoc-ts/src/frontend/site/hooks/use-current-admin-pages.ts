@@ -5,7 +5,7 @@ import { useRouteContext } from './use-route-context';
 
 export const useCurrentAdminPages = () => {
   const { slug } = useSite();
-  const { manifestId, collectionId, canvasId } = useRouteContext();
+  const { manifestId, collectionId, canvasId, topicType, topic } = useRouteContext();
   const user = useUser();
   const { t } = useTranslation();
   const project = useProject();
@@ -42,6 +42,20 @@ export const useCurrentAdminPages = () => {
       label: t('Canvas'),
       link: `/s/${slug}/admin/manifests/${manifestId}/canvases/${canvasId}`,
     });
+  }
+
+  if (topicType) {
+    availablePages.push({
+      label: t('Topic type'),
+      link: `/s/${slug}/admin/topics/${topicType}`,
+    });
+
+    if (topic) {
+      availablePages.push({
+        label: t('Topic'),
+        link: `/s/${slug}/admin/topics/${topicType}/${topic}`,
+      });
+    }
   }
 
   return availablePages;

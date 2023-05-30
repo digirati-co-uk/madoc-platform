@@ -127,7 +127,13 @@ export const AdminHeader: React.FC<{
                 item ? (
                   <AdminTabItem
                     key={item.link}
-                    $active={item.active || pathname === item.link || (pathname.indexOf(item.link) !== -1 && n > 0)}
+                    $active={
+                      item.active ||
+                      pathname === item.link ||
+                      pathname.replace(/ /g, '%20') === item.link ||
+                      pathname === item.link.replace(/ /g, '%20') ||
+                      (pathname.indexOf(item.link) !== -1 && n > 0)
+                    }
                     as={Link}
                     to={item.link}
                   >

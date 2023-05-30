@@ -7,6 +7,8 @@ export function createLink(opt: {
   canvasId?: string | number;
   taskId?: string;
   parentTaskId?: string;
+  topicType?: string;
+  topic?: string;
   query?: any;
   subRoute?: string;
   admin?: boolean;
@@ -17,6 +19,23 @@ export function createLink(opt: {
     opt.hash ? `#${opt.hash}` : ''
   }`;
   const canvasSubRoute = opt.admin ? 'canvases' : 'c';
+
+  // Topics.
+  if (opt.topicType) {
+    const path = [];
+
+    path.push(`/topics/${opt.topicType}`);
+    if (opt.topic) {
+      path.push(`/${opt.topic}`);
+    }
+    if (opt.manifestId) {
+      path.push(`/manifests/${opt.manifestId}`);
+    }
+    if (opt.canvasId) {
+      path.push(`/${canvasSubRoute}/${opt.canvasId}`);
+    }
+    return `${path.join('')}${suffix}`;
+  }
 
   // Tasks.
   if (opt.taskId) {
@@ -31,7 +50,6 @@ export function createLink(opt: {
     }
     return `/tasks/${opt.taskId}${suffix}`;
   }
-
   // Canvas
   if (opt.canvasId) {
     const path = [];
@@ -60,10 +78,9 @@ export function createLink(opt: {
     if (opt.projectId) {
       path.push(`/projects/${opt.projectId}`);
     }
-    if (opt.collectionId) {
+    if (opt.collectionId && !opt.admin) {
       path.push(`/collections/${opt.collectionId}`);
     }
-
     path.push(`/manifests/${opt.manifestId}`);
 
     return `${path.join('')}${suffix}`;

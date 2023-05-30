@@ -14,8 +14,8 @@ import { useRouteContext } from '../hooks/use-route-context';
 import { AssignCanvasToUser } from './AssignCanvasToUser';
 import { CanvasManifestPagination } from './CanvasManifestPagination';
 import { CanvasTaskProgress } from './CanvasTaskProgress';
-import { CreateModelTestCase } from './CreateModelTestCase';
 import { RequiredStatement } from './RequiredStatement';
+import { StartTagEdit } from './StartTagEdit';
 
 export const CanvasPageHeader: React.FC<{ subRoute?: string; title?: string }> = ({ subRoute, title }) => {
   const { manifestId, canvasId } = useRouteContext();
@@ -52,6 +52,7 @@ export const CanvasPageHeader: React.FC<{ subRoute?: string; title?: string }> =
       </div>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <ButtonRow>
+          <StartTagEdit isEdit={subRoute === 'edit'} />
           <AssignCanvasToUser />
 
           {!isAdmin && !canProgress ? null : <CanvasTaskProgress />}

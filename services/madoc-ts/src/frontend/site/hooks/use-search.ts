@@ -1,26 +1,40 @@
 import { InternationalString } from '@iiif/presentation-3';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { FacetConfig } from '../../shared/components/MetadataFacetEditor';
 import { apiHooks, paginatedApiHooks } from '../../shared/hooks/use-api-query';
 import { useSiteConfiguration } from '../features/SiteConfigurationContext';
 import { useRouteContext } from './use-route-context';
 import { useSearchQuery } from './use-search-query';
+import { useBreadcrumbs } from '../../shared/components/Breadcrumbs';
+import { useSearchFacets } from './use-search-facets';
 
 function normalizeDotKey(key: string) {
   return key.startsWith('metadata.') ? key.slice('metadata.'.length).toLowerCase() : key.toLowerCase();
 }
 
 export function useSearch() {
+  const { topic } = useBreadcrumbs();
+  const topicId = topic?.id;
+
   const { projectId, collectionId, manifestId } = useRouteContext();
-  const { fulltext, appliedFacets, page } = useSearchQuery();
+  const { fulltext, appliedFacets, page, rscType } = useSearchQuery();
+  const { clearAllFacets } = useSearchFacets();
   const {
     project: { searchStrategy, claimGranularity, searchOptions },
   } = useSiteConfiguration();
   const { searchMultipleFields, nonLatinFulltext, onlyShowManifests } = searchOptions || {};
   const searchFacetConfig = apiHooks.getSiteSearchFacetConfiguration(() => []);
 
+  useEffect(() => {
+    if (topicId) {
+      // clearAllFacets();
+      appliedFacets.push({ k: 'entity', v: topicId });
+    }
+    return;
+  }, [appliedFacets, topicId, topic]);
+
   const [facetsToRequest, facetDisplayOrder, facetIdMap] = useMemo(() => {
-    const facets = searchFacetConfig.data ? searchFacetConfig.data.facets : [];
+    const facets = !topicId && searchFacetConfig.data ? searchFacetConfig.data.facets : [];
     const returnList: string[] = [];
     const idMap: { [id: string]: { config: FacetConfig; keys: string[] } } = {};
     const displayOrder: string[] = [];
@@ -39,9 +53,30 @@ export function useSearch() {
       }
     }
     return [returnList, displayOrder, idMap];
-  }, [searchFacetConfig.data]);
+  }, [searchFacetConfig.data, topicId]);
 
-  const searchResponse = paginatedApiHooks.getSiteSearchQuery(
+  const topicFacets = appliedFacets.map(facet =>
+    facet.k === 'entity'
+      ? {
+          type: 'entity',
+          group_id: facet.v,
+        }
+      : {
+          type: 'metadata',
+          subtype: facet.k,
+          value: facet.v,
+        }
+  );
+
+  const searchQFacets = appliedFacets.map(facet => ({
+    type: 'metadata',
+    subtype: facet.k,
+    value: facet.v,
+  }));
+
+  const facets = topic ? topicFacets : searchQFacets;
+
+  const searchResults = paginatedApiHooks.getSiteSearchQuery(
     () => [
       {
         projectId,
@@ -50,11 +85,8 @@ export function useSearch() {
         fulltext: fulltext,
         facet_fields: facetsToRequest.length ? facetsToRequest : undefined,
         //  @todo stringify facets.
-        facets: appliedFacets.map(facet => ({
-          type: 'metadata',
-          subtype: facet.k,
-          value: facet.v,
-        })),
+        facets: facets,
+        resource_type: rscType,
         facet_on_manifests: true,
         search_type: searchStrategy as any,
         number_of_facets: searchFacetConfig.data?.facets.length ? 100 : undefined,
@@ -67,7 +99,14 @@ export function useSearch() {
     {
       enabled:
         !searchFacetConfig.isLoading &&
-        (!!facetsToRequest.length || !!fulltext || fulltext === '' || collectionId || manifestId || projectId),
+        (!!facetsToRequest.length ||
+          !!fulltext ||
+          fulltext === '' ||
+          !!rscType ||
+          collectionId ||
+          manifestId ||
+          projectId ||
+          topicId),
     }
   );
 
@@ -94,12 +133,14 @@ export function useSearch() {
     const mappedSearchResponseMetadata: {
       [key: string]: Array<{ key: string; value: string; count: number; configuration?: FacetConfig }>;
     } = {};
-    const metadataFacets = searchResponse.resolvedData?.facets?.metadata || {};
 
+    const metadataFacets = searchResults.resolvedData?.facets?.metadata || {};
+    const entityFacets = searchResults.resolvedData?.facets?.entity || {};
+
+    const facetType = { ...metadataFacets, ...entityFacets };
     const showAllFacets = facetDisplayOrder.length === 0;
-
-    for (const facet of Object.keys(metadataFacets)) {
-      const values = Object.keys(metadataFacets[facet]);
+    for (const facet of Object.keys(facetType)) {
+      const values = Object.keys(facetType[facet]);
       const normalisedKey = facet.toLowerCase();
 
       if (showAllFacets) {
@@ -121,7 +162,7 @@ export function useSearch() {
           : [];
         mappedSearchResponseMetadata[normalisedKey].push({
           value,
-          count: metadataFacets[facet] ? (metadataFacets[facet] as any)[value] || 0 : 0,
+          count: facetType[facet] ? (facetType[facet] as any)[value] || 0 : 0,
           key: normalisedKey,
         });
       }
@@ -174,7 +215,8 @@ export function useSearch() {
         }
       } else {
         for (const field of fieldsToMap.keys) {
-          const searchResultFacetValues = mappedSearchResponseMetadata[field];
+          const normalisedField = field.toLowerCase();
+          const searchResultFacetValues = mappedSearchResponseMetadata[normalisedField];
           if (searchResultFacetValues) {
             displayItem.items.push(
               ...searchResultFacetValues.map(fieldValue => ({
@@ -192,7 +234,6 @@ export function useSearch() {
     }
 
     return displayList;
-  }, [facetDisplayOrder, facetIdMap, searchResponse.resolvedData]);
-
-  return [searchResponse, displayFacets, searchFacetConfig.isLoading || searchResponse.isLoading] as const;
+  }, [facetDisplayOrder, facetIdMap, searchResults.resolvedData]);
+  return [searchResults, displayFacets, searchFacetConfig.isLoading || searchResults.isLoading] as const;
 }

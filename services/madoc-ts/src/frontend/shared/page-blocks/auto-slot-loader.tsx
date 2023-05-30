@@ -27,6 +27,8 @@ export const AutoSlotLoader: React.FC<{ fuzzy?: boolean; slots?: string[]; child
       routeContext.manifest = routeMatch.params.manifestId ? Number(routeMatch.params.manifestId) : undefined;
       routeContext.canvas = routeMatch.params.canvasId ? Number(routeMatch.params.canvasId) : undefined;
       routeContext.project = routeMatch.params.slug ? routeMatch.params.slug : undefined;
+      routeContext.topicType = routeMatch.params.topicType ? routeMatch.params.topicType : undefined;
+      routeContext.topic = routeMatch.params.topic ? routeMatch.params.topic : undefined;
     }
     routeContext.slotIds = slots && slots.length ? slots : undefined;
 
@@ -37,6 +39,8 @@ export const AutoSlotLoader: React.FC<{ fuzzy?: boolean; slots?: string[]; child
     routeMatch.params.canvasId,
     routeMatch.params.collectionId,
     routeMatch.params.manifestId,
+    routeMatch.params.topicType,
+    routeMatch.params.topic,
     routeMatch.params.slug,
   ]);
 

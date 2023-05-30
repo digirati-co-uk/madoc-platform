@@ -1,7 +1,6 @@
 import { FC } from 'react';
 import { BaseProperty } from './base-property';
 import { CaptureModel } from './capture-model';
-import { FieldTypeMap } from './custom';
 import { MapValues } from './utility';
 
 export interface BaseField extends BaseProperty {
@@ -9,6 +8,9 @@ export interface BaseField extends BaseProperty {
   type: Exclude<string, 'entity'>;
   value: any;
 }
+
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface FieldTypeMap {}
 
 export type FieldTypes<Type extends FieldTypeMap = FieldTypeMap> = MapValues<Type>;
 

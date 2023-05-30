@@ -1,0 +1,96 @@
+{
+  "type": "object",
+  "properties": {
+    "url": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string"
+    },
+    "created": {
+      "type": "string"
+    },
+    "modified": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string"
+    },
+    "type_slug": {
+      "type": "string"
+    },
+    "type_title": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "label": {
+      "type": "string"
+    },
+    "slug": {
+      "type": "string"
+    },
+    "title": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "description": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "featured_resources": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/FeaturedResource"
+      }
+    },
+    "related_topics": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/EntitySnippet"
+      }
+    },
+    "authorities": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/EnrichmentEntityAuthority"
+      }
+    },
+    "tagged_resource_count": {
+      "type": "number"
+    },
+    "other_data": {
+      "$ref": "#/definitions/EntityOtherData"
+    }
+  },
+  "required": [
+    "authorities",
+    "created",
+    "id",
+    "label",
+    "modified",
+    "related_topics",
+    "slug",
+    "tagged_resource_count",
+    "title",
+    "type",
+    "type_slug",
+    "type_title",
+    "url"
+  ],
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

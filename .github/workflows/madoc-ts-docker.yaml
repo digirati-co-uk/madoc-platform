@@ -5,7 +5,7 @@ on:
     branches: ['main']
     tags: ['v*']
   pull_request:
-    branches: ['main', 'feature/v2.1']
+    branches: ['main', 'feature/v2.1', 'feature/IDA-893-enrichment-integration']
     paths:
       - ".github/workflows/madoc-ts-docker.yaml"
       - "services/madoc-ts/src/**"

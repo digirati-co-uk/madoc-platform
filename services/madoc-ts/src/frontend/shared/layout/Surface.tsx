@@ -45,6 +45,7 @@ const SurfaceStyled = styled.div<{
   $background?: string;
   $color?: string;
   $textAlign?: 'left' | 'center' | 'right';
+  $fullWidth?: boolean;
   $padding?: 'none' | 'sm' | 'md' | 'lg';
   $marginBottom?: 'none' | 'sm' | 'md' | 'lg';
   $fontSize?: 'sm' | 'md' | 'lg';
@@ -55,16 +56,20 @@ const SurfaceStyled = styled.div<{
   color: ${props => (props.$color ? props.$color : 'inherit')};
   padding: ${parseProp('$padding', '0')};
   font-size: ${parseProp('$fontSize', '1em')};
+  font-size: ${parseProp('$fontSize', '1em')};
   font-weight: ${props => (props.$fontWeight ? props.$fontWeight : 'inherit')};
   font-family: ${props => (props.$font ? `${props.$font}, sans-serif` : 'inherit')};
   text-align: ${props => (props.$textAlign ? props.$textAlign : 'left')};
   margin-bottom: ${parseProp('$marginBottom', '0')};
+  margin-left: ${props => (props.$fullWidth ? '-2em' : '')};
+  margin-right: ${props => (props.$fullWidth ? '-2em' : '')};
 `;
 
 export type SurfaceProps = {
   id?: string;
   background?: string;
   textColor?: string;
+  fullWidth?: boolean;
   textAlign?: 'left' | 'center' | 'right';
   font?: string;
   padding?: 'none' | 'sm' | 'md' | 'lg';
@@ -77,6 +82,7 @@ export const Surface: React.FC<SurfaceProps> = ({
   id,
   textAlign,
   textColor,
+  fullWidth,
   background,
   font,
   fontSize,
@@ -96,6 +102,7 @@ export const Surface: React.FC<SurfaceProps> = ({
       $color={color}
       $background={background}
       $textAlign={textAlign}
+      $fullWidth={fullWidth}
       $font={font}
       $padding={padding}
       $fontSize={fontSize}
@@ -113,6 +120,7 @@ blockEditorFor(Surface, {
   internal: true,
   defaultProps: {
     textColor: '',
+    fullWidth: false,
     background: '',
     font: '',
     padding: 'none',
@@ -125,6 +133,7 @@ blockEditorFor(Surface, {
     textColor: { label: 'Text color', type: 'color-field' },
     background: { label: 'Background color', type: 'color-field' },
     font: { label: 'Font (from google)', type: 'text-field' },
+    fullWidth: { label: 'Display as full width?', type: 'checkbox-field' },
     padding: {
       label: 'Padding size',
       description: 'How much padding should the surface have. (default: none)',

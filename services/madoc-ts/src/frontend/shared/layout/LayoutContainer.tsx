@@ -151,11 +151,7 @@ export const LayoutSidebar = styled.div<{ $noScroll?: boolean }>`
   border-right: 1px solid #918f8f;
   overflow: auto;
   position: relative;
-
-  &[data-space='true'] {
-    margin-right: 1em;
-  }
-
+  
   ${props =>
     props.$noScroll &&
     css`
@@ -173,6 +169,10 @@ export const LayoutHandle = styled.div<{ $isDragging?: boolean }>`
   cursor: col-resize;
   border-radius: 0 0 3px 3px;
 
+  &[data-space='true'] {
+    margin-right: 1em;
+  }
+  
   svg {
     fill: #a1a1a1;
     left: 2px;

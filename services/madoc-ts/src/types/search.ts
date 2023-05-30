@@ -13,15 +13,18 @@ export type SearchResult = {
 
   /** Optional thumbnail of resource */
   madoc_thumbnail?: string;
+  thumbnail?: string;
 
   /** Label for the resource from the search result */
   label: InternationalString;
 
   /** List of contexts for the resource */
-  contexts: Array<{
-    type: string;
-    id: string;
-  }>;
+  contexts:
+    | Array<string>
+    | Array<{
+        type: string;
+        id: string;
+      }>;
 
   /**
    * List of hits.
@@ -113,6 +116,19 @@ export type SearchQuery = {
         indexable_float?: number;
         indexable_date_range_start?: string;
         indexable_date_range_end?: string;
+      }
+    | {
+        type: string;
+        indexable_text: string;
+      }
+    | {
+        type: string;
+        subtype: string;
+        indexable_text: string;
+      }
+    | {
+        type: string;
+        group_id: string;
       }
     // Unknown if this is supported.
     | {

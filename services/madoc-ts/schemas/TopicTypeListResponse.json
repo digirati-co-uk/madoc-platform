@@ -1,0 +1,36 @@
+{
+  "description": "ENTITY TYPE",
+  "type": "object",
+  "properties": {
+    "pagination": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "type": "number"
+        },
+        "totalResults": {
+          "type": "number"
+        },
+        "totalPages": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "page",
+        "totalPages",
+        "totalResults"
+      ]
+    },
+    "results": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/EntityTypeSnippet"
+      }
+    }
+  },
+  "required": [
+    "pagination",
+    "results"
+  ],
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

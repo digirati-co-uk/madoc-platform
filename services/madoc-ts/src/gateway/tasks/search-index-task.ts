@@ -110,6 +110,8 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
               await api.updateTask(taskId, { status: 3 });
             } catch (e) {
               // ignore error.
+              console.log(e);
+              await api.updateTask(taskId, { status: -1 });
             }
 
             break;

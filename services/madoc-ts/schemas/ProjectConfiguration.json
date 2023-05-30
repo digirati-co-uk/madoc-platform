@@ -4,6 +4,9 @@
     "allowCollectionNavigation": {
       "type": "boolean"
     },
+    "allowTopicNavigation": {
+      "type": "boolean"
+    },
     "allowManifestNavigation": {
       "type": "boolean"
     },
@@ -65,6 +68,9 @@
       "type": "boolean"
     },
     "priorityRandomness": {
+      "type": "boolean"
+    },
+    "randomCanvas": {
       "type": "boolean"
     },
     "skipAutomaticOCRImport": {
@@ -259,6 +265,9 @@
         "hideRandomCanvas": {
           "type": "boolean"
         },
+        "generatePDF": {
+          "type": "boolean"
+        },
         "hideFilterImages": {
           "type": "boolean"
         },
@@ -292,6 +301,9 @@
           "type": "boolean"
         },
         "hideDashboardLink": {
+          "type": "boolean"
+        },
+        "hideTopicLink": {
           "type": "boolean"
         },
         "hidePageNavLinks": {
@@ -348,6 +360,7 @@
     "allowCollectionNavigation",
     "allowManifestNavigation",
     "allowSubmissionsWhenCanvasComplete",
+    "allowTopicNavigation",
     "claimGranularity",
     "contributionWarningTime",
     "defaultEditorOrientation",

@@ -93,6 +93,7 @@ export const metadataSuggestions: ProjectTemplate<MetadataSuggestionsOptions> = 
         hideProjectsLink: false,
         hideCollectionsLink: false,
         hideDashboardLink: false,
+        hideTopicLink: false,
         hidePageNavLinks: false,
         hideSearchBar: false,
       },

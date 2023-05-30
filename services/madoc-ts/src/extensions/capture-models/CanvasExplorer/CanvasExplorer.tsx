@@ -53,7 +53,11 @@ export const CanvasExplorer: React.FC<CanvasExplorerProps & {
           return (
             <ImageStripBox
               onClick={() =>
-                props.updateValue({ id: item.id.toString(), label: item.label, thumbnail: item.thumbnail })
+                props.updateValue({
+                  id: item.id.toString(),
+                  label: item.label,
+                  thumbnail: item.thumbnail,
+                })
               }
               key={item.id}
             >

@@ -17,11 +17,21 @@ type ManifestSearchIndexType = {
 
 export const ManifestSearchIndex = createUniversalComponent<ManifestSearchIndexType>(
   () => {
-    const { data, isError, refetch } = useData(ManifestSearchIndex, {}, { retry: 0 });
+    const { data, isError, refetch } = useData(
+      ManifestSearchIndex,
+      {},
+      { retry: 0, useErrorBoundary: false, suspense: false }
+    );
     const { data: structure } = useData(EditManifestStructure);
     const { id } = useParams<{ id: string }>();
     const totalCanvases = structure?.items.length || 0;
     const [indexContext, { isLoading, percent }] = useIndexResource(Number(id), 'manifest', totalCanvases, async () => {
+      await refetch();
+    });
+
+    const api = useApi();
+    const [invokeEnrichment, { isLoading: enrichLoading }] = useMutation(async () => {
+      await api.search.triggerSearchIndex(Number(id), 'manifest');
       await refetch();
     });
 
@@ -47,6 +57,10 @@ export const ManifestSearchIndex = createUniversalComponent<ManifestSearchIndexT
         <Button disabled={isLoading} onClick={() => indexContext()}>
           Reindex manifest {isLoading && percent ? ` ${percent}%` : null}
         </Button>
+        {'  '}
+        <Button disabled={enrichLoading} onClick={() => invokeEnrichment()}>
+          {enrichLoading ? `...loading` : 'Invoke enrichment'}
+        </Button>
         <hr />
         <pre>{JSON.stringify(data, null, 2)}</pre>
       </div>
@@ -57,7 +71,12 @@ export const ManifestSearchIndex = createUniversalComponent<ManifestSearchIndexT
       return ['manifest-search-index', { id: Number(params.id) }];
     },
     getData: async (key, { id }, api) => {
-      return api.searchGetIIIF(`urn:madoc:manifest:${id}`);
+      try {
+        return api.search.searchGetIIIF(`urn:madoc:manifest:${id}`);
+      } catch (e) {
+        console.log('err', e);
+        return null;
+      }
     },
   }
 );

@@ -1,0 +1,66 @@
+{
+  "type": "object",
+  "properties": {
+    "url": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string"
+    },
+    "created": {
+      "type": "string"
+    },
+    "modified": {
+      "type": "string"
+    },
+    "label": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string"
+    },
+    "type_slug": {
+      "type": "string"
+    },
+    "type_title": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "slug": {
+      "type": "string"
+    },
+    "title": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "tagged_resource_count": {
+      "type": "number"
+    },
+    "other_data": {
+      "$ref": "#/definitions/EntityOtherData"
+    }
+  },
+  "required": [
+    "created",
+    "id",
+    "label",
+    "modified",
+    "slug",
+    "tagged_resource_count",
+    "title",
+    "type_slug",
+    "type_title",
+    "url"
+  ],
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

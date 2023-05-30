@@ -19,8 +19,10 @@ export function GlobalSiteNavigation(props: {
   const user = useUser();
   const { navigation, project } = useSiteConfiguration();
   const { enableProjects, enableCollections } = useNavigationOptions();
+  const enableTopics = project.allowTopicNavigation;
   const showProjects = enableProjects && !project.headerOptions?.hideProjectsLink;
   const showCollections = enableCollections && !project.headerOptions?.hideCollectionsLink;
+  const showTopics = enableTopics && !project.headerOptions?.hideTopicLink;
   const showDashboard = user && !project.headerOptions?.hideDashboardLink;
   const showNavLinks = !project.headerOptions?.hidePageNavLinks;
   const isExtraActive = props.extraNavItems ? props.extraNavItems.some(i => i.slug === location.pathname) : false;
@@ -40,6 +42,11 @@ export function GlobalSiteNavigation(props: {
       {showCollections ? (
         <LightNavigationItem $active={location.pathname.startsWith('/collections') && !isExtraActive}>
           <HrefLink href="/collections">{t('Collections')}</HrefLink>
+        </LightNavigationItem>
+      ) : null}
+      {showTopics ? (
+        <LightNavigationItem $active={location.pathname.startsWith('/topic') && !isExtraActive}>
+          <HrefLink href="/topics">{t('Topics')}</HrefLink>
         </LightNavigationItem>
       ) : null}
       {showDashboard ? (

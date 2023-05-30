@@ -16,7 +16,6 @@ export const ViewPage: React.FC = () => {
   const { editMode } = useSiteConfiguration();
   const [isEditing, setIsEditing] = useState(false);
   const location = useLocation();
-
   useEffect(() => {
     if (!editMode) {
       setIsEditing(false);

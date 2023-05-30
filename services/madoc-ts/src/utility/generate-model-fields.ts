@@ -16,6 +16,7 @@ export function generateModelFields(doc: CaptureModel['document']): ModelFields 
         parent.temp.value.push(key);
       }
     },
+
     visitEntity: (entity, key, parent) => {
       if (!parent && entity.temp && entity.temp.value) {
         // The root has complete.

@@ -17,6 +17,12 @@ type BreadcrumbContextType = {
   canvas?: { name: InternationalString; id: number };
   task?: { name: string; id: string };
   subpage?: { name: InternationalString; path: string };
+  topicType?: { name: InternationalString | string; id: string };
+  topic?: {
+    slug: string;
+    name: InternationalString;
+    id: string;
+  };
 };
 
 const Helmet: any = _Helmet;
@@ -120,6 +126,8 @@ export const BreadcrumbContext: React.FC<BreadcrumbContextType> = ({
   canvas,
   task,
   subpage,
+  topicType,
+  topic,
 }) => {
   const parentCtx = useBreadcrumbs();
   const ctx = useMemo(() => {
@@ -142,8 +150,14 @@ export const BreadcrumbContext: React.FC<BreadcrumbContextType> = ({
     if (subpage) {
       newCtx.subpage = subpage;
     }
+    if (topicType) {
+      newCtx.topicType = topicType;
+    }
+    if (topic) {
+      newCtx.topic = topic;
+    }
     return newCtx;
-  }, [parentCtx, manifest, project, collection, canvas, task, subpage]);
+  }, [parentCtx, project, collection, manifest, canvas, task, subpage, topicType, topic]);
 
   return (
     <ErrorBoundary>
@@ -156,9 +170,15 @@ export type BreadcrumbProps = {
   currentPage?: string | undefined;
   textColor?: string | undefined;
   textColorActive?: string | undefined;
+  topicRoot?: boolean;
 };
 
-export const DisplayBreadcrumbs: React.FC<BreadcrumbProps> = ({ currentPage, textColor, textColorActive }) => {
+export const DisplayBreadcrumbs: React.FC<BreadcrumbProps> = ({
+  currentPage,
+  topicRoot,
+  textColor,
+  textColorActive,
+}) => {
   const site = useSite();
   const breads = useBreadcrumbs();
   const location = useLocation();
@@ -167,6 +187,28 @@ export const DisplayBreadcrumbs: React.FC<BreadcrumbProps> = ({ currentPage, tex
 
   const stack = useMemo(() => {
     const flatList = [];
+
+    // Topics are only at the top. In theory, you could have collection/manifest/canvases under.
+    if (breads.topicType || topicRoot) {
+      flatList.push({
+        label: { none: [t('breadcrumbs__Topics', { defaultValue: t('Topics') })] },
+        url: `/topics`,
+      });
+
+      if (breads.topicType) {
+        flatList.push({
+          label: breads.topicType.name,
+          url: `/topics/${breads.topicType.id}`,
+        });
+
+        if (breads.topic) {
+          flatList.push({
+            label: breads.topic.name,
+            url: `/topics/${breads.topicType.id}/${breads.topic.slug}`,
+          });
+        }
+      }
+    }
 
     // Projects can only be in one place.
     if (breads.project) {
@@ -224,6 +266,12 @@ export const DisplayBreadcrumbs: React.FC<BreadcrumbProps> = ({ currentPage, tex
           label: breads.manifest.name,
           url: `/collections/${breads.collection.id}/manifests/${breads.manifest.id}`,
         });
+      } else if (breads.topicType && breads.topic) {
+        // 3. Just under topics
+        flatList.push({
+          label: breads.manifest.name,
+          url: `/topics/${breads.topicType.id}/${breads.topic.slug}/manifests/${breads.manifest.id}`,
+        });
       } else {
         flatList.push({
           label: { none: [t('breadcrumbs__Manifests', { defaultValue: t('Manifests') })] },
@@ -260,6 +308,11 @@ export const DisplayBreadcrumbs: React.FC<BreadcrumbProps> = ({ currentPage, tex
             label: breads.canvas.name,
             url: `/collections/${breads.collection.id}/manifests/${breads.manifest.id}/c/${breads.canvas.id}`,
           });
+        } else if (breads.topic && breads.topicType) {
+          flatList.push({
+            label: breads.canvas.name,
+            url: `/topics/${breads.topicType.id}/${breads.topic.slug}/manifests/${breads.manifest.id}/c/${breads.canvas.id}`,
+          });
         } else {
           // 4. On its own.
           flatList.push({
@@ -291,6 +344,8 @@ export const DisplayBreadcrumbs: React.FC<BreadcrumbProps> = ({ currentPage, tex
     breads.manifest,
     breads.project,
     breads.subpage,
+    breads.topic,
+    breads.topicType,
     currentPage,
     location.pathname,
     t,
@@ -344,7 +399,7 @@ export const DisplayBreadcrumbs: React.FC<BreadcrumbProps> = ({ currentPage, tex
 blockEditorFor(DisplayBreadcrumbs, {
   type: 'default.DisplayBreadcrumbs',
   label: 'Display breadcrumbs',
-  anyContext: ['collection', 'manifest', 'canvas', 'project'],
+  anyContext: ['collection', 'manifest', 'canvas', 'project', 'topic', 'topicType'],
   defaultProps: {
     textColor: '',
     textColorActive: '',

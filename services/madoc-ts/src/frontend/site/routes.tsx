@@ -529,6 +529,133 @@ export function createRoutes(Components: RouteComponents): CreateRouteType {
         },
       ],
     },
+    // Topics and topic types.
+    {
+      path: '/topics',
+      element: <Components.PageLoader />,
+      children: [
+        {
+          path: '/topics',
+          element: <Components.TopicTypeListLoader />,
+          children: [
+            {
+              index: true,
+              element: <Components.ViewTopicTypes />,
+            },
+          ],
+        },
+      ],
+    },
+    {
+      path: '/topics/:topicType',
+      element: <Components.TopicTypeLoader />,
+      children: [
+        {
+          path: '/topics/:topicType',
+          exact: true,
+          element: <Components.ViewTopicType />,
+        },
+        {
+          path: '/topics/:topicType/:topic',
+          element: <Components.TopicLoader />,
+          children: [
+            {
+              path: '/topics/:topicType/:topic',
+              exact: true,
+              element: <Components.ViewTopic />,
+            },
+            {
+              path: '/topics/:topicType/:topic/search',
+              exact: true,
+              element: <Components.Search />,
+            },
+            {
+              path: '/topics/:topicType/:topic/manifests/:manifestId',
+              element: <Components.ManifestLoader />,
+              children: [
+                {
+                  path: '/topics/:topicType/:topic/manifests/:manifestId',
+                  exact: true,
+                  element: <Components.ViewManifest />,
+                },
+                {
+                  path: '/topics/:topicType/:topic/manifests/:manifestId/search',
+                  exact: true,
+                  element: <Components.Search />,
+                },
+                {
+                  path: '/topics/:topicType/:topic/manifests/:manifestId/mirador',
+                  exact: true,
+                  element: <Components.ViewManifestMirador />,
+                },
+                {
+                  path: '/topics/:topicType/:topic/manifests/:manifestId/uv',
+                  exact: true,
+                  element: <Components.ViewManifestUV />,
+                },
+                {
+                  path: '/topics/:topicType/:topic/manifests/:manifestId/c/:canvasId',
+                  element: <Components.CanvasLoader />,
+                  children: [
+                    {
+                      path: '/topics/:topicType/:topic/manifests/:manifestId/c/:canvasId',
+                      exact: true,
+                      element: <Components.ViewCanvas />,
+                    },
+                    {
+                      path: '/topics/:topicType/:topic/manifests/:manifestId/c/:canvasId/edit',
+                      exact: true,
+                      element: <Components.EditCanvas />,
+                    },
+                    {
+                      path: '*',
+                      element: <Components.PageLoader />,
+                      children: [
+                        {
+                          path: '*',
+                          element: <Components.ViewPage />,
+                        },
+                      ],
+                    },
+                  ],
+                },
+                {
+                  path: '*',
+                  element: <Components.PageLoader />,
+                  children: [
+                    {
+                      path: '*',
+                      element: <Components.ViewPage />,
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              path: '*',
+              element: <Components.PageLoader />,
+              children: [
+                {
+                  path: '*',
+                  element: <Components.ViewPage />,
+                },
+              ],
+            },
+          ],
+        },
+        {
+          path: '*',
+          element: <Components.PageLoader />,
+          children: [
+            {
+              path: '*',
+              element: <Components.ViewPage />,
+            },
+          ],
+        },
+      ],
+    },
+
     {
       path: '/tasks',
       element: <Components.AllTasks />,
@@ -562,7 +689,13 @@ export function createRoutes(Components: RouteComponents): CreateRouteType {
     {
       path: '/search',
       exact: true,
-      element: <Components.Search />,
+      element: <Components.PageLoader />,
+      children: [
+        {
+          path: '/search',
+          element: <Components.Search />,
+        },
+      ],
     },
     {
       path: '/dashboard',

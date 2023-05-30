@@ -1,0 +1,42 @@
+{
+  "allOf": [
+    {
+      "$ref": "#/definitions/EntityTypeFull"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "pagination": {
+          "type": "object",
+          "properties": {
+            "page": {
+              "type": "number"
+            },
+            "totalResults": {
+              "type": "number"
+            },
+            "totalPages": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "page",
+            "totalPages",
+            "totalResults"
+          ]
+        },
+        "topics": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/EntitySnippet"
+          }
+        }
+      },
+      "required": [
+        "pagination",
+        "topics"
+      ]
+    }
+  ],
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
