@@ -30,6 +30,6 @@ blockEditorFor(TopicTypesCount, {
   label: 'All Types Count',
   type: 'default.TopicTypesCount',
   anyContext: [],
-  requiredContext: [],
+  requiredContext: ['topicType'],
   editor: {},
 });

@@ -14,7 +14,7 @@
       "type": "string"
     },
     "type": {
-      "$ref": "#/definitions/SpaCyNERType"
+      "type": "string"
     },
     "type_slug": {
       "type": "string"
@@ -67,7 +67,7 @@
     "authorities": {
       "type": "array",
       "items": {
-        "$ref": "#/definitions/AuthoritySnippet"
+        "$ref": "#/definitions/EnrichmentEntityAuthority"
       }
     },
     "tagged_resource_count": {

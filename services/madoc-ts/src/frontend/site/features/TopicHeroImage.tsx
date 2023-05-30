@@ -49,6 +49,7 @@ blockEditorFor(TopicHeroImage, {
   type: 'default.TopicHeroImage',
   label: 'Topic hero image',
   anyContext: ['topic'],
+  requiredContext: ['topic'],
   defaultProps: {
     imageStyle: 'fit',
     imagePosition: 'center',

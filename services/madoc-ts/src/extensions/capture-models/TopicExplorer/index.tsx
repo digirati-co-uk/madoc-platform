@@ -2,7 +2,6 @@ import React from 'react';
 import { FieldSpecification } from '../../../frontend/shared/capture-models/types/field-types';
 import { TopicExplorer, TopicExplorerProps } from './TopicExplorer';
 import { TopicExplorerPreview } from './TopicExplorer.preview';
-import { registerField } from '../../../frontend/shared/capture-models/plugin-api/global-store';
 
 declare module '../../../frontend/shared/capture-models/types/field-types' {
   export interface FieldTypeMap {
@@ -21,7 +20,3 @@ export const specification: FieldSpecification<TopicExplorerProps> = {
   Editor: React.lazy(() => import(/* webpackChunkName: "field-editors" */ './TopicExplorer.editor')),
   TextPreview: TopicExplorerPreview,
 };
-
-registerField(specification);
-
-export default specification;

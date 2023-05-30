@@ -80,6 +80,7 @@ export const GlobalMenuStack: React.FC<{
 blockEditorFor(GlobalMenuStack, {
   type: 'default.GlobalMenuStack',
   label: 'Global menu (stack)',
+  requiredContext: ['page'],
   defaultProps: {
     logo: null,
     hideSiteTitle: false,

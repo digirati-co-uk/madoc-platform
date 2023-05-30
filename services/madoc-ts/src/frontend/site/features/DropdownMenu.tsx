@@ -103,11 +103,11 @@ const CloseBtn = styled.button`
 `;
 export const DropDownMenu: React.FC<{
   showHomepageMenu?: boolean;
-  newNavItems?: {
+  extraLinks?: {
     slug?: string;
     text?: string;
   }[];
-}> = ({ showHomepageMenu, newNavItems }) => {
+}> = ({ showHomepageMenu, extraLinks }) => {
   const [open, setOpen] = useState(false);
   const { t } = useTranslation();
 
@@ -131,7 +131,7 @@ export const DropDownMenu: React.FC<{
         <div>
           <NavHeader>{t('Menu')}</NavHeader>
           <NavWrapper>
-            <GlobalSiteNavigation showHomepageMenu={showHomepageMenu} extraNavItems={newNavItems} />
+            <GlobalSiteNavigation showHomepageMenu={showHomepageMenu} extraNavItems={extraLinks} />
           </NavWrapper>
         </div>
         <CloseBtn
@@ -150,14 +150,15 @@ export const DropDownMenu: React.FC<{
 blockEditorFor(DropDownMenu, {
   type: 'default.DropDownMenu',
   label: 'Dropdown menu',
+  requiredContext: ['page'],
   defaultProps: {
     showHomepageMenu: false,
-    slug1: '',
-    text1: '',
-    slug2: '',
-    text2: '',
-    slug3: '',
-    text3: '',
+    extraLinks: [
+      {
+        slug: '',
+        text: '',
+      },
+    ],
   },
   editor: {
     showHomepageMenu: {
@@ -165,26 +166,29 @@ blockEditorFor(DropDownMenu, {
       type: 'checkbox-field',
       inlineLabel: 'Show home as menu item',
     },
+    extraLinks: {
+      allowMultiple: true,
+      label: 'Extra Nav items',
+      pluralLabel: 'Extra Nav items',
+      labelledBy: 'text',
+      description: 'paste the relative slug as shown on the site eg: projects/project-name',
+    },
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    'extraLinks.text': {
+      type: 'text-field',
+      label: 'Extra Nav item display text',
+    },
+    'extraLinks.slug': {
+      type: 'text-field',
+      label: 'Extra Nav item slug',
+      description: 'paste the relative slug as shown on the site eg: topics/topic_type/topic',
+    },
     slug1: {
       type: 'text-field',
       label: 'Extra Nav item slug',
       description: 'paste the relative slug as shown on the site eg: topics/topic_type/topic',
     },
-    text1: { type: 'text-field', label: 'Extra Nav item display text' },
-    slug2: { type: 'text-field', label: 'Extra Nav item slug' },
-    text2: { type: 'text-field', label: 'Extra Nav item display text' },
-    slug3: { type: 'text-field', label: 'Extra Nav item slug' },
-    text3: { type: 'text-field', label: 'Extra Nav item display text' },
-  },
-  mapToProps(formInput: any) {
-    const newNavItems: {
-      slug?: string;
-      text?: string;
-    }[] = [];
-    if (formInput.slug1) newNavItems.push({ slug: formInput.slug1, text: formInput.text1 });
-    if (formInput.slug2) newNavItems.push({ slug: formInput.slug2, text: formInput.text2 });
-    if (formInput.slug3) newNavItems.push({ slug: formInput.slug3, text: formInput.text3 });
-    return { newNavItems };
   },
   source: {
     id: 'global-header',

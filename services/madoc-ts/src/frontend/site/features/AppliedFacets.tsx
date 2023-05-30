@@ -13,12 +13,29 @@ export const AppliedFacetContainer = styled.div`
 
 export const Pill = styled.div`
   border-radius: 3px;
-  width: auto;
   background-color: #ecf0ff;
   color: #437bdd;
-  margin-right: 1em;
+  display: flex;
+  padding: 5px;
+  margin: 0 1em 1em 0;
+  max-width: 250px;
+  transition: max-width ease-in-out 0.6s;
+  :hover {
+    transition: max-width ease-in-out 0.6s;
+    cursor: pointer;
+    max-width: 100%;
+  }
+`;
+export const FacetLabel = styled.p`
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font-size: 12px;
   padding: 5px;
+  margin: 0;
+  :hover {
+    cursor: pointer;
+  }
 `;
 
 export const RemoveFacet = styled.button`
@@ -54,7 +71,7 @@ export const AppliedFacets: React.FC<AppliedFacetsProps> = () => {
     <AppliedFacetContainer>
       {appliedFacets.map((facet, i) => (
         <Pill key={i}>
-          {facet.v}
+          <FacetLabel>{facet.v}</FacetLabel>
           <RemoveFacet
             onClick={() => {
               clearSingleFacet(facet.k, [facet.v]);
@@ -71,7 +88,7 @@ export const AppliedFacets: React.FC<AppliedFacetsProps> = () => {
 blockEditorFor(AppliedFacets, {
   label: 'Applied Facets',
   type: 'default.applied-facets',
-  anyContext: [],
-  requiredContext: [],
+  anyContext: ['collection', 'manifest', 'canvas', 'project', 'topic', 'topicType'],
+  requiredContext: ['page'],
   editor: {},
 });

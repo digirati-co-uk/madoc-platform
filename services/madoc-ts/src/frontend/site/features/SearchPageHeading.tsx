@@ -13,12 +13,16 @@ export const SearchHeadingContainer = styled.div`
     span {
       &[data-position='first'] {
         order: 0;
-        padding-right: 0.2em;
+        ::after {
+          content: '\\00a0 ';
+        }
       }
 
       &[data-position='last'] {
         order: 1;
-        padding-left: 0.2em;
+        ::before {
+          content: '\\00a0 ';
+        }
       }
 
       &[data-position='none'] {
@@ -31,7 +35,7 @@ export const SearchHeadingContainer = styled.div`
 export const SearchHeading: React.FC<{
   title?: string;
   queryPosition?: string;
-}> = ({ title, queryPosition }) => {
+}> = ({ title = 'search', queryPosition = 'first' }) => {
   const { fulltext } = useSearchQuery();
 
   const breads = useBreadcrumbs();
@@ -50,14 +54,14 @@ export const SearchHeading: React.FC<{
       {isGlobal ? (
         <>
           <Heading1>
-            <span data-position={queryPosition}> “{fulltext}”</span>
-            <LocaleString>{title ? title : 'search'}</LocaleString>
+            <span data-position={queryPosition}>{!fulltext || fulltext === ' ' ? null : `“${fulltext}”`}</span>
+            <LocaleString>{title}</LocaleString>
           </Heading1>
         </>
       ) : (
         <Heading1>
           <LocaleString data-position={queryPosition}>{getHeading()}</LocaleString>
-          <LocaleString>{title ? title : 'search'}</LocaleString>
+          <LocaleString>{title}</LocaleString>
         </Heading1>
       )}
     </SearchHeadingContainer>
@@ -67,8 +71,8 @@ export const SearchHeading: React.FC<{
 blockEditorFor(SearchHeading, {
   type: 'default.SearchHeading',
   label: 'Search heading',
-  anyContext: [],
-  requiredContext: [],
+  anyContext: ['collection', 'manifest', 'canvas', 'project', 'topic', 'topicType'],
+  requiredContext: ['page'],
   defaultProps: {
     queryPosition: 'first',
     title: 'search',

@@ -6,17 +6,11 @@ import { SearchPagination } from '../features/SearchPagination';
 import { SearchPageResults } from '../features/SearchPageResults';
 import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
 import { SearchHeading } from '../features/SearchPageHeading';
-import { StaticPage } from '../features/StaticPage';
-import { useRouteContext } from '../hooks/use-route-context';
-import { useLocation } from 'react-router-dom';
+import { AutoSlotLoader } from '../../shared/page-blocks/auto-slot-loader';
 
 export const Search = () => {
-  const { topic } = useRouteContext();
-  const { hash } = useLocation();
-  const topicId = topic && hash ? hash.replace(/#/, '') : undefined;
-
   return (
-    <StaticPage title="search">
+    <AutoSlotLoader>
       <Slot name="common-breadcrumbs">
         <DisplayBreadcrumbs currentPage={'Search'} />
       </Slot>
@@ -47,6 +41,6 @@ export const Search = () => {
           </Slot>
         </div>
       </div>
-    </StaticPage>
+    </AutoSlotLoader>
   );
 };
