@@ -239,7 +239,11 @@ export function createServerRenderer(
 
     const dehydratedState = dehydrate(prefetchCache);
     const mapLocalCodes = (ln: string) => {
-      const label = localeCodes.getByTag(ln).name;
+      let label = localeCodes.getByTag(ln).local || localeCodes.getByTag(ln).name;
+      if (label === 'Welsh') {
+        label = 'Cymraeg';
+      }
+
       return { label: label, code: ln };
     };
     const supportedLocales = siteLocales.localisations.map(ln => {
