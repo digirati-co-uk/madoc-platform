@@ -22,7 +22,3 @@ export const specification: FieldSpecification<MediaExplorerProps> = {
   Editor: React.lazy(() => import(/* webpackChunkName: "field-editors" */ './MediaExplorer.editor')),
   TextPreview: MediaExplorerPreview,
 };
-
-registerField(specification);
-
-export default specification;

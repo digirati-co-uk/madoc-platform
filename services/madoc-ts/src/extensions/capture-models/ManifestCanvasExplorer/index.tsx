@@ -2,7 +2,6 @@ import React from 'react';
 import { FieldSpecification } from '../../../frontend/shared/capture-models/types/field-types';
 import { ManifestCanvasExplorer, ManifestCanvasExplorerProps } from './ManifestCanvasExplorer';
 import { ManifestCanvasExplorerPreview } from './ManifestCanvasExplorer.preview';
-import { registerField } from '../../../frontend/shared/capture-models/plugin-api/global-store';
 
 declare module '../../../frontend/shared/capture-models/types/field-types' {
   export interface FieldTypeMap {
@@ -21,7 +20,3 @@ export const specification: FieldSpecification<ManifestCanvasExplorerProps> = {
   Editor: React.lazy(() => import(/* webpackChunkName: "field-editors" */ './ManifestCanvasExplorer.editor')),
   TextPreview: ManifestCanvasExplorerPreview,
 };
-
-registerField(specification);
-
-export default specification;
