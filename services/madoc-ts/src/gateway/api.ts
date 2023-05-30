@@ -5,6 +5,7 @@ import {
   ActivityOrderedCollectionPage,
   ChangeDiscoveryActivityRequest,
 } from '../activity-streams/change-discovery-types';
+import { UpdateResourceDetailsRequest } from '../database/queries/update-resource-details';
 import { CrowdsourcingApi } from '../extensions/capture-models/crowdsourcing-api';
 import { ConfigInjectionExtension } from '../extensions/capture-models/ConfigInjection/ConfigInjection.extension';
 import { ConfigInjectionSettings } from '../extensions/capture-models/ConfigInjection/types';
@@ -28,6 +29,7 @@ import { BaseField } from '../frontend/shared/capture-models/types/field-types';
 import { RevisionRequest } from '../frontend/shared/capture-models/types/revision-request';
 import { FacetConfig } from '../frontend/shared/components/MetadataFacetEditor';
 import { GetLocalisationResponse, ListLocalisationsResponse } from '../routes/admin/localisation';
+import { UpdateManifestDetailsRequest } from '../routes/iiif/manifests/update-manifest-details';
 import { AnnotationStyles } from '../types/annotation-styles';
 import {
   CanvasDeletionSummary,
@@ -997,6 +999,20 @@ export class ApiClient {
       body: {
         item_ids,
       },
+      method: 'PUT',
+    });
+  }
+
+  async updateManifestDetails(id: number, details: UpdateManifestDetailsRequest) {
+    return this.request<void, UpdateManifestDetailsRequest>(`/api/madoc/iiif/manifests/${id}/details`, {
+      body: details,
+      method: 'PUT',
+    });
+  }
+
+  async updateCanvasDetails(id: number, details: UpdateResourceDetailsRequest) {
+    return this.request<void, UpdateResourceDetailsRequest>(`/api/madoc/iiif/canvases/${id}/details`, {
+      body: details,
       method: 'PUT',
     });
   }
