@@ -31,7 +31,7 @@ export function createNewFieldInstance(
 
   // Modify the new field with defaults form the plugin store
   newField.id = generateId();
-  newField.value = copy(description?.defaultValue || null);
+  newField.value = copy(description ? description.defaultValue : null);
   if (newField.selector) {
     newField.selector.id = generateId();
     newField.selector.state = null;
