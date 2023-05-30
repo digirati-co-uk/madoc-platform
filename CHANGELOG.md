@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed autocomplete crashing (NS-28)
 - Fixed infinite requests if no data when using infinite query 
 - Fixed pre-process IIIF Manifest metadata and descriptive fields for validity - 3000 character max (MAD-1379)
+- Fixed regex on search snippet removing 'n' instead of '/n' MAD-1386
 ### Added
 - Added new "webhook" data model (no usages yet)
 - Added more options to the footer grid block and nested fields (NS-14)
