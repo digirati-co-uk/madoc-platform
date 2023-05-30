@@ -10,11 +10,13 @@ export function useManagePropertyList(property: string) {
   const fields = entity.properties[property];
   const label = fields[0].label;
   const allowMultiple = Boolean(fields[0] ? fields[0].allowMultiple : false);
+  const maxMultiple = fields[0] ? fields[0].maxMultiple : null;
   const { createNewEntityInstance, createNewFieldInstance, removeInstance } = Revisions.useStoreActions(a => ({
     createNewEntityInstance: a.createNewEntityInstance,
     createNewFieldInstance: a.createNewFieldInstance,
     removeInstance: a.removeInstance,
   }));
+  const canAddAnother = Boolean(maxMultiple && maxMultiple > fields.length);
 
   const createNewEntity = useCallback(() => {
     if (configuration.allowEditing) {
@@ -54,6 +56,7 @@ export function useManagePropertyList(property: string) {
   return {
     label,
     allowMultiple,
+    canAddAnother,
     canRemove: configuration.allowEditing,
     canAdd: configuration.allowEditing,
     removeItem,

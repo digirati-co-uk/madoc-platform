@@ -16,6 +16,7 @@ const specification: FieldSpecification<CheckboxFieldProps> = {
   label: 'Checkbox Field',
   defaultProps: {},
   allowMultiple: true,
+  maxMultiple: 99,
   required: false,
   TextPreview: CheckboxFieldPreview,
   description: 'Simple checkbox boolean value',

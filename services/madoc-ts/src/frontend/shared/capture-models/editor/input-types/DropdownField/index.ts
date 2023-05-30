@@ -16,6 +16,7 @@ const specification: FieldSpecification<DropdownFieldProps> = {
   label: 'Dropdown Field',
   defaultProps: {},
   allowMultiple: true,
+  maxMultiple: 99,
   required: false,
   TextPreview: DropdownFieldPreview,
   description: 'Simple list of static values',

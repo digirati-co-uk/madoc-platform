@@ -34,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added option item description to autocomplete (NS-26)
 - Added required fields in capture model (MAD-211)
 - Added not found pages for canvas, manifest, project and collection (MAD-1123)
+- Added max number option for allowMultiple fields in capture model 
 
 ### Changed
 - Changed language on user dash from 'reviews' to 'review tasks' to differentiate between the two
