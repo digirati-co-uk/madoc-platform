@@ -67,7 +67,7 @@ function sanitizeLabel(str: string) {
 }
 
 function replaceBreaks(str: string) {
-  return str.replace(/[\\n]+/, '');
+  return str.replace(/\\n/, '');
 }
 
 const SearchItem: React.FC<{ result: SearchResult; size?: 'large' | 'small'; search?: string }> = ({
