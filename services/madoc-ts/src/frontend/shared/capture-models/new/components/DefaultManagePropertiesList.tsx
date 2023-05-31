@@ -59,6 +59,7 @@ export const DefaultManagePropertyList: EditorRenderingConfig['ManagePropertyLis
 }) => {
   const {
     allowMultiple,
+    canAddAnother,
     canAdd,
     canRemove,
     label,
@@ -66,6 +67,7 @@ export const DefaultManagePropertyList: EditorRenderingConfig['ManagePropertyLis
     createNewField,
     removeItem,
   } = useManagePropertyList(property);
+
   const { t } = useTranslation();
   const helper = useSelectorHelper();
 
@@ -112,7 +114,7 @@ export const DefaultManagePropertyList: EditorRenderingConfig['ManagePropertyLis
             );
           })
         : children}
-      {canAdd ? (
+      {canAdd && canAddAnother ? (
         <NewInstanceContainer>
           <AddNewInstance onClick={type === 'entity' ? createNewEntity : createNewField}>
             {t('Add another {{label}}', { label })}

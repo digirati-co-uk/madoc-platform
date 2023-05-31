@@ -17,6 +17,7 @@ const specification: FieldSpecification<BorderFieldProps> = {
   Component: BorderField,
   defaultValue: getEmptyBorder(),
   allowMultiple: true,
+  maxMultiple: 99,
   required: false,
   defaultProps: {
     clearable: true,

@@ -17,6 +17,7 @@ const specification: FieldSpecification<InternationalFieldProps> = {
   Component: InternationalField,
   defaultValue: { none: [''] },
   allowMultiple: true,
+  maxMultiple: 99,
   defaultProps: {},
   Editor: React.lazy(() => import(/* webpackChunkName: "field-editors" */ './InternationalField.editor')),
   TextPreview: InternationalFieldPreview,

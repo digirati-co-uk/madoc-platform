@@ -212,6 +212,10 @@ export const FieldEditor: React.FC<{
               {t('Plural label (used when referring to lists of this document)')}
               <Field as={StyledFormInputElement} type="text" name="pluralField" />
             </StyledFormLabel>
+            <StyledFormLabel>
+              {t('Max number of instances (used when referring to lists of this document)')}
+              <Field as={StyledFormInputElement} type="number" name="maxMultiple" />
+            </StyledFormLabel>
           </StyledFormField>
           {editor}
           <div style={{ marginTop: 20 }}>
