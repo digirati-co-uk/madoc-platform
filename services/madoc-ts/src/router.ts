@@ -6,6 +6,8 @@ import { getProjectAnnotationStyle } from './routes/annotation-styles/get-projec
 import { annotationStyles } from './routes/annotation-styles/index';
 import { searchAllUsers } from './routes/global/search-all-users';
 import { systemCheck } from './routes/global/system-check';
+import { updateCanvasDetails } from './routes/iiif/canvases/update-canvas-details';
+import { updateManifestDetails } from './routes/iiif/manifests/update-manifest-details';
 import { getAutomatedUsers } from './routes/manage-site/get-automated-users';
 import { createProjectExport } from './routes/projects/create-project-export';
 import { getProjectRawData } from './routes/projects/get-project-raw-data';
@@ -408,6 +410,7 @@ export const router = new TypedRouter({
     updateManifestStructure,
     { schemaName: 'UpdateStructureList' },
   ],
+  'put-manifest-details': [TypedRouter.PUT, '/api/madoc/iiif/manifests/:id/details', updateManifestDetails],
   'get-manifest-collections': [TypedRouter.GET, '/api/madoc/iiif/manifests/:id/collections', getManifestCollections],
   'get-manifest-autocomplete': [TypedRouter.GET, '/api/madoc/iiif/autocomplete/manifests', getManifestAutocomplete],
   'get-manifest-linking': [TypedRouter.GET, '/api/madoc/iiif/manifests/:id/linking', getLinking],
@@ -427,6 +430,7 @@ export const router = new TypedRouter({
   ],
   'get-canvas-manifests': [TypedRouter.GET, '/api/madoc/iiif/canvases/:id/manifests', getCanvasManifests],
   'get-canvas-linking': [TypedRouter.GET, '/api/madoc/iiif/canvases/:id/linking', getLinking],
+  'put-canvas-details': [TypedRouter.PUT, '/api/madoc/iiif/canvases/:id/details', updateCanvasDetails],
   'search-index-canvas': [TypedRouter.POST, '/api/madoc/iiif/canvases/:id/index', indexCanvas],
   'convert-linking-property': [TypedRouter.POST, '/api/madoc/iiif/linking/:id/convert', convertLinking],
   'get-canvas-plaintext': [TypedRouter.GET, '/api/madoc/iiif/canvases/:id/plaintext', getCanvasPlaintext],

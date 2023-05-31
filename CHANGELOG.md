@@ -33,6 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Ability to add custom nav items to the Global Menu block
 - Added option item description to autocomplete (NS-26)
 - Added required fields in capture model (MAD-211)
+- Added ability to update manifest thumbnail (MAD-1314)
 - Added not found pages for canvas, manifest, project and collection (MAD-1123)
 - Added max number option for allowMultiple fields in capture model 
 
