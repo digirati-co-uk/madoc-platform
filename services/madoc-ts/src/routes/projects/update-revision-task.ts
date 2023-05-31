@@ -47,7 +47,7 @@ export const updateRevisionTask: RouteMiddleware<{ taskId: string; task: any }> 
     throw new Error('Task has no delegated reviewers');
   }
 
-  if (!isAdmin || !canReview) {
+  if (!isAdmin && !canReview) {
     throw new Error('Not authorised');
   }
 
