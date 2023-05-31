@@ -25,6 +25,7 @@ export type FieldSpecification<Props extends BaseField = BaseField> = {
   allowMultiple: boolean;
   maxMultiple?: number;
   required?: boolean;
+  dependant?: string;
   defaultProps: Partial<Props>;
   Component: FC<Props & InjectedFieldProps<Props['value']>>;
   TextPreview: FC<Props>;

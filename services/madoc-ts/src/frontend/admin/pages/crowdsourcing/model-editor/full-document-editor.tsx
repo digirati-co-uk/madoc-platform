@@ -69,6 +69,7 @@ export const FullDocumentEditor: React.FC = () => {
           <div>
             <FieldEditor
               sourceTypes={sourceTypes}
+              subtreeFields={state.subtreeFields}
               key={state.selectedField}
               term={state.selectedField}
               field={state.subtree.properties[state.selectedField][0] as BaseField}

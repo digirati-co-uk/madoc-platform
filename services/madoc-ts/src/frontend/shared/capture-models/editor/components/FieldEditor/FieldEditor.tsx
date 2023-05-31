@@ -12,6 +12,7 @@ import { ConfirmButton } from '../../atoms/ConfirmButton';
 import { ChooseSelectorButton } from '../ChooseSelectorButton/ChooseSelectorButton';
 import { ChooseFieldButton } from '../ChooseFieldButton/ChooseFieldButton';
 import { FormPreview } from '../FormPreview/FormPreview';
+import { Dropdown, DropdownOption } from '../../atoms/Dropdown';
 import {
   StyledCheckbox,
   StyledFormField,
@@ -39,7 +40,8 @@ export const FieldEditor: React.FC<{
   onChangeFieldType?: (type: string, defaults: any, term?: string) => void;
   setSaveHandler?: (handler: () => void) => void;
   sourceTypes?: Array<FieldSource>;
-}> = ({ onSubmit, onDelete, onChangeFieldType, sourceTypes, field: props, term }) => {
+  subtreeFields?: any[];
+}> = ({ onSubmit, onDelete, onChangeFieldType, sourceTypes, field: props, term, subtreeFields }) => {
   const { t } = useTranslation();
   const ctx = useContext(PluginContext);
   const { fields, selectors } = useContext(PluginContext);
@@ -57,6 +59,7 @@ export const FieldEditor: React.FC<{
     return sourceType.fieldTypes.indexOf(props.type) !== -1;
   });
   const [dataSource, setDataSource] = useState<string[]>(props.dataSources || []);
+  const [dependantField, setDependantField] = useState<string | undefined>(props.dependant || undefined);
 
   return (
     <BrowserComponent fallback="loading...">
@@ -70,6 +73,7 @@ export const FieldEditor: React.FC<{
                 type: props.type,
                 selector,
                 dataSources: dataSource && dataSource.length ? dataSource : undefined,
+                dependent: dependantField ? dependantField : undefined,
                 value: defaultValue,
               }),
               term
@@ -81,6 +85,7 @@ export const FieldEditor: React.FC<{
                 type: props.type,
                 selector,
                 dataSources: dataSource && dataSource.length ? dataSource : undefined,
+                dependant: dependantField ? dependantField : undefined,
                 value: defaultValue,
               },
               term
@@ -126,6 +131,29 @@ export const FieldEditor: React.FC<{
               </StyledFormLabel>
             </StyledFormField>
           ) : null}
+          {subtreeFields && (
+            <StyledFormField>
+              <StyledFormLabel>{t('Depends on? (This field will only appear if the dependant field has a value)')}</StyledFormLabel>
+              <Dropdown
+                placeholder={t('Choose a field')}
+                fluid
+                selection
+                options={subtreeFields.map(f =>
+                  f
+                    ? {
+                        key: f.value.id,
+                        text: f.term || '',
+                        value: f.value.id,
+                      }
+                    : null
+                )}
+                value={dependantField}
+                onChange={val => {
+                  setDependantField(val || undefined);
+                }}
+              />
+            </StyledFormField>
+          )}
           {dataSources ? (
             <StyledFormField>
               <StyledFormLabel>

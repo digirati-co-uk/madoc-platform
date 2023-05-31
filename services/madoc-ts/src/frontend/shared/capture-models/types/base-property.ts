@@ -13,6 +13,7 @@ export interface BaseProperty {
   allowMultiple?: boolean;
   maxMultiple?: number;
   required?: boolean;
+  dependant?: string;
   immutable?: boolean;
   profile?: string;
   dataSources?: string[];
