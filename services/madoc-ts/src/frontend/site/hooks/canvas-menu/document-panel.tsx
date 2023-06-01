@@ -7,7 +7,6 @@ import { apiHooks } from '../../../shared/hooks/use-api-query';
 import { ModelDocumentIcon } from '../../../shared/icons/ModelDocumentIcon';
 import { useRouteContext } from '../use-route-context';
 import { CanvasMenuHook } from './types';
-import { renderProperty } from '../../../shared/capture-models/_components/ViewDocument/render/render-property';
 
 export function useDocumentPanel(): CanvasMenuHook {
   const { projectId, canvasId } = useRouteContext();

@@ -10,7 +10,6 @@ export function getEntityLabel(
 ): string {
   const labelledBy = document.labelledBy ? tModel(document.labelledBy) : undefined;
 
-  console.log(labelledBy);
   if (labelledBy && labelledBy.match(/{(.+?)}/)) {
     const state = {
       isEmpty: true,
