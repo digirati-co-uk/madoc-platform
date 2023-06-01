@@ -35,6 +35,7 @@ export function ViewEntity({
   const label = getEntityLabel(entity, undefined, false, tModel);
   const [isOn, trigger] = useDecayState();
 
+  console.log(label)
   useEffect(() => {
     if (selectorId) {
       return helper.withSelector(selectorId).on('click', () => {
@@ -70,7 +71,7 @@ export function ViewEntity({
       >
         <DocumentEntityLabel style={{ display: 'flex', alignItems: 'center' }}>
           {selector && !fluidImage ? <ViewSelector small selector={selector} inline /> : null}
-          <div style={{ flex: 1, paddingLeft: '0.5em' }}>{label}</div>
+          <div style={{ flex: 1, paddingLeft: '0.5em' }}>{label} </div>
           {interactive ? (
             <DownArrowIcon
               style={

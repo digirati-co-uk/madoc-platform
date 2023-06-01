@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed pre-process IIIF Manifest metadata and descriptive fields for validity - 3000 character max (MAD-1379)
 - Fixed regex on search snippet removing 'n' instead of '\n' MAD-1386
 - Fixed importing multiple manifests breaks preview (MAD-1387)
+- Fixed nested fields not showing up in document panel (NS-25)
 
 ### Added
 - Added new "webhook" data model (no usages yet)
