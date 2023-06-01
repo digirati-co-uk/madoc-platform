@@ -64,7 +64,7 @@ export const PreviewCollection: React.FC<{
         setManifests(mans);
       }
     },
-    [props.id]
+    [props.manifestIds]
   );
 
   if (error) {

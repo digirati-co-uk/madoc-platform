@@ -1,5 +1,4 @@
 {
-  "*Import multiple manifests by inputting one url per line": "*Import multiple manifests by inputting one url per line",
   "...": "...",
   "A longer description for your form field, appears under the label (like this)": "A longer description for your form field, appears under the label (like this)",
   "A longer description for your transcription form field, appears under the label (like this)": "A longer description for your transcription form field, appears under the label (like this)",
@@ -433,7 +432,6 @@
   "In review": "In review",
   "Indexing resource into search": "Indexing resource into search",
   "Inline label": "Inline label",
-  "Input one url per line to Import multiple manifests by inputting one url per line": "Input one url per line to Import multiple manifests by inputting one url per line",
   "Installation title": "Installation title",
   "Invalid JSON, please try again": "Invalid JSON, please try again",
   "Invalid collection": "Invalid collection",

@@ -149,7 +149,6 @@ export const CreateManifest: React.FC = () => {
                   )}
                   <InputSubLabel>{t('Import multiple manifests by inputting one url per line')}</InputSubLabel>
                 </InputContainer>
-
                 <SmallButton
                   disabled={isCreating}
                   onClick={() => {
