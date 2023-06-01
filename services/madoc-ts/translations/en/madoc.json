@@ -423,6 +423,7 @@
   "Import existing collection": "Import existing collection",
   "Import manifest": "Import manifest",
   "Import manifests": "Import manifests",
+  "Import multiple manifests by inputting one url per line": "Import multiple manifests by inputting one url per line",
   "Import {{count}} manifests": "Import {{count}} manifests",
   "Import {{count}} manifests_plural": "Import {{count}} manifests",
   "Imported": "Imported",

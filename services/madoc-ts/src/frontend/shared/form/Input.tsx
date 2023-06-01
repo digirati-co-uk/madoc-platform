@@ -13,6 +13,13 @@ export const InputLabel = styled.label<{ $caps?: boolean }>`
       text-transform: capitalize;
     `}
 `;
+export const InputSubLabel = styled.span`
+  color: #424242;
+  letter-spacing: -0.3px;
+  font-weight: 400;
+  line-height: 1.8em;
+  font-size: 13px;
+`;
 
 export const inputStyles = css`
   background: #fff;
