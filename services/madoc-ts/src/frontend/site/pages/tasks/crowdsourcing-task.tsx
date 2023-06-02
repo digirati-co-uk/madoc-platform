@@ -18,6 +18,8 @@ import { WarningMessage } from '../../../shared/callouts/WarningMessage';
 import { SuccessMessage } from '../../../shared/callouts/SuccessMessage';
 import { ErrorMessage } from '../../../shared/callouts/ErrorMessage';
 import { CrowdsourcingTaskManifest } from './crowdsourcing-task-manifest';
+import { useApiTask } from '../../../shared/hooks/use-api-task';
+import { useSiteConfiguration } from '../../features/SiteConfigurationContext';
 
 const ViewCrowdSourcingTask: React.FC<TaskContext<CrowdsourcingTask>> = ({ task, parentTask }) => {
   const { t } = useTranslation();
@@ -37,6 +39,11 @@ const ViewCrowdSourcingTask: React.FC<TaskContext<CrowdsourcingTask>> = ({ task,
     rejectedMessage,
   } = useCrowdsourcingTaskDetails(task, parentTask);
   const showCaptureModelOnManifest = project?.config.shadow?.showCaptureModelOnManifest;
+  const config = useSiteConfiguration();
+  const { data: parentTaskData } = useApiTask<CrowdsourcingTask>(task.parent_task);
+
+  const isParentComplete = !config.project.allowSubmissionsWhenCanvasComplete && parentTaskData?.status === 3;
+  const isDraft = task.status === 1;
 
   if (!isCanvas && !showCaptureModelOnManifest) {
     return (
@@ -58,12 +65,15 @@ const ViewCrowdSourcingTask: React.FC<TaskContext<CrowdsourcingTask>> = ({ task,
           </WarningMessage>
         ) : null}
         {mayExpire ? <WarningMessage $banner>{t('Your contribution may expire soon')}</WarningMessage> : null}
-        {isComplete ? (
+        {isComplete && !isParentComplete ? (
           <SuccessMessage $banner>
             {t('This task is complete. You can make another contribution from the')}{' '}
             {backLink ? <Link to={backLink}>{t('Image page')}</Link> : t('Image page')}
           </SuccessMessage>
         ) : null}
+        {isComplete ? <SuccessMessage $banner>{t('This task is complete.')}</SuccessMessage> : null}
+        {isDraft && isParentComplete ?
+            <WarningMessage $banner>{t('This tasks parent is complete, you can no longer edit or submit this task')}</WarningMessage> : null}
         {wasRejected ? (
           <ErrorMessage $banner>
             {t('This contribution was rejected. You can make another contribution from the')}{' '}
@@ -93,7 +103,7 @@ const ViewCrowdSourcingTask: React.FC<TaskContext<CrowdsourcingTask>> = ({ task,
           </RevisionProviderWithFeatures>
         ) : null}
 
-        {!isSubmitted && !isComplete && editLink && !wasRejected ? (
+        {!isSubmitted && !isComplete && editLink && !wasRejected && !isParentComplete ? (
           <div>
             <Button $primary as={HrefLink} href={editLink}>
               {t('Edit submission')}

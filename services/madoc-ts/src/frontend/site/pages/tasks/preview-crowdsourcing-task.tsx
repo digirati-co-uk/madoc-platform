@@ -1,5 +1,5 @@
 import { Runtime } from '@atlas-viewer/atlas';
-import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CrowdsourcingTask } from '../../../../gateway/tasks/crowdsourcing-task';
 import { ThemeProvider } from 'styled-components';
@@ -13,7 +13,7 @@ import { useBrowserLayoutEffect } from '../../../shared/hooks/use-browser-layout
 import { HomeIcon } from '../../../shared/icons/HomeIcon';
 import { MinusIcon } from '../../../shared/icons/MinusIcon';
 import { PlusIcon } from '../../../shared/icons/PlusIcon';
-import { Button } from '../../../shared/navigation/Button';
+
 import {
   EditorToolbarButton,
   EditorToolbarContainer,
