@@ -20,7 +20,6 @@ export const DefaultPostSubmission: EditorRenderingConfig['PostSubmission'] = ({
   const createLink = useRelativeLinks();
 
   const idx = canvasId && structure.data ? structure.data.ids.indexOf(canvasId) : -1;
-
   if (!structure.data || idx === -1 || !manifestId || !canvasId) {
     return null;
   }
@@ -40,6 +39,7 @@ export const DefaultPostSubmission: EditorRenderingConfig['PostSubmission'] = ({
           $primary
           as={HrefLink}
           href={createLink({ canvasId: next.id, subRoute: 'model' })}
+          onClick={onContinue}
         >
           {t('Next image')}
         </Button>
