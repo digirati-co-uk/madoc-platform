@@ -63,16 +63,15 @@ export function getNonTemplatedEntityLabel(
   for (const prop of props) {
     const items = document.properties[prop];
     if (items) {
+      const parts: string[] = [];
       for (const item of items) {
-        const parts: string[] = [];
         if (item && !isEntity(item) && typeof item.value === 'string' && item.value) {
           parts.push(item.value);
         } else if (isEntity(item)) {
           parts.push(getEntityLabel(item));
         }
-
-        return parts.join(' ') || fallback;
       }
+      return parts.join(' ') || fallback;
     }
   }
 

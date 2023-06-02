@@ -59,7 +59,6 @@ export function ViewEntity({
     }
   }, [helper, selectorId]);
 
-
   return (
     <DocumentSection data-highlighted={isOn} ref={ref}>
       <DocumentHeading
