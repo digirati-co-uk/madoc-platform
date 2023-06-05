@@ -20074,9 +20074,9 @@ react-i18next@11.18.4, react-i18next@^11.18.0, react-i18next@^11.18.4, react-i18
     "@babel/runtime" "^7.14.5"
     html-parse-stringify "^3.0.1"
 
-"react-iiif-vault@https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/548ec37f/react-iiif-vault":
+"react-iiif-vault@https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/85a8ada5/react-iiif-vault":
   version "0.9.20"
-  resolved "https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/548ec37f/react-iiif-vault#60489220ce1aba6f745ea00253764ee80b077468"
+  resolved "https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/85a8ada5/react-iiif-vault#1d0b5c703d40e90d4f2b33d89fae587bee5af81f"
   dependencies:
     "@atlas-viewer/atlas" "^2.0.0-alpha.19"
     "@atlas-viewer/iiif-image-api" "2.*"
