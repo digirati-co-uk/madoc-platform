@@ -24,6 +24,7 @@ export const ProjectActions: React.FC = () => {
   const user = useUser();
   const isAdmin = user && user.scope && user.scope.indexOf('site.admin') !== -1;
   const isReviewer = isAdmin || (user && user.scope && user.scope.indexOf('tasks.create') !== -1);
+  const canContribute = isAdmin || (user && user.scope && user.scope.indexOf('models.contribute') !== -1);
   const options = useProjectPageConfiguration();
   const { showCaptureModelOnManifest } = useProjectShadowConfiguration();
 
@@ -33,7 +34,7 @@ export const ProjectActions: React.FC = () => {
 
   return (
     <div>
-      {!options.hideStartContributing && isActive ? (
+      {!options.hideStartContributing && isActive && canContribute ? (
         claimGranularity === 'manifest' || showCaptureModelOnManifest ? (
           <GoToRandomManifest
             $primary
