@@ -67,6 +67,9 @@
     "priorityRandomness": {
       "type": "boolean"
     },
+    "randomCanvas": {
+      "type": "boolean"
+    },
     "skipAutomaticOCRImport": {
       "type": "boolean"
     },
@@ -257,6 +260,9 @@
           "type": "boolean"
         },
         "hideRandomCanvas": {
+          "type": "boolean"
+        },
+        "generatePDF": {
           "type": "boolean"
         },
         "hideFilterImages": {

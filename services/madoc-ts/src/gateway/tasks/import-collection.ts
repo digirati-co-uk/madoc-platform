@@ -26,7 +26,7 @@ export const status = [
 export interface ImportCollectionTask extends BaseTask {
   type: 'madoc-collection-import';
   parameters: [number, number | undefined];
-  manifests: string[] | undefined;
+  manifestIds?: string[];
   status: -1 | 0 | 1 | 2 | 3 | 4;
   state: {
     resourceId?: number;
@@ -37,7 +37,7 @@ export interface ImportCollectionTask extends BaseTask {
 
 export function createTask(
   collectionUrl: string,
-  manifests: string[],
+  manifestIds: string[],
   userId: number,
   siteId?: number
 ): ImportCollectionTask {
@@ -53,7 +53,7 @@ export function createTask(
     ],
     status: 0,
     status_text: status[0],
-    manifests: manifests,
+    manifestIds: manifestIds,
     parameters: [userId, siteId],
   };
 }
@@ -91,7 +91,6 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
       const originalSubtasks = task.subtasks || [];
       const subtasksToReTrigger = [];
       const subjectsToSkip = [];
-      // const selectedManifests = ['https://view.nls.uk/manifest/7446/74465507/manifest.json'];
 
       if (originalSubtasks.length) {
         for (const subtask of originalSubtasks) {
@@ -103,10 +102,9 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
           }
         }
       }
-      //https://view.nls.uk/collections/7446/74466699.json
       for (const manifestRef of iiifCollection.items) {
-        if (task.manifests && task.manifests.length) {
-          if (task.manifests?.indexOf(manifestRef.id) === -1) {
+        if (task.manifestIds && task.manifestIds.length) {
+          if (task.manifestIds?.indexOf(manifestRef.id) === -1) {
             continue;
           }
         }
