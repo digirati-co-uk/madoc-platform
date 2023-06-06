@@ -11,7 +11,7 @@ import {
   CanvasViewerControls,
   CanvasViewerEditorStyleReset,
   CanvasViewerGrid,
-} from '../../../features/CanvasViewerGrid';
+} from '../../../../shared/atoms/CanvasViewerGrid';
 import { useData } from '../../../../shared/hooks/use-data';
 import { PreviewIcon } from '../../../../shared/icons/PreviewIcon';
 import { EmptyState } from '../../../../shared/layout/EmptyState';
