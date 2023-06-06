@@ -71,7 +71,7 @@ export const importCollection: RouteMiddleware<never, { collection: string; mani
   const collectionId = context.requestBody.collection;
   const manifests = context.requestBody.manifestIds;
 
-  context.response.body = await userApi.newTask(collection.createTask(collectionId, manifests, id, siteId));
+  context.response.body = await userApi.newTask(collection.createTask(collectionId, id, siteId, manifests));
 };
 
 export const importManifestOcr: RouteMiddleware<never, { manifestId: number; label: string }> = async context => {
