@@ -25,7 +25,7 @@ export const PreviewCollection: React.FC<{
   const [excludedManifests, setExcludedManifests] = useState<string[]>([]);
   const [error, setError] = useState<string>('');
 
-  const excludeEnabled = false; // @todo enable
+  const excludeEnabled = true;
 
   useVaultEffect(
     vault => {

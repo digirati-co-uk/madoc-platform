@@ -60,13 +60,18 @@ export const importBulkManifests: RouteMiddleware<never, { manifests: string[] }
   context.response.body = rootTask;
 };
 
-export const importCollection: RouteMiddleware<never, { collection: string }> = async (context, next) => {
+export const importCollection: RouteMiddleware<never, { collection: string; manifestIds: string[] }> = async (
+  context,
+  next
+) => {
   const { id, siteId, name } = userWithScope(context, ['site.admin']);
 
   const userApi = api.asUser({ userId: id, userName: name, siteId });
 
   const collectionId = context.requestBody.collection;
-  context.response.body = await userApi.newTask(collection.createTask(collectionId, id, siteId));
+  const manifests = context.requestBody.manifestIds;
+
+  context.response.body = await userApi.newTask(collection.createTask(collectionId, manifests, id, siteId));
 };
 
 export const importManifestOcr: RouteMiddleware<never, { manifestId: number; label: string }> = async context => {

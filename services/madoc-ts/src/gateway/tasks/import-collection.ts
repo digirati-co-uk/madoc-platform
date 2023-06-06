@@ -26,6 +26,7 @@ export const status = [
 export interface ImportCollectionTask extends BaseTask {
   type: 'madoc-collection-import';
   parameters: [number, number | undefined];
+  manifests: string[] | undefined;
   status: -1 | 0 | 1 | 2 | 3 | 4;
   state: {
     resourceId?: number;
@@ -34,7 +35,12 @@ export interface ImportCollectionTask extends BaseTask {
   };
 }
 
-export function createTask(collectionUrl: string, userId: number, siteId?: number): ImportCollectionTask {
+export function createTask(
+  collectionUrl: string,
+  manifests: string[],
+  userId: number,
+  siteId?: number
+): ImportCollectionTask {
   return {
     type: 'madoc-collection-import',
     name: 'Importing collection',
@@ -47,6 +53,7 @@ export function createTask(collectionUrl: string, userId: number, siteId?: numbe
     ],
     status: 0,
     status_text: status[0],
+    manifests: manifests,
     parameters: [userId, siteId],
   };
 }
@@ -84,6 +91,7 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
       const originalSubtasks = task.subtasks || [];
       const subtasksToReTrigger = [];
       const subjectsToSkip = [];
+      // const selectedManifests = ['https://view.nls.uk/manifest/7446/74465507/manifest.json'];
 
       if (originalSubtasks.length) {
         for (const subtask of originalSubtasks) {
@@ -95,8 +103,13 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
           }
         }
       }
-
+      //https://view.nls.uk/collections/7446/74466699.json
       for (const manifestRef of iiifCollection.items) {
+        if (task.manifests && task.manifests.length) {
+          if (task.manifests?.indexOf(manifestRef.id) === -1) {
+            continue;
+          }
+        }
         if (subjectsToSkip.indexOf(manifestRef.id) !== -1) {
           continue;
         }
@@ -104,7 +117,7 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
           subtasks.push(importManifest.createTask(manifestRef.id, userId, siteId));
         }
         if (manifestRef.type === 'Collection') {
-          subtasks.push(createTask(manifestRef.id, userId, siteId));
+          subtasks.push(createTask(manifestRef.id, [], userId, siteId));
         }
       }
 
