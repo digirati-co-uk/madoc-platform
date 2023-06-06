@@ -1150,7 +1150,7 @@ export class ApiClient {
     });
   }
 
-  async importCollection(id: string, manifestIds: string[]) {
+  async importCollection(id: string, manifestIds?: string[]) {
     return this.request<ImportCollectionTask>(`/api/madoc/iiif/import/collection`, {
       method: 'POST',
       body: {
