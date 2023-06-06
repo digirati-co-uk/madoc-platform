@@ -61,7 +61,7 @@ export const CanvasStatus: React.FC<{ status: number; floating?: boolean }> = ({
       <CanvasStatusBackground $floating={floating}>
         <CanvasStatusItem data-tip={tooltip} $status={status} />
       </CanvasStatusBackground>
-      {api.getIsServer() || !user || user.site_role === 'viewer' ? null : (
+      {api.getIsServer() || !user || user.site_role === 'viewer' || user.site_role === 'editor' ? null : (
         <ReactTooltip place="bottom" type="dark" effect="solid" />
       )}
     </>
