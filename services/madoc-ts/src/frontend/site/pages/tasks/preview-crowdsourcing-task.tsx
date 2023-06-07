@@ -38,7 +38,7 @@ import {
   CanvasViewerGrid,
   CanvasViewerGridContent,
   CanvasViewerGridSidebar,
-} from '../../features/CanvasViewerGrid';
+} from '../../../shared/atoms/CanvasViewerGrid';
 import { useCrowdsourcingTaskDetails } from '../../hooks/use-crowdsourcing-task-details';
 import { useReviewConfiguration } from '../../hooks/use-review-configuration';
 import { RequestChanges } from './actions/request-changes';

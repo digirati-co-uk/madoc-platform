@@ -4,7 +4,7 @@ import { RegionHighlight, Runtime } from '@atlas-viewer/atlas';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useCanvas, useImageService, CanvasPanel, CanvasContext } from 'react-iiif-vault';
 import { useTranslation } from 'react-i18next';
-import { CanvasViewerButton, CanvasViewerControls } from '../../site/features/CanvasViewerGrid';
+import { CanvasViewerButton, CanvasViewerControls } from '../atoms/CanvasViewerGrid';
 import { useSiteConfiguration } from '../../site/features/SiteConfigurationContext';
 import { ViewReadOnlyAnnotation } from '../atlas/ViewReadOnlyAnnotation';
 import { GhostCanvas } from '../atoms/GhostCanvas';
