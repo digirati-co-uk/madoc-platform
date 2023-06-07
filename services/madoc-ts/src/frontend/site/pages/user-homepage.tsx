@@ -13,7 +13,7 @@ import { CrowdsourcingReview } from '../../../gateway/tasks/crowdsourcing-review
 import { CrowdsourcingTask } from '../../../gateway/tasks/crowdsourcing-task';
 import { Pagination } from '../../../types/schemas/_pagination';
 import { isAdmin, isContributor, isReviewer } from '../../shared/utility/user-roles';
-import { UserGreeting } from '../features/UserGreeting';
+import { UserGreeting } from '../features/contributor/UserGreeting';
 
 type UserHomepageType = {
   query: unknown;

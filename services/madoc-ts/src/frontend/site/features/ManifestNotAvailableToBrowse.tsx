@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import { Heading3 } from '../../shared/typography/Heading3';
 import { LockIcon } from '../../shared/icons/LockIcon';
-import { usePreventCanvasNavigation } from './PreventUsersNavigatingCanvases';
-import { RandomlyAssignCanvas } from './RandomlyAssignCanvas';
+import { usePreventCanvasNavigation } from '../hooks/use-prevent-canvas-navigation';
+import { RandomlyAssignCanvas } from './contributor/RandomlyAssignCanvas';
 
 export const ManifestNotAvailableToBrowse: React.FC = () => {
   const { t } = useTranslation();

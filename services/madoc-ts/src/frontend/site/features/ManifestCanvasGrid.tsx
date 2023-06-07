@@ -20,7 +20,7 @@ import { useProjectShadowConfiguration } from '../hooks/use-project-shadow-confi
 import { useProjectStatus } from '../hooks/use-project-status';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 import { CanvasViewer } from './CanvasViewer';
-import { usePreventCanvasNavigation } from './PreventUsersNavigatingCanvases';
+import { usePreventCanvasNavigation } from '../hooks/use-prevent-canvas-navigation';
 import { FilterInput } from '../../shared/atoms/FilterInput';
 
 export function ManifestCanvasGrid(props: {

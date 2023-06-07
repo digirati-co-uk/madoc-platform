@@ -8,7 +8,7 @@ import { CanvasConfigurationViewer } from '../features/CanvasConfigurationViewer
 import { CanvasHighlightedRegions } from '../features/CanvasHighlightedRegions';
 import { CanvasPageHeader } from '../features/CanvasPageHeader';
 import { CanvasThumbnailNavigation } from '../features/CanvasThumbnailNavigation';
-import { ContinueCanvasSubmission } from '../features/ContinueCanvasSubmission';
+import { ContinueCanvasSubmission } from '../features/contributor/ContinueCanvasSubmission';
 import { HighlightedCanvasSearchResults } from '../features/HighlightedCanvasSearchResults';
 import { ManifestMetadata } from '../features/ManifestMetadata';
 import { RedirectToNextCanvas } from '../features/RedirectToNextCanvas';

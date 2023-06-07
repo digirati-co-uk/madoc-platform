@@ -11,10 +11,9 @@ import { ManifestLoader, CanvasLoader } from '../components';
 import { useCanvasNavigation } from '../hooks/use-canvas-navigation';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 import { useRouteContext } from '../hooks/use-route-context';
-import { AssignCanvasToUser } from './AssignCanvasToUser';
+import { AssignCanvasToUser } from './reviewer/AssignCanvasToUser';
 import { CanvasManifestPagination } from './CanvasManifestPagination';
-import { CanvasTaskProgress } from './CanvasTaskProgress';
-import { CreateModelTestCase } from './CreateModelTestCase';
+import { CanvasTaskProgress } from './admin/CanvasTaskProgress';
 import { RequiredStatement } from './RequiredStatement';
 
 export const CanvasPageHeader: React.FC<{ subRoute?: string; title?: string }> = ({ subRoute, title }) => {

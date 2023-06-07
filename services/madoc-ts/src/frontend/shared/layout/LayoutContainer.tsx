@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components';
-import { CanvasViewerButton, CanvasViewerControls } from '../../site/features/CanvasViewerGrid';
+import { CanvasViewerButton, CanvasViewerControls } from '../atoms/CanvasViewerGrid';
 
 export const OuterLayoutContainer = styled.div`
   display: flex;
