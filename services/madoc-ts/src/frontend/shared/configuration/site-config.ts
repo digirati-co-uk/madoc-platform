@@ -491,7 +491,7 @@ export const siteConfigurationModel: {
 export const ProjectConfigInterface: {
   [key in keyof Partial<ProjectConfigurationNEW>]: string | (Partial<BaseField> & any);
 } = {
-  globalSiteNavigation: {
+  headerOptions: {
     label: 'Global site navigation',
     description: 'View options for the global site navigation',
     type: 'checkbox-list-field',
@@ -788,7 +788,7 @@ export const ProjectConfigContributions: {
       { value: 'horizontal', text: 'Horizontal (to the right) ' },
     ],
   },
-  contributionPanelOptions: {
+  modelPageOptions: {
     label: 'Contribution Panel',
     description: 'View options for the contributions pnnel',
     type: 'checkbox-list-field',

@@ -115,7 +115,8 @@ export type ProjectConfigurationNEW = {
     siteConfig: Array<{ property: string; original: any; override: any }>;
     staticConfig: Array<{ property: string; original: any; override: any }>;
   };
-  globalSiteNavigation?: {
+
+  headerOptions?: {
     hideSiteTitle?: boolean;
     hideProjectsLink?: boolean;
     hideCollectionsLink?: boolean;
@@ -123,23 +124,26 @@ export type ProjectConfigurationNEW = {
     hidePageNavLinks?: boolean;
     hideSearchBar?: boolean;
   };
+
   projectPageOptions?: {
-    hideStatistics?: boolean;
-    hideProjectCollectionNavigation?: boolean;
-    hideProjectManifestNavigation?: boolean;
+    hideStatistics?: boolean; // Changed to sub-item
+    hideProjectCollectionNavigation?: boolean; // Changed to sub-item
+    hideProjectManifestNavigation?: boolean; // Changed to sub-item
     hideStartContributing?: boolean;
     hideSearchButton?: boolean;
     hideRandomManifest?: boolean;
     hideRandomCanvas?: boolean;
     reviewerDashboard?: boolean;
   };
+
   collectionPageOptions?: {
+    //@todo collection page config dosent exist yet
     hideSearchButton?: false;
     hideRandomManifest?: false;
     hideRandomCanvas?: false;
   };
   manifestPageOptions?: {
-    hideManifestMetadataOnCanvas?: boolean;
+    hideManifestMetadataOnCanvas?: boolean; // Changed to sub-item
     hideStartContributing?: boolean;
     hideOpenInMirador?: boolean;
     hideSearchButton?: boolean;
@@ -151,7 +155,7 @@ export type ProjectConfigurationNEW = {
     coveredImages?: boolean;
     rectangularImages?: boolean;
     hideCanvasLabels?: boolean;
-    skipManifestListingPage?: boolean;
+    skipManifestListingPage?: boolean; // Changed to sub-item
   };
 
   atlasBackground?: string;
@@ -159,10 +163,11 @@ export type ProjectConfigurationNEW = {
   universalViewerCanvasPage?: boolean;
   hideCanvasThumbnailNavigation?: boolean;
 
+  // new parent
   navigation?: {
-    allowCollectionNavigation: boolean;
-    allowManifestNavigation: boolean;
-    allowCanvasNavigation: boolean;
+    allowCollectionNavigation: boolean; // Changed to sub-item
+    allowManifestNavigation: boolean; // Changed to sub-item
+    allowCanvasNavigation: boolean; // Changed to sub-item
   };
 
   searchStrategy?: 'string';
@@ -170,37 +175,41 @@ export type ProjectConfigurationNEW = {
     nonLatinFulltext?: boolean;
     searchMultipleFields?: boolean;
     onlyShowManifests?: boolean;
-    showSearchFacetCount?: boolean;
+    showSearchFacetCount?: boolean; // changed to sub-item
   };
 
   contributionMode?: 'transcription' | 'annotation';
   maxContributionsPerResource: false | number;
-  preventMultipleUserSubmissionsPerResource?: boolean;
+  preventMultipleUserSubmissionsPerResource?: boolean; // changed removed from parent
   forkMode?: boolean;
   claimGranularity: 'canvas' | 'manifest';
+
+  // new parent
   assigningCanvas?: {
-    randomlyAssignCanvas?: boolean;
-    priorityRandomness?: boolean;
+    randomlyAssignCanvas?: boolean; // changed to sub-item
+    priorityRandomness?: boolean; // changed to sub-item
   };
   randomCanvas?: boolean;
   defaultEditorOrientation: 'vertical' | 'horizontal';
-  contributionPanelOptions?: {
+
+  modelPageOptions?: {
     hideViewerControls?: boolean;
     enableRotation?: boolean;
     fixedTranscriptionBar?: boolean;
     disableSaveForLater?: boolean;
-    allowPersonalNotes?: boolean;
+    allowPersonalNotes?: boolean; // changed to sub-item
   };
   contributionWarningTime: false | number;
   shortExpiryTime?: string;
   longExpiryTime?: string;
 
+  //new parent
   submissionOptions?: {
-    disablePreview?: boolean;
-    disableNextCanvas?: boolean;
-    preventContributionAfterManifestUnassign?: boolean;
-    preventContributionAfterRejection?: boolean;
-    preventContributionAfterSubmission?: boolean;
+    disablePreview?: boolean; //changed parent
+    disableNextCanvas?: boolean; // changed parent
+    preventContributionAfterManifestUnassign?: boolean; // changed parent
+    preventContributionAfterRejection?: boolean; // changed parent
+    preventContributionAfterSubmission?: boolean; // changed parent
   };
 
   modelPageShowAnnotations?: 'always' | 'when-open' | 'highlighted';
@@ -212,6 +221,7 @@ export type ProjectConfigurationNEW = {
   adminsAreReviewers: boolean;
   manuallyAssignedReviewer?: number | null;
   revisionApprovalsRequired: number;
+
   reviewOptions?: {
     allowMerging?: boolean;
     enableAutoReview?: boolean;
