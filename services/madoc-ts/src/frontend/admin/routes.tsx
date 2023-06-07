@@ -26,6 +26,7 @@ import { SiteSystemConfiguration } from './pages/content/system-configuration';
 import { ChooseAnnotationStyle } from './pages/crowdsourcing/model-editor/choose-annotation-style';
 import { NewProjectFromTemplate } from './pages/crowdsourcing/projects/new-project-from-template';
 import { ProjectConfiguration } from './pages/crowdsourcing/projects/project-configuration';
+import { ProjectConfigurationNew } from './pages/crowdsourcing/projects/project-configuration-new';
 import { ProjectSearchIndex } from './pages/crowdsourcing/projects/project-search-index';
 import { ProjectStreams } from './pages/crowdsourcing/projects/project-streams';
 import { OcrListPage } from './pages/enrichment/ocr/ocr-list';
@@ -306,6 +307,10 @@ export const routes: RouteObject[] = [
       {
         path: '/projects/:id/configuration',
         element: <ProjectConfiguration />,
+      },
+      {
+        path: '/projects/:id/configurationnew',
+        element: <ProjectConfigurationNew />,
       },
       {
         path: '/projects/:id/model',
