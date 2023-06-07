@@ -1,4 +1,8 @@
 export type ProjectConfiguration = {
+  _source?: {
+    siteConfig: Array<{ property: string; original: any; override: any }>;
+    staticConfig: Array<{ property: string; original: any; override: any }>;
+  };
   allowCollectionNavigation: boolean;
   allowManifestNavigation: boolean;
   allowCanvasNavigation: boolean;
@@ -107,6 +111,10 @@ export type ProjectConfiguration = {
 };
 
 export type ProjectConfigurationNEW = {
+  _source?: {
+    siteConfig: Array<{ property: string; original: any; override: any }>;
+    staticConfig: Array<{ property: string; original: any; override: any }>;
+  };
   globalSiteNavigation?: {
     hideSiteTitle?: boolean;
     hideProjectsLink?: boolean;

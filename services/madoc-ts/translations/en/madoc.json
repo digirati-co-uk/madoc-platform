@@ -1,6 +1,5 @@
 {
   "...": "...",
-  "..todo": "..todo",
   "A longer description for your form field, appears under the label (like this)": "A longer description for your form field, appears under the label (like this)",
   "A longer description for your transcription form field, appears under the label (like this)": "A longer description for your transcription form field, appears under the label (like this)",
   "API keys": "API keys",
@@ -885,7 +884,6 @@
   "accepting contributions": "accepting contributions",
   "add": "add",
   "add to import": "add to import",
-  "adminsAreReviewers": "adminsAreReviewers",
   "alignment": "alignment",
   "assigned": "assigned",
   "assigned to": "assigned to",
@@ -969,8 +967,6 @@
   "paused": "paused",
   "pending": "pending",
   "preview": "preview",
-  "project 1": "project 1",
-  "project_id": "project_id",
   "projects": "projects",
   "rejected": "rejected",
   "remove": "remove",
