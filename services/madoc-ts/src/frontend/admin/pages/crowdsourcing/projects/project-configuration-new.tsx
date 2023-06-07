@@ -19,6 +19,7 @@ import { useShortMessage } from '../../../../shared/hooks/use-short-message';
 import { serverRendererFor } from '../../../../shared/plugins/external/server-renderer-for';
 import { InfoMessage } from '../../../../shared/callouts/InfoMessage';
 import { Heading2 } from '../../../../shared/typography/Heading2';
+import {Accordion} from "../../../../shared/atoms/Accordion";
 
 export const ProjectConfigurationNew: React.FC = () => {
   const params = useParams() as { id: string };
