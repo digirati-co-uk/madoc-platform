@@ -2,7 +2,14 @@ import * as React from 'react';
 
 export function Spinner(props: React.SVGProps<SVGSVGElement>) {
   return (
-    <svg width="1em" height="1em" viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg" stroke="#fff" {...props}>
+    <svg
+      width="1em"
+      height="1em"
+      viewBox="0 0 38 38"
+      xmlns="http://www.w3.org/2000/svg"
+      stroke="currentColor"
+      {...props}
+    >
       <g transform="translate(1 1)" strokeWidth={2} fill="none" fillRule="evenodd">
         <circle strokeOpacity={0.5} cx={18} cy={18} r={18} />
         <path d="M36 18c0-9.94-8.06-18-18-18">
