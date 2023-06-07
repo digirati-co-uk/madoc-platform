@@ -18,9 +18,12 @@ export const ProjectConfiguration: React.FC = () => {
 
   const { scrollToTop } = useAdminLayout();
   const api = useApi();
-  const { data: projectConfiguration, refetch, updatedAt } = apiHooks.getSiteConfiguration(() =>
-    params.id ? [{ project_id: params.id }] : undefined
+  const { data: _projectConfiguration, refetch, updatedAt } = apiHooks.getSiteConfiguration(() =>
+    params.id ? [{ project_id: params.id, show_source: true }] : undefined
   );
+
+  const { _source, ...projectConfiguration } = _projectConfiguration || {};
+
   const { t } = useTranslation();
   const [didSave, setDidSave] = useShortMessage();
   const projectTemplate = useProjectTemplate(project?.template);

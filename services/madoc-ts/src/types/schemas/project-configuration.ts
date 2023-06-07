@@ -1,4 +1,8 @@
 export type ProjectConfiguration = {
+  _source?: {
+    siteConfig: Array<{ property: string; original: any; override: any }>;
+    staticConfig: Array<{ property: string; original: any; override: any }>;
+  };
   allowCollectionNavigation: boolean;
   allowManifestNavigation: boolean;
   allowCanvasNavigation: boolean;
