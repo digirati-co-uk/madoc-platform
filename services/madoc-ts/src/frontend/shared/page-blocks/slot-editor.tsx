@@ -98,6 +98,7 @@ const EditBlockWrapper = styled.div`
 
 const TableHandle = styled(TableHandleIcon)`
   margin: 4px;
+  color: #979797;
 `;
 
 const reorder = (list: any[], startIndex: number, endIndex: number) => {
