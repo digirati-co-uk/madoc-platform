@@ -96,12 +96,14 @@ export const ProjectConfigurationNew: React.FC = () => {
           icon={<ContributionIcon />}
           maxHeight={false}
         >
-          <EditShorthandCaptureModel
-            key={updatedAt}
-            immutableFields={projectTemplate?.configuration?.immutable}
-            data={projectConfiguration}
-            template={ProjectConfigContributions}
-          />
+          <div style={{ height: '2000px' }}>
+            <EditShorthandCaptureModel
+              key={updatedAt}
+              immutableFields={projectTemplate?.configuration?.immutable}
+              data={projectConfiguration}
+              template={ProjectConfigContributions}
+            />
+          </div>
         </AccordionItem>
 
         <AccordionItem
