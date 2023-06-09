@@ -18,7 +18,7 @@ import { useProjectTemplate } from '../../../../shared/hooks/use-project-templat
 import { useShortMessage } from '../../../../shared/hooks/use-short-message';
 import { serverRendererFor } from '../../../../shared/plugins/external/server-renderer-for';
 import { InfoMessage } from '../../../../shared/callouts/InfoMessage';
-import { AccordionItem, AccordionContainer } from '../../../../shared/navigation/Accordion';
+import { AccordionItem, AccordionContainer, useAccordionItems } from '../../../../shared/navigation/Accordion';
 import { BugIcon } from '../../../../shared/icons/BugIcon';
 import { InterfaceIcon } from '../../../../shared/icons/InterfaceIcon';
 import { SearchIcon } from '../../../../shared/icons/SearchIcon';
@@ -27,6 +27,7 @@ import { ReviewIcon } from '../../../../shared/icons/ReviewIcon';
 import { SettingsIcon } from '../../../../shared/icons/SettingsIcon';
 
 export const ProjectConfigurationNew: React.FC = () => {
+  const { getItemProps, onKeyDown } = useAccordionItems(5);
   const params = useParams() as { id: string };
   const { data: project } = apiHooks.getProject(() => (params.id ? [params.id] : undefined));
 
@@ -46,22 +47,26 @@ export const ProjectConfigurationNew: React.FC = () => {
     return <EmptyState>{t('There is no configuration for this project type')}</EmptyState>;
   }
 
-  if (!project) {
+  if (!project || !_projectConfiguration) {
     return null;
   }
+
   return (
     <div style={{ flex: 1, marginBottom: '2em' }}>
-      <InfoMessage>🚧 New Configuration WIP 🚧</InfoMessage>
+      <InfoMessage $margin>🚧 New Configuration WIP 🚧</InfoMessage>
 
-      <AccordionContainer>
+      <AccordionContainer key={updatedAt} onKeyDown={onKeyDown}>
         <AccordionItem
+          key={updatedAt}
           large
           label="Interface"
           description="With description"
           icon={<InterfaceIcon />}
           maxHeight={false}
+          initialOpen
+          {...getItemProps(0)}
         >
-          <div style={{ height: '1800px' }}>
+          <div style={{ padding: 1, clear: 'both' }}>
             <EditShorthandCaptureModel
               key={updatedAt}
               searchLabel={t('Search configuration')}
@@ -78,6 +83,7 @@ export const ProjectConfigurationNew: React.FC = () => {
           description="With description"
           icon={<SearchIcon />}
           maxHeight={false}
+          {...getItemProps(1)}
         >
           <div style={{ height: '350px' }}>
             <EditShorthandCaptureModel
@@ -95,6 +101,7 @@ export const ProjectConfigurationNew: React.FC = () => {
           description="With description"
           icon={<ContributionIcon />}
           maxHeight={false}
+          {...getItemProps(2)}
         >
           <div style={{ height: '2000px' }}>
             <EditShorthandCaptureModel
@@ -112,6 +119,7 @@ export const ProjectConfigurationNew: React.FC = () => {
           description="With description"
           icon={<ReviewIcon />}
           maxHeight={false}
+          {...getItemProps(3)}
         >
           <div style={{ height: '720px' }}>
             <EditShorthandCaptureModel
@@ -123,7 +131,14 @@ export const ProjectConfigurationNew: React.FC = () => {
           </div>
         </AccordionItem>
 
-        <AccordionItem large label="Other" description="With description" icon={<SettingsIcon />} maxHeight={false}>
+        <AccordionItem
+          large
+          label="Other"
+          description="With description"
+          icon={<SettingsIcon />}
+          maxHeight={false}
+          {...getItemProps(4)}
+        >
           <div style={{ height: '650px' }}>
             <EditShorthandCaptureModel
               key={updatedAt}
