@@ -45,7 +45,6 @@ export const Project: UniversalComponent<ProjectType> = createUniversalComponent
             { label: t('Details'), link: `/projects/${data.id}/metadata` },
             { label: t('Content'), link: `/projects/${data.id}/content` },
             !configFrozen ? { label: t('Configuration'), link: `/projects/${data.id}/configuration` } : null,
-            { label: t('Configuration New'), link: `/projects/${data.id}/configurationnew` },
             !noModel ? { label: t('Model'), link: `/projects/${data.id}/model` } : null,
             { label: t('Crowdsourcing'), link: `/projects/${data.id}/tasks` },
             { label: t('Search index'), link: `/projects/${data.id}/search` },
