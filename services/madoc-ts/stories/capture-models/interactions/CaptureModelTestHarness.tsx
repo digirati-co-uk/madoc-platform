@@ -46,7 +46,7 @@ export interface CaptureModelTestHarnessProps {
 
 export type ModelStory = StoryObj<typeof CaptureModelTestHarness>;
 
-function modelWithStructure(input: any): CaptureModel {
+export function modelWithStructure(input: any): CaptureModel {
   const newModel = deepmerge({}, input);
   if (!newModel.id) {
     newModel.id = generateId();

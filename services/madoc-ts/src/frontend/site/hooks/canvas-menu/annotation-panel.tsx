@@ -30,6 +30,7 @@ export function useAnnotationPanel(active: boolean): CanvasMenuHook {
   const styles = useProjectAnnotationStyles();
 
   useEffect(() => {
+    console.log(regions)
     setIsActive(active);
   }, [active, setIsActive]);
 
