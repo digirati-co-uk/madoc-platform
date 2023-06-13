@@ -4,57 +4,70 @@ import {
   NavIconContainer,
   NavIconNotifcation,
 } from '../../src/frontend/shared/layout/LayoutContainer';
-import { useMetadataMenu } from '../../src/frontend/site/hooks/canvas-menu/metadata-panel';
-import { useAnnotationPanel } from '../../src/frontend/site/hooks/canvas-menu/annotation-panel';
-import { useTranscriptionMenu } from '../../src/frontend/site/hooks/canvas-menu/transcription-panel';
-import { useDocumentPanel } from '../../src/frontend/site/hooks/canvas-menu/document-panel';
-import { useRevisionPanel } from '../../src/frontend/site/hooks/canvas-menu/revision-panel';
-import { usePersonalNotesMenu } from '../../src/frontend/site/hooks/canvas-menu/personal-notes';
-import { CanvasMenuHook } from '../../src/frontend/site/hooks/canvas-menu/types';
-import { useLocalStorage } from '../../src/frontend/shared/hooks/use-local-storage';
-import { AnnotationPanel } from './annotationPanel';
 import { ViewDocument } from '../../src/frontend/shared/capture-models/inspector/ViewDocument';
 import { DynamicVaultContext } from '../../src/frontend/shared/capture-models/new/DynamicVaultContext';
-import { useState } from 'react';
-import { CaptureModel } from '../../src/frontend/shared/capture-models/types/capture-model';
-import { modelWithStructure } from '../capture-models/interactions/CaptureModelTestHarness';
-import { DocumentPanel } from './documentPanel';
+import { useState } from 'react';;
+import { ModelDocumentIcon } from '../../src/frontend/shared/icons/ModelDocumentIcon';
+import { InfoIcon } from '../../src/frontend/shared/icons/InfoIcon';
+import { AnnotationsIcon } from '../../src/frontend/shared/icons/AnnotationsIcon';
+import { TranscriptionIcon } from '../../src/frontend/shared/icons/TranscriptionIcon';
+import { PersonIcon } from '../../src/frontend/shared/icons/PersonIcon';
+import { parse } from 'query-string';
+// @ts-ignore
+import mad1200fixture1 from '../../fixtures/96-jira/MAD-1200-1.json';
 export default {
   title: 'Components / Canvas sidebar',
 };
 
 const Template: any = (props: any) => {
-  const [captureModel, setCaptureModel] = useState<CaptureModel>(() => modelWithStructure(props.captureModel));
-  const [openPanel, setOpenPanel] = useLocalStorage<string>(`canvas-page-selected`, 'metadata');
-  const [isOpen, setIsOpen] = useLocalStorage<boolean>(`canvas-page-sidebar`, false);
-  const target = props.target || {
-    manifestUri: 'https://digirati-co-uk.github.io/wunder.json',
-    canvasUri: 'https://digirati-co-uk.github.io/wunder/canvases/0',
+  const [k, setK] = useState(props.initialTab || 0);
+  const captureModel = mad1200fixture1;
+  const target = {
+    manifestUri: 'https://www.omeka.ugent.be/manifests/iiif/2/2636/manifest',
+    canvasUri: 'https://www.omeka.ugent.be/manifests/iiif/2/2636/canvas/p1',
   };
 
-  const menuItems = [DocumentPanel()].filter(Boolean) as CanvasMenuHook[];
-
   return (
-    <>
+    <div style={{ display: 'flex' }}>
       <LayoutSidebarMenu>
-        {menuItems.map(menuItem => {
-          return (
-            <NavIconContainer
-              key={1}
-              onClick={() => {
-                console.log('k');
-              }}
-            >
-              {menuItem.notifications && !(isOpen && menuItem.id === openPanel) ? (
-                <NavIconNotifcation>{menuItem.notifications}</NavIconNotifcation>
-              ) : null}
-              {menuItem.icon} {menuItem.label}
-            </NavIconContainer>
-          );
-        })}
+        {/* Metadata */}
+        <NavIconContainer $active={k === 0} onClick={() => setK(0)}>
+          <InfoIcon />
+        </NavIconContainer>
+
+        {/* Annotations */}
+        <NavIconContainer $active={k === 1} onClick={() => setK(1)}>
+          <AnnotationsIcon />
+        </NavIconContainer>
+
+        {/* Transcriptions */}
+        <NavIconContainer $active={k === 2} onClick={() => setK(2)}>
+          <TranscriptionIcon />
+        </NavIconContainer>
+
+        {/* Document */}
+        <NavIconContainer $active={k === 3} onClick={() => setK(3)}>
+          <NavIconNotifcation>1</NavIconNotifcation>
+          <ModelDocumentIcon />
+        </NavIconContainer>
+
+        {/* Revisions */}
+        <NavIconContainer $active={k === 4} onClick={() => setK(4)}>
+          <NavIconNotifcation>1</NavIconNotifcation>
+          <PersonIcon />
+        </NavIconContainer>
       </LayoutSidebarMenu>
-      );
-    </>
+
+      <div>
+        <DynamicVaultContext {...target}>
+          <ViewDocument
+            key={JSON.stringify(captureModel.document)}
+            hideEmpty
+            document={captureModel.document}
+          />
+        </DynamicVaultContext>
+      </div>
+    </div>
   );
 };
 
