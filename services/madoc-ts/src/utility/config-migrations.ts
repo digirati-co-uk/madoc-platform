@@ -19,6 +19,9 @@ function version1to2(config: ProjectConfiguration): ProjectConfigurationNEW {
     priorityRandomness,
     modelPageOptions,
     allowPersonalNotes,
+    miradorCanvasPage,
+    universalViewerCanvasPage,
+    hideCanvasThumbnailNavigation,
     ...unchangedConfig
   } = config;
 
@@ -35,6 +38,11 @@ function version1to2(config: ProjectConfiguration): ProjectConfigurationNEW {
       hideManifestMetadataOnCanvas: hideManifestMetadataOnCanvas,
       skipManifestListingPage: skipManifestListingPage,
     }),
+    canvasPageOptions: {
+      miradorCanvasPage: miradorCanvasPage,
+      universalViewerCanvasPage: universalViewerCanvasPage,
+      hideCanvasThumbnailNavigation: hideCanvasThumbnailNavigation,
+    },
     navigation: {
       allowCollectionNavigation: allowCollectionNavigation,
       allowManifestNavigation: allowManifestNavigation,
@@ -83,6 +91,7 @@ function version2to1(config: ProjectConfigurationNEW): ProjectConfiguration {
       preventContributionAfterRejection,
       preventContributionAfterSubmission,
     } = {},
+    canvasPageOptions: { miradorCanvasPage, universalViewerCanvasPage, hideCanvasThumbnailNavigation } = {},
     ...unchangedConfig
   } = config;
 
@@ -93,16 +102,16 @@ function version2to1(config: ProjectConfigurationNEW): ProjectConfiguration {
     allowCollectionNavigation: allowCollectionNavigation || false,
     allowManifestNavigation: allowManifestNavigation || false,
     allowCanvasNavigation: allowCanvasNavigation || false,
-    randomlyAssignCanvas: randomlyAssignCanvas,
-    priorityRandomness: priorityRandomness,
-    allowPersonalNotes: allowPersonalNotes,
-    skipManifestListingPage: skipManifestListingPage,
-    hideStatistics: hideStatistics,
-    hideProjectCollectionNavigation: hideProjectCollectionNavigation,
-    hideProjectManifestNavigation: hideProjectManifestNavigation,
-    hideManifestMetadataOnCanvas: hideManifestMetadataOnCanvas,
-    showSearchFacetCount: showSearchFacetCount,
-    searchOptions: searchOptions,
+    randomlyAssignCanvas,
+    priorityRandomness,
+    allowPersonalNotes,
+    skipManifestListingPage,
+    hideStatistics,
+    hideProjectCollectionNavigation,
+    hideProjectManifestNavigation,
+    hideManifestMetadataOnCanvas,
+    showSearchFacetCount,
+    searchOptions,
     modelPageOptions: {
       ...modelPageOptions,
       preventMultipleUserSubmissionsPerResource,
@@ -112,8 +121,11 @@ function version2to1(config: ProjectConfigurationNEW): ProjectConfiguration {
       preventContributionAfterRejection,
       preventContributionAfterManifestUnassign,
     },
-    projectPageOptions: projectPageOptions,
-    manifestPageOptions: manifestPageOptions,
+    projectPageOptions,
+    manifestPageOptions,
+    miradorCanvasPage,
+    universalViewerCanvasPage,
+    hideCanvasThumbnailNavigation,
   };
 }
 

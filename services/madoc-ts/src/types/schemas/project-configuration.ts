@@ -161,9 +161,11 @@ export type ProjectConfigurationNEW = {
   };
 
   atlasBackground?: string;
-  miradorCanvasPage?: boolean;
-  universalViewerCanvasPage?: boolean;
-  hideCanvasThumbnailNavigation?: boolean;
+  canvasPageOptions?: {
+    miradorCanvasPage?: boolean;
+    universalViewerCanvasPage?: boolean;
+    hideCanvasThumbnailNavigation?: boolean;
+  };
 
   // new parent
   navigation?: {
