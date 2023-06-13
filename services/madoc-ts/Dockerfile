@@ -1,4 +1,4 @@
-FROM node:18 as build
+FROM node:18-bullseye as build
 
 WORKDIR /home/node/app
 
@@ -29,7 +29,7 @@ RUN yarn build:vite-scheduler
 RUN yarn build:frontend
 RUN yarn build:vite-server
 
-FROM node:18 as modules
+FROM node:18-bullseye as modules
 
 WORKDIR /home/node/app
 
@@ -39,7 +39,7 @@ COPY --from=build /home/node/app/npm /home/node/app/npm
 
 RUN yarn install --no-interactive --frozen-lockfile --production=true
 
-FROM node:18
+FROM node:18-bullseye
 
 WORKDIR /home/node/app
 
