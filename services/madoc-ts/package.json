@@ -303,7 +303,7 @@
     "typescript": "^4.9.4",
     "typescript-json-schema": "^0.55.0",
     "typescript-plugin-styled-components": "^2.0.0",
-    "vite": "^4.0.4",
+    "vite": "^4.0.5",
     "vite-node": "^0.28.2",
     "vite-plugin-environment": "^1.1.3",
     "vite-plugin-require-transform": "^1.0.6",
