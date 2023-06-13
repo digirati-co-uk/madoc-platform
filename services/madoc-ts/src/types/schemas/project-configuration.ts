@@ -1,4 +1,5 @@
 export type ProjectConfiguration = {
+  _version?: 1;
   _source?: {
     siteConfig: Array<{ property: string; original: any; override: any }>;
     staticConfig: Array<{ property: string; original: any; override: any }>;
@@ -111,6 +112,7 @@ export type ProjectConfiguration = {
 };
 
 export type ProjectConfigurationNEW = {
+  _version: 2;
   _source?: {
     siteConfig: Array<{ property: string; original: any; override: any }>;
     staticConfig: Array<{ property: string; original: any; override: any }>;
@@ -136,12 +138,12 @@ export type ProjectConfigurationNEW = {
     reviewerDashboard?: boolean;
   };
 
-  collectionPageOptions?: {
-    //@todo collection page config dosent exist yet
-    hideSearchButton?: false;
-    hideRandomManifest?: false;
-    hideRandomCanvas?: false;
-  };
+  // collectionPageOptions?: {
+  //   //@todo collection page config dosent exist yet
+  //   hideSearchButton?: false;
+  //   hideRandomManifest?: false;
+  //   hideRandomCanvas?: false;
+  // };
   manifestPageOptions?: {
     hideManifestMetadataOnCanvas?: boolean; // Changed to sub-item
     hideStartContributing?: boolean;
