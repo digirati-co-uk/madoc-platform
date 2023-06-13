@@ -2,7 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { stringify } from 'query-string';
-import { SmallRoundedButton, MediumRoundedButton } from '../navigation/Button';
+import { SmallButton, Button } from '../navigation/Button';
 
 import styled from 'styled-components';
 import { HrefLink } from '../utility/href-link';
@@ -81,24 +81,24 @@ export const Pagination: React.FC<{
 
   return (
     <PaginationContainer style={{ justifyContent: position }}>
-      <SmallRoundedButton
+      <SmallButton
         disabled={!prevPage || isLoading}
         as={HrefLink}
         href={`${pathname}${page > 2 ? `?${pageParam}=${page - 1}&` : q ? '?' : ''}${q}${hash ? `#${hash}` : ''}`}
       >
         {isLoading ? t('loading...') : t('Previous page')}
-      </SmallRoundedButton>
+      </SmallButton>
       <PaginationDisplay style={{ color: isLoading ? '#999' : '#666' }}>
         {t('Page {{page}} of {{count}}', { page, count: totalPages })}
       </PaginationDisplay>
 
-      <SmallRoundedButton
+      <SmallButton
         as={HrefLink}
         disabled={!nextPage || isLoading}
         href={`${pathname}?${pageParam}=${page + 1}${q ? `&${q}` : ''}${hash ? `#${hash}` : ''}`}
       >
         {isLoading ? t('loading...') : t('Next page')}
-      </SmallRoundedButton>
+      </SmallButton>
     </PaginationContainer>
   );
 };
@@ -151,31 +151,31 @@ export const PaginationNumbered: React.FC<{
   return (
     <PaginationContainerNumbered style={{ justifyContent: position }}>
       {prevPage ? (
-        <MediumRoundedButton as={Link} to={`${pathname}${page > 2 ? `?${pageParam}=${page - 1}&` : q ? '?' : ''}${q}`}>
+        <Button as={Link} to={`${pathname}${page > 2 ? `?${pageParam}=${page - 1}&` : q ? '?' : ''}${q}`}>
           {t('Previous page')}
-        </MediumRoundedButton>
+        </Button>
       ) : null}
       {prevPage ? (
-        <MediumRoundedButton as={Link} to={`${pathname}${page >= 2 ? `?${pageParam}=${page - 1}&` : q ? '?' : ''}${q}`}>
+        <Button as={Link} to={`${pathname}${page >= 2 ? `?${pageParam}=${page - 1}&` : q ? '?' : ''}${q}`}>
           {page >= 2 ? `${page - 1}` : ``}
-        </MediumRoundedButton>
+        </Button>
       ) : null}
-      <MediumRoundedButton
+      <Button
         style={{ background: '#e9e9e9' }}
         as={Link}
         to={`${pathname}${page ? `?${pageParam}=${page}&` : q ? '?' : ''}${q}`}
       >
         {page}
-      </MediumRoundedButton>
+      </Button>
       {nextPage ? (
-        <MediumRoundedButton as={Link} to={`${pathname}?${pageParam}=${page + 1}${q ? `&${q}` : ''}`}>
+        <Button as={Link} to={`${pathname}?${pageParam}=${page + 1}${q ? `&${q}` : ''}`}>
           {`${page + 1}`}
-        </MediumRoundedButton>
+        </Button>
       ) : null}
       {nextPage ? (
-        <MediumRoundedButton as={Link} to={`${pathname}?${pageParam}=${page + 1}${q ? `&${q}` : ''}`}>
+        <Button as={Link} to={`${pathname}?${pageParam}=${page + 1}${q ? `&${q}` : ''}`}>
           {t('Next page')}
-        </MediumRoundedButton>
+        </Button>
       ) : null}
     </PaginationContainerNumbered>
   );

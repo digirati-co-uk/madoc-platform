@@ -4,7 +4,7 @@ import { NotFound } from '../../../utility/errors/not-found';
 export const queryConfig: ReactQueryConfig = {
   queries: {
     staleTime: 5 * 60 * 1000,
-    refetchOnWindowFocus: true,
+    refetchOnWindowFocus: false,
     refetchOnMount: true,
     retry: (count, err) => {
       if (err instanceof NotFound) {

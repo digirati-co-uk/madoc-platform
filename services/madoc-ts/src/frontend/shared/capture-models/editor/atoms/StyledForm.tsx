@@ -6,13 +6,16 @@ import { madocLazy } from '../../../utility/madoc-lazy';
 const Textarea = madocLazy(() => /* webpackChunkName: "browser" */ import('react-textarea-autosize'));
 
 export const StyledForm = styled.form`
-  margin-bottom: 1em;
+  margin-bottom: 1rem;
 `;
+
+const textSize = `0.875rem`;
+const lineHeight = `1.5rem`;
 
 export const StyledFormLabel = styled.label`
   font-weight: bold;
-  font-size: 1em;
-  line-height: 1.6em;
+  font-size: ${textSize};
+  line-height: ${lineHeight};
   display: block;
   > * {
     font-weight: normal;
@@ -20,7 +23,11 @@ export const StyledFormLabel = styled.label`
 `;
 export const StyledFormField = styled.div`
   display: block;
-  margin-bottom: 1em;
+  margin-bottom: 1rem;
+`;
+
+export const FieldSection = styled.div`
+  margin-bottom: 1.25rem;
 `;
 
 export const inputCss = css`
@@ -32,9 +39,9 @@ export const inputCss = css`
   -webkit-appearance: none;
   border-radius: 3px;
   tap-highlight-color: rgba(255, 255, 255, 0);
-  line-height: 1.2em;
-  padding: 0.7em 0.9em;
-  font-size: 1em;
+  padding: 0.4rem 0.8rem;
+  font-size: ${textSize};
+  line-height: ${lineHeight};
   background: #fff;
   border: 1px solid rgba(5, 42, 68, 0.2);
   color: rgba(0, 0, 0, 0.87);
@@ -55,11 +62,59 @@ export const inputCss = css`
 `;
 
 const _StyledCheckbox = styled.input`
-  margin: 1em;
+  margin: 0.8rem;
+  width: 1rem;
+  height: 1rem;
+  grid-area: checkbox;
+  align-self: flex-start;
 `;
 export const StyledCheckbox: typeof _StyledCheckbox = forwardRef(function StyledCheckbox(props: any, ref) {
   return <_StyledCheckbox ref={ref} type="checkbox" {...props} />;
 }) as any;
+
+export const StyledCheckboxLabel = styled.div`
+  grid-area: label;
+  align-self: center;
+  font-weight: 500;
+  margin: 0.35rem 0;
+`;
+export const StyledCheckboxDescription = styled.div`
+  font-size: 0.875rem;
+  line-height: 1.3rem;
+  color: #666;
+  grid-area: description;
+  margin-bottom: 0.5rem;
+`;
+
+export const StyledCheckboxContainer = styled.label`
+  display: grid;
+  grid-template-columns: 3rem 1fr;
+  padding: 0 0.25rem;
+  grid-template-areas:
+    'checkbox label'
+    'checkbox description';
+
+  &:first-child {
+    border-radius: 3px 3px 0 0;
+  }
+
+  &:last-child {
+    border-radius: 0 0 3px 3px;
+  }
+
+  &:first-child:last-child {
+    border-radius: 3px;
+  }
+
+  &[data-no-description='true'] {
+    grid-template-rows: 1fr;
+  }
+
+  &:focus-within {
+    background: #f1f8ff;
+    margin-left: 0px;
+  }
+`;
 
 const _StyledColor = styled.input`
   //margin: 0.5em;

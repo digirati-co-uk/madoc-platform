@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components';
 import { ArrowForwardIcon } from '../icons/ArrowForwardIcon';
 
 export type SimpleCardProps = {
-  label?: string;
+  label?: string | React.ReactNode;
   labelFor?: string;
   image?: string;
   interactive?: boolean;

@@ -72,6 +72,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
           borderRadius: '3px',
         },
       }}
+      menuPosition="auto"
       inputId={id}
       initialValue={initialValue}
       placeholder={placeholder}
