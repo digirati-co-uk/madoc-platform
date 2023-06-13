@@ -17,7 +17,7 @@ const RevisionListContainer = styled.div`
   padding: 10px;
 `;
 
-const RevisionListItemContainer = styled.div<{ $selected?: boolean }>`
+export const RevisionListItemContainer = styled.div<{ $selected?: boolean }>`
   border: 1px solid #ddd;
   border-radius: 3px;
   padding: 0.5em;
@@ -63,7 +63,7 @@ const statusColours: { [key in StatusTypes]: string } = {
   rejected: '#a90e21',
 };
 
-const RevisionStatus = styled.div<{ $status?: RevisionRequest['revision']['status'] }>`
+export const RevisionStatus = styled.div<{ $status?: RevisionRequest['revision']['status'] }>`
   background: ${props => (props.$status ? statusColours[props.$status] : '#eee')};
   width: 4px;
   margin-right: 0.5em;
