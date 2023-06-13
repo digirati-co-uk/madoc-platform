@@ -561,25 +561,6 @@ export const ProjectConfigInterface: {
       },
     ],
   },
-  collectionPageOptions: {
-    label: 'Collection page options',
-    description: '..todo',
-    type: 'checkbox-list-field',
-    options: [
-      {
-        label: 'Hide search button',
-        value: 'hideSearchButton',
-      },
-      {
-        label: 'Hide go to random manifest button',
-        value: 'hideRandomManifest',
-      },
-      {
-        label: 'Hide go to random canvas button',
-        value: 'hideRandomCanvas',
-      },
-    ],
-  },
   manifestPageOptions: {
     label: 'Manifest page options',
     description: '..todo',
@@ -640,12 +621,12 @@ export const ProjectConfigInterface: {
       },
     ],
   },
-  atlasBackground: {
-    label: 'Atlas background',
-    type: 'color-field',
-    description: 'Change the background of the deep zoom viewer',
-    defaultValue: '#f9f9f9',
-  },
+  // atlasBackground: {
+  //   label: 'Atlas background',
+  //   type: 'color-field',
+  //   description: 'Change the background of the deep zoom viewer',
+  //   defaultValue: '#f9f9f9',
+  // },
   miradorCanvasPage: {
     label: 'Use Mirador on canvas page',
     type: 'checkbox-field',

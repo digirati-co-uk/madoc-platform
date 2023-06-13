@@ -9,6 +9,7 @@ import React, {
   useEffect,
   useImperativeHandle,
   useLayoutEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -35,9 +36,9 @@ const ItemRow = styled.div`
     background: #f7f7f7;
     border: none;
     margin-bottom: 1em;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+    //display: flex;
+    //flex-direction: column;
+    //justify-content: center;
   }
 `;
 
@@ -63,6 +64,10 @@ const ItemLabel = styled.button`
   text-overflow: ellipsis;
   min-width: 0;
   overflow: hidden;
+
+  &:focus {
+    outline: none;
+  }
 
   p {
     display: none;
@@ -114,49 +119,52 @@ const ItemIcon = styled.div`
 `;
 
 const ItemBodyInner = styled.div<{ $full?: boolean }>`
-  ${props =>
-    props.$full
-      ? css`
-          margin: 0;
-        `
-      : css`
-          margin: 1em 1em 1.5em;
-        `}
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
 `;
 
-const ItemBody = styled.div<{
-  $hidden?: boolean;
+const ItemBodyPadding = styled.div<{ $full?: boolean; $max?: boolean }>`
+  min-height: 0;
+  overflow: hidden;
+  flex: 1;
+  padding: 1em 1em 1.5em;
+
+  &[data-full='true'] {
+    margin: 0;
+  }
+
+  &[data-max-height='true'] {
+    overflow-y: auto;
+  }
+`;
+
+const ItemBody = styled.section<{
   $initial?: boolean;
-  $maxHeight?: number;
   $scrolled?: boolean;
 }>`
-  transition: height 0.2s, box-shadow 0.2s;
+  display: grid;
+  grid-template-rows: 0fr;
   overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+
+  [data-open='true'] & {
+    opacity: 1;
+    grid-template-rows: 1fr;
+    visibility: visible;
+  }
+
+  transition: all 0.4s, visibility 0.8s;
 
   &[data-has-icon='true'] {
     padding-left: 4em;
   }
 
-  ${props =>
-    props.$scrolled
-      ? css`
-          box-shadow: inset 0px 2px 0px 0 rgba(0, 0, 0, 0.1);
-        `
-      : css`
-          box-shadow: inset 0px 2px 0px 0 rgba(0, 0, 0, 0);
-        `}
-
-  ${props =>
-    props.$initial
-      ? css`
-          position: absolute;
-          opacity: 0;
-          height: auto;
-        `
-      : css`
-          max-height: ${props.$maxHeight || '120'}px;
-          overflow-y: auto;
-        `}
+  box-shadow: inset 0px 2px 0px 0 rgba(0, 0, 0, 0);
+  &[data-scrolled='true'] {
+    box-shadow: inset 0px 2px 0px 0 rgba(0, 0, 0, 0.1);
+  }
 `;
 
 const ItemHeading = styled.div<{ $open?: boolean }>`
@@ -182,37 +190,19 @@ const ItemHeading = styled.div<{ $open?: boolean }>`
     border-color: #3579f6;
   }
 
-  ${props =>
-    props.$open &&
-    css`
-      color: #333;
-      &:after {
-        content: '';
-        height: 1px;
-        background: #eee;
-        position: absolute;
-        top: 100%;
-        left: 0.5em;
-        right: 0.5em;
-      }
-    `}
-`;
-
-function runWhenEntered(element: HTMLElement, callback: () => void) {
-  const parent = element.closest('.transition');
-  if (parent && !parent.classList.contains('transition-entered')) {
-    const style = window.getComputedStyle(parent);
-    const t = setTimeout(
-      callback,
-      parseFloat(style.transitionDuration) * (style.transitionDuration.endsWith('ms') ? 1 : 1000) || 0
-    );
-    return () => {
-      clearTimeout(t);
-    };
-  } else {
-    callback();
+  [data-open='true'] & {
+    color: #333;
+    &:after {
+      content: '';
+      height: 1px;
+      background: #eee;
+      position: absolute;
+      top: 100%;
+      left: 0.5em;
+      right: 0.5em;
+    }
   }
-}
+`;
 
 interface AccordionItemProps {
   label: string | ReactNode;
@@ -236,101 +226,12 @@ export interface AccordionItemRef {
 
 const noop = (() => void 0) as any;
 
-export const AccordionItem = forwardRef<AccordionItemRef, AccordionItemProps>(function AccordionItem(props, ref) {
-  const content = useRef<HTMLDivElement>(null);
-  const btn = useRef<HTMLButtonElement>(null);
-
-  const [open, setIsOpen] = useState<boolean>(props.initialOpen || false);
-  const onChange = props.onChange || noop;
-  const toggle = () => {
-    onChange(!open);
-    setIsOpen(o => !o);
-  };
-  const [_height, setHeight] = useState<number | undefined>(undefined);
-  const maxHeight = props.maxHeight === false ? 1000000 : props.maxHeight || 800;
-  const initial = typeof _height === 'undefined';
-  const height = Math.min(_height || 0, maxHeight);
-  const [scrolled, setScrolled] = useState(false);
-
-  useImperativeHandle(ref, () => ({
-    open() {
-      onChange(true);
-      setIsOpen(true);
-    },
-    close() {
-      onChange(false);
-      setIsOpen(false);
-    },
-    toggle() {
-      toggle();
-    },
-    focus() {
-      if (btn.current) {
-        btn.current.focus();
-      }
-    },
-    button: btn,
-  }));
-
-  useLayoutEffect(() => {
-    if (content.current && initial) {
-      if (content.current) {
-        return runWhenEntered(content.current, () => {
-          if (content.current) {
-            const bounds = content.current.getBoundingClientRect();
-            setHeight(bounds.height);
-          }
-        });
-      }
-    }
-  }, [initial]);
-
-  const onScroll: UIEventHandler<HTMLDivElement> = e => {
-    if ((e.target as HTMLDivElement).scrollTop > 0) {
-      setScrolled(true);
-    } else {
-      setScrolled(false);
-    }
-  };
-
-  return (
-    <ItemRow data-large={props.large} data-open={open}>
-      <ItemHeading $open={open}>
-        {props.icon ? <ItemIcon onClick={toggle}>{props.icon}</ItemIcon> : null}
-        <ItemLabel ref={btn} onClick={toggle}>
-          {props.label}
-          {props.description ? <ItemDescription>{props.description}</ItemDescription> : null}
-        </ItemLabel>
-        <ItemCollapse onClick={toggle}>
-          <DownArrowIcon width="1em" height="1em" rotate={open ? 0 : 180} />
-        </ItemCollapse>
-      </ItemHeading>
-      <ItemBody
-        data-has-icon={!!props.icon}
-        onScroll={onScroll}
-        ref={content}
-        $initial={initial && !open}
-        $maxHeight={maxHeight}
-        $scrolled={scrolled}
-        style={{
-          height: initial ? undefined : open && height ? height : 0,
-          transitionDuration: `${Math.max(200, height * 0.7)}ms`,
-        }}
-      >
-        <ItemBodyInner $full={props.fullWidth}>{props.children}</ItemBodyInner>
-      </ItemBody>
-    </ItemRow>
-  );
-});
-
-interface AccordionProps {
-  singleMode?: boolean;
-  items: Array<AccordionItemProps>;
-  maxHeight?:  number | false;
+let keyIdIndex = 0;
+function useId() {
+  return useMemo(() => keyIdIndex++, []);
 }
 
-export function Accordion(props: AccordionProps) {
-  const itemsLength = props.items.length;
+export function useAccordionItems(itemsLength: number, singleMode = false) {
   const [elRefs, setElRefs] = useState<RefObject<AccordionItemRef>[]>([]);
   const current = useRef(-1);
 
@@ -383,7 +284,7 @@ export function Accordion(props: AccordionProps) {
   };
 
   const onChange = (key: number, isOpen: boolean) => {
-    if (props.singleMode && isOpen && key !== current.current) {
+    if (singleMode && isOpen && key !== current.current) {
       current.current = key;
       for (let i = 0; i < elRefs.length; i++) {
         const ref = elRefs[i];
@@ -404,16 +305,110 @@ export function Accordion(props: AccordionProps) {
     );
   }, [itemsLength]);
 
+  const getItemProps = (key: number) => {
+    return {
+      ref: elRefs[key],
+      onChange: (isOpen: boolean) => onChange(key, isOpen),
+    };
+  };
+
+  return {
+    onKeyDown,
+    getItemProps,
+  };
+}
+
+export const AccordionItem = forwardRef<AccordionItemRef, AccordionItemProps>(function AccordionItem(props, ref) {
+  const content = useRef<HTMLDivElement>(null);
+  const btn = useRef<HTMLButtonElement>(null);
+  const id = useId();
+
+  const [open, setIsOpen] = useState<boolean>(props.initialOpen || false);
+  const onChange = props.onChange || noop;
+  const toggle = () => {
+    onChange(!open);
+    setIsOpen(o => !o);
+  };
+  const maxHeight = props.maxHeight;
+  const [scrolled, setScrolled] = useState(false);
+
+  useImperativeHandle(ref, () => ({
+    open() {
+      onChange(true);
+      setIsOpen(true);
+    },
+    close() {
+      onChange(false);
+      setIsOpen(false);
+    },
+    toggle() {
+      toggle();
+    },
+    focus() {
+      if (btn.current) {
+        btn.current.focus();
+      }
+    },
+    button: btn,
+  }));
+
+  const onScroll: UIEventHandler<HTMLDivElement> = e => {
+    if ((e.target as HTMLDivElement).scrollTop > 0) {
+      setScrolled(true);
+    } else {
+      setScrolled(false);
+    }
+  };
+
+  return (
+    <ItemRow data-large={props.large} data-open={open}>
+      <ItemHeading data-open={open}>
+        {props.icon ? <ItemIcon onClick={toggle}>{props.icon}</ItemIcon> : null}
+        <ItemLabel ref={btn} onClick={toggle} aria-expanded={open} aria-controls={`accordion-${id}`}>
+          {props.label}
+          {props.description ? <ItemDescription>{props.description}</ItemDescription> : null}
+        </ItemLabel>
+        <ItemCollapse onClick={toggle}>
+          <DownArrowIcon width="1em" height="1em" rotate={open ? 0 : 180} />
+        </ItemCollapse>
+      </ItemHeading>
+      <ItemBody
+        aria-labelledby={`accordion-${id}`}
+        aria-hidden={!open}
+        data-has-icon={!!props.icon}
+        onScroll={onScroll}
+        ref={content}
+        $initial={!open}
+        data-scrolled={scrolled}
+        hidden={!open}
+      >
+        <ItemBodyInner>
+          <ItemBodyPadding
+            data-max-height={!!maxHeight}
+            data-full={props.fullWidth}
+            style={{ maxHeight: maxHeight || undefined }}
+          >
+            {props.children}
+          </ItemBodyPadding>
+        </ItemBodyInner>
+      </ItemBody>
+    </ItemRow>
+  );
+});
+
+interface AccordionProps {
+  singleMode?: boolean;
+  items: Array<AccordionItemProps>;
+  maxHeight?: number | false;
+}
+
+export function Accordion(props: AccordionProps) {
+  const { getItemProps, onKeyDown } = useAccordionItems(props.items.length, props.singleMode);
+
   return (
     <AccordionContainer onKeyDown={onKeyDown}>
       {props.items.map((item, key) => (
-        <AccordionItem
-          maxHeight={props.maxHeight}
-          key={key}
-          ref={elRefs[key]}
-          {...item}
-          onChange={isOpen => onChange(key, isOpen)}
-        >
+        <AccordionItem maxHeight={props.maxHeight} key={key} {...item} {...getItemProps(key)}>
           {item.children}
         </AccordionItem>
       ))}

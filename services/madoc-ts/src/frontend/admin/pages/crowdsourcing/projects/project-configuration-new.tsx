@@ -18,10 +18,16 @@ import { useProjectTemplate } from '../../../../shared/hooks/use-project-templat
 import { useShortMessage } from '../../../../shared/hooks/use-short-message';
 import { serverRendererFor } from '../../../../shared/plugins/external/server-renderer-for';
 import { InfoMessage } from '../../../../shared/callouts/InfoMessage';
-import { Heading2 } from '../../../../shared/typography/Heading2';
-import {Accordion} from "../../../../shared/atoms/Accordion";
+import { AccordionItem, AccordionContainer, useAccordionItems } from '../../../../shared/navigation/Accordion';
+import { BugIcon } from '../../../../shared/icons/BugIcon';
+import { InterfaceIcon } from '../../../../shared/icons/InterfaceIcon';
+import { SearchIcon } from '../../../../shared/icons/SearchIcon';
+import { ContributionIcon } from '../../../../shared/icons/ContributionIcon';
+import { ReviewIcon } from '../../../../shared/icons/ReviewIcon';
+import { SettingsIcon } from '../../../../shared/icons/SettingsIcon';
 
 export const ProjectConfigurationNew: React.FC = () => {
+  const { getItemProps, onKeyDown } = useAccordionItems(5);
   const params = useParams() as { id: string };
   const { data: project } = apiHooks.getProject(() => (params.id ? [params.id] : undefined));
 
@@ -41,58 +47,108 @@ export const ProjectConfigurationNew: React.FC = () => {
     return <EmptyState>{t('There is no configuration for this project type')}</EmptyState>;
   }
 
-  if (!project) {
+  if (!project || !_projectConfiguration) {
     return null;
   }
+
   return (
-    <div>
-      <InfoMessage>🚧 New Configuration WIP 🚧</InfoMessage>
+    <div style={{ flex: 1, marginBottom: '2em' }}>
+      <InfoMessage $margin>🚧 New Configuration WIP 🚧</InfoMessage>
 
-      <Heading2>Interface</Heading2>
+      <AccordionContainer key={updatedAt} onKeyDown={onKeyDown}>
+        <AccordionItem
+          key={updatedAt}
+          large
+          label="Interface"
+          description="With description"
+          icon={<InterfaceIcon />}
+          maxHeight={false}
+          initialOpen
+          {...getItemProps(0)}
+        >
+          <div style={{ padding: 1, clear: 'both' }}>
+            <EditShorthandCaptureModel
+              key={updatedAt}
+              searchLabel={t('Search configuration')}
+              immutableFields={projectTemplate?.configuration?.immutable}
+              data={projectConfiguration}
+              template={ProjectConfigInterface}
+            />
+          </div>
+        </AccordionItem>
 
-      <EditShorthandCaptureModel
-        key={updatedAt}
-        searchLabel={t('Search configuration')}
-        immutableFields={projectTemplate?.configuration?.immutable}
-        data={projectConfiguration}
-        template={ProjectConfigInterface}
-      />
+        <AccordionItem
+          large
+          label="Search & browse"
+          description="With description"
+          icon={<SearchIcon />}
+          maxHeight={false}
+          {...getItemProps(1)}
+        >
+          <div style={{ height: '350px' }}>
+            <EditShorthandCaptureModel
+              key={updatedAt}
+              immutableFields={projectTemplate?.configuration?.immutable}
+              data={projectConfiguration}
+              template={ProjectConfigSearch}
+            />
+          </div>
+        </AccordionItem>
 
-      <Heading2>Search & browse</Heading2>
-      <EditShorthandCaptureModel
-        key={updatedAt}
-        searchLabel={t('Search configuration')}
-        immutableFields={projectTemplate?.configuration?.immutable}
-        data={projectConfiguration}
-        template={ProjectConfigSearch}
-      />
+        <AccordionItem
+          large
+          label="Contributions"
+          description="With description"
+          icon={<ContributionIcon />}
+          maxHeight={false}
+          {...getItemProps(2)}
+        >
+          <div style={{ height: '2000px' }}>
+            <EditShorthandCaptureModel
+              key={updatedAt}
+              immutableFields={projectTemplate?.configuration?.immutable}
+              data={projectConfiguration}
+              template={ProjectConfigContributions}
+            />
+          </div>
+        </AccordionItem>
 
-      <Heading2>Contributions</Heading2>
-      <EditShorthandCaptureModel
-        key={updatedAt}
-        searchLabel={t('Search configuration')}
-        immutableFields={projectTemplate?.configuration?.immutable}
-        data={projectConfiguration}
-        template={ProjectConfigContributions}
-      />
+        <AccordionItem
+          large
+          label="Review process"
+          description="With description"
+          icon={<ReviewIcon />}
+          maxHeight={false}
+          {...getItemProps(3)}
+        >
+          <div style={{ height: '720px' }}>
+            <EditShorthandCaptureModel
+              key={updatedAt}
+              immutableFields={projectTemplate?.configuration?.immutable}
+              data={projectConfiguration}
+              template={ProjectConfigReview}
+            />
+          </div>
+        </AccordionItem>
 
-      <Heading2>Review process</Heading2>
-      <EditShorthandCaptureModel
-        key={updatedAt}
-        searchLabel={t('Search configuration')}
-        immutableFields={projectTemplate?.configuration?.immutable}
-        data={projectConfiguration}
-        template={ProjectConfigReview}
-      />
-
-      <Heading2>Other</Heading2>
-      <EditShorthandCaptureModel
-        key={updatedAt}
-        searchLabel={t('Search configuration')}
-        immutableFields={projectTemplate?.configuration?.immutable}
-        data={projectConfiguration}
-        template={ProjectConfigOther}
-      />
+        <AccordionItem
+          large
+          label="Other"
+          description="With description"
+          icon={<SettingsIcon />}
+          maxHeight={false}
+          {...getItemProps(4)}
+        >
+          <div style={{ height: '650px' }}>
+            <EditShorthandCaptureModel
+              key={updatedAt}
+              immutableFields={projectTemplate?.configuration?.immutable}
+              data={projectConfiguration}
+              template={ProjectConfigOther}
+            />
+          </div>
+        </AccordionItem>
+      </AccordionContainer>
     </div>
   );
 };
