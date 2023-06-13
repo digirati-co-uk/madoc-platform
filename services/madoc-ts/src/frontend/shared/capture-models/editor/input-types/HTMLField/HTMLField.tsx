@@ -52,6 +52,11 @@ const RichTextEditor: typeof _RichTextEditor = (_RichTextEditor as any).default
 const StyledRichTextEditor = styled(RichTextEditor)`
   border-color: rgba(5, 42, 68, 0.2);
   font-family: inherit !important;
+
+  &:focus-within {
+    border-color: #005cc5;
+  }
+
   [class^='IconButton__root'] {
     border-color: rgba(5, 42, 68, 0.2);
     background: rgba(5, 42, 68, 0.05);
