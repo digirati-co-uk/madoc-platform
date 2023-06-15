@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.1.1...main)
+## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.1.2...main)
 
 <!-- 
 ### Fixed
@@ -13,6 +13,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 ### Removed
 -->
+
+## [v2.1.2](https://github.com/digirati-co-uk/madoc-platform/compare/v2.1.1...v2.1.2)
+Hotfix release for submissions in progress.
+
+### Fixed
+- Fixed bug with save for later
 
 ## [v2.1.1](https://github.com/digirati-co-uk/madoc-platform/compare/v2.1.0...v2.1.1)
 
