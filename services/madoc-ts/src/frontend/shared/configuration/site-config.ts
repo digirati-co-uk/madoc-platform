@@ -523,6 +523,11 @@ export const NonProjectOptions: {
       },
     ],
   },
+  skipAutomaticOCRImport: {
+    label: 'OCR import',
+    type: 'checkbox-field',
+    inlineLabel: 'Skip automatically processing OCR during IIIF manifest import',
+  },
 };
 
 export const ProjectConfigInterface: {
@@ -751,7 +756,7 @@ export const ProjectConfigContributions: {
     type: 'text-field',
   },
   preventMultipleUserSubmissionsPerResource: {
-    label: 'Only one submission per user, per resource (comes from list ‘contribution page’)',
+    label: 'Only one submission per user, per resource',
     type: 'checkbox-field',
   },
   forkMode: {
@@ -965,42 +970,46 @@ export const ProjectConfigReview: {
 export const ProjectConfigOther: {
   [key in keyof Partial<ProjectConfigurationNEW>]: string | (Partial<BaseField> & any);
 } = {
-  randomlyAssignReviewer: {
-    label: 'When assigning a reviewer',
-    type: 'checkbox-field',
-    inlineLabel: 'Randomly assign a reviewer',
-  },
-  adminsAreReviewers: {
-    label: 'When assigning a reviewer',
-    type: 'checkbox-field',
-    inlineLabel: 'Admins count as reviewers',
-  },
-  manuallyAssignedReviewer: {
-    label: 'Custom reviewer (numeric id)',
-    type: 'text-field',
-  },
-  revisionApprovalsRequired: {
-    label: 'Submission approvals required',
-    type: 'text-field',
-  },
-  reviewOptions: {
-    label: 'Review options',
-    description: 'Options for review listing and pages',
+  activityStreams: {
+    label: 'Activity streams',
+    description: 'Below are the enabled activity streams. When you enable them, only new activity will be recorded.',
     type: 'checkbox-list-field',
     options: [
       {
-        label: 'Allow merging submissions',
-        value: 'allowMerging',
+        label: 'Completed manifests activity',
+        value: 'manifest',
       },
       {
-        label: 'Allow auto-review if assigned to automated user',
-        value: 'enableAutoReview',
+        label: 'Completed canvas activity (not yet implemented)',
+        value: 'canvas',
+      },
+      {
+        label: 'Curated activity feed',
+        value: 'curated',
+      },
+      {
+        label: 'Project published feed (not yet implemented)',
+        value: 'published',
       },
     ],
   },
-  hideCompletedResources: {
-    label: 'Once a resource (canvas or manifest) is complete',
-    type: 'checkbox-field',
-    inlineLabel: 'Hide it from the resource page in the project',
+  metadataSuggestions: {
+    label: 'Metadata suggestions',
+    description: 'Allow users to suggest additions or corrections to metadata',
+    type: 'checkbox-list-field',
+    options: [
+      {
+        label: 'Collection metadata',
+        value: 'collection',
+      },
+      {
+        label: 'Manifest metadata',
+        value: 'manifest',
+      },
+      {
+        label: 'Canvas metadata',
+        value: 'canvas',
+      },
+    ],
   },
 };
