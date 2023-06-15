@@ -5,7 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.1.0...main)
+## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.1.1...main)
+
+<!-- 
+### Fixed
+### Added
+### Changed
+### Removed
+-->
+
+## [v2.1.1](https://github.com/digirati-co-uk/madoc-platform/compare/v2.1.0...v2.1.1)
 
 ### Fixed
 - Fixed bug with single line transcriptions in preview mode (NS-11)
@@ -44,13 +53,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Changed language on user dash from 'reviews' to 'review tasks' to differentiate between the two
 
-<!-- 
-### Fixed
-### Added
-### Changed
-### Removed
--->
- 
 
 ## [v2.1.0](https://github.com/digirati-co-uk/madoc-platform/compare/v2.0.8...v2.1.0)
 
