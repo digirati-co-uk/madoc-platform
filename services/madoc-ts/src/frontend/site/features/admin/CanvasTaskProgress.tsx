@@ -84,6 +84,7 @@ export const CanvasTaskProgress: React.FC = () => {
 
   const [deleteCaptureModel, deleteCaptureModelStatus] = useMutation(async () => {
     if (canvasModel && canvasModel.model && canvasModel.model.id) {
+      await api.batchDeleteTasks({ resourceId: canvasId, subject: canvasTask?.subject });
       await api.deleteCaptureModel(canvasModel.model.id);
       await refetchModel();
     }
