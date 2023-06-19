@@ -34,6 +34,7 @@ export const CanvasTaskProgress: React.FC = () => {
   const { data: canvasModel, refetch: refetchModel } = useCanvasModel();
 
   const canvasTask = projectTasks?.canvasTask;
+  const userTasks = projectTasks?.userTasks;
   const isManifestComplete = projectTasks?.isManifestComplete;
   const canBeMarkedAsComplete = !canvasTask || canvasTask.status <= 1;
   const totalContributors = projectTasks?.totalContributors;
@@ -83,8 +84,18 @@ export const CanvasTaskProgress: React.FC = () => {
   });
 
   const [deleteCaptureModel, deleteCaptureModelStatus] = useMutation(async () => {
-    if (canvasModel && canvasModel.model && canvasModel.model.id) {
-      await api.batchDeleteTasks({ resourceId: canvasId, subject: canvasTask?.subject });
+    if (canvasModel && canvasModel.model && canvasModel.model.id && userTasks) {
+      await Promise.all(
+        userTasks.map(
+          userTask =>
+            userTask &&
+            userTask.id &&
+            api.deleteTask(userTask.id).catch(err => {
+              console.log(err);
+            })
+        )
+      );
+
       await api.deleteCaptureModel(canvasModel.model.id);
       await refetchModel();
     }

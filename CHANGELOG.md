@@ -38,10 +38,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added required fields in capture model (MAD-211)
 - Added ability to update manifest thumbnail (MAD-1314)
 - Added not found pages for canvas, manifest, project and collection (MAD-1123)
-- Added max number option for allowMultiple fields in capture model 
+- Added max number option for allowMultiple fields in capture model
 
 ### Changed
 - Changed language on user dash from 'reviews' to 'review tasks' to differentiate between the two
+- Improved 'delete all contributions' by deleting all user tasks as well as capture model
 
 <!-- 
 ### Fixed
