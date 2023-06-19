@@ -26,7 +26,7 @@ export function CanvasSimpleEditor({ revision, isSegmentation }: CanvasSimpleEdi
   const { projectId, canvasId } = useRouteContext();
   const { data: projectModel } = useCanvasModel();
   const [{ captureModel }, , modelRefetch] = useLoadedCaptureModel(projectModel?.model?.id, undefined, canvasId);
-  const { updateClaim, allTasksDone, maxContributorsReached, markedAsUnusable } = useCanvasUserTasks();
+  const { updateClaim, allTasksDone, maxContributorsReached, canUserSubmit, markedAsUnusable } = useCanvasUserTasks();
   const { isPreparing } = useProjectStatus();
   const annotationTheme = useProjectAnnotationStyles();
   const user = useCurrentUser(true);
@@ -44,7 +44,7 @@ export function CanvasSimpleEditor({ revision, isSegmentation }: CanvasSimpleEdi
   const allowMultiple = !config.project.modelPageOptions?.preventMultipleUserSubmissionsPerResource;
   const hideViewerControls = !!config.project.modelPageOptions?.hideViewerControls;
   const forkMode = !!config.project.forkMode;
-  const preventFurtherSubmission = (!allowMultiple && allTasksDone) || maxContributorsReached;
+  const preventFurtherSubmission = (!allowMultiple && allTasksDone) || (allTasksDone && maxContributorsReached);
   const isEditing = isEditingAnotherUsersRevision(captureModel, revision, user.user);
   const { isAdmin } = useUserPermissions();
   const canContribute =

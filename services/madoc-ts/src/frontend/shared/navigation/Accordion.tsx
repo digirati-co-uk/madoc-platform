@@ -20,6 +20,7 @@ export const AccordionContainer = styled.div`
   display: flex;
   width: 100%;
   flex-direction: column;
+  position: relative;
 `;
 
 const ItemRow = styled.div`
@@ -120,13 +121,13 @@ const ItemIcon = styled.div`
 
 const ItemBodyInner = styled.div<{ $full?: boolean }>`
   min-height: 0;
-  overflow: hidden;
+  overflow: visible;
   display: flex;
 `;
 
 const ItemBodyPadding = styled.div<{ $full?: boolean; $max?: boolean }>`
   min-height: 0;
-  overflow: hidden;
+  overflow: visible;
   flex: 1;
   padding: 1em 1em 1.5em;
 
@@ -153,6 +154,9 @@ const ItemBody = styled.section<{
     opacity: 1;
     grid-template-rows: 1fr;
     visibility: visible;
+    &[data-overflow='true'] {
+      overflow: visible;
+    }
   }
 
   transition: all 0.4s, visibility 0.8s;
@@ -175,6 +179,7 @@ const ItemHeading = styled.div<{ $open?: boolean }>`
   min-width: 0;
   width: 100%;
   color: #757575;
+  z-index: 1;
   &:hover {
     color: #333;
   }
@@ -212,6 +217,7 @@ interface AccordionItemProps {
   initialOpen?: boolean;
   maxHeight?: number | false;
   fullWidth?: boolean;
+  overflow?: boolean;
   onChange?: (value: boolean) => void;
   large?: boolean;
 }
@@ -243,6 +249,21 @@ export function useAccordionItems(itemsLength: number, singleMode = false) {
     }
 
     switch (e.code) {
+      case 'Home': {
+        const next = 0;
+        if (elRefs[next]) {
+          elRefs[next].current?.focus();
+        }
+        break;
+      }
+      case 'End': {
+        const next = itemsLength - 1;
+        if (elRefs[next]) {
+          elRefs[next].current?.focus();
+        }
+        break;
+      }
+
       case 'ArrowDown': {
         if (currentIndex !== itemsLength - 1) {
           const next = currentIndex + 1;
@@ -312,7 +333,55 @@ export function useAccordionItems(itemsLength: number, singleMode = false) {
     };
   };
 
+  const open = (key: number) => {
+    const el = elRefs[key];
+    if (el && el.current) {
+      el.current.open();
+    }
+  };
+
+  const close = (key: number) => {
+    const el = elRefs[key];
+    if (el && el.current) {
+      el.current.close();
+    }
+  };
+
+  const toggle = (key: number) => {
+    const el = elRefs[key];
+    if (el && el.current) {
+      el.current.toggle();
+    }
+  };
+
+  const focus = (key: number) => {
+    const el = elRefs[key];
+    if (el && el.current) {
+      el.current.focus();
+    }
+  };
+
+  const openAll = () => {
+    for (let i = 0; i < elRefs.length; i++) {
+      const ref = elRefs[i];
+      ref.current?.open();
+    }
+  };
+
+  const closeAll = () => {
+    for (let i = 0; i < elRefs.length; i++) {
+      const ref = elRefs[i];
+      ref.current?.close();
+    }
+  };
+
   return {
+    open,
+    close,
+    toggle,
+    focus,
+    openAll,
+    closeAll,
     onKeyDown,
     getItemProps,
   };
@@ -375,6 +444,7 @@ export const AccordionItem = forwardRef<AccordionItemRef, AccordionItemProps>(fu
       <ItemBody
         aria-labelledby={`accordion-${id}`}
         aria-hidden={!open}
+        data-overflow={!!props.overflow}
         data-has-icon={!!props.icon}
         onScroll={onScroll}
         ref={content}
@@ -400,6 +470,7 @@ interface AccordionProps {
   singleMode?: boolean;
   items: Array<AccordionItemProps>;
   maxHeight?: number | false;
+  overflow?: boolean;
 }
 
 export function Accordion(props: AccordionProps) {
@@ -408,7 +479,7 @@ export function Accordion(props: AccordionProps) {
   return (
     <AccordionContainer onKeyDown={onKeyDown}>
       {props.items.map((item, key) => (
-        <AccordionItem maxHeight={props.maxHeight} key={key} {...item} {...getItemProps(key)}>
+        <AccordionItem overflow={props.overflow} maxHeight={props.maxHeight} key={key} {...item} {...getItemProps(key)}>
           {item.children}
         </AccordionItem>
       ))}

@@ -370,6 +370,7 @@ export const siteConfigurationModel: {
       },
       {
         label: 'Hide image filtering',
+        description: 'Hide the ability to filter images by their contribution status',
         value: 'hideFilterImages',
       },
       {
@@ -488,7 +489,7 @@ export const siteConfigurationModel: {
   },
 };
 
-export const ProjectConfigInterface: {
+export const NonProjectOptions: {
   [key in keyof Partial<ProjectConfigurationNEW>]: string | (Partial<BaseField> & any);
 } = {
   headerOptions: {
@@ -522,13 +523,18 @@ export const ProjectConfigInterface: {
       },
     ],
   },
+};
+
+export const ProjectConfigInterface: {
+  [key in keyof Partial<ProjectConfigurationNEW>]: string | (Partial<BaseField> & any);
+} = {
   projectPageOptions: {
     label: 'Project page options',
-    description: '..todo',
+    description: 'UI customisations for the default page blocks on the project page',
     type: 'checkbox-list-field',
     options: [
       {
-        label: 'Hide statistics on projects page',
+        label: 'Hide statistics',
         value: 'hideStatistics',
       },
       {
@@ -561,9 +567,28 @@ export const ProjectConfigInterface: {
       },
     ],
   },
+  // ollectionPageOptions: {
+  //   label: 'Collection page options',
+  //   description: '..todo',
+  //   type: 'checkbox-list-field',
+  //   options: [
+  //     {
+  //       label: 'Hide search button',
+  //       value: 'hideSearchButton',
+  //     },
+  //     {
+  //       label: 'Hide go to random manifest button',
+  //       value: 'hideRandomManifest',
+  //     },
+  //     {
+  //       label: 'Hide go to random canvas button',
+  //       value: 'hideRandomCanvas',
+  //     },
+  //   ],
+  // },
   manifestPageOptions: {
     label: 'Manifest page options',
-    description: '..todo',
+    description: 'UI customisations for the default page blocks on the manifest page',
     type: 'checkbox-list-field',
     options: [
       {
@@ -621,26 +646,33 @@ export const ProjectConfigInterface: {
       },
     ],
   },
-  // atlasBackground: {
-  //   label: 'Atlas background',
-  //   type: 'color-field',
-  //   description: 'Change the background of the deep zoom viewer',
-  //   defaultValue: '#f9f9f9',
-  // },
-  miradorCanvasPage: {
-    label: 'Use Mirador on canvas page',
-    type: 'checkbox-field',
-    inlineLabel: 'Use Mirador in place of the default viewer',
+  atlasBackground: {
+    label: 'Atlas background',
+    type: 'color-field',
+    description: 'Change the background of the deep zoom viewer (default: #f9f9f9)',
+    defaultValue: '#f9f9f9',
   },
-  universalViewerCanvasPage: {
-    label: 'Use Universal Viewer on canvas page',
-    type: 'checkbox-field',
-    inlineLabel: 'Use UniversalViewer in place of the default viewer',
-  },
-  hideCanvasThumbnailNavigation: {
-    label: 'Hide manifest thumbnail navigation on canvas page',
-    type: 'checkbox-field',
-    inlineLabel: 'Hide manifest thumbnail navigation',
+  canvasPageOptions: {
+    label: 'Canvas page options',
+    description: 'These options can be overridden on the canvas page using page blocks',
+    type: 'checkbox-list-field',
+    options: [
+      {
+        label: 'Use Mirador Viewer',
+        description: 'Use Mirador in place of the default viewer',
+        value: 'miradorCanvasPage',
+      },
+      {
+        label: 'Use Universal Viewer',
+        description: 'Use UniversalViewer in place of the default viewer',
+        value: 'universalViewerCanvasPage',
+      },
+      {
+        label: 'Hide thumbnail navigation',
+        description: 'Hide manifest thumbnail navigation',
+        value: 'hideCanvasThumbnailNavigation',
+      },
+    ],
   },
 };
 
@@ -791,8 +823,8 @@ export const ProjectConfigContributions: {
         value: 'disableSaveForLater',
       },
       {
-        label:
-          'Allow personal notes (allow users to take personal notes only visible to themselves on canvases in a project)',
+        label: 'Allow personal notes',
+        description: 'allow users to take personal notes only visible to themselves on canvases in a project',
         value: 'allowPersonalNotes',
       },
     ],

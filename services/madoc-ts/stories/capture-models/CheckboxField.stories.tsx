@@ -23,6 +23,22 @@ export const Simple: React.FC = () => {
     </form>
   );
 };
+export const SimpleWithDescription: React.FC = () => {
+  const [value, setValue] = React.useState(true);
+  return (
+    <form>
+      <CheckboxField
+        id="1"
+        label="Some label"
+        inlineLabel="Confirm this thing"
+        inlineDescription="A description of what this thing does that might be quite long and wrap over multiple lines."
+        type="checkbox-field"
+        value={value}
+        updateValue={setValue}
+      />
+    </form>
+  );
+};
 
 export const SimpleWithoutLabel: React.FC = () => {
   const [value, setValue] = React.useState(true);

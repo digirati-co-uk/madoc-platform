@@ -33,14 +33,18 @@ export const Button = styled.button<{
   line-height: 1.18em;
   border-radius: 3px;
   background: #fff;
-  color: #3579f6;
   text-decoration: none;
   display: inline-block;
   letter-spacing: 0.25px;
   vertical-align: top;
   transition: color 0.1s, background-color 0.1s, border-color 0.1s;
   white-space: nowrap;
-  border: 1px solid #4265e9;
+  
+  // Alternative with github style gradient
+  background: linear-gradient(180deg, #fafbfc 0%, #eff3f6 90%);
+  border: 1px solid rgba(27, 31, 35, 0.15);
+  color: #333;
+  
   
   ${props =>
     props.$link &&
@@ -56,48 +60,35 @@ export const Button = styled.button<{
     `}
 
   &:active {
-    box-shadow: inset 0 2px 8px 0 rgba(39, 75, 155, 0.8);
+    //box-shadow: inset 0 2px 8px 0 rgba(39, 75, 155, 0.8);
+    // Alternative with github style gradient
+    box-shadow: inset 0 2px 8px 0 rgba(27, 31, 35, 0.15);
   }
 
   &:link,
   &:visited {
-    color: #3579f6;
+    color: #333;
   }
 
-  &:hover {
-    background: #4265e9;
-    border-color: #4265e9;
-    color: #fff;
+  &:hover, &:focus {
+    // Alternative with github style gradient
+    background: linear-gradient(180deg, #f0f3f6 0%, #e6ebf1 90%);
+    border-color: rgba(27, 31, 35, 0.15);
+    color: #000;
   }
   
   &:focus {
     outline: none;
-    color: #fff;
-    background: #4265e9;
-    border-color: #4265e9;
-  }
-  
-  &:focus:hover {
-    border-color: #4265e9;
   }
 
-  &:disabled {
+  &:disabled, &[disabled] {
     opacity: 0.6;
     cursor: not-allowed;
-
-    &:hover {
-      color: #4265e9;
-      background: #fff;
-      border-color: #4265e9;
-    }
+    pointer-events: none;
   }
 
   ${ButtonIcon} svg {
-    fill: #4265e9;
-  }
-  &:hover ${ButtonIcon} svg,
-  &:focus ${ButtonIcon} svg {
-    fill: #fff;
+    fill: #333;
   }
 
   ${props =>
@@ -116,6 +107,12 @@ export const Button = styled.button<{
       &:hover {
         background: #5371e9;
         border-color: #5371e9;
+      }
+      &:focus,
+      &:focus:hover {
+        background: #4265e9;
+        border-color: #4265e9;
+        color: #fff;
       }
       &:focus-visible {
         box-shadow: inset 0 0px 0px 2px rgba(255, 255, 255, 0.8);
@@ -265,51 +262,9 @@ export const Button = styled.button<{
     `}
 `;
 
-export const RoundedButton = styled.a<{ disabled?: boolean }>`
-  cursor: pointer;
-  font-size: 16px;
-  line-height: 22px;
-  padding: 3px 10px;
-  background: #ffffff;
-  color: #007bff;
-  border: 1px solid #dee2e6;
-  text-decoration: none;
-  border-radius: 4px;
-
-  ${props =>
-    !props.disabled &&
-    css`
-      &:link,
-      &:visited {
-        color: #007bff;
-      }
-      &:hover {
-        background: #ffffff;
-        border-color: #dee2e6;
-      }
-      &:focus {
-        outline: 1px solid #dee2e6;
-      }
-    `}
-  ${props =>
-    props.disabled &&
-    css`
-      pointer-events: none;
-      cursor: not-allowed;
-      background: #eee;
-      color: #777b80;
-    `}
-`;
-
 export const SmallButton = styled(Button)`
   padding: 0.25em 0.75em;
   font-size: 0.8em;
-`;
-
-export const SmallRoundedButton = styled(RoundedButton)`
-  font-size: 12px;
-  line-height: 14px;
-  padding: 2px 10px;
 `;
 
 export const MediumRoundedButton = styled.a`

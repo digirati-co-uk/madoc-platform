@@ -4,6 +4,7 @@ import { useField } from '../../../plugin-api/hooks/use-field';
 import { useSelectorStatus } from '../../../plugin-api/hooks/use-selector-status';
 import { BaseField } from '../../../types/field-types';
 import { BaseSelector } from '../../../types/selector-types';
+import { FieldSection } from '../../atoms/StyledForm';
 import { FieldHeader } from '../FieldHeader/FieldHeader';
 
 type Props<T extends BaseField = BaseField> = {
@@ -79,7 +80,7 @@ export const FieldWrapper: React.FC<Props> = ({
 
   return (
     <BrowserComponent fallback={typeof fallback !== 'undefined' ? fallback : 'loading...'}>
-      <div style={{ marginBottom: '1em' }}>
+      <FieldSection>
         {hideHeader ? null : (
           <FieldHeader
             required={field.required}
@@ -100,7 +101,7 @@ export const FieldWrapper: React.FC<Props> = ({
           />
         )}
         {fieldComponent || ''}
-      </div>
+      </FieldSection>
       {field.required || selector?.required ? <small>* required</small> : null}
     </BrowserComponent>
   );
