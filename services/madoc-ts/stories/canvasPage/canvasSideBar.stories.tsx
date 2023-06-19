@@ -1,5 +1,9 @@
 import * as React from 'react';
-import { LayoutSidebarMenu, NavIconContainer } from '../../src/frontend/shared/layout/LayoutContainer';
+import {
+  LayoutSidebarMenu,
+  NavIconContainer,
+  NavIconNotifcation,
+} from '../../src/frontend/shared/layout/LayoutContainer';
 import { ViewDocument } from '../../src/frontend/shared/capture-models/inspector/ViewDocument';
 import { DynamicVaultContext } from '../../src/frontend/shared/capture-models/new/DynamicVaultContext';
 import { useState } from 'react';
@@ -10,14 +14,20 @@ import { TranscriptionIcon } from '../../src/frontend/shared/icons/Transcription
 import { PersonIcon } from '../../src/frontend/shared/icons/PersonIcon';
 import { MetadataEmptyState } from '../../src/frontend/shared/atoms/MetadataConfiguration';
 import { RevisionListItemContainer, RevisionStatus } from '../../src/frontend/shared/components/RevisionList';
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { Subheading1 } from '../../src/frontend/shared/typography/Heading1';
-// // @ts-ignore
+
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import mad1200fixture1 from '../../fixtures/96-jira/MAD-1200-1.json';
 
 import { MetadataPanel } from './metadataPanel';
 import { AnnotationsPanel } from './annotationsPanel';
 import { TranscriptionsPanel } from './transcriptionsPanel';
+import { PersonalNotesPanel } from './personalNotesPanel';
+import { DownloadsPanel } from './downloadsPanel';
+import { LockIcon } from '../../src/frontend/shared/icons/LockIcon';
+import { DownloadIcon } from '../../src/frontend/shared/icons/DownloadIcon';
 
 export default {
   title: 'Components / Canvas sidebar',
@@ -30,6 +40,26 @@ const Template: any = (sidebarProps: any) => {
   const target = {
     manifestUri: 'https://www.omeka.ugent.be/manifests/iiif/2/2636/manifest',
     canvasUri: 'https://www.omeka.ugent.be/manifests/iiif/2/2636/canvas/p1',
+  };
+
+  const personalNotes = { enabled: true, count: 2 };
+  const downloads = {
+    enabled: true,
+    count: 2,
+    items: [
+      {
+        id: 'atvubjnl5421',
+        label: { none: ['first'] },
+        type: 'pdf',
+        url: 'www.madoc.pdf',
+      },
+      {
+        id: 'hgdugtrebjnl56531',
+        label: { none: ['Seccond'] },
+        type: 'svg',
+        url: 'www.madoc.svg',
+      },
+    ],
   };
 
   return (
@@ -51,9 +81,9 @@ const Template: any = (sidebarProps: any) => {
         </NavIconContainer>
 
         {/* Translations */}
-        <NavIconContainer $active={k === 3} onClick={() => setK(3)}>
-          <TranscriptionIcon />
-        </NavIconContainer>
+        {/*<NavIconContainer $active={k === 3} onClick={() => setK(3)}>*/}
+        {/*  <TranscriptionIcon />*/}
+        {/*</NavIconContainer>*/}
 
         {/* Documents */}
         <NavIconContainer $active={k === 4} onClick={() => setK(4)}>
@@ -66,14 +96,20 @@ const Template: any = (sidebarProps: any) => {
         </NavIconContainer>
 
         {/* personalNotes */}
-        <NavIconContainer $active={k === 6} onClick={() => setK(6)}>
-          {/*<LockIcon />*/}
-        </NavIconContainer>
+        {personalNotes.enabled && (
+          <NavIconContainer $active={k === 6} onClick={() => setK(6)}>
+            <LockIcon />
+            <NavIconNotifcation>{personalNotes.count}</NavIconNotifcation>
+          </NavIconContainer>
+        )}
 
         {/* downloads */}
-        <NavIconContainer $active={k === 7} onClick={() => setK(7)}>
-          {/*<ArrowDownIcon />*/}
-        </NavIconContainer>
+        {downloads.enabled && (
+          <NavIconContainer $active={k === 7} onClick={() => setK(7)}>
+            <DownloadIcon />
+            <NavIconNotifcation>{downloads.count}</NavIconNotifcation>
+          </NavIconContainer>
+        )}
       </LayoutSidebarMenu>
 
       <div>
@@ -118,9 +154,9 @@ const Template: any = (sidebarProps: any) => {
             </div>
           </DynamicVaultContext>
         ) : k === 6 ? (
-          <p>Personal Notes </p>
+          <PersonalNotesPanel personalNotes={personalNotes} />
         ) : (
-          <p>Downloads</p>
+          <DownloadsPanel downloads={downloads} />
         )}
       </div>
     </div>

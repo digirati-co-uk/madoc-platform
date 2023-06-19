@@ -7,12 +7,15 @@ export const MetadataPanel: React.FC<{ metadata?: MetadataItem[] }> = ({ metadat
   if (!metadata || !metadata.length) {
     return <MetadataEmptyState>No Metadata</MetadataEmptyState>;
   }
-  metadata.map(data => {
-    return (
-      <>
-        <LocaleString>{data.label}</LocaleString>
-        <LocaleString>{data.value}</LocaleString>
-      </>
-    );
-  });
+
+  return (
+    <>
+      {metadata.map(data => (
+        <>
+          <LocaleString>{data.label}</LocaleString>
+          <LocaleString>{data.value}</LocaleString>
+        </>
+      ))}
+    </>
+  );
 };
