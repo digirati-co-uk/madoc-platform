@@ -30,6 +30,12 @@ export const GlobalStyles = createGlobalStyle`
     flex-direction: column;
   }
   
+  .rfs-menu-container {
+    overflow: hidden;
+    box-shadow: 0 4px 15px 0 rgba(0, 0, 0, 0.18), 0 0px 0px 1px rgba(0, 0, 0, 0.15),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+  }
+  
   //.rfs-menu-container {
   //  position: fixed;
   //  max-width: 550px;

@@ -5,7 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.1.0...main)
+## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.1.2...main)
+
+<!-- 
+### Fixed
+### Added
+### Changed
+### Removed
+-->
+
+## [v2.1.2](https://github.com/digirati-co-uk/madoc-platform/compare/v2.1.1...v2.1.2)
+Hotfix release for submissions in progress.
+
+### Fixed
+- Fixed bug with save for later
+
+## [v2.1.1](https://github.com/digirati-co-uk/madoc-platform/compare/v2.1.0...v2.1.1)
 
 ### Fixed
 - Fixed bug with single line transcriptions in preview mode (NS-11)
@@ -38,19 +53,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added required fields in capture model (MAD-211)
 - Added ability to update manifest thumbnail (MAD-1314)
 - Added not found pages for canvas, manifest, project and collection (MAD-1123)
-- Added max number option for allowMultiple fields in capture model
+- Added max number option for allowMultiple fields in capture model 
+- Added new Configuration page for projects (MAD-1365)
 
 ### Changed
 - Changed language on user dash from 'reviews' to 'review tasks' to differentiate between the two
 - Improved 'delete all contributions' by deleting all user tasks as well as capture model
 
-<!-- 
-### Fixed
-### Added
-### Changed
-### Removed
--->
- 
 
 ## [v2.1.0](https://github.com/digirati-co-uk/madoc-platform/compare/v2.0.8...v2.1.0)
 

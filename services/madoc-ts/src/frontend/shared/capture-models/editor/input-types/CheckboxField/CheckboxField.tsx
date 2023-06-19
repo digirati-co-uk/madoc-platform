@@ -1,13 +1,20 @@
 import React from 'react';
 import { BaseField, FieldComponent } from '../../../types/field-types';
 import { InlineFieldContainer } from '../../atoms/InlineFieldContainer';
-import { StyledCheckbox, StyledFormLabel } from '../../atoms/StyledForm';
+import {
+  StyledCheckbox,
+  StyledCheckboxContainer,
+  StyledCheckboxDescription,
+  StyledCheckboxLabel,
+  StyledFormLabel,
+} from '../../atoms/StyledForm';
 import { useModelTranslation } from '../../../hooks/use-model-translation';
 
 export interface CheckboxFieldProps extends BaseField {
   type: 'checkbox-field';
   value: boolean;
   inlineLabel?: string;
+  inlineDescription?: string;
   disabled?: boolean;
 }
 
@@ -16,7 +23,7 @@ export const CheckboxField: FieldComponent<CheckboxFieldProps> = props => {
   if (props.inlineLabel) {
     return (
       <InlineFieldContainer>
-        <StyledFormLabel>
+        <StyledCheckboxContainer data-no-description={!props.inlineDescription}>
           <StyledCheckbox
             name={props.id}
             id={props.id}
@@ -27,14 +34,17 @@ export const CheckboxField: FieldComponent<CheckboxFieldProps> = props => {
               props.updateValue(v.target.checked);
             }}
           />
-          {tModel(props.inlineLabel)}
-        </StyledFormLabel>
+          <StyledCheckboxLabel>{tModel(props.inlineLabel)}</StyledCheckboxLabel>
+          {props.inlineDescription ? (
+            <StyledCheckboxDescription>{tModel(props.inlineDescription)}</StyledCheckboxDescription>
+          ) : null}
+        </StyledCheckboxContainer>
       </InlineFieldContainer>
     );
   }
 
   return (
-    <InlineFieldContainer $inline>
+    <InlineFieldContainer data-inline>
       <StyledCheckbox
         name={props.id}
         id={props.id}

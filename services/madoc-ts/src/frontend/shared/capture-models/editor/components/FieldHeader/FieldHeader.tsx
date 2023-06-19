@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import styled, { css } from 'styled-components';
-import { useModelTranslation } from '../../../hooks/use-model-translation';
+import { ModelTranslation } from '../../../utility/model-translation';
 import { Tag } from '../../atoms/Tag';
 import { useTranslation } from 'react-i18next';
 import { useSelectorHelper } from '../../stores/selectors/selector-helper';
@@ -19,11 +19,15 @@ type FieldHeaderProps = {
   required?: boolean;
 };
 
+const textSize = `0.875rem`;
+const lineHeight = `1.35rem`;
+
 export const FieldHeaderWrapper = styled.div`
   font-family: -apple-system, 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Open Sans',
     'Helvetica Neue', 'Icons16', sans-serif;
-  line-height: 1.8em;
-  margin: 0.5em 0;
+  font-size: ${textSize};
+  line-height: ${lineHeight};
+  margin: 0.3rem 0;
 `;
 
 const FieldHeaderTop = styled.div`
@@ -38,9 +42,10 @@ const FieldHeaderLeft = styled.div`
 `;
 
 export const FieldHeaderTitle = styled.label`
-  letter-spacing: -0.3px;
+  letter-spacing: -0.25px;
   font-weight: 500;
-  font-size: 1.2em;
+  font-size: 1rem;
+  margin-top: 0.5rem;
   .ui.tiny.label {
     margin-left: 0.5em;
   }
@@ -48,7 +53,9 @@ export const FieldHeaderTitle = styled.label`
 
 const FieldHeaderSubtitle = styled.label`
   letter-spacing: -0.25px;
-  font-size: 1em;
+  color: #555;
+  font-size: ${textSize};
+  line-height: ${lineHeight};
   padding-bottom: 0.3em;
   display: block;
 `;
@@ -59,7 +66,7 @@ const FieldHeaderRight = styled.div`
 `;
 
 const FieldHeaderIcon = styled.div<{ open?: boolean }>`
-  padding: 0.5em 1em;
+  padding: 0.5rem 1rem;
   cursor: pointer;
   margin-top: auto;
   background: transparent;
@@ -100,8 +107,8 @@ const FieldHeaderBottom = styled.div<{ open?: boolean }>`
 const FieldHeaderBottomInner = styled.div`
   background: #aaa7de;
   color: #fff;
-  padding: 0.7em;
-  margin-bottom: 0.5em;
+  padding: 0.7rem;
+  margin-bottom: 0.5rem;
 `;
 
 export const FieldHeader: React.FC<FieldHeaderProps> = ({
@@ -120,8 +127,6 @@ export const FieldHeader: React.FC<FieldHeaderProps> = ({
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const helper = useSelectorHelper();
-  const { t: tModel, i18n } = useModelTranslation();
-
   const isSelectorRequired = selectorComponent && selectorComponent.props?.required;
   const isSelectorValue = selectorComponent && selectorComponent.props.state;
   const isSelectorInvalid = isSelectorRequired && !isSelectorValue;
@@ -145,11 +150,19 @@ export const FieldHeader: React.FC<FieldHeaderProps> = ({
       <FieldHeaderTop>
         <FieldHeaderLeft>
           <FieldHeaderTitle htmlFor={labelFor}>
-            {tModel(label) || <span style={{ opacity: 0.5 }}>{t('Untitled')}</span>}{' '}
+            {label ? (
+              <ModelTranslation>{label}</ModelTranslation>
+            ) : (
+              <span style={{ opacity: 0.5 }}>{t('Untitled')}</span>
+            )}{' '}
             {showTerm && term ? <Tag size="tiny">{term}</Tag> : null}
             {required ? <span>*</span> : null}
           </FieldHeaderTitle>
-          {description ? <FieldHeaderSubtitle htmlFor={labelFor}>{tModel(description)}</FieldHeaderSubtitle> : null}
+          {description ? (
+            <FieldHeaderSubtitle htmlFor={labelFor}>
+              <ModelTranslation>{description}</ModelTranslation>
+            </FieldHeaderSubtitle>
+          ) : null}
         </FieldHeaderLeft>
         {selectorComponent ? (
           <FieldHeaderRight

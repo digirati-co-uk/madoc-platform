@@ -2,8 +2,8 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { SimpleCard } from '../atoms/SimpleCard';
 import { Button } from '../navigation/Button';
-import { useModelTranslation } from './hooks/use-model-translation';
 import { RevisionRequest } from './types/revision-request';
+import { ModelTranslation } from './utility/model-translation';
 
 export const Choice: React.FC<{
   showBackButton: boolean;
@@ -13,7 +13,6 @@ export const Choice: React.FC<{
   revisions?: Record<string, RevisionRequest[]>;
 }> = ({ choice, onChoice, showBackButton, onBackButton, revisions, children }) => {
   const { t } = useTranslation();
-  const { t: tModel } = useModelTranslation();
 
   return (
     <>
@@ -23,8 +22,13 @@ export const Choice: React.FC<{
         </div>
       ) : null}
       {choice.items.map((item, idx) => (
-        <SimpleCard key={idx} label={tModel(item.label)} interactive onClick={() => onChoice(item.id)}>
-          {tModel(item.description)}
+        <SimpleCard
+          key={idx}
+          label={item.label ? <ModelTranslation>{item.label}</ModelTranslation> : undefined}
+          interactive
+          onClick={() => onChoice(item.id)}
+        >
+          <ModelTranslation>{item.description}</ModelTranslation>
           {revisions && revisions[item.id] && revisions[item.id].length ? (
             <div
               style={{

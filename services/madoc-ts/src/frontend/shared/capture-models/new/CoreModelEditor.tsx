@@ -328,19 +328,20 @@ export function CoreModelEditor({
               {preventFurtherSubmission ? (
                 <>
                   <EmptyState style={{ fontSize: '1.25em' }} $box $noMargin>
-                    <ButtonIcon>
-                      <TickIcon />
-                    </ButtonIcon>
-                    <strong>{t('Task is complete!')}</strong>
+                    <strong style={{ display: 'flex' }}>
+                      <TickIcon style={{ marginRight: '0.5em', marginBottom: 0 }} /> {t('Task is complete!')}
+                    </strong>
                   </EmptyState>
                   <EmptyState>
                     {markedAsUnusable ? (
                       t('You have marked this as unusable')
                     ) : (
                       <>
-                        {t('Thank you for your submission.')}
-                        {t('You can view your contribution in the left sidebar.')}
-                        {t('You can continue working on another canvas.')}
+                        <p>{t('Thank you for your submission.')}</p>
+                        <p>
+                          {t('You can view your contribution in the left sidebar.')}{' '}
+                          {t('You can continue working on another canvas.')}
+                        </p>
                       </>
                     )}
                   </EmptyState>
