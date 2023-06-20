@@ -60,6 +60,8 @@ const SurfaceStyled = styled.div<{
   font-family: ${props => (props.$font ? `${props.$font}, sans-serif` : 'inherit')};
   text-align: ${props => (props.$textAlign ? props.$textAlign : 'left')};
   margin-bottom: ${parseProp('$marginBottom', '0')};
+  margin-left: ${props => (props.$fullWidth ? '-2em' : '')};
+  margin-right: ${props => (props.$fullWidth ? '-2em' : '')};
 `;
 
 export type SurfaceProps = {
