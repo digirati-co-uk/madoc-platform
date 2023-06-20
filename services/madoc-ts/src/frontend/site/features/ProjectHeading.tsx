@@ -13,6 +13,8 @@ export const ProjectHeading: React.FC = () => {
 
   return (
     <>
+      {/*add image */}
+      {/*add start contributing button*/}
       <LocaleString as={Heading1}>{project.label}</LocaleString>
       <LocaleString as={Subheading1}>{project.summary}</LocaleString>
     </>
