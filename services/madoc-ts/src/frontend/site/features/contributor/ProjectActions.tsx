@@ -18,7 +18,7 @@ export const ProjectActions: React.FC = () => {
   const { isActive } = useProjectStatus();
   const { t } = useTranslation();
   const createLink = useRelativeLinks();
-  console.log(project)
+
   const {
     project: { allowCollectionNavigation = true, allowManifestNavigation = true, claimGranularity, allowPersonalNotes },
   } = useSiteConfiguration();

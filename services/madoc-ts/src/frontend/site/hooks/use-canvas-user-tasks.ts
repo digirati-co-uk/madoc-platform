@@ -78,7 +78,7 @@ export function useCanvasUserTasks() {
         ? canvasTask.maxContributors <= canvasTask.totalContributors
         : false;
 
-    const canSubmit = user && !!canvasTask?.canUserSubmit;
+    const canUserSubmit = user && !!canvasTask?.canUserSubmit;
 
     const cantSubmitAfterRejection = config.project.modelPageOptions?.preventContributionAfterRejection
       ? userTasks?.some(task => task.status === -1)
@@ -98,7 +98,7 @@ export function useCanvasUserTasks() {
 
     const canCanvasTakeSubmission = canClaimCanvas && cantSubmitMultiple && completedAndHide && maxContributorsReached;
 
-    const canUserSubmit = canContribute && canSubmit && cantSubmitAfterRejection && cantSubmitAfterSubmission;
+    const canSubmitTask = canContribute && canUserSubmit && cantSubmitAfterRejection && cantSubmitAfterSubmission;
 
     const preventFurtherSubmission = canCanvasTakeSubmission && canUserSubmit;
 
@@ -122,7 +122,6 @@ export function useCanvasUserTasks() {
       completedAndHide,
       completed,
       canClaimCanvas,
-      canSubmit,
       canContribute,
       maxContributorsReached,
       updateClaim,

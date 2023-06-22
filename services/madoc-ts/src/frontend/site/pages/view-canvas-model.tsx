@@ -28,7 +28,7 @@ export const ViewCanvasModel: React.FC = () => {
   const { canvasId } = useRouteContext();
   const { showCanvasNavigation, showWarning } = useCanvasNavigation();
   const { isManifestComplete, hasExpired } = useManifestTask();
-  const { canSubmit, canContribute, isLoading: isLoadingTasks, completedAndHide } = useCanvasUserTasks();
+  const { canUserSubmit, canContribute, isLoading: isLoadingTasks, completedAndHide } = useCanvasUserTasks();
 
   const { goToNext } = useLocationQuery<any>();
   const shouldGoToNext = castBool(goToNext);
@@ -40,9 +40,8 @@ export const ViewCanvasModel: React.FC = () => {
 
   const { showCaptureModelOnManifest } = useProjectShadowConfiguration();
 
-
   const isReadOnly =
-    (!canSubmit && !isLoadingTasks) ||
+    (!canUserSubmit && !isLoadingTasks) ||
     completedAndHide ||
     isManifestComplete ||
     hasExpired ||

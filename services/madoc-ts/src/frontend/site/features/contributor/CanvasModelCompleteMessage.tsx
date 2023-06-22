@@ -12,7 +12,7 @@ export const CanvasModelCompleteMessage: React.FC = () => {
   const { projectId } = useRouteContext();
   const { isManifestComplete, hasExpired } = useManifestTask();
   const user = useUser();
-  const { canSubmit, canCanvasTakeSubmission, isLoading: isLoadingTasks, completed } = useCanvasUserTasks();
+  const { canUserSubmit, canCanvasTakeSubmission, isLoading: isLoadingTasks, completed } = useCanvasUserTasks();
 
   const { t } = useTranslation();
 
@@ -21,7 +21,7 @@ export const CanvasModelCompleteMessage: React.FC = () => {
   const projectPaused = !isActive && !isPreparing;
 
   const hideModelEditor =
-    (!canSubmit && !isLoadingTasks) ||
+    (!canUserSubmit && !isLoadingTasks) ||
     canCanvasTakeSubmission ||
     isManifestComplete ||
     hasExpired ||
