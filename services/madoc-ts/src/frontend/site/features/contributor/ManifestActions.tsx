@@ -31,13 +31,11 @@ export const ManifestActions: React.FC<props> = ({ alignment }) => {
   const createLink = useRelativeLinks();
   const options = useManifestPageConfiguration();
   const { showNavigationContent } = usePreventCanvasNavigation();
-  const { canUserSubmit, userTasks } = useManifestUserTasks();
+  const { canUserSubmit, preventFurtherSubmission } = useManifestUserTasks();
   const { isActive, isPreparing } = useProjectStatus();
   const { data: project } = useProject();
   const { tasks: continueSubmission, inProgress: continueCount } = useContinueSubmission();
-  const config = useSiteConfiguration();
-  const allowMultiple = !config.project.modelPageOptions?.preventMultipleUserSubmissionsPerResource;
-  const preventFurtherSubmission = !allowMultiple && !!userTasks?.find(task => task.status === 2 || task.status === 3);
+
   const {
     project: { claimGranularity, manifestPageOptions },
   } = useSiteConfiguration();

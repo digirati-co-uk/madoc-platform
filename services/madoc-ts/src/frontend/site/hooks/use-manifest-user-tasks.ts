@@ -6,10 +6,12 @@ import { useApi } from '../../shared/hooks/use-api';
 import { useInvalidateAfterSubmission } from './use-invalidate-after-submission';
 import { useProjectManifestTasks } from './use-project-manifest-tasks';
 import { RouteContext } from './use-route-context';
+import { useSiteConfiguration } from '../features/SiteConfigurationContext';
 
 const defaultScope: any[] = [];
 export function useManifestUserTasks() {
   const invalidate = useInvalidateAfterSubmission();
+  const config = useSiteConfiguration();
   const api = useApi();
   const { user, scope = defaultScope } = api.getIsServer() ? { user: undefined } : api.getCurrentUser() || {};
   const { data: manifestTask, isLoading, refetch, updatedAt } = useProjectManifestTasks();
@@ -58,15 +60,48 @@ export function useManifestUserTasks() {
     );
     const completedAndHide = manifestTask?.manifestTask?.status === 3;
     const canUserSubmit = user && !!manifestTask?.canUserSubmit;
-    const canContribute = user && (scope.indexOf('site.admin') !== -1 || scope.indexOf('models.contribute') !== -1);
+
+    const canContribute =
+      user &&
+      (scope.indexOf('site.admin') !== -1 ||
+        scope.indexOf('models.contribute') !== -1 ||
+        scope.indexOf('models.admin') !== -1);
+
     const allTasksDone = userContributions.length
       ? !userContributions.find(t => t.status === 0 || t.status === 1)
       : false;
+
     const markedAsUnusable =
       allTasksDone &&
       (userContributions.length
         ? !!userContributions.find(t => (t.status === 2 || t.status === 3) && !t.state.revisionId)
         : false);
+
+    const maxContributorsReached =
+      manifestTask?.maxContributors && manifestTask.totalContributors
+        ? manifestTask.maxContributors <= manifestTask.totalContributors
+        : false;
+
+    const cantSubmitAfterRejection = config.project.modelPageOptions?.preventContributionAfterRejection
+      ? userTasks?.some(task => task.status === -1)
+      : false;
+
+    const cantSubmitAfterSubmission = config.project.modelPageOptions?.preventContributionAfterSubmission
+      ? userContributions?.some(task => task.status === 2)
+      : false;
+
+    const cantSubmitMultiple = config.project.modelPageOptions?.preventMultipleUserSubmissionsPerResource
+      ? userContributions.length > 0
+      : false;
+
+    const preventFurtherSubmission =
+      !canContribute &&
+      !canUserSubmit &&
+      allTasksDone &&
+      maxContributorsReached &&
+      cantSubmitAfterRejection &&
+      cantSubmitAfterSubmission &&
+      cantSubmitMultiple;
 
     return {
       user,
@@ -83,6 +118,18 @@ export function useManifestUserTasks() {
       updateClaim,
       updatedAt,
       refetch,
+      preventFurtherSubmission,
     };
-  }, [manifestTask, user, scope, isLoading, updateClaim, updatedAt, refetch]);
+  }, [
+    manifestTask,
+    user,
+    scope,
+    config.project.modelPageOptions?.preventContributionAfterRejection,
+    config.project.modelPageOptions?.preventContributionAfterSubmission,
+    config.project.modelPageOptions?.preventMultipleUserSubmissionsPerResource,
+    isLoading,
+    updateClaim,
+    updatedAt,
+    refetch,
+  ]);
 }

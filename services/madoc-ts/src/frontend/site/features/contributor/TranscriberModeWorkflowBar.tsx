@@ -20,7 +20,7 @@ export const TranscriberModeWorkflowBar: React.FC = () => {
   const { fixedTranscriptionBar } = useModelPageConfiguration();
   const invalidate = useInvalidateAfterSubmission();
   const { isManifestComplete, userManifestStats, filteredTasks } = useManifestTask();
-  const { userTasks, canUserSubmit, markedAsUnusable } = useCanvasUserTasks();
+  const { userTasks, canSubmit, markedAsUnusable } = useCanvasUserTasks();
   const { inReview } = filteredTasks;
   const { submitAllClaims, isSubmitting, canSubmit: canSubmitClaims } = useSubmitAllClaims();
   const { projectId, canvasId, manifestId } = useRouteContext();
@@ -39,7 +39,6 @@ export const TranscriberModeWorkflowBar: React.FC = () => {
     // The amount of tasks completed matches the amount of items.
     !!(structure?.items.length && userManifestStats && userManifestStats?.done === structure?.items.length);
 
-  const canSubmit = !!canUserSubmit && canSubmitClaims;
   const [isUnusable, setIsUsable] = useState(false);
 
   useEffect(() => {
@@ -119,7 +118,7 @@ export const TranscriberModeWorkflowBar: React.FC = () => {
         willExpireSoon,
         isComplete,
         isSubmitted,
-        canSubmit,
+        canSubmit: !!canSubmit && canSubmitClaims,
         isUnusable,
         hasExpired,
       }}

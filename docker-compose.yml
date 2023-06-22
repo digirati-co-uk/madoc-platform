@@ -203,7 +203,8 @@ services:
         condition: service_healthy
 
   search:
-    image: ghcr.io/digirati-co-uk/madoc-search-service:247f854b1258e3971907e6912cef2374a1da8474
+    image: ghcr.io/digirati-co-uk/madoc-search-service:main
+    platform: linux/amd64
 #    build:
 #      context: services/search
 #      dockerfile: Dockerfile

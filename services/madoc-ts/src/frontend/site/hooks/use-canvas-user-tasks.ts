@@ -60,21 +60,48 @@ export function useCanvasUserTasks() {
     const userContributions = (userTasks || []).filter(
       task => task.type === 'crowdsourcing-task' && task.status !== -1
     );
+
     const completedAndHide = !config.project.allowSubmissionsWhenCanvasComplete && canvasTask?.canvasTask?.status === 3;
     const completed = canvasTask?.canvasTask?.status === 3;
+
+    const canContribute =
+      user &&
+      (scope.indexOf('site.admin') !== -1 ||
+        scope.indexOf('models.contribute') !== -1 ||
+        scope.indexOf('models.admin') !== -1);
+
+    const canClaimCanvas =
+      user && (config.project.claimGranularity ? config.project.claimGranularity === 'canvas' : true);
 
     const maxContributorsReached =
       canvasTask?.maxContributors && canvasTask.totalContributors
         ? canvasTask.maxContributors <= canvasTask.totalContributors
         : false;
 
-    const canClaimCanvas =
-      user && (config.project.claimGranularity ? config.project.claimGranularity === 'canvas' : true);
-    const canUserSubmit = user && !!canvasTask?.canUserSubmit;
-    const canContribute = user && (scope.indexOf('site.admin') !== -1 || scope.indexOf('models.contribute') !== -1);
+    const canSubmit = user && !!canvasTask?.canUserSubmit;
+
+    const cantSubmitAfterRejection = config.project.modelPageOptions?.preventContributionAfterRejection
+      ? userTasks?.some(task => task.status === -1)
+      : false;
+
+    const cantSubmitAfterSubmission = config.project.modelPageOptions?.preventContributionAfterSubmission
+      ? userContributions?.some(task => task.status === 2)
+      : false;
+
+    const cantSubmitMultiple = config.project.modelPageOptions?.preventMultipleUserSubmissionsPerResource
+      ? userContributions.length > 0
+      : false;
+
     const allTasksDone = userContributions.length
       ? !userContributions.find(t => t.status === 0 || t.status === 1)
       : false;
+
+    const canCanvasTakeSubmission = canClaimCanvas && cantSubmitMultiple && completedAndHide && maxContributorsReached;
+
+    const canUserSubmit = canContribute && canSubmit && cantSubmitAfterRejection && cantSubmitAfterSubmission;
+
+    const preventFurtherSubmission = canCanvasTakeSubmission && canUserSubmit;
+
     const markedAsUnusable =
       allTasksDone &&
       (userContributions.length
@@ -90,25 +117,31 @@ export function useCanvasUserTasks() {
       markedAsUnusable,
       isManifestComplete: canvasTask?.isManifestComplete,
       allTasksDone,
+      canCanvasTakeSubmission,
+      canUserSubmit,
       completedAndHide,
       completed,
       canClaimCanvas,
-      canUserSubmit,
+      canSubmit,
       canContribute,
       maxContributorsReached,
       updateClaim,
       updatedAt,
       refetch,
+      preventFurtherSubmission,
     };
   }, [
+    canvasTask,
+    config.project.allowSubmissionsWhenCanvasComplete,
+    config.project.claimGranularity,
+    config.project.modelPageOptions?.preventContributionAfterRejection,
+    config.project.modelPageOptions?.preventContributionAfterSubmission,
+    config.project.modelPageOptions?.preventMultipleUserSubmissionsPerResource,
     user,
     scope,
     isLoading,
-    canvasTask,
-    refetch,
-    updatedAt,
     updateClaim,
-    config.project.allowSubmissionsWhenCanvasComplete,
-    config.project.claimGranularity,
+    updatedAt,
+    refetch,
   ]);
 }

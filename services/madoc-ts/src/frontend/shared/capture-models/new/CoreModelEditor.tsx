@@ -31,7 +31,7 @@ import { PlusIcon } from '../../icons/PlusIcon';
 import { RotateIcon } from '../../icons/RotateIcon';
 import { TickIcon } from '../../icons/TickIcon';
 import { EmptyState } from '../../layout/EmptyState';
-import { Button, ButtonIcon } from '../../navigation/Button';
+import { Button } from '../../navigation/Button';
 import { BrowserComponent } from '../../utility/browser-component';
 import { CaptureModel } from '../types/capture-model';
 import { RevisionRequest } from '../types/revision-request';

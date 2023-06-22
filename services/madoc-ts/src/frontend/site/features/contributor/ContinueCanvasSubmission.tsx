@@ -20,16 +20,21 @@ import { useProjectShadowConfiguration } from '../../hooks/use-project-shadow-co
 import { useProjectStatus } from '../../hooks/use-project-status';
 import { useRelativeLinks } from '../../hooks/use-relative-links';
 import { useRouteContext } from '../../hooks/use-route-context';
-import { useSiteConfiguration } from '../SiteConfigurationContext';
 
 export const ContinueCanvasSubmission: React.FC = () => {
   const { t } = useTranslation();
   const { projectId, canvasId } = useRouteContext();
-  const { completed, canClaimCanvas, canUserSubmit, isLoading, canContribute, userTasks } = useCanvasUserTasks();
+  const {
+    completed,
+    canClaimCanvas,
+    canUserSubmit,
+    isLoading,
+    canContribute,
+    preventFurtherSubmission,
+    canCanvasTakeSubmission,
+  } = useCanvasUserTasks();
   const { isManifestComplete, canClaimManifest, userManifestTask } = useManifestTask();
-  const config = useSiteConfiguration();
-  const allowMultiple = !config.project.modelPageOptions?.preventMultipleUserSubmissionsPerResource;
-  const preventFurtherSubmission = !allowMultiple && !!userTasks?.find(task => task.status === 2 || task.status === 3);
+
   const { tasks: continueSubmission, inProgress: continueCount } = useContinueSubmission();
   const createLink = useRelativeLinks();
   const { data: project } = useProject();
@@ -84,11 +89,11 @@ export const ContinueCanvasSubmission: React.FC = () => {
     const revision = continueSubmission[0].state.revisionId;
     const notStarted = continueSubmission[0].status === 0;
     const started = continueSubmission[0].status === 1;
-    const completed = continueSubmission[0].status === 2 || continueSubmission[0].status === 3;
+    const isCompleted = continueSubmission[0].status === 2 || continueSubmission[0].status === 3;
 
     return (
       <ProjectDetailWrapper>
-        {!continueCount && !notStarted && !completed ? (
+        {!continueCount && !notStarted && !isCompleted ? (
           <ProjectListingDescription>
             <strong>{started ? t('You have started this item') : t('You have already completed this item')}</strong>
           </ProjectListingDescription>
@@ -117,7 +122,7 @@ export const ContinueCanvasSubmission: React.FC = () => {
     );
   }
 
-  if (canContribute && (canClaimCanvas || canClaimManifest || userManifestTask)) {
+  if (canCanvasTakeSubmission && (canClaimManifest || userManifestTask)) {
     return (
       <ProjectDetailWrapper>
         <Button

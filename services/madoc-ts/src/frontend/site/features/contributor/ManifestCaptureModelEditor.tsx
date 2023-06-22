@@ -32,7 +32,7 @@ export function ManifestCaptureModelEditor({ revision }: { revision: string; isS
   const { data: projectModel } = useManifestModel();
   const { data: project } = useProject();
   const [{ captureModel }, , modelRefetch] = useLoadedCaptureModel(projectModel?.model?.id, undefined, undefined);
-  const { updateClaim, allTasksDone, markedAsUnusable } = useManifestUserTasks();
+  const { updateClaim, preventFurtherSubmission, canContribute, markedAsUnusable } = useManifestUserTasks();
   const { isPreparing } = useProjectStatus();
   const user = useCurrentUser(true);
   const config = useSiteConfiguration();
@@ -45,15 +45,7 @@ export function ManifestCaptureModelEditor({ revision }: { revision: string; isS
   const [postSubmission, setPostSubmission] = useState(false);
   const [postSubmissionMessage, setPostSubmissionMessage] = useState(false);
   const allowMultiple = !config.project.modelPageOptions?.preventMultipleUserSubmissionsPerResource;
-  const preventFurtherSubmission = !allowMultiple && allTasksDone;
   const isEditing = isEditingAnotherUsersRevision(captureModel, revision, user.user);
-
-  const canContribute =
-    user &&
-    user.scope &&
-    (user.scope.indexOf('site.admin') !== -1 ||
-      user.scope.indexOf('models.admin') !== -1 ||
-      user.scope.indexOf('models.contribute') !== -1);
 
   const isModelAdmin =
     user && user.scope && (user.scope.indexOf('site.admin') !== -1 || user.scope.indexOf('models.admin') !== -1);
