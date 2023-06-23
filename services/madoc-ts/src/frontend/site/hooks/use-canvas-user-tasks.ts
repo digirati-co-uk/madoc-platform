@@ -61,46 +61,48 @@ export function useCanvasUserTasks() {
       task => task.type === 'crowdsourcing-task' && task.status !== -1
     );
 
-    const completedAndHide = !config.project.allowSubmissionsWhenCanvasComplete && canvasTask?.canvasTask?.status === 3;
-    const completed = canvasTask?.canvasTask?.status === 3;
-
     const canContribute =
       user &&
-      (scope.indexOf('site.admin') !== -1 ||
-        scope.indexOf('models.contribute') !== -1 ||
-        scope.indexOf('models.admin') !== -1);
+      (scope.indexOf('site.admin') === -1 ||
+        scope.indexOf('models.contribute') === -1 ||
+        scope.indexOf('models.admin') === -1);
 
     const canClaimCanvas =
       user && (config.project.claimGranularity ? config.project.claimGranularity === 'canvas' : true);
 
-    const maxContributorsReached =
+    const maxContributors =
       canvasTask?.maxContributors && canvasTask.totalContributors
-        ? canvasTask.maxContributors <= canvasTask.totalContributors
+        ? canvasTask.maxContributors >= canvasTask.totalContributors
         : false;
+
+    // if max contributors reached check that the current user isnt one of them
+    const maxContributorsReached = maxContributors ? userTasks?.some(t => t.type !== 'crowdsourcing-task') : false;
 
     const canUserSubmit = user && !!canvasTask?.canUserSubmit;
 
-    const cantSubmitAfterRejection = config.project.modelPageOptions?.preventContributionAfterRejection
-      ? userTasks?.some(task => task.status === -1)
-      : false;
+    const canSubmitAfterRejection = config.project.modelPageOptions?.preventContributionAfterRejection
+      ? userTasks?.some(task => task.status !== -1)
+      : true;
 
-    const cantSubmitAfterSubmission = config.project.modelPageOptions?.preventContributionAfterSubmission
-      ? userContributions?.some(task => task.status === 2)
-      : false;
+    const canSubmitAfterSubmission = config.project.modelPageOptions?.preventContributionAfterSubmission
+      ? userContributions?.some(task => task.status !== 2)
+      : true;
 
-    const cantSubmitMultiple = config.project.modelPageOptions?.preventMultipleUserSubmissionsPerResource
-      ? userContributions.length > 0
-      : false;
+    const canSubmitMultiple = config.project.modelPageOptions?.preventMultipleUserSubmissionsPerResource
+      ? !userContributions || userContributions.length === 0
+      : true;
 
     const allTasksDone = userContributions.length
       ? !userContributions.find(t => t.status === 0 || t.status === 1)
       : false;
 
-    const canCanvasTakeSubmission = canClaimCanvas && cantSubmitMultiple && completedAndHide && maxContributorsReached;
+    const completedAndHide = !config.project.allowSubmissionsWhenCanvasComplete && canvasTask?.canvasTask?.status === 3;
+    const completed = canvasTask?.canvasTask?.status === 3;
 
-    const canSubmitTask = canContribute && canUserSubmit && cantSubmitAfterRejection && cantSubmitAfterSubmission;
+    const canCanvasTakeSubmission = canClaimCanvas && canSubmitMultiple && !completedAndHide && !maxContributorsReached;
 
-    const preventFurtherSubmission = canCanvasTakeSubmission && canUserSubmit;
+    const canSubmitTask = canContribute && canUserSubmit && canSubmitAfterRejection && canSubmitAfterSubmission;
+    const preventFurtherSubmission = !canCanvasTakeSubmission || !canSubmitTask;
 
     const markedAsUnusable =
       allTasksDone &&
