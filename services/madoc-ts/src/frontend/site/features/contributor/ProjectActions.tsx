@@ -6,28 +6,27 @@ import { Button, ButtonRow } from '../../../shared/navigation/Button';
 import { useUser } from '../../../shared/hooks/use-site';
 import { useProject } from '../../hooks/use-project';
 import { useProjectPageConfiguration } from '../../hooks/use-project-page-configuration';
-import { useProjectShadowConfiguration } from '../../hooks/use-project-shadow-configuration';
 import { useProjectStatus } from '../../hooks/use-project-status';
 import { useRelativeLinks } from '../../hooks/use-relative-links';
 import { GoToRandomCanvas } from './GoToRandomCanvas';
 import { GoToRandomManifest } from './GoToRandomManifest';
 import { useSiteConfiguration } from '../SiteConfigurationContext';
+import { StartContributingButton } from './StartContributingButton';
 
-export const ProjectActions: React.FC = () => {
+export const ProjectActions: React.FC<{
+  showContributingButton?: boolean }> = ({showContributingButton = false}) => {
   const { data: project } = useProject();
   const { isActive } = useProjectStatus();
   const { t } = useTranslation();
   const createLink = useRelativeLinks();
 
   const {
-    project: { allowCollectionNavigation = true, allowManifestNavigation = true, claimGranularity, allowPersonalNotes },
+    project: { allowCollectionNavigation = true, allowManifestNavigation = true, allowPersonalNotes },
   } = useSiteConfiguration();
   const user = useUser();
   const isAdmin = user && user.scope && user.scope.indexOf('site.admin') !== -1;
   const isReviewer = isAdmin || (user && user.scope && user.scope.indexOf('tasks.create') !== -1);
-  const canContribute = isAdmin || (user && user.scope && user.scope.indexOf('models.contribute') !== -1);
   const options = useProjectPageConfiguration();
-  const { showCaptureModelOnManifest } = useProjectShadowConfiguration();
 
   if (!project) {
     return null;
@@ -35,19 +34,7 @@ export const ProjectActions: React.FC = () => {
 
   return (
     <div>
-      {!options.hideStartContributing && isActive && canContribute ? (
-        claimGranularity === 'manifest' || showCaptureModelOnManifest ? (
-          <GoToRandomManifest
-            $primary
-            $large
-            label={{ none: [t('Start contributing')] }}
-            navigateToModel
-            manifestModel={showCaptureModelOnManifest}
-          />
-        ) : (
-          <GoToRandomCanvas $primary $large label={{ none: [t('Start contributing')] }} navigateToModel />
-        )
-      ) : null}
+      {showContributingButton && <StartContributingButton />}
       <ButtonRow>
         {!options.hideSearchButton ? (
           <Button as={Link} to={createLink({ subRoute: 'search' })}>
@@ -83,5 +70,14 @@ blockEditorFor(ProjectActions, {
   label: 'Project actions',
   anyContext: ['project'],
   requiredContext: ['project'],
-  editor: {},
+  defaultProps: {
+    showContributingButton: false,
+  },
+  editor: {
+    showContributingButton: {
+      label: 'Start contributing button',
+      type: 'checkbox-field',
+      inlineLabel: 'Show start Contributing button',
+    },
+  },
 });
