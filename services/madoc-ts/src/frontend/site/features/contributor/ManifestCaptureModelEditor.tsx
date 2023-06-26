@@ -32,9 +32,8 @@ export function ManifestCaptureModelEditor({ revision }: { revision: string; isS
   const { data: projectModel } = useManifestModel();
   const { data: project } = useProject();
   const [{ captureModel }, , modelRefetch] = useLoadedCaptureModel(projectModel?.model?.id, undefined, undefined);
-  const { updateClaim, preventFurtherSubmission, canContribute, markedAsUnusable } = useManifestUserTasks();
+  const { updateClaim, preventFurtherSubmission, canContribute, markedAsUnusable, user } = useManifestUserTasks();
   const { isPreparing } = useProjectStatus();
-  const user = useCurrentUser(true);
   const config = useSiteConfiguration();
   const {
     disableSaveForLater = false,
@@ -45,10 +44,8 @@ export function ManifestCaptureModelEditor({ revision }: { revision: string; isS
   const [postSubmission, setPostSubmission] = useState(false);
   const [postSubmissionMessage, setPostSubmissionMessage] = useState(false);
   const allowMultiple = !config.project.modelPageOptions?.preventMultipleUserSubmissionsPerResource;
-  const isEditing = isEditingAnotherUsersRevision(captureModel, revision, user.user);
+  const isEditing = isEditingAnotherUsersRevision(captureModel, revision, user);
 
-  const isModelAdmin =
-    user && user.scope && (user.scope.indexOf('site.admin') !== -1 || user.scope.indexOf('models.admin') !== -1);
   const features: RevisionProviderFeatures = isPreparing
     ? {
         autosave: false,
@@ -87,7 +84,7 @@ export function ManifestCaptureModelEditor({ revision }: { revision: string; isS
     }
   }
 
-  if (api.getIsServer() || !manifestId || !projectId || (isPreparing && !isModelAdmin)) {
+  if (api.getIsServer() || !manifestId || !projectId || (isPreparing && !canContribute)) {
     return null;
   }
 

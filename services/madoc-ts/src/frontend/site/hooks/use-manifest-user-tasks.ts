@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 import { useMutation } from 'react-query';
-import { BaseTask } from '../../../gateway/tasks/base-task';
 import { RevisionRequest } from '../../shared/capture-models/types/revision-request';
 import { useApi } from '../../shared/hooks/use-api';
 import { useInvalidateAfterSubmission } from './use-invalidate-after-submission';
@@ -48,28 +47,50 @@ export function useManifestUserTasks() {
   );
 
   return useMemo(() => {
-    const reviews = manifestTask?.userTasks
-      ? manifestTask.userTasks.filter(
-          task => (task as BaseTask).type === 'crowdsourcing-review' && (task.status === 2 || task.status === 1)
-        )
-      : [];
-
     const userTasks = manifestTask ? manifestTask.userTasks : undefined;
     const userContributions = (userTasks || []).filter(
       task => task.type === 'crowdsourcing-task' && task.status !== -1
     );
-    const completedAndHide = manifestTask?.manifestTask?.status === 3;
-    const canUserSubmit = user && !!manifestTask?.canUserSubmit;
 
     const canContribute =
       user &&
-      (scope.indexOf('site.admin') !== -1 ||
-        scope.indexOf('models.contribute') !== -1 ||
-        scope.indexOf('models.admin') !== -1);
+      (scope.indexOf('site.admin') === -1 ||
+        scope.indexOf('models.contribute') === -1 ||
+        scope.indexOf('models.admin') === -1);
+
+    const maxContributors =
+      manifestTask?.maxContributors && manifestTask.totalContributors
+        ? manifestTask.maxContributors >= manifestTask.totalContributors
+        : false;
+
+    // if max contributors reached check that the current user isnt one of them
+    const maxContributorsReached = maxContributors ? userTasks?.some(t => t.type !== 'crowdsourcing-task') : false;
+
+    const canUserSubmit = user && !!manifestTask?.canUserSubmit;
+
+    const canSubmitAfterRejection = config.project.modelPageOptions?.preventContributionAfterRejection
+      ? !userTasks?.some(task => task.status === -1)
+      : true;
+
+    const canSubmitAfterSubmission = config.project.modelPageOptions?.preventContributionAfterSubmission
+      ? userContributions?.some(task => task.status !== 2)
+      : true;
+
+    const canSubmitMultiple = config.project.modelPageOptions?.preventMultipleUserSubmissionsPerResource
+      ? !userContributions || userContributions.length === 0
+      : true;
 
     const allTasksDone = userContributions.length
       ? !userContributions.find(t => t.status === 0 || t.status === 1)
       : false;
+
+    const completedAndHide = manifestTask?.manifestTask?.status === 3;
+
+    const canManifestTakeSubmission = !completedAndHide && !maxContributorsReached;
+    const canSubmitAnother = canSubmitMultiple && canSubmitAfterRejection && canSubmitAfterSubmission;
+
+    const preventFurtherSubmission =
+      !canManifestTakeSubmission || !canSubmitAnother || !(canContribute && canUserSubmit);
 
     const markedAsUnusable =
       allTasksDone &&
@@ -77,37 +98,10 @@ export function useManifestUserTasks() {
         ? !!userContributions.find(t => (t.status === 2 || t.status === 3) && !t.state.revisionId)
         : false);
 
-    const maxContributorsReached =
-      manifestTask?.maxContributors && manifestTask.totalContributors
-        ? manifestTask.maxContributors <= manifestTask.totalContributors
-        : false;
-
-    const cantSubmitAfterRejection = config.project.modelPageOptions?.preventContributionAfterRejection
-      ? userTasks?.some(task => task.status === -1)
-      : false;
-
-    const cantSubmitAfterSubmission = config.project.modelPageOptions?.preventContributionAfterSubmission
-      ? userContributions?.some(task => task.status === 2)
-      : false;
-
-    const cantSubmitMultiple = config.project.modelPageOptions?.preventMultipleUserSubmissionsPerResource
-      ? userContributions.length > 0
-      : false;
-
-    const preventFurtherSubmission =
-      !canContribute &&
-      !canUserSubmit &&
-      allTasksDone &&
-      maxContributorsReached &&
-      cantSubmitAfterRejection &&
-      cantSubmitAfterSubmission &&
-      cantSubmitMultiple;
-
     return {
       user,
       isLoading,
       manifestTask: manifestTask?.manifestTask,
-      reviews,
       userTasks,
       markedAsUnusable,
       isManifestComplete: manifestTask?.isManifestComplete,

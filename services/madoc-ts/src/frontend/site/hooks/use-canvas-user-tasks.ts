@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 import { useMutation } from 'react-query';
-import { BaseTask } from '../../../gateway/tasks/base-task';
 import { RevisionRequest } from '../../shared/capture-models/types/revision-request';
 import { useApi } from '../../shared/hooks/use-api';
 import { useSiteConfiguration } from '../features/SiteConfigurationContext';
@@ -50,12 +49,6 @@ export function useCanvasUserTasks() {
   );
 
   return useMemo(() => {
-    const reviews = canvasTask?.userTasks
-      ? canvasTask.userTasks.filter(
-          task => (task as BaseTask).type === 'crowdsourcing-review' && (task.status === 2 || task.status === 1)
-        )
-      : [];
-
     const userTasks = canvasTask ? canvasTask.userTasks : undefined;
     const userContributions = (userTasks || []).filter(
       task => task.type === 'crowdsourcing-task' && task.status !== -1
@@ -81,7 +74,7 @@ export function useCanvasUserTasks() {
     const canUserSubmit = user && !!canvasTask?.canUserSubmit;
 
     const canSubmitAfterRejection = config.project.modelPageOptions?.preventContributionAfterRejection
-      ? userTasks?.some(task => task.status !== -1)
+      ? !userTasks?.some(task => task.status === -1)
       : true;
 
     const canSubmitAfterSubmission = config.project.modelPageOptions?.preventContributionAfterSubmission
@@ -99,10 +92,10 @@ export function useCanvasUserTasks() {
     const completedAndHide = !config.project.allowSubmissionsWhenCanvasComplete && canvasTask?.canvasTask?.status === 3;
     const completed = canvasTask?.canvasTask?.status === 3;
 
-    const canCanvasTakeSubmission = canClaimCanvas && canSubmitMultiple && !completedAndHide && !maxContributorsReached;
+    const canCanvasTakeSubmission = canClaimCanvas && !completedAndHide && !maxContributorsReached;
+    const canSubmitAnother = canSubmitMultiple && canSubmitAfterRejection && canSubmitAfterSubmission;
 
-    const canSubmitTask = canContribute && canUserSubmit && canSubmitAfterRejection && canSubmitAfterSubmission;
-    const preventFurtherSubmission = !canCanvasTakeSubmission || !canSubmitTask;
+    const preventFurtherSubmission = !canCanvasTakeSubmission || !canSubmitAnother || !(canContribute && canUserSubmit);
 
     const markedAsUnusable =
       allTasksDone &&
@@ -114,18 +107,14 @@ export function useCanvasUserTasks() {
       user,
       canvasTask: canvasTask?.canvasTask,
       isLoading,
-      reviews,
       userTasks,
       markedAsUnusable,
-      isManifestComplete: canvasTask?.isManifestComplete,
-      allTasksDone,
       canCanvasTakeSubmission,
       canUserSubmit,
       completedAndHide,
       completed,
       canClaimCanvas,
       canContribute,
-      maxContributorsReached,
       updateClaim,
       updatedAt,
       refetch,
