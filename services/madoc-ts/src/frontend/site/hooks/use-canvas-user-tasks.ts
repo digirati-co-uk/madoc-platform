@@ -69,7 +69,7 @@ export function useCanvasUserTasks() {
         : false;
 
     // if max contributors reached check that the current user isnt one of them
-    const maxContributorsReached = maxContributors ? userTasks?.some(t => t.type !== 'crowdsourcing-task') : false;
+    const maxContributorsReached = maxContributors ? !userTasks?.some(t => t.type === 'crowdsourcing-task') : false;
 
     const canUserSubmit = user && !!canvasTask?.canUserSubmit;
 
