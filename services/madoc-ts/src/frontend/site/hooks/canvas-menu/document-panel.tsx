@@ -27,8 +27,11 @@ export function useDocumentPanel(): CanvasMenuHook {
             .flatMap(b => b)
             .map((f: any) => f.properties && Object.values(f.properties));
 
-          const emptyFlat = nestedItems.filter(x => x).flatMap(a => a).flatMap(b => b.filter((f: any) => f.value));
-          const emptyFields = flatProperties.flatMap(c => c).filter((f: any) => f.value);
+          const emptyFlat = nestedItems
+            .filter(x => x)
+            .flatMap(a => a)
+            .flatMap(b => b.filter((f: any) => f.value !== undefined));
+          const emptyFields = flatProperties.flatMap(c => c).filter((f: any) => f.value !== undefined);
           const isApproved = model.revisions.filter((q: { approved: boolean }) => q.approved);
           return flatProperties.length > 0 && isApproved.length > 0 && (emptyFlat.length > 0 || emptyFields.length > 0);
         })

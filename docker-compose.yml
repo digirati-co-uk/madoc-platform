@@ -99,6 +99,7 @@ services:
   tasks-api:
     tty: true
     image: ghcr.io/digirati-co-uk/tasks-api:latest
+    platform: linux/amd64
     environment:
       - SERVER_PORT=3000
       - DATABASE_HOST=shared-postgres
@@ -119,6 +120,7 @@ services:
   model-api:
     tty: true
     image: digirati/capture-models:latest
+    platform: linux/amd64
     environment:
       - SERVER_PORT=3000
       - DATABASE_HOST=shared-postgres
@@ -171,6 +173,7 @@ services:
 
   config-service:
     image: digirati/madoc_config_service_django:175410fc5b7dbef4cc259686564fbedeb60c8789
+    platform: linux/amd64
     environment:
       - USE_DOCKER=yes
       - IPYTHONDIR=/app/.ipython
@@ -194,6 +197,7 @@ services:
   storage-api:
     tty: true
     image: ghcr.io/digirati-co-uk/storage-api:main
+    platform: linux/amd64
     environment:
       - GATEWAY_HOST=${GATEWAY_HOST}
     volumes:
@@ -203,11 +207,11 @@ services:
         condition: service_healthy
 
   search:
-    image: ghcr.io/digirati-co-uk/madoc-search-service:main
+    image: ghcr.io/digirati-co-uk/madoc-search-service:247f854b1258e3971907e6912cef2374a1da8474
     platform: linux/amd64
-#    build:
-#      context: services/search
-#      dockerfile: Dockerfile
+    #    build:
+    #      context: services/search
+    #      dockerfile: Dockerfile
     environment:
       - BROWSABLE=False
       - USE_DOCKER=yes
@@ -226,9 +230,9 @@ services:
       - DATABASE_URL=postgres://${POSTGRES_SEARCH_API_USER}:${POSTGRES_SEARCH_API_PASSWORD}@shared-postgres:${POSTGRES_PORT}/${POSTGRES_DB}
     links:
       - shared-postgres
-#    volumes:
-#      - ./services/search/search_service:/app
+  #    volumes:
+  #      - ./services/search/search_service:/app
 
   okra:
     image: digirati/okra:latest
-
+    platform: linux/amd64

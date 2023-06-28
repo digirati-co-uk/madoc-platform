@@ -1,4 +1,4 @@
-FROM library/postgres:12
+FROM library/postgres:12-bullseye
 
 ENV TASKS_API_PASSWORD=tasks_api_password
 ENV MODEL_API_PASSWORD=model_api_password
