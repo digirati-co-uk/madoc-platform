@@ -9,6 +9,7 @@ import { HrefLink } from '../../../utility/href-link';
 import { Revisions } from '../../editor/stores/revisions';
 import { useDeselectRevision } from '../hooks/use-deselect-revision';
 import { EditorRenderingConfig, useSlotContext } from './EditorSlots';
+import { ErrorMessage } from '../../../callouts/ErrorMessage';
 
 export const DefaultSubmitButton: EditorRenderingConfig['SubmitButton'] = ({ afterSave, canSubmit = true }) => {
   const { t } = useTranslation();
@@ -38,7 +39,6 @@ export const DefaultSubmitButton: EditorRenderingConfig['SubmitButton'] = ({ aft
       // Change this to "draft" to save for later.
       await updateFunction(currentRevision, status);
     } catch (e) {
-      console.error(e);
       throw new Error(t('Unable to save your submission'));
     }
   });
@@ -63,49 +63,56 @@ export const DefaultSubmitButton: EditorRenderingConfig['SubmitButton'] = ({ aft
           }}
           footerAlignRight
           renderFooter={({ close }) => {
-            return isSuccess ? (
-              <>
-                <ButtonRow $noMargin>
-                  {projectId ? (
-                    <Button data-cy="back-to-project" as={HrefLink} href={`/projects/${projectId}`}>
-                      {t('Back to project')}
+            return (
+              <div>
+                {status === 'error' && (
+                  <div style={{ color: '#c74158', marginBottom: '0.5em' }}>
+                    {t('Error - Unable to save your submission')}
+                  </div>
+                )}
+                {isSuccess ? (
+                  <ButtonRow $noMargin>
+                    {projectId ? (
+                      <Button data-cy="back-to-project" as={HrefLink} href={`/projects/${projectId}`}>
+                        {t('Back to project')}
+                      </Button>
+                    ) : null}
+                    <Button data-cy="close-add-another" onClick={close}>
+                      {t('Close and keep working')}
                     </Button>
-                  ) : null}
-                  <Button data-cy="close-add-another" onClick={close}>
-                    {t('Close and keep working')}
-                  </Button>
-                </ButtonRow>
-              </>
-            ) : (
-              <ButtonRow $noMargin>
-                {!disableSaveForLater ? (
-                  <Button
-                    data-cy="save-later-button"
-                    disabled={isLoading}
-                    onClick={() => {
-                      saveRevision('draft').then(() => {
-                        deselectRevision();
-                        close();
-                      });
-                    }}
-                  >
-                    {t('Save for later')}
-                  </Button>
-                ) : null}
-                <Button
-                  data-cy="publish-button"
-                  data-testid="publish-button"
-                  disabled={isLoading || !canSubmit}
-                  $primary
-                  onClick={() => {
-                    saveRevision('submitted').then(() => {
-                      deselectRevision();
-                    });
-                  }}
-                >
-                  {isLoading ? t('Saving...') : t('Submit')}
-                </Button>
-              </ButtonRow>
+                  </ButtonRow>
+                ) : (
+                  <ButtonRow $noMargin>
+                    {!disableSaveForLater ? (
+                      <Button
+                        data-cy="save-later-button"
+                        disabled={isLoading}
+                        onClick={() => {
+                          saveRevision('draft').then(() => {
+                            deselectRevision();
+                            close();
+                          });
+                        }}
+                      >
+                        {t('Save for later')}
+                      </Button>
+                    ) : null}
+                    <Button
+                      data-cy="publish-button"
+                      data-testid="publish-button"
+                      disabled={isLoading || !canSubmit}
+                      $primary
+                      onClick={() => {
+                        saveRevision('submitted').then(() => {
+                          deselectRevision();
+                        });
+                      }}
+                    >
+                      {isLoading ? t('Saving...') : t('Submit')}
+                    </Button>
+                  </ButtonRow>
+                )}
+              </div>
             );
           }}
         >
