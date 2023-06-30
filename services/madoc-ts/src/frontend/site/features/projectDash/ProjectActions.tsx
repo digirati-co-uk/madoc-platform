@@ -8,10 +8,10 @@ import { useProject } from '../../hooks/use-project';
 import { useProjectPageConfiguration } from '../../hooks/use-project-page-configuration';
 import { useProjectStatus } from '../../hooks/use-project-status';
 import { useRelativeLinks } from '../../hooks/use-relative-links';
-import { GoToRandomCanvas } from './GoToRandomCanvas';
-import { GoToRandomManifest } from './GoToRandomManifest';
+import { GoToRandomCanvas } from '../contributor/GoToRandomCanvas';
+import { GoToRandomManifest } from '../contributor/GoToRandomManifest';
 import { useSiteConfiguration } from '../SiteConfigurationContext';
-import { StartContributingButton } from './StartContributingButton';
+import { StartContributingButton } from '../contributor/StartContributingButton';
 
 export const ProjectActions: React.FC<{
   showContributingButton?: boolean }> = ({showContributingButton = false}) => {
@@ -35,11 +35,11 @@ export const ProjectActions: React.FC<{
     <div>
       {showContributingButton && <StartContributingButton />}
       <ButtonRow>
-        {!options.hideSearchButton ? (
-          <Button as={Link} to={createLink({ subRoute: 'search' })}>
-            {t('Search this project')}
-          </Button>
-        ) : null}
+        {/*{!options.hideSearchButton ? (*/}
+        {/*  <Button as={Link} to={createLink({ subRoute: 'search' })}>*/}
+        {/*    {t('Search this project')}*/}
+        {/*  </Button>*/}
+        {/*) : null}*/}
         {isReviewer && isActive ? (
           <Button
             as={Link}

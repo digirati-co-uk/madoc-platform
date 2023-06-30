@@ -3,11 +3,12 @@ import { ProjectStatus } from '../../shared/atoms/ProjectStatus';
 import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
 import { AvailableBlocks } from '../../shared/page-blocks/available-blocks';
 import { Slot } from '../../shared/page-blocks/slot';
-import { ProjectActions } from '../features/contributor/ProjectActions';
+import { ProjectActions } from '../features/projectDash/ProjectActions';
 import { ProjectContributors } from '../features/ProjectContributors';
-import { ProjectHeading } from '../features/ProjectHeading';
-import { ProjectStatistics } from '../features/ProjectStatistics';
+import { ProjectHeading } from '../features/projectDash/ProjectHeading';
+import { ProjectStatistics } from '../features/projectDash/ProjectStatistics';
 import { ProjectTabs } from '../features/projectDash/ProjectTabs';
+import { SearchResource } from '../features/SearchResource';
 
 export const ViewProject: React.FC = () => {
   const available = (
@@ -29,6 +30,7 @@ export const ViewProject: React.FC = () => {
       </Slot>
 
       <Slot name="project-actionss">
+          <SearchResource />
         <ProjectStatistics />
           <ProjectActions />
         {available}

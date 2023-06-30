@@ -1,15 +1,15 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
-import { StatisticContainer, StatisticLabel, StatisticNumber } from '../../shared/atoms/Statistics';
-import { useProject } from '../hooks/use-project';
-import { useSiteConfiguration } from './SiteConfigurationContext';
+import { blockEditorFor } from '../../../../extensions/page-blocks/block-editor-for';
+import { StatisticContainer, StatisticLabel, StatisticNumber } from '../../../shared/atoms/Statistics';
+import { useProject } from '../../hooks/use-project';
+import { useSiteConfiguration } from '../SiteConfigurationContext';
 import styled from 'styled-components';
-import { useProjectManifests } from '../hooks/use-project-manifests';
-import CheckCircleIcon from '../../shared/icons/CheckCircleIcon';
-import HourglassIcon from '../../shared/icons/HourglassIcon';
-import PendingIcon from '../../shared/icons/PendingIcon';
-import InProgressIcon from '../../shared/icons/InProgressIcon';
+import { useProjectManifests } from '../../hooks/use-project-manifests';
+import CheckCircleIcon from '../../../shared/icons/CheckCircleIcon';
+import HourglassIcon from '../../../shared/icons/HourglassIcon';
+import PendingIcon from '../../../shared/icons/PendingIcon';
+import InProgressIcon from '../../../shared/icons/InProgressIcon';
 
 const ProgessHeading = styled.h2`
   font-size: 1.2em;
@@ -96,7 +96,7 @@ export const ProjectStatistics: React.FC = () => {
   }
 
   return (
-    <div style={{ width: '60vw' }}>
+    <div style={{ width: '75vw' }}>
       <ProgessHeading>{t('Project progress')}</ProgessHeading>
       <StatisticContainer>
         <ContentStat>
