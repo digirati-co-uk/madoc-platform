@@ -4,11 +4,18 @@ import { Link } from 'react-router-dom';
 
 export const StatisticLabel = styled.div`
   font-size: 0.9em;
+  color: black;
 `;
 
 export const StatisticNumber = styled.div`
-  font-size: 3em;
-  line-height: 1em;
+  font-size: 2em;
+  font-weight: 600;
+
+  > svg {
+    font-size: 48px;
+    vertical-align: -10px;
+    fill: #999999;
+  }
 `;
 
 export const Statistic = styled.div<{ $interactive?: boolean }>`
