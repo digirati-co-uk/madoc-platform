@@ -4,15 +4,12 @@ import { UpdateManifestDetailsRequest } from '../../../../../routes/iiif/manifes
 import { SnippetThumbnail, SnippetThumbnailContainer } from '../../../../shared/atoms/SnippetLarge';
 import { Input, InputContainer, InputLabel } from '../../../../shared/form/Input';
 import { apiHooks } from '../../../../shared/hooks/use-api-query';
-import { useManifest } from '../../../../site/hooks/use-manifest';
 import { UniversalComponent } from '../../../../types';
 import { ItemStructureList } from '../../../../../types/schemas/item-structure-list';
 import { LocaleString } from '../../../../shared/components/LocaleString';
 import { useApi } from '../../../../shared/hooks/use-api';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { Button, SmallButton, TinyButton } from '../../../../shared/navigation/Button';
-import { ContextHeading, Header } from '../../../../shared/atoms/Header';
-import { Subheading1 } from '../../../../shared/typography/Heading1';
 import { ReorderTable, ReorderTableRow } from '../../../../shared/atoms/ReorderTable';
 import { resetServerContext } from 'react-beautiful-dnd';
 import { TableActions, TableContainer, TableRow, TableRowLabel } from '../../../../shared/layout/Table';

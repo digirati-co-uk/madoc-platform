@@ -1,18 +1,18 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
-import { CanvasStatus } from '../../shared/atoms/CanvasStatus';
-import { Heading3 } from '../../shared/typography/Heading3';
-import { SingleLineHeading5, Subheading5 } from '../../shared/typography/Heading5';
-import { ImageGrid, ImageGridItem } from '../../shared/atoms/ImageGrid';
-import { CroppedImage } from '../../shared/atoms/Images';
-import { LocaleString, useCreateLocaleString } from '../../shared/components/LocaleString';
-import { useSubjectMap } from '../../shared/hooks/use-subject-map';
-import { useProject } from '../hooks/use-project';
-import { useProjectManifests } from '../hooks/use-project-manifests';
-import { useSiteConfiguration } from './SiteConfigurationContext';
-import { ImageStripBox } from '../../shared/atoms/ImageStrip';
+import { blockEditorFor } from '../../../../extensions/page-blocks/block-editor-for';
+import { CanvasStatus } from '../../../shared/atoms/CanvasStatus';
+import { Heading3 } from '../../../shared/typography/Heading3';
+import { SingleLineHeading5, Subheading5 } from '../../../shared/typography/Heading5';
+import { ImageGrid } from '../../../shared/atoms/ImageGrid';
+import { CroppedImage } from '../../../shared/atoms/Images';
+import { LocaleString, useCreateLocaleString } from '../../../shared/components/LocaleString';
+import { useSubjectMap } from '../../../shared/hooks/use-subject-map';
+import { useProject } from '../../hooks/use-project';
+import { useProjectManifests } from '../../hooks/use-project-manifests';
+import { useSiteConfiguration } from '../SiteConfigurationContext';
+import { ImageStripBox } from '../../../shared/atoms/ImageStrip';
 
 export function ProjectManifests(props: {
   background?: string;
