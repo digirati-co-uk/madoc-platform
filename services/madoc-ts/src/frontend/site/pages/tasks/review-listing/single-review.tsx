@@ -47,10 +47,6 @@ import { extractIdFromUrn } from '../../../../../utility/parse-urn';
 import { useProjectAnnotationStyles } from '../../../hooks/use-project-annotation-styles';
 import UnlockSmileyIcon from '../../../../shared/icons/UnlockSmileyIcon';
 import { useCurrentUser } from '../../../../shared/hooks/use-current-user';
-import { ManifestCanvasGrid } from '../../../features/ManifestCanvasGrid';
-import { PreviewManifest } from '../../../../admin/molecules/PreviewManifest';
-import { ViewContentFetch } from '../../../../admin/molecules/ViewContentFetch';
-import { ProjectManifests } from '../../../features/ProjectManifests';
 import { ManifestSnippet } from '../../../../shared/components/ManifestSnippet';
 
 const ReviewContainer = styled.div`

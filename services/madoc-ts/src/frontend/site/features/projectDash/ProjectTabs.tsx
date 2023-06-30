@@ -3,9 +3,10 @@ import { useTranslation } from 'react-i18next';
 import { blockEditorFor } from '../../../../extensions/page-blocks/block-editor-for';
 import styled from 'styled-components';
 import { ProjectMyWorkTab } from './ProjectMyWorkTab';
-import {ProjectContentTab} from "./ProjectContentTab";
+import { ProjectContentTab } from './ProjectContentTab';
 
 const TabContainer = styled.div`
+  padding-top: 2em;
   display: flex;
   justify-content: flex-start;
   position: relative;
