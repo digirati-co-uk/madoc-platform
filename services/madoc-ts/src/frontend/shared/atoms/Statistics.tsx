@@ -8,14 +8,14 @@ export const StatisticLabel = styled.div`
 `;
 
 export const StatisticNumber = styled.div`
-  font-size: 2em;
+  font-size: 1.5em;
   font-weight: 600;
+`;
 
-  > svg {
-    font-size: 48px;
-    vertical-align: -10px;
-    fill: #999999;
-  }
+export const StatisticText = styled.div`
+  display: flex;
+  flex-direction: column;
+  line-height: 2em;
 `;
 
 export const Statistic = styled.div<{ $interactive?: boolean }>`
