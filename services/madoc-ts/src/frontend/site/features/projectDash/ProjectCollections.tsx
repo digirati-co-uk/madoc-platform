@@ -9,7 +9,7 @@ import { apiHooks } from '../../../shared/hooks/use-api-query';
 import { HrefLink } from '../../../shared/utility/href-link';
 import { useProject } from '../../hooks/use-project';
 import { useSiteConfiguration } from '../SiteConfigurationContext';
-import { HalfGird } from '../../../shared/layout/Grid';
+import {CSSHalfGrid, HalfGird} from '../../../shared/layout/Grid';
 
 export const ProjectCollections: React.FC = () => {
   const { data: project } = useProject();
@@ -34,11 +34,11 @@ export const ProjectCollections: React.FC = () => {
   return (
     <>
       <Heading3>{t('Collections')}</Heading3>
-      <HalfGird>
+      <CSSHalfGrid>
         {shownCollections.map((collection, idx) => (
           <CollectionSnippet key={idx} id={collection.id} projectId={project.slug} />
         ))}
-      </HalfGird>
+      </CSSHalfGrid>
       {showAllCollectionsButton ? (
         <Button as={HrefLink} href={`/projects/${project.slug}/collections`}>
           {t('See all collections')}

@@ -56,11 +56,11 @@ export function ProjectManifests(props: {
           >
             <ImageStripBox
               data-view-list={props.list}
-              $border={props.cardBorder}
+              $border={props.cardBorder ? props.cardBorder : '#999'}
               $color={props.textColor}
               $bgColor={props.background}
             >
-              <CroppedImage $size="large" $covered={props.imageStyle === 'covered'}>
+              <CroppedImage $covered={props.imageStyle === 'covered'}>
                 {manifest.thumbnail ? (
                   <img alt={createLocaleString(manifest.label, t('Untitled manifest'))} src={manifest.thumbnail} />
                 ) : null}
@@ -90,7 +90,7 @@ blockEditorFor(ProjectManifests, {
     background: '',
     list: false,
     textColor: '',
-    cardBorder: '',
+    cardBorder: '#999',
     imageStyle: 'fit',
   },
   editor: {

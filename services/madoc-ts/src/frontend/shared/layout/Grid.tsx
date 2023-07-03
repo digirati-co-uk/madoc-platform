@@ -24,6 +24,16 @@ export const GridButton = styled.button`
   }
 `;
 
+export const CSSHalfGrid = styled.div<{ $justify?: string }>`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 1em;
+  justify-content: ${props => props.$justify};
+  align-items: flex-start;
+  overflow-y: auto;
+
+`;
+
 export const CSSThirdGrid = styled.div<{ $justify?: string }>`
   display: grid;
   grid-template-columns: auto auto auto 1fr;
