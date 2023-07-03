@@ -61,7 +61,6 @@ export const ProjectTabs: React.FC = () => {
 
   const [tab, setTab] = useState('1');
 
-  const Tab1Content = <p> Hiya im tab1 </p>;
   const Tab2Content = <p> Hiya im tab2 </p>;
 
   const tabs = [

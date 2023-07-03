@@ -50,11 +50,15 @@ export const ViewProjectNotes: React.FC = () => {
           ? data.notes.map(note => {
               const isManifest = note.type === 'manifest';
               return (
-                <GridContainer>
+                <GridContainer key={note.id}>
                   {note.resource.thumbnail ? (
                     <ImageStripBox $size={size}>
                       {isManifest ? (
-                        <SnippetThumbnailContainer stackedThumbnail={isManifest} portrait fluid>
+                        <SnippetThumbnailContainer
+                          data-is-stacked={isManifest}
+                          data-is-portrait={true}
+                          data-is-fluid={true}
+                        >
                           <SnippetThumbnail src={note.resource.thumbnail} />
                         </SnippetThumbnailContainer>
                       ) : (

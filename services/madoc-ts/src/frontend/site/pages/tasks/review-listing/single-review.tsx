@@ -400,7 +400,13 @@ function ViewSingleReview({
               metadata.subject?.id &&
               metadata.subject.type === 'manifest' && (
                 <>
-                  <ManifestSnippet id={metadata.subject?.id} stackedThumbnail flat portrait hideButton />
+                  <ManifestSnippet
+                    id={metadata.subject?.id}
+                    data-is-stacked={true}
+                    data-is-flatd={true}
+                    data-is-portrait={true}
+                    hideButton
+                  />
                 </>
               )
             )}

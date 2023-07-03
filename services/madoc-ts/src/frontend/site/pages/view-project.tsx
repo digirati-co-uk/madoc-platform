@@ -30,9 +30,9 @@ export const ViewProject: React.FC = () => {
       </Slot>
 
       <Slot name="project-actionss">
-          <SearchResource />
+        <SearchResource />
         <ProjectStatistics />
-          <ProjectActions />
+        <ProjectActions />
         {available}
       </Slot>
 

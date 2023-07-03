@@ -104,7 +104,7 @@ const SearchItem: React.FC<{ result: SearchResult; size?: 'large' | 'small'; sea
         <GridContainer>
           <ImageStripBox $size={size} style={{ width: 200, maxHeight: 200, marginBottom: 20 }}>
             {isManifest ? (
-              <SnippetThumbnailContainer stackedThumbnail={isManifest} portrait fluid>
+              <SnippetThumbnailContainer data-is-stacked={isManifest} data-is-portrait={true} data-is-fluid={true}>
                 <SnippetThumbnail
                   src={result.madoc_thumbnail}
                   style={{ maxHeight: 200, fitContent: 'scale-down' } as any}

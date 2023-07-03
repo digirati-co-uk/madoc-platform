@@ -21,7 +21,6 @@ export const CollectionSnippet: React.FC<{ id: number; projectId?: string | numb
   if (!data) {
     return (
       <SnippetLarge
-        margin
         label={'...'}
         subtitle={t('Collection')}
         summary={'...'}
@@ -41,7 +40,6 @@ export const CollectionSnippet: React.FC<{ id: number; projectId?: string | numb
 
   return (
     <SnippetLarge
-      margin
       label={<LocaleString>{data.collection.label}</LocaleString>}
       subtitle={t('Collection with {{count}} manifests', { count: data.pagination.totalResults })}
       summary={<LocaleString>{data.collection.summary}</LocaleString>}

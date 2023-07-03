@@ -2,8 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { blockEditorFor } from '../../../../extensions/page-blocks/block-editor-for';
 import { parseUrn } from '../../../../utility/parse-urn';
-import { SmallButton } from '../../../shared/navigation/Button';
-import { CSSThirdGrid } from '../../../shared/layout/Grid';
+import { CSSThirdGrid, GridButton } from '../../../shared/layout/Grid';
 import { Heading3 } from '../../../shared/typography/Heading3';
 import { ContinueTaskDisplay } from '../../../shared/components/ContinueTaskDisplay';
 import { useContributorTasks } from '../../../shared/hooks/use-contributor-tasks';
@@ -74,14 +73,16 @@ export const ProjectContributionButton: React.FC = () => {
 
   return (
     <div>
-      <Heading3 $margin>{t('Continue where you left off')}</Heading3>
-      <CSSThirdGrid $justify="flex-start">{taskComponents}</CSSThirdGrid>
-      <SmallButton
-        as={HrefLink}
-        href={createLink({ projectId: project.id, subRoute: 'tasks', query: { type: 'crowdsourcing-task' } })}
-      >
-        {t('View all contributions')}
-      </SmallButton>
+      <Heading3 $margin>{t('Pick up where you left off')}</Heading3>
+      <CSSThirdGrid $justify="center">
+        {taskComponents}
+        <GridButton
+          as={HrefLink}
+          href={createLink({ projectId: project.id, subRoute: 'tasks', query: { type: 'crowdsourcing-task' } })}
+        >
+          {t('View all contributions')}
+        </GridButton>
+      </CSSThirdGrid>
     </div>
   );
 };

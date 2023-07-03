@@ -127,7 +127,6 @@ export function SingleCollection(props: SingleCollectionProps) {
   if (!data) {
     return (
       <SnippetLarge
-        margin
         label={'...'}
         subtitle={t('Collection')}
         summary={'...'}
@@ -147,7 +146,6 @@ export function SingleCollection(props: SingleCollectionProps) {
 
   return (
     <SnippetLarge
-      margin
       label={<LocaleString>{data.collection.label}</LocaleString>}
       subtitle={t('Collection with {{count}} manifests', { count: data.pagination.totalResults })}
       summary={<LocaleString>{data.collection.summary}</LocaleString>}

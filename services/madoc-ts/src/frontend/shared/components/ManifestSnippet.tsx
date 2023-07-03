@@ -18,7 +18,6 @@ export const ManifestSnippet: React.FC<{
   if (!data) {
     return (
       <SnippetLarge
-        margin
         label={'...'}
         subtitle={t(`Manifest`)}
         summary={'...'}
@@ -38,7 +37,6 @@ export const ManifestSnippet: React.FC<{
 
   return (
     <SnippetLarge
-      margin
       label={<LocaleString>{data.manifest.label}</LocaleString>}
       subtitle={t('Manifest with {{count}} images', { count: data.pagination.totalResults })}
       summary={<LocaleString>{data.manifest.summary}</LocaleString>}

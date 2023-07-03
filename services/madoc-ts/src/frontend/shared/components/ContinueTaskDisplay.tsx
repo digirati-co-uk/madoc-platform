@@ -4,7 +4,6 @@ import { SubjectSnippet as SubjectSnippetType } from '../../../extensions/tasks/
 import { BaseTask } from '../../../gateway/tasks/base-task';
 import { useRelativeLinks } from '../../site/hooks/use-relative-links';
 import { useTaskMetadata } from '../../site/hooks/use-task-metadata';
-import { PrimaryButtonLink } from '../navigation/Button';
 import { SnippetLarge } from '../atoms/SnippetLarge';
 import { useCreateLocaleString } from './LocaleString';
 
@@ -40,15 +39,12 @@ export function ContinueTaskDisplay({
 
   return (
     <SnippetLarge
-      size="sm"
       thumbnail={subject.thumbnail}
+      portrait
       subtitle={subject.parent ? createLocalString(subject.label) : subject.type}
-      center
-      margin
       lightBackground
       label={subject.parent ? createLocalString(subject.parent.label) : createLocalString(subject.label)}
       link={link}
-      linkAs={PrimaryButtonLink}
       query={next ? { goToNext: true } : undefined}
       buttonText={next ? t('Contribute to the next image') : t('Continue contribution')}
     />

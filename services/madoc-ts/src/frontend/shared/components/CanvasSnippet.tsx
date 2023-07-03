@@ -27,7 +27,6 @@ export const CanvasSnippet: React.FC<{
   if (!data) {
     return (
       <SnippetLarge
-        margin
         label={'...'}
         subtitle={t(`Canvas`)}
         summary={'...'}
@@ -43,7 +42,6 @@ export const CanvasSnippet: React.FC<{
 
   return (
     <SnippetLarge
-      margin
       label={<LocaleString>{data.canvas.label}</LocaleString>}
       subtitle={t(`Canvas`)}
       summary={<LocaleString>{data.canvas.summary}</LocaleString>}

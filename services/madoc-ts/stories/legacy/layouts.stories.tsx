@@ -591,7 +591,6 @@ export const SingleCollectionListingGrid: React.FC = () => {
             size={size}
             center={center}
             buttonRole={buttonRole}
-            containThumbnail={false}
             smallLabel={true}
             fluid
           />
