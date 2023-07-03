@@ -1,0 +1,12 @@
+{
+  "sandboxes": ["new", "vanilla"],
+  "node": "16",
+  "installCommand": "custom-install",
+  "buildCommand": "custom-build",
+  "packages": [
+    "services/madoc-ts/npm/components"
+  ],
+  "publishDirectory": {
+    "@madoc.io/components": "services/madoc-ts/npm/components"
+  }
+}
