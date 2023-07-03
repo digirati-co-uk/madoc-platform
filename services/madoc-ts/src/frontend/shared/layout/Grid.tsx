@@ -15,8 +15,13 @@ export const GridButton = styled.button`
   justify-content: center;
   border: 1px dashed #999;
   background-color: #f7f7f7;
-  color: #3498db;
+  color: #3773db;
   text-decoration: none;
+  
+  &:hover {
+    border: 1px solid #0f306c;
+    color: #0f306c;
+  }
 `;
 
 export const CSSThirdGrid = styled.div<{ $justify?: string }>`

@@ -20,6 +20,7 @@ export type SnippetLargeProps = {
   smallLabel?: boolean;
   interactive?: boolean;
   query?: any;
+  placeholderIcon?: JSX.Element;
 };
 
 const sizeMap = {
@@ -30,16 +31,20 @@ const sizeMap = {
 
 const SnippetButton = styled.a<{ $center?: boolean }>`
   margin-left: ${props => (props.$center ? 'auto' : '')};
-  width: auto;
   justify-self: flex-end;
   padding: 0.4em 0;
   font-size: 0.9rem;
   text-decoration: none;
   color: #3773db;
- 
+  flex-shrink: 0;
+
   &:link,
   &:visited {
     color: #3773db;
+  }
+
+  &:hover {
+    color: #0f306c;
   }
 
   &[data-is-role='button'] {
@@ -47,6 +52,7 @@ const SnippetButton = styled.a<{ $center?: boolean }>`
     background: #ecf0ff;
     color: #3773db;
     border-radius: 3px;
+
     &:hover {
       background: #d3dbf5;
       color: #3773db;
@@ -171,7 +177,6 @@ export const SnippetThumbnailContainer = styled.div<{
       width: 11em;
     }
   }
-  
 
   &[data-is-portrait='true'] {
     margin-bottom: 1rem;
@@ -180,6 +185,15 @@ export const SnippetThumbnailContainer = styled.div<{
     width: 100%
   }
 
+  &[data-is-icon='true'] {
+    background: #DDDDDD;
+    align-items: center;
+    svg {
+      height: 48px;
+      width: 48px;
+      fill: #888888;
+    }
+  }
 }
 `;
 
@@ -209,7 +223,6 @@ const SnippetSummary = styled.div`
 `;
 
 export const SnippetLarge: React.FC<SnippetLargeProps> = props => {
-
   return (
     <SnippetContainer
       size={props.size}
@@ -224,6 +237,13 @@ export const SnippetLarge: React.FC<SnippetLargeProps> = props => {
           data-is-portrait={props.portrait}
         >
           <SnippetThumbnail src={props.thumbnail} />
+        </SnippetThumbnailContainer>
+      ) : props.placeholderIcon ? (
+        <SnippetThumbnailContainer
+          data-is-portrait={props.portrait}
+          data-is-icon={true}
+        >
+          {props.placeholderIcon}
         </SnippetThumbnailContainer>
       ) : null}
       <SnippetMetadata>

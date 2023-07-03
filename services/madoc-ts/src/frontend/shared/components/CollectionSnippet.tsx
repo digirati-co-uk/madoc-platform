@@ -5,6 +5,7 @@ import { useApiCollection } from '../hooks/use-api-collection';
 import { LocaleString } from './LocaleString';
 import { HrefLink } from '../utility/href-link';
 import { createLink } from '../utility/create-link';
+import CollectionIcon from '../icons/CollectionIcon';
 
 export const CollectionSnippet: React.FC<{ id: number; projectId?: string | number } & Partial<SnippetLargeProps>> = ({
   id,
@@ -25,6 +26,7 @@ export const CollectionSnippet: React.FC<{ id: number; projectId?: string | numb
         subtitle={t('Collection')}
         summary={'...'}
         linkAs={HrefLink}
+        placeholderIcon={<CollectionIcon />}
         buttonText={t('view collection')}
         link={createLink({ collectionId: id, projectId: projectId })}
         {...props}
@@ -45,6 +47,7 @@ export const CollectionSnippet: React.FC<{ id: number; projectId?: string | numb
       summary={<LocaleString>{data.collection.summary}</LocaleString>}
       linkAs={HrefLink}
       thumbnail={thumbnail}
+      placeholderIcon={<CollectionIcon />}
       buttonText={t('view collection')}
       link={createLink({ collectionId: id, projectId: projectId })}
       {...props}
