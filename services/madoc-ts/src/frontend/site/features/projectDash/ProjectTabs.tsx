@@ -4,6 +4,7 @@ import { blockEditorFor } from '../../../../extensions/page-blocks/block-editor-
 import styled from 'styled-components';
 import { ProjectMyWorkTab } from './ProjectMyWorkTab';
 import { ProjectContentTab } from './ProjectContentTab';
+import {ProjectContributorsTab} from "./ProjectContributorsTab";
 
 const TabContainer = styled.div`
   padding-top: 2em;
@@ -74,11 +75,11 @@ export const ProjectTabs: React.FC = () => {
       title: 'Manifests and Collections',
       content: <ProjectContentTab />,
     },
-    {
-      id: '3',
-      title: 'Contributors',
-      content: Tab2Content,
-    },
+    // {
+    //   id: '3',
+    //   title: 'Contributors',
+    //   content: <ProjectContributorsTab />,
+    // },
   ];
 
   const SelectedTab = tabs.find(tb => tb.id === tab);
