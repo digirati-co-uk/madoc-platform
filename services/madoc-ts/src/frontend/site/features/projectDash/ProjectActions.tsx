@@ -8,10 +8,10 @@ import { useProject } from '../../hooks/use-project';
 import { useProjectPageConfiguration } from '../../hooks/use-project-page-configuration';
 import { useProjectStatus } from '../../hooks/use-project-status';
 import { useRelativeLinks } from '../../hooks/use-relative-links';
-import { GoToRandomCanvas } from '../contributor/GoToRandomCanvas';
-import { GoToRandomManifest } from '../contributor/GoToRandomManifest';
+import { GoToRandomCanvas } from '../sharedFeatures/GoToRandomCanvas';
+import { GoToRandomManifest } from '../sharedFeatures/GoToRandomManifest';
 import { useSiteConfiguration } from '../SiteConfigurationContext';
-import { StartContributingButton } from '../contributor/StartContributingButton';
+import { StartContributingButton } from '../sharedFeatures/StartContributingButton';
 
 export const ProjectActions: React.FC<{
   showContributingButton?: boolean }> = ({showContributingButton = false}) => {

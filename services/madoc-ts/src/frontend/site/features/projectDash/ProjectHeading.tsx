@@ -4,7 +4,7 @@ import { Heading1, Subheading1 } from '../../../shared/typography/Heading1';
 import { LocaleString } from '../../../shared/components/LocaleString';
 import { useProject } from '../../hooks/use-project';
 import styled from 'styled-components';
-import { StartContributingButton } from '../contributor/StartContributingButton';
+import { StartContributingButton } from '../sharedFeatures/StartContributingButton';
 
 const ProjectHeadingContainer = styled.div`
   display: flex;

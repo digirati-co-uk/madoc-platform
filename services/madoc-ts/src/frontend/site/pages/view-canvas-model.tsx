@@ -6,15 +6,15 @@ import { useCurrentUser } from '../../shared/hooks/use-current-user';
 import { useLocationQuery } from '../../shared/hooks/use-location-query';
 import { AutoSlotLoader } from '../../shared/page-blocks/auto-slot-loader';
 import { Slot } from '../../shared/page-blocks/slot';
-import { CanvasModelCompleteMessage } from '../features/contributor/CanvasModelCompleteMessage';
-import { CanvasModelEditor } from '../features/contributor/CanvasModelEditor';
-import { CanvasModelPrepareActions } from '../features/admin/CanvasModelPrepareActions';
-import { CanvasModelReadOnlyViewer } from '../features/CanvasModelReadOnlyViewer';
-import { CanvasNotAvailableToBrowse } from '../features/CanvasNotAvailableToBrowse';
-import { CanvasPageHeader } from '../features/CanvasPageHeader';
-import { CanvasTaskWarningMessage } from '../features/contributor/CanvasTaskWarningMessage';
-import { CanvasThumbnailNavigation } from '../features/CanvasThumbnailNavigation';
-import { PrepareCanvasCaptureModel } from '../features/admin/PrepareCanvasCaptureModel';
+import { CanvasModelCompleteMessage } from '../features/canvasPage/modelPage/CanvasModelCompleteMessage';
+import { CanvasModelEditor } from '../features/canvasPage/modelPage/CanvasModelEditor';
+import { CanvasModelPrepareActions } from '../features/canvasPage/modelPage/CanvasModelPrepareActions';
+import { CanvasModelReadOnlyViewer } from '../features/canvasPage/viewers/CanvasModelReadOnlyViewer';
+import { CanvasNotAvailableToBrowse } from '../features/canvasPage/CanvasNotAvailableToBrowse';
+import { CanvasPageHeader } from '../features/canvasPage/CanvasPageHeader';
+import { CanvasTaskWarningMessage } from '../features/canvasPage/modelPage/CanvasTaskWarningMessage';
+import { CanvasThumbnailNavigation } from '../features/canvasPage/CanvasThumbnailNavigation';
+import { PrepareCanvasCaptureModel } from '../features/canvasPage/modelPage/PrepareCanvasCaptureModel';
 import { useSiteConfiguration } from '../features/SiteConfigurationContext';
 import { useCanvasNavigation } from '../hooks/use-canvas-navigation';
 import { useCanvasUserTasks } from '../hooks/use-canvas-user-tasks';
@@ -23,7 +23,7 @@ import { useProjectShadowConfiguration } from '../hooks/use-project-shadow-confi
 import { useProjectStatus } from '../hooks/use-project-status';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 import { useRouteContext } from '../hooks/use-route-context';
-import { RedirectToNextCanvas } from '../features/RedirectToNextCanvas';
+import { RedirectToNextCanvas } from '../features/canvasPage/RedirectToNextCanvas';
 
 export const ViewCanvasModel: React.FC = () => {
   const { canvasId } = useRouteContext();

@@ -4,11 +4,11 @@ import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
 import { AvailableBlocks } from '../../shared/page-blocks/available-blocks';
 import { Slot } from '../../shared/page-blocks/slot';
 import { ProjectActions } from '../features/projectDash/ProjectActions';
-import { ProjectContributors } from '../features/ProjectContributors';
+import { ProjectContributors } from '../features/projectDash/ProjectContributors';
 import { ProjectHeading } from '../features/projectDash/ProjectHeading';
 import { ProjectStatistics } from '../features/projectDash/ProjectStatistics';
 import { ProjectTabs } from '../features/projectDash/ProjectTabs';
-import { SearchResource } from '../features/SearchResource';
+import { SearchResource } from '../features/projectDash/SearchResource';
 
 export const ViewProject: React.FC = () => {
   const available = (

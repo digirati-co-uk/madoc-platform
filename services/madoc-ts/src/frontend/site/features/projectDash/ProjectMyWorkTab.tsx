@@ -1,7 +1,7 @@
 import React from 'react';
-import { ProjectContributionButton } from '../contributor/ProjectContributionButton';
+import { ProjectContributionButton } from './ProjectContributionButton';
 import { Slot } from '../../../shared/page-blocks/slot';
-import { ContributorTasks } from '../contributor/ContributorTasks';
+import { ContributorTasks } from '../sharedFeatures/ContributorTasks';
 
 export const ProjectMyWorkTab: React.FC = () => {
   return (
