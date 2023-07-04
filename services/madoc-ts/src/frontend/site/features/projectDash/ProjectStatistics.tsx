@@ -12,7 +12,6 @@ import InProgressIcon from '../../../shared/icons/InProgressIcon';
 
 const ProgressHeading = styled.h2`
   font-size: 1.2em;
-  padding: 0 1em;
 `;
 
 const ProgressContainer = styled.div`

@@ -4,7 +4,7 @@ import { blockEditorFor } from '../../../../extensions/page-blocks/block-editor-
 import styled from 'styled-components';
 import { ProjectMyWorkTab } from './ProjectMyWorkTab';
 import { ProjectContentTab } from './ProjectContentTab';
-import {ProjectContributorsTab} from "./ProjectContributorsTab";
+import { ProjectContributorsTab } from './ProjectContributorsTab';
 
 const TabContainer = styled.div`
   padding-top: 2em;
@@ -25,7 +25,8 @@ const TabContainer = styled.div`
 
 const Tab = styled.button`
   margin-right: 24px;
-  font-size: 14px;
+  font-size: 1em;
+  font-weight: 500;
   border-radius: 5px;
   border: rgba(112, 112, 112, 0.05);
   background-color: transparent;
@@ -54,15 +55,13 @@ const Tab = styled.button`
 `;
 
 const TabContent = styled.div`
-  padding: 2em;
+  padding: 1em;
 `;
 
 export const ProjectTabs: React.FC = () => {
   const { t } = useTranslation();
 
   const [tab, setTab] = useState('1');
-
-  const Tab2Content = <p> Hiya im tab2 </p>;
 
   const tabs = [
     {
