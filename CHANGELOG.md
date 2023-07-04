@@ -14,6 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 -->
 
+### Fixed
+- Fix bug when importing Manifests with long labels
+
 ## [v2.1.2](https://github.com/digirati-co-uk/madoc-platform/compare/v2.1.1...v2.1.2)
 Hotfix release for submissions in progress.
 
