@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { Navigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { CrowdsourcingReview } from '../../../../../gateway/tasks/crowdsourcing-review';
 import { CrowdsourcingTask } from '../../../../../gateway/tasks/crowdsourcing-task';
 import { EditorSlots } from '../../../../shared/capture-models/new/components/EditorSlots';
@@ -47,7 +47,7 @@ import { extractIdFromUrn } from '../../../../../utility/parse-urn';
 import { useProjectAnnotationStyles } from '../../../hooks/use-project-annotation-styles';
 import UnlockSmileyIcon from '../../../../shared/icons/UnlockSmileyIcon';
 import { useCurrentUser } from '../../../../shared/hooks/use-current-user';
-import { ManifestSnippet } from '../../../../shared/components/ManifestSnippet';
+import { ManifestSnippet } from '../../../../shared/features/ManifestSnippet';
 
 const ReviewContainer = styled.div`
   position: relative;

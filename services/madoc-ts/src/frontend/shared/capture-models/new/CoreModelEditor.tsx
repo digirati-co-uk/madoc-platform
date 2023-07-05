@@ -4,9 +4,9 @@ import { useTranslation } from 'react-i18next';
 import { PARAGRAPHS_PROFILE } from '../../../../extensions/capture-models/Paragraphs/Paragraphs.helpers';
 import { slotConfig } from '../../../../extensions/capture-models/Paragraphs/Paragraphs.slots';
 import { AnnotationStyles } from '../../../../types/annotation-styles';
-import { CanvasHighlightedRegions } from '../../../site/features/canvasPage/CanvasHighlightedRegions';
-import { CanvasModelUserStatus } from '../../../site/features/canvasPage/modelPage/CanvasModelUserStatus';
-import { CanvasViewer, CanvasViewerProps } from '../../../site/features/canvasPage/viewers/CanvasViewer';
+import { CanvasHighlightedRegions } from '../../../site/features/canvas/CanvasHighlightedRegions';
+import { CanvasModelUserStatus } from '../../../site/features/canvas/CanvasModelUserStatus';
+import { CanvasViewer, CanvasViewerProps } from '../../../site/features/canvas/CanvasViewer';
 import {
   CanvasViewerButton,
   CanvasViewerContentOverlay,
@@ -17,8 +17,8 @@ import {
   CanvasViewerGridSidebar,
 } from '../../atoms/CanvasViewerGrid';
 import { CreateModelTestCase } from '../../../site/features/CreateModelTestCase';
-import { OpenSeadragonViewer } from '../../../site/features/canvasPage/viewers/OpenSeadragonViewer.lazy';
-import { TranscriberModeWorkflowBar } from '../../../site/features/canvasPage/modelPage/TranscriberModeWorkflowBar';
+import { OpenSeadragonViewer } from '../../features/OpenSeadragonViewer.lazy';
+import { TranscriberModeWorkflowBar } from '../../../site/features/canvas/TranscriberModeWorkflowBar';
 import { RouteContext } from '../../../site/hooks/use-route-context';
 import { ViewReadOnlyAnnotation } from '../../atlas/ViewReadOnlyAnnotation';
 import { InfoMessage } from '../../callouts/InfoMessage';

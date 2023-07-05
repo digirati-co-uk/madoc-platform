@@ -1,7 +1,7 @@
 import React from 'react';
 import { createLink } from '../../../../shared/utility/create-link';
 import styled from 'styled-components';
-import { NavigationButton, PaginationText } from '../../../../shared/components/CanvasNavigationMinimalist';
+import { NavigationButton, PaginationText } from '../../../../shared/components/NavigationButton';
 import { CrowdsourcingTask } from '../../../../../gateway/tasks/crowdsourcing-task';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';

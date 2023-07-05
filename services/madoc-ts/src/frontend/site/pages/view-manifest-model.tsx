@@ -1,21 +1,20 @@
 import React from 'react';
-import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
+import { DisplayBreadcrumbs } from '../blocks/Breadcrumbs';
 import { useCurrentUser } from '../../shared/hooks/use-current-user';
 import { Slot } from '../../shared/page-blocks/slot';
-import { ManifestHeading } from '../features/manifestPage/ManifestHeading';
-import { ManifestModelEditor } from '../features/manifestPage/modelPage/ManifestModelEditor';
-import { ManifestPagination } from '../features/manifestPage/ManifestPagination';
-import { ManifestUserNotification } from '../features/manifestPage/ManifestUserNotification';
-import { PrepareManifestsCaptureModel } from '../features/manifestPage/modelPage/PrepareManifestCaptureModel';
-import { RequiredStatement } from '../features/sharedFeatures/RequiredStatement';
+import { ManifestHeading } from '../blocks/ManifestHeading';
+import { ManifestModelEditor } from '../blocks/ManifestModelEditor';
+import { ManifestPagination } from '../blocks/ManifestPagination';
+import { ManifestUserNotification } from '../blocks/ManifestUserNotification';
+import { PrepareManifestsCaptureModel } from '../features/manifest/PrepareManifestCaptureModel';
+import { RequiredStatement } from '../blocks/RequiredStatement';
 import { useManifestTask } from '../hooks/use-manifest-task';
 import { useManifestUserTasks } from '../hooks/use-manifest-user-tasks';
 import { useProjectShadowConfiguration } from '../hooks/use-project-shadow-configuration';
 import { useProjectStatus } from '../hooks/use-project-status';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 import { Navigate } from 'react-router-dom';
-import '../features/manifestPage/ManifestHero';
-import { ManifestModelCanvasPreview } from '../features/manifestPage/modelPage/ManifestModelCanvasPreview';
+import { ManifestModelCanvasPreview } from '../blocks/ManifestModelCanvasPreview';
 
 export function ViewManifestModel() {
   const createLink = useRelativeLinks();

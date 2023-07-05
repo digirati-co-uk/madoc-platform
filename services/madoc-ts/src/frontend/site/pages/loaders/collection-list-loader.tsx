@@ -1,7 +1,7 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import { ProjectFull } from '../../../../types/project-full';
-import { BreadcrumbContext } from '../../../shared/components/Breadcrumbs';
+import { BreadcrumbContext } from '../../blocks/Breadcrumbs';
 import { createUniversalComponent } from '../../../shared/utility/create-universal-component';
 import { UniversalComponent } from '../../../types';
 import { Pagination as PaginationType } from '../../../../types/schemas/_pagination';

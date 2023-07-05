@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
+import { DisplayBreadcrumbs } from '../blocks/Breadcrumbs';
 import { LocaleString } from '../../shared/components/LocaleString';
 import { Slot } from '../../shared/page-blocks/slot';
 import { SlotProvider } from '../../shared/page-blocks/slot-context';

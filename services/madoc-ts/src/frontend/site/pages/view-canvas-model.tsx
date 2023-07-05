@@ -1,20 +1,20 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { castBool } from '../../../utility/cast-bool';
-import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
+import { DisplayBreadcrumbs } from '../blocks/Breadcrumbs';
 import { useCurrentUser } from '../../shared/hooks/use-current-user';
 import { useLocationQuery } from '../../shared/hooks/use-location-query';
 import { AutoSlotLoader } from '../../shared/page-blocks/auto-slot-loader';
 import { Slot } from '../../shared/page-blocks/slot';
-import { CanvasModelCompleteMessage } from '../features/canvasPage/modelPage/CanvasModelCompleteMessage';
-import { CanvasModelEditor } from '../features/canvasPage/modelPage/CanvasModelEditor';
-import { CanvasModelPrepareActions } from '../features/canvasPage/modelPage/CanvasModelPrepareActions';
-import { CanvasModelReadOnlyViewer } from '../features/canvasPage/viewers/CanvasModelReadOnlyViewer';
-import { CanvasNotAvailableToBrowse } from '../features/canvasPage/CanvasNotAvailableToBrowse';
-import { CanvasPageHeader } from '../features/canvasPage/CanvasPageHeader';
-import { CanvasTaskWarningMessage } from '../features/canvasPage/modelPage/CanvasTaskWarningMessage';
-import { CanvasThumbnailNavigation } from '../features/canvasPage/CanvasThumbnailNavigation';
-import { PrepareCanvasCaptureModel } from '../features/canvasPage/modelPage/PrepareCanvasCaptureModel';
+import { CanvasModelCompleteMessage } from '../blocks/CanvasModelCompleteMessage';
+import { CanvasModelEditor } from '../blocks/CanvasModelEditor';
+import { CanvasModelPrepareActions } from '../blocks/CanvasModelPrepareActions';
+import { CanvasModelReadOnlyViewer } from '../blocks/CanvasModelReadOnlyViewer';
+import { CanvasNotAvailableToBrowse } from '../blocks/CanvasNotAvailableToBrowse';
+import { CanvasPageHeader } from '../blocks/CanvasPageHeader';
+import { CanvasTaskWarningMessage } from '../blocks/CanvasTaskWarningMessage';
+import { CanvasThumbnailNavigation } from '../blocks/CanvasThumbnailNavigation';
+import { PrepareCanvasCaptureModel } from '../features/canvas/PrepareCanvasCaptureModel';
 import { useSiteConfiguration } from '../features/SiteConfigurationContext';
 import { useCanvasNavigation } from '../hooks/use-canvas-navigation';
 import { useCanvasUserTasks } from '../hooks/use-canvas-user-tasks';
@@ -23,7 +23,7 @@ import { useProjectShadowConfiguration } from '../hooks/use-project-shadow-confi
 import { useProjectStatus } from '../hooks/use-project-status';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 import { useRouteContext } from '../hooks/use-route-context';
-import { RedirectToNextCanvas } from '../features/canvasPage/RedirectToNextCanvas';
+import { RedirectToNextCanvas } from '../features/canvas/RedirectToNextCanvas';
 
 export const ViewCanvasModel: React.FC = () => {
   const { canvasId } = useRouteContext();

@@ -3,7 +3,7 @@ import { ApiArgs } from '../../../shared/hooks/use-api-query';
 import { AutoSlotLoader } from '../../../shared/page-blocks/auto-slot-loader';
 import { UniversalComponent } from '../../../types';
 import { createUniversalComponent } from '../../../shared/utility/create-universal-component';
-import { BreadcrumbContext } from '../../../shared/components/Breadcrumbs';
+import { BreadcrumbContext } from '../../blocks/Breadcrumbs';
 import { ManifestFull } from '../../../../types/schemas/manifest-full';
 import { Outlet } from 'react-router-dom';
 import { usePaginatedManifest } from '../../hooks/use-manifest';

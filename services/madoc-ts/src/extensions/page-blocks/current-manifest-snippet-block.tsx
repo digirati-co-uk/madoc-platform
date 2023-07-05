@@ -1,6 +1,6 @@
 import React from 'react';
 import { captureModelShorthand } from '../../frontend/shared/capture-models/helpers/capture-model-shorthand';
-import { ManifestSnippet } from '../../frontend/shared/components/ManifestSnippet';
+import { ManifestSnippet } from '../../frontend/shared/features/ManifestSnippet';
 import { ReactPageBlockDefinition } from './extension';
 
 const definition: ReactPageBlockDefinition<

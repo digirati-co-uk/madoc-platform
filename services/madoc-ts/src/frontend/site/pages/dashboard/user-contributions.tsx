@@ -1,12 +1,12 @@
 import React from 'react';
-import { ContributorTasks } from '../../features/sharedFeatures/ContributorTasks';
+import { ContributionsTasks } from '../../features/userDash/ContributionsTasks';
 import { UserStatistics } from '../../features/userDash/UserStatistics';
 
 export const UserContributions: React.FC = () => {
   return (
     <>
       <UserStatistics />
-      <ContributorTasks />
+      <ContributionsTasks />
     </>
   );
 };

@@ -1,11 +1,11 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
-import { LightNavigation, LightNavigationItem } from '../../shared/navigation/LightNavigation';
-import { LocaleString } from '../../shared/components/LocaleString';
-import { useNavigationOptions, useUser } from '../../shared/hooks/use-site';
-import { HrefLink } from '../../shared/utility/href-link';
-import { useSiteConfiguration } from './SiteConfigurationContext';
+import { LightNavigation, LightNavigationItem } from '../../../shared/navigation/LightNavigation';
+import { LocaleString } from '../../../shared/components/LocaleString';
+import { useNavigationOptions, useUser } from '../../../shared/hooks/use-site';
+import { HrefLink } from '../../../shared/utility/href-link';
+import { useSiteConfiguration } from '../SiteConfigurationContext';
 
 export function GlobalSiteNavigation(props: {
   showHomepageMenu?: boolean;

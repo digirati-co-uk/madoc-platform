@@ -21,7 +21,7 @@ import {
   SiteSwitcherBackButton,
   SiteSwitcherContainer,
   SiteSwitcherSiteName,
-} from '../../shared/components/AdminMenu';
+} from '../components/AdminMenu';
 import { useSite, useUser } from '../../shared/hooks/use-site';
 import { HrefLink } from '../../shared/utility/href-link';
 

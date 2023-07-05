@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { FooterImageGrid } from '../../../shared/components/FooterImageGrid';
+import { FooterImageGrid } from '../../blocks/FooterImageGrid';
 import { RenderFragment } from '../../../shared/components/RenderFragment';
 import { GlobalSearch } from '../../../shared/form/GlobalSearch';
 import { useSiteTheme } from '../../../shared/hooks/use-site';
@@ -13,7 +13,7 @@ import { Slot } from '../../../shared/page-blocks/slot';
 import { GlobalStyles } from '../../../shared/typography/GlobalStyles';
 import { maxWidth } from '../../variables/global';
 import { footerColor, footerBackground, footerContainerBackground } from '../../../shared/variables';
-import { GlobalMenuStack } from './GlobalMenuStack';
+import { GlobalMenuStack } from '../../blocks/GlobalMenuStack';
 
 const StyledGlobalFooter = styled.div`
   background: ${footerBackground};

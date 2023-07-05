@@ -9,7 +9,7 @@ import {
   EditorShorthandCaptureModelRef,
   EditShorthandCaptureModel,
 } from '../../../../shared/capture-models/EditorShorthandCaptureModel';
-import { useAdminLayout } from '../../../../shared/components/AdminMenu';
+import { useAdminLayout } from '../../../components/AdminMenu';
 import {
   postProcessConfiguration,
   ProjectConfigContributions,

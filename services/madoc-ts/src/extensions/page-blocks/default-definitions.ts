@@ -1,14 +1,14 @@
-import { CanvasPanelBlock } from '../../frontend/shared/components/CanvasPanelBlock';
-import { SingleCollection } from '../../frontend/shared/components/SingleCollection';
-import { SingleProject } from '../../frontend/shared/components/SingleProject';
+import { CanvasPanelBlock } from '../../frontend/site/blocks/CanvasPanelBlock';
+import { SingleCollection } from '../../frontend/site/blocks/SingleCollection';
+import { SingleProject } from '../../frontend/site/blocks/SingleProject';
 import { Surface } from '../../frontend/shared/layout/Surface';
-import { FeaturedItem } from '../../frontend/shared/components/FeaturedItem';
-import { CrowdSourcingBanner } from '../../frontend/shared/components/CrowdSourcingBanner';
+import { FeaturedItem } from '../../frontend/site/blocks/FeaturedItem';
+import { CrowdSourcingBanner } from '../../frontend/site/blocks/CrowdSourcingBanner';
 import { PageBlockDefinition } from './extension';
 import simpleHtmlBlock from './simple-html-block/simple-html-block';
 import currentManifest from './current-manifest-snippet-block';
 import simpleMarkdownBlock from './simple-markdown-block/simple-markdown-block';
-import { EmbedItem } from '../../frontend/site/features/sharedBlocks/EmbedItem';
+import { EmbedItem } from '../../frontend/site/blocks/EmbedItem';
 
 export function getDefaultPageBlockDefinitions(): PageBlockDefinition<any, any, any, any>[] {
   return [

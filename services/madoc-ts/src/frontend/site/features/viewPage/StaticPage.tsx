@@ -1,10 +1,10 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
-import { useApi } from '../../shared/hooks/use-api';
-import { useData } from '../../shared/hooks/use-data';
-import { SlotProvider } from '../../shared/page-blocks/slot-context';
-import { PageLoader } from '../pages/loaders/page-loader';
-import { useSiteConfiguration } from './SiteConfigurationContext';
+import { useApi } from '../../../shared/hooks/use-api';
+import { useData } from '../../../shared/hooks/use-data';
+import { SlotProvider } from '../../../shared/page-blocks/slot-context';
+import { PageLoader } from '../../pages/loaders/page-loader';
+import { useSiteConfiguration } from '../SiteConfigurationContext';
 
 export const StaticPage: React.FC<{ layout?: string; title: string }> = ({ title, layout = 'none', children }) => {
   const { pathname } = useLocation();

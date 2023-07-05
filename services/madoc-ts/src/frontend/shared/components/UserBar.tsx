@@ -2,7 +2,7 @@ import { stringify } from 'query-string';
 import React, { useEffect, useMemo } from 'react';
 import useDropdownMenu from 'react-accessible-dropdown-menu-hook';
 import { useTranslation } from 'react-i18next';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { siteRoles } from '../../config';
 import { useSiteConfiguration } from '../../site/features/SiteConfigurationContext';

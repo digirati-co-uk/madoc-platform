@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { BaseTask } from '../../../gateway/tasks/base-task';
-import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
+import { DisplayBreadcrumbs } from '../blocks/Breadcrumbs';
 import { Button, ButtonIcon, ButtonRow } from '../../shared/navigation/Button';
 import {
   LayoutContainer,
@@ -20,9 +20,9 @@ import { useInfiniteData } from '../../shared/hooks/use-data';
 import { Pagination as PaginationType } from '../../../types/schemas/_pagination';
 import { Navigate, Outlet, useNavigate, useParams } from 'react-router-dom';
 import { useLocationQuery } from '../../shared/hooks/use-location-query';
-import { TaskFilterStatuses } from '../features/tasksPage/TaskFilterStatuses';
-import { TaskFilterType } from '../features/tasksPage/TaskFilterType';
-import { TaskListItem } from '../features/tasksPage/TaskListItem';
+import { TaskFilterStatuses } from '../features/tasks/TaskFilterStatuses';
+import { TaskFilterType } from '../features/tasks/TaskFilterType';
+import { TaskListItem } from '../features/tasks/TaskListItem';
 import { useGoToQuery } from '../hooks/use-go-to-query';
 import { useInfiniteAction } from '../hooks/use-infinite-action';
 import { useRelativeLinks } from '../hooks/use-relative-links';

@@ -8,7 +8,7 @@ import {
   revisionsMapToRevisionsList,
   useRevisionList,
 } from '../../../shared/capture-models/new/hooks/use-revision-list';
-import { RevisionList } from '../../../shared/components/RevisionList';
+import { RevisionList } from '../../features/tasks/RevisionList';
 import { useUser } from '../../../shared/hooks/use-site';
 import { PersonIcon } from '../../../shared/icons/PersonIcon';
 import { useCanvasUserTasks } from '../use-canvas-user-tasks';

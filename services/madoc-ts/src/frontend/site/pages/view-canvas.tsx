@@ -1,17 +1,17 @@
 import React from 'react';
 import { castBool } from '../../../utility/cast-bool';
-import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
-import { CanvasVaultContext } from '../../shared/components/CanvasVaultContext';
+import { DisplayBreadcrumbs } from '../blocks/Breadcrumbs';
+import { CanvasVaultContext } from '../../shared/capture-models/CanvasVaultContext';
 import { useLocationQuery } from '../../shared/hooks/use-location-query';
 import { Slot } from '../../shared/page-blocks/slot';
-import { CanvasConfigurationViewer } from '../features/canvasPage/viewers/CanvasConfigurationViewer';
-import { CanvasHighlightedRegions } from '../features/canvasPage/CanvasHighlightedRegions';
-import { CanvasPageHeader } from '../features/canvasPage/CanvasPageHeader';
-import { CanvasThumbnailNavigation } from '../features/canvasPage/CanvasThumbnailNavigation';
-import { ContinueCanvasSubmission } from '../features/canvasPage/ContinueCanvasSubmission';
-import { HighlightedCanvasSearchResults } from '../features/canvasPage/HighlightedCanvasSearchResults';
-import { ManifestMetadata } from '../features/manifestPage/ManifestMetadata';
-import { RedirectToNextCanvas } from '../features/canvasPage/RedirectToNextCanvas';
+import { CanvasConfigurationViewer } from '../blocks/CanvasConfigurationViewer';
+import { CanvasHighlightedRegions } from '../features/canvas/CanvasHighlightedRegions';
+import { CanvasPageHeader } from '../blocks/CanvasPageHeader';
+import { CanvasThumbnailNavigation } from '../blocks/CanvasThumbnailNavigation';
+import { ContinueCanvasSubmission } from '../blocks/ContinueCanvasSubmission';
+import { HighlightedCanvasSearchResults } from '../blocks/HighlightedCanvasSearchResults';
+import { ManifestMetadata } from '../blocks/ManifestMetadata';
+import { RedirectToNextCanvas } from '../features/canvas/RedirectToNextCanvas';
 import { useSiteConfiguration } from '../features/SiteConfigurationContext';
 import { useCanvasNavigation } from '../hooks/use-canvas-navigation';
 
