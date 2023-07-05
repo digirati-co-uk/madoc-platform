@@ -94,5 +94,7 @@ export const DocumentEntityLabel = styled.div`
 export const FieldPreviewWrapper = styled.div`
   white-space: pre-wrap;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
+  row-gap: 0.5em;
 `;
