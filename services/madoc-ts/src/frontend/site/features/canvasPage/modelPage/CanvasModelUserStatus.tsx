@@ -1,14 +1,14 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button } from '../../../shared/navigation/Button';
-import { InfoMessage } from '../../../shared/callouts/InfoMessage';
-import { SuccessMessage } from '../../../shared/callouts/SuccessMessage';
-import { createLink } from '../../../shared/utility/create-link';
-import { HrefLink } from '../../../shared/utility/href-link';
-import { useContinueSubmission } from '../../hooks/use-continue-submission';
-import { useContributionMode } from '../../hooks/use-contribution-mode';
-import { useRelativeLinks } from '../../hooks/use-relative-links';
-import { useRouteContext } from '../../hooks/use-route-context';
+import { Button } from '../../../../shared/navigation/Button';
+import { InfoMessage } from '../../../../shared/callouts/InfoMessage';
+import { SuccessMessage } from '../../../../shared/callouts/SuccessMessage';
+import { createLink } from '../../../../shared/utility/create-link';
+import { HrefLink } from '../../../../shared/utility/href-link';
+import { useContinueSubmission } from '../../../hooks/use-continue-submission';
+import { useContributionMode } from '../../../hooks/use-contribution-mode';
+import { useRelativeLinks } from '../../../hooks/use-relative-links';
+import { useRouteContext } from '../../../hooks/use-route-context';
 
 export const CanvasModelUserStatus: React.FC<{ isEditing?: boolean }> = ({ isEditing }) => {
   const { t } = useTranslation();

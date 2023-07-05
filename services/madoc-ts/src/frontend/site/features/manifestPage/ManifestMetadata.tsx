@@ -1,14 +1,14 @@
 import React from 'react';
-import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
-import { MetaDataDisplay } from '../../shared/components/MetaDataDisplay';
-import { usePaginatedData } from '../../shared/hooks/use-data';
-import { useUser } from '../../shared/hooks/use-site';
-import { useSiteMetadataConfiguration } from '../../shared/hooks/use-site-metadata-configuration';
-import { useMetadataSuggestionConfiguration } from '../hooks/use-metadata-suggestion-configuration';
-import { useProjectShadowConfiguration } from '../hooks/use-project-shadow-configuration';
-import { useRelativeLinks } from '../hooks/use-relative-links';
-import { useRouteContext } from '../hooks/use-route-context';
-import { ManifestLoader } from '../pages/loaders/manifest-loader';
+import { blockEditorFor } from '../../../../extensions/page-blocks/block-editor-for';
+import { MetaDataDisplay } from '../../../shared/components/MetaDataDisplay';
+import { usePaginatedData } from '../../../shared/hooks/use-data';
+import { useUser } from '../../../shared/hooks/use-site';
+import { useSiteMetadataConfiguration } from '../../../shared/hooks/use-site-metadata-configuration';
+import { useMetadataSuggestionConfiguration } from '../../hooks/use-metadata-suggestion-configuration';
+import { useProjectShadowConfiguration } from '../../hooks/use-project-shadow-configuration';
+import { useRelativeLinks } from '../../hooks/use-relative-links';
+import { useRouteContext } from '../../hooks/use-route-context';
+import { ManifestLoader } from '../../pages/loaders/manifest-loader';
 
 export const ManifestMetadata: React.FC<{ hidden?: boolean; compact?: boolean; showEmptyMessage?: boolean }> = ({
   hidden,

@@ -8,7 +8,7 @@ import { PageBlockDefinition } from './extension';
 import simpleHtmlBlock from './simple-html-block/simple-html-block';
 import currentManifest from './current-manifest-snippet-block';
 import simpleMarkdownBlock from './simple-markdown-block/simple-markdown-block';
-import { EmbedItem } from '../../frontend/site/features/EmbedItem';
+import { EmbedItem } from '../../frontend/site/features/sharedBlocks/EmbedItem';
 
 export function getDefaultPageBlockDefinitions(): PageBlockDefinition<any, any, any, any>[] {
   return [

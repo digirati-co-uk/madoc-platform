@@ -3,10 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { MetadataEmptyState } from '../../../shared/atoms/MetadataConfiguration';
 import { useData } from '../../../shared/hooks/use-data';
 import { TranscriptionIcon } from '../../../shared/icons/TranscriptionIcon';
-import { CanvasPlaintext } from '../../features/CanvasPlaintext';
+import { CanvasPlaintext } from '../../features/canvasPage/CanvasPlaintext';
 import { CanvasLoader } from '../../pages/loaders/canvas-loader';
 import { CanvasMenuHook } from './types';
-import {LayoutSidebarMenu, NavIconContainer, NavIconNotifcation} from "../../../shared/layout/LayoutContainer";
 
 export function useTranscriptionMenu(): CanvasMenuHook {
   const { data } = useData(CanvasLoader, []);

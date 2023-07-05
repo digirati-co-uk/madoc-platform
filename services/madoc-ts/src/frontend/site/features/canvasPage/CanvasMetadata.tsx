@@ -1,11 +1,11 @@
 import React from 'react';
-import { MetaDataDisplay } from '../../shared/components/MetaDataDisplay';
-import { useData } from '../../shared/hooks/use-data';
-import { useSiteMetadataConfiguration } from '../../shared/hooks/use-site-metadata-configuration';
-import { useMetadataSuggestionConfiguration } from '../hooks/use-metadata-suggestion-configuration';
-import { useRelativeLinks } from '../hooks/use-relative-links';
-import { useRouteContext } from '../hooks/use-route-context';
-import { CanvasLoader } from '../pages/loaders/canvas-loader';
+import { MetaDataDisplay } from '../../../shared/components/MetaDataDisplay';
+import { useData } from '../../../shared/hooks/use-data';
+import { useSiteMetadataConfiguration } from '../../../shared/hooks/use-site-metadata-configuration';
+import { useMetadataSuggestionConfiguration } from '../../hooks/use-metadata-suggestion-configuration';
+import { useRelativeLinks } from '../../hooks/use-relative-links';
+import { useRouteContext } from '../../hooks/use-route-context';
+import { CanvasLoader } from '../../pages/loaders/canvas-loader';
 
 export const CanvasMetadata: React.FC<{ compact?: boolean; showEmptyMessage?: boolean }> = ({
   compact,

@@ -4,7 +4,7 @@ import { AdminLayoutContainer, AdminLayoutMenu } from '../../src/frontend/shared
 import { SiteProvider } from '../../src/frontend/shared/hooks/use-site';
 
 export default {
-  title: 'Components / Admin sidebar',
+  title: 'Admin / Admin sidebar',
   Component: AdminSidebar,
   args: {
     globalAdmin: false,
