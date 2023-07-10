@@ -1,13 +1,7 @@
 import { ApiClient } from '../../gateway/api';
 import { BaseExtension, defaultDispose } from '../extension-manager';
 import { RegistryExtension } from '../registry-extension';
-import { canvasAnnotationExport } from './export-configs/canvas/canvas-annotation-export';
-import { canvasApiExport } from './export-configs/canvas/canvas-api-export';
-import { canvasModelExport } from './export-configs/canvas/canvas-model-export';
-import { canvasPlaintextExport } from './export-configs/canvas/canvas-plaintext-export';
-import { manifestApiExport } from './export-configs/manifest/manifest-api-export';
-import { projectApiExport } from './export-configs/project/project-api-export';
-import { projectCsvSimpleExport } from './export-configs/project/project-csv-simple-export';
+import { allExports } from './export-configs/index';
 import { ExportConfig } from './types';
 
 export class ProjectExportExtension extends RegistryExtension<ExportConfig> implements BaseExtension {
@@ -20,14 +14,12 @@ export class ProjectExportExtension extends RegistryExtension<ExportConfig> impl
       registryName: ProjectExportExtension.REGISTRY,
     });
     this.api = api;
+
     // List of default export options.
-    ProjectExportExtension.register(canvasApiExport);
-    ProjectExportExtension.register(canvasModelExport);
-    ProjectExportExtension.register(canvasPlaintextExport);
-    ProjectExportExtension.register(canvasAnnotationExport);
-    ProjectExportExtension.register(manifestApiExport);
-    ProjectExportExtension.register(projectApiExport);
-    ProjectExportExtension.register(projectCsvSimpleExport);
+    const extensions = Object.values(allExports);
+    for (const extension of extensions) {
+      ProjectExportExtension.register(extension);
+    }
   }
 
   dispose() {
