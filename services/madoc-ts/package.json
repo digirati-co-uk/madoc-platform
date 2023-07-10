@@ -294,7 +294,7 @@
     "jest-environment-jsdom": "^29.4.2",
     "jsdom": "^16.5.1",
     "koa-connect": "^2.1.0",
-    "prettier": "^1.19.1",
+    "prettier": "^3.0.0",
     "react-is": "^16.13.1",
     "react-query-devtools": "^2.4.7",
     "react-refresh": "^0.10.0",
