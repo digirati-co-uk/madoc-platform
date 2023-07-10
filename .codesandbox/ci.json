@@ -4,9 +4,11 @@
   "installCommand": "custom-install",
   "buildCommand": "custom-build",
   "packages": [
-    "services/madoc-ts/npm/components"
+    "services/madoc-ts/npm/components",
+    "services/madoc-ts/npm/config"
   ],
   "publishDirectory": {
-    "@madoc.io/components": "services/madoc-ts/npm/components"
+    "@madoc.io/components": "services/madoc-ts/npm/components",
+    "@madoc.io/config": "services/madoc-ts/npm/config"
   }
 }
