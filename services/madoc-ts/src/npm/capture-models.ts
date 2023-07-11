@@ -20,6 +20,8 @@ export * from '../frontend/shared/capture-models/editor/stores/revisions/revisio
 export * from '../frontend/shared/capture-models/new/components/RevisionProviderWithFeatures';
 export * from '../frontend/shared/capture-models/EditorShorthandCaptureModel';
 
+import '../frontend/shared/capture-models/editor/bundle';
+
 export const utility = {
   revisionStore,
   hydrateCaptureModel,
