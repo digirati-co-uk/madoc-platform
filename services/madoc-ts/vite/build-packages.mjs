@@ -89,7 +89,9 @@ export function defineConfig(options) {
     if (
       !existsSync(npmPath) || !existsSync(packageJson)
     ) {
-      throw new Error(`Invalid package: ${pkg}`);
+      console.log(chalk.red(`Skipping ${pkg}`));
+      continue;
+      // throw new Error(`Invalid package: ${pkg}`);
     }
 
     const packageJsonContents = JSON.parse(await readFile(packageJson, "utf-8"));
