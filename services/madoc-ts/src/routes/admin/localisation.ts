@@ -207,7 +207,7 @@ export const getLocalisation: RouteMiddleware<{ code: string; namespace?: string
           await context.connection.any(
             sql<{ capture_model_id: string }>`select capture_model_id from iiif_project where site_id = ${siteId}`
           )
-        ).map(m => m.capture_model_id)
+        ).map((m: any) => m.capture_model_id)
       : [];
   // Load default english.
   const emptyJson = await loadLocaleTemplate(userApi, namespace, modelIds);
@@ -348,7 +348,7 @@ export const updateLocalisation: RouteMiddleware<{ code: string; namespace?: str
           await context.connection.any(
             sql<{ capture_model_id: string }>`select capture_model_id from iiif_project where site_id = ${siteId}`
           )
-        ).map(m => m.capture_model_id)
+        ).map((m: any) => m.capture_model_id)
       : [];
 
   const keys = Object.keys(context.requestBody);

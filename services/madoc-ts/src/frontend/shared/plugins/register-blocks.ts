@@ -1,4 +1,4 @@
-import { PageBlockExtension } from '../../../extensions/page-blocks/extension';
+import { PageBlockExtension } from '@/npm/registry';
 
 export function registerBlocks(blockMap: any) {
   const keys = Object.keys(blockMap);

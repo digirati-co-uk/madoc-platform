@@ -1,5 +1,5 @@
 {
-  "name": "@madoc.io/components",
+  "name": "@madoc.io/registry",
   "version": "1.0.0",
   "type": "module",
   "main": "dist/cjs/index.cjs",
@@ -9,11 +9,11 @@
     "index.d.ts",
     "dist-umd"
   ],
-  "types": "index.d.ts",
   "keywords": [
     "iiif",
     "typescript"
   ],
+  "types": "index.d.ts",
   "exports": {
     ".": {
       "require": "./dist/cjs/index.js",
@@ -35,11 +35,9 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.4.0-pre.13",
-    "react-query": "^2.26.4",
     "styled-components": "5.3.3"
   },
   "publishConfig": {
     "access": "public"
-  },
-  "globalName": "MadocComponents"
+  }
 }

@@ -16,7 +16,7 @@ import { plainTextSource } from '../extensions/capture-models/DynamicDataSources
 import { ExtensionManager } from '../extensions/extension-manager';
 import { NotificationExtension } from '../extensions/notifications/extension';
 import { getDefaultPageBlockDefinitions } from '../extensions/page-blocks/default-definitions';
-import { PageBlockExtension } from '../extensions/page-blocks/extension';
+import { PageBlockExtension } from '@/npm/registry';
 import { MediaExtension } from '../extensions/media/extension';
 import { ProjectExportExtension } from '../extensions/project-export/extension';
 import { ProjectTemplateExtension } from '../extensions/projects/extension';

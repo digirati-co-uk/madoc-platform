@@ -2,7 +2,7 @@ import { RouteMiddleware } from '../../types/route-middleware';
 import { onlyGlobalAdmin } from '../../utility/user-with-scope';
 
 export const systemCheck: RouteMiddleware = async context => {
-  await onlyGlobalAdmin(context);
+  await onlyGlobalAdmin(context as any);
 
   function envSet(name: string, value?: string) {
     if (value) {

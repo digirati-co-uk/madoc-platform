@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import fs from 'fs';
+import { resolve } from "path";
 
 const https = fs.existsSync('/certs/local-key.pem') && fs.existsSync('/certs/local-cert.pem');
 
@@ -19,6 +20,7 @@ export default defineConfig({
     alias: {
       'react-iiif-vault': 'react-iiif-vault/react17',
       'react-dom/client': 'react-dom',
+      '@/npm': resolve(__dirname, '../src/npm'),
     },
   },
   optimizeDeps: {

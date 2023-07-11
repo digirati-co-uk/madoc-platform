@@ -379,7 +379,7 @@ serverRendererFor(ReviewListingPage, {
     const slug = vars.projectSlug;
     const project = await api.getProject(slug);
 
-    return api.getTasks(vars.page, {
+    return api.getTasks(vars.query.page, {
       all_tasks: false,
       type: 'crowdsourcing-task',
       root_task_id: project.task_id,
