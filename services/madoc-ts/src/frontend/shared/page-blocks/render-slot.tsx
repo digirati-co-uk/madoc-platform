@@ -1,9 +1,11 @@
 import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { EditorialContext, SiteSlot } from '../../../types/schemas/site-page';
 import { SlotLayout } from '../layout/SlotLayout';
 import { SurfaceProps } from '../layout/Surface';
 import { RenderBlock } from './render-block';
 import { SlotEditor } from './slot-editor';
+import { sortSiteBlocks } from './sort-site-blocks';
 
 export type RenderSlotProps = {
   id?: string;
@@ -22,17 +24,21 @@ export type RenderSlotProps = {
 };
 
 export const RenderSlot: React.FC<RenderSlotProps> = props => {
+  const { i18n } = useTranslation();
   const layout = props.layout || props.slot.layout;
   const surfaceProps = props.slot?.props?.surface as SurfaceProps;
+  const language = i18n.language;
 
   const orderedBlocks = useMemo(() => {
-    return [...props.slot.blocks].sort((a, b) => {
-      const aOrder = typeof a.order === 'undefined' ? Infinity : a.order;
-      const bOrder = typeof b.order === 'undefined' ? Infinity : b.order;
+    return sortSiteBlocks([...props.slot.blocks], language);
+  }, [props.editable, language, props.slot]);
 
-      return aOrder > bOrder ? 1 : -1;
-    });
-  }, [props.slot]);
+  const allBlocks = useMemo(() => {
+    if (!props.editable) {
+      return [];
+    }
+    return sortSiteBlocks([...props.slot.blocks], language, false);
+  }, [props.editable, language, props.slot]);
 
   if (props.editable) {
     return (
@@ -41,7 +47,8 @@ export const RenderSlot: React.FC<RenderSlotProps> = props => {
         noSurface={props.noSurface}
         layout={layout}
         slot={props.slot}
-        blocks={orderedBlocks}
+        blocks={allBlocks}
+        visibleBlocks={orderedBlocks}
         context={props.context}
         onUpdateSlot={props.onUpdateSlot}
         onUpdateBlock={props.onUpdateBlock}

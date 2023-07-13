@@ -2,6 +2,7 @@ import { InternationalString } from '@iiif/presentation-3';
 import React, { useEffect, useState } from 'react';
 import { MetadataEditor } from '../../admin/molecules/MetadataEditor';
 import { Input, InputContainer, InputLabel } from '../form/Input';
+import { useDetailedSupportLocales } from '../hooks/use-site';
 
 export const PageCreator: React.FC<{
   defaultPath?: string;
@@ -9,9 +10,12 @@ export const PageCreator: React.FC<{
   defaultDescription?: InternationalString;
   onUpdate: (page: { path: string; title: InternationalString; description: InternationalString }) => void;
 }> = ({ defaultPath = '', defaultDescription, defaultTitle, onUpdate }) => {
+  const supported = useDetailedSupportLocales();
   const [path, setPath] = useState<string>(defaultPath);
   const [title, setTitle] = useState<InternationalString>(defaultTitle || { en: [''] });
   const [description, setDescription] = useState<InternationalString>(defaultDescription || { en: [''] });
+
+  const languages = (supported || []).map(key => key.code);
 
   useEffect(() => {
     onUpdate({ path, title, description });
@@ -30,7 +34,7 @@ export const PageCreator: React.FC<{
           id={'title'}
           fields={title}
           onSave={output => setTitle(output.toInternationalString())}
-          availableLanguages={['en', 'fr', 'es']}
+          availableLanguages={languages}
           metadataKey={'label'}
         />
       </InputContainer>
@@ -41,7 +45,7 @@ export const PageCreator: React.FC<{
           id={'description'}
           fields={description}
           onSave={output => setDescription(output.toInternationalString())}
-          availableLanguages={['en', 'fr', 'es']}
+          availableLanguages={languages}
           metadataKey={'description'}
         />
       </InputContainer>
