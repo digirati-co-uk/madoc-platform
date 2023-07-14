@@ -10,6 +10,8 @@ import { updateCanvasDetails } from './routes/iiif/canvases/update-canvas-detail
 import { updateManifestDetails } from './routes/iiif/manifests/update-manifest-details';
 import { getAutomatedUsers } from './routes/manage-site/get-automated-users';
 import { createProjectExport } from './routes/projects/create-project-export';
+import { getCanvasDetail } from "./routes/projects/get-canvas-detail";
+import { getCanvasTask } from "./routes/projects/get-canvas-task";
 import { getProjectRawData } from './routes/projects/get-project-raw-data';
 import { listProjectModelEntityAutocomplete } from './routes/projects/list-project-model-entity-autocomplete';
 import { updateProjectAnnotationStyle } from './routes/projects/update-project-annotation-style';
@@ -506,6 +508,11 @@ export const router = new TypedRouter({
     '/api/madoc/projects/:id/personal-notes/:resourceId',
     updateProjectNote,
   ],
+  // New canvas endpoints.
+  'get-project-canvas-task': [TypedRouter.GET, '/api/madoc/projects/:id/canvas/:canvasId/task', getCanvasTask],
+  'get-project-canvas-detail': [TypedRouter.GET, '/api/madoc/projects/:id/canvas/:canvasId/detail', getCanvasDetail],
+
+
   'get-project-deletion-summary': [TypedRouter.GET, '/api/madoc/projects/:id/deletion-summary', deleteProjectSummary],
   'delete-project': [TypedRouter.DELETE, '/api/madoc/projects/:id', deleteProjectEndpoint],
 
