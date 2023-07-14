@@ -920,6 +920,7 @@
   "atlas__annotations": "Annotations",
   "atlas__change_to_image": "View image",
   "atlas__change_to_plaintext": "View as text",
+  "atlas__resize": "Resize",
   "atlas__rotate": "Rotate",
   "atlas__switch-layout": "Switch layout",
   "atlas__zoom_home": "Home",
