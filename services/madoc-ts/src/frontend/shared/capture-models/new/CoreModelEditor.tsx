@@ -33,6 +33,7 @@ import { TickIcon } from '../../icons/TickIcon';
 import { EmptyState } from '../../layout/EmptyState';
 import { Button, ButtonIcon } from '../../navigation/Button';
 import { BrowserComponent } from '../../utility/browser-component';
+import { CaptureModelVisualSettings } from '../editor/components/CaptureModelVisualSettings/CaptureModelVisualSettings';
 import { CaptureModel } from '../types/capture-model';
 import { RevisionRequest } from '../types/revision-request';
 import { BackToChoicesButton } from './components/BackToChoicesButton';
@@ -102,6 +103,8 @@ export interface CoreModelEditorProps {
 
   showBugReport?: boolean;
   children?: React.ReactNode;
+
+  visualConfig?: Partial<CaptureModelVisualSettings>;
 }
 export function CoreModelEditor({
   revision,
@@ -131,6 +134,7 @@ export function CoreModelEditor({
   enableHighlightedRegions,
   canvasViewerPins,
   showBugReport,
+  visualConfig,
   children,
 }: CoreModelEditorProps) {
   const { t } = useTranslation();
@@ -246,6 +250,7 @@ export function CoreModelEditor({
         features={features}
         revision={isSegmentation ? undefined : revision}
         captureModel={captureModel}
+        visualConfig={visualConfig}
         slotConfig={{
           editor: {
             allowEditing: !preventFurtherSubmission,

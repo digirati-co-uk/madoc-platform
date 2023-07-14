@@ -303,6 +303,10 @@ export const siteConfigurationModel: {
         label: 'Enable autosave',
         value: 'enableAutoSave',
       },
+      {
+        label: 'Enable tooltip descriptions',
+        value: 'enableTooltipDescriptions',
+      },
     ],
   },
   reviewOptions: {
@@ -829,6 +833,10 @@ export const ProjectConfigContributions: {
       {
         label: 'Enable autosave',
         value: 'enableAutoSave',
+      },
+      {
+        label: 'Enable tooltip descriptions',
+        value: 'enableTooltipDescriptions',
       },
       {
         label: 'Allow personal notes',

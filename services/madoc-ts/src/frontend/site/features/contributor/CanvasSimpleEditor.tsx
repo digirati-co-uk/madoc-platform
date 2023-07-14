@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useMemo } from 'react';
+import { CaptureModelVisualSettings } from '../../../shared/capture-models/editor/components/CaptureModelVisualSettings/CaptureModelVisualSettings';
 import { CoreModelEditor } from '../../../shared/capture-models/new/CoreModelEditor';
 import { DynamicVaultContext } from '../../../shared/capture-models/new/DynamicVaultContext';
 import { useReadOnlyAnnotations } from '../../../shared/hooks/use-read-only-annotations';
@@ -36,6 +37,8 @@ export function CanvasSimpleEditor({ revision, isSegmentation }: CanvasSimpleEdi
     disablePreview = false,
     disableNextCanvas = false,
     enableRotation = false,
+    enableAutoSave = false,
+    enableTooltipDescriptions = false,
   } = useModelPageConfiguration();
   const mode = useContributionMode();
   const isVertical = config.project.defaultEditorOrientation === 'vertical';
@@ -56,6 +59,13 @@ export function CanvasSimpleEditor({ revision, isSegmentation }: CanvasSimpleEdi
 
   const isModelAdmin =
     user && user.scope && (user.scope.indexOf('site.admin') !== -1 || user.scope.indexOf('models.admin') !== -1);
+
+  const visualConfig = useMemo<Partial<CaptureModelVisualSettings>>(
+    () => ({
+      descriptionTooltip: enableTooltipDescriptions,
+    }),
+    [enableTooltipDescriptions]
+  );
 
   if (api.getIsServer() || !canvasId || !projectId || (isPreparing && !isModelAdmin)) {
     return null;
@@ -89,6 +99,7 @@ export function CanvasSimpleEditor({ revision, isSegmentation }: CanvasSimpleEdi
         enableRotation={enableRotation}
         updateClaim={updateClaim}
         showBugReport={isAdmin}
+        visualConfig={visualConfig}
       />
     </DynamicVaultContext>
   );
