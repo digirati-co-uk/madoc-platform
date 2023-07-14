@@ -8,7 +8,8 @@ export function createNewFieldInstance(
   entity: CaptureModel['document'],
   property: string,
   multipleOverride = false,
-  revisionId?: string | null
+  revisionId?: string | null,
+  withId?: string
 ): BaseField {
   // Grab the property itself from the entity.
   const prop = entity.properties[property];
@@ -30,7 +31,7 @@ export function createNewFieldInstance(
   }
 
   // Modify the new field with defaults form the plugin store
-  newField.id = generateId();
+  newField.id = withId || generateId();
   newField.value = copy(description.defaultValue);
   if (newField.selector) {
     newField.selector.id = generateId();

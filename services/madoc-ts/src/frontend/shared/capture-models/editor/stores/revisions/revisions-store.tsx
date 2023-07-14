@@ -612,7 +612,7 @@ export const revisionStore: RevisionsModel = {
     }
   }),
 
-  createNewFieldInstance: action((state, { property, path, revisionId }) => {
+  createNewFieldInstance: action((state, { property, path, revisionId, withId }) => {
     // Grab the parent entity where we want to add a new field.
     const entity = getRevisionFieldFromPath<CaptureModel['document']>(state, path, revisionId);
     if (!entity) {
@@ -620,7 +620,7 @@ export const revisionStore: RevisionsModel = {
     }
 
     // Fork a new field from what already exists.
-    const newField = createNewFieldInstance(debug(entity), property);
+    const newField = createNewFieldInstance(debug(entity), property, false, null, withId);
 
     if (newField) {
       newField.revision = state.currentRevisionId || undefined;
