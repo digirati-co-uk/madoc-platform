@@ -14,6 +14,7 @@ import {
 import { useLocalStorage } from '../../shared/hooks/use-local-storage';
 import { useResizeLayout } from '../../shared/hooks/use-resize-layout';
 import { useAnnotationPanel } from '../hooks/canvas-menu/annotation-panel';
+import { useBrowserPanel } from '../hooks/canvas-menu/browser-panel';
 import { useDocumentPanel } from '../hooks/canvas-menu/document-panel';
 import { useMetadataMenu } from '../hooks/canvas-menu/metadata-panel';
 import { usePersonalNotesMenu } from '../hooks/canvas-menu/personal-notes';
@@ -41,6 +42,7 @@ export interface CanvasViewerProps {
     disableDocumentPanel?: boolean;
     disableRevisionPanel?: boolean;
     disablePersonalNotes?: boolean;
+    disableBrowserPanel?: boolean;
   };
 
   children?: React.ReactNode;
@@ -67,6 +69,7 @@ export function CanvasViewer({
     disableAnnotationPanel,
     disableTranscriptionMenu,
     disableMetadata,
+    disableBrowserPanel = true,
   } = pins;
 
   // @todo this needs a re-think.
@@ -83,6 +86,8 @@ export function CanvasViewer({
     disableRevisionPanel ? null : useRevisionPanel(),
     // eslint-disable-next-line react-hooks/rules-of-hooks
     disablePersonalNotes ? null : usePersonalNotesMenu(),
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    disableBrowserPanel ? null : useBrowserPanel(),
   ].filter(Boolean) as CanvasMenuHook[];
 
   const currentMenuItem = menuItems.find(e => e.id === openPanel);
