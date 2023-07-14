@@ -60,6 +60,7 @@ export type ProjectConfiguration = {
     disablePreview?: boolean;
     disableNextCanvas?: boolean;
     enableRotation?: boolean;
+    enableAutoSave?: boolean;
   };
   projectPageOptions?: {
     hideStartContributing?: boolean;
@@ -202,6 +203,7 @@ export type ProjectConfigurationNEW = {
     fixedTranscriptionBar?: boolean;
     disableSaveForLater?: boolean;
     allowPersonalNotes?: boolean; // changed to sub-item
+    enableAutoSave?: boolean;
   };
   contributionWarningTime: false | number;
   shortExpiryTime?: string;

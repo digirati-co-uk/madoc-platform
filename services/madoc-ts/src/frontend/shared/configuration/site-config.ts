@@ -299,6 +299,10 @@ export const siteConfigurationModel: {
         label: 'Enable rotation of images',
         value: 'enableRotation',
       },
+      {
+        label: 'Enable autosave',
+        value: 'enableAutoSave',
+      },
     ],
   },
   reviewOptions: {
@@ -821,6 +825,10 @@ export const ProjectConfigContributions: {
       {
         label: 'Disable save for later button',
         value: 'disableSaveForLater',
+      },
+      {
+        label: 'Enable autosave',
+        value: 'enableAutoSave',
       },
       {
         label: 'Allow personal notes',

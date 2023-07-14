@@ -24,6 +24,10 @@ export type SystemConfig = {
   installationTitle: string;
   defaultSite: string | null;
   autoPublishImport: boolean | null;
+  loginHeader?: string;
+  loginFooter?: string;
+  registerHeader?: string;
+  registerFooter?: string;
 } & SiteSystemConfig;
 
 export type CreateSiteRequest = {
