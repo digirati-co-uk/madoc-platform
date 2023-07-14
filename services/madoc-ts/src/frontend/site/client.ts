@@ -1,5 +1,6 @@
 import { renderClient } from '../shared/utility/render-client';
 import '../shared/plugins/globals';
+import 'react-tooltip/dist/react-tooltip.css';
 
 Promise.all([
   // The component.

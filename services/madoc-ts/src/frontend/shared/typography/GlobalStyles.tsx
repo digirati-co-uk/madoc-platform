@@ -36,6 +36,10 @@ export const GlobalStyles = createGlobalStyle`
     inset 0 0 0 1px rgba(255, 255, 255, 0.2);
   }
   
+  .react-tooltip {
+    z-index: 9999;
+  }
+  
   //.rfs-menu-container {
   //  position: fixed;
   //  max-width: 550px;

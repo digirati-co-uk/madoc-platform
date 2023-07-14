@@ -6,8 +6,6 @@ import { TranscriptionIcon } from '../../../shared/icons/TranscriptionIcon';
 import { CanvasPlaintext } from '../../features/CanvasPlaintext';
 import { CanvasLoader } from '../../pages/loaders/canvas-loader';
 import { CanvasMenuHook } from './types';
-import { IIIFExplorer } from '@manifest-editor/iiif-browser-bundle';
-import '@manifest-editor/iiif-browser-bundle/dist-umd/style.css';
 
 export function useTranscriptionMenu(): CanvasMenuHook {
   const { data } = useData(CanvasLoader, []);
@@ -21,8 +19,6 @@ export function useTranscriptionMenu(): CanvasMenuHook {
       ) : (
         <MetadataEmptyState style={{ marginTop: 100 }}>No plaintext</MetadataEmptyState>
       )}
-
-      <IIIFExplorer />
     </>
   );
 

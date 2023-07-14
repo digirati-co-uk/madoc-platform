@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactTooltip from 'react-tooltip';
+import { Tooltip as ReactTooltip } from 'react-tooltip';
 import {
   LayoutContainer,
   LayoutContent,
@@ -114,7 +114,8 @@ export function CanvasViewer({
             data-has-label={tabsName}
             key={menuItem.id}
             $active={!menuItem.isDisabled && menuItem.id === openPanel && isOpen}
-            data-tip={tabsName ? null : menuItem.label}
+            data-tooltip-id="canvas-viewer"
+            data-tooltip-content={tabsName ? null : menuItem.label}
             $disabled={menuItem.isDisabled}
             onClick={() => {
               if (!menuItem.isDisabled) {
@@ -173,7 +174,7 @@ export function CanvasViewer({
           </LayoutContainer>
         </OuterLayoutContainer>
       </div>
-      <ReactTooltip place="right" type="dark" effect="solid" />
+      <ReactTooltip className="react-tooltip" id="canvas-viewer" place="right" variant="dark" />
     </>
   );
 }
