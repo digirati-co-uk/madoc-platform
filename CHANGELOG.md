@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.1.2...main)
+## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.1.3...main)
 
 <!-- 
 ### Fixed
@@ -14,11 +14,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 -->
 
+## [v2.1.3](https://github.com/digirati-co-uk/madoc-platform/compare/v2.1.2...v2.1.3)
+
 ### Added
 - Multi-lingual page blocks (NS-32)
+- Added block customisations to Project header
 
 ### Fixed
-- Fix bug when importing Manifests with long labels
+- Fix bug when importing Manifests with long labels (NS-29)
+- Fixed saving issue (MAD-1405)
+- Fixed error on Review dashboard (MAD-1405)
+- Fixed error for empty submission (MAD-1403)
 
 ## [v2.1.2](https://github.com/digirati-co-uk/madoc-platform/compare/v2.1.1...v2.1.2)
 Hotfix release for submissions in progress.
