@@ -1,5 +1,5 @@
 import { InternationalString } from '@iiif/presentation-3';
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { Select } from 'react-functional-select';
 import { LocaleString } from '../../../../components/LocaleString';
 import { useOptionalApi } from '../../../../hooks/use-api';
@@ -56,6 +56,7 @@ export const AutocompleteField: FieldComponent<AutocompleteFieldProps> = props =
   const [error, setError] = useState('');
   const api = useOptionalApi();
   const boxHeight = hasFetched && options.length && options[0].description ? 55 : undefined;
+  const pendingFetch = useRef<AbortController>();
   const onOptionChange = (option: CompletionItem | undefined) => {
     if (!option) {
       props.updateValue(undefined);
@@ -84,6 +85,13 @@ export const AutocompleteField: FieldComponent<AutocompleteFieldProps> = props =
           setIsLoading(false);
           return;
         }
+
+        if (pendingFetch.current) {
+          pendingFetch.current.abort();
+        }
+        const abortController = new AbortController();
+        pendingFetch.current = abortController;
+
         const fetcher = (): Promise<{ completions: CompletionItem[] }> => {
           if (props.dataSource.startsWith('madoc-api://')) {
             const source = props.dataSource.slice('madoc-api://'.length);
@@ -92,20 +100,27 @@ export const AutocompleteField: FieldComponent<AutocompleteFieldProps> = props =
             }
             return api.request(`/api/madoc/${source.replace(/%/, value || '')}`);
           }
-          return fetch(`${props.dataSource}`.replace(/%/, value || '')).then(
-            r => r.json() as Promise<{ completions: CompletionItem[] }>
-          );
+          return fetch(`${props.dataSource}`.replace(/%/, value || ''), {
+            signal: pendingFetch.current?.signal,
+          }).then(r => r.json() as Promise<{ completions: CompletionItem[] }>);
         };
 
         // Make API Request.
         fetcher()
           .then(items => {
+            if (abortController.signal.aborted) {
+              return;
+            }
+            pendingFetch.current = undefined;
             setOptions(items.completions);
             setIsLoading(false);
             setHasFetched(true);
             setError('');
           })
           .catch(e => {
+            if (abortController.signal.aborted) {
+              return;
+            }
             console.error(e);
             setError(t('There was a problem fetching results'));
           });

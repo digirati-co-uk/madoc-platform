@@ -106,6 +106,11 @@ import { DeleteProject } from './pages/crowdsourcing/projects/delete-project';
 import { ProjectExportTab } from './pages/crowdsourcing/projects/project-export';
 import { GenerateApiKey } from './pages/system/generate-api-key';
 import { CreateBot } from './pages/global/create-bot';
+import { CreateTermConfiguration } from './pages/term-configurations/create-term-configuration';
+import { EditTermConfiguration } from './pages/term-configurations/edit-term-configuration';
+import { TermConfigurations } from './pages/term-configurations/index';
+import { ListTermConfigurations } from './pages/term-configurations/list-term-configurations';
+import { ViewTermConfiguration } from './pages/term-configurations/view-term-configuration';
 
 export const routes: RouteObject[] = [
   {
@@ -458,6 +463,28 @@ export const routes: RouteObject[] = [
   {
     path: '/configure/site/system',
     element: <SiteSystemConfiguration />,
+  },
+  {
+    path: '/configure/site/terms',
+    element: <TermConfigurations />,
+    children: [
+      {
+        index: true,
+        element: <ListTermConfigurations />,
+      },
+      {
+        path: '/configure/site/terms/create',
+        element: <CreateTermConfiguration />,
+      },
+      {
+        path: '/configure/site/terms/:id',
+        element: <ViewTermConfiguration />,
+      },
+      {
+        path: '/configure/site/terms/:id/edit',
+        element: <EditTermConfiguration />,
+      },
+    ],
   },
   {
     path: '/page-blocks',

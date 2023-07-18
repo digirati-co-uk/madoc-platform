@@ -11,6 +11,7 @@ import { PageBlocksRepository } from '../repository/page-blocks-repository';
 import { PluginRepository } from '../repository/plugin-repository';
 import { ProjectRepository } from '../repository/project-repository';
 import { SiteUserRepository } from '../repository/site-user-repository';
+import { TermConfigurationsRepository } from '../repository/term-configurations-repository';
 import { ThemeRepository } from '../repository/theme-repository';
 import { CronJobs } from '../utility/cron-jobs';
 import { Mailer } from '../utility/mailer';
@@ -43,6 +44,7 @@ declare module 'koa' {
     captureModels: CaptureModelRepository;
     siteManager: SiteUserRepository;
     webhooks: WebhookRepository;
+    termConfigurations: TermConfigurationsRepository;
     pluginManager: PluginManager;
     cron: CronJobs;
 

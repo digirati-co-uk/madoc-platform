@@ -53,6 +53,11 @@ export const SiteConfiguration: React.FC = () => {
               Change the site-wide configuration, cannot be overridden by project.
             </RoundedCard>
           </HrefLink>
+          <HrefLink href={`/configure/site/terms`} style={{ textDecoration: 'none' }}>
+            <RoundedCard label="Edit external term lists" interactive>
+              Add or remove external term lists used for auto-completion.
+            </RoundedCard>
+          </HrefLink>
         </div>
       </WidePage>
     </>

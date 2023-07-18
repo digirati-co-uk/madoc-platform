@@ -2,6 +2,13 @@ import { getAuthRoutes } from './auth';
 import { deleteApiKey } from './routes/admin/delete-api-key';
 import { keyRegenerate } from './routes/admin/key-regenerate';
 import { listApiKeys } from './routes/admin/list-api-keys';
+import {
+  createTermConfiguration,
+  deleteTermConfiguration,
+  getTermConfiguration,
+  listTermConfigurations,
+  updateTermConfiguration,
+} from './routes/admin/term-configurations';
 import { getProjectAnnotationStyle } from './routes/annotation-styles/get-project-annotation-style';
 import { annotationStyles } from './routes/annotation-styles/index';
 import { searchAllUsers } from './routes/global/search-all-users';
@@ -127,6 +134,7 @@ import { siteManifestTasks } from './routes/site/site-manifest-tasks';
 import { getStaticPage, sitePages } from './routes/site/site-pages';
 import { listProjectsAutocomplete } from './routes/projects/list-projects-autocomplete';
 import { siteTaskMetadata } from './routes/site/site-task-metadata';
+import { termListProxy } from './routes/site/site-term-proxy';
 import { siteUserAutocomplete } from './routes/site/site-user-autocomplete';
 import { forgotPassword } from './routes/user/forgot-password';
 import { getSiteUser } from './routes/user/get-site-user';
@@ -509,6 +517,13 @@ export const router = new TypedRouter({
   'get-project-deletion-summary': [TypedRouter.GET, '/api/madoc/projects/:id/deletion-summary', deleteProjectSummary],
   'delete-project': [TypedRouter.DELETE, '/api/madoc/projects/:id', deleteProjectEndpoint],
 
+  // Term configurations
+  'get-term-configuration': [TypedRouter.GET, '/api/madoc/term-configuration/:id', getTermConfiguration],
+  'update-term-configuration': [TypedRouter.PUT, '/api/madoc/term-configuration/:id', updateTermConfiguration],
+  'create-term-configuration': [TypedRouter.POST, '/api/madoc/term-configuration', createTermConfiguration],
+  'delete-term-configuration': [TypedRouter.DELETE, '/api/madoc/term-configuration/:id', deleteTermConfiguration],
+  'list-term-configuration': [TypedRouter.GET, '/api/madoc/term-configuration', listTermConfigurations],
+
   // Themes
   'list-themes': [TypedRouter.GET, '/api/madoc/system/themes', listThemes],
   // 'get-theme': [TypedRouter.GET, '/api/madoc/system/themes/:theme_id', getTheme],
@@ -595,6 +610,7 @@ export const router = new TypedRouter({
   'site-project': [TypedRouter.GET, '/s/:slug/madoc/api/projects/:projectSlug', siteProject],
   'site-projects': [TypedRouter.GET, '/s/:slug/madoc/api/projects', siteProjects],
   'site-search': [TypedRouter.POST, '/s/:slug/madoc/api/search', siteSearch],
+  'site-term-proxy': [TypedRouter.GET, '/s/:slug/madoc/api/term-proxy/:id', termListProxy],
   'site-topic': [TypedRouter.GET, '/s/:slug/madoc/api/topics/:type/:id', siteTopic],
   'site-topic-type': [TypedRouter.GET, '/s/:slug/madoc/api/topics/:type', siteTopicType],
   'site-topic-types': [TypedRouter.GET, '/s/:slug/madoc/api/topics', siteTopicTypes],

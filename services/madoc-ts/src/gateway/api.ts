@@ -24,6 +24,7 @@ import { SiteManagerExtension } from '../extensions/site-manager/extension';
 import { SystemExtension } from '../extensions/system/extension';
 import { TaskExtension } from '../extensions/tasks/extension';
 import { ThemeExtension } from '../extensions/themes/extension';
+import { CompletionItem } from '../frontend/shared/capture-models/editor/input-types/AutocompleteField/AutocompleteField';
 import { CaptureModel } from '../frontend/shared/capture-models/types/capture-model';
 import { BaseField } from '../frontend/shared/capture-models/types/field-types';
 import { RevisionRequest } from '../frontend/shared/capture-models/types/revision-request';
@@ -2223,6 +2224,12 @@ export class ApiClient {
 
   async getSiteProjectManifestTasks(projectId: string | number, manifestId: number) {
     return this.publicRequest<ProjectManifestTasks>(`/madoc/api/projects/${projectId}/manifest-tasks/${manifestId}`);
+  }
+
+  async queryCustomTermConfiguration(id: string, query: string) {
+    return this.publicRequest<{ completions: CompletionItem[] }>(
+      `/madoc/api/term-proxy/${id}?q=${encodeURIComponent(query)}`
+    );
   }
 
   async siteUserAutocomplete(q: string, roles?: string[]) {

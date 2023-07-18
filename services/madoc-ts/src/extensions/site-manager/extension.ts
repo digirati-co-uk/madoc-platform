@@ -1,6 +1,7 @@
 import { stringify } from 'query-string';
 import { ApiClient } from '../../gateway/api';
 import { Pagination } from '../../types/schemas/_pagination';
+import { TermConfiguration, TermConfigurationRequest } from '../../types/term-configurations';
 import { BaseExtension, defaultDispose } from '../extension-manager';
 import {
   CreateSiteRequest,
@@ -174,5 +175,34 @@ export class SiteManagerExtension implements BaseExtension {
       method: 'POST',
       body: config,
     });
+  }
+
+  // Term configurations
+  async getTermConfiguration(id: string) {
+    return this.api.request<TermConfiguration>(`/api/madoc/term-configuration/${id}`);
+  }
+
+  async updateTermConfiguration(id: string, config: TermConfigurationRequest & { id: string }) {
+    return this.api.request(`/api/madoc/term-configuration/${id}`, {
+      method: 'PUT',
+      body: config,
+    });
+  }
+
+  async createTermConfiguration(config: TermConfigurationRequest) {
+    return this.api.request<TermConfiguration>(`/api/madoc/term-configuration`, {
+      method: 'POST',
+      body: config,
+    });
+  }
+
+  async deleteTermConfiguration(id: string) {
+    return this.api.request(`/api/madoc/term-configuration/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async getAllTermConfigurations() {
+    return this.api.request<{ termConfigurations: TermConfiguration[] }>(`/api/madoc/term-configuration`);
   }
 }
