@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - New "custom auto-complete" configurations for external APIs (MAD-1408)
 - New configuration to allow model field descriptions to be displayed as tooltips (MAD-1329)
+- IIIF Collection endpoint for Madoc Collections (MAD-1407) 
 
 ### Fixed
 - Fix bug when importing Manifests with long labels (NS-29)

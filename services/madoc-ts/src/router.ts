@@ -655,6 +655,7 @@ export const router = new TypedRouter({
   'manifest-search': [TypedRouter.GET, '/s/:slug/madoc/api/manifests/:id/search/1.0', searchManifest],
   // 'manifest-export': [TypedRouter.GET, '/s/:slug/madoc/api/manifests/:id/export/source', exportManifest],
   'manifest-build': [TypedRouter.GET, '/s/:slug/madoc/api/manifests/:id/export/:version', siteManifestBuild],
+  'collection-build': [TypedRouter.GET, '/s/:slug/madoc/api/collections/:id/export/:version', siteManifestBuild],
   'manifest-project-build': [
     TypedRouter.GET,
     '/s/:slug/madoc/api/projects/:projectSlug/export/manifest/:id/:version',
