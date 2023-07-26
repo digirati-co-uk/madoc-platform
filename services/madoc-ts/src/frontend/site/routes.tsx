@@ -13,6 +13,11 @@ export function createRoutes(Components: RouteComponents): CreateRouteType {
       element: <Components.RedirectPage />,
     },
     {
+      path: '/terms',
+      exact: true,
+      element: <Components.SiteTerms />,
+    },
+    {
       path: '/collections',
       exact: true,
       element: <Components.PageLoader />,
@@ -587,6 +592,11 @@ export function createRoutes(Components: RouteComponents): CreateRouteType {
           path: '/dashboard/reviews',
           exact: true,
           element: <Components.UserReviews />,
+        },
+        {
+          path: '/dashboard/settings',
+          exact: true,
+          element: <Components.UserSettings />,
         },
         {
           path: '/dashboard',

@@ -68,6 +68,17 @@ export const Register: React.FC = () => {
     return <Navigate to="/" />;
   }
 
+  const acceptTerms = site.latestTerms ? (
+    <div>
+      <p>
+        {t('By registering you agree to the ')}
+        <a target="_blank" href={`/s/${site.slug}/terms`} rel="noreferrer">
+          {t('terms and conditions')}
+        </a>
+      </p>
+    </div>
+  ) : null;
+
   if (user && form?.invitation) {
     // @todo.
     return (
@@ -87,6 +98,7 @@ export const Register: React.FC = () => {
               </LoginActions>
             </InputContainer>
           </LoginContainer>
+          {acceptTerms}
           <input type="hidden" name="code" value={form.invitation.id} />
         </form>
       </div>
@@ -121,6 +133,7 @@ export const Register: React.FC = () => {
             <Input type="text" name="email" id="email" defaultValue={form?.email} />
             {form?.emailError ? <ErrorMessage $small>{t('Email already in use')}</ErrorMessage> : null}
           </InputContainer>
+          {acceptTerms}
           {systemConfig?.registerFooter ? (
             <div dangerouslySetInnerHTML={{ __html: systemConfig.registerFooter }} style={{ marginBottom: '1em' }} />
           ) : null}

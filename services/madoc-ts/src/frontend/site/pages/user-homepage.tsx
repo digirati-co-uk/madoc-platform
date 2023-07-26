@@ -69,6 +69,10 @@ export const UserHomepage: UniversalComponent<UserHomepageType> = createUniversa
               <HrefLink href="/dashboard/my-sites">{t('My sites')}</HrefLink>
             </DashboardTab>
           ) : null}
+
+          <DashboardTab $active={location.pathname === '/dashboard/settings'}>
+            <HrefLink href="/dashboard/settings">{t('Settings')}</HrefLink>
+          </DashboardTab>
         </DashboardTabs>
 
         <Outlet />
