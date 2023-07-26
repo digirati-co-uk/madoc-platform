@@ -52,7 +52,7 @@ export type JsonProjectTemplate = {
 
 export type CaptureModelShorthand<Keys extends string | number | symbol> = Record<
   Keys,
-  string | Partial<CaptureModel['document']> | Partial<BaseField>
+  string | Partial<CaptureModel['document']> | (Partial<BaseField> & Record<string, any>)
 >;
 
 export type ProjectTemplateConfig<T extends ProjectTemplate> = T extends ProjectTemplate<any, any, infer R> ? R : never;

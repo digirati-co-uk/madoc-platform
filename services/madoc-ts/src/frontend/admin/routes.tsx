@@ -1,6 +1,10 @@
 import React from 'react';
 import { RouteObject } from 'react-router-dom';
 import { annotationStylesRoutes } from './pages/annotation-styles/index';
+import { CreateBadge } from './pages/badges/create-badge';
+import { Badges } from './pages/badges/index';
+import { ListBadges } from './pages/badges/list-badges';
+import { ViewBadge } from './pages/badges/view-badge';
 import { CanvasExport } from './pages/content/canvases/canvas-export';
 import { CanvasJson } from './pages/content/canvases/canvas-json';
 import { CanvasPlaintext } from './pages/content/canvases/canvas-plaintext';
@@ -63,6 +67,8 @@ import { Project } from './pages/crowdsourcing/projects/project';
 import { ProjectModelEditor } from './pages/crowdsourcing/projects/project-model-editor';
 import { CreateCollection } from './pages/content/collections/create-collection';
 import { CreateManifest } from './pages/content/manifests/create-manifest';
+import { SiteTerms } from './pages/site-terms/index';
+import { ListTerms } from './pages/site-terms/list-terms';
 import { CreateInvitation } from './pages/sites/create-invitation';
 import { ListInvitations } from './pages/sites/list-invitations';
 import { ListSites } from './pages/global/list-sites';
@@ -111,6 +117,7 @@ import { EditTermConfiguration } from './pages/term-configurations/edit-term-con
 import { TermConfigurations } from './pages/term-configurations/index';
 import { ListTermConfigurations } from './pages/term-configurations/list-term-configurations';
 import { ViewTermConfiguration } from './pages/term-configurations/view-term-configuration';
+import { CreateTerms } from './pages/site-terms/create-terms';
 
 export const routes: RouteObject[] = [
   {
@@ -483,6 +490,38 @@ export const routes: RouteObject[] = [
       {
         path: '/configure/site/terms/:id/edit',
         element: <EditTermConfiguration />,
+      },
+    ],
+  },
+  {
+    path: '/configure/site/badges',
+    element: <Badges />,
+    children: [
+      {
+        index: true,
+        element: <ListBadges />,
+      },
+      {
+        path: '/configure/site/badges/create',
+        element: <CreateBadge />,
+      },
+      {
+        path: '/configure/site/badges/:id',
+        element: <ViewBadge />,
+      },
+    ],
+  },
+  {
+    path: '/configure/site/terms-and-conditions',
+    element: <SiteTerms />,
+    children: [
+      {
+        index: true,
+        element: <CreateTerms />,
+      },
+      {
+        path: '/configure/site/terms-and-conditions/list',
+        element: <ListTerms />,
       },
     ],
   },

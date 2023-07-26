@@ -66,7 +66,7 @@ export const SiteSystemConfiguration: React.FC = () => {
     loginFooter: '',
     registerHeader: '',
     registerFooter: '',
-    ...savedConfig,
+    ...(savedConfig as any),
   };
 
   const [updateSystemConfig] = useMutation(async (newConfig: any) => {

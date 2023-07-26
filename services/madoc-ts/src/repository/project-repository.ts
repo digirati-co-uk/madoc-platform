@@ -1,5 +1,6 @@
 import { sql } from 'slonik';
 import { Project } from '../types/project-full';
+import { ProjectRow } from '../types/projects';
 import { getMetadata } from '../utility/iiif-database-helpers';
 import { mapMetadata } from '../utility/iiif-metadata';
 import { parseProjectId } from '../utility/parse-project-id';
@@ -7,6 +8,25 @@ import { SQL_EMPTY } from '../utility/postgres-tags';
 import { BaseRepository } from './base-repository';
 
 export class ProjectRepository extends BaseRepository {
+  async getProjectByTaskId(taskId: number, siteId: number, onlyPublished = false): Promise<Project | undefined> {
+    const projects = await this.connection.many(
+      getMetadata<{ resource_id: number; project_id: number }>(
+        sql`
+        select *, collection_id as resource_id, iiif_project.id as project_id from iiif_project 
+            left join iiif_resource ir on iiif_project.collection_id = ir.id
+        where site_id = ${siteId} 
+          and iiif_project.task_id = ${taskId}
+          ${onlyPublished ? sql`and (iiif_project.status = 1 or iiif_project.status = 2)` : SQL_EMPTY}
+      `,
+        siteId
+      )
+    );
+
+    const mappedProjects = mapMetadata(projects, ProjectRepository.mapProject);
+
+    return mappedProjects[0] as any;
+  }
+
   async getProjectByIdOrSlug(idOrSlug: string | number, siteId: number, onlyPublished = false): Promise<Project> {
     const { projectSlug, projectId } = parseProjectId(idOrSlug);
 
@@ -24,20 +44,22 @@ export class ProjectRepository extends BaseRepository {
       )
     );
 
-    const mappedProjects = mapMetadata(projects, project => {
-      return {
-        id: project.project_id,
-        slug: project.slug,
-        capture_model_id: project.capture_model_id,
-        collection_id: project.id,
-        task_id: project.task_id,
-        status: project.status,
-        style_id: project.style_id || null,
-        template: project.template_name,
-        template_config: project.template_config,
-      };
-    });
+    const mappedProjects = mapMetadata(projects, ProjectRepository.mapProject);
 
     return mappedProjects[0] as any;
+  }
+
+  static mapProject(project: any) {
+    return {
+      id: project.project_id,
+      slug: project.slug,
+      capture_model_id: project.capture_model_id,
+      collection_id: project.id,
+      task_id: project.task_id,
+      status: project.status,
+      style_id: project.style_id || null,
+      template: project.template_name,
+      template_config: project.template_config,
+    };
   }
 }

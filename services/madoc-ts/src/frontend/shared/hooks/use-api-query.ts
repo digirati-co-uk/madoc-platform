@@ -66,6 +66,7 @@ export type GetApiMethods = keyof Pick<
   | 'getSiteManifests'
   | 'getSitePage'
   | 'getSiteProject'
+  | 'getSiteProjectRecent'
   | 'getSiteProjects'
   | 'getSiteProjectCanvasModel'
   | 'getSiteProjectCanvasTasks'

@@ -38,13 +38,14 @@ import {
   ProjectDeletionSummary,
   CollectionDeletionSummary,
 } from '../types/deletion-summary';
-import { Site, SiteUser, User } from '../extensions/site-manager/types';
+import { PublicUserProfile, Site, SiteUser, User, UserInformationRequest } from '../extensions/site-manager/types';
 import { ProjectManifestTasks } from '../types/manifest-tasks';
 import { NoteListResponse } from '../types/personal-notes';
 import { Pm2Status } from '../types/pm2';
 import { ResourceLinkResponse } from '../types/schemas/linking';
 import { ProjectConfiguration } from '../types/schemas/project-configuration';
 import { SearchIngestRequest, SearchResponse, SearchQuery } from '../types/search';
+import { SiteTerms } from '../types/site-terms';
 import { SearchIndexable } from '../utility/capture-model-to-indexables';
 import { NotFound } from '../utility/errors/not-found';
 import { parseUrn } from '../utility/parse-urn';
@@ -76,7 +77,7 @@ import { Pagination } from '../types/schemas/_pagination';
 import { CrowdsourcingTask } from './tasks/crowdsourcing-task';
 import { ResourceClaim } from '../routes/projects/create-resource-claim';
 import { ProjectList } from '../types/schemas/project-list';
-import { ProjectFull } from '../types/project-full';
+import { Project, ProjectFull } from '../types/project-full';
 import { UserDetails } from '../types/schemas/user-details';
 import { CrowdsourcingReviewMerge } from './tasks/crowdsourcing-review';
 import { CrowdsourcingCanvasTask } from './tasks/crowdsourcing-canvas-task';
@@ -590,6 +591,16 @@ export class ApiClient {
 
   async getProjectMetadata(id: number) {
     return this.request<GetMetadata>(`/api/madoc/projects/${id}/metadata`);
+  }
+
+  async getProjectByTaskId(id: string) {
+    return this.request<Project>(`/api/madoc/project-by-task/${id}`);
+  }
+
+  async getProjectSVG(id: string | number, taskId: string) {
+    return this.request<{ svg: string; empty: false } | { empty: true; svg?: never }>(
+      `/api/madoc/projects/${id}/tasks/${taskId}/preview-svg`
+    );
   }
 
   async getProjectStructure(id: number) {
@@ -1216,7 +1227,7 @@ export class ApiClient {
 
   // User API
   async getUser(id: number) {
-    return this.request<{ user: User }>(`/api/madoc/users/${id}`);
+    return this.publicRequest<PublicUserProfile>(`/madoc/api/users/${id}`);
   }
 
   async getAutomatedUsers() {
@@ -2156,6 +2167,12 @@ export class ApiClient {
     return this.publicRequest<ProjectFull>(`/madoc/api/projects/${id}`);
   }
 
+  async getSiteProjectRecent(id: string | number) {
+    return this.publicRequest<{ tasks: CrowdsourcingTask[]; pagination: Pagination }>(
+      `/madoc/api/projects/${id}/recent`
+    );
+  }
+
   async getSiteProjects(query?: import('../routes/site/site-projects').SiteProjectsQuery) {
     return this.publicRequest<ProjectList>(`/madoc/api/projects`, query);
   }
@@ -2265,5 +2282,22 @@ export class ApiClient {
 
   async getUserDetails() {
     return this.publicRequest<UserDetails>(`/madoc/api/me`);
+  }
+
+  async getSettingsModel() {
+    return this.request<{ model: CaptureModel }>(`/api/madoc/me/settings`);
+  }
+
+  async getSiteTerms(selected?: string) {
+    return this.publicRequest<{ latest: SiteTerms; selected?: SiteTerms; list: Omit<SiteTerms, 'terms'>[] }>(
+      selected ? `/madoc/api/terms?id=${selected}` : `/madoc/api/terms`
+    );
+  }
+
+  async saveSettingsModel(model: UserInformationRequest) {
+    return this.request(`/api/madoc/me/settings`, {
+      method: 'POST',
+      body: model,
+    });
   }
 }
