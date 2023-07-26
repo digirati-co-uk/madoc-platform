@@ -1,0 +1,20 @@
+@tailwind base;
+
+@layer base {
+    h1 {
+        @apply text-3xl;
+    }
+    h2 {
+        @apply text-xl my-5;
+    }
+    h3 {
+        @apply text-lg my-3;
+    }
+    a {
+        @apply text-gray-700 underline;
+    }
+}
+
+@tailwind components;
+@tailwind utilities;
+

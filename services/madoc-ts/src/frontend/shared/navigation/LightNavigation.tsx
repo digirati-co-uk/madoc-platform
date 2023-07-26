@@ -36,7 +36,7 @@ export const LightNavigationItem = styled.li<{ $active?: boolean }>`
     color: ${text};
     padding: 0.3em 0.6em;
     display: block;
-    border-bottom-width: 3px;
+    border-bottom-width: 0px;
     &:hover {
       //text-decoration: underline;
     }

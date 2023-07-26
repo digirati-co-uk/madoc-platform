@@ -107,6 +107,7 @@ const HeroAssetThumbnails = styled.div<{ $background: string }>`
 const HeroAssetLargeThumbnail = styled.div`
   z-index: 2;
   img {
+    max-width: initial;
     height: 280px;
     object-fit: contain;
     box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.53);
@@ -121,6 +122,7 @@ const HeroAssetThumbnail = styled.div`
   z-index: 2;
   margin-left: 10px;
   img {
+    max-width: initial;
     box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.53);
     &:first-child {
       margin-top: 0;

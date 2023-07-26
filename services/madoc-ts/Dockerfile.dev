@@ -1,4 +1,4 @@
-FROM node:18
+FROM node:18-bullseye
 
 WORKDIR /home/node/app
 
@@ -18,6 +18,8 @@ COPY ./tsconfig.frontend.json /home/node/app/tsconfig.frontend.json
 COPY ./migrations /home/node/app/migrations
 COPY ./config.json /home/node/app/config.json
 COPY ./generate-schemas.js /home/node/app/generate-schemas.js
+COPY ./postcss.config.js /home/node/app/postcss.config.js
+COPY ./tailwind.config.js /home/node/app/tailwind.config.js
 COPY ./translations /home/node/app/translations
 COPY ./schemas /home/node/app/schemas
 COPY ./themes /home/node/app/themes

@@ -10,6 +10,7 @@ import { VaultProvider } from 'react-iiif-vault';
 import '../shared/capture-models/plugins';
 import { RouteObject } from 'react-router-dom';
 import { SiteProvider } from '../shared/hooks/use-site';
+import './index.css';
 
 export type SiteAppProps = {
   jwt?: string;

@@ -1,6 +1,7 @@
 import React from 'react';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import { LocaleString } from '../../shared/components/LocaleString';
+import { Heading1 } from '../../shared/typography/Heading1';
 import { usePaginatedCollection } from '../hooks/use-paginated-collection';
 
 export const CollectionTitle: React.FC = () => {
@@ -8,10 +9,10 @@ export const CollectionTitle: React.FC = () => {
   const collection = data?.collection;
 
   if (!collection) {
-    return null;
+    return <Heading1>{'...'}</Heading1>;
   }
 
-  return <LocaleString as="h1">{collection.label}</LocaleString>;
+  return <LocaleString as={Heading1}>{collection.label}</LocaleString>;
 };
 
 blockEditorFor(CollectionTitle, {

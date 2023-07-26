@@ -78,6 +78,9 @@ const ThickTableRow = styled(SimpleTable.Row)<{ $active?: boolean }>`
 `;
 
 const HeaderLink = styled.a`
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
   color: black;
 
   svg {

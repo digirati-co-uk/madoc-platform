@@ -1,6 +1,57 @@
 {
   "type": "object",
   "properties": {
+    "_version": {
+      "type": "number",
+      "enum": [
+        1
+      ]
+    },
+    "_source": {
+      "type": "object",
+      "properties": {
+        "siteConfig": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "property": {
+                "type": "string"
+              },
+              "original": {},
+              "override": {}
+            },
+            "required": [
+              "original",
+              "override",
+              "property"
+            ]
+          }
+        },
+        "staticConfig": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "property": {
+                "type": "string"
+              },
+              "original": {},
+              "override": {}
+            },
+            "required": [
+              "original",
+              "override",
+              "property"
+            ]
+          }
+        }
+      },
+      "required": [
+        "siteConfig",
+        "staticConfig"
+      ]
+    },
     "allowCollectionNavigation": {
       "type": "boolean"
     },
@@ -212,6 +263,12 @@
           "type": "boolean"
         },
         "enableRotation": {
+          "type": "boolean"
+        },
+        "enableAutoSave": {
+          "type": "boolean"
+        },
+        "enableTooltipDescriptions": {
           "type": "boolean"
         }
       }
