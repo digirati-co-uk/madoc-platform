@@ -44,4 +44,8 @@ export const GlobalStyles = createGlobalStyle`
   //  position: fixed;
   //  max-width: 550px;
   //}
+  
+  .selector-preview-svg {
+    stroke: red;
+  }
 `;
