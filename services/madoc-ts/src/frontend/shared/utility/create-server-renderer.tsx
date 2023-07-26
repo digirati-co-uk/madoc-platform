@@ -301,7 +301,7 @@ export function createServerRenderer(
         )
       );
     } catch (e) {
-      throw new ReactServerError(e);
+      throw new ReactServerError(e as any);
     }
 
     const helmet = Helmet.renderStatic();
