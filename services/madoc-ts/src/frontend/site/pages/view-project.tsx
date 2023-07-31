@@ -1,7 +1,7 @@
-import { useUser } from '@madoc.io/types';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ProjectStatus } from '../../shared/atoms/ProjectStatus';
+import { useUser } from '../../shared/hooks/use-site';
 import { SlotTabs } from '../../tailwind/components/slot-tabs';
 import { DisplayBreadcrumbs } from '../blocks/Breadcrumbs';
 import { AvailableBlocks } from '../../shared/page-blocks/available-blocks';
@@ -22,7 +22,6 @@ import { ProjectCollections } from '../blocks/ProjectCollections';
 import { ProjectContributionButton } from '../blocks/ProjectContributionButton';
 import { ProjectContributors } from '../blocks/ProjectContributors';
 import { ProjectHeading } from '../blocks/ProjectHeading';
-import { SearchResource } from '../blocks/SearchResource';
 import { ProjectStatistics } from '../features/ProjectStatistics';
 import { useProject } from '../hooks/use-project';
 
