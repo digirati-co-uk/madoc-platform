@@ -46,7 +46,6 @@ function renderOptionLabel(option: CompletionItem) {
 }
 
 export const AutocompleteField: FieldComponent<AutocompleteFieldProps> = props => {
-  // console.log(typeof props.value)
   const { t } = useTranslation();
   const [options, setOptions] = useState<CompletionItem[]>(
     props.value ? [typeof props.value === 'string' ? { uri: props.value, label: 'unknown' } : props.value] : []
