@@ -12,6 +12,7 @@ import { ErrorMessage } from '../shared/callouts/ErrorMessage';
 import '../shared/capture-models/plugins';
 import { SiteProvider } from '../shared/hooks/use-site';
 import { AdminSidebar } from './molecules/AdminSidebar';
+import './index.css';
 
 export type AdminAppProps = {
   jwt?: string;
