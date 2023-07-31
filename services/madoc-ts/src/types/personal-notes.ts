@@ -15,6 +15,8 @@ export type NoteListRow = {
   personal_notes__id: string;
   personal_notes__note: string;
   personal_notes__type: string;
+  personal_notes__created: string;
+  personal_notes__updated: string;
   iiif__id: number;
   iiif__type: string;
   iiif__thumbnail: string | null;
@@ -35,6 +37,8 @@ export type NoteListItem = {
   id: string;
   type: string;
   note: string;
+  created: string;
+  updated: string;
   resource: {
     id: number;
     type: string;

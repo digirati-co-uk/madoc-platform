@@ -12,12 +12,6 @@ export const svgFromCrowdsourcingTask: RouteMiddleware = async context => {
   const { siteId, id } = optionalUserWithScope(context, ['site.admin']);
   const userApi = api.asUser({ siteId });
 
-  console.log({
-    siteId,
-    id,
-    taskId: context.params.taskId,
-  });
-
   // 1. Get the task.
   const task = await userApi.getTask<CrowdsourcingTask>(context.params.taskId);
   if (task.type !== 'crowdsourcing-task') {

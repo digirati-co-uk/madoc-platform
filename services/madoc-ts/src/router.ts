@@ -32,8 +32,22 @@ import { createProjectExport } from './routes/projects/create-project-export';
 import { getProjectFromTask } from './routes/projects/get-project-from-task';
 import { getProjectRawData } from './routes/projects/get-project-raw-data';
 import { listProjectModelEntityAutocomplete } from './routes/projects/list-project-model-entity-autocomplete';
+import { addProjectFeedback, listProjectFeedback, removeProjectFeedback } from './routes/projects/project-feedback';
+import {
+  addProjectMember,
+  listProjectMembers,
+  removeProjectMember,
+  updateUsersProjectRole,
+} from './routes/projects/project-members';
+import {
+  createProjectUpdate,
+  deleteProjectUpdate,
+  listProjectUpdates,
+  updateProjectUpdate,
+} from './routes/projects/project-updates';
 import { svgFromCrowdsourcingTask } from './routes/projects/svg-from-crowdsourcing-task';
 import { updateProjectAnnotationStyle } from './routes/projects/update-project-annotation-style';
+import { updateProjectDuration } from './routes/projects/update-project-duration';
 import { siteRoot } from './routes/root';
 import {
   assignUserToDelegatedRequest,
@@ -528,6 +542,7 @@ export const router = new TypedRouter({
     listProjectModelEntityAutocomplete,
   ],
   'update-project-status': [TypedRouter.PUT, '/api/madoc/projects/:id/status', updateProjectStatus],
+  'update-project-duration': [TypedRouter.PUT, '/api/madoc/projects/:id/duration', updateProjectDuration],
   'create-project-resource-claim': [TypedRouter.POST, '/api/madoc/projects/:id/claim', createResourceClaim],
   'export-project-template': [TypedRouter.GET, '/api/madoc/projects/:id/export', exportProjectTemplate],
   'update-project-curated-feed': [TypedRouter.POST, '/api/madoc/projects/:id/feeds/:feed', updateCuratedFeed],
@@ -553,6 +568,24 @@ export const router = new TypedRouter({
   'get-project-deletion-summary': [TypedRouter.GET, '/api/madoc/projects/:id/deletion-summary', deleteProjectSummary],
   'delete-project': [TypedRouter.DELETE, '/api/madoc/projects/:id', deleteProjectEndpoint],
   'project-task-svg': [TypedRouter.GET, '/api/madoc/projects/:id/tasks/:taskId/preview-svg', svgFromCrowdsourcingTask],
+  // Project updates
+  'list-project-updates': [TypedRouter.GET, '/api/madoc/projects/:id/updates', listProjectUpdates],
+  'create-project-update': [TypedRouter.POST, '/api/madoc/projects/:id/updates', createProjectUpdate],
+  'update-project-update': [TypedRouter.PUT, '/api/madoc/projects/:id/updates/:updateId', updateProjectUpdate],
+  'delete-project-update': [TypedRouter.DELETE, '/api/madoc/projects/:id/updates/:updateId', deleteProjectUpdate],
+  // Project members
+  'list-project-members': [TypedRouter.GET, '/api/madoc/projects/:id/members', listProjectMembers],
+  'add-project-member': [TypedRouter.POST, '/api/madoc/projects/:id/members', addProjectMember],
+  'update-project-member': [TypedRouter.PUT, '/api/madoc/projects/:id/members/:userId', updateUsersProjectRole],
+  'remove-project-member': [TypedRouter.DELETE, '/api/madoc/projects/:id/members/:userId', removeProjectMember],
+  // Project feedback
+  'list-project-feedback': [TypedRouter.GET, '/api/madoc/projects/:id/feedback', listProjectFeedback],
+  'add-project-feedback': [TypedRouter.POST, '/api/madoc/projects/:id/feedback', addProjectFeedback],
+  'remove-project-feedback': [
+    TypedRouter.DELETE,
+    '/api/madoc/projects/:id/feedback/:feedbackId',
+    removeProjectFeedback,
+  ],
 
   // Term configurations
   'get-term-configuration': [TypedRouter.GET, '/api/madoc/term-configuration/:id', getTermConfiguration],

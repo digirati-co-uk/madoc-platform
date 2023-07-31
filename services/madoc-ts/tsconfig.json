@@ -15,7 +15,7 @@
     "strict": true,
     "sourceMap": true,
     "skipLibCheck": true,
-    "jsx": "react",
+    "jsx": "react-jsx",
     "resolveJsonModule": true,
     "noImplicitAny": true,
     "downlevelIteration": true,

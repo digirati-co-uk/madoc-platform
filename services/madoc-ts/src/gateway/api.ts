@@ -42,6 +42,7 @@ import { PublicUserProfile, Site, SiteUser, User, UserInformationRequest } from 
 import { ProjectManifestTasks } from '../types/manifest-tasks';
 import { NoteListResponse } from '../types/personal-notes';
 import { Pm2Status } from '../types/pm2';
+import { ProjectFeedback, ProjectMember, ProjectUpdate } from '../types/projects';
 import { ResourceLinkResponse } from '../types/schemas/linking';
 import { ProjectConfiguration } from '../types/schemas/project-configuration';
 import { SearchIngestRequest, SearchResponse, SearchQuery } from '../types/search';
@@ -669,10 +670,96 @@ export class ApiClient {
     });
   }
 
+  async updateProjectDuration(id: number, endDate: Date) {
+    return this.request<any>(`/api/madoc/projects/${id}/duration`, {
+      method: 'PUT',
+      body: {
+        endDate: endDate.toISOString(),
+      },
+    });
+  }
+
   async updateProjectAnnotationStyle(id: string | number, style_id: number) {
     return this.request(`/api/madoc/projects/${id}/annotation-style`, {
       method: 'PUT',
       body: { style_id },
+    });
+  }
+
+  async listProjectUpdates(id: string | number) {
+    return this.request<{ updates: ProjectUpdate[] }>(`/api/madoc/projects/${id}/updates`);
+  }
+
+  async getLatestProjectUpdate(id: string | number): Promise<ProjectUpdate | null> {
+    const response = await this.request<{ updates: ProjectUpdate[] }>(`/api/madoc/projects/${id}/updates?latest=true`);
+    return response?.updates[0] || null;
+  }
+
+  async createProjectUpdate(id: string | number, update: string) {
+    return this.request(`/api/madoc/projects/${id}/updates`, {
+      method: 'POST',
+      body: { update },
+    });
+  }
+
+  async updateProjectUpdate(id: string | number, updateId: string | number, update: string) {
+    return this.request(`/api/madoc/projects/${id}/updates/${updateId}`, {
+      method: 'PUT',
+      body: { update },
+    });
+  }
+
+  async deleteProjectUpdate(id: string | number, updateId: string | number) {
+    return this.request(`/api/madoc/projects/${id}/updates/${updateId}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async listProjectMembers(id: string | number) {
+    return this.request<{ members: ProjectMember[] }>(`/api/madoc/projects/${id}/members`);
+  }
+
+  async addProjectMember(id: string | number, userId: string | number, role: ProjectMember['role']) {
+    return this.request<{ success: boolean }>(`/api/madoc/projects/${id}/members`, {
+      method: 'POST',
+      body: {
+        user_id: userId,
+        role,
+      },
+    });
+  }
+
+  async updateUsersProjectRole(id: string | number, userId: string | number, role: ProjectMember['role']) {
+    return this.request<{ success: boolean }>(`/api/madoc/projects/${id}/members/${userId}`, {
+      method: 'PUT',
+      body: {
+        role,
+      },
+    });
+  }
+
+  async removeProjectMember(id: string | number, userId: string | number) {
+    return this.request<{ success: boolean }>(`/api/madoc/projects/${id}/members/${userId}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async getAllProjectFeedback(id: string | number) {
+    return this.request<{ feedback: ProjectFeedback[] }>(`/api/madoc/projects/${id}/feedback`);
+  }
+
+  async addProjectFeedback(id: string | number, feedback: string) {
+    return this.request<ProjectFeedback>(`/api/madoc/projects/${id}/feedback`, {
+      method: 'POST',
+      body: {
+        feedback,
+      },
+    });
+  }
+
+  async deleteProjectFeedback(id: string | number, feedbackId: string | number) {
+    return this.request(`/api/madoc/projects/${id}/feedback/${feedbackId}`, {
+      method: 'DELETE',
     });
   }
 
