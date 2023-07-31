@@ -17,7 +17,7 @@ export const listProjectUpdates: RouteMiddleware = async context => {
   const onlyOne = castBool(context.query.latest);
   const perPage = onlyOne ? 1 : Number(context.query.per_page || 10);
 
-  const updates = await context.projects.listProjectUpdates(project.id, siteId, perPage, page * perPage);
+  const updates = await context.projects.listProjectUpdates(project.id, siteId, perPage, (page - 1) * perPage);
   const total = await context.projects.countProjectUpdates(project.id, siteId);
   const totalPages = Math.ceil(total / perPage);
 

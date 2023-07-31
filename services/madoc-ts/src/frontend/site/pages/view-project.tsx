@@ -22,7 +22,7 @@ import { ProjectCollections } from '../blocks/ProjectCollections';
 import { ProjectContributionButton } from '../blocks/ProjectContributionButton';
 import { ProjectContributors } from '../blocks/ProjectContributors';
 import { ProjectHeading } from '../blocks/ProjectHeading';
-import { ProjectStatistics } from '../features/ProjectStatistics';
+import { ProjectStatistics } from '../blocks/ProjectStatistics';
 import { useProject } from '../hooks/use-project';
 
 export const ViewProject: React.FC = () => {

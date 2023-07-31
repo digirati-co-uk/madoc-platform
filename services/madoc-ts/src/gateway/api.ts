@@ -28,7 +28,7 @@ import { CompletionItem } from '../frontend/shared/capture-models/editor/input-t
 import { CaptureModel } from '../frontend/shared/capture-models/types/capture-model';
 import { BaseField } from '../frontend/shared/capture-models/types/field-types';
 import { RevisionRequest } from '../frontend/shared/capture-models/types/revision-request';
-import { FacetConfig } from '../frontend/shared/components/MetadataFacetEditor';
+import { FacetConfig } from "../frontend/shared/features/MetadataFacetEditor";
 import { GetLocalisationResponse, ListLocalisationsResponse } from '../routes/admin/localisation';
 import { UpdateManifestDetailsRequest } from '../routes/iiif/manifests/update-manifest-details';
 import { AnnotationStyles } from '../types/annotation-styles';
@@ -686,8 +686,8 @@ export class ApiClient {
     });
   }
 
-  async listProjectUpdates(id: string | number) {
-    return this.request<{ updates: ProjectUpdate[] }>(`/api/madoc/projects/${id}/updates`);
+  async listProjectUpdates(id: string | number, page = 1) {
+    return this.request<{ updates: ProjectUpdate[] }>(`/api/madoc/projects/${id}/updates?page=${page}`);
   }
 
   async getLatestProjectUpdate(id: string | number): Promise<ProjectUpdate | null> {

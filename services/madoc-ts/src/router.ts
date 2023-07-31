@@ -162,6 +162,7 @@ import { siteManifestTasks } from './routes/site/site-manifest-tasks';
 import { getStaticPage, sitePages } from './routes/site/site-pages';
 import { listProjectsAutocomplete } from './routes/projects/list-projects-autocomplete';
 import { siteProjectRecent } from './routes/site/site-project-recent';
+import { siteProjectUpdates } from "./routes/site/site-project-updates";
 import { siteTaskMetadata } from './routes/site/site-task-metadata';
 import { termListProxy } from './routes/site/site-term-proxy';
 import { siteTerms } from './routes/site/site-terms';
@@ -692,6 +693,7 @@ export const router = new TypedRouter({
   'site-static-page': [TypedRouter.GET, '/s/:slug/madoc/api/page/static/root/:paths*', getStaticPage],
   'site-resolve-slot': [TypedRouter.GET, '/s/:slug/madoc/api/slots', resolveSlots],
   'site-project': [TypedRouter.GET, '/s/:slug/madoc/api/projects/:projectSlug', siteProject],
+  'site-project-updates': [TypedRouter.GET, '/s/:slug/madoc/api/projects/:projectSlug/updates', siteProjectUpdates],
   'site-project-recent': [TypedRouter.GET, '/s/:slug/madoc/api/projects/:projectSlug/recent', siteProjectRecent],
   'site-projects': [TypedRouter.GET, '/s/:slug/madoc/api/projects', siteProjects],
   'site-search': [TypedRouter.POST, '/s/:slug/madoc/api/search', siteSearch],
