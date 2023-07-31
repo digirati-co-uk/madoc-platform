@@ -1,13 +1,12 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useMatch, useLocation } from 'react-router-dom';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import { Button } from '../../shared/navigation/Button';
 import { Heading3 } from '../../shared/typography/Heading3';
-import { ImageGrid } from '../../shared/atoms/ImageGrid';
-import { CollectionSnippet } from '../../shared/components/CollectionSnippet';
 import { apiHooks } from '../../shared/hooks/use-api-query';
 import { HrefLink } from '../../shared/utility/href-link';
+import { CollectionGrid } from '../../tailwind/components/CollectionGrid';
+import { CollectionGridItem } from '../../tailwind/components/CollectionGridItem';
 import { useProject } from '../hooks/use-project';
 import { useSiteConfiguration } from './SiteConfigurationContext';
 
@@ -34,11 +33,11 @@ export const ProjectCollections: React.FC = () => {
   return (
     <>
       <Heading3>{t('Collections')}</Heading3>
-      <ImageGrid $size="large">
+      <CollectionGrid>
         {shownCollections.map((collection, idx) => (
-          <CollectionSnippet key={idx} id={collection.id} projectId={project.slug} />
+          <CollectionGridItem key={idx} id={collection.id} projectId={project.slug} />
         ))}
-      </ImageGrid>
+      </CollectionGrid>
       {showAllCollectionsButton ? (
         <Button as={HrefLink} href={`/projects/${project.slug}/collections`}>
           {t('See all collections')}
