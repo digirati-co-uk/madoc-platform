@@ -17,7 +17,7 @@ const ProgressHeading = styled.h2`
 const ProgressContainer = styled.div`
   display: flex;
   align-items: center;
-  width: 100%;
+  align-self: center;
 `;
 
 const ProgressStat = styled.div`
@@ -54,8 +54,6 @@ export const ProjectStatistics: React.FC = () => {
 
   return (
     <>
-      <ProgressHeading>{t('Project progress')}</ProgressHeading>
-
       <ProgressContainer>
         <ProgressStat style={{ borderTop: '2px solid #B05104' }}>
           <CheckCircleIcon />

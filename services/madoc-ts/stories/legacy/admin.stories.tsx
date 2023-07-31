@@ -1,28 +1,5 @@
 import { useState } from 'react';
-import styled from 'styled-components';
-import { AdminHeader } from '../../src/frontend/admin/molecules/AdminHeader';
 import * as React from 'react';
-import { Button, ButtonRow } from '../../src/frontend/shared/navigation/Button';
-import { EmptySlotActions, EmptySlotContainer, EmptySlotLabel } from '../../src/frontend/shared/layout/EmptySlot';
-import { GlobalHeader } from '../../src/frontend/shared/navigation/GlobalHeader';
-import {
-  PageEditorActions,
-  PageEditorButton,
-  PageEditorContainer,
-  PageEditorDescription,
-  PageEditorTitle,
-} from '../../src/frontend/shared/page-blocks/PageEditor';
-import {
-  SlotEditorButton,
-  SlotEditorContainer,
-  SlotEditorLabel,
-  SlotEditorLabelReadOnly,
-  SlotEditorReadOnly,
-  SlotEditorWhy,
-  SlotOutlineContainer,
-} from '../../src/frontend/shared/layout/SlotEditor';
-import { WidePage } from '../../src/frontend/shared/layout/WidePage';
-import { LightNavigation, LightNavigationItem } from '../../src/frontend/shared/navigation/LightNavigation';
 import {
   AdminLayoutContainer,
   AdminLayoutMain,
@@ -44,7 +21,30 @@ import {
   SiteSwitcherBackButton,
   SiteSwitcherContainer,
   SiteSwitcherSiteName,
-} from '../../src/frontend/shared/components/AdminMenu';
+} from '../../src/frontend/admin/components/AdminMenu';
+import { AdminHeader } from '../../src/frontend/admin/molecules/AdminHeader';
+import { Button, ButtonRow } from '../../src/frontend/shared/navigation/Button';
+import { EmptySlotActions, EmptySlotContainer, EmptySlotLabel } from '../../src/frontend/shared/layout/EmptySlot';
+import { GlobalHeader } from '../../src/frontend/shared/navigation/GlobalHeader';
+import {
+  PageEditorActions,
+  PageEditorButton,
+  PageEditorContainer,
+  PageEditorDescription,
+  PageEditorTitle,
+} from '../../src/frontend/shared/page-blocks/PageEditor';
+import {
+  SlotEditorButton,
+  SlotEditorContainer,
+  SlotEditorLabel,
+  SlotEditorLabelReadOnly,
+  SlotEditorReadOnly,
+  SlotEditorWhy,
+  SlotOutlineContainer,
+} from '../../src/frontend/shared/layout/SlotEditor';
+import { WidePage } from '../../src/frontend/shared/layout/WidePage';
+import { LightNavigation, LightNavigationItem } from '../../src/frontend/shared/navigation/LightNavigation';
+
 import { ModalButton } from '../../src/frontend/shared/components/Modal';
 import { SiteProvider } from '../../src/frontend/shared/hooks/use-site';
 

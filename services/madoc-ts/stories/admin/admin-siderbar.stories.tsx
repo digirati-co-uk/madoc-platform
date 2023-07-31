@@ -1,6 +1,6 @@
 import * as React from 'react';
+import { AdminLayoutContainer, AdminLayoutMenu } from '../../src/frontend/admin/components/AdminMenu';
 import { AdminSidebar } from '../../src/frontend/admin/molecules/AdminSidebar';
-import { AdminLayoutContainer, AdminLayoutMenu } from '../../src/frontend/shared/components/AdminMenu';
 import { SiteProvider } from '../../src/frontend/shared/hooks/use-site';
 
 export default {
