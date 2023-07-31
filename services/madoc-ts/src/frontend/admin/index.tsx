@@ -4,7 +4,7 @@ import { CurrentUserWithScope, Site, SystemConfig } from '../../extensions/site-
 import { ApiClient } from '../../gateway/api';
 import { useTranslation } from 'react-i18next';
 import { GlobalStyles } from '../shared/typography/GlobalStyles';
-import { AdminLayoutContainer, AdminLayoutMain, AdminLayoutMenu } from '../shared/components/AdminMenu';
+import { AdminLayoutContainer, AdminLayoutMain, AdminLayoutMenu } from './components/AdminMenu';
 import { UserBar } from '../shared/components/UserBar';
 import { RenderConfigRoutes } from '../shared/utility/server-utils';
 import { ApiContext, useIsApiRestarting } from '../shared/hooks/use-api';

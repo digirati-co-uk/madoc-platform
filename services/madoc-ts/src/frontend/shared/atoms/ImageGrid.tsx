@@ -16,8 +16,7 @@ export const ImageGrid = styled.div<{
   $size?: 'large' | 'small';
 }>`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(${getSize}, 1fr));
-  justify-content: space-between;
+  grid-template-columns: repeat(auto-fit, ${getSize});
   background-color: inherit;
   grid-gap: 0.875em;
   width: 100%;

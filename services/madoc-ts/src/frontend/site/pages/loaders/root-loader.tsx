@@ -10,9 +10,9 @@ import { ErrorBoundary } from '../../../shared/utility/error-boundary';
 import { createUniversalComponent } from '../../../shared/utility/create-universal-component';
 import { UniversalComponent } from '../../../types';
 import { useStaticData } from '../../../shared/hooks/use-data';
-import { GlobalFooter } from '../../features/GlobalFooter';
-import { GlobalSiteHeader } from '../../features/GlobalSiteHeader';
-import { GlobalSiteNavigation } from '../../features/GlobalSiteNavigation';
+import { GlobalFooter } from '../../features/global/GlobalFooter';
+import { GlobalSiteHeader } from '../../features/global/GlobalSiteHeader';
+import { GlobalSiteNavigation } from '../../features/global/GlobalSiteNavigation';
 import { ConfigProvider, SiteConfigurationContext } from '../../features/SiteConfigurationContext';
 
 export type RootLoaderType = {

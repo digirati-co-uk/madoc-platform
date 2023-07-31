@@ -1,6 +1,6 @@
 import React from 'react';
 import { captureModelShorthand } from '../../frontend/shared/capture-models/helpers/capture-model-shorthand';
-import { ManifestSnippet } from '../../frontend/shared/components/ManifestSnippet';
+import { ManifestSnippet } from '../../frontend/shared/features/ManifestSnippet';
 import { ReactPageBlockDefinition } from './extension';
 
 const definition: ReactPageBlockDefinition<
@@ -10,7 +10,6 @@ const definition: ReactPageBlockDefinition<
     size?: 'lg' | 'md' | 'sm';
     center?: boolean;
     buttonRole?: 'button' | 'link';
-    containThumbnail?: boolean;
     smallLabel?: boolean;
     fluid?: boolean;
   },
@@ -52,11 +51,6 @@ const definition: ReactPageBlockDefinition<
         { value: 'link', text: 'Link' },
       ],
     },
-    containThumbnail: {
-      label: 'Thumbnail layout',
-      type: 'checkbox-field',
-      inlineLabel: 'Contain thumbnail',
-    },
     smallLabel: {
       label: 'Label size',
       type: 'checkbox-field',
@@ -74,7 +68,6 @@ const definition: ReactPageBlockDefinition<
     size: 'md',
     center: false,
     buttonRole: 'button',
-    containThumbnail: true,
     smallLabel: false,
     fluid: false,
   },

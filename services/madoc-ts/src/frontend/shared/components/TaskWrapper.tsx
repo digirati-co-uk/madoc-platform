@@ -2,7 +2,7 @@ import React from 'react';
 import { SubjectSnippet } from '../../../extensions/tasks/resolvers/subject-resolver';
 import { BaseTask } from '../../../gateway/tasks/base-task';
 import { ExpandGrid } from '../layout/Grid';
-import { TaskHeader } from './TaskHeader';
+import { TaskHeader } from '../../site/features/tasks/TaskHeader';
 
 export const TaskWrapper: React.FC<{ task: BaseTask; subject?: SubjectSnippet; refetch?: () => Promise<any> }> = ({
   task,

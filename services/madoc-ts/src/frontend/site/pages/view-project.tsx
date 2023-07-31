@@ -2,10 +2,11 @@ import { useUser } from '@madoc.io/types';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ProjectStatus } from '../../shared/atoms/ProjectStatus';
-import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
+import { SlotTabs } from '../../tailwind/components/slot-tabs';
+import { DisplayBreadcrumbs } from '../blocks/Breadcrumbs';
 import { AvailableBlocks } from '../../shared/page-blocks/available-blocks';
 import { Slot } from '../../shared/page-blocks/slot';
-import { SlotTabs } from '../../tailwind/components/slot-tabs';
+
 import { MostRecentProjectUpdate } from '../../tailwind/blocks/project/MostRecentProjectUpdate';
 import { PostNewProjectUpdate } from '../../tailwind/blocks/project/PostNewProjectUpdate';
 import { ProjectBanner } from '../../tailwind/blocks/project/ProjectBanner';
@@ -16,12 +17,12 @@ import { ProjectManifestList } from '../../tailwind/blocks/project/ProjectManife
 import { ProjectMyWork } from '../../tailwind/blocks/project/ProjectMyWork';
 import { ProjectPersonalNotes } from '../../tailwind/blocks/project/ProjectPersonalNotes';
 import { ProjectSearchBox } from '../../tailwind/blocks/project/ProjectSearchBox';
-import { TabBar } from '../../tailwind/components/TabBar';
-import { ProjectActions } from '../features/contributor/ProjectActions';
-import { ProjectContributionButton } from '../features/contributor/ProjectContributionButton';
-import { ProjectCollections } from '../features/ProjectCollections';
-import { ProjectContributors } from '../features/ProjectContributors';
-import { ProjectHeading } from '../features/ProjectHeading';
+import { ProjectActions } from '../blocks/ProjectActions';
+import { ProjectCollections } from '../blocks/ProjectCollections';
+import { ProjectContributionButton } from '../blocks/ProjectContributionButton';
+import { ProjectContributors } from '../blocks/ProjectContributors';
+import { ProjectHeading } from '../blocks/ProjectHeading';
+import { SearchResource } from '../blocks/SearchResource';
 import { ProjectStatistics } from '../features/ProjectStatistics';
 import { useProject } from '../hooks/use-project';
 

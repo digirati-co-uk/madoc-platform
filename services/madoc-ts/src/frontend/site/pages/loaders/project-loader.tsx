@@ -14,10 +14,10 @@ import { nullTheme, useCustomTheme } from '../../../themes/helpers/CustomThemePr
 import { UniversalComponent } from '../../../types';
 import { createUniversalComponent } from '../../../shared/utility/create-universal-component';
 import { useStaticData } from '../../../shared/hooks/use-data';
-import { BreadcrumbContext } from '../../../shared/components/Breadcrumbs';
+import { BreadcrumbContext } from '../../blocks/Breadcrumbs';
 import { ProjectFull } from '../../../../types/project-full';
 import { ConfigProvider } from '../../features/SiteConfigurationContext';
-import { FooterImageGrid } from '../../../shared/components/FooterImageGrid';
+import { FooterImageGrid } from '../../blocks/FooterImageGrid';
 import { Slot } from '../../../shared/page-blocks/slot';
 import { ItemNotFound } from '../Item-not-found';
 

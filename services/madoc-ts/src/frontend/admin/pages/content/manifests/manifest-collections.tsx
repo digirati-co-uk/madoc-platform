@@ -1,5 +1,5 @@
 import React from 'react';
-import { CollectionSnippet } from '../../../../shared/components/CollectionSnippet';
+import { CollectionSnippet } from '../../../../shared/features/CollectionSnippet';
 import { SmallButton } from '../../../../shared/navigation/Button';
 import { Link } from 'react-router-dom';
 import { useData } from '../../../../shared/hooks/use-data';

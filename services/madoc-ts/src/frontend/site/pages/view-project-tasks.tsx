@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Heading1, Subheading1 } from '../../shared/typography/Heading1';
-import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
+import { DisplayBreadcrumbs } from '../blocks/Breadcrumbs';
 import { ContributorTasks } from '../../shared/components/ContributorTasks';
 import { LocaleString } from '../../shared/components/LocaleString';
 import { ReviewerTasks } from '../../shared/components/ReviewerTasks';

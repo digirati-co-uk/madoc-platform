@@ -3,8 +3,8 @@ import { AvailableBlocks } from '../../shared/page-blocks/available-blocks';
 import { Slot } from '../../shared/page-blocks/slot';
 import { HeroCentered } from '../../tailwind/blocks/HeroCentered';
 import { HeroHyper } from '../../tailwind/blocks/HeroHyper';
-import { DefaultHomepage } from '../features/DefaultHomepage';
-import { StaticPage } from '../features/StaticPage';
+import { DefaultHomepage } from '../blocks/DefaultHomepage';
+import { StaticPage } from '../features/viewPage/StaticPage';
 
 export const Homepage = () => {
   return (

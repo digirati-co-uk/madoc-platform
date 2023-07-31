@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { MemoryRouter } from 'react-router-dom';
 import { AdminHeader } from '../../src/frontend/admin/molecules/AdminHeader';
 import { GlobalHeader } from '../../src/frontend/shared/navigation/GlobalHeader';
 

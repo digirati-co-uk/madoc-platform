@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Subheading5 } from '../typography/Heading5';
+import { SingleLineHeading5, Subheading5 } from '../typography/Heading5';
 
 export const ImageStripBox = styled.div<{
   $size?: 'large' | 'small';
@@ -15,10 +15,13 @@ export const ImageStripBox = styled.div<{
   border: 1px solid transparent;
   border-color: ${props => (props.$border ? props.$border : 'transparent')};
   background-color: ${props => (props.$bgColor ? props.$bgColor : 'inherit')};
+  ${SingleLineHeading5} {
+    font-size: 1em;
+    margin-bottom: 0.5em;
+  }
   h5,
   ${Subheading5} {
-    color: ${props => (props.$color ? props.$color : 'inherit')}!important;
-    padding: ${props => (props.$border ? '0 0 1em 0.5em' : '0')};
+    color: ${props => (props.$color ? props.$color : '')};
   }
 
   &:hover {
