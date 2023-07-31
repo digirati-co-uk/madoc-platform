@@ -1,3 +1,4 @@
+import { InternationalString } from '@iiif/presentation-3';
 import * as React from 'react';
 import styled from 'styled-components';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
@@ -65,6 +66,7 @@ const SurfaceStyled = styled.div<{
 `;
 
 export type SurfaceProps = {
+  label?: string;
   id?: string;
   background?: string;
   textColor?: string;
@@ -118,6 +120,7 @@ blockEditorFor(Surface, {
   type: 'surface',
   internal: true,
   defaultProps: {
+    label: null,
     textColor: '',
     background: '',
     font: '',
@@ -129,6 +132,7 @@ blockEditorFor(Surface, {
     marginBottom: 'none',
   },
   editor: {
+    label: { label: 'Label', type: 'text-field' },
     textColor: { label: 'Text color', type: 'color-field' },
     background: { label: 'Background color', type: 'color-field' },
     font: { label: 'Font (from google)', type: 'text-field' },
