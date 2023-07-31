@@ -11,6 +11,7 @@ import { useRouteContext } from '../hooks/use-route-context';
 const SearchResourceContainer = styled.div`
   padding: 1em 0;
   width: 500px;
+  align-self: center;
 
   label {
     font-size: 1em;

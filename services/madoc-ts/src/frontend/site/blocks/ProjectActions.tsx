@@ -14,7 +14,8 @@ import { useSiteConfiguration } from '../features/SiteConfigurationContext';
 import { StartContributingButton } from '../features/project/StartContributingButton';
 
 export const ProjectActions: React.FC<{
-  showContributingButton?: boolean }> = ({showContributingButton = false}) => {
+  showContributingButton?: boolean;
+}> = ({ showContributingButton = false }) => {
   const { data: project } = useProject();
   const { isActive } = useProjectStatus();
   const { t } = useTranslation();
@@ -35,11 +36,6 @@ export const ProjectActions: React.FC<{
     <div>
       {showContributingButton && <StartContributingButton />}
       <ButtonRow>
-        {/*{!options.hideSearchButton ? (*/}
-        {/*  <Button as={Link} to={createLink({ subRoute: 'search' })}>*/}
-        {/*    {t('Search this project')}*/}
-        {/*  </Button>*/}
-        {/*) : null}*/}
         {isReviewer && isActive ? (
           <Button
             as={Link}

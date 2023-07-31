@@ -1,9 +1,9 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { ResultTitle } from '../../../shared/components/SearchResults';
 import { apiHooks } from '../../../shared/hooks/use-api-query';
 import { LocaleString, useRouteContext } from '../../../shared/plugins/public-api';
 import { HrefLink } from '../../../shared/utility/href-link';
+import { ResultTitle } from '../../../site/features/search/SearchResults';
 import { useProject } from '../../../site/hooks/use-project';
 import { useRelativeLinks } from '../../../site/hooks/use-relative-links';
 

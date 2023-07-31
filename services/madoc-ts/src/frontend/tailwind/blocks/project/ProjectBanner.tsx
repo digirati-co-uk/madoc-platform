@@ -4,7 +4,7 @@ import { LocaleString } from '../../../shared/components/LocaleString';
 import { ArrowForwardIcon } from '../../../shared/icons/ArrowForwardIcon';
 import { Heading1, Subheading1 } from '../../../shared/typography/Heading1';
 import { HrefLink } from '../../../shared/utility/href-link';
-import { StartContributingButton } from '../../../site/features/contributor/StartContributingButton';
+import { StartContributingButton } from '../../../site/features/project/StartContributingButton';
 import { useProject } from '../../../site/hooks/use-project';
 import { ContinueMostRecentLink } from '../../components/ContinueMostRecentLink';
 import { ProgressBarSmall } from '../../components/ProgressBarSmall';

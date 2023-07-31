@@ -8,7 +8,7 @@ import { HrefLink } from '../../shared/utility/href-link';
 import { CollectionGrid } from '../../tailwind/components/CollectionGrid';
 import { CollectionGridItem } from '../../tailwind/components/CollectionGridItem';
 import { useProject } from '../hooks/use-project';
-import { useSiteConfiguration } from './SiteConfigurationContext';
+import { useSiteConfiguration } from '../features/SiteConfigurationContext';
 
 export const ProjectCollections: React.FC = () => {
   const { data: project } = useProject();
