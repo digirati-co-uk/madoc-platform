@@ -128,6 +128,9 @@
               "type"
             ]
           }
+        },
+        "placeholder_image": {
+          "type": "string"
         }
       },
       "required": [

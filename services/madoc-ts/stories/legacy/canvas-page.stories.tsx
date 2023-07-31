@@ -38,7 +38,7 @@ import { URLContextExplorer } from '../../src/frontend/shared/components/Content
 import { MetaDataDisplay } from '../../src/frontend/shared/components/MetaDataDisplay';
 import { SimpleAtlasViewer } from '../../src/frontend/shared/components/SimpleAtlasViewer';
 import { useResizeLayout } from '../../src/frontend/shared/hooks/use-resize-layout';
-import ReactTooltip from 'react-tooltip';
+import { Tooltip as ReactTooltip } from 'react-tooltip';
 import { AnnotationsIcon } from '../../src/frontend/shared/icons/AnnotationsIcon';
 import { InfoIcon } from '../../src/frontend/shared/icons/InfoIcon';
 import { ModelDocumentIcon } from '../../src/frontend/shared/icons/ModelDocumentIcon';
