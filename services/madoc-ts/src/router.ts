@@ -162,7 +162,7 @@ import { siteManifestTasks } from './routes/site/site-manifest-tasks';
 import { getStaticPage, sitePages } from './routes/site/site-pages';
 import { listProjectsAutocomplete } from './routes/projects/list-projects-autocomplete';
 import { siteProjectRecent } from './routes/site/site-project-recent';
-import { siteProjectUpdates } from "./routes/site/site-project-updates";
+import { siteProjectUpdates } from './routes/site/site-project-updates';
 import { siteTaskMetadata } from './routes/site/site-task-metadata';
 import { termListProxy } from './routes/site/site-term-proxy';
 import { siteTerms } from './routes/site/site-terms';

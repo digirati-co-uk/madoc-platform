@@ -687,7 +687,10 @@ export class ApiClient {
   }
 
   async listProjectUpdates(id: string | number, page = 1) {
-    return this.request<{ updates: ProjectUpdate[] }>(`/api/madoc/projects/${id}/updates?page=${page}`);
+    return this.request<{
+      pagination: Pagination;
+      updates: ProjectUpdate[];
+    }>(`/api/madoc/projects/${id}/updates?page=${page}`);
   }
 
   async getLatestProjectUpdate(id: string | number): Promise<ProjectUpdate | null> {

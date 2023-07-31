@@ -24,6 +24,7 @@ import { ProjectContributors } from '../blocks/ProjectContributors';
 import { ProjectHeading } from '../blocks/ProjectHeading';
 import { ProjectStatistics } from '../blocks/ProjectStatistics';
 import { useProject } from '../hooks/use-project';
+import { ListProjectUpdates } from '../../tailwind/blocks/project/ListProjectUpdates';
 
 export const ViewProject: React.FC = () => {
   const { t } = useTranslation();
@@ -57,7 +58,9 @@ export const ViewProject: React.FC = () => {
       </Slot>
 
       <SlotTabs initial={project?.isProjectMember ? 'project-my-work' : 'project-content'}>
-        <Slot name="project-navigation" label={t('Overview')} />
+        <Slot name="project-navigation" label={t('Overview')}>
+          <ListProjectUpdates />
+        </Slot>
         <Slot name="project-my-work" label={t('My work')} hidden={!user}>
           <ProjectContinueSubmissions />
           <ProjectMyWork />
