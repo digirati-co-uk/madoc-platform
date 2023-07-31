@@ -14,6 +14,8 @@ import {
   KanbanLabel,
   KanbanType,
 } from '../../src/frontend/shared/atoms/Kanban';
+import { URLContextExplorer } from '../../src/frontend/shared/features/ContentExplorer';
+import { SimpleAtlasViewer } from '../../src/frontend/shared/features/SimpleAtlasViewer';
 import {
   LayoutContainer,
   LayoutContent,
@@ -34,9 +36,9 @@ import {
   TaskItemTagType,
   TaskListContainer,
 } from '../../src/frontend/shared/atoms/TaskList';
-import { URLContextExplorer } from '../../src/frontend/shared/components/ContentExplorer';
+
 import { MetaDataDisplay } from '../../src/frontend/shared/components/MetaDataDisplay';
-import { SimpleAtlasViewer } from '../../src/frontend/shared/components/SimpleAtlasViewer';
+
 import { useResizeLayout } from '../../src/frontend/shared/hooks/use-resize-layout';
 import { Tooltip as ReactTooltip } from 'react-tooltip';
 import { AnnotationsIcon } from '../../src/frontend/shared/icons/AnnotationsIcon';
@@ -227,7 +229,6 @@ export const Main_Page = () => {
             </LayoutContent>
           </LayoutContainer>
         </OuterLayoutContainer>
-        <ReactTooltip place="right" type="dark" effect="solid" />
       </div>
     </VaultProvider>
   );
