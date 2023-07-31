@@ -107,6 +107,7 @@ export const Button = styled.button<{
       &:hover {
         background: #5371e9;
         border-color: #5371e9;
+        color: #fff;
       }
       &:focus,
       &:focus:hover {
