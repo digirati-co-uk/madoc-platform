@@ -9,7 +9,11 @@ export const TaskFilterStatuses: React.FC<{ statuses: Array<{ label: any; value:
 }) => {
   const { t } = useTranslation();
   const { page, ...query } = useLocationQuery();
-  const statuses = query.status ? query.status.split(',').map(Number) : [];
+  const statuses = query.status
+    ? Array.isArray(query.status)
+      ? query.status.map(Number)
+      : query.status.split(',').map(Number)
+    : [];
   const goToQuery = useGoToQuery();
 
   const realLabel = statuses.length === 1 ? allStatuses.find(ty => ty.value && ty.value === statuses[0])?.label : '';
