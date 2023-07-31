@@ -30,7 +30,7 @@ const Item = styled.button`
   flex: 1;
   background: transparent;
   border: none;
-  padding: 0.6em;
+  padding: 0.6em 1em;
   color: #777;
   white-space: nowrap;
   font-size: 0.875em;
