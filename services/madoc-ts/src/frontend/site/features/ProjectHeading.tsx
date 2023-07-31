@@ -40,6 +40,7 @@ export const ProjectHeading: React.FC<{
   showContributingButton?: boolean;
 }> = ({ headerImage, fullWidth, imageHeight = 200, showContributingButton = true }) => {
   const { data: project } = useProject();
+  const projectImageUrl = project?.placeholderImage ? project.placeholderImage : headerImage ? headerImage.image : null;
 
   if (!project) {
     return null;
@@ -52,9 +53,11 @@ export const ProjectHeading: React.FC<{
         <LocaleString as={Subheading1}>{project.summary}</LocaleString>
       </ProjectTitle>
 
-      <ProjectImage data-full-width={fullWidth} style={{ maxHeight: `${imageHeight}px` }}>
-        <img src={headerImage?.image} alt={''} />
-      </ProjectImage>
+      {projectImageUrl ? (
+        <ProjectImage data-full-width={fullWidth} style={{ maxHeight: `${imageHeight}px` }}>
+          <img src={headerImage?.image} alt={''} />
+        </ProjectImage>
+      ) : null}
 
       {showContributingButton && <StartContributingButton />}
     </ProjectHeadingContainer>
