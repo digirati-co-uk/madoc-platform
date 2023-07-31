@@ -6,15 +6,18 @@ import { RenderBlankSlot } from './render-blank-slot';
 import { RenderSlot } from './render-slot';
 import { useSlots } from './slot-context';
 
-export const Slot: React.FC<{
+export interface SlotProps {
   id?: string;
   name: string;
+  label?: string;
   hidden?: boolean;
   layout?: string;
   noSurface?: boolean;
   small?: boolean;
   source?: { type: string; id: string };
-}> = props => {
+}
+
+export const Slot: React.FC<SlotProps> = props => {
   const { t } = useTranslation();
   const { slots, context, editable, onUpdateSlot, onUpdateBlock, invalidateSlots, pagePath } = useSlots();
 
