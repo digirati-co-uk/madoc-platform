@@ -85,10 +85,10 @@ export function createTask(task: CrowdsourcingTask): CrowdsourcingReview {
     status_text: 'not started',
     parameters: [task.id, task.parameters[2]],
     state: {},
-    events: ['madoc-ts.created', 'madoc-ts.assigned'],
+    events: ['madoc-ts.created', 'madoc-ts.assigned', 'madoc-ts.status.3'],
   };
 }
-
+//       await userApi.addProjectMember(project.id, id, { id: 'creator', label: 'Creator' });
 export const jobHandler = async (name: string, taskId: string, api: ApiClient) => {
   // If you throw an exception here, the crowdsourcing task will be marked as rejected. Need to be careful.
   switch (name) {
@@ -126,6 +126,23 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
 
       await api.notifications.taskAssignmentNotification('You have been assigned a review', task);
 
+      break;
+    }
+    case 'status.3': {
+      const task = await api.getTask<CrowdsourcingReview>(taskId);
+      const assignee: any = task.assignee;
+      if (task.root_task && assignee) {
+        const projects = await api.getProjects(0, { root_task_id: task.root_task });
+        if (projects.projects.length) {
+          const project = projects.projects[0];
+          if (project) {
+            const user = parseUrn(assignee?.id);
+            if (user && user.type === 'user') {
+              await api.addProjectMember(project.id, user.id, { id: 'reviewer', label: 'Reviewer' });
+            }
+          }
+        }
+      }
       break;
     }
   }

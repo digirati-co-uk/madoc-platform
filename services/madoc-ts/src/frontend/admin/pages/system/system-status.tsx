@@ -50,6 +50,12 @@ export const SystemStatus: UniversalComponent<SystemStatusType> = createUniversa
       });
     });
 
+    const [migrateProjectMembers, migrateProjectMembersStatus] = useMutation(async () => {
+      return api.request(`/api/madoc/system/migrate-project-members`, {
+        method: 'POST',
+      });
+    });
+
     const { memory, cpu } = data
       ? data.list.reduce(
           (state, next) => {
@@ -107,6 +113,9 @@ export const SystemStatus: UniversalComponent<SystemStatusType> = createUniversa
             <Button onClick={() => migrateModels()} disabled={migrateModelsStatus.isLoading}>
               {t('Migrate models')}
             </Button>
+            <Button onClick={() => migrateProjectMembers()} disabled={migrateProjectMembersStatus.isLoading}>
+              Migrate project members
+            </Button>
           </ButtonRow>
 
           {migrateModelsStatus.data ? (
@@ -119,6 +128,8 @@ export const SystemStatus: UniversalComponent<SystemStatusType> = createUniversa
               </SuccessMessage>
             )
           ) : null}
+
+          {migrateProjectMembersStatus.data ? <SuccessMessage>Migration complete</SuccessMessage> : null}
 
           {data
             ? data.list.map(item => {
