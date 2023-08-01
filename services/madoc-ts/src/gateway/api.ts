@@ -28,7 +28,7 @@ import { CompletionItem } from '../frontend/shared/capture-models/editor/input-t
 import { CaptureModel } from '../frontend/shared/capture-models/types/capture-model';
 import { BaseField } from '../frontend/shared/capture-models/types/field-types';
 import { RevisionRequest } from '../frontend/shared/capture-models/types/revision-request';
-import { FacetConfig } from "../frontend/shared/features/MetadataFacetEditor";
+import { FacetConfig } from '../frontend/shared/features/MetadataFacetEditor';
 import { GetLocalisationResponse, ListLocalisationsResponse } from '../routes/admin/localisation';
 import { UpdateManifestDetailsRequest } from '../routes/iiif/manifests/update-manifest-details';
 import { AnnotationStyles } from '../types/annotation-styles';
@@ -719,7 +719,7 @@ export class ApiClient {
     return this.request<{ members: ProjectMember[] }>(`/api/madoc/projects/${id}/members`);
   }
 
-  async addProjectMember(id: string | number, userId: string | number, role: ProjectMember['role']) {
+  async addProjectMember(id: string | number, userId: string | number, role?: ProjectMember['role']) {
     return this.request<{ success: boolean }>(`/api/madoc/projects/${id}/members`, {
       method: 'POST',
       body: {
@@ -1606,6 +1606,26 @@ export class ApiClient {
     return this.request<{ statuses: { [status: string]: number }; total: number }>(
       `/api/tasks/${id}/stats${query ? `?${stringify(query)}` : ''}`
     );
+  }
+
+  async getTaskAssigneeStats(
+    id: string,
+    query: { type?: string; root?: boolean; distinct_subjects?: boolean; status?: number } = {}
+  ) {
+    (query as any).group_by = 'assignee';
+    const response = await this.request<{ assignee_id: { [status: string]: number }; total: number }>(
+      `/api/tasks/${id}/stats?${stringify(query)}`
+    );
+
+    // This might be an old version of the API.
+    if (!response || !response.assignee_id) {
+      return {
+        _old: true,
+        total: 0,
+        assignee_id: {},
+      } as typeof response;
+    }
+    return response;
   }
 
   async getAllTaskStats(query?: { type?: string; root?: boolean; distinct_subjects?: boolean; user_id?: string }) {

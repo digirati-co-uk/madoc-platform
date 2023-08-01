@@ -1,4 +1,5 @@
 import { Children, ReactNode, useState } from 'react';
+import { AvailableBlocks } from '../../shared/page-blocks/available-blocks';
 import { Slot } from '../../shared/page-blocks/slot';
 import { useSlots } from '../../shared/page-blocks/slot-context';
 
@@ -22,7 +23,14 @@ export function SlotTabs(props: SlotTabProps) {
 
       const slot = slots[name];
 
-      const empty = slot ? slot?.blocks.length === 0 : !(child as any).props.children;
+      const children = (child as any).props.children;
+      const isChildrenEmpty =
+        !children ||
+        Children.toArray(children).filter((c: any) => {
+          return c.type !== AvailableBlocks;
+        }).length === 0;
+
+      const empty = slot ? slot?.blocks.length === 0 : isChildrenEmpty;
 
       const customLabel = slot?.props?.surface?.label;
 

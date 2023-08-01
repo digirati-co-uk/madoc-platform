@@ -36,6 +36,7 @@ import { addProjectFeedback, listProjectFeedback, removeProjectFeedback } from '
 import {
   addProjectMember,
   listProjectMembers,
+  migrateProjectMembers,
   removeProjectMember,
   updateUsersProjectRole,
 } from './routes/projects/project-members';
@@ -286,6 +287,7 @@ export const router = new TypedRouter({
   'run-cron-jobs': [TypedRouter.POST, '/api/madoc/cron/jobs/:jobId/run', runJob],
   'regenerate-keys': [TypedRouter.POST, '/api/madoc/system/key-regen', keyRegenerate],
   'generate-api-key': [TypedRouter.POST, '/api/madoc/system/api-keys', generateApiKey],
+  'migrate-project-members': [TypedRouter.POST, '/api/madoc/system/migrate-project-members', migrateProjectMembers],
   'get-api-keys': [TypedRouter.GET, '/api/madoc/system/api-keys', listApiKeys],
   'delete-api-key': [TypedRouter.DELETE, '/api/madoc/system/api-keys/:client_id', deleteApiKey],
 

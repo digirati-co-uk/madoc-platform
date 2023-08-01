@@ -36,6 +36,7 @@ export const ViewProject: React.FC = () => {
       <ProjectContributors />
       <ProjectContributionButton />
       <ProjectHeading />
+      <MostRecentProjectUpdate />
     </AvailableBlocks>
   );
 
@@ -60,12 +61,13 @@ export const ViewProject: React.FC = () => {
 
       <SlotTabs initial={project?.isProjectMember ? 'project-my-work' : undefined}>
         <Slot name="project-navigation" label={t('Overview')}>
-          <MostRecentProjectUpdate />
+          {available}
         </Slot>
         <Slot name="project-my-work" label={t('My work')} hidden={!user}>
           <ProjectContinueSubmissions />
           <ProjectMyWork />
           <ProjectPersonalNotes />
+          {available}
         </Slot>
         <Slot name="project-content" label={t('Manifests and Collections')}>
           <ProjectCollections />
@@ -76,6 +78,7 @@ export const ViewProject: React.FC = () => {
           <ProjectContinueSubmissions />
           <ProjectMyWork />
           <ProjectPersonalNotes />
+          {available}
         </Slot>
         <Slot name="project-contributors" label={t('Contributors')} />
         <Slot name="project-updates" label={t('Updates')} hidden={!project?.latestUpdate && !isAdmin}>

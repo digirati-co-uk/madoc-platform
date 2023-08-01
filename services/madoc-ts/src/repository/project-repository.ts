@@ -273,6 +273,10 @@ export class ProjectRepository extends BaseRepository {
   }
 
   async addUserToProject(userId: number, projectId: number, role?: ProjectMemberRole) {
+    const isMember = await this.isUserProjectMember(userId, projectId);
+    if (isMember) {
+      return;
+    }
     await this.connection.query(ProjectRepository.mutations.addUserToProject(userId, projectId, role));
   }
 
