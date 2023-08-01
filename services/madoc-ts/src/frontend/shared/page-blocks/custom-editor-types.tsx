@@ -4,6 +4,7 @@ import { specification as mediaExplorer } from '../../../extensions/capture-mode
 import { specification as projectExplorer } from '../../../extensions/capture-models/ProjectExplorer/index';
 import { pluginStore } from '../capture-models/plugin-api/globals';
 import { specification as canvasExplorer } from '../../../extensions/capture-models/CanvasExplorer/index';
+import { specification as avatarGenerator } from '../../../extensions/capture-models/AvatarGeneratorField/index';
 import { PluginStore } from '../capture-models/types/plugin-store';
 import { PluginContext } from '../capture-models/plugin-api/context';
 
@@ -18,6 +19,7 @@ export const CustomEditorTypes: React.FC = ({ children }) => {
         [projectExplorer.type]: projectExplorer,
         [collectionExplorer.type]: collectionExplorer,
         [canvasExplorer.type]: canvasExplorer,
+        [avatarGenerator.type]: avatarGenerator,
       },
     };
   }, []);

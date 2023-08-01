@@ -1,6 +1,11 @@
 import { CaptureModelShorthand } from '../../../extensions/projects/types';
 
 export const userDetailConfig: CaptureModelShorthand<any> = {
+  avatar: {
+    type: 'avatar-generator-field',
+    label: 'Avatar',
+    description: 'Enable an avatar for your profile',
+  },
   bio: {
     type: 'text-field',
     label: 'Bio',
