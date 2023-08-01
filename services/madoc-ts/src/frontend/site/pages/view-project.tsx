@@ -60,7 +60,6 @@ export const ViewProject: React.FC = () => {
       <SlotTabs initial={project?.isProjectMember ? 'project-my-work' : 'project-content'}>
         <Slot name="project-navigation" label={t('Overview')}>
           <MostRecentProjectUpdate />
-          <ListProjectUpdates />
         </Slot>
         <Slot name="project-my-work" label={t('My work')} hidden={!user}>
           <ProjectContinueSubmissions />
@@ -74,7 +73,7 @@ export const ViewProject: React.FC = () => {
         </Slot>
         <Slot name="project-contributors" label={t('Contributors')} />
         <Slot name="project-updates" label={t('Updates')}>
-          <MostRecentProjectUpdate />
+          <ListProjectUpdates />
           <PostNewProjectUpdate />
         </Slot>
         <Slot name="project-feedback" label={t('Feedback')} hidden={project?.isProjectMember !== true}>
