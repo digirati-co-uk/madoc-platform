@@ -22,7 +22,7 @@ export function SlotTabs(props: SlotTabProps) {
 
       const slot = slots[name];
 
-      const empty = slot?.blocks.length === 0 && !(child as any).props.children;
+      const empty = slot ? slot?.blocks.length === 0 : !(child as any).props.children;
 
       const customLabel = slot?.props?.surface?.label;
 

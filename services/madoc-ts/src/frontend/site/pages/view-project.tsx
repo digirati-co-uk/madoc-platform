@@ -29,6 +29,7 @@ import { ListProjectUpdates } from '../../tailwind/blocks/project/ListProjectUpd
 export const ViewProject: React.FC = () => {
   const { t } = useTranslation();
   const user = useUser();
+  const isAdmin = (user?.scope || []).includes('site.admin');
   const { data: project } = useProject();
   const available = (
     <AvailableBlocks>
@@ -57,8 +58,8 @@ export const ViewProject: React.FC = () => {
         {available}
       </Slot>
 
-      <SlotTabs initial={project?.isProjectMember ? 'project-my-work' : 'project-content'}>
-        <Slot name="project-navigation" label={t('Overview')}>
+      <SlotTabs initial={project?.isProjectMember ? 'project-my-work' : undefined}>
+        <Slot name="project-navigation" label={t('Overview')} />
           <MostRecentProjectUpdate />
           <ListProjectUpdates />
         </Slot>
@@ -72,12 +73,17 @@ export const ViewProject: React.FC = () => {
           <ProjectManifestList />
           {available}
         </Slot>
+        <Slot name="project-my-work" label={t('My work')} hidden={!user}>
+          <ProjectContinueSubmissions />
+          <ProjectMyWork />
+          <ProjectPersonalNotes />
+        </Slot>
         <Slot name="project-contributors" label={t('Contributors')} />
-        <Slot name="project-updates" label={t('Updates')}>
+        <Slot name="project-updates" label={t('Updates')} hidden={!project?.latestUpdate && !isAdmin}>
           <MostRecentProjectUpdate />
           <PostNewProjectUpdate />
         </Slot>
-        <Slot name="project-feedback" label={t('Feedback')} hidden={project?.isProjectMember !== true}>
+        <Slot name="project-feedback" label={t('Feedback')} hidden={project?.isProjectMember !== true && !isAdmin}>
           <ProjectFeedbackListing />
           <ProjectFeedback />
         </Slot>

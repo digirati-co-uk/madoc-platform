@@ -46,7 +46,7 @@ export const ProjectStatistics: React.FC = () => {
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  const total = Object.values(project?.statistics).reduce((a, b) => Math.max(a, 0) + Math.max(b, 0));
+  const total = Object.values(project?.statistics || {}).reduce((a, b) => Math.max(a, 0) + Math.max(b, 0), 0);
 
   if (hideStatistics || !project) {
     return null;

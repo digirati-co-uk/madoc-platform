@@ -44,6 +44,10 @@ export const Button = styled.button<{
   background: linear-gradient(180deg, #fafbfc 0%, #eff3f6 90%);
   border: 1px solid rgba(27, 31, 35, 0.15);
   color: #333;
+
+  &[type="submit"] {
+    background: linear-gradient(180deg, #fafbfc 0%, #eff3f6 90%);
+  }
   
   
   ${props =>
@@ -97,6 +101,10 @@ export const Button = styled.button<{
       background: #4265e9;
       color: #fff;
       border: 1px solid #4265e9;
+
+      &[type='submit'] {
+        background: #4265e9;
+      }
       &:active {
         box-shadow: inset 0 2px 8px 0 rgba(39, 75, 155, 0.8);
       }

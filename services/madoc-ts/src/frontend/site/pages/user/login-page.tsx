@@ -49,9 +49,9 @@ export const LoginPage: React.FC = () => {
               <div dangerouslySetInnerHTML={{ __html: system.loginFooter }} style={{ marginBottom: '1em' }} />
             ) : null}
             <LoginActions>
-              <FlexSpacer>
+              <div style={{ flex: 1 }}>
                 <HrefLink href={`/forgot-password`}>{t('Forgot password?')}</HrefLink>
-              </FlexSpacer>
+              </div>
               <Button $primary>{t('Login')}</Button>
             </LoginActions>
           </InputContainer>
