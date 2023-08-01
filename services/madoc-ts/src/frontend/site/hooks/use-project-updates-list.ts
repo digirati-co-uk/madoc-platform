@@ -10,7 +10,7 @@ export function useProjectUpdatesList() {
 
   return usePaginatedQuery(['site-project-update-list', { projectId, page }], async () => {
     if (projectId) {
-      return api.listProjectUpdates(projectId, page);
+      return api.ListSiteProjectUpdates(projectId, page);
     }
   });
 }
