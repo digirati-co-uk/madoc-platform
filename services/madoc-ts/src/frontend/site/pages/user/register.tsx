@@ -69,7 +69,7 @@ export const Register: React.FC = () => {
   }
 
   const acceptTerms = site.latestTerms ? (
-    <div>
+    <div style={{ marginBottom: '1em', fontSize: '0.875em', color: '#444' }}>
       <p>
         {t('By registering you agree to the ')}
         <a target="_blank" href={`/s/${site.slug}/terms`} rel="noreferrer">
@@ -139,9 +139,9 @@ export const Register: React.FC = () => {
           ) : null}
           <InputContainer>
             <LoginActions>
-              <FlexSpacer>
+              <div style={{ flex: 1 }}>
                 {t('Already have an account?')} <HrefLink href="/login">{t('Login')}</HrefLink>
-              </FlexSpacer>
+              </div>
               <Button type="submit" $primary>
                 {t('Register')}
               </Button>

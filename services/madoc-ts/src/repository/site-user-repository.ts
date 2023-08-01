@@ -1256,7 +1256,8 @@ export class SiteUserRepository extends BaseRepository {
   }
 
   async invalidateSiteCache(siteId: number) {
-    cache.del(`public-site-id:${siteId}`);
+    const slug = await this.connection.oneFirst(sql<{ slug: string }>`select slug from site where id = ${siteId}`);
+    cache.del(`public-site-id:${slug}`);
   }
 
   async updateInvitation(invitationId: string, siteId: number, req: UpdateInvitation) {
