@@ -24,6 +24,7 @@ import { ProjectContributors } from '../blocks/ProjectContributors';
 import { ProjectHeading } from '../blocks/ProjectHeading';
 import { ProjectStatistics } from '../blocks/ProjectStatistics';
 import { useProject } from '../hooks/use-project';
+import { ListProjectUpdates } from '../../tailwind/blocks/project/ListProjectUpdates';
 
 export const ViewProject: React.FC = () => {
   const { t } = useTranslation();
@@ -58,7 +59,14 @@ export const ViewProject: React.FC = () => {
       </Slot>
 
       <SlotTabs initial={project?.isProjectMember ? 'project-my-work' : undefined}>
-        <Slot name="project-navigation" label={t('Overview')} />
+        <Slot name="project-navigation" label={t('Overview')}>
+          <MostRecentProjectUpdate />
+        </Slot>
+        <Slot name="project-my-work" label={t('My work')} hidden={!user}>
+          <ProjectContinueSubmissions />
+          <ProjectMyWork />
+          <ProjectPersonalNotes />
+        </Slot>
         <Slot name="project-content" label={t('Manifests and Collections')}>
           <ProjectCollections />
           <ProjectManifestList />
@@ -71,7 +79,7 @@ export const ViewProject: React.FC = () => {
         </Slot>
         <Slot name="project-contributors" label={t('Contributors')} />
         <Slot name="project-updates" label={t('Updates')} hidden={!project?.latestUpdate && !isAdmin}>
-          <MostRecentProjectUpdate />
+          <ListProjectUpdates />
           <PostNewProjectUpdate />
         </Slot>
         <Slot name="project-feedback" label={t('Feedback')} hidden={project?.isProjectMember !== true && !isAdmin}>
