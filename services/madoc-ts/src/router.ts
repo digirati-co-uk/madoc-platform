@@ -272,6 +272,7 @@ import { deleteProjectEndpoint } from './routes/projects/deleteProject';
 import { exportProjectTemplate } from './routes/projects/export-project-template';
 import { generateApiKey } from './routes/admin/generate-api-key';
 import { authenticateApi } from './routes/global/api-authentication';
+import { listProjectAssigneeStats } from './routes/projects/list-project-assignee-stats';
 
 export const router = new TypedRouter({
   // Normal route
@@ -571,6 +572,11 @@ export const router = new TypedRouter({
   'get-project-deletion-summary': [TypedRouter.GET, '/api/madoc/projects/:id/deletion-summary', deleteProjectSummary],
   'delete-project': [TypedRouter.DELETE, '/api/madoc/projects/:id', deleteProjectEndpoint],
   'project-task-svg': [TypedRouter.GET, '/api/madoc/projects/:id/tasks/:taskId/preview-svg', svgFromCrowdsourcingTask],
+  'list-project-assignee-stats': [
+    TypedRouter.GET,
+    '/api/madoc/projects/:id/tasks/assignee-stats',
+    listProjectAssigneeStats,
+  ],
   // Project updates
   'list-project-updates': [TypedRouter.GET, '/api/madoc/projects/:id/updates', listProjectUpdates],
   'create-project-update': [TypedRouter.POST, '/api/madoc/projects/:id/updates', createProjectUpdate],
