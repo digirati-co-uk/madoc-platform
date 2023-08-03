@@ -9,14 +9,30 @@ export function ProjectContributorStatistics() {
   if (!data) {
     return null;
   }
+
+  if (!data.submissions.total || data.submissions.total === 0) {
+    return <p>No contributions to this project yet</p>;
+  }
+
+  const graphScale = Math.ceil(data.submissions.total / 10) * 10;
+
   const getPercentage = (a: number) => {
-    const p = (a / 25) * 100;
-    return `w-[${p}%]`;
+    const p = (a / graphScale) * 100;
+    return `${p}%`;
   };
 
-  const style = 'repeating-linear-gradient(to left, #f7f7f7, #f7f7f7 10%, #fff 10%, #fff 20%)';
+  const scaleIndicatorList = [];
+  for (let i = 1; i * 10 <= graphScale; i++) {
+    scaleIndicatorList.push(i * 10);
+  }
+
+  const barScale = graphScale === 10 ? getPercentage(1) : graphScale === 20 ? getPercentage(2) : getPercentage(5);
+  const barScaleAlt = graphScale === 10 ? getPercentage(0.5) : graphScale === 20 ? getPercentage(1) : getPercentage(2.5);
+
+
+  const style = `repeating-linear-gradient(to left, #f7f7f7, #f7f7f7 ${barScaleAlt}, #fff ${barScaleAlt}, #fff ${barScale}`;
   return (
-    <div className="container mx-auto">
+    <div className="container mx-auto p-5 max-w-5xl">
       <div className="overflow-hidden p-5 shadow-md">
         {/* Top */}
         <div className="px-5 py-3">
@@ -35,8 +51,10 @@ export function ProjectContributorStatistics() {
                 </div>
                 <div className="w-[100%] border-l-2 border-gray-300" style={{ background: style }}>
                   <div
+                    tabIndex={0}
                     data-tooltip-id={`my-tooltip-${i}`}
-                    className={`${getPercentage(stat.submissions)} bg-teal-400 h-5 my-3`}
+                    style={{ width: getPercentage(stat.submissions) }}
+                    className="bg-teal-400 h-5 my-3"
                   />
                   <ReactTooltip id={`my-tooltip-${i}`} place="right" content={`${stat.submissions} Submissions`} />
                 </div>
@@ -45,11 +63,12 @@ export function ProjectContributorStatistics() {
             <div className="flex">
               <div className="w-1/5" />
               <div className=" flex w-[100%] border-gray-300 border-t-2 text-gray-500">
-                <div className="w-[21%] text-end">0 - 5</div>
-                <div className="w-[20%] text-end">10</div>
-                <div className="w-[20%] text-end">15</div>
-                <div className="w-[20%] text-end">20</div>
-                <div className="w-[20%] text-end">25+</div>
+                <div className="text-end">0</div>
+                {scaleIndicatorList.map((n, i) => (
+                  <div key={i} style={{ width: '100%' }} className="text-end">
+                    {n}
+                  </div>
+                ))}
               </div>
             </div>
           </dl>

@@ -25,7 +25,7 @@ import { ProjectHeading } from '../blocks/ProjectHeading';
 import { ProjectStatistics } from '../blocks/ProjectStatistics';
 import { useProject } from '../hooks/use-project';
 import { ListProjectUpdates } from '../../tailwind/blocks/project/ListProjectUpdates';
-import {ProjectContributorStatistics} from "../../tailwind/blocks/project/ProjectContributorStatistics";
+import { ProjectContributorStatistics } from '../../tailwind/blocks/project/ProjectContributorStatistics';
 
 export const ViewProject: React.FC = () => {
   const { t } = useTranslation();
@@ -73,12 +73,6 @@ export const ViewProject: React.FC = () => {
         <Slot name="project-content" label={t('Manifests and Collections')}>
           <ProjectCollections />
           <ProjectManifestList />
-          {available}
-        </Slot>
-        <Slot name="project-my-work" label={t('My work')} hidden={!user}>
-          <ProjectContinueSubmissions />
-          <ProjectMyWork />
-          <ProjectPersonalNotes />
           {available}
         </Slot>
         <Slot name="project-contributors" label={t('Contributors')}>
