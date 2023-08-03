@@ -62,6 +62,7 @@ export type ProjectConfiguration = {
     enableRotation?: boolean;
     enableAutoSave?: boolean;
     enableTooltipDescriptions?: boolean;
+    enableSplitView?: boolean;
   };
   projectPageOptions?: {
     hideStartContributing?: boolean;
@@ -206,6 +207,7 @@ export type ProjectConfigurationNEW = {
     allowPersonalNotes?: boolean; // changed to sub-item
     enableAutoSave?: boolean;
     enableTooltipDescriptions?: boolean;
+    enableSplitView?: boolean;
   };
   contributionWarningTime: false | number;
   shortExpiryTime?: string;

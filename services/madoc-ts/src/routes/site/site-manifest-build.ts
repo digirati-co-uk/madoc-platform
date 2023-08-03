@@ -7,6 +7,7 @@ import { RouteMiddleware } from '../../types/route-middleware';
 import { IIIFBuilder } from 'iiif-builder';
 import { NotFound } from '../../utility/errors/not-found';
 import { createMetadataReducer } from '../../utility/iiif-metadata';
+import cache from 'memory-cache';
 
 type IIIFExportRow = {
   derived__id: number;
@@ -76,6 +77,23 @@ export const siteManifestBuild: RouteMiddleware<{
   version: string;
   projectSlug?: string;
 }> = async context => {
+  const cacheKey = `build-manifest-${context.params.slug}-${context.params.id}-${context.params.version}-${context.params.projectSlug}`;
+  const cached = cache.get(cacheKey);
+  const noCacheHeader = context.get('Cache-Control');
+  if (cached && !noCacheHeader.includes('no-cache')) {
+    // Cache control.
+    context.set('Access-Control-Allow-Origin', '*');
+    context.set('Cache-Control', 'public, max-age=3600');
+    context.set('X-Cache', 'HIT');
+    context.response.body = cached;
+    return;
+  }
+
+  const updateCache = (data: any) => {
+    cache.put(cacheKey, data, 60 * 60 * 24);
+    context.set('Cache-Control', 'public, max-age=3600');
+  };
+
   const vault = new Vault();
   const builder = new IIIFBuilder(vault);
   const site = context.state.site;
@@ -373,6 +391,7 @@ export const siteManifestBuild: RouteMiddleware<{
         const collectionJson: any = builder.toPresentation3({ id: newCollection.id, type: 'Manifest' });
         collectionJson['@context'] = 'http://iiif.io/api/presentation/3/context.json';
         context.response.body = collectionJson;
+        updateCache(collectionJson);
         return;
       }
       case '2.1': {
@@ -381,6 +400,7 @@ export const siteManifestBuild: RouteMiddleware<{
         const collectionJson: any = builder.toPresentation2({ id: newCollection.id, type: 'Manifest' });
         collectionJson['@context'] = 'http://iiif.io/api/presentation/2/context.json';
         context.response.body = collectionJson;
+        updateCache(collectionJson);
         return;
       }
       default:
@@ -647,6 +667,7 @@ export const siteManifestBuild: RouteMiddleware<{
       const manifestJson: any = builder.toPresentation3({ id: newManifest.id, type: 'Manifest' });
       manifestJson['@context'] = 'http://iiif.io/api/presentation/3/context.json';
       context.response.body = manifestJson;
+      updateCache(manifestJson);
       return;
     }
     case '2.1': {
@@ -655,6 +676,7 @@ export const siteManifestBuild: RouteMiddleware<{
       const manifestJson: any = builder.toPresentation2({ id: newManifest.id, type: 'Manifest' });
       manifestJson['@context'] = 'http://iiif.io/api/presentation/2/context.json';
       context.response.body = manifestJson;
+      updateCache(manifestJson);
       return;
     }
     default:

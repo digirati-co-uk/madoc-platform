@@ -307,6 +307,10 @@ export const siteConfigurationModel: {
         label: 'Enable tooltip descriptions',
         value: 'enableTooltipDescriptions',
       },
+      {
+        label: 'Enable split-view',
+        value: 'enableSplitView',
+      },
     ],
   },
   reviewOptions: {
@@ -842,6 +846,10 @@ export const ProjectConfigContributions: {
         label: 'Allow personal notes',
         description: 'allow users to take personal notes only visible to themselves on canvases in a project',
         value: 'allowPersonalNotes',
+      },
+      {
+        label: 'Enable split view',
+        value: 'enableSplitView',
       },
     ],
   },

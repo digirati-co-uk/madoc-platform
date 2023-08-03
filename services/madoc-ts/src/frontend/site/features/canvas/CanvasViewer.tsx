@@ -69,7 +69,7 @@ export function CanvasViewer({
     disableAnnotationPanel,
     disableTranscriptionMenu,
     disableMetadata,
-    disableBrowserPanel = true,
+    disableBrowserPanel = false,
   } = pins;
 
   // @todo this needs a re-think.
@@ -155,6 +155,9 @@ export function CanvasViewer({
                 data-space={sidebarSpace}
                 style={{ width: widthB, border: `1px solid ${borderColor}` }}
               >
+                <div style={{ margin: '1em', borderBottom: '1px solid #ddd' }}>
+                  <PanelTitle>{currentMenuItem.label}</PanelTitle>
+                </div>
                 {currentMenuItem.content}
               </LayoutSidebar>
             ) : null}

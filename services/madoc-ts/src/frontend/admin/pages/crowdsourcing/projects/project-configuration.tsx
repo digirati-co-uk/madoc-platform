@@ -66,11 +66,6 @@ export const ProjectConfiguration: React.FC = () => {
     return migrateConfig.version1to2(_projectConfiguration);
   }, [_projectConfiguration]);
 
-  console.log({
-    v1: _projectConfiguration,
-    v2: projectConfiguration,
-  });
-
   const { t } = useTranslation();
   const [didSave, setDidSave] = useShortMessage();
   const projectTemplate = useProjectTemplate(project?.template);
@@ -89,7 +84,9 @@ export const ProjectConfiguration: React.FC = () => {
       ...(otherRef.current?.getData() || {}),
     };
 
-    await api.saveSiteConfiguration(postProcessConfiguration(config), { project_id: project.id });
+    const toSave = migrateConfig.version2to1(config);
+
+    await api.saveSiteConfiguration(postProcessConfiguration(toSave), { project_id: project.id });
     await refetch();
     setDidSave();
     scrollToTop();

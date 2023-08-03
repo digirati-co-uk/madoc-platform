@@ -18,6 +18,11 @@ export const OuterLayoutContainer = styled.div`
 export const NavIconContainer = styled.div<{ $active?: boolean; $disabled?: boolean }>`
   &:hover {
     background: #eee;
+
+    svg {
+      fill: #4a64e1;
+      color: #4a64e1;
+    }
   }
 
   border-radius: 3px;
@@ -32,6 +37,7 @@ export const NavIconContainer = styled.div<{ $active?: boolean; $disabled?: bool
 
   svg {
     fill: #666;
+    color: #666;
     width: 1.4em;
     height: 1.4em;
   }
@@ -52,10 +58,15 @@ export const NavIconContainer = styled.div<{ $active?: boolean; $disabled?: bool
 
       svg {
         fill: #fff;
+        color: #fff;
       }
 
       &:hover {
         background: #4a64e1;
+        svg {
+          fill: #fff;
+          color: #fff;
+        }
       }
     `}
 
@@ -67,10 +78,15 @@ export const NavIconContainer = styled.div<{ $active?: boolean; $disabled?: bool
 
       svg {
         fill: #ccc;
+        color: #ccc;
       }
 
       &:hover {
         background: transparent;
+        svg {
+          fill: #ccc;
+          color: #ccc;
+        }
       }
     `}
 `;
@@ -151,6 +167,8 @@ export const LayoutSidebar = styled.div<{ $noScroll?: boolean }>`
   border-right: 1px solid #918f8f;
   overflow: auto;
   position: relative;
+  display: flex;
+  flex-direction: column;
 
   &[data-space='true'] {
     margin-right: 1em;
