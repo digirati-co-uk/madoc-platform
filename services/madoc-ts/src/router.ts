@@ -273,6 +273,7 @@ import { deleteProjectEndpoint } from './routes/projects/deleteProject';
 import { exportProjectTemplate } from './routes/projects/export-project-template';
 import { generateApiKey } from './routes/admin/generate-api-key';
 import { authenticateApi } from './routes/global/api-authentication';
+import { siteListProjectAssigneeStats } from './routes/site/site-list-project-assignee-stats';
 
 export const router = new TypedRouter({
   // Normal route
@@ -698,6 +699,11 @@ export const router = new TypedRouter({
   'site-project': [TypedRouter.GET, '/s/:slug/madoc/api/projects/:projectSlug', siteProject],
   'site-project-updates': [TypedRouter.GET, '/s/:slug/madoc/api/projects/:projectSlug/updates', siteProjectUpdates],
   'site-project-recent': [TypedRouter.GET, '/s/:slug/madoc/api/projects/:projectSlug/recent', siteProjectRecent],
+  'site-list-project-assignee-stats': [
+    TypedRouter.GET,
+    '/s/:slug/madoc/api/projects/:projectSlug/tasks/assignee-stats',
+    siteListProjectAssigneeStats,
+  ],
   'site-projects': [TypedRouter.GET, '/s/:slug/madoc/api/projects', siteProjects],
   'site-search': [TypedRouter.POST, '/s/:slug/madoc/api/search', siteSearch],
   'site-term-proxy': [TypedRouter.GET, '/s/:slug/madoc/api/term-proxy/:id', termListProxy],

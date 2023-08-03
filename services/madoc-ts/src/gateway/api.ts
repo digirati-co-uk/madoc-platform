@@ -2355,6 +2355,13 @@ export class ApiClient {
     return this.publicRequest<ProjectManifestTasks>(`/madoc/api/projects/${projectId}/manifest-tasks/${manifestId}`);
   }
 
+  async getSiteProjectAssigneeTasks(projectId: string | number) {
+    return this.publicRequest<{
+      submissions: { stats: { user: any; submissions: number }[]; total: number };
+      total: number;
+    }>(`/madoc/api/projects/${projectId}/tasks/assignee-stats`);
+  }
+
   async queryCustomTermConfiguration(id: string, query: string) {
     return this.publicRequest<{ completions: CompletionItem[] }>(
       `/madoc/api/term-proxy/${id}?q=${encodeURIComponent(query)}`
