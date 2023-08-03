@@ -1,6 +1,13 @@
 import { CaptureModelShorthand } from '../../../extensions/projects/types';
 
 export const userDetailConfig: CaptureModelShorthand<any> = {
+  gravitar: {
+    type: 'checkbox-field',
+    label: 'Profile image',
+    description: 'Use your Gravitar profile image',
+    inlineLabel: 'Use Gravitar',
+    inlineDescription: 'The image will be fetched from Gravitar using your email address.',
+  },
   bio: {
     type: 'text-field',
     label: 'Bio',

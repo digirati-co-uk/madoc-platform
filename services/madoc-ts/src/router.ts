@@ -168,6 +168,7 @@ import { siteTaskMetadata } from './routes/site/site-task-metadata';
 import { termListProxy } from './routes/site/site-term-proxy';
 import { siteTerms } from './routes/site/site-terms';
 import { siteUserAutocomplete } from './routes/site/site-user-autocomplete';
+import { siteUserImage } from './routes/site/site-user-image';
 import { siteUserProfile } from './routes/site/site-user-profile';
 import { saveUserSettings } from './routes/user/save-user-settings';
 import { userSettingsModel } from './routes/user/user-settings-model';
@@ -755,6 +756,7 @@ export const router = new TypedRouter({
 
   // User profile
   'user-profile': [TypedRouter.GET, '/s/:slug/madoc/api/users/:id', siteUserProfile],
+  'user-profile-image': [TypedRouter.GET, '/s/:slug/madoc/api/users/:id/image', siteUserImage],
 
   // Other routes.
   ...activityStreamRoutes,
