@@ -163,6 +163,7 @@ import { updateProjectStatus } from './routes/projects/update-project-status';
 import { siteManifestTasks } from './routes/site/site-manifest-tasks';
 import { getStaticPage, sitePages } from './routes/site/site-pages';
 import { listProjectsAutocomplete } from './routes/projects/list-projects-autocomplete';
+import { siteProjectMembers } from "./routes/site/site-project-members";
 import { siteProjectRecent } from './routes/site/site-project-recent';
 import { siteProjectUpdates } from './routes/site/site-project-updates';
 import { siteTaskMetadata } from './routes/site/site-task-metadata';
@@ -700,6 +701,7 @@ export const router = new TypedRouter({
   'site-resolve-slot': [TypedRouter.GET, '/s/:slug/madoc/api/slots', resolveSlots],
   'site-project': [TypedRouter.GET, '/s/:slug/madoc/api/projects/:projectSlug', siteProject],
   'site-project-updates': [TypedRouter.GET, '/s/:slug/madoc/api/projects/:projectSlug/updates', siteProjectUpdates],
+  'site-project-members': [TypedRouter.GET, '/s/:slug/madoc/api/projects/:projectSlug/members', siteProjectMembers],
   'site-project-recent': [TypedRouter.GET, '/s/:slug/madoc/api/projects/:projectSlug/recent', siteProjectRecent],
   'site-list-project-assignee-stats': [
     TypedRouter.GET,

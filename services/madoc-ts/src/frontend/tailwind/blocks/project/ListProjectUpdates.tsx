@@ -26,7 +26,14 @@ export function ListProjectUpdates() {
       <div className="max-w-4xl mx-auto">
         <h2 className="text-lg font-semibold text-gray-500">{t('Project updates')}</h2>
         {data.updates?.map(update => (
-          <ViewProjectUpdate key={update.id} {...(update || {})} />
+          <ViewProjectUpdate
+            key={update.id}
+            update={update.update}
+            id={update.id}
+            created={update.created}
+            user={update.user}
+            snapshot={update.snapshot}
+          />
         ))}
         <Pagination
           page={data ? data.pagination.page : undefined}

@@ -696,7 +696,7 @@ export class ApiClient {
   }
 
   async listProjectUpdates(id: string | number) {
-    return this.request<{ updates: ProjectUpdate[] }>(`/api/madoc/projects/${id}/updates/`);
+    return this.request<{ updates: ProjectUpdate[] }>(`/api/madoc/projects/${id}/updates`);
   }
 
   async getLatestProjectUpdate(id: string | number): Promise<ProjectUpdate | null> {
@@ -2302,10 +2302,14 @@ export class ApiClient {
       `/madoc/api/projects/${projectId}/manifest-models/${manifestId}`
     );
   }
-  async ListSiteProjectUpdates(id: string | number, page = 1) {
+  async getAllSiteProjectUpdates(id: string | number, page = 1) {
     return this.publicRequest<{ pagination: Pagination; updates: ProjectUpdate[] }>(
       `/madoc/api/projects/${id}/updates?page=${page}`
     );
+  }
+
+  async getAllSiteProjectMembers(id: string | number) {
+    return this.publicRequest<{ members: ProjectMember[] }>(`/madoc/api/projects/${id}/members`);
   }
 
   async getSiteConfiguration(query?: import('../routes/site/site-configuration').SiteConfigurationQuery) {

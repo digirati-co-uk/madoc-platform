@@ -2,6 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ProjectStatus } from '../../shared/atoms/ProjectStatus';
 import { useUser } from '../../shared/hooks/use-site';
+import { ProjectMembersList } from '../../tailwind/blocks/project/ProjectMembersList';
 import { SlotTabs } from '../../tailwind/components/slot-tabs';
 import { DisplayBreadcrumbs } from '../blocks/Breadcrumbs';
 import { AvailableBlocks } from '../../shared/page-blocks/available-blocks';
@@ -76,6 +77,7 @@ export const ViewProject: React.FC = () => {
           {available}
         </Slot>
         <Slot name="project-contributors" label={t('Contributors')}>
+          <ProjectMembersList />
           <ProjectContributorStatistics />
         </Slot>
         <Slot name="project-updates" label={t('Updates')} hidden={!project?.latestUpdate && !isAdmin}>
