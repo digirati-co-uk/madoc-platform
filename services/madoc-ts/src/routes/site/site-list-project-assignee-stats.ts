@@ -9,10 +9,10 @@ export const siteListProjectAssigneeStats: RouteMiddleware = async context => {
 
   const projectTask = await siteApi.getProjectTask(projectSlug);
 
-  if (!projectTask) {
+  if (!projectTask || !projectTask.task_id) {
     throw new RequestError('No project task');
   }
-  const assigneeSubmissions = await siteApi.getTaskAssigneeStats(projectTask.task_id || '', {
+  const assigneeSubmissions = await siteApi.getTaskAssigneeStats(projectTask.task_id, {
     status: 3,
     type: 'crowdsourcing-task',
     root: true,
@@ -21,12 +21,16 @@ export const siteListProjectAssigneeStats: RouteMiddleware = async context => {
   const projectMembers = await siteApi.listProjectMembers(projectTask.id);
 
   if (!projectMembers) {
-    throw new RequestError('No members');
+    context.response.body = {
+      reviews: {},
+      submissions: {},
+    };
   }
 
   const submissionsStats = [];
   for (const [key, value] of Object.entries(assigneeSubmissions.assignee_id)) {
-    const findUser = projectMembers.members.find(m => m.id === extractIdFromUrn(key));
+    const assigneeId = extractIdFromUrn(key);
+    const findUser = projectMembers.members.find(m => m.id === assigneeId);
 
     submissionsStats.push({
       user: findUser?.user,
