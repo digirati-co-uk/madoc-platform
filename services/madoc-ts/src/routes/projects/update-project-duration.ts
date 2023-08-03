@@ -1,3 +1,4 @@
+import { getProject } from '../../database/queries/project-queries';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { sql } from 'slonik';
 import { NotFound } from '../../utility/errors/not-found';

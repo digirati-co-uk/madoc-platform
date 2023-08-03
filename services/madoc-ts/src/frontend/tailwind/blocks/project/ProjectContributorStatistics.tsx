@@ -44,7 +44,7 @@ export function ProjectContributorStatistics() {
           <dl>
             {data.submissions.stats.map((stat, i) => (
               <dd key={i} className="flex">
-                <div className="w-1/5 flex items-center">
+                <div className="w-1/2 sm:w-1/5 flex items-center">
                   <div className="w-10">
                     <img
                       className="rounded-full w-8"
@@ -59,7 +59,7 @@ export function ProjectContributorStatistics() {
                     {stat.user?.name}
                   </HrefLink>
                 </div>
-                <div className="w-4/5 border-l-2 border-gray-300" style={{ background: style }}>
+                <div className="w-1/2 sm:w-4/5 border-l-2 border-gray-300" style={{ background: style }}>
                   <div
                     tabIndex={0}
                     data-tooltip-id={`my-tooltip-${i}`}
@@ -74,8 +74,8 @@ export function ProjectContributorStatistics() {
               </dd>
             ))}
             <div className="flex">
-              <div className="w-1/5" />
-              <div className=" flex w-4/5 border-gray-300 border-t-2 text-gray-500">
+              <div className="w-1/2 sm:w-1/5" />
+              <div className=" flex w-1/2 sm:w-4/5 border-gray-300 border-t-2 text-gray-500">
                 <div className="text-end">0</div>
                 {scaleIndicatorList.map((n, i) => (
                   <div key={i} style={{ width: '100%' }} className="text-end">

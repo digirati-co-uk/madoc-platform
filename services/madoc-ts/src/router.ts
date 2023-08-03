@@ -48,6 +48,7 @@ import {
 } from './routes/projects/project-updates';
 import { svgFromCrowdsourcingTask } from './routes/projects/svg-from-crowdsourcing-task';
 import { updateProjectAnnotationStyle } from './routes/projects/update-project-annotation-style';
+import { updateProjectBanner } from "./routes/projects/update-project-banner";
 import { updateProjectDuration } from './routes/projects/update-project-duration';
 import { siteRoot } from './routes/root';
 import {
@@ -548,6 +549,7 @@ export const router = new TypedRouter({
   ],
   'update-project-status': [TypedRouter.PUT, '/api/madoc/projects/:id/status', updateProjectStatus],
   'update-project-duration': [TypedRouter.PUT, '/api/madoc/projects/:id/duration', updateProjectDuration],
+  'update-project-banner': [TypedRouter.PUT, '/api/madoc/projects/:id/banner', updateProjectBanner],
   'create-project-resource-claim': [TypedRouter.POST, '/api/madoc/projects/:id/claim', createResourceClaim],
   'export-project-template': [TypedRouter.GET, '/api/madoc/projects/:id/export', exportProjectTemplate],
   'update-project-curated-feed': [TypedRouter.POST, '/api/madoc/projects/:id/feeds/:feed', updateCuratedFeed],

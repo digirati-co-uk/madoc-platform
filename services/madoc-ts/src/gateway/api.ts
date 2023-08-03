@@ -679,6 +679,15 @@ export class ApiClient {
     });
   }
 
+  async updateProjectBanner(id: string | number, banner: string | null) {
+    return this.request<any>(`/api/madoc/projects/${id}/banner`, {
+      method: 'PUT',
+      body: {
+        banner,
+      },
+    });
+  }
+
   async updateProjectAnnotationStyle(id: string | number, style_id: number) {
     return this.request(`/api/madoc/projects/${id}/annotation-style`, {
       method: 'PUT',

@@ -101,6 +101,16 @@ export class ProjectRepository extends BaseRepository {
     removeUserFromProject: (userId: number, projectId: number) => sql`
       delete from project_members where project_id = ${projectId} and user_id = ${userId}
     `,
+
+    updateProjectBanner: (projectId: number, banner: string | null, siteId: number) => sql`
+        update iiif_resource i
+        set placeholder_image = ${banner}
+        where id = (select collection_id
+                    from iiif_project
+                    where id = ${projectId}
+                      and site_id = ${siteId}
+                    limit 1)
+    `,
   };
 
   async resolveProject(idOrSlug: string | number, siteId: number) {
@@ -282,6 +292,10 @@ export class ProjectRepository extends BaseRepository {
 
   async updateUsersProjectRole(userId: number, projectId: number, role: ProjectMemberRole) {
     await this.connection.query(ProjectRepository.mutations.updateUsersProjectRole(userId, projectId, role));
+  }
+
+  async setProjectBanner(projectId: number, banner: string | null, siteId: number) {
+    await this.connection.query(ProjectRepository.mutations.updateProjectBanner(projectId, banner, siteId));
   }
 
   async removeUserFromProject(userId: number, projectId: number) {
