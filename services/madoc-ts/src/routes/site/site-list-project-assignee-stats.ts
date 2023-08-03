@@ -1,6 +1,6 @@
 import { RouteMiddleware } from '../../types/route-middleware';
 import { extractIdFromUrn } from '../../utility/parse-urn';
-import {RequestError} from "../../utility/errors/request-error";
+import { RequestError } from '../../utility/errors/request-error';
 
 export const siteListProjectAssigneeStats: RouteMiddleware = async context => {
   const { siteApi } = context.state;
