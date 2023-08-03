@@ -56,23 +56,12 @@ export const ProjectStatistics: React.FC = () => {
     <>
       <ProgressContainer>
         <ProgressStat style={{ borderTop: '2px solid #B05104' }}>
-          <CheckCircleIcon />
+          <PendingIcon />
           <StatisticText>
             <StatisticNumber>{Math.max(0, project.statistics['0'] || 0)}</StatisticNumber>
             <StatisticLabel>{t('Not started')}</StatisticLabel>
             <StatisticLabel style={{ color: '#6B6B6B' }}>
               {Math.round((Math.max(0, project.statistics['0'] || 0) / total) * 100)}%
-            </StatisticLabel>
-          </StatisticText>
-        </ProgressStat>
-
-        <ProgressStat style={{ borderTop: '2px solid #B08D04' }}>
-          <HourglassIcon />
-          <StatisticText>
-            <StatisticNumber>{Math.max(0, project.statistics['2'] || 0)}</StatisticNumber>
-            <StatisticLabel>{t('In review')}</StatisticLabel>
-            <StatisticLabel style={{ color: '#6B6B6B' }}>
-              {Math.round((Math.max(0, project.statistics['2'] || 0) / total) * 100)}%
             </StatisticLabel>
           </StatisticText>
         </ProgressStat>
@@ -88,8 +77,19 @@ export const ProjectStatistics: React.FC = () => {
           </StatisticText>
         </ProgressStat>
 
+        <ProgressStat style={{ borderTop: '2px solid #B08D04' }}>
+          <HourglassIcon />
+          <StatisticText>
+            <StatisticNumber>{Math.max(0, project.statistics['2'] || 0)}</StatisticNumber>
+            <StatisticLabel>{t('In review')}</StatisticLabel>
+            <StatisticLabel style={{ color: '#6B6B6B' }}>
+              {Math.round((Math.max(0, project.statistics['2'] || 0) / total) * 100)}%
+            </StatisticLabel>
+          </StatisticText>
+        </ProgressStat>
+
         <ProgressStat style={{ borderTop: '2px solid #2BA30D' }}>
-          <PendingIcon />
+          <CheckCircleIcon />
           <StatisticText>
             <StatisticNumber>{Math.max(0, project.statistics['3'] || 0)}</StatisticNumber>
             <StatisticLabel>{t('Completed')}</StatisticLabel>

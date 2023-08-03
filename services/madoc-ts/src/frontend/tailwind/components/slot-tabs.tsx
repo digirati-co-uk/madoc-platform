@@ -1,13 +1,15 @@
-import { Children, ReactNode, useState } from 'react';
+import { Children, ReactNode, useEffect, useState } from 'react';
 import { AvailableBlocks } from '../../shared/page-blocks/available-blocks';
 import { Slot } from '../../shared/page-blocks/slot';
 import { useSlots } from '../../shared/page-blocks/slot-context';
 
 interface SlotTabProps {
   initial?: string;
+  disableHash?: boolean;
   children?: any;
 }
 export function SlotTabs(props: SlotTabProps) {
+  const initialTab = typeof window !== 'undefined' && !props.disableHash ? window.location.hash.replace('#', '') : null;
   const { slots, editable } = useSlots();
   const tabs = Children.map(props.children, (child, idx) => {
     if (!child) {
@@ -57,11 +59,29 @@ export function SlotTabs(props: SlotTabProps) {
     return !t.empty;
   }) as { name: string; label: string; empty: boolean; hidden: boolean; index: number; component: ReactNode }[];
 
-  const initialIndex = tabs.find(tab => (props.initial ? tab.name === props.initial : null));
+  const initial = initialTab || props.initial;
+
+  const initialIndex = tabs.find(tab => (initial ? tab.name === initial : null));
 
   const [active, setActive] = useState(initialIndex?.index || tabs[0]?.index || 0);
 
   const selected = tabs.find(tab => tab.index === active);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && !props.disableHash) {
+      const listener = () => {
+        const hash = window.location.hash.replace('#', '');
+        const tab = tabs.find(t => t.name === hash);
+        if (tab) {
+          setActive(tab.index);
+        }
+      };
+      window.addEventListener('hashchange', listener);
+      return () => {
+        window.removeEventListener('hashchange', listener);
+      };
+    }
+  }, []);
 
   if (tabs.length === 1) {
     return (selected?.component || null) as any;
@@ -79,7 +99,12 @@ export function SlotTabs(props: SlotTabProps) {
             <button
               role="tab"
               key={k}
-              onClick={() => setActive(tab.index)}
+              onClick={() => {
+                setActive(tab.index);
+                if (typeof window !== 'undefined' && !props.disableHash) {
+                  window.location.hash = tab.name;
+                }
+              }}
               className={`px-2 border-b-2 hover:border-blue-400 ${
                 tab.index === active ? 'text-slate-800 border-blue-500' : 'text-slate-500 border-transparent'
               } ${tab.empty ? 'text-slate-400' : 'text-slate-900'}`}

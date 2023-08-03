@@ -64,7 +64,7 @@ export function ProjectBanner({ showContributingButton = true, headerImage }: an
 
   return (
     <div
-      className="bg-orange-600 bg-no-repeat bg-cover bg-center lg:h-96 relative grid grid-cols-6 mb-5"
+      className="bg-slate-200 bg-no-repeat bg-cover bg-center lg:h-96 relative grid grid-cols-6 mb-5"
       style={{ backgroundImage: `url(${projectImageUrl})` }}
     >
       <div className="col-span-6 lg:col-span-3 xl:col-span-2 bg-opacity-60 bg-white p-8 backdrop-blur-sm">
