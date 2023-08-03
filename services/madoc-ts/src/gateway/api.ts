@@ -728,6 +728,10 @@ export class ApiClient {
     return this.request<{ members: ProjectMember[] }>(`/api/madoc/projects/${id}/members`);
   }
 
+  async getProjectMemberEmails(id: string | number) {
+    return this.request<{ users: Array<{ id: number; name: string; email: string }> }>(`/api/madoc/projects/${id}/member-emails`);
+  }
+
   async addProjectMember(id: string | number, userId: string | number, role?: ProjectMember['role']) {
     return this.request<{ success: boolean }>(`/api/madoc/projects/${id}/members`, {
       method: 'POST',

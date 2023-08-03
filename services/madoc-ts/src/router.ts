@@ -31,6 +31,7 @@ import { getAutomatedUsers } from './routes/manage-site/get-automated-users';
 import { createProjectExport } from './routes/projects/create-project-export';
 import { getProjectFromTask } from './routes/projects/get-project-from-task';
 import { getProjectRawData } from './routes/projects/get-project-raw-data';
+import { listProjectEmails } from "./routes/projects/list-project-emails";
 import { listProjectModelEntityAutocomplete } from './routes/projects/list-project-model-entity-autocomplete';
 import { addProjectFeedback, listProjectFeedback, removeProjectFeedback } from './routes/projects/project-feedback';
 import {
@@ -564,6 +565,7 @@ export const router = new TypedRouter({
   'assign-review': [TypedRouter.POST, '/api/madoc/projects/:id/reviews', assignReview],
   'get-project-model': [TypedRouter.GET, '/api/madoc/projects/:id/models/:subject', getProjectModel],
   'get-project-task': [TypedRouter.GET, '/api/madoc/projects/:id/task', getProjectTask],
+  'get-project-member-emails': [TypedRouter.GET, '/api/madoc/projects/:id/member-emails', listProjectEmails],
   'assign-random-resource': [TypedRouter.POST, '/api/madoc/projects/:id/random', assignRandomResource],
   'get-project-data-raw': [TypedRouter.GET, '/api/madoc/projects/:id/raw-model-fields', getProjectRawData],
   'get-project-personal-note': [TypedRouter.GET, '/api/madoc/projects/:id/personal-notes/:resourceId', getProjectNote],

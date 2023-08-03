@@ -1,15 +1,18 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { apiHooks } from '../../../shared/hooks/use-api-query';
-import { useSite } from '../../../shared/hooks/use-site';
+import { useSite, useUser } from '../../../shared/hooks/use-site';
 import { HrefLink } from '../../../shared/utility/href-link';
 import { useRouteContext } from '../../../site/hooks/use-route-context';
+import { EmailProjectMembers } from './EmailProjectMembers';
 
 export function ProjectMembersList() {
   const site = useSite();
   const { t } = useTranslation();
   const { projectId } = useRouteContext();
   const { data } = apiHooks.getAllSiteProjectMembers(() => (projectId ? [projectId] : undefined));
+  const user = useUser();
+  const isAdmin = user && user.scope && user.scope.indexOf('site.admin') !== -1;
 
   if (!data?.members.length || !projectId) {
     return null;
@@ -20,6 +23,7 @@ export function ProjectMembersList() {
   return (
     <div className="my-5 max-w-5xl mx-auto">
       <h3 className="text-xl font-semibold mb-4 text-center">{t('Contributors')}</h3>
+      {isAdmin ? <EmailProjectMembers /> : null}
       <div className="flex flex-wrap gap-2 items-center justify-center">
         {members.map(member => (
           <HrefLink

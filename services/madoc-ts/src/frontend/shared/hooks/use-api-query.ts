@@ -93,6 +93,7 @@ export type GetApiMethods = keyof Pick<
   | 'getAllPersonalNotes'
   | 'getAllProjectFeedback'
   | 'getAllSiteProjectMembers'
+  | 'getProjectMemberEmails'
 >;
 
 const keys = Object.getOwnPropertyNames(ApiClient.prototype);

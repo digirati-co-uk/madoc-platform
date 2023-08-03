@@ -1429,7 +1429,10 @@ export class SiteUserRepository extends BaseRepository {
     const protectedUserDetails = await this.getProtectedUserDetails(targetUser);
 
     if (isSelf) {
-      return protectedUserDetails.information;
+      return {
+        allowedDetails: protectedUserDetails.information,
+        preferences: protectedUserDetails.preferences,
+      };
     }
 
     const allowedDetails: Record<string, string> = {};
