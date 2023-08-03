@@ -47,7 +47,6 @@ export function ProjectContributorStatistics() {
               <dd key={i} className="flex">
                 <div className="w-1/5 py-1">
                   <p>{stat.user?.name} </p>
-                  <p className="italic text-gray-500">User role tbc</p>
                 </div>
                 <div className="w-[100%] border-l-2 border-gray-300" style={{ background: style }}>
                   <div

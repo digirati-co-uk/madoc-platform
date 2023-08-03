@@ -8,7 +8,7 @@ export function useProjectAssigneeStats() {
 
   const assigneeStats = useQuery(['project-task-stats', { projectId }], async () => {
     if (projectId) {
-      return api.listProjectAssigneeStats(projectId);
+      return api.getSiteProjectAssigneeTasks(projectId);
     }
   });
 

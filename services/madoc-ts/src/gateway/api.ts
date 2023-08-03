@@ -719,10 +719,6 @@ export class ApiClient {
     return this.request<{ members: ProjectMember[] }>(`/api/madoc/projects/${id}/members`);
   }
 
-  async listProjectstatss(id: string | number) {
-    return this.request<{}>(`/api/tasks/${id}`);
-  }
-
   async addProjectMember(id: string | number, userId: string | number, role?: ProjectMember['role']) {
     return this.request<{ success: boolean }>(`/api/madoc/projects/${id}/members`, {
       method: 'POST',
@@ -1632,12 +1628,6 @@ export class ApiClient {
     return response;
   }
 
-  async listProjectAssigneeStats(projectId: string) {
-    return this.request<{ submissions: { stats: { user: any; submissions: number }[]; total: number }; total: number }>(
-      `/api/madoc/projects/${projectId}/tasks/assignee-stats`
-    );
-  }
-
   async getAllTaskStats(query?: { type?: string; root?: boolean; distinct_subjects?: boolean; user_id?: string }) {
     return this.request<{ statuses: { [status: string]: number }; total: number }>(
       `/api/tasks/stats${query ? `?${stringify(query)}` : ''}`
@@ -2363,6 +2353,13 @@ export class ApiClient {
 
   async getSiteProjectManifestTasks(projectId: string | number, manifestId: number) {
     return this.publicRequest<ProjectManifestTasks>(`/madoc/api/projects/${projectId}/manifest-tasks/${manifestId}`);
+  }
+
+  async getSiteProjectAssigneeTasks(projectId: string | number) {
+    return this.publicRequest<{
+      submissions: { stats: { user: any; submissions: number }[]; total: number };
+      total: number;
+    }>(`/madoc/api/projects/${projectId}/tasks/assignee-stats`);
   }
 
   async queryCustomTermConfiguration(id: string, query: string) {
