@@ -180,7 +180,7 @@ export type PublicUserProfile = {
 
 export type UserPreferences = {
   visibility?: Record<
-    'email' | 'contributions' | 'contributionStatistics' | 'awards' | string,
+    'email' | 'contributions' | 'contributionStatistics' | 'awards' | 'gravitar' | string,
     'public' | 'staff' | 'only-me'
   >;
 };
