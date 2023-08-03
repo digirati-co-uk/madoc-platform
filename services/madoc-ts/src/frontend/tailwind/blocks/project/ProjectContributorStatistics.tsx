@@ -53,7 +53,7 @@ export function ProjectContributorStatistics() {
                     />
                   </div>
                   <HrefLink
-                    href={`/users/${stat.user.id}`}
+                    href={`/users/${stat.user?.id}`}
                     className="flex-1 text-sm whitespace-nowrap overflow-hidden text-ellipsis min-w-0 px-2"
                   >
                     {stat.user?.name}
