@@ -37,7 +37,7 @@ const ProgressStat = styled.div`
   }
 `;
 
-export const ProjectStatistics: React.FC = () => {
+export const ProjectStatisticsWithIcons: React.FC = () => {
   const { data: project } = useProject();
   const { t } = useTranslation();
   const {
@@ -103,9 +103,9 @@ export const ProjectStatistics: React.FC = () => {
   );
 };
 
-blockEditorFor(ProjectStatistics, {
-  type: 'default.ProjectStatistics',
-  label: 'Project statistics',
+blockEditorFor(ProjectStatisticsWithIcons, {
+  type: 'default.ProjectStatisticsWithIcons',
+  label: 'Project statistics (icons)',
   anyContext: ['project'],
   requiredContext: ['project'],
   editor: {},

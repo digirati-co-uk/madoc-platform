@@ -91,8 +91,10 @@ export const SlotLayout = React.forwardRef(function SlotLayout(
     );
   }
   return (
-    <Surface id={id} {...surfaceProps}>
-      <StackSlotLayout ref={ref as any}>{children}</StackSlotLayout>
+    <Surface {...surfaceProps}>
+      <StackSlotLayout id={id} ref={ref as any}>
+        {children}
+      </StackSlotLayout>
     </Surface>
   );
 });

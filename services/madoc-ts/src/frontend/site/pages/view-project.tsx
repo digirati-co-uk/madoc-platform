@@ -23,7 +23,8 @@ import { ProjectCollections } from '../blocks/ProjectCollections';
 import { ProjectContributionButton } from '../blocks/ProjectContributionButton';
 import { ProjectContributors } from '../blocks/ProjectContributors';
 import { ProjectHeading } from '../blocks/ProjectHeading';
-import { ProjectStatistics } from '../blocks/ProjectStatistics';
+import { ProjectStatisticsWithIcons } from '../blocks/ProjectStatisticsWithIcons';
+import { ProjectStatistics } from '../features/ProjectStatistics';
 import { useProject } from '../hooks/use-project';
 import { ListProjectUpdates } from '../../tailwind/blocks/project/ListProjectUpdates';
 import { ProjectContributorStatistics } from '../../tailwind/blocks/project/ProjectContributorStatistics';
@@ -39,6 +40,7 @@ export const ViewProject: React.FC = () => {
       <ProjectContributionButton />
       <ProjectHeading />
       <MostRecentProjectUpdate />
+      <ProjectStatistics />
     </AvailableBlocks>
   );
 
@@ -56,7 +58,7 @@ export const ViewProject: React.FC = () => {
       </Slot>
 
       <Slot name="project-actions">
-        <ProjectStatistics />
+        <ProjectStatisticsWithIcons />
         <ProjectActions />
         {available}
       </Slot>
