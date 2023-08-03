@@ -27,15 +27,17 @@ export const siteListProjectAssigneeStats: RouteMiddleware = async context => {
     };
   }
 
+  const assigneeStats = assigneeSubmissions?.assignee_id || {};
   const submissionsStats = [];
-  for (const [key, value] of Object.entries(assigneeSubmissions.assignee_id)) {
-    const assigneeId = extractIdFromUrn(key);
-    const findUser = projectMembers.members.find(m => m.id === assigneeId);
-
-    submissionsStats.push({
-      user: findUser?.user,
-      submissions: value,
-    });
+  for (const member of projectMembers.members) {
+    const urn = `urn:madoc:user:${member.user.id}`;
+    const total = assigneeStats[urn] || 0;
+    if (total) {
+      submissionsStats.push({
+        user: member.user,
+        submissions: total,
+      });
+    }
   }
 
   context.response.body = {

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useProjectAssigneeStats } from '../../../site/hooks/use-project-assignee-stats';
 import { Tooltip as ReactTooltip } from 'react-tooltip';
 import { useSite } from '../../../shared/hooks/use-site';
+import { HrefLink } from '../../../shared/utility/href-link';
 export function ProjectContributorStatistics() {
   const { t } = useTranslation();
   const { data } = useProjectAssigneeStats();
@@ -34,20 +35,16 @@ export function ProjectContributorStatistics() {
 
   const style = `repeating-linear-gradient(to left, #f7f7f7, #f7f7f7 ${barScaleAlt}, #fff ${barScaleAlt}, #fff ${barScale}`;
   return (
-    <div className="container mx-auto p-5 max-w-5xl">
-      <div className="overflow-hidden p-5 shadow-md">
-        {/* Top */}
-        <div className="pb-5">
-          <h5 className="font-bold text-stone-600">{t('All contributions')}</h5>
-        </div>
-        {/* main */}
+    <div className="container mx-auto px-5 max-w-5xl my-5">
+      <div className="overflow-hidden">
+        <h3 className="text-xl font-semibold mb-4">{t('All contributions')}</h3>
         {!data.submissions.stats ? (
           <p>No contributions to this project yet</p>
         ) : (
           <dl>
             {data.submissions.stats.map((stat, i) => (
               <dd key={i} className="flex">
-                <div className="w-1/5 py-1 flex">
+                <div className="w-1/5 flex items-center">
                   <div className="w-10">
                     <img
                       className="rounded-full w-8"
@@ -55,22 +52,30 @@ export function ProjectContributorStatistics() {
                       alt=""
                     />
                   </div>
-                  <p className="mt-1">{stat.user?.name} </p>
+                  <HrefLink
+                    href={`/users/${stat.user.id}`}
+                    className="flex-1 text-sm whitespace-nowrap overflow-hidden text-ellipsis min-w-0 px-2"
+                  >
+                    {stat.user?.name}
+                  </HrefLink>
                 </div>
-                <div className="w-[100%] border-l-2 border-gray-300" style={{ background: style }}>
+                <div className="w-4/5 border-l-2 border-gray-300" style={{ background: style }}>
                   <div
                     tabIndex={0}
                     data-tooltip-id={`my-tooltip-${i}`}
                     style={{ width: getPercentage(stat.submissions) }}
-                    className="bg-teal-400 h-5 my-3"
-                  />
+                    className="bg-teal-400 h-5 my-3 pr-3 flex items-center justify-end"
+                  >
+                    <span className="not-sr-only text-white text-sm">{stat.submissions}</span>
+                    <span className="sr-only">{stat.submissions} Submissions</span>
+                  </div>
                   <ReactTooltip id={`my-tooltip-${i}`} place="right" content={`${stat.submissions} Submissions`} />
                 </div>
               </dd>
             ))}
             <div className="flex">
               <div className="w-1/5" />
-              <div className=" flex w-[100%] border-gray-300 border-t-2 text-gray-500">
+              <div className=" flex w-4/5 border-gray-300 border-t-2 text-gray-500">
                 <div className="text-end">0</div>
                 {scaleIndicatorList.map((n, i) => (
                   <div key={i} style={{ width: '100%' }} className="text-end">
