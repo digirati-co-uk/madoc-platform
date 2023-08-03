@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { blockEditorFor } from '../../../../extensions/page-blocks/block-editor-for';
 import { SubjectSnippet as SubjectSnippetType } from '../../../../extensions/tasks/resolvers/subject-resolver';
 import { BaseTask } from '../../../../gateway/tasks/base-task';
 import { SimpleStatus } from '../../../shared/atoms/SimpleStatus';
@@ -18,7 +19,7 @@ export function ProjectMyWork() {
   const user = useUser();
   const { data: project } = useProject();
   const createLink = useRelativeLinks();
-  const [filter, setFilter] = useState('0,1,2');
+  const [filter, setFilter] = useState('0,1');
   const { t } = useTranslation();
   const { data: tasks } = paginatedApiHooks.getTasks(() =>
     user && project
@@ -50,37 +51,44 @@ export function ProjectMyWork() {
             value={filter}
             onChange={e => setFilter(e)}
             options={[
-              { value: '0,1,2', label: 'All' },
+              { value: '0,1,2,3', label: 'All' },
               { value: '0,1', label: 'In progress' },
               { value: '2', label: 'Submitted' },
+              { value: '3', label: 'Approved' },
             ]}
           />
         </div>
       </div>
       <div className="relative overflow-x-auto">
-        <table className="w-full text-sm text-left text-gray-500">
-          <thead className="text-sm text-gray-700 bg-slate-100">
-            <tr>
-              <th scope="col" className="px-6 py-3">
-                {t('Resource')}
-              </th>
-              <th scope="col" className="px-6 py-3">
-                {t('Modified')}
-              </th>
-              <th scope="col" className="px-6 py-3">
-                {t('Manifest')}
-              </th>
-              <th scope="col" className="px-6 py-3">
-                {t('Status')}
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {tasks.tasks.map(task => (
-              <TaskRow key={task.id} task={task} />
-            ))}
-          </tbody>
-        </table>
+        {tasks.tasks.length === 0 ? (
+          <div className="bg-white p-8 text-center text-sm text-slate-500 border rounded rounded-lg">
+            {t('No submissions')}
+          </div>
+        ) : (
+          <table className="w-full text-sm text-left text-gray-500">
+            <thead className="text-sm text-gray-700 bg-slate-100">
+              <tr>
+                <th scope="col" className="px-6 py-3">
+                  {t('Resource')}
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  {t('Modified')}
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  {t('Manifest')}
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  {t('Status')}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {tasks.tasks.map(task => (
+                <TaskRow key={task.id} task={task} />
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
       <div className="p-4 my-2">
         <HrefLink
@@ -104,16 +112,24 @@ function TaskRow({ task }: { task: BaseTask }) {
   const { subject } = useTaskMetadata<{ subject?: SubjectSnippetType }>(task);
   if (!subject) return null;
 
-  const query = {
-    revision: task.state?.revisionId,
-  };
+  const query =
+    task.status === 3
+      ? undefined
+      : {
+          revision: task.state?.revisionId,
+        };
 
   return (
     <tr className="bg-white border-b">
       <th scope="row" className="px-6 py-4 font-medium text-gray-900">
         {subject?.parent ? (
           <HrefLink
-            href={createLink({ manifestId: subject?.parent?.id, canvasId: subject?.id, subRoute: 'model', query })}
+            href={createLink({
+              manifestId: subject?.parent?.id,
+              canvasId: subject?.id,
+              subRoute: task.status === 3 ? undefined : 'model',
+              query,
+            })}
           >
             <LocaleString>{subject?.parent?.label}</LocaleString>
             {' - '}
@@ -137,3 +153,11 @@ function TaskRow({ task }: { task: BaseTask }) {
     </tr>
   );
 }
+
+blockEditorFor(ProjectMyWork, {
+  type: 'default.ProjectMyWork',
+  label: 'Project my work',
+  anyContext: ['project'],
+  requiredContext: ['project'],
+  editor: {},
+});

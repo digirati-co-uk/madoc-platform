@@ -1,6 +1,7 @@
 import React, { FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { blockEditorFor } from '../../../../extensions/page-blocks/block-editor-for';
 import { SearchIcon } from '../../../shared/icons/SearchIcon';
 import { Button, useRouteContext } from '../../../shared/plugins/public-api';
 
@@ -36,3 +37,11 @@ export function ProjectSearchBox() {
     </div>
   );
 }
+
+blockEditorFor(ProjectSearchBox, {
+  type: 'default.ProjectSearchBox',
+  label: 'Project search box',
+  anyContext: ['project'],
+  requiredContext: ['project'],
+  editor: {},
+});

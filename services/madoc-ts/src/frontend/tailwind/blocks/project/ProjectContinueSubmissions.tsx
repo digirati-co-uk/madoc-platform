@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { blockEditorFor } from '../../../../extensions/page-blocks/block-editor-for';
 import { useRecentUserTasks } from '../../../shared/hooks/use-recent-user-tasks';
 import { ContinueSubmission } from '../../components/ContinueSubmission';
 
@@ -21,3 +22,11 @@ export function ProjectContinueSubmissions() {
     </div>
   );
 }
+
+blockEditorFor(ProjectContinueSubmissions, {
+  type: 'default.ProjectContinueSubmissions',
+  label: 'Project continue submissions',
+  anyContext: ['project'],
+  requiredContext: ['project'],
+  editor: {},
+});

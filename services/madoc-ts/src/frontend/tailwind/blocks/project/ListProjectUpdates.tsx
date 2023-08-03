@@ -1,22 +1,22 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { blockEditorFor } from '../../../../extensions/page-blocks/block-editor-for';
 import { ViewProjectUpdate } from '../../components/ViewProjectUpdate';
 import { useProjectUpdatesList } from '../../../site/hooks/use-project-updates-list';
 import { Pagination } from '../../../shared/components/Pagination';
 
-export function ListProjectUpdates() {
+export function ListProjectUpdates({ withBackground }: { withBackground?: boolean }) {
   const { t } = useTranslation();
   const { data } = useProjectUpdatesList();
 
   if (!data) {
     return null;
   }
-  const withBackground = false as boolean;
 
   if (!data || data?.pagination?.totalResults < 1) {
     return (
-      <div>
-        <div>{t('No project updates')}</div>
+      <div className="max-w-4xl mx-auto">
+        <div className="text-lg text-slate-500">{t('No project updates')}</div>
       </div>
     );
   }
@@ -44,3 +44,20 @@ export function ListProjectUpdates() {
     </div>
   );
 }
+
+blockEditorFor(ListProjectUpdates, {
+  type: 'default.ListProjectUpdates',
+  label: 'List project updates',
+  anyContext: ['project'],
+  requiredContext: ['project'],
+  defaultProps: {
+    withBackground: false,
+  },
+  editor: {
+    withBackground: {
+      type: 'checkbox-field',
+      label: 'Background',
+      inlineLabel: 'Dark background',
+    },
+  },
+});

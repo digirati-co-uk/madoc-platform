@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
+import { blockEditorFor } from '../../../../extensions/page-blocks/block-editor-for';
 import { StyledFormMultilineInputElement } from '../../../shared/capture-models/editor/atoms/StyledForm';
 import { Spinner } from '../../../shared/icons/Spinner';
 import { WhiteTickIcon } from '../../../shared/icons/TickIcon';
@@ -75,3 +76,11 @@ export function ProjectFeedback() {
     </div>
   );
 }
+
+blockEditorFor(ProjectFeedback, {
+  type: 'default.ProjectFeedback',
+  label: 'Project feedback',
+  anyContext: ['project'],
+  requiredContext: ['project'],
+  editor: {},
+});

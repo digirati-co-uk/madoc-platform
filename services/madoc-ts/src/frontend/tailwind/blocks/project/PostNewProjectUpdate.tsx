@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
 import RichMarkdownEditor from 'rich-markdown-editor';
 import invariant from 'tiny-invariant';
+import { blockEditorFor } from '../../../../extensions/page-blocks/block-editor-for';
 import { ErrorMessage } from '../../../shared/callouts/ErrorMessage';
 import { SuccessMessage } from '../../../shared/callouts/SuccessMessage';
 import { useApi } from '../../../shared/hooks/use-api';
@@ -68,3 +69,11 @@ export function PostNewProjectUpdate() {
     </div>
   );
 }
+
+blockEditorFor(PostNewProjectUpdate, {
+  type: 'default.PostNewProjectUpdate',
+  label: 'Post new project update',
+  anyContext: ['project'],
+  requiredContext: ['project'],
+  editor: {},
+});

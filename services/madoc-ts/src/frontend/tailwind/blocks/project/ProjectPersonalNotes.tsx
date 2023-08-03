@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { blockEditorFor } from '../../../../extensions/page-blocks/block-editor-for';
 import { apiHooks } from '../../../shared/hooks/use-api-query';
 import { LocaleString, useRouteContext } from '../../../shared/plugins/public-api';
 import { HrefLink } from '../../../shared/utility/href-link';
@@ -7,16 +8,14 @@ import { ResultTitle } from '../../../site/features/search/SearchResults';
 import { useProject } from '../../../site/hooks/use-project';
 import { useRelativeLinks } from '../../../site/hooks/use-relative-links';
 
-export function ProjectPersonalNotes() {
+export function ProjectPersonalNotes({ toDisplay = 3 }: { toDisplay?: number }) {
   const { t } = useTranslation();
   const { projectId } = useRouteContext();
   const { data: project } = useProject();
   const createLink = useRelativeLinks();
   const { data } = apiHooks.getAllPersonalNotes(() => (projectId ? [projectId] : undefined));
 
-  const toDisplay = 3;
-
-  if (!project || !data || !data.notes) {
+  if (!project || !data || !data.notes || !data.notes.length) {
     return null;
   }
 
@@ -84,3 +83,31 @@ export function ProjectPersonalNotes() {
     </div>
   );
 }
+
+blockEditorFor(ProjectPersonalNotes, {
+  type: 'default.ProjectPersonalNotes',
+  label: 'Project personal notes',
+  anyContext: ['project'],
+  requiredContext: ['project'],
+  defaultProps: {
+    toDisplay: 3,
+  },
+  mapToProps: (props: any) => {
+    const toDisplay = Number(parseFloat(props.toDisplay || '3'));
+    if (isNaN(toDisplay)) {
+      return {
+        toDisplay: 3,
+      };
+    }
+    return {
+      toDisplay,
+    };
+  },
+  editor: {
+    toDisplay: {
+      type: 'text-field',
+      label: 'Number to display',
+      description: 'Number of notes to display (default 3)',
+    },
+  },
+});

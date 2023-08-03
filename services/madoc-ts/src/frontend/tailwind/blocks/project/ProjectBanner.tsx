@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { blockEditorFor } from '../../../../extensions/page-blocks/block-editor-for';
 import { LocaleString } from '../../../shared/components/LocaleString';
 import { ArrowForwardIcon } from '../../../shared/icons/ArrowForwardIcon';
 import { Heading1, Subheading1 } from '../../../shared/typography/Heading1';
@@ -19,17 +20,23 @@ const blur = {
   sm: 'backdrop-blur-sm',
 };
 
-export function ProjectBanner({ showContributingButton = true, headerImage }: any) {
+export function ProjectBanner({
+  showStatisticsBar = false,
+  showContributingButton = true,
+  headerImage,
+}: {
+  showStatisticsBar?: boolean;
+  showContributingButton?: boolean;
+  headerImage?: { image: string } | null;
+}) {
   const { t } = useTranslation();
   const { data: project } = useProject();
-  const projectImageUrl = project?.placeholderImage ? project.placeholderImage : headerImage ? headerImage.image : null;
+  const projectImageUrl = headerImage ? headerImage.image : project?.placeholderImage ? project.placeholderImage : null;
 
   const hasStatistics = !!project?.statistics;
   const totalItems = hasStatistics ? Object.values(project.statistics).reduce((total, n) => total + n, 0) : 0;
   const donePercentage = hasStatistics && totalItems ? (project.statistics[3] || 0) / totalItems : 0;
   const progressPercentage = hasStatistics && totalItems ? (project.statistics[2] || 0) / totalItems : 0;
-
-  const showStatisticsBar = false as boolean;
 
   if (!project) {
     return null;
@@ -75,12 +82,12 @@ export function ProjectBanner({ showContributingButton = true, headerImage }: an
         <div className="col-span-6 md:col-span-3 self-end flex gap-3 p-2">
           {donePercentage ? (
             <div className="bg-white rounded px-4 py-0.5 text-sm text-green-700 border border-green-600">
-              {Math.round(donePercentage * 100)}% {t('done')}
+              {Math.ceil(donePercentage * 100)}% {t('done')}
             </div>
           ) : null}
           {progressPercentage ? (
             <div className="bg-white rounded px-4 py-0.5 text-sm text-orange-700 border border-orange-600">
-              {Math.round(progressPercentage * 100)}% {t('in progress')}
+              {Math.ceil(progressPercentage * 100)}% {t('in progress')}
             </div>
           ) : null}
         </div>
@@ -88,3 +95,20 @@ export function ProjectBanner({ showContributingButton = true, headerImage }: an
     </div>
   );
 }
+
+blockEditorFor(ProjectBanner, {
+  type: 'default.ProjectBanner',
+  label: 'Project banner',
+  anyContext: ['project'],
+  requiredContext: ['project'],
+  defaultProps: {
+    showStatisticsBar: false,
+    showContributingButton: true,
+    headerImage: null,
+  },
+  editor: {
+    showStatisticsBar: { label: 'Show statistics bar', type: 'checkbox-field' },
+    showContributingButton: { label: 'Show contributing button', type: 'checkbox-field' },
+    headerImage: { label: 'Image', type: 'madoc-media-explorer' },
+  },
+});

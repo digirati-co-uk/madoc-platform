@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { blockEditorFor } from '../../../../extensions/page-blocks/block-editor-for';
 import { apiHooks } from '../../../shared/hooks/use-api-query';
 import { useSite, useUser } from '../../../shared/hooks/use-site';
 import { HrefLink } from '../../../shared/utility/href-link';
@@ -50,3 +51,11 @@ export function ProjectMembersList() {
     </div>
   );
 }
+
+blockEditorFor(ProjectMembersList, {
+  type: 'default.ProjectMembersList',
+  label: 'Project members list',
+  anyContext: ['project'],
+  requiredContext: ['project'],
+  editor: {},
+});

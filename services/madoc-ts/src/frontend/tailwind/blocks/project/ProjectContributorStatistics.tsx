@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { blockEditorFor } from '../../../../extensions/page-blocks/block-editor-for';
 import { useProjectAssigneeStats } from '../../../site/hooks/use-project-assignee-stats';
 import { Tooltip as ReactTooltip } from 'react-tooltip';
 import { useSite } from '../../../shared/hooks/use-site';
@@ -90,3 +91,11 @@ export function ProjectContributorStatistics() {
     </div>
   );
 }
+
+blockEditorFor(ProjectContributorStatistics, {
+  type: 'default.ProjectContributorStatistics',
+  label: 'Project contributor statistics',
+  anyContext: ['project'],
+  requiredContext: ['project'],
+  editor: {},
+});

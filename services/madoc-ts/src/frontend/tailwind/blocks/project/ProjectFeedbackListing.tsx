@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
+import { blockEditorFor } from '../../../../extensions/page-blocks/block-editor-for';
 import { TimeAgo } from '../../../shared/atoms/TimeAgo';
 import { useApi } from '../../../shared/hooks/use-api';
 import { apiHooks } from '../../../shared/hooks/use-api-query';
@@ -64,3 +65,11 @@ export function ProjectFeedbackListing() {
     </div>
   );
 }
+
+blockEditorFor(ProjectFeedbackListing, {
+  type: 'default.ProjectFeedbackListing',
+  label: 'Project feedback listing',
+  anyContext: ['project'],
+  requiredContext: ['project'],
+  editor: {},
+});

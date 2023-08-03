@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { blockEditorFor } from '../../../../extensions/page-blocks/block-editor-for';
 import { ModalButton } from '../../../shared/components/Modal';
 import { apiHooks } from '../../../shared/hooks/use-api-query';
 import { useUser } from '../../../shared/hooks/use-site';
@@ -44,3 +45,11 @@ export function EmailProjectMembers() {
     </ModalButton>
   );
 }
+
+blockEditorFor(EmailProjectMembers, {
+  type: 'default.EmailProjectMembers',
+  label: 'Email project members',
+  anyContext: ['project'],
+  requiredContext: ['project'],
+  editor: {},
+});
