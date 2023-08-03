@@ -10,6 +10,7 @@ import { LocaleString } from '../../../shared/components/LocaleString';
 import { paginatedApiHooks } from '../../../shared/hooks/use-api-query';
 import { useUser } from '../../../shared/hooks/use-site';
 import { ArrowForwardIcon } from '../../../shared/icons/ArrowForwardIcon';
+import { Spinner } from '../../../shared/icons/Spinner';
 import { HrefLink } from '../../../shared/utility/href-link';
 import { useProject } from '../../../site/hooks/use-project';
 import { useRelativeLinks } from '../../../site/hooks/use-relative-links';
@@ -21,7 +22,7 @@ export function ProjectMyWork() {
   const createLink = useRelativeLinks();
   const [filter, setFilter] = useState('0,1');
   const { t } = useTranslation();
-  const { data: tasks } = paginatedApiHooks.getTasks(() =>
+  const { data: tasks, latestData, isFetching } = paginatedApiHooks.getTasks(() =>
     user && project
       ? [
           0,
@@ -37,6 +38,10 @@ export function ProjectMyWork() {
         ]
       : undefined
   );
+
+  const taskList = (latestData?.tasks || tasks?.tasks || []).filter((t: any) => {
+    return filter.includes(`${t.status}`);
+  });
 
   if (!tasks || !user) {
     return null;
@@ -59,10 +64,10 @@ export function ProjectMyWork() {
           />
         </div>
       </div>
-      <div className="relative overflow-x-auto">
-        {tasks.tasks.length === 0 ? (
-          <div className="bg-white p-8 text-center text-sm text-slate-500 border rounded rounded-lg">
-            {t('No submissions')}
+      <div className="relative overflow-x-auto" style={{ opacity: isFetching ? 0.8 : 1 }}>
+        {taskList.length === 0 ? (
+          <div className="bg-white p-8 text-center text-sm text-slate-500 border rounded-lg">
+            {isFetching ? <Spinner /> : t('No submissions')}
           </div>
         ) : (
           <table className="w-full text-sm text-left text-gray-500">
@@ -83,7 +88,7 @@ export function ProjectMyWork() {
               </tr>
             </thead>
             <tbody>
-              {tasks.tasks.map(task => (
+              {taskList.map(task => (
                 <TaskRow key={task.id} task={task} />
               ))}
             </tbody>
