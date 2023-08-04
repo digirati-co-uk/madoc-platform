@@ -15,3 +15,4 @@ services/madoc-remix
 services/madoc-ts/service-jwts/madoc-remix.json
 e2e/test-fixtures/postgres/default/default.sql
 .DS_Store
+services/madoc-next
