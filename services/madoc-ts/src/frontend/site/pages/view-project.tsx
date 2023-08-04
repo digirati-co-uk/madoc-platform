@@ -37,7 +37,7 @@ export const ViewProject: React.FC = () => {
   const available = (
     <AvailableBlocks>
       <ProjectContributors />
-      <ProjectContributionButton />
+      {/*<ProjectContributionButton />*/}
       <ProjectHeading />
       <MostRecentProjectUpdate />
       <ProjectStatistics />

@@ -2,7 +2,11 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useProject } from '../../hooks/use-project';
 import { useRouteContext } from '../../hooks/use-route-context';
-import { ProjectListingDescription, ProjectListingItem, ProjectListingTitle } from '../../../shared/atoms/ProjectListing';
+import {
+  ProjectListingDescription,
+  ProjectListingItem,
+  ProjectListingTitle,
+} from '../../../shared/atoms/ProjectListing';
 import { Button } from '../../../shared/navigation/Button';
 import { HrefLink } from '../../../shared/utility/href-link';
 import { LocaleString } from '../../../shared/components/LocaleString';
