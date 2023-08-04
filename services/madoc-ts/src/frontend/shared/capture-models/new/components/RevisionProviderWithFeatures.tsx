@@ -53,7 +53,7 @@ export const RevisionProviderWithFeatures: React.FC<{
 }) => {
   const {
     autoSelectingRevision = true,
-    autosave = false,
+    // autosave = true,
     revisionEditMode = true,
     directEdit = false,
     preventMultiple = false,
@@ -77,7 +77,7 @@ export const RevisionProviderWithFeatures: React.FC<{
             >
               {/*<DebugRevisionSwitcher contributors={captureModel?.contributors} />*/}
               {/*<AutoSelectDefineRegion />*/}
-              {autosave ? <AutosaveRevision minutes={2} /> : null}
+              {features?.autosave ? <AutosaveRevision /> : null}
               {revisionEditMode ? <SwitchFieldAfterRevises /> : null}
               {revisionEditMode ? <SwitchEditMode /> : null}
               {autoSelectingRevision ? (
