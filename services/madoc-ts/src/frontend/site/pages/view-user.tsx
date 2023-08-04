@@ -237,7 +237,7 @@ export const ViewUser: UniversalComponent<ViewUserType> = createUniversalCompone
       <>
         <ProfileHeader>
           <ProfileImage>
-            <img src={`/s/${site.slug}/madoc/api/users/1/image`} alt="" />
+            <img src={`/s/${site.slug}/madoc/api/users/${data.user.id}/image`} alt="" />
           </ProfileImage>
           <div style={{ display: 'flex' }}>
             <Heading1 style={{ width: 'auto' }}>{data.user.name}</Heading1>
