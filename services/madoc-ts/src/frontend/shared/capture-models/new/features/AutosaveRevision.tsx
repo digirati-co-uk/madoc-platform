@@ -107,7 +107,7 @@ export const AutosaveRevision: React.FC = () => {
             setRetrievedRevision();
           }}
         >
-          Continue where you left off?
+          {t('Continue where you left off?')}
         </TextButton>
       </InfoMessage>
     );
