@@ -56,6 +56,7 @@ export interface CoreModelEditorProps {
   // Options
   isPreparing?: boolean;
   allowMultiple?: boolean;
+  autosave?: boolean;
 
   forkMode?: boolean;
 
@@ -112,6 +113,7 @@ export function CoreModelEditor({
   annotationTheme,
   disablePreview,
   isEditing,
+  autosave,
   mode,
   isSegmentation,
   forkMode,
@@ -198,6 +200,7 @@ export function CoreModelEditor({
     : {
         preventMultiple: !allowMultiple,
         forkMode: forkMode,
+        autosave: autosave,
       };
 
   const _components: Partial<EditorRenderingConfig> = isPreparing

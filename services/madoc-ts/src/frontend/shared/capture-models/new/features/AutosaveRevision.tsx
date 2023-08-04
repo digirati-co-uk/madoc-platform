@@ -4,23 +4,33 @@ import { useMutation } from 'react-query';
 import { Revisions } from '../../editor/stores/revisions/index';
 import * as localforage from 'localforage';
 import { TextButton } from '../../../navigation/Button';
+import { isEmptyRevision } from '../../helpers/is-empty-revision';
+import { InfoMessage } from '../../../callouts/InfoMessage';
+import { RevisionRequest } from '../../types/revision-request';
 
 export const AutosaveRevision: React.FC = () => {
   const currentRevisionId = Revisions.useStoreState(s => s.currentRevisionId);
   const currentRevision = Revisions.useStoreState(s => s.currentRevision);
   const currentDoc = currentRevision?.document.properties;
   const currentDocRef = useRef<any>();
+  const importRevision = Revisions.useStoreActions(a => a.importRevision);
+  const selectRevision = Revisions.useStoreActions(a => a.selectRevision);
+  const deselectRevision = Revisions.useStoreActions(a => a.deselectRevision);
+
   const { t } = useTranslation();
 
   const [autosaveRevision] = useMutation(async () => {
     if (!currentRevision) {
-      console.log('no revision');
+      return;
+    }
+    const isEmpty = isEmptyRevision(currentRevision);
+    if (isEmpty) {
       return;
     }
     localforage
       .setItem(`autosave-${currentRevision.captureModelId}`, currentRevision)
       .then(value => {
-        console.log(value);
+        console.log('saved!');
       })
       .catch(err => {
         console.log(err);
@@ -28,57 +38,79 @@ export const AutosaveRevision: React.FC = () => {
       });
   });
 
+  const [getSavedRevision, rev] = useMutation(async () => {
+    if (!currentRevision) {
+      return;
+    }
+    return localforage
+      .getItem<RevisionRequest>(`autosave-${currentRevision?.captureModelId}`)
+      .then(value => {
+        if (value) {
+          return value;
+        }
+        return;
+      })
+      .catch(err => {
+        console.log(err);
+        throw new Error(t('Unable to retreive a submission'));
+      });
+  });
+
+  const setRetrievedRevision = () => {
+    if (currentRevisionId && rev.data) {
+      deselectRevision({ revisionId: currentRevisionId });
+      importRevision({ revisionRequest: rev.data });
+      selectRevision({ revisionId: rev.data.revision.id });
+
+      localforage
+        .removeItem(`autosave-${currentRevision?.captureModelId}`)
+        .then(() => {
+          console.log('Key is cleared!');
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    }
+  };
+
   useEffect(() => {
     if (currentRevisionId && currentDoc) {
       currentDocRef.current = currentDoc;
     }
   }, [currentDoc, currentRevisionId]);
-  return (
-    <TextButton
-      onClick={() => {
-        autosaveRevision();
-      }}
-    >
-      click to set revision
-    </TextButton>
-  );
-};
-export const RetreiveAutosaveRevision: React.FC = () => {
-  const currentRevision = Revisions.useStoreState(s => s.currentRevision);
-  const { t } = useTranslation();
-  // importRevision
-  const importRevision = Revisions.useStoreActions(a => a.importRevision);
-  const selectRevision = Revisions.useStoreActions(a => a.selectRevision);
-  const saveRevision = Revisions.useStoreActions(a => a.saveRevision);
 
-  const [RetreiveSavedRevision] = useMutation(async () => {
-    if (!currentRevision) {
-      console.log('no revision');
-      return;
+  useEffect(() => {
+    if (currentRevisionId) {
+      getSavedRevision();
     }
-    localforage
-      .getItem(`autosave-${currentRevision?.captureModelId}`)
-      .then(value => {
-        if (value) {
-          console.log('got it!', value);
-          // saveRevision({revisionId: value.revisionId })
-          importRevision({ revisionRequest: value });
-        }
-        // selectRevision({ revisionId: value.revisionId });
-      })
-      .catch(err => {
-        console.log(err);
-        throw new Error(t('Unable to retreive your submission'));
-      });
-  });
+  }, [currentRevisionId, getSavedRevision]);
 
-  return (
-    <TextButton
-      onClick={() => {
-        RetreiveSavedRevision();
-      }}
-    >
-      click to import saved
-    </TextButton>
-  );
+  useEffect(() => {
+    const saveInterval = setInterval(() => {
+      if (currentDocRef.current && currentRevisionId) {
+        currentDocRef.current = undefined;
+        autosaveRevision();
+      }
+    }, 10000); // 10 secs
+
+    return () => {
+      clearInterval(saveInterval);
+    };
+  }, [autosaveRevision, currentRevisionId]);
+
+  if (rev.data) {
+    return (
+      <InfoMessage>
+        <TextButton
+          $inherit
+          onClick={() => {
+            setRetrievedRevision();
+          }}
+        >
+          Continue where you left off?
+        </TextButton>
+      </InfoMessage>
+    );
+  }
+  return null;
 };

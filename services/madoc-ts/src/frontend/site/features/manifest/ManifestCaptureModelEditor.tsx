@@ -45,6 +45,7 @@ export function ManifestCaptureModelEditor({ revision }: { revision: string; isS
   const [postSubmission, setPostSubmission] = useState(false);
   const [postSubmissionMessage, setPostSubmissionMessage] = useState(false);
   const allowMultiple = !config.project.modelPageOptions?.preventMultipleUserSubmissionsPerResource;
+  const autoSave = config.project.modelPageOptions?.enableAutoSave;
   const preventFurtherSubmission = !allowMultiple && allTasksDone;
   const isEditing = isEditingAnotherUsersRevision(captureModel, revision, user.user);
 
@@ -59,7 +60,7 @@ export function ManifestCaptureModelEditor({ revision }: { revision: string; isS
     user && user.scope && (user.scope.indexOf('site.admin') !== -1 || user.scope.indexOf('models.admin') !== -1);
   const features: RevisionProviderFeatures = isPreparing
     ? {
-        autosave: false,
+        autosave: autoSave,
         autoSelectingRevision: true,
         revisionEditMode: false,
         directEdit: true,

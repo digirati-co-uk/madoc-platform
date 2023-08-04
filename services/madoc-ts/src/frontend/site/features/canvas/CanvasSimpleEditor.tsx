@@ -50,6 +50,7 @@ export function CanvasSimpleEditor({ revision, isSegmentation }: CanvasSimpleEdi
   const preventFurtherSubmission = (!allowMultiple && allTasksDone) || (allTasksDone && maxContributorsReached);
   const isEditing = isEditingAnotherUsersRevision(captureModel, revision, user.user);
   const { isAdmin } = useUserPermissions();
+  const autosave = config.project.modelPageOptions?.enableAutoSave;
   const canContribute =
     user &&
     user.scope &&
@@ -89,6 +90,7 @@ export function CanvasSimpleEditor({ revision, isSegmentation }: CanvasSimpleEdi
         forkMode={forkMode}
         isEditing={isEditing}
         mode={mode}
+        autosave={autosave}
         hideViewerControls={hideViewerControls}
         isVertical={isVertical}
         disableSaveForLater={disableSaveForLater}
