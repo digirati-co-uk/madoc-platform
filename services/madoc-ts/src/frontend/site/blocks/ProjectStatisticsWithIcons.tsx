@@ -61,7 +61,7 @@ export const ProjectStatisticsWithIcons: React.FC = () => {
             <StatisticNumber>{Math.max(0, project.statistics['0'] || 0)}</StatisticNumber>
             <StatisticLabel>{t('Not started')}</StatisticLabel>
             <StatisticLabel style={{ color: '#6B6B6B' }}>
-              {Math.round((Math.max(0, project.statistics['0'] || 0) / total) * 100)}%
+              {total === 0 ? '0' : Math.round((Math.max(0, project.statistics['0'] || 0) / total) * 100)}%
             </StatisticLabel>
           </StatisticText>
         </ProgressStat>
@@ -72,7 +72,7 @@ export const ProjectStatisticsWithIcons: React.FC = () => {
             <StatisticNumber>{Math.max(0, project.statistics['1'] || 0)}</StatisticNumber>
             <StatisticLabel>{t('In progress')}</StatisticLabel>
             <StatisticLabel style={{ color: '#6B6B6B' }}>
-              {Math.round((Math.max(0, project.statistics['1'] || 0) / total) * 100)}%
+              {total === 0 ? '0' : Math.round((Math.max(0, project.statistics['1'] || 0) / total) * 100)}%
             </StatisticLabel>
           </StatisticText>
         </ProgressStat>
@@ -83,7 +83,7 @@ export const ProjectStatisticsWithIcons: React.FC = () => {
             <StatisticNumber>{Math.max(0, project.statistics['2'] || 0)}</StatisticNumber>
             <StatisticLabel>{t('In review')}</StatisticLabel>
             <StatisticLabel style={{ color: '#6B6B6B' }}>
-              {Math.round((Math.max(0, project.statistics['2'] || 0) / total) * 100)}%
+              {total === 0 ? '0' : Math.round((Math.max(0, project.statistics['2'] || 0) / total) * 100)}%
             </StatisticLabel>
           </StatisticText>
         </ProgressStat>
@@ -94,7 +94,7 @@ export const ProjectStatisticsWithIcons: React.FC = () => {
             <StatisticNumber>{Math.max(0, project.statistics['3'] || 0)}</StatisticNumber>
             <StatisticLabel>{t('Completed')}</StatisticLabel>
             <StatisticLabel style={{ color: '#6B6B6B' }}>
-              {Math.round((Math.max(0, project.statistics['3'] || 0) / total) * 100)}%
+              {total === 0 ? '0' : Math.round((Math.max(0, project.statistics['3'] || 0) / total) * 100)}%
             </StatisticLabel>
           </StatisticText>
         </ProgressStat>
