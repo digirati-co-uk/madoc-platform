@@ -7,7 +7,7 @@ import {
 } from '../../editor/components/CaptureModelVisualSettings/CaptureModelVisualSettings';
 import { WithModelNamespace } from '../../hooks/use-model-translation';
 import { CaptureModel } from '../../types/capture-model';
-import { AutosaveRevision } from '../features/AutosaveRevision';
+import {AutosaveRevision, RetreiveAutosaveRevision} from '../features/AutosaveRevision';
 import { AutoSelectingRevision } from '../features/AutoSelectingRevision';
 import { BasicUnNesting } from '../features/BasicUnNesting';
 import { CorrectingRevisionSubtree } from '../features/CorrectingRevisionSubtree';
@@ -53,7 +53,7 @@ export const RevisionProviderWithFeatures: React.FC<{
 }) => {
   const {
     autoSelectingRevision = true,
-    autosave = false,
+    autosave = true,
     revisionEditMode = true,
     directEdit = false,
     preventMultiple = false,
@@ -77,7 +77,11 @@ export const RevisionProviderWithFeatures: React.FC<{
             >
               {/*<DebugRevisionSwitcher contributors={captureModel?.contributors} />*/}
               {/*<AutoSelectDefineRegion />*/}
-              {autosave ? <AutosaveRevision minutes={2} /> : null}
+              {autosave ? (
+                <>
+                  <AutosaveRevision /> <RetreiveAutosaveRevision />
+                </>
+              ) : null}
               {revisionEditMode ? <SwitchFieldAfterRevises /> : null}
               {revisionEditMode ? <SwitchEditMode /> : null}
               {autoSelectingRevision ? (
