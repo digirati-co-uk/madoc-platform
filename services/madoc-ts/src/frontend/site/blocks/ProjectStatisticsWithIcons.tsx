@@ -10,10 +10,6 @@ import HourglassIcon from '../../shared/icons/HourglassIcon';
 import PendingIcon from '../../shared/icons/PendingIcon';
 import InProgressIcon from '../../shared/icons/InProgressIcon';
 
-const ProgressHeading = styled.h2`
-  font-size: 1.2em;
-`;
-
 const ProgressContainer = styled.div`
   display: flex;
   align-items: center;

@@ -350,7 +350,7 @@ export const siteConfigurationModel: {
         value: 'hideRandomCanvas',
       },
       {
-        label: 'Show reviewer dashboard',
+        label: 'Hide reviewer dashboard',
         value: 'reviewerDashboard',
       },
     ],
@@ -574,7 +574,7 @@ export const ProjectConfigInterface: {
         value: 'hideRandomCanvas',
       },
       {
-        label: 'hide reviewer dashboard',
+        label: 'Hide reviewer dashboard',
         value: 'reviewerDashboard',
       },
     ],
