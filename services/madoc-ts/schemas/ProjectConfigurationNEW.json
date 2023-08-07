@@ -284,6 +284,9 @@
         },
         "enableTooltipDescriptions": {
           "type": "boolean"
+        },
+        "enableSplitView": {
+          "type": "boolean"
         }
       }
     },
