@@ -63,10 +63,13 @@ export function useCanvasUserTasks() {
     const completedAndHide = !config.project.allowSubmissionsWhenCanvasComplete && canvasTask?.canvasTask?.status === 3;
     const completed = canvasTask?.canvasTask?.status === 3;
 
-    const maxContributorsReached =
+    const maxContributors =
       canvasTask?.maxContributors && canvasTask.totalContributors
-        ? canvasTask.maxContributors <= canvasTask.totalContributors
+        ? canvasTask.maxContributors >= canvasTask.totalContributors
         : false;
+
+    // if max contributors reached check that the current user isnt one of them
+    const maxContributorsReached = maxContributors ? !userTasks?.some(t => t.type === 'crowdsourcing-task') : false;
 
     const canClaimCanvas =
       user && (config.project.claimGranularity ? config.project.claimGranularity === 'canvas' : true);
