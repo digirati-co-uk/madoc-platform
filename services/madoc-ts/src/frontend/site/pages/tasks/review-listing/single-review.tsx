@@ -11,7 +11,7 @@ import {
   CanvasViewerControls,
   CanvasViewerEditorStyleReset,
   CanvasViewerGrid,
-} from '../../../features/CanvasViewerGrid';
+} from '../../../../shared/atoms/CanvasViewerGrid';
 import { useData } from '../../../../shared/hooks/use-data';
 import { PreviewIcon } from '../../../../shared/icons/PreviewIcon';
 import { EmptyState } from '../../../../shared/layout/EmptyState';
@@ -194,9 +194,11 @@ function ViewSingleReview({
   const limitedReviewer =
     user && user.scope && user.scope.indexOf('models.revision') !== -1 && user.scope.indexOf('models.create') === -1;
   const reviewer =
-    (user && user.scope && user.scope.indexOf('models.revision') !== -1) ||
-    user.scope.indexOf('site.admin') ||
-    (-1 && user.scope.indexOf('models.admin'));
+    user &&
+    user.scope &&
+    (user.scope.indexOf('models.revision') !== -1 ||
+      user.scope.indexOf('site.admin') !== -1 ||
+      user.scope.indexOf('models.admin') !== -1);
 
   const canReview = limitedReviewer ? review?.assignee?.id === user.user?.id : reviewer;
   const isDone = task?.status === 3;

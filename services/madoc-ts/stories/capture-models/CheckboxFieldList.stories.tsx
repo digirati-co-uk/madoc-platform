@@ -30,6 +30,28 @@ export const Simple: React.FC = () => {
   );
 };
 
+export const SimpleWithDescriptions: React.FC = () => {
+  const [value, setValue] = React.useState({});
+  return (
+    <form>
+      <CheckboxFieldList
+        id="1"
+        label="Some label"
+        options={[
+          { value: 'test-1', label: 'Test 1', description: 'A description of test 1' },
+          { value: 'test-2', label: 'Test 2', description: 'A description of test 2' },
+          { value: 'test-3', label: 'Test 3' },
+          { value: 'test-4', label: 'Test 4', description: 'A description of test 4' },
+          { value: 'test-5', label: 'Test 5' },
+        ]}
+        type="checkbox-list-field"
+        value={value}
+        updateValue={setValue}
+      />
+    </form>
+  );
+};
+
 export const WithFieldWrapper: React.FC = () => {
   return (
     <PluginProvider>

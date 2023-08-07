@@ -1,10 +1,16 @@
-import React, { useState } from 'react';
+import React, { FormEvent, useState } from 'react';
+import { useMutation } from 'react-query';
+import { UpdateManifestDetailsRequest } from '../../../../../routes/iiif/manifests/update-manifest-details';
+import { SnippetThumbnail, SnippetThumbnailContainer } from '../../../../shared/atoms/SnippetLarge';
+import { Input, InputContainer, InputLabel } from '../../../../shared/form/Input';
+import { apiHooks } from '../../../../shared/hooks/use-api-query';
+import { useManifest } from '../../../../site/hooks/use-manifest';
 import { UniversalComponent } from '../../../../types';
 import { ItemStructureList } from '../../../../../types/schemas/item-structure-list';
 import { LocaleString } from '../../../../shared/components/LocaleString';
 import { useApi } from '../../../../shared/hooks/use-api';
 import { Link, useParams } from 'react-router-dom';
-import { SmallButton, TinyButton } from '../../../../shared/navigation/Button';
+import { Button, SmallButton, TinyButton } from '../../../../shared/navigation/Button';
 import { ContextHeading, Header } from '../../../../shared/atoms/Header';
 import { Subheading1 } from '../../../../shared/typography/Heading1';
 import { ReorderTable, ReorderTableRow } from '../../../../shared/atoms/ReorderTable';
@@ -53,6 +59,24 @@ export const EditManifestStructure: UniversalComponent<EditManifestStructureType
       },
     });
 
+    const { data: manifest, refetch: refetchManifest, updatedAt } = apiHooks.getManifestById(() => [Number(params.id)]);
+
+    const [updateDetails, updateDetailsStatus] = useMutation(async (details: UpdateManifestDetailsRequest) => {
+      await api.updateManifestDetails(Number(params.id), details);
+      await refetchManifest();
+    });
+
+    const updateDetailsForm = (e: FormEvent) => {
+      e.preventDefault();
+      const form = e.currentTarget as HTMLFormElement;
+      const formData = new FormData(form);
+      const newData = Object.fromEntries(formData.entries());
+      if (Object.keys(newData).length === 0) return;
+      updateDetails(newData as UpdateManifestDetailsRequest);
+    };
+
+    const itemProps = { disabled: updateDetailsStatus.isLoading };
+
     if (!data) {
       return <>loading...</>;
     }
@@ -60,6 +84,31 @@ export const EditManifestStructure: UniversalComponent<EditManifestStructureType
     return (
       <>
         <div>
+          {manifest ? (
+            <form
+              key={updatedAt}
+              onSubmit={updateDetailsForm}
+              style={{ background: '#eee', borderRadius: 3, padding: '1em', marginBottom: '1em' }}
+            >
+              <h3>Update manifest details</h3>
+              <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1em', width: '100%' }}>
+                <InputContainer wide style={{ flex: 1 }}>
+                  <InputLabel>Thumbnail</InputLabel>
+                  <Input
+                    type="text"
+                    name="default_thumbnail"
+                    defaultValue={manifest?.manifest.thumbnail || ''}
+                    {...itemProps}
+                  />
+                </InputContainer>
+                <SnippetThumbnailContainer style={{ marginLeft: '1em' }}>
+                  <SnippetThumbnail src={manifest?.manifest.thumbnail} />
+                </SnippetThumbnailContainer>
+              </div>
+              <Button type={'submit'}>Save</Button>
+            </form>
+          ) : null}
+
           <SmallButton onClick={() => setShowThumbs(r => !r)}>
             {showThumbs ? t('Hide thumbs') : t('Show thumbs')}
           </SmallButton>
@@ -82,13 +131,21 @@ export const EditManifestStructure: UniversalComponent<EditManifestStructureType
                     <>
                       {showThumbs && item.thumbnail ? (
                         <TableRowLabel>
-                          <InView>
-                            {({ ref, inView }) => (
-                              <div ref={ref} style={{ height: 90, width: 90 }}>
-                                {inView ? <img src={item.thumbnail} height={90} /> : null}
-                              </div>
-                            )}
-                          </InView>
+                          <div>
+                            <InView>
+                              {({ ref, inView }) => (
+                                <div ref={ref} style={{ height: 90, width: 90 }}>
+                                  {inView ? <img src={item.thumbnail} height={90} /> : null}
+                                </div>
+                              )}
+                            </InView>
+                            <SmallButton
+                              disabled={updateDetailsStatus.isLoading}
+                              onClick={() => updateDetails({ default_thumbnail: item.thumbnail })}
+                            >
+                              Use as manifest thumbnail
+                            </SmallButton>
+                          </div>
                         </TableRowLabel>
                       ) : null}
                       <LocaleString>{item.label}</LocaleString>

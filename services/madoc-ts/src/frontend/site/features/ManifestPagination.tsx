@@ -3,7 +3,7 @@ import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for
 import { Pagination, PaginationNumbered } from '../../shared/components/Pagination';
 import { useLocationQuery } from '../../shared/hooks/use-location-query';
 import { useManifest } from '../hooks/use-manifest';
-import { usePreventCanvasNavigation } from './PreventUsersNavigatingCanvases';
+import { usePreventCanvasNavigation } from '../hooks/use-prevent-canvas-navigation';
 import { useRouteContext } from '../hooks/use-route-context';
 
 export const ManifestPagination: React.FC<{

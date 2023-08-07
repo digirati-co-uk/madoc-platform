@@ -25,7 +25,7 @@ export const PreviewCollection: React.FC<{
   const [excludedManifests, setExcludedManifests] = useState<string[]>([]);
   const [error, setError] = useState<string>('');
 
-  const excludeEnabled = false; // @todo enable
+  const excludeEnabled = true;
 
   useVaultEffect(
     vault => {
@@ -51,7 +51,17 @@ export const PreviewCollection: React.FC<{
   useVaultEffect(
     vault => {
       if (props.manifestIds && props.manifestIds.length) {
-        setManifests(vault.get(props.manifestIds));
+        const mans: ManifestNormalized[] = [];
+        props.manifestIds.forEach(id => {
+          vault.loadManifest(id).then(man => {
+            if (man?.type !== 'Manifest') {
+              setError('Invalid manifest');
+            } else {
+              mans.push(man);
+            }
+          });
+        });
+        setManifests(mans);
       }
     },
     [props.manifestIds]

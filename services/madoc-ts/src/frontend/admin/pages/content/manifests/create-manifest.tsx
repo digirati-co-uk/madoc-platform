@@ -17,7 +17,7 @@ import { GridContainer, HalfGird } from '../../../../shared/layout/Grid';
 import { serverRendererFor } from '../../../../shared/plugins/external/server-renderer-for';
 import { Heading3 } from '../../../../shared/typography/Heading3';
 import { Button, SmallButton } from '../../../../shared/navigation/Button';
-import { Input, InputContainer, InputLabel } from '../../../../shared/form/Input';
+import {Input, InputContainer, InputLabel, InputSubLabel} from '../../../../shared/form/Input';
 import { BrowserComponent } from '../../../../shared/utility/browser-component';
 import { HrefLink } from '../../../../shared/utility/href-link';
 import { Pagination } from '../../../molecules/Pagination';
@@ -147,6 +147,7 @@ export const CreateManifest: React.FC = () => {
                       </IntlInputContainer>
                     </BrowserComponent>
                   )}
+                  <InputSubLabel>{t('Import multiple manifests by inputting one url per line')}</InputSubLabel>
                 </InputContainer>
                 <SmallButton
                   disabled={isCreating}

@@ -25,7 +25,7 @@ export const status = [
 
 export interface ImportCollectionTask extends BaseTask {
   type: 'madoc-collection-import';
-  parameters: [number, number | undefined];
+  parameters: [number, number | undefined, string[] | undefined];
   status: -1 | 0 | 1 | 2 | 3 | 4;
   state: {
     resourceId?: number;
@@ -34,7 +34,12 @@ export interface ImportCollectionTask extends BaseTask {
   };
 }
 
-export function createTask(collectionUrl: string, userId: number, siteId?: number): ImportCollectionTask {
+export function createTask(
+  collectionUrl: string,
+  userId: number,
+  siteId?: number,
+  manifestIds?: string[]
+): ImportCollectionTask {
   return {
     type: 'madoc-collection-import',
     name: 'Importing collection',
@@ -47,7 +52,7 @@ export function createTask(collectionUrl: string, userId: number, siteId?: numbe
     ],
     status: 0,
     status_text: status[0],
-    parameters: [userId, siteId],
+    parameters: [userId, siteId, manifestIds],
   };
 }
 
@@ -60,7 +65,7 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
     case 'created': {
       const vault = new Vault();
       const task = await api.acceptTask<ImportCollectionTask>(taskId);
-      const [userId, siteId] = task.parameters;
+      const [userId, siteId, manifestIds] = task.parameters;
 
       // 1. Fetch collection
       const json = await fetch(task.subject).then(r => r.json());
@@ -95,8 +100,12 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
           }
         }
       }
-
       for (const manifestRef of iiifCollection.items) {
+        if (manifestIds && manifestIds.length) {
+          if (manifestIds?.indexOf(manifestRef.id) === -1) {
+            continue;
+          }
+        }
         if (subjectsToSkip.indexOf(manifestRef.id) !== -1) {
           continue;
         }

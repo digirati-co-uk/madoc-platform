@@ -16,7 +16,7 @@ export function useManagePropertyList(property: string) {
     createNewFieldInstance: a.createNewFieldInstance,
     removeInstance: a.removeInstance,
   }));
-  const canAddAnother = Boolean(maxMultiple && maxMultiple > fields.length);
+  const canAddAnother = Boolean(maxMultiple ? maxMultiple > fields.length : true);
 
   const createNewEntity = useCallback(() => {
     if (configuration.allowEditing) {

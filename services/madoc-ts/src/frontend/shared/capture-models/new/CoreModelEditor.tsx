@@ -5,7 +5,7 @@ import { PARAGRAPHS_PROFILE } from '../../../../extensions/capture-models/Paragr
 import { slotConfig } from '../../../../extensions/capture-models/Paragraphs/Paragraphs.slots';
 import { AnnotationStyles } from '../../../../types/annotation-styles';
 import { CanvasHighlightedRegions } from '../../../site/features/CanvasHighlightedRegions';
-import { CanvasModelUserStatus } from '../../../site/features/CanvasModelUserStatus';
+import { CanvasModelUserStatus } from '../../../site/features/contributor/CanvasModelUserStatus';
 import { CanvasViewer, CanvasViewerProps } from '../../../site/features/CanvasViewer';
 import {
   CanvasViewerButton,
@@ -15,10 +15,10 @@ import {
   CanvasViewerGrid,
   CanvasViewerGridContent,
   CanvasViewerGridSidebar,
-} from '../../../site/features/CanvasViewerGrid';
-import { CreateModelTestCase } from '../../../site/features/CreateModelTestCase';
+} from '../../atoms/CanvasViewerGrid';
+import { CreateModelTestCase } from '../../../site/features/admin/CreateModelTestCase';
 import { OpenSeadragonViewer } from '../../../site/features/OpenSeadragonViewer.lazy';
-import { TranscriberModeWorkflowBar } from '../../../site/features/TranscriberModeWorkflowBar';
+import { TranscriberModeWorkflowBar } from '../../../site/features/contributor/TranscriberModeWorkflowBar';
 import { RouteContext } from '../../../site/hooks/use-route-context';
 import { ViewReadOnlyAnnotation } from '../../atlas/ViewReadOnlyAnnotation';
 import { InfoMessage } from '../../callouts/InfoMessage';
@@ -149,7 +149,6 @@ export function CoreModelEditor({
       setShowPanWarning(false);
     }, 3000);
   }, []);
-
 
   const goHome = () => {
     if (runtime.current) {
@@ -329,19 +328,20 @@ export function CoreModelEditor({
               {preventFurtherSubmission ? (
                 <>
                   <EmptyState style={{ fontSize: '1.25em' }} $box $noMargin>
-                    <ButtonIcon>
-                      <TickIcon />
-                    </ButtonIcon>
-                    <strong>{t('Task is complete!')}</strong>
+                    <strong style={{ display: 'flex' }}>
+                      <TickIcon style={{ marginRight: '0.5em', marginBottom: 0 }} /> {t('Task is complete!')}
+                    </strong>
                   </EmptyState>
                   <EmptyState>
                     {markedAsUnusable ? (
                       t('You have marked this as unusable')
                     ) : (
                       <>
-                        {t('Thank you for your submission.')}
-                        {t('You can view your contribution in the left sidebar.')}
-                        {t('You can continue working on another canvas.')}
+                        <p>{t('Thank you for your submission.')}</p>
+                        <p>
+                          {t('You can view your contribution in the left sidebar.')}{' '}
+                          {t('You can continue working on another canvas.')}
+                        </p>
                       </>
                     )}
                   </EmptyState>

@@ -10,8 +10,12 @@ export const TextFieldPreview: React.FC<TextFieldProps> = ({ value, previewInlin
   }
 
   if (previewInline) {
-    return <span style={{ display: 'inline-block', marginRight: '.3em', whiteSpace: 'pre-wrap' }}>{value}</span>;
+    return (
+      <span style={{ display: 'inline-block', minWidth: '100px', marginRight: '.3em', whiteSpace: 'pre-wrap' }}>
+        {value}
+      </span>
+    );
   }
 
-  return <div style={{ whiteSpace: 'pre-wrap' }}>{value}</div>;
+  return <div style={{ whiteSpace: 'pre-wrap', minWidth: '100px' }}>{value}</div>;
 };

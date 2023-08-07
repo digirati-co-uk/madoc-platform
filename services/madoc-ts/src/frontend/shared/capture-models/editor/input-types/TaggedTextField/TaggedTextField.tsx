@@ -123,6 +123,10 @@ const MainContainer = styled.div`
   border-radius: 3px;
   font-size: 14px;
   padding: 0.6em;
+
+  &:focus-within {
+    border-color: #005cc5;
+  }
 `;
 
 const BlockWrapper: FC<any> = ({ tag, children }) => {

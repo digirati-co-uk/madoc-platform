@@ -6,6 +6,7 @@ import { TableActions, TableContainer, TableRow, TableRowLabel } from '../layout
 
 const TableHandle = styled(TableHandleIcon)`
   margin: 4px;
+  color: #979797;
 `;
 
 export const ReorderTableRow: React.FC<{

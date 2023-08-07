@@ -4,7 +4,7 @@ import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
 import { LocaleString } from '../../shared/components/LocaleString';
 import { Slot } from '../../shared/page-blocks/slot';
 import { SlotProvider } from '../../shared/page-blocks/slot-context';
-import { PageEditorBar } from '../features/PageEditorBar';
+import { PageEditorBar } from '../features/admin/PageEditorBar';
 import { useSiteConfiguration } from '../features/SiteConfigurationContext';
 import { usePage } from './loaders/page-loader';
 import { PageNotFound } from './page-not-found';
