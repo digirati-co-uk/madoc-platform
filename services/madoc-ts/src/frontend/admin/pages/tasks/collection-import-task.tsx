@@ -5,7 +5,7 @@ import { Button } from '../../../shared/navigation/Button';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
 import { useApi } from '../../../shared/hooks/use-api';
-import { CollectionSnippet } from '../../../shared/components/CollectionSnippet';
+import { CollectionSnippet } from '../../../shared/features/CollectionSnippet';
 import { CollapsibleTaskList } from '../../molecules/CollapsibleTaskList';
 
 export const CollectionImportTask: React.FC<{ task: ImportManifestTask; statusBar?: JSX.Element }> = ({

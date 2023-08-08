@@ -141,6 +141,12 @@ export const createNewProject: RouteMiddleware<unknown, CreateProject> = async c
       await userApi.pageBlocks.processSlotMappingRequest(chosenTemplate.slots, project.id);
     }
 
+    try {
+      await userApi.addProjectMember(project.id, id, { id: 'creator', label: 'Creator' });
+    } catch (err) {
+      // ignore
+    }
+
     // Returning project.
     context.response.body = await context.projects.getProjectByIdOrSlug(project.id, siteId);
   } catch (err) {

@@ -1,7 +1,7 @@
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import { useApi } from '../../shared/hooks/use-api';
 import React, { useMemo } from 'react';
-import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
+import { DisplayBreadcrumbs } from '../blocks/Breadcrumbs';
 import { BrowserComponent } from '../../shared/utility/browser-component';
 import { useRouteContext } from '../hooks/use-route-context';
 import { UniversalViewer } from '../../shared/viewers/universal-viewer.lazy';

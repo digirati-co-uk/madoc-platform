@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
 import styled from 'styled-components';
 import { Button } from '../../../shared/navigation/Button';
-import { InputContainer, InputLabel } from '../../../shared/form/Input';
+import { InputContainer } from '../../../shared/form/Input';
 import { LockIcon } from '../../../shared/icons/LockIcon';
 import { useApi } from '../../../shared/hooks/use-api';
 import { apiHooks } from '../../../shared/hooks/use-api-query';
@@ -14,7 +14,7 @@ import { CanvasMenuHook } from './types';
 import { StyledFormMultilineInputElement } from '../../../shared/capture-models/editor/atoms/StyledForm';
 
 const NoteContainer = styled.div`
-  padding: 0.5em;
+  padding: 1em;
 `;
 
 export function usePersonalNotesMenu(): CanvasMenuHook {
@@ -48,8 +48,7 @@ export function usePersonalNotesMenu(): CanvasMenuHook {
     <>
       {data ? (
         <NoteContainer>
-          <InputContainer>
-            <InputLabel htmlFor="personal-notes">{t('Personal notes')}</InputLabel>
+          <InputContainer fluid>
             <StyledFormMultilineInputElement
               data-cy="personal-notes"
               id="personal-notes"

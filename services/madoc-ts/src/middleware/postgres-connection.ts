@@ -8,6 +8,7 @@ import { NotificationRepository } from '../repository/notification-repository';
 import { PageBlocksRepository } from '../repository/page-blocks-repository';
 import { PluginRepository } from '../repository/plugin-repository';
 import { ProjectRepository } from '../repository/project-repository';
+import { TermConfigurationsRepository } from '../repository/term-configurations-repository';
 import { ThemeRepository } from '../repository/theme-repository';
 import { ApiKeyRepository } from '../repository/api-key-repository';
 import { EnvConfig } from '../types/env-config';
@@ -31,6 +32,7 @@ export const postgresConnection = (
     context.notifications = new NotificationRepository(connection);
     context.projects = new ProjectRepository(connection);
     context.annotationStyles = new AnnotationStylesRepository(connection);
+    context.termConfigurations = new TermConfigurationsRepository(connection);
     context.captureModels = new CaptureModelRepository(connection, {
       capture_model_api_migrated: env.flags.capture_model_api_migrated,
     });

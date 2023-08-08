@@ -1,0 +1,4 @@
+/* Don't include the reset for the admin - too much to fix. */
+@tailwind components;
+@tailwind utilities;
+

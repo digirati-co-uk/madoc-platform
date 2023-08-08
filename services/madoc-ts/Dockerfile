@@ -19,6 +19,8 @@ COPY ./generate-schemas.js /home/node/app/generate-schemas.js
 COPY ./themes /home/node/app/themes
 COPY ./vite /home/node/app/vite
 COPY ./vite.config.js /home/node/app/vite.config.js
+COPY ./postcss.config.js /home/node/app/postcss.config.js
+COPY ./tailwind.config.js /home/node/app/tailwind.config.js
 
 ENV NODE_ENV=production
 

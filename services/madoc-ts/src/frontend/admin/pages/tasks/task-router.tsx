@@ -1,6 +1,5 @@
 import { BaseTask } from '../../../../gateway/tasks/base-task';
 import { Status } from '../../../shared/atoms/Status';
-import { FilePreview } from '../../../shared/components/FilePreview';
 import { RootStatistics } from '../../../shared/components/RootStatistics';
 import { TableContainer, TableRow, TableRowLabel } from '../../../shared/layout/Table';
 import { UniversalComponent } from '../../../types';
@@ -16,7 +15,7 @@ import { useTranslation } from 'react-i18next';
 import { SubtaskProgress } from '../../../shared/atoms/SubtaskProgress';
 import { usePaginatedData } from '../../../shared/hooks/use-data';
 import { createUniversalComponent } from '../../../shared/utility/create-universal-component';
-import { CanvasSnippet } from '../../../shared/components/CanvasSnippet';
+import { CanvasSnippet } from '../../../shared/features/CanvasSnippet';
 import { Link } from 'react-router-dom';
 import { SmallButton } from '../../../shared/navigation/Button';
 

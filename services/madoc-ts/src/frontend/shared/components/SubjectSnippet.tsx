@@ -1,9 +1,9 @@
 import React, { useMemo } from 'react';
 import { parseUrn } from '../../../utility/parse-urn';
 import { SnippetLargeProps } from '../atoms/SnippetLarge';
-import { CollectionSnippet } from './CollectionSnippet';
-import { ManifestSnippet } from './ManifestSnippet';
-import { CanvasSnippet } from './CanvasSnippet';
+import { CollectionSnippet } from '../features/CollectionSnippet';
+import { ManifestSnippet } from '../features/ManifestSnippet';
+import { CanvasSnippet } from '../features/CanvasSnippet';
 
 export const SubjectSnippet: React.FC<{
   subject: string;

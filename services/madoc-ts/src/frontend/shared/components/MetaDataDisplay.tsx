@@ -6,7 +6,7 @@ import { MetadataEmptyState } from '../atoms/MetadataConfiguration';
 import { Button } from '../navigation/Button';
 import { HrefLink } from '../utility/href-link';
 import { LocaleString } from './LocaleString';
-import { FacetConfig } from './MetadataFacetEditor';
+import { FacetConfig } from '../features/MetadataFacetEditor';
 
 const MetadataDisplayContainer = styled.div<{ $variation?: 'list' | 'table'; $size?: 'lg' | 'md' | 'sm' }>`
   font-size: ${props =>

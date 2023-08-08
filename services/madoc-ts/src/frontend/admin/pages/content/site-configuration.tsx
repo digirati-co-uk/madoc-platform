@@ -53,6 +53,21 @@ export const SiteConfiguration: React.FC = () => {
               Change the site-wide configuration, cannot be overridden by project.
             </RoundedCard>
           </HrefLink>
+          <HrefLink href={`/configure/site/terms`} style={{ textDecoration: 'none' }}>
+            <RoundedCard label="Edit external term lists" interactive>
+              Add or remove external term lists used for auto-completion.
+            </RoundedCard>
+          </HrefLink>
+          <HrefLink href={`/configure/site/terms-and-conditions`} style={{ textDecoration: 'none' }}>
+            <RoundedCard label="Terms and conditions" interactive>
+              Update terms and conditions of the site
+            </RoundedCard>
+          </HrefLink>
+          <HrefLink href={`/configure/site/badges`} style={{ textDecoration: 'none' }}>
+            <RoundedCard label="Edit available badges" interactive>
+              Add or remove badges that can be awarded to users.
+            </RoundedCard>
+          </HrefLink>
         </div>
       </WidePage>
     </>

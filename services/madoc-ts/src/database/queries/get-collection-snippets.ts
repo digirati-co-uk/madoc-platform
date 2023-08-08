@@ -15,6 +15,8 @@ export type CollectionSnippetsRow = {
   source: string;
   resource_id: number;
   canvas_count?: number;
+  placeholder_image?: string;
+  published: boolean;
 };
 
 type CollectionAggregate = TaggedTemplateLiteralInvocationType<{
@@ -24,6 +26,8 @@ type CollectionAggregate = TaggedTemplateLiteralInvocationType<{
   manifest_canvas_count: number;
   collection_manifest_count: number;
   manifest_thumbnail: string;
+  published: boolean;
+  placeholder_image?: string;
 }>;
 
 export function getSingleCollection({
@@ -55,6 +59,7 @@ export function getSingleCollection({
     collection_manifest_count: number;
     manifest_thumbnail: string;
     published: boolean;
+    placeholder_image?: string;
   }>`
       select ${collectionId}::int                                  as collection_id,
              manifest_links.item_id                                as manifest_id,
@@ -63,7 +68,8 @@ export function getSingleCollection({
              resource.type                                         as resource_type,
              resource.id                                           as resource_id,
              manifest_thumbnail(${siteId}, manifest_links.item_id) as manifest_thumbnail,
-             single_collection.published                           as published
+             single_collection.published                           as published,
+             single_collection.placeholder_image                   as placeholder_image
       
       from iiif_derived_resource single_collection
                left join iiif_derived_resource_items manifest_links 
@@ -112,7 +118,7 @@ function selectCollections({
 
   if (parentCollectionId) {
     return sql`
-      select cidr.resource_id as collection_id, cidr.published as published
+      select cidr.resource_id as collection_id, cidr.published as published, cidr.placeholder_image as placeholder_image
       from iiif_derived_resource cidr
       left join iiif_derived_resource_items cidri on cidr.resource_id = cidri.item_id
       where resource_type = 'collection'  
@@ -121,12 +127,12 @@ function selectCollections({
         ${hideFlat ? sql`and cidr.flat = false` : SQL_EMPTY}
         ${onlyPublished ? sql`and cidr.published = true` : SQL_EMPTY}
         and cidri.resource_id = ${parentCollectionId} 
-      limit ${perPage} offset ${offset}
+      limit ${perPage} offset ${offset} 
     `;
   }
 
   return sql`
-    select cidr.resource_id as collection_id, cidr.published as published
+    select cidr.resource_id as collection_id, cidr.published as published, cidr.placeholder_image as placeholder_image
     from iiif_derived_resource cidr
     where resource_type = 'collection'  
       and cidr.site_id = ${siteId}
@@ -163,14 +169,16 @@ export function getCollectionList({
             canvas_count.item_total                       as manifest_canvas_count,
             manifest_count.item_total                     as collection_manifest_count,
             manifest_thumbnail(${siteId}, manifest_links.item_id) as manifest_thumbnail,
-            collection.published                          as published
+            collection.published                          as published,
+            collection.placeholder_image                  as placeholder_image
+              
      from (${selectCollections({
        parentCollectionId,
        siteId,
        perPage,
        page,
        onlyPublished,
-     })}) collection(collection_id, published)
+     })}) collection(collection_id, published, placeholder_image)
               left join (select im.item_id, im.resource_id, ir.type
                          from iiif_derived_resource_items im
                             left join iiif_resource ir on im.item_id = ir.id
@@ -198,6 +206,7 @@ export function getCollectionSnippets(
             collections_aggregation.collection_manifest_count as manifest_count,
             collections_aggregation.resource_type as resource_type,
             collections_aggregation.published as published,
+            collections_aggregation.placeholder_image as placeholder_image,
             metadata.id as metadata_id,
             metadata.key,
             metadata.value,

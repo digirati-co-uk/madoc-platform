@@ -4,32 +4,12 @@ import { useMutation } from 'react-query';
 import { Site, SystemConfig } from '../../../../extensions/site-manager/types';
 import { SuccessMessage } from '../../../shared/callouts/SuccessMessage';
 import { EditShorthandCaptureModel } from '../../../shared/capture-models/EditorShorthandCaptureModel';
+import { globalSystemConfigModel } from '../../../shared/configuration/global-config';
 import { useApi } from '../../../shared/hooks/use-api';
 import { useData } from '../../../shared/hooks/use-data';
 import { serverRendererFor } from '../../../shared/plugins/external/server-renderer-for';
 import { AdminHeader } from '../../molecules/AdminHeader';
 import { WidePage } from '../../../shared/layout/WidePage';
-
-const globalSystemConfigModel: Partial<{ [key in keyof SystemConfig]: any }> = {
-  enableRegistrations: {
-    label: 'User registrations',
-    type: 'checkbox-field',
-    inlineLabel: 'Allow users to register to the site',
-  },
-  registeredUserTranscriber: {
-    label: 'User role',
-    type: 'checkbox-field',
-    inlineLabel: 'New users can contribute to crowdsourcing projects',
-  },
-  installationTitle: {
-    label: 'Installation title',
-    type: 'text-field',
-  },
-  defaultSite: {
-    label: 'Slug of default site',
-    type: 'dropdown-field',
-  },
-};
 
 export const GlobalSystemConfig: React.FC = () => {
   const { data, refetch, updatedAt } = useData(GlobalSystemConfig);
@@ -71,6 +51,7 @@ export const GlobalSystemConfig: React.FC = () => {
         <div style={{ maxWidth: 600 }}>
           {updateSystemConfigStatus.isSuccess ? <SuccessMessage>Config updated</SuccessMessage> : null}
           <EditShorthandCaptureModel
+            keepExtraFields
             enableSearch
             searchLabel={t('Search configuration')}
             key={updatedAt}

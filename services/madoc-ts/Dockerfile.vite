@@ -1,4 +1,4 @@
-FROM node:18 as build
+FROM node:18-bullseye as build
 
 WORKDIR /home/node/app
 
@@ -8,7 +8,7 @@ COPY ./npm /home/node/app/npm
 
 RUN yarn install
 
-FROM node:18
+FROM node:18-bullseye
 
 WORKDIR /home/node/app
 
@@ -17,6 +17,8 @@ COPY --from=build /home/node/app/yarn.lock /home/node/app/yarn.lock
 COPY --from=build /home/node/app/node_modules /home/node/app/node_modules
 COPY ./schemas /home/node/app/schemas
 COPY ./vite.config.js /home/node/app/vite.config.js
+COPY ./postcss.config.js /home/node/app/postcss.config.js
+COPY ./tailwind.config.js /home/node/app/tailwind.config.js
 COPY ./themes /home/node/app/themes
 COPY ./vite /home/node/app/vite
 COPY ./entrypoint /home/node/app/entrypoint

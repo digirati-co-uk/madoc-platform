@@ -15,7 +15,15 @@ export const siteProject: RouteMiddleware<{ slug: string; projectSlug: string }>
   };
 
   try {
-    const project = await siteApi.getProject(projectSlug, { published: onlyPublished });
+    const [project, latestUpdate] = await Promise.all([
+      siteApi.getProject(projectSlug, { published: onlyPublished }),
+      siteApi.getLatestProjectUpdate(projectSlug),
+    ]);
+
+    if (latestUpdate) {
+      project.latestUpdate = latestUpdate;
+    }
+
     context.response.status = 200;
     context.response.body = project;
   } catch (err) {

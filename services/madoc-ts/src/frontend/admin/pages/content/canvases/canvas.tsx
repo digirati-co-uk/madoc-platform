@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { CanvasNavigation } from '../../../../shared/components/CanvasNavigation';
+import { CanvasNavigation } from '../../../../shared/features/CanvasNavigation';
 import { useSite } from '../../../../shared/hooks/use-site';
 import { UniversalComponent } from '../../../../types';
 import { LocaleString } from '../../../../shared/components/LocaleString';
@@ -12,7 +12,6 @@ import { createUniversalComponent } from '../../../../shared/utility/create-univ
 import { useApiManifest } from '../../../../shared/hooks/use-api-manifest';
 import { AdminHeader } from '../../../molecules/AdminHeader';
 import { WidePage } from '../../../../shared/layout/WidePage';
-import { ManifestFull } from '../../../../../types/schemas/manifest-full';
 
 type CanvasViewType = {
   data: CanvasFull;

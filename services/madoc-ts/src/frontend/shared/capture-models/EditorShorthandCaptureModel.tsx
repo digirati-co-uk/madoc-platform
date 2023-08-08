@@ -8,6 +8,7 @@ import { hydrateCaptureModel } from './helpers/hydrate-capture-model';
 import { serialiseCaptureModel } from './helpers/serialise-capture-model';
 import { CustomSubmitButton } from './new/components/CustomSubmitButton';
 import { EditorSlots, ProfileConfig } from './new/components/EditorSlots';
+import { RevisionOnChange } from './new/components/RevisionOnChange';
 import { RevisionProviderWithFeatures } from './new/components/RevisionProviderWithFeatures';
 import { createRevisionFromDocument } from '../utility/create-revision-from-document';
 import { RevisionStoreReference } from './new/components/RevisionStoreReference';
@@ -25,6 +26,7 @@ export interface EditorShorthandCaptureModelProps {
   immutableFields?: string[];
   onSave?: (revision: any) => Promise<void> | void;
   onPreview?: (revision: any) => Promise<void> | void;
+  onChange?: (revision: RevisionRequest | null) => void;
   keepExtraFields?: boolean;
   structure?: CaptureModel['structure'];
   children?: any;
@@ -52,6 +54,7 @@ export const EditShorthandCaptureModel = forwardRef(
       structure,
       enableSearch,
       searchLabel,
+      onChange,
       children,
     }: EditorShorthandCaptureModelProps,
     ref: React.Ref<EditorShorthandCaptureModelRef>
@@ -142,6 +145,7 @@ export const EditShorthandCaptureModel = forwardRef(
         revision={rev.revisionId}
       >
         <RevisionStoreReference ref={revisionRef} />
+        {onChange ? <RevisionOnChange onChange={onChange} /> : null}
         {enableSearch ? (
           <InputContainer wide>
             {searchLabel ? <InputLabel>{searchLabel}</InputLabel> : null}

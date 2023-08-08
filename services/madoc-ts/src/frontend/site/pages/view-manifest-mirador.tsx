@@ -3,7 +3,7 @@ import { BrowserComponent } from '../../shared/utility/browser-component';
 import { Mirador } from '../../shared/viewers/mirador.lazy';
 import { useApi } from '../../shared/hooks/use-api';
 import React, { useMemo } from 'react';
-import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
+import { DisplayBreadcrumbs } from '../blocks/Breadcrumbs';
 import { useRouteContext } from '../hooks/use-route-context';
 import { ErrorBoundary } from '../../shared/utility/error-boundary';
 

@@ -6,7 +6,7 @@ import { SubtaskProgress } from '../../shared/atoms/SubtaskProgress';
 import { useProject } from '../hooks/use-project';
 import { useSiteConfiguration } from './SiteConfigurationContext';
 
-export const ProjectStatistics: React.FC = () => {
+export function ProjectStatistics(props: { showBar?: boolean }) {
   const { data: project } = useProject();
   const { t } = useTranslation();
   const {
@@ -37,19 +37,30 @@ export const ProjectStatistics: React.FC = () => {
           <StatisticLabel>{t('Completed')}</StatisticLabel>
         </Statistic>
       </StatisticContainer>
-      <SubtaskProgress
-        total={project.statistics['0'] + project.statistics['1'] + project.statistics['2'] + project.statistics['3']}
-        done={project.statistics['3'] || 0}
-        progress={(project.statistics['2'] || 0) + (project.statistics['1'] || 0)}
-      />
+      {props.showBar ? (
+        <SubtaskProgress
+          total={project.statistics['0'] + project.statistics['1'] + project.statistics['2'] + project.statistics['3']}
+          done={project.statistics['3'] || 0}
+          progress={(project.statistics['2'] || 0) + (project.statistics['1'] || 0)}
+        />
+      ) : null}
     </>
   );
-};
+}
 
 blockEditorFor(ProjectStatistics, {
   type: 'default.ProjectStatistics',
   label: 'Project statistics',
   anyContext: ['project'],
   requiredContext: ['project'],
-  editor: {},
+  defaultProps: {
+    showBar: false,
+  },
+  editor: {
+    showBar: {
+      type: 'checkbox-field',
+      label: 'Show progress bar',
+      inlineLabel: 'Show progress bar',
+    },
+  },
 });

@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import { EmptyState } from '../../../../shared/layout/EmptyState';
 import { SuccessMessage } from '../../../../shared/callouts/SuccessMessage';
 import { EditShorthandCaptureModel } from '../../../../shared/capture-models/EditorShorthandCaptureModel';
-import { useAdminLayout } from '../../../../shared/components/AdminMenu';
+import { useAdminLayout } from '../../../components/AdminMenu';
 import { postProcessConfiguration, siteConfigurationModel } from '../../../../shared/configuration/site-config';
 import { useApi } from '../../../../shared/hooks/use-api';
 import { apiHooks } from '../../../../shared/hooks/use-api-query';

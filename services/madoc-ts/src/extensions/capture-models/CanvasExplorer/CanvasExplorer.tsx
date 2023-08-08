@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { ImageStripBox } from '../../../frontend/shared/atoms/ImageStrip';
 import { ImageGrid } from '../../../frontend/shared/atoms/ImageGrid';
 import { Heading5 } from '../../../frontend/shared/typography/Heading5';
-import { CanvasSnippet } from '../../../frontend/shared/components/CanvasSnippet';
+import { CanvasSnippet } from '../../../frontend/shared/features/CanvasSnippet';
 
 export type CanvasExplorerProps = {
   id: string;

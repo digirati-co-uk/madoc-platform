@@ -24,10 +24,11 @@ import { SiteManagerExtension } from '../extensions/site-manager/extension';
 import { SystemExtension } from '../extensions/system/extension';
 import { TaskExtension } from '../extensions/tasks/extension';
 import { ThemeExtension } from '../extensions/themes/extension';
+import { CompletionItem } from '../frontend/shared/capture-models/editor/input-types/AutocompleteField/AutocompleteField';
 import { CaptureModel } from '../frontend/shared/capture-models/types/capture-model';
 import { BaseField } from '../frontend/shared/capture-models/types/field-types';
 import { RevisionRequest } from '../frontend/shared/capture-models/types/revision-request';
-import { FacetConfig } from '../frontend/shared/components/MetadataFacetEditor';
+import { FacetConfig } from '../frontend/shared/features/MetadataFacetEditor';
 import { GetLocalisationResponse, ListLocalisationsResponse } from '../routes/admin/localisation';
 import { UpdateManifestDetailsRequest } from '../routes/iiif/manifests/update-manifest-details';
 import { AnnotationStyles } from '../types/annotation-styles';
@@ -37,13 +38,15 @@ import {
   ProjectDeletionSummary,
   CollectionDeletionSummary,
 } from '../types/deletion-summary';
-import { Site, SiteUser, User } from '../extensions/site-manager/types';
+import { PublicUserProfile, Site, SiteUser, User, UserInformationRequest } from '../extensions/site-manager/types';
 import { ProjectManifestTasks } from '../types/manifest-tasks';
 import { NoteListResponse } from '../types/personal-notes';
 import { Pm2Status } from '../types/pm2';
+import { ProjectFeedback, ProjectMember, ProjectUpdate } from '../types/projects';
 import { ResourceLinkResponse } from '../types/schemas/linking';
 import { ProjectConfiguration } from '../types/schemas/project-configuration';
 import { SearchIngestRequest, SearchResponse, SearchQuery } from '../types/search';
+import { SiteTerms } from '../types/site-terms';
 import { SearchIndexable } from '../utility/capture-model-to-indexables';
 import { NotFound } from '../utility/errors/not-found';
 import { parseUrn } from '../utility/parse-urn';
@@ -75,7 +78,7 @@ import { Pagination } from '../types/schemas/_pagination';
 import { CrowdsourcingTask } from './tasks/crowdsourcing-task';
 import { ResourceClaim } from '../routes/projects/create-resource-claim';
 import { ProjectList } from '../types/schemas/project-list';
-import { ProjectFull } from '../types/project-full';
+import { Project, ProjectFull } from '../types/project-full';
 import { UserDetails } from '../types/schemas/user-details';
 import { CrowdsourcingReviewMerge } from './tasks/crowdsourcing-review';
 import { CrowdsourcingCanvasTask } from './tasks/crowdsourcing-canvas-task';
@@ -591,6 +594,16 @@ export class ApiClient {
     return this.request<GetMetadata>(`/api/madoc/projects/${id}/metadata`);
   }
 
+  async getProjectByTaskId(id: string) {
+    return this.request<Project>(`/api/madoc/project-by-task/${id}`);
+  }
+
+  async getProjectSVG(id: string | number, taskId: string) {
+    return this.request<{ svg: string; empty: false } | { empty: true; svg?: never }>(
+      `/api/madoc/projects/${id}/tasks/${taskId}/preview-svg`
+    );
+  }
+
   async getProjectStructure(id: number) {
     return this.request<{
       collectionId: number;
@@ -657,10 +670,109 @@ export class ApiClient {
     });
   }
 
+  async updateProjectDuration(id: number, endDate: Date) {
+    return this.request<any>(`/api/madoc/projects/${id}/duration`, {
+      method: 'PUT',
+      body: {
+        endDate: endDate.toISOString(),
+      },
+    });
+  }
+
+  async updateProjectBanner(id: string | number, banner: string | null) {
+    return this.request<any>(`/api/madoc/projects/${id}/banner`, {
+      method: 'PUT',
+      body: {
+        banner,
+      },
+    });
+  }
+
   async updateProjectAnnotationStyle(id: string | number, style_id: number) {
     return this.request(`/api/madoc/projects/${id}/annotation-style`, {
       method: 'PUT',
       body: { style_id },
+    });
+  }
+
+  async listProjectUpdates(id: string | number) {
+    return this.request<{ updates: ProjectUpdate[] }>(`/api/madoc/projects/${id}/updates`);
+  }
+
+  async getLatestProjectUpdate(id: string | number): Promise<ProjectUpdate | null> {
+    const response = await this.request<{ updates: ProjectUpdate[] }>(`/api/madoc/projects/${id}/updates?latest=true`);
+    return response?.updates[0] || null;
+  }
+
+  async createProjectUpdate(id: string | number, update: string) {
+    return this.request(`/api/madoc/projects/${id}/updates`, {
+      method: 'POST',
+      body: { update },
+    });
+  }
+
+  async updateProjectUpdate(id: string | number, updateId: string | number, update: string) {
+    return this.request(`/api/madoc/projects/${id}/updates/${updateId}`, {
+      method: 'PUT',
+      body: { update },
+    });
+  }
+
+  async deleteProjectUpdate(id: string | number, updateId: string | number) {
+    return this.request(`/api/madoc/projects/${id}/updates/${updateId}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async listProjectMembers(id: string | number) {
+    return this.request<{ members: ProjectMember[] }>(`/api/madoc/projects/${id}/members`);
+  }
+
+  async getProjectMemberEmails(id: string | number) {
+    return this.request<{ users: Array<{ id: number; name: string; email: string }> }>(`/api/madoc/projects/${id}/member-emails`);
+  }
+
+  async addProjectMember(id: string | number, userId: string | number, role?: ProjectMember['role']) {
+    return this.request<{ success: boolean }>(`/api/madoc/projects/${id}/members`, {
+      method: 'POST',
+      body: {
+        user_id: userId,
+        role,
+      },
+    });
+  }
+
+  async updateUsersProjectRole(id: string | number, userId: string | number, role: ProjectMember['role']) {
+    return this.request<{ success: boolean }>(`/api/madoc/projects/${id}/members/${userId}`, {
+      method: 'PUT',
+      body: {
+        role,
+      },
+    });
+  }
+
+  async removeProjectMember(id: string | number, userId: string | number) {
+    return this.request<{ success: boolean }>(`/api/madoc/projects/${id}/members/${userId}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async getAllProjectFeedback(id: string | number) {
+    return this.request<{ feedback: ProjectFeedback[] }>(`/api/madoc/projects/${id}/feedback`);
+  }
+
+  async addProjectFeedback(id: string | number, feedback: string) {
+    return this.request<ProjectFeedback>(`/api/madoc/projects/${id}/feedback`, {
+      method: 'POST',
+      body: {
+        feedback,
+      },
+    });
+  }
+
+  async deleteProjectFeedback(id: string | number, feedbackId: string | number) {
+    return this.request(`/api/madoc/projects/${id}/feedback/${feedbackId}`, {
+      method: 'DELETE',
     });
   }
 
@@ -1215,7 +1327,7 @@ export class ApiClient {
 
   // User API
   async getUser(id: number) {
-    return this.request<{ user: User }>(`/api/madoc/users/${id}`);
+    return this.publicRequest<PublicUserProfile>(`/madoc/api/users/${id}`);
   }
 
   async getAutomatedUsers() {
@@ -1507,6 +1619,26 @@ export class ApiClient {
     return this.request<{ statuses: { [status: string]: number }; total: number }>(
       `/api/tasks/${id}/stats${query ? `?${stringify(query)}` : ''}`
     );
+  }
+
+  async getTaskAssigneeStats(
+    id: string,
+    query: { type?: string; root?: boolean; distinct_subjects?: boolean; status?: number } = {}
+  ) {
+    (query as any).group_by = 'assignee';
+    const response = await this.request<{ assignee_id: { [status: string]: number }; total: number }>(
+      `/api/tasks/${id}/stats?${stringify(query)}`
+    );
+
+    // This might be an old version of the API.
+    if (!response || !response.assignee_id) {
+      return {
+        _old: true,
+        total: 0,
+        assignee_id: {},
+      } as typeof response;
+    }
+    return response;
   }
 
   async getAllTaskStats(query?: { type?: string; root?: boolean; distinct_subjects?: boolean; user_id?: string }) {
@@ -2155,6 +2287,12 @@ export class ApiClient {
     return this.publicRequest<ProjectFull>(`/madoc/api/projects/${id}`);
   }
 
+  async getSiteProjectRecent(id: string | number) {
+    return this.publicRequest<{ tasks: CrowdsourcingTask[]; pagination: Pagination }>(
+      `/madoc/api/projects/${id}/recent`
+    );
+  }
+
   async getSiteProjects(query?: import('../routes/site/site-projects').SiteProjectsQuery) {
     return this.publicRequest<ProjectList>(`/madoc/api/projects`, query);
   }
@@ -2167,6 +2305,15 @@ export class ApiClient {
     return this.publicRequest<{ model?: CaptureModel }>(
       `/madoc/api/projects/${projectId}/manifest-models/${manifestId}`
     );
+  }
+  async getAllSiteProjectUpdates(id: string | number, page = 1) {
+    return this.publicRequest<{ pagination: Pagination; updates: ProjectUpdate[] }>(
+      `/madoc/api/projects/${id}/updates?page=${page}`
+    );
+  }
+
+  async getAllSiteProjectMembers(id: string | number) {
+    return this.publicRequest<{ members: ProjectMember[] }>(`/madoc/api/projects/${id}/members`);
   }
 
   async getSiteConfiguration(query?: import('../routes/site/site-configuration').SiteConfigurationQuery) {
@@ -2225,6 +2372,19 @@ export class ApiClient {
     return this.publicRequest<ProjectManifestTasks>(`/madoc/api/projects/${projectId}/manifest-tasks/${manifestId}`);
   }
 
+  async getSiteProjectAssigneeTasks(projectId: string | number) {
+    return this.publicRequest<{
+      submissions: { stats: { user: any; submissions: number }[]; total: number };
+      total: number;
+    }>(`/madoc/api/projects/${projectId}/tasks/assignee-stats`);
+  }
+
+  async queryCustomTermConfiguration(id: string, query: string) {
+    return this.publicRequest<{ completions: CompletionItem[] }>(
+      `/madoc/api/term-proxy/${id}?q=${encodeURIComponent(query)}`
+    );
+  }
+
   async siteUserAutocomplete(q: string, roles?: string[]) {
     return this.publicRequest<{
       completions: Array<{
@@ -2258,5 +2418,22 @@ export class ApiClient {
 
   async getUserDetails() {
     return this.publicRequest<UserDetails>(`/madoc/api/me`);
+  }
+
+  async getSettingsModel() {
+    return this.request<{ model: CaptureModel }>(`/api/madoc/me/settings`);
+  }
+
+  async getSiteTerms(selected?: string) {
+    return this.publicRequest<{ latest: SiteTerms; selected?: SiteTerms; list: Omit<SiteTerms, 'terms'>[] }>(
+      selected ? `/madoc/api/terms?id=${selected}` : `/madoc/api/terms`
+    );
+  }
+
+  async saveSettingsModel(model: UserInformationRequest) {
+    return this.request(`/api/madoc/me/settings`, {
+      method: 'POST',
+      body: model,
+    });
   }
 }

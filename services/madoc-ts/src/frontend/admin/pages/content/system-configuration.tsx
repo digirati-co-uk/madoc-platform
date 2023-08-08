@@ -23,14 +23,51 @@ const systemConfigModel = {
     type: 'checkbox-field',
     inlineLabel: 'Automatically publish manifest after importing',
   },
+  // Login/Register messages
+  loginHeader: {
+    label: 'Login header message',
+    description: 'Message to display above the login form',
+    type: 'text-field',
+    multiline: true,
+    minLines: 4,
+  },
+  loginFooter: {
+    label: 'Login footer message',
+    description: 'Message to display below the login form',
+    type: 'text-field',
+    multiline: true,
+    minLines: 4,
+  },
+  registerHeader: {
+    label: 'Register header message',
+    description: 'Message to display above the registration form',
+    type: 'text-field',
+    multiline: true,
+    minLines: 4,
+  },
+  registerFooter: {
+    label: 'Register footer message',
+    description: 'Message to display below the registration form',
+    type: 'text-field',
+    multiline: true,
+    minLines: 4,
+  },
 };
 
 export const SiteSystemConfiguration: React.FC = () => {
   const api = useApi();
-  const config = useSystemConfig();
+  const savedConfig = useSystemConfig();
   const updateConfig = useUpdateSystemConfig();
   const navigate = useNavigate();
   const site = useSite();
+
+  const config = {
+    loginHeader: '',
+    loginFooter: '',
+    registerHeader: '',
+    registerFooter: '',
+    ...(savedConfig as any),
+  };
 
   const [updateSystemConfig] = useMutation(async (newConfig: any) => {
     await api.siteManager.updateSite({

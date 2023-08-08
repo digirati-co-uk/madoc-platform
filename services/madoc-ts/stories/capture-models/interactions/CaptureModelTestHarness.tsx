@@ -24,7 +24,7 @@ import { EditorContentVariations } from '../../../src/frontend/shared/capture-mo
 import { PluginProvider } from '../../../src/frontend/shared/capture-models/plugin-api/context';
 import { CaptureModel } from '../../../src/frontend/shared/capture-models/types/capture-model';
 import { RevisionRequest } from '../../../src/frontend/shared/capture-models/types/revision-request';
-import { RevisionList } from '../../../src/frontend/shared/components/RevisionList';
+import { RevisionList } from '../../../src/frontend/shared/capture-models/RevisionList';
 import { TaskTabBackground, TaskTabItem, TaskTabRow } from '../../../src/frontend/shared/components/TaskTabs';
 import { ViewerSavingContext } from '../../../src/frontend/shared/hooks/use-viewer-saving';
 import { AnnotationStyles } from '../../../src/types/annotation-styles';

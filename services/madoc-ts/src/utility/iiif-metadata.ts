@@ -12,6 +12,7 @@ export type MetadataField = {
   created_at?: Date;
   total?: number;
   published?: boolean;
+  placeholder_image?: string;
 };
 
 export const setValueDotNotation = (property: any, key: string, setValue: (prop: any) => void) => {
@@ -97,6 +98,7 @@ export const metadataReducer = createMetadataReducer(next => ({
   created: next.created_at,
   thumbnail: next.thumbnail,
   published: next.published,
+  placeholder_image: next.placeholder_image,
 }));
 
 export function mapMetadata<

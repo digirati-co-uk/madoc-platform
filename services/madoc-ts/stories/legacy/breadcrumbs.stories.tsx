@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { BreadcrumbDivider, BreadcrumbItem, BreadcrumbList } from '../../src/frontend/shared/components/Breadcrumbs';
+import { BreadcrumbDivider, BreadcrumbItem, BreadcrumbList } from '../../src/frontend/site/blocks/Breadcrumbs';
 
 export default { title: 'Legacy/Breadcrumbs' };
 

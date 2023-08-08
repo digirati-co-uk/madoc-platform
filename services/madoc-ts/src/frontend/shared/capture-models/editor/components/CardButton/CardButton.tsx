@@ -3,7 +3,7 @@ import { getTheme } from '../../themes';
 
 export const CardButton = styled.button<{ size?: 'large' | 'medium' | 'small'; shadow?: boolean; inline?: boolean }>`
   box-sizing: border-box;
-  background: ${props => getTheme(props).colors.primary};
+  background: ${props => getTheme(props).colors.primary} !important; /*Tailwind issue*/
   color: ${props => getTheme(props).colors.textOnPrimary};
   margin-bottom: ${props => {
     const size = getTheme(props).card[props.size === 'large' ? 'large' : 'small'];

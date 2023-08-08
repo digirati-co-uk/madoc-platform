@@ -10,13 +10,14 @@ import { Input, InputContainer, InputLabel } from '../../../shared/form/Input';
 import { LoginActions, LoginContainer } from '../../../shared/layout/LoginContainer';
 import { SuccessMessage } from '../../../shared/callouts/SuccessMessage';
 import { useLocationQuery } from '../../../shared/hooks/use-location-query';
-import { useFormResponse, useSite, useUser } from '../../../shared/hooks/use-site';
+import { useFormResponse, useSite, useSystemConfig, useUser } from '../../../shared/hooks/use-site';
 import { HrefLink } from '../../../shared/utility/href-link';
 
 export const LoginPage: React.FC = () => {
   const { t } = useTranslation();
   const user = useUser();
   const site = useSite();
+  const system = useSystemConfig();
   const form = useFormResponse<{ loginError?: boolean; email?: string; success?: boolean }>();
   const didError = form?.loginError || false;
   const { redirect } = useLocationQuery();
@@ -30,6 +31,9 @@ export const LoginPage: React.FC = () => {
       {form && form.success ? <SuccessMessage>{t('You may now login')}</SuccessMessage> : null}
       <LoginContainer>
         <Heading1 $margin>{t('Login')}</Heading1>
+        {system?.loginHeader ? (
+          <div dangerouslySetInnerHTML={{ __html: system.loginHeader }} style={{ marginBottom: '1em' }} />
+        ) : null}
         <form method="post" action={`/s/${site.slug}/login?${stringify({ redirect })}`}>
           <InputContainer $error={didError}>
             <InputLabel htmlFor="email">{t('Email')}</InputLabel>
@@ -41,10 +45,13 @@ export const LoginPage: React.FC = () => {
             {didError ? <ErrorMessage $small>Incorrect email or password</ErrorMessage> : null}
           </InputContainer>
           <InputContainer>
+            {system?.loginFooter ? (
+              <div dangerouslySetInnerHTML={{ __html: system.loginFooter }} style={{ marginBottom: '1em' }} />
+            ) : null}
             <LoginActions>
-              <FlexSpacer>
+              <div style={{ flex: 1 }}>
                 <HrefLink href={`/forgot-password`}>{t('Forgot password?')}</HrefLink>
-              </FlexSpacer>
+              </div>
               <Button $primary>{t('Login')}</Button>
             </LoginActions>
           </InputContainer>

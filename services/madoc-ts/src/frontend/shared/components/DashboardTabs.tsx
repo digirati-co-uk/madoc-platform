@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import styled, { css } from 'styled-components';
 import { useBrowserLayoutEffect } from '../hooks/use-browser-layout-effect';
 
@@ -90,7 +90,6 @@ export const DashboardTab = styled.li<{ $active?: boolean }>`
     color: #fff;
     padding: 0.65em 1em;
     display: block;
-    border-bottom-width: 3px;
     &:hover {
       text-decoration: none;
     }

@@ -39,10 +39,15 @@ export const SiteDetails = styled.div`
 
 export const SiteTitle = styled.a`
   text-decoration: none;
-  letter-spacing: -2px;
+  letter-spacing: -1px;
   color: ${headerText};
   font-size: 1em;
   margin-right: 2em;
+
+  h1 {
+    margin: 0.65em 0;
+    font-weight: 600;
+  }
 `;
 
 export const GlobalSearchContainer = styled.div`
@@ -76,12 +81,18 @@ export const GlobalSearchInput = styled.input`
 export const GlobalSearchButton = styled.button`
   font-size: 0.9em;
   padding: 0.2em 1em;
-  background: #333;
+  background-color: #333;
   color: #fff;
   border: 2px solid #333;
   &:focus {
     outline: none;
     border-color: ${searchBorderFocusColor};
+  }
+
+  /* Tailwind issue. */
+  &[type='submit'],
+  &[type='button'] {
+    background-color: #333;
   }
 `;
 

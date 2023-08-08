@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.1.3...main)
 
+### Added
+- New "custom auto-complete" configurations for external APIs (MAD-1408)
+- New configuration to allow model field descriptions to be displayed as tooltips (MAD-1329)
+- IIIF Collection endpoint for Madoc Collections (MAD-1407)
+- New User preferences + profile options
+- New customisable "Terms" page that users can accept
+- Term API configuration admin interface
+- Added TailwindCSS to the project
+
 <!-- 
 ### Fixed
 ### Added

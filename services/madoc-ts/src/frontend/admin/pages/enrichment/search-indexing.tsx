@@ -4,7 +4,7 @@ import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../../../shared/navigation/Button';
 import { WidePage } from '../../../shared/layout/WidePage';
-import { FacetConfig, MetadataFacetEditor } from '../../../shared/components/MetadataFacetEditor';
+import { FacetConfig, MetadataFacetEditor } from '../../../shared/features/MetadataFacetEditor';
 import { useApi } from '../../../shared/hooks/use-api';
 import { apiHooks } from '../../../shared/hooks/use-api-query';
 import { AdminHeader } from '../../molecules/AdminHeader';

@@ -1,4 +1,4 @@
-import React, { Suspense, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useBrowserLayoutEffect } from '../hooks/use-browser-layout-effect';
 import { Spinner } from '../icons/Spinner';
 import {

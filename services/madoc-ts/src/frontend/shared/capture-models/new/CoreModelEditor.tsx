@@ -4,9 +4,9 @@ import { useTranslation } from 'react-i18next';
 import { PARAGRAPHS_PROFILE } from '../../../../extensions/capture-models/Paragraphs/Paragraphs.helpers';
 import { slotConfig } from '../../../../extensions/capture-models/Paragraphs/Paragraphs.slots';
 import { AnnotationStyles } from '../../../../types/annotation-styles';
-import { CanvasHighlightedRegions } from '../../../site/features/CanvasHighlightedRegions';
-import { CanvasModelUserStatus } from '../../../site/features/contributor/CanvasModelUserStatus';
-import { CanvasViewer, CanvasViewerProps } from '../../../site/features/CanvasViewer';
+import { CanvasHighlightedRegions } from '../../../site/features/canvas/CanvasHighlightedRegions';
+import { CanvasModelUserStatus } from '../../../site/features/canvas/CanvasModelUserStatus';
+import { CanvasViewer, CanvasViewerProps } from '../../../site/features/canvas/CanvasViewer';
 import {
   CanvasViewerButton,
   CanvasViewerContentOverlay,
@@ -16,9 +16,9 @@ import {
   CanvasViewerGridContent,
   CanvasViewerGridSidebar,
 } from '../../atoms/CanvasViewerGrid';
-import { CreateModelTestCase } from '../../../site/features/admin/CreateModelTestCase';
-import { OpenSeadragonViewer } from '../../../site/features/OpenSeadragonViewer.lazy';
-import { TranscriberModeWorkflowBar } from '../../../site/features/contributor/TranscriberModeWorkflowBar';
+import { CreateModelTestCase } from '../../../site/features/CreateModelTestCase';
+import { OpenSeadragonViewer } from '../../features/OpenSeadragonViewer.lazy';
+import { TranscriberModeWorkflowBar } from '../../../site/features/canvas/TranscriberModeWorkflowBar';
 import { RouteContext } from '../../../site/hooks/use-route-context';
 import { ViewReadOnlyAnnotation } from '../../atlas/ViewReadOnlyAnnotation';
 import { InfoMessage } from '../../callouts/InfoMessage';
@@ -33,6 +33,7 @@ import { TickIcon } from '../../icons/TickIcon';
 import { EmptyState } from '../../layout/EmptyState';
 import { Button } from '../../navigation/Button';
 import { BrowserComponent } from '../../utility/browser-component';
+import { CaptureModelVisualSettings } from '../editor/components/CaptureModelVisualSettings/CaptureModelVisualSettings';
 import { CaptureModel } from '../types/capture-model';
 import { RevisionRequest } from '../types/revision-request';
 import { BackToChoicesButton } from './components/BackToChoicesButton';
@@ -55,6 +56,7 @@ export interface CoreModelEditorProps {
   // Options
   isPreparing?: boolean;
   allowMultiple?: boolean;
+  autosave?: boolean;
 
   forkMode?: boolean;
 
@@ -102,6 +104,8 @@ export interface CoreModelEditorProps {
 
   showBugReport?: boolean;
   children?: React.ReactNode;
+
+  visualConfig?: Partial<CaptureModelVisualSettings>;
 }
 export function CoreModelEditor({
   revision,
@@ -109,6 +113,7 @@ export function CoreModelEditor({
   annotationTheme,
   disablePreview,
   isEditing,
+  autosave,
   mode,
   isSegmentation,
   forkMode,
@@ -131,6 +136,7 @@ export function CoreModelEditor({
   enableHighlightedRegions,
   canvasViewerPins,
   showBugReport,
+  visualConfig,
   children,
 }: CoreModelEditorProps) {
   const { t } = useTranslation();
@@ -194,6 +200,7 @@ export function CoreModelEditor({
     : {
         preventMultiple: !allowMultiple,
         forkMode: forkMode,
+        autosave: autosave,
       };
 
   const _components: Partial<EditorRenderingConfig> = isPreparing
@@ -246,6 +253,7 @@ export function CoreModelEditor({
         features={features}
         revision={isSegmentation ? undefined : revision}
         captureModel={captureModel}
+        visualConfig={visualConfig}
         slotConfig={{
           editor: {
             allowEditing: !preventFurtherSubmission,

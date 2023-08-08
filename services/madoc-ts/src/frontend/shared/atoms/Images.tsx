@@ -8,7 +8,6 @@ export const CroppedImage = styled.div<{
 }>`
   background: #000;
   padding: 2px;
-
   aspect-ratio: ${props => (props.$rect ? '1.618' : '1')};
   display: flex;
   justify-content: center;
@@ -53,20 +52,5 @@ export const CroppedImage = styled.div<{
           transform: scale(1.2);
         }
       `}
-  }
-`;
-
-export const CoveredImage = styled.div`
-  overflow: hidden;
-  margin: 0.5em;
-  border-radius: 5px;
-
-  img {
-    object-fit: cover;
-    object-position: 50% 50%;
-    display: block;
-
-    height: 130px;
-    width: 100%;
   }
 `;

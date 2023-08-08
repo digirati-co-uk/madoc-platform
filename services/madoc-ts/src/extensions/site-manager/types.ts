@@ -1,4 +1,5 @@
 import { InternationalString } from '@iiif/presentation-3';
+import { BaseTask } from '../../gateway/tasks/base-task';
 
 export type Site = {
   id: number;
@@ -10,6 +11,7 @@ export type Site = {
   modified?: Date;
   owner?: { id: number; name?: string };
   config: SiteSystemConfig;
+  latestTerms?: string;
 };
 
 export type SiteSystemConfig = {
@@ -18,12 +20,20 @@ export type SiteSystemConfig = {
   emailActivation: boolean;
   enableNotifications: boolean;
   autoPublishImport: boolean;
+  loginHeader?: string;
+  loginFooter?: string;
+  registerHeader?: string;
+  registerFooter?: string;
 };
 
+// Note: these can never be optional - breaks the setting.
+// There is a default in site-user-repository.ts that has to be updated.
 export type SystemConfig = {
   installationTitle: string;
   defaultSite: string | null;
   autoPublishImport: boolean | null;
+  builtInUserProfile: Record<string, boolean>;
+  userProfileModel: string;
 } & SiteSystemConfig;
 
 export type CreateSiteRequest = {
@@ -72,6 +82,7 @@ export type UserRowWithoutPassword = {
   role: string;
   site_role?: string;
   is_active: boolean;
+  terms_accepted?: string[];
   created_by?: number | null;
   automated: boolean;
   config?: any | null;
@@ -121,6 +132,7 @@ export type UserCreationRequest = {
 export type SiteUser = {
   id: number;
   name: string;
+  terms_accepted?: string[];
   /**
    * This is always the global role, never the site role.
    */
@@ -137,6 +149,52 @@ export type SiteUser = {
 
 export type CurrentUserWithScope = SiteUser & {
   scope: string[];
+  preferences: UserPreferences;
+  information: UserInformation;
+  terms?: {
+    hasTerms: boolean;
+    hasAccepted: boolean;
+  };
+};
+
+export type PublicUserProfile = {
+  user: {
+    id: number;
+    name: string;
+    email?: string;
+    automated?: boolean;
+    site_role?: string;
+    config?: UserConfig | null;
+  };
+  infoLabels: Record<string, string>;
+  info: Record<'email' | 'contributions' | 'contributionStatistics' | 'awards', string> & Record<string, any>;
+  statistics?: Record<
+    'crowdsourcing' | 'reviews',
+    {
+      statuses: Record<number, number>;
+      total: number;
+    }
+  >;
+  recentTasks?: BaseTask[];
+};
+
+export type UserPreferences = {
+  visibility?: Record<
+    'email' | 'contributions' | 'contributionStatistics' | 'awards' | 'gravitar' | string,
+    'public' | 'staff' | 'only-me'
+  >;
+};
+export type UserInformation = Record<string, any>;
+
+export type UserInformationRequest = {
+  fields: Record<
+    string,
+    {
+      value: any;
+      visibility: 'public' | 'staff' | 'only-me';
+    }
+  >;
+  extraVisibility: Record<string, 'public' | 'staff' | 'only-me'>;
 };
 
 export type UpdateUser = {

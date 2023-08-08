@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { BreadcrumbDivider, BreadcrumbList, BreadcrumbItem as SiteBreadcrumbItem } from '../components/Breadcrumbs';
+import { BreadcrumbDivider, BreadcrumbList, BreadcrumbItem as SiteBreadcrumbItem } from '../../site/blocks/Breadcrumbs';
 import { useSite } from '../hooks/use-site';
 
 export type BreadcrumbItem = {

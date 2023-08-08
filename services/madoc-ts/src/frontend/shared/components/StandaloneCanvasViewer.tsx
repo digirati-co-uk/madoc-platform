@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { CanvasFull } from '../../../types/canvas-full';
 import { useViewerHeight } from '../../site/hooks/use-viewer-height';
 import { apiHooks } from '../hooks/use-api-query';
-import { SimpleAtlasViewer } from './SimpleAtlasViewer';
+import { SimpleAtlasViewer } from '../features/SimpleAtlasViewer';
 
 export const CanvasViewer: React.FC<{ canvas: CanvasFull['canvas'] }> = ({ canvas }) => {
   const [canvasRef, setCanvasRef] = useState<CanvasNormalized>();

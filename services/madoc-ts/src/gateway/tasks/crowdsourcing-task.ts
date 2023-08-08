@@ -373,6 +373,15 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
             },
             user: user.id,
           });
+
+          const projects = await api.getProjects(0, { root_task_id: task.root_task });
+          if (projects.projects.length) {
+            const project = projects.projects[0] ? await api.getProject(projects.projects[0].id) : undefined;
+            if (project) {
+              // Add user to project
+              await api.addProjectMember(project.id, user.id);
+            }
+          }
         }
       }
 

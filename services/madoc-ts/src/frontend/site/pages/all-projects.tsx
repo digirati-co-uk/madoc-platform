@@ -2,9 +2,9 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Heading1 } from '../../shared/typography/Heading1';
 import { Slot } from '../../shared/page-blocks/slot';
-import { AllProjectsPaginatedItems } from '../features/AllProjectsPaginatedItems';
-import { AllProjectsPagination } from '../features/AllProjectsPagination';
-import { StaticPage } from '../features/StaticPage';
+import { AllProjectsPaginatedItems } from '../blocks/AllProjectsPaginatedItems';
+import { AllProjectsPagination } from '../blocks/AllProjectsPagination';
+import { StaticPage } from '../features/viewPage/StaticPage';
 
 export const AllProjects: React.FC = () => {
   const { t } = useTranslation();

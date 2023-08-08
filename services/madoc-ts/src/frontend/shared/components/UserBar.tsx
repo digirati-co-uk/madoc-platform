@@ -2,7 +2,7 @@ import { stringify } from 'query-string';
 import React, { useEffect, useMemo } from 'react';
 import useDropdownMenu from 'react-accessible-dropdown-menu-hook';
 import { useTranslation } from 'react-i18next';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { siteRoles } from '../../config';
 import { useSiteConfiguration } from '../../site/features/SiteConfigurationContext';
@@ -14,10 +14,11 @@ import {
 } from '../navigation/GlobalHeader';
 import { LanguageSwitcher } from '../navigation/LanguageSwitcher';
 import { useLocationQuery } from '../hooks/use-location-query';
-import { useSite, useSystemConfig } from '../hooks/use-site';
+import { useSite, useSystemConfig, useUser } from '../hooks/use-site';
 import { ArrowDownIcon } from '../icons/ArrowDownIcon';
 import { HrefLink } from '../utility/href-link';
 import { NotificationCenter } from './NotificationCenter';
+import { TermsPopup } from './TermsPopup';
 
 const UserBarContainer = styled.div`
   height: 36px;
@@ -118,11 +119,12 @@ export const ViewRole: React.FC<{ role: string; site_role?: string }> = ({ role,
 export const UserBar: React.FC<{
   user?: { name: string; id: number; scope: string[]; role: string; site_role?: string };
   admin?: boolean;
-}> = ({ user, admin }) => {
+}> = ({ admin }) => {
   const { t } = useTranslation();
   const location = useLocation();
   const systemConfig = useSystemConfig();
   const redirect = useLoginRedirect(admin);
+  const user = useUser();
   const showAdmin = user && user.scope.indexOf('site.admin') !== -1;
   const { buttonProps, itemProps, isOpen, setIsOpen } = useDropdownMenu(showAdmin ? 5 : 4);
   const { editMode, setEditMode } = useSiteConfiguration();
@@ -135,6 +137,8 @@ export const UserBar: React.FC<{
 
   return (
     <>
+      <TermsPopup />
+
       <UserBarContainer>
         <UserBarInstallation>{systemConfig.installationTitle}</UserBarInstallation>
         {admin ? (
@@ -144,6 +148,8 @@ export const UserBar: React.FC<{
             {site.title}
           </UserBarSiteButton>
         )}
+        <UserBarExpander />
+
         <UserBarExpander />
 
         {user ? <NotificationCenter isAdmin={admin} /> : null}
