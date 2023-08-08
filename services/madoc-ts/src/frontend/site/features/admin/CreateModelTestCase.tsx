@@ -159,7 +159,7 @@ export function CreateModelTestCase(props: { captureModel?: CaptureModel }) {
       <CanvasViewerButton {...buttonProps}>
         <BugIcon />
       </CanvasViewerButton>
-      <ItemFilterPopupContainer $visible={isOpen} role="menu" style={{ padding: '1em' }}>
+      <ItemFilterPopupContainer $alignLeft $visible={isOpen} role="menu" style={{ padding: '1em' }}>
         <ButtonRow>
           <Button $primary as="a" target="_blank" href={createGithubIssue(name, props.captureModel, options)}>
             Open github issue

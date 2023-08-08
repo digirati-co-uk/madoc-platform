@@ -22,6 +22,14 @@ export const CanvasViewerGridSidebar = styled.div<{ $vertical?: boolean }>`
   max-height: 100%;
   display: flex;
   flex-direction: column;
+
+  &[data-width='narrow'] {
+    width: 300px;
+  }
+
+  &[data-width='wide'] {
+    width: 600px;
+  }
 `;
 
 export const CanvasViewerContentOverlay = styled.div`
@@ -39,6 +47,11 @@ export const CanvasViewerControls = styled(ButtonRow)`
   right: 1em;
   top: 0;
   z-index: 10;
+
+  &[data-position='left'] {
+    left: 1em;
+    right: auto;
+  }
 `;
 
 export const CanvasViewerButton = styled(Button)`

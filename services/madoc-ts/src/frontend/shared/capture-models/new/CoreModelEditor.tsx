@@ -28,11 +28,13 @@ import { ReadOnlyAnnotation } from '../../hooks/use-read-only-annotations';
 import { HomeIcon } from '../../icons/HomeIcon';
 import { MinusIcon } from '../../icons/MinusIcon';
 import { PlusIcon } from '../../icons/PlusIcon';
+import { ResizeIcon } from '../../icons/ResizeIcon';
 import { RotateIcon } from '../../icons/RotateIcon';
 import { TickIcon } from '../../icons/TickIcon';
 import { EmptyState } from '../../layout/EmptyState';
-import { Button, ButtonIcon } from '../../navigation/Button';
+import { Button, ButtonIcon, SmallButton } from '../../navigation/Button';
 import { BrowserComponent } from '../../utility/browser-component';
+import { Annotorious } from '../../viewers/Annotorious.lazy';
 import { CaptureModel } from '../types/capture-model';
 import { RevisionRequest } from '../types/revision-request';
 import { BackToChoicesButton } from './components/BackToChoicesButton';
@@ -101,8 +103,13 @@ export interface CoreModelEditorProps {
   canvasViewerPins?: CanvasViewerProps['pins'];
 
   showBugReport?: boolean;
+
   children?: React.ReactNode;
+
+  size?: 'narrow' | 'wide';
 }
+
+const resizeOptions = ['narrow', undefined, 'wide'];
 export function CoreModelEditor({
   revision,
   captureModel,
@@ -133,6 +140,7 @@ export function CoreModelEditor({
   showBugReport,
   children,
 }: CoreModelEditorProps) {
+  const [size, setSize] = useState<undefined | 'narrow' | 'wide'>();
   const { t } = useTranslation();
   const runtime = useRef<Runtime>();
   const osd = useRef<any>();
@@ -142,6 +150,10 @@ export function CoreModelEditor({
   const [postSubmissionMessage, setPostSubmissionMessage] = useState(false);
   const [invalidateKey, invalidate] = useReducer(i => i + 1, 0);
   const [isOSD, setIsOSD] = useState(false);
+
+  const resize = () => {
+    setSize(resizeOptions[(resizeOptions.indexOf(size) + 1) % resizeOptions.length] as any);
+  };
 
   const onPanInSketchMode = useCallback(() => {
     setShowPanWarning(true);
@@ -212,7 +224,13 @@ export function CoreModelEditor({
         SubmitButton: SubmitWithoutPreview,
       }
     : {};
-  const components = { ..._components, ...(customComponents || {}) };
+  const components = {
+    ..._components,
+    ...(customComponents || {}),
+
+    // This is one integration point.
+    // TopLevelEditor: ({ children }) => <div>Top level?</div>,
+  };
 
   const profileConfig: { [key: string]: Partial<EditorRenderingConfig> } = {
     [PARAGRAPHS_PROFILE]: slotConfig,
@@ -294,23 +312,30 @@ export function CoreModelEditor({
               )}
 
               {hideViewerControls ? null : (
-                <CanvasViewerControls>
-                  {showBugReport ? <CreateModelTestCase captureModel={captureModel} /> : null}
-                  {enableRotation ? (
-                    <CanvasViewerButton onClick={rotate}>
-                      <RotateIcon title={t('atlas__rotate', { defaultValue: 'Rotate' })} />
+                <>
+                  <CanvasViewerControls data-position="left">
+                    {showBugReport ? <CreateModelTestCase captureModel={captureModel} /> : null}
+                    <CanvasViewerButton onClick={resize}>
+                      <ResizeIcon title={t('atlas__resize', { defaultValue: 'Resize' })} />
                     </CanvasViewerButton>
-                  ) : null}
-                  <CanvasViewerButton onClick={goHome}>
-                    <HomeIcon title={t('atlas__zoom_home', { defaultValue: 'Home' })} />
-                  </CanvasViewerButton>
-                  <CanvasViewerButton onClick={zoomOut}>
-                    <MinusIcon title={t('atlas__zoom_out', { defaultValue: 'Zoom out' })} />
-                  </CanvasViewerButton>
-                  <CanvasViewerButton onClick={zoomIn}>
-                    <PlusIcon title={t('atlas__zoom_in', { defaultValue: 'Zoom in' })} />
-                  </CanvasViewerButton>
-                </CanvasViewerControls>
+                  </CanvasViewerControls>
+                  <CanvasViewerControls>
+                    {enableRotation ? (
+                      <CanvasViewerButton onClick={rotate}>
+                        <RotateIcon title={t('atlas__rotate', { defaultValue: 'Rotate' })} />
+                      </CanvasViewerButton>
+                    ) : null}
+                    <CanvasViewerButton onClick={goHome}>
+                      <HomeIcon title={t('atlas__zoom_home', { defaultValue: 'Home' })} />
+                    </CanvasViewerButton>
+                    <CanvasViewerButton onClick={zoomOut}>
+                      <MinusIcon title={t('atlas__zoom_out', { defaultValue: 'Zoom out' })} />
+                    </CanvasViewerButton>
+                    <CanvasViewerButton onClick={zoomIn}>
+                      <PlusIcon title={t('atlas__zoom_in', { defaultValue: 'Zoom in' })} />
+                    </CanvasViewerButton>
+                  </CanvasViewerControls>
+                </>
               )}
 
               <CanvasViewerContentOverlay>
@@ -318,7 +343,7 @@ export function CoreModelEditor({
               </CanvasViewerContentOverlay>
             </CanvasViewerGridContent>
 
-            <CanvasViewerGridSidebar $vertical={isVertical}>
+            <CanvasViewerGridSidebar $vertical={isVertical} data-width={size}>
               {postSubmissionMessage ? (
                 <div>
                   <EditorSlots.PostSubmission stacked messageOnly onContinue={() => setPostSubmissionMessage(false)} />
