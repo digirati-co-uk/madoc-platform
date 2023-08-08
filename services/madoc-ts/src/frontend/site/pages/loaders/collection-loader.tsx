@@ -5,7 +5,7 @@ import { AutoSlotLoader } from '../../../shared/page-blocks/auto-slot-loader';
 import { createUniversalComponent } from '../../../shared/utility/create-universal-component';
 import { UniversalComponent } from '../../../types';
 import { usePaginatedData } from '../../../shared/hooks/use-data';
-import { BreadcrumbContext } from '../../../shared/components/Breadcrumbs';
+import { BreadcrumbContext } from '../../blocks/Breadcrumbs';
 import { CollectionFull } from '../../../../types/schemas/collection-full';
 import { ItemNotFound } from '../Item-not-found';
 

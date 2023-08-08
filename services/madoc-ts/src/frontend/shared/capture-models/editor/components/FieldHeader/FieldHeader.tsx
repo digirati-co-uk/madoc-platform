@@ -1,9 +1,11 @@
 import React, { useCallback, useState } from 'react';
+import { Tooltip } from 'react-tooltip';
 import styled, { css } from 'styled-components';
 import { ModelTranslation } from '../../../utility/model-translation';
 import { Tag } from '../../atoms/Tag';
 import { useTranslation } from 'react-i18next';
 import { useSelectorHelper } from '../../stores/selectors/selector-helper';
+import { useCaptureModelVisualSettings } from '../CaptureModelVisualSettings/CaptureModelVisualSettings';
 
 type FieldHeaderProps = {
   labelFor?: string;
@@ -49,6 +51,31 @@ export const FieldHeaderTitle = styled.label`
   .ui.tiny.label {
     margin-left: 0.5em;
   }
+`;
+
+export const FieldHelp = styled.div`
+  display: inline-block;
+
+  border-radius: 50%;
+  width: 1.2em;
+  height: 1.2em;
+  line-height: 1.2em;
+  font-size: 0.9em;
+  margin-bottom: 0.2em;
+  text-align: center;
+  background: #eee;
+  color: #555;
+  margin-left: 0.5em;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+  &:hover {
+    background: #aaa7de;
+    color: #fff;
+  }
+`;
+
+export const FieldHelpInner = styled.div`
+  white-space: pre-wrap;
 `;
 
 const FieldHeaderSubtitle = styled.label`
@@ -127,6 +154,7 @@ export const FieldHeader: React.FC<FieldHeaderProps> = ({
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const helper = useSelectorHelper();
+  const settings = useCaptureModelVisualSettings();
   const isSelectorRequired = selectorComponent && selectorComponent.props?.required;
   const isSelectorValue = selectorComponent && selectorComponent.props.state;
   const isSelectorInvalid = isSelectorRequired && !isSelectorValue;
@@ -157,11 +185,22 @@ export const FieldHeader: React.FC<FieldHeaderProps> = ({
             )}{' '}
             {showTerm && term ? <Tag size="tiny">{term}</Tag> : null}
             {required ? <span>*</span> : null}
+            {description && settings.descriptionTooltip ? <FieldHelp data-tooltip-id={labelFor}>?</FieldHelp> : null}
           </FieldHeaderTitle>
           {description ? (
-            <FieldHeaderSubtitle htmlFor={labelFor}>
-              <ModelTranslation>{description}</ModelTranslation>
-            </FieldHeaderSubtitle>
+            settings.descriptionTooltip ? (
+              <Tooltip id={labelFor}>
+                <FieldHelpInner>
+                  <ModelTranslation>{description}</ModelTranslation>
+                </FieldHelpInner>
+              </Tooltip>
+            ) : (
+              <FieldHeaderSubtitle htmlFor={labelFor}>
+                <FieldHelpInner>
+                  <ModelTranslation>{description}</ModelTranslation>
+                </FieldHelpInner>
+              </FieldHeaderSubtitle>
+            )
           ) : null}
         </FieldHeaderLeft>
         {selectorComponent ? (

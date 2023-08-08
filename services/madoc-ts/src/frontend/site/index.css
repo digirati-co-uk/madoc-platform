@@ -1,0 +1,41 @@
+@tailwind base;
+
+@layer base {
+    :root {
+        --color-primary: 74 103 228;
+    }
+
+    h1 {
+        @apply text-3xl;
+    }
+    h2 {
+        @apply text-xl my-5;
+    }
+    h3 {
+        @apply text-lg my-3;
+    }
+    a {
+        @apply text-gray-700 underline;
+    }
+}
+
+@tailwind components;
+
+@layer components {
+    .grid-t-sm {
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    }
+    .grid-t-md {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+    .grid-t-lg {
+        grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+    }
+
+}
+
+@tailwind utilities;
+
+
+
+

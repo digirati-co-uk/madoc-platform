@@ -14,6 +14,7 @@ type Props = {
   enableExternalImages?: boolean;
   enableLinks?: boolean;
   placeholder?: string;
+  inline?: boolean;
   optionsAsText: string;
   clearable: boolean;
 };
@@ -49,6 +50,12 @@ const DropdownFieldEditor: React.FC<Props> = props => {
         <StyledFormLabel>
           <Field as={StyledCheckbox} type="checkbox" name="clearable" defaultValue={props.clearable} required={false} />
           Allow clearing of selection
+        </StyledFormLabel>
+      </StyledFormField>
+      <StyledFormField>
+        <StyledFormLabel>
+          <Field as={StyledCheckbox} type="checkbox" name="inline" defaultValue={props.inline} required={false} />
+          Use inline variant
         </StyledFormLabel>
       </StyledFormField>
     </>

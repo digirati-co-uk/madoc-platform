@@ -2,6 +2,10 @@ import styled, { css } from 'styled-components';
 
 export const ContextualPositionWrapper = styled.div`
   position: relative;
+
+  svg {
+    display: inline-block;
+  }
 `;
 
 export const ContextualLabel = styled.button`
@@ -9,6 +13,10 @@ export const ContextualLabel = styled.button`
   border-radius: 3px;
   padding: 0.3em 0.8em;
   border: 2px solid #eee;
+  font-size: 0.875em;
+  display: flex;
+  align-items: center;
+  gap: 0.25em;
 
   &:hover {
     background: #ccc;

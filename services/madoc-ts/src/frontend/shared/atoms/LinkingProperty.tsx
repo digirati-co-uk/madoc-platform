@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useMutation } from 'react-query';
 import styled from 'styled-components';
 import { ResourceLinkResponse } from '../../../types/schemas/linking';
-import { LinkingPropertyEditor } from '../components/LinkingPropertyEditor';
+import { LinkingPropertyEditor } from '../features/LinkingPropertyEditor';
 import { useApi } from '../hooks/use-api';
 import { createLink } from '../utility/create-link';
 import { Link } from 'react-router-dom';

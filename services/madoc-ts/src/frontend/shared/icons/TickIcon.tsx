@@ -32,6 +32,7 @@ export const WhiteTickIcon = (props: any) => (
       <polygon
         fillRule="nonzero"
         points="7.5 13.5 4 10 2.83333333 11.1666667 7.5 15.8333333 17.5 5.83333333 16.3333333 4.66666667"
+        fill="currentColor"
       />
     </g>
   </svg>

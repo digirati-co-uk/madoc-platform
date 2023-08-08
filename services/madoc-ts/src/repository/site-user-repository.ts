@@ -1,5 +1,6 @@
 import cache from 'memory-cache';
 import { DatabasePoolConnectionType, DatabaseTransactionConnectionType, NotFoundError, sql } from 'slonik';
+import { v4 } from 'uuid';
 import {
   CreateSiteRequest,
   CurrentUserWithScope,
@@ -9,20 +10,25 @@ import {
   SitePermissionRow,
   SiteRow,
   SiteUser,
+  SystemConfig,
   UpdateInvitation,
   UpdateSiteRequest,
   UpdateUser,
   User,
   UserCreationRequest,
+  UserInformation,
+  UserInformationRequest,
   UserInvitation,
   UserInvitationsRequest,
   UserInvitationsRow,
+  UserPreferences,
   UserRow,
   UserRowWithoutPassword,
   UserSite,
-  SystemConfig,
 } from '../extensions/site-manager/types';
+import { AwardBadgeRequest, Badge, BadgeAward, BadgeAwardRow, BadgeRow, CreateBadgeRequest } from '../types/badges';
 import { ExternalConfig } from '../types/external-config';
+import { SiteTerms, SiteTermsRow } from '../types/site-terms';
 import { NotFound } from '../utility/errors/not-found';
 import { SiteNotFound } from '../utility/errors/site-not-found';
 import { parseJWT } from '../utility/parse-jwt';
@@ -118,7 +124,7 @@ export class SiteUserRepository extends BaseRepository {
     `,
 
     getSiteUserById: (id: number, siteId: number) => sql<SiteUser>`
-        select id, name, "user".role, sp.role as site_role
+        select id, name, "user".role, sp.role as site_role, "user".terms_accepted
         from "user"
                  left outer join site_permission sp on "user".id = sp.user_id and sp.site_id = ${siteId}
         where id = ${id}
@@ -182,7 +188,7 @@ export class SiteUserRepository extends BaseRepository {
     `,
 
     getActiveUserById: (userId: number) => sql<UserRowWithoutPassword>`
-      select id, name, lower(email) as email, role, is_active, created, modified, automated, config 
+      select id, name, lower(email) as email, role, is_active, created, modified, automated, config, terms_accepted
       from "user" 
       where is_active = true and id = ${userId}
     `,
@@ -255,6 +261,88 @@ export class SiteUserRepository extends BaseRepository {
     `,
 
     getSystemConfig: () => sql<{ key: string; value: { value: any } }>`select * from system_config`,
+
+    getProtectedUserDetails: (userId: number) => sql<{ user_info: any; user_preferences: any }>`
+      select u.user_info, u.user_preferences from "user" u where u.id = ${userId}
+    `,
+
+    // ==============================
+    // Badges
+    // ==============================
+
+    getBadges: (siteId: number) => sql<BadgeRow>`
+      select * from badge where site_id = ${siteId} or site_id is null
+    `,
+
+    getBadge: (badgeId: string, siteId: number) => sql<BadgeRow>`
+      select * from badge where (site_id = ${siteId} or site_id is null) and id = ${badgeId}
+    `,
+
+    listBadgeAwards: (badgeId: string, siteId: number) => sql<BadgeAwardRow>`
+      select 
+          b.*,
+          ba.*, 
+          u.name as awarded_by_name,
+          u2.name as user_name,
+          b.id as id,
+          ba.id as badge_id
+      from badge_award ba 
+          left join "user" u on u.id = ba.awarded_by
+          left join badge b on b.id = ba.badge_id
+          left join "user" u2 on u2.id = ba.user_id
+      where ba.badge_id = ${badgeId} and ba.site_id = ${siteId}
+    `,
+
+    getAwardedBadge: (id: string, userId: number, siteId: number) => sql<BadgeAwardRow>`
+        select
+          b.*,
+          ba.*,
+          u.name as awarded_by_name,
+          u2.name as user_name,
+          b.id as id,
+          ba.id as badge_id
+      from badge_award ba
+               left join "user" u on u.id = ba.awarded_by
+               left join badge b on b.id = ba.badge_id
+               left join "user" u2 on u2.id = ba.user_id
+      where ba.id = ${id} and ba.site_id = ${siteId} and ba.user_id = ${userId}
+    `,
+
+    listUserBadgeAwards: (userId: number, siteId: number) => sql<BadgeAwardRow>`
+      select
+          b.*,
+          ba.*,
+          u.name as awarded_by_name,
+          u2.name as user_name,
+          b.id as id,
+          ba.id as badge_id
+      from badge_award ba
+               left join "user" u on u.id = ba.awarded_by
+               left join badge b on b.id = ba.badge_id
+               left join "user" u2 on u2.id = ba.user_id
+      where ba.user_id = ${userId} and ba.site_id = ${siteId}
+    `,
+
+    getTermsById: (id: string, siteId: number) => sql<SiteTermsRow>`
+      select * from site_terms where site_id = ${siteId} and id = ${id}
+    `,
+
+    getLatestTerms: (siteId: number) => sql<SiteTermsRow>`
+      select * from site_terms where site_id = ${siteId} order by created_at desc limit 1
+    `,
+
+    getLatestTermsId: (siteId: number) => sql<{ id: string; created_at: string }>`
+      select id, created_at from site_terms where site_id = ${siteId} order by created_at desc limit 1
+    `,
+
+    listTerms: (siteId: number, opt: { snippet: boolean }) =>
+      opt.snippet
+        ? sql<SiteTermsRow>`
+      select id, created_at from site_terms where site_id = ${siteId} order by created_at desc
+    `
+        : sql<SiteTermsRow>`
+      select * from site_terms where site_id = ${siteId} order by created_at desc
+    `,
   };
 
   static mutations = {
@@ -473,6 +561,83 @@ export class SiteUserRepository extends BaseRepository {
       on conflict (key) do update set
         value = ${sql.json({ value })}
     `,
+
+    setUserInfo: (userId: number, info: any) => sql`
+      update "user" set user_info = ${sql.json(info)} where id = ${userId}
+    `,
+
+    setUserPreferences: (userId: number, preferences: any) => sql`
+      update "user" set user_preferences = ${sql.json(preferences)} where id = ${userId}
+    `,
+
+    // ==============================
+    // Badges
+    // ==============================
+    createBadge: (req: CreateBadgeRequest, siteId: number | null) => sql<BadgeRow>`
+      insert into badge (id, site_id, label, description, svg_code, tier_colors, trigger_name, created_at, updated_at) values (
+        ${v4()},
+        ${siteId || null},
+        ${sql.json(req.label)},
+        ${req.description ? sql.json(req.description) : null},
+        ${req.svg},
+        ${sql.array(req.tier_colors || [], `text`)},
+        ${req.trigger_name || ''},
+        CURRENT_TIMESTAMP,
+        CURRENT_TIMESTAMP
+      ) returning *
+    `,
+
+    updateBadge: (badgeId: string, req: CreateBadgeRequest, siteId: number) => sql<BadgeRow>`
+      update badge set
+        label = ${sql.json(req.label)},
+        description = ${req.description ? sql.json(req.description) : null},
+        svg_code = ${req.svg},
+        tier_colors = ${req.tier_colors || []},
+        trigger_name = ${req.trigger_name || ''},
+        updated_at = CURRENT_TIMESTAMP
+      where id = ${badgeId} and (site_id = ${siteId} or site_id is null)
+    `,
+
+    deleteBadge: (badgeId: string, siteId: number) => sql`
+      delete from badge where id = ${badgeId} and (site_id = ${siteId} or site_id is null)
+    `,
+
+    awardBadge: (award: AwardBadgeRequest, userId: number, siteId: number) => sql<{ id: string }>`
+      insert into badge_award (id, site_id, user_id, project_id, badge_id, awarded_by, reason, tier) values 
+      (
+        ${v4()},
+        ${siteId},
+        ${award.user_id},
+        ${award.project_id || null},
+        ${award.badge_id},
+        ${userId},
+        ${award.reason || ''},
+        ${award.tier || 0}
+      ) returning id, user_id
+    `,
+
+    removeAwardedBadge: (awardId: string, userId: number, siteId: number) => sql`
+      delete from badge_award where id = ${awardId} and site_id = ${siteId} and user_id = ${userId}
+    `,
+
+    createTerms: (req: { text: string; markdown: string }, siteId: number) => sql<SiteTermsRow>`
+      insert into site_terms (id, site_id, created_at, terms_markdown, terms_text) values
+        (
+          ${v4()},
+          ${siteId},
+          CURRENT_TIMESTAMP,
+          ${req.markdown},
+          ${req.text}
+        ) returning *
+    `,
+
+    deleteTerms: (id: string, siteId: number) => sql`
+      delete from site_terms where id = ${id} and site_id = ${siteId}
+    `,
+
+    acceptTerms: (userId: number, termsId: string) => sql`
+      update "user" set terms_accepted = array_append(terms_accepted, ${termsId}) where id = ${userId}
+    `,
   };
 
   static mapUser(row: UserRowWithoutPassword | UserRow): User {
@@ -542,6 +707,56 @@ export class SiteUserRepository extends BaseRepository {
     return reduced[invitations[0].id];
   }
 
+  static mapBadge(row: BadgeRow): Badge {
+    return {
+      id: row.id,
+      label: row.label,
+      description: row.description,
+      svg: row.svg_code || '', // default?
+      tier_colors: row.tier_colors,
+      trigger_name: row.trigger_name,
+      created_at: new Date(row.created_at),
+      updated_at: new Date(row.updated_at),
+    };
+  }
+
+  static mapBadgeAward(row: BadgeAwardRow): BadgeAward {
+    return {
+      id: row.id,
+      user: {
+        id: row.user_id,
+        name: row.user_name || '',
+      },
+      awarded_by: row.awarded_by
+        ? {
+            id: row.awarded_by,
+            name: row.awarded_by_name || '',
+          }
+        : undefined,
+      badge: SiteUserRepository.mapBadge({
+        ...row,
+        id: row.badge_id,
+      }),
+      reason: row.reason,
+      tier: row.tier,
+      awarded_at: new Date(row.awarded_at),
+    };
+  }
+
+  static mapTerms(row: SiteTermsRow): SiteTerms {
+    return {
+      id: row.id,
+      createdAt: new Date(row.created_at),
+      terms:
+        row.terms_text || row.terms_markdown
+          ? {
+              text: row.terms_text || '',
+              markdown: row.terms_markdown || '',
+            }
+          : undefined,
+    };
+  }
+
   static reduceInvitations(
     state: { [id: string]: UserInvitation },
     row: UserInvitationsRow
@@ -590,6 +805,8 @@ export class SiteUserRepository extends BaseRepository {
       emailActivation: true,
       defaultSite: null,
       autoPublishImport: true,
+      builtInUserProfile: {},
+      userProfileModel: '',
     };
 
     const global = await this.connection.any(SiteUserRepository.query.getSystemConfig());
@@ -749,6 +966,10 @@ export class SiteUserRepository extends BaseRepository {
     }
     try {
       const site = await this.getSiteBySlug(slug);
+      const terms = await this.getLatestTermsId(site.id);
+      if (terms) {
+        site.latestTerms = terms.id;
+      }
 
       if (site.is_public) {
         cache.put(cacheKey, site, 60 * 60 * 1000); // 1-hour cache.
@@ -1028,12 +1249,15 @@ export class SiteUserRepository extends BaseRepository {
     await this.connection.query(SiteUserRepository.mutations.updateSite(siteId, req));
 
     try {
-      const site = await this.getSiteById(siteId);
-      const cacheKey = `public-site-id:${site.slug}`;
-      cache.put(cacheKey, site, 60 * 60 * 1000); // 1-hour cache.
+      await this.invalidateSiteCache(siteId);
     } catch (e) {
       //..
     }
+  }
+
+  async invalidateSiteCache(siteId: number) {
+    const slug = await this.connection.oneFirst(sql<{ slug: string }>`select slug from site where id = ${siteId}`);
+    cache.del(`public-site-id:${slug}`);
   }
 
   async updateInvitation(invitationId: string, siteId: number, req: UpdateInvitation) {
@@ -1089,6 +1313,25 @@ export class SiteUserRepository extends BaseRepository {
     return stats;
   }
 
+  async getProtectedUserDetails(
+    userId: number
+  ): Promise<{ preferences: UserPreferences; information: UserInformation }> {
+    const { user_info, user_preferences } = await this.connection.one(
+      SiteUserRepository.query.getProtectedUserDetails(userId)
+    );
+
+    return {
+      preferences: user_preferences || {},
+      information: user_info || {},
+    };
+  }
+
+  /**
+   * This is the useUser() hook (eventually)
+   *
+   * @param siteId
+   * @param jwt
+   */
   async getUserFromJwt(
     siteId: number,
     jwt?: { user?: { name: string; id?: number; service: boolean; serviceId?: string }; scope?: string[] }
@@ -1099,6 +1342,18 @@ export class SiteUserRepository extends BaseRepository {
 
     try {
       const user = await this.getSiteUserById(jwt.user.id, siteId);
+      const details = await this.getProtectedUserDetails(jwt.user.id);
+      // Here is the site terms.
+      const terms = await this.getLatestTermsId(siteId);
+
+      const termsStatus = {
+        hasTerms: !!terms,
+        hasAccepted: false,
+      };
+
+      if (terms && user.terms_accepted?.includes(terms.id)) {
+        termsStatus.hasAccepted = true;
+      }
 
       return {
         name: user.name,
@@ -1106,10 +1361,143 @@ export class SiteUserRepository extends BaseRepository {
         scope: jwt.scope,
         site_role: user.site_role,
         role: user.role,
+        preferences: details.preferences,
+        information: details.information,
+        terms_accepted: user.terms_accepted,
+        terms: termsStatus,
       };
     } catch (e) {
       return undefined;
     }
+  }
+
+  async updateUserPreferences(userId: number, request: Record<string, any>) {
+    const { user_preferences } = await this.connection.one(SiteUserRepository.query.getProtectedUserDetails(userId));
+
+    const newPreferences = {
+      ...(user_preferences || {}),
+      ...(request || {}),
+      visibility: {
+        ...((user_preferences && user_preferences.visibility) || {}),
+      },
+    };
+
+    await this.connection.query(SiteUserRepository.mutations.setUserPreferences(userId, newPreferences));
+  }
+
+  async updateUserInformation(userId: number, request: UserInformationRequest) {
+    const { user_info, user_preferences } = await this.connection.one(
+      SiteUserRepository.query.getProtectedUserDetails(userId)
+    );
+    const newInformation: UserInformation = {
+      ...(user_info || {}),
+    };
+    const newPreferences = {
+      ...(user_preferences || {}),
+      visibility: {
+        ...((user_preferences && user_preferences.visibility) || {}),
+      },
+    };
+
+    if (request.fields) {
+      const keys = Object.keys(request.fields);
+      for (const key of keys) {
+        const field = request.fields[key];
+        newPreferences.visibility[key] = field.visibility;
+        newInformation[key] = field.value;
+      }
+    }
+
+    if (request.extraVisibility) {
+      const keys = Object.keys(request.extraVisibility);
+      for (const key of keys) {
+        newPreferences.visibility[key] = request.extraVisibility[key];
+      }
+    }
+
+    await this.connection.query(SiteUserRepository.mutations.setUserPreferences(userId, newPreferences));
+    await this.connection.query(SiteUserRepository.mutations.setUserInfo(userId, newInformation));
+  }
+
+  async requestUserDetails(targetUser: number, userId: number | undefined, siteId: number, showPlaceholders = false) {
+    const userRequesting = userId ? await this.getSiteUserById(userId, siteId) : null;
+    const isStaff = userRequesting?.site_role === 'admin' || userRequesting?.role === 'global_admin';
+    // Disable reviewers for now. We could make this a config option.
+    /* || userRequesting?.site_role === 'reviewer'*/
+    const isSelf = targetUser === userId;
+
+    const protectedUserDetails = await this.getProtectedUserDetails(targetUser);
+
+    if (isSelf) {
+      return {
+        allowedDetails: protectedUserDetails.information,
+        preferences: protectedUserDetails.preferences,
+      };
+    }
+
+    const allowedDetails: Record<string, string> = {};
+    const allKeys = Object.keys(protectedUserDetails.information);
+    const visibilityPreferences = protectedUserDetails.preferences.visibility || {};
+    for (const key of allKeys) {
+      const visibility = visibilityPreferences[key];
+      if (visibility === 'public' || (visibility === 'staff' && isStaff)) {
+        allowedDetails[key] = protectedUserDetails.information[key];
+      } else {
+        if (showPlaceholders) {
+          allowedDetails[key] = '***';
+        }
+      }
+    }
+
+    return {
+      allowedDetails,
+      preferences: protectedUserDetails.preferences,
+    };
+  }
+
+  // badges
+
+  async createBadge(badge: CreateBadgeRequest, siteId: number | null) {
+    const created = await this.connection.one(SiteUserRepository.mutations.createBadge(badge, siteId));
+    return SiteUserRepository.mapBadge(created);
+  }
+
+  async updateBadge(badge: CreateBadgeRequest & { id: string }, siteId: number) {
+    const updated = await this.connection.one(SiteUserRepository.mutations.updateBadge(badge.id, badge, siteId));
+    return SiteUserRepository.mapBadge(updated);
+  }
+
+  async deleteBadge(badgeId: string, siteId: number) {
+    await this.connection.query(SiteUserRepository.mutations.deleteBadge(badgeId, siteId));
+  }
+
+  async getBadge(badgeId: string, siteId: number) {
+    const badge = await this.connection.one(SiteUserRepository.query.getBadge(badgeId, siteId));
+    return SiteUserRepository.mapBadge(badge);
+  }
+
+  async listBadges(siteId: number) {
+    const badges = await this.connection.any(SiteUserRepository.query.getBadges(siteId));
+    return badges.map(SiteUserRepository.mapBadge);
+  }
+
+  async listUserAwardedBadges(userId: number, siteId: number) {
+    const badges = await this.connection.any(SiteUserRepository.query.listUserBadgeAwards(userId, siteId));
+    return badges.map(SiteUserRepository.mapBadgeAward);
+  }
+
+  async getAwardedBadge(id: string, userId: number, siteId: number) {
+    const badge = await this.connection.one(SiteUserRepository.query.getAwardedBadge(id, userId, siteId));
+    return SiteUserRepository.mapBadgeAward(badge);
+  }
+
+  async awardBadge(request: AwardBadgeRequest, userId: number, siteId: number) {
+    const awarded = await this.connection.one(SiteUserRepository.mutations.awardBadge(request, userId, siteId));
+    return this.getAwardedBadge(awarded.id, userId, siteId);
+  }
+
+  async removeAwardedBadge(id: string, userId: number, siteId: number) {
+    await this.connection.query(SiteUserRepository.mutations.removeAwardedBadge(id, userId, siteId));
   }
 
   async refreshExpiredToken(token: string, refreshWindow: number) {
@@ -1127,7 +1515,7 @@ export class SiteUserRepository extends BaseRepository {
 
     const exp = payload.exp * 1000;
     const time = new Date().getTime();
-    const allowedTime = time - refreshWindow * 1000;
+    const allowedTime = time + refreshWindow * 1000;
     const canRefresh = exp - allowedTime > 0;
     const hasExpired = exp - time < 0;
 
@@ -1145,5 +1533,45 @@ export class SiteUserRepository extends BaseRepository {
       siteId: userDetails.site.id,
       details: await this.getUserAndSites(userDetails.user.id),
     } as const;
+  }
+
+  async getTermsById(id: string, siteId: number) {
+    const terms = await this.connection.one(SiteUserRepository.query.getTermsById(id, siteId));
+    return SiteUserRepository.mapTerms(terms);
+  }
+
+  async getLatestTerms(siteId: number) {
+    const terms = await this.connection.maybeOne(SiteUserRepository.query.getLatestTerms(siteId));
+    return terms ? SiteUserRepository.mapTerms(terms) : null;
+  }
+
+  async getLatestTermsId(siteId: number) {
+    const terms = await this.connection.maybeOne(SiteUserRepository.query.getLatestTermsId(siteId));
+    return terms ? terms : null;
+  }
+
+  async listTerms(siteId: number, options: { snippet: boolean } = { snippet: false }) {
+    const terms = await this.connection.any(SiteUserRepository.query.listTerms(siteId, options));
+    return terms.map(SiteUserRepository.mapTerms);
+  }
+
+  async createTerms(terms: { markdown: string; text: string }, siteId: number) {
+    const created = await this.connection.one(SiteUserRepository.mutations.createTerms(terms, siteId));
+    await this.invalidateSiteCache(siteId);
+    return SiteUserRepository.mapTerms(created);
+  }
+
+  async deleteTerms(id: string, siteId: number) {
+    await this.connection.query(SiteUserRepository.mutations.deleteTerms(id, siteId));
+    await this.invalidateSiteCache(siteId);
+  }
+
+  async acceptTerms(userId: number, termsId: string) {
+    const alreadyAccepted = await this.connection.maybeOne(
+      sql`SELECT id, terms_accepted FROM "user" where id = ${userId} and ${termsId}::uuid = ANY(terms_accepted)`
+    );
+    if (!alreadyAccepted) {
+      await this.connection.query(SiteUserRepository.mutations.acceptTerms(userId, termsId));
+    }
   }
 }

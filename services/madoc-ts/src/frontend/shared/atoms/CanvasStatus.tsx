@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components';
 import React from 'react';
-import ReactTooltip from 'react-tooltip';
+import { Tooltip as ReactTooltip } from 'react-tooltip';
 import { useTranslation } from 'react-i18next';
 import { useApi } from '../hooks/use-api';
 import { useUser } from '../hooks/use-site';
@@ -59,10 +59,10 @@ export const CanvasStatus: React.FC<{ status: number; floating?: boolean }> = ({
   return (
     <>
       <CanvasStatusBackground $floating={floating}>
-        <CanvasStatusItem data-tip={tooltip} $status={status} />
+        <CanvasStatusItem $status={status} data-tooltip-id={`status-${status}`} data-tooltip-content={tooltip} />
       </CanvasStatusBackground>
       {api.getIsServer() || !user || user.site_role === 'viewer' || user.site_role === 'editor' ? null : (
-        <ReactTooltip place="bottom" type="dark" effect="solid" />
+        <ReactTooltip place="bottom" variant="dark" id={`status-${status}`} />
       )}
     </>
   );

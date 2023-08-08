@@ -1,7 +1,26 @@
 import { getAuthRoutes } from './auth';
+import {
+  awardBadge,
+  createBadge,
+  deleteBadge,
+  getAwardedBadge,
+  getBadge,
+  listBadges,
+  listUserAwardedBadges,
+  removeAwardedBadge,
+  updateBadge,
+} from './routes/admin/badges';
 import { deleteApiKey } from './routes/admin/delete-api-key';
 import { keyRegenerate } from './routes/admin/key-regenerate';
 import { listApiKeys } from './routes/admin/list-api-keys';
+import {
+  createTermConfiguration,
+  deleteTermConfiguration,
+  getTermConfiguration,
+  listTermConfigurations,
+  updateTermConfiguration,
+} from './routes/admin/term-configurations';
+import { acceptTerms, createTerms, deleteTerms, getLatestTerms, getTermsById, listTerms } from './routes/admin/terms';
 import { getProjectAnnotationStyle } from './routes/annotation-styles/get-project-annotation-style';
 import { annotationStyles } from './routes/annotation-styles/index';
 import { searchAllUsers } from './routes/global/search-all-users';
@@ -10,9 +29,28 @@ import { updateCanvasDetails } from './routes/iiif/canvases/update-canvas-detail
 import { updateManifestDetails } from './routes/iiif/manifests/update-manifest-details';
 import { getAutomatedUsers } from './routes/manage-site/get-automated-users';
 import { createProjectExport } from './routes/projects/create-project-export';
+import { getProjectFromTask } from './routes/projects/get-project-from-task';
 import { getProjectRawData } from './routes/projects/get-project-raw-data';
+import { listProjectEmails } from "./routes/projects/list-project-emails";
 import { listProjectModelEntityAutocomplete } from './routes/projects/list-project-model-entity-autocomplete';
+import { addProjectFeedback, listProjectFeedback, removeProjectFeedback } from './routes/projects/project-feedback';
+import {
+  addProjectMember,
+  listProjectMembers,
+  migrateProjectMembers,
+  removeProjectMember,
+  updateUsersProjectRole,
+} from './routes/projects/project-members';
+import {
+  createProjectUpdate,
+  deleteProjectUpdate,
+  listProjectUpdates,
+  updateProjectUpdate,
+} from './routes/projects/project-updates';
+import { svgFromCrowdsourcingTask } from './routes/projects/svg-from-crowdsourcing-task';
 import { updateProjectAnnotationStyle } from './routes/projects/update-project-annotation-style';
+import { updateProjectBanner } from "./routes/projects/update-project-banner";
+import { updateProjectDuration } from './routes/projects/update-project-duration';
 import { siteRoot } from './routes/root';
 import {
   assignUserToDelegatedRequest,
@@ -126,8 +164,17 @@ import { updateProjectStatus } from './routes/projects/update-project-status';
 import { siteManifestTasks } from './routes/site/site-manifest-tasks';
 import { getStaticPage, sitePages } from './routes/site/site-pages';
 import { listProjectsAutocomplete } from './routes/projects/list-projects-autocomplete';
+import { siteProjectMembers } from "./routes/site/site-project-members";
+import { siteProjectRecent } from './routes/site/site-project-recent';
+import { siteProjectUpdates } from './routes/site/site-project-updates';
 import { siteTaskMetadata } from './routes/site/site-task-metadata';
+import { termListProxy } from './routes/site/site-term-proxy';
+import { siteTerms } from './routes/site/site-terms';
 import { siteUserAutocomplete } from './routes/site/site-user-autocomplete';
+import { siteUserImage } from './routes/site/site-user-image';
+import { siteUserProfile } from './routes/site/site-user-profile';
+import { saveUserSettings } from './routes/user/save-user-settings';
+import { userSettingsModel } from './routes/user/user-settings-model';
 import { forgotPassword } from './routes/user/forgot-password';
 import { getSiteUser } from './routes/user/get-site-user';
 import { loginRefresh } from './routes/user/login-refresh';
@@ -229,6 +276,7 @@ import { deleteProjectEndpoint } from './routes/projects/deleteProject';
 import { exportProjectTemplate } from './routes/projects/export-project-template';
 import { generateApiKey } from './routes/admin/generate-api-key';
 import { authenticateApi } from './routes/global/api-authentication';
+import { siteListProjectAssigneeStats } from './routes/site/site-list-project-assignee-stats';
 
 export const router = new TypedRouter({
   // Normal route
@@ -244,6 +292,7 @@ export const router = new TypedRouter({
   'run-cron-jobs': [TypedRouter.POST, '/api/madoc/cron/jobs/:jobId/run', runJob],
   'regenerate-keys': [TypedRouter.POST, '/api/madoc/system/key-regen', keyRegenerate],
   'generate-api-key': [TypedRouter.POST, '/api/madoc/system/api-keys', generateApiKey],
+  'migrate-project-members': [TypedRouter.POST, '/api/madoc/system/migrate-project-members', migrateProjectMembers],
   'get-api-keys': [TypedRouter.GET, '/api/madoc/system/api-keys', listApiKeys],
   'delete-api-key': [TypedRouter.DELETE, '/api/madoc/system/api-keys/:client_id', deleteApiKey],
 
@@ -261,6 +310,11 @@ export const router = new TypedRouter({
   'global-deactivate-user': [TypedRouter.POST, '/api/madoc/users/:userId/deactivate', deactivateUser],
   'global-delete-user': [TypedRouter.DELETE, '/api/madoc/users/:userId', deleteUser],
   'global-reset-password-user': [TypedRouter.POST, '/api/madoc/users/:userId/reset-password', resetPassword],
+  // User badges
+  'list-user-awarded-badges': [TypedRouter.GET, '/api/madoc/users/:userId/badges', listUserAwardedBadges],
+  'get-awarded-badge': [TypedRouter.GET, '/api/madoc/users/:userId/badges/:id', getAwardedBadge],
+  'award-badge': [TypedRouter.POST, '/api/madoc/users/:userId/badges', awardBadge],
+  'remove-awarded-badge': [TypedRouter.DELETE, '/api/madoc/users/:userId/badges/:id', removeAwardedBadge],
   'global-get-system-config': [TypedRouter.GET, '/api/madoc/system/config', getSystemConfig],
   'global-update-system-config': [TypedRouter.POST, '/api/madoc/system/config', updateSystemConfig],
   'global-system-check': [TypedRouter.POST, '/api/madoc/system/check', systemCheck],
@@ -312,6 +366,17 @@ export const router = new TypedRouter({
   ],
   'update-metadata-configuration': [TypedRouter.POST, '/api/madoc/configuration/metadata', updateMetadataConfiguration],
   'site-details': [TypedRouter.GET, '/api/madoc/site/:siteId/details', getSiteDetails],
+
+  // User.
+  'get-user-settings-model': [TypedRouter.GET, '/api/madoc/me/settings', userSettingsModel],
+  'update-user-settings-model': [TypedRouter.POST, '/api/madoc/me/settings', saveUserSettings],
+
+  // Badges
+  'create-badge': [TypedRouter.POST, '/api/madoc/badges', createBadge],
+  'get-badge': [TypedRouter.GET, '/api/madoc/badges/:id', getBadge],
+  'update-badge': [TypedRouter.PUT, '/api/madoc/badges/:id', updateBadge],
+  'delete-badge': [TypedRouter.DELETE, '/api/madoc/badges/:id', deleteBadge],
+  'list-badges': [TypedRouter.GET, '/api/madoc/badges', listBadges],
 
   // Notifications.
   'get-all-notifications': [TypedRouter.GET, '/api/madoc/notifications', getNotifications],
@@ -464,6 +529,7 @@ export const router = new TypedRouter({
   'create-project': [TypedRouter.POST, '/api/madoc/projects', createNewProject],
   'list-projects': [TypedRouter.GET, '/api/madoc/projects', listProjects],
   'get-project': [TypedRouter.GET, '/api/madoc/projects/:id', getProject],
+  'get-project-by-task': [TypedRouter.GET, '/api/madoc/project-by-task/:id', getProjectFromTask],
   'export-project': [TypedRouter.POST, '/api/madoc/projects/:id/export', createProjectExport],
   'get-project-structure': [TypedRouter.GET, '/api/madoc/projects/:id/structure', getProjectStructure],
   'get-project-metadata': [TypedRouter.GET, '/api/madoc/projects/:id/metadata', getProjectMetadata],
@@ -484,6 +550,8 @@ export const router = new TypedRouter({
     listProjectModelEntityAutocomplete,
   ],
   'update-project-status': [TypedRouter.PUT, '/api/madoc/projects/:id/status', updateProjectStatus],
+  'update-project-duration': [TypedRouter.PUT, '/api/madoc/projects/:id/duration', updateProjectDuration],
+  'update-project-banner': [TypedRouter.PUT, '/api/madoc/projects/:id/banner', updateProjectBanner],
   'create-project-resource-claim': [TypedRouter.POST, '/api/madoc/projects/:id/claim', createResourceClaim],
   'export-project-template': [TypedRouter.GET, '/api/madoc/projects/:id/export', exportProjectTemplate],
   'update-project-curated-feed': [TypedRouter.POST, '/api/madoc/projects/:id/feeds/:feed', updateCuratedFeed],
@@ -497,6 +565,7 @@ export const router = new TypedRouter({
   'assign-review': [TypedRouter.POST, '/api/madoc/projects/:id/reviews', assignReview],
   'get-project-model': [TypedRouter.GET, '/api/madoc/projects/:id/models/:subject', getProjectModel],
   'get-project-task': [TypedRouter.GET, '/api/madoc/projects/:id/task', getProjectTask],
+  'get-project-member-emails': [TypedRouter.GET, '/api/madoc/projects/:id/member-emails', listProjectEmails],
   'assign-random-resource': [TypedRouter.POST, '/api/madoc/projects/:id/random', assignRandomResource],
   'get-project-data-raw': [TypedRouter.GET, '/api/madoc/projects/:id/raw-model-fields', getProjectRawData],
   'get-project-personal-note': [TypedRouter.GET, '/api/madoc/projects/:id/personal-notes/:resourceId', getProjectNote],
@@ -508,6 +577,32 @@ export const router = new TypedRouter({
   ],
   'get-project-deletion-summary': [TypedRouter.GET, '/api/madoc/projects/:id/deletion-summary', deleteProjectSummary],
   'delete-project': [TypedRouter.DELETE, '/api/madoc/projects/:id', deleteProjectEndpoint],
+  'project-task-svg': [TypedRouter.GET, '/api/madoc/projects/:id/tasks/:taskId/preview-svg', svgFromCrowdsourcingTask],
+  // Project updates
+  'list-project-updates': [TypedRouter.GET, '/api/madoc/projects/:id/updates', listProjectUpdates],
+  'create-project-update': [TypedRouter.POST, '/api/madoc/projects/:id/updates', createProjectUpdate],
+  'update-project-update': [TypedRouter.PUT, '/api/madoc/projects/:id/updates/:updateId', updateProjectUpdate],
+  'delete-project-update': [TypedRouter.DELETE, '/api/madoc/projects/:id/updates/:updateId', deleteProjectUpdate],
+  // Project members
+  'list-project-members': [TypedRouter.GET, '/api/madoc/projects/:id/members', listProjectMembers],
+  'add-project-member': [TypedRouter.POST, '/api/madoc/projects/:id/members', addProjectMember],
+  'update-project-member': [TypedRouter.PUT, '/api/madoc/projects/:id/members/:userId', updateUsersProjectRole],
+  'remove-project-member': [TypedRouter.DELETE, '/api/madoc/projects/:id/members/:userId', removeProjectMember],
+  // Project feedback
+  'list-project-feedback': [TypedRouter.GET, '/api/madoc/projects/:id/feedback', listProjectFeedback],
+  'add-project-feedback': [TypedRouter.POST, '/api/madoc/projects/:id/feedback', addProjectFeedback],
+  'remove-project-feedback': [
+    TypedRouter.DELETE,
+    '/api/madoc/projects/:id/feedback/:feedbackId',
+    removeProjectFeedback,
+  ],
+
+  // Term configurations
+  'get-term-configuration': [TypedRouter.GET, '/api/madoc/term-configuration/:id', getTermConfiguration],
+  'update-term-configuration': [TypedRouter.PUT, '/api/madoc/term-configuration/:id', updateTermConfiguration],
+  'create-term-configuration': [TypedRouter.POST, '/api/madoc/term-configuration', createTermConfiguration],
+  'delete-term-configuration': [TypedRouter.DELETE, '/api/madoc/term-configuration/:id', deleteTermConfiguration],
+  'list-term-configuration': [TypedRouter.GET, '/api/madoc/term-configuration', listTermConfigurations],
 
   // Themes
   'list-themes': [TypedRouter.GET, '/api/madoc/system/themes', listThemes],
@@ -573,6 +668,20 @@ export const router = new TypedRouter({
   'create-media': [TypedRouter.POST, '/api/madoc/media', createMedia],
   'generate-media-thumbnails': [TypedRouter.POST, '/api/madoc/media/:mediaId/generate-thumbnails', generateThumbnails],
 
+  // Site terms
+  // getTermsById
+  // getLatestTerms
+  // listTerms
+  // createTerms
+  // deleteTerms
+  // acceptTerms
+  'list-terms': [TypedRouter.GET, '/api/madoc/terms', listTerms],
+  'get-latest-terms': [TypedRouter.GET, '/api/madoc/terms/latest', getLatestTerms],
+  'accept-terms': [TypedRouter.POST, '/api/madoc/terms/accept', acceptTerms],
+  'get-terms': [TypedRouter.GET, '/api/madoc/terms/:termsId', getTermsById],
+  'create-terms': [TypedRouter.POST, '/api/madoc/terms', createTerms],
+  'delete-terms': [TypedRouter.DELETE, '/api/madoc/terms/:termsId', deleteTerms],
+
   // New Site routes.
   'current-site-details': [TypedRouter.GET, '/s/:slug/madoc/api/site', siteDetails],
   'site-canvas': [TypedRouter.GET, '/s/:slug/madoc/api/canvases/:id', siteCanvas],
@@ -593,8 +702,17 @@ export const router = new TypedRouter({
   'site-static-page': [TypedRouter.GET, '/s/:slug/madoc/api/page/static/root/:paths*', getStaticPage],
   'site-resolve-slot': [TypedRouter.GET, '/s/:slug/madoc/api/slots', resolveSlots],
   'site-project': [TypedRouter.GET, '/s/:slug/madoc/api/projects/:projectSlug', siteProject],
+  'site-project-updates': [TypedRouter.GET, '/s/:slug/madoc/api/projects/:projectSlug/updates', siteProjectUpdates],
+  'site-project-members': [TypedRouter.GET, '/s/:slug/madoc/api/projects/:projectSlug/members', siteProjectMembers],
+  'site-project-recent': [TypedRouter.GET, '/s/:slug/madoc/api/projects/:projectSlug/recent', siteProjectRecent],
+  'site-list-project-assignee-stats': [
+    TypedRouter.GET,
+    '/s/:slug/madoc/api/projects/:projectSlug/tasks/assignee-stats',
+    siteListProjectAssigneeStats,
+  ],
   'site-projects': [TypedRouter.GET, '/s/:slug/madoc/api/projects', siteProjects],
   'site-search': [TypedRouter.POST, '/s/:slug/madoc/api/search', siteSearch],
+  'site-term-proxy': [TypedRouter.GET, '/s/:slug/madoc/api/term-proxy/:id', termListProxy],
   'site-topic': [TypedRouter.GET, '/s/:slug/madoc/api/topics/:type/:id', siteTopic],
   'site-topic-type': [TypedRouter.GET, '/s/:slug/madoc/api/topics/:type', siteTopicType],
   'site-topic-types': [TypedRouter.GET, '/s/:slug/madoc/api/topics', siteTopicTypes],
@@ -615,6 +733,7 @@ export const router = new TypedRouter({
     '/s/:slug/madoc/api/projects/:projectSlug/canvas-tasks/:canvasId',
     siteCanvasTasks,
   ],
+
   'site-configuration': [TypedRouter.GET, '/s/:slug/madoc/api/configuration', siteConfiguration],
   'site-completion': [TypedRouter.GET, '/s/:slug/madoc/api/completions/:type', siteCompletions],
   'site-model-configuration': [TypedRouter.GET, '/s/:slug/madoc/api/configuration/model', siteModelConfiguration],
@@ -634,16 +753,22 @@ export const router = new TypedRouter({
   'site-get-locale': [TypedRouter.GET, '/s/:slug/madoc/api/locales/:lng', getLocale],
   'site-get-locale-ns': [TypedRouter.GET, '/s/:slug/madoc/api/locales/:lng/:ns', getLocale],
   'site-user-autocomplete': [TypedRouter.GET, '/s/:slug/madoc/api/users/autocomplete', siteUserAutocomplete],
+  'site-terms': [TypedRouter.GET, '/s/:slug/madoc/api/terms', siteTerms],
 
   // To be worked into API calling methods
   'manifest-search': [TypedRouter.GET, '/s/:slug/madoc/api/manifests/:id/search/1.0', searchManifest],
   // 'manifest-export': [TypedRouter.GET, '/s/:slug/madoc/api/manifests/:id/export/source', exportManifest],
   'manifest-build': [TypedRouter.GET, '/s/:slug/madoc/api/manifests/:id/export/:version', siteManifestBuild],
+  'collection-build': [TypedRouter.GET, '/s/:slug/madoc/api/collections/:id/export/:version', siteManifestBuild],
   'manifest-project-build': [
     TypedRouter.GET,
     '/s/:slug/madoc/api/projects/:projectSlug/export/manifest/:id/:version',
     siteManifestBuild,
   ],
+
+  // User profile
+  'user-profile': [TypedRouter.GET, '/s/:slug/madoc/api/users/:id', siteUserProfile],
+  'user-profile-image': [TypedRouter.GET, '/s/:slug/madoc/api/users/:id/image', siteUserImage],
 
   // Other routes.
   ...activityStreamRoutes,

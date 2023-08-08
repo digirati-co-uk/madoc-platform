@@ -68,6 +68,17 @@ export const Register: React.FC = () => {
     return <Navigate to="/" />;
   }
 
+  const acceptTerms = site.latestTerms ? (
+    <div style={{ marginBottom: '1em', fontSize: '0.875em', color: '#444' }}>
+      <p>
+        {t('By registering you agree to the ')}
+        <a target="_blank" href={`/s/${site.slug}/terms`} rel="noreferrer">
+          {t('terms and conditions')}
+        </a>
+      </p>
+    </div>
+  ) : null;
+
   if (user && form?.invitation) {
     // @todo.
     return (
@@ -87,6 +98,7 @@ export const Register: React.FC = () => {
               </LoginActions>
             </InputContainer>
           </LoginContainer>
+          {acceptTerms}
           <input type="hidden" name="code" value={form.invitation.id} />
         </form>
       </div>
@@ -109,6 +121,9 @@ export const Register: React.FC = () => {
               <Heading1 $margin>{t('Register')}</Heading1>
             </>
           )}
+          {systemConfig?.registerHeader ? (
+            <div dangerouslySetInnerHTML={{ __html: systemConfig.registerHeader }} style={{ marginBottom: '1em' }} />
+          ) : null}
           <InputContainer>
             <InputLabel htmlFor="name">{t('Display name')}</InputLabel>
             <Input type="text" name="name" id="name" defaultValue={form?.name} />
@@ -118,11 +133,15 @@ export const Register: React.FC = () => {
             <Input type="text" name="email" id="email" defaultValue={form?.email} />
             {form?.emailError ? <ErrorMessage $small>{t('Email already in use')}</ErrorMessage> : null}
           </InputContainer>
+          {acceptTerms}
+          {systemConfig?.registerFooter ? (
+            <div dangerouslySetInnerHTML={{ __html: systemConfig.registerFooter }} style={{ marginBottom: '1em' }} />
+          ) : null}
           <InputContainer>
             <LoginActions>
-              <FlexSpacer>
+              <div style={{ flex: 1 }}>
                 {t('Already have an account?')} <HrefLink href="/login">{t('Login')}</HrefLink>
-              </FlexSpacer>
+              </div>
               <Button type="submit" $primary>
                 {t('Register')}
               </Button>

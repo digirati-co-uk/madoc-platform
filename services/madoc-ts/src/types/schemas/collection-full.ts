@@ -19,6 +19,7 @@ export type CollectionFull = {
       canvasCount?: number;
       firstCanvasId?: number;
     }>;
+    placeholder_image?: string;
   };
   subjects?: Array<{
     subject: string;

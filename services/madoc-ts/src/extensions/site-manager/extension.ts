@@ -1,6 +1,9 @@
 import { stringify } from 'query-string';
 import { ApiClient } from '../../gateway/api';
+import { AwardBadgeRequest, Badge, BadgeAward, CreateBadgeRequest } from '../../types/badges';
 import { Pagination } from '../../types/schemas/_pagination';
+import { SiteTerms } from '../../types/site-terms';
+import { TermConfiguration, TermConfigurationRequest } from '../../types/term-configurations';
 import { BaseExtension, defaultDispose } from '../extension-manager';
 import {
   CreateSiteRequest,
@@ -173,6 +176,117 @@ export class SiteManagerExtension implements BaseExtension {
     return this.api.request(`/api/madoc/system/config`, {
       method: 'POST',
       body: config,
+    });
+  }
+
+  // Term configurations
+  async getTermConfiguration(id: string) {
+    return this.api.request<TermConfiguration>(`/api/madoc/term-configuration/${id}`);
+  }
+
+  async updateTermConfiguration(id: string, config: TermConfigurationRequest & { id: string }) {
+    return this.api.request(`/api/madoc/term-configuration/${id}`, {
+      method: 'PUT',
+      body: config,
+    });
+  }
+
+  async createTermConfiguration(config: TermConfigurationRequest) {
+    return this.api.request<TermConfiguration>(`/api/madoc/term-configuration`, {
+      method: 'POST',
+      body: config,
+    });
+  }
+
+  async deleteTermConfiguration(id: string) {
+    return this.api.request(`/api/madoc/term-configuration/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async getAllTermConfigurations() {
+    return this.api.request<{ termConfigurations: TermConfiguration[] }>(`/api/madoc/term-configuration`);
+  }
+
+  // Badges
+  async createBadge(badge: CreateBadgeRequest) {
+    return this.api.request<Badge>(`/api/madoc/badges`, {
+      method: 'POST',
+      body: badge,
+    });
+  }
+
+  async getBadge(id: string) {
+    return this.api.request<Badge>(`/api/madoc/badges/${id}`);
+  }
+
+  async updateBadge(id: string, badge: CreateBadgeRequest) {
+    return this.api.request<Badge>(`/api/madoc/badges/${id}`, {
+      method: 'PUT',
+      body: badge,
+    });
+  }
+
+  async deleteBadge(id: string) {
+    await this.api.request(`/api/madoc/badges/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async listBadges() {
+    return this.api.request<{ badges: Badge[] }>(`/api/madoc/badges`);
+  }
+
+  //User badges
+  async listUserAwardedBadges(userId: number) {
+    return this.api.request<{ awards: BadgeAward[] }>(`/api/madoc/users/${userId}/badges`);
+  }
+
+  async getAwardedBadge(userId: number, id: string) {
+    return this.api.request<BadgeAward>(`/api/madoc/users/${userId}/badges/${id}`);
+  }
+
+  async awardBadge(userId: number, badge: AwardBadgeRequest) {
+    return this.api.request<BadgeAward>(`/api/madoc/users/${userId}/badges`, {
+      method: 'POST',
+      body: badge,
+    });
+  }
+
+  async removeAwardedBadge(userId: number, id: string) {
+    await this.api.request(`/api/madoc/users/${userId}/badges/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async listTerms() {
+    return this.api.request<{ terms: SiteTerms[] }>(`/api/madoc/terms`);
+  }
+
+  async getLatestTerms() {
+    return this.api.request<{ latest: SiteTerms; list: Omit<SiteTerms, 'terms'>[] }>(`/api/madoc/terms/latest`);
+  }
+
+  async acceptTerms() {
+    return this.api.request(`/api/madoc/terms/accept`, {
+      method: 'POST',
+    });
+  }
+
+  async getTermsById(termsId: string) {
+    return this.api.request<SiteTerms>(`/api/madoc/terms/${termsId}`);
+  }
+
+  async createTerms(terms: { text: string; markdown: string }) {
+    return this.api.request<SiteTerms>(`/api/madoc/terms`, {
+      method: 'POST',
+      body: terms,
+    });
+  }
+
+  async deleteTerms(termsId: string) {
+    return this.api.request(`/api/madoc/terms/${termsId}`, {
+      method: 'DELETE',
     });
   }
 }

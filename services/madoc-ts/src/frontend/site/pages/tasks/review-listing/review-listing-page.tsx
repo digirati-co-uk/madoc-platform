@@ -5,7 +5,7 @@ import styled, { css } from 'styled-components';
 import { SubjectSnippet } from '../../../../../extensions/tasks/resolvers/subject-resolver';
 import { CrowdsourcingTask } from '../../../../../gateway/tasks/crowdsourcing-task';
 import { SimpleStatus } from '../../../../shared/atoms/SimpleStatus';
-import { DisplayBreadcrumbs } from '../../../../shared/components/Breadcrumbs';
+import { DisplayBreadcrumbs } from '../../../blocks/Breadcrumbs';
 import { LocaleString } from '../../../../shared/components/LocaleString';
 import { useInfiniteData } from '../../../../shared/hooks/use-data';
 import { useLocationQuery } from '../../../../shared/hooks/use-location-query';
@@ -78,6 +78,9 @@ const ThickTableRow = styled(SimpleTable.Row)<{ $active?: boolean }>`
 `;
 
 const HeaderLink = styled.a`
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
   color: black;
 
   svg {

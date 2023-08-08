@@ -7,10 +7,10 @@ import { Heading1, Subheading1 } from '../../shared/typography/Heading1';
 import { CroppedImage } from '../../shared/atoms/Images';
 import { ImageStripBox } from '../../shared/atoms/ImageStrip';
 import { SnippetThumbnail, SnippetThumbnailContainer } from '../../shared/atoms/SnippetLarge';
-import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
+import { DisplayBreadcrumbs } from '../blocks/Breadcrumbs';
 import { LocaleString } from '../../shared/components/LocaleString';
 import { Pagination } from '../../shared/components/Pagination';
-import { ResultTitle } from '../../shared/components/SearchResults';
+import { ResultTitle } from '../features/search/SearchResults';
 import { usePaginatedData } from '../../shared/hooks/use-data';
 import { serverRendererFor } from '../../shared/plugins/external/server-renderer-for';
 import { HrefLink } from '../../shared/utility/href-link';
@@ -50,11 +50,15 @@ export const ViewProjectNotes: React.FC = () => {
           ? data.notes.map(note => {
               const isManifest = note.type === 'manifest';
               return (
-                <GridContainer>
+                <GridContainer key={note.id}>
                   {note.resource.thumbnail ? (
                     <ImageStripBox $size={size}>
                       {isManifest ? (
-                        <SnippetThumbnailContainer stackedThumbnail={isManifest} portrait fluid>
+                        <SnippetThumbnailContainer
+                          data-is-stacked={isManifest}
+                          data-is-portrait={true}
+                          data-is-fluid={true}
+                        >
                           <SnippetThumbnail src={note.resource.thumbnail} />
                         </SnippetThumbnailContainer>
                       ) : (

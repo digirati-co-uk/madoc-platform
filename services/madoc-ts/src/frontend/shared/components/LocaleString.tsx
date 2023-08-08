@@ -1,6 +1,6 @@
 import { InternationalString } from '@iiif/presentation-3';
 import { useTranslation } from 'react-i18next';
-import React, { CSSProperties, useMemo } from 'react';
+import React, { useMemo } from 'react';
 
 export const LanguageString: React.FC<{ [key: string]: any } & { as?: string | React.FC<any>; language: string }> = ({
   as: Component,

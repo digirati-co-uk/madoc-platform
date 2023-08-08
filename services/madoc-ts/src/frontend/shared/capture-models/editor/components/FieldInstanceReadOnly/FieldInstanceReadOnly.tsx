@@ -4,7 +4,7 @@ import { BaseField } from '../../../types/field-types';
 import { FieldPreview } from '../FieldPreview/FieldPreview';
 import { Revisions } from '../../stores/revisions/index';
 import { SelectorPreview } from '../SelectorPreview/SelectorPreview';
-import ReactTooltip from 'react-tooltip';
+import { Tooltip as ReactTooltip } from 'react-tooltip';
 
 const PreviewListContainer = styled.div`
   & ~ & {
@@ -38,11 +38,11 @@ export const FieldInstanceReadOnly: React.FC<{
       <PreviewList>
         {fields.map(field => (
           <span key={field.id}>
-            <span data-for={field.id} data-tip="">
+            <span data-for={field.id} data-tooltip-content="">
               <FieldPreview key={field.id} field={field} />
             </span>
             {showSelectorPreview && field.selector && field.selector.state ? (
-              <ReactTooltip id={field.id} effect="solid" backgroundColor="#000" aria-haspopup="true">
+              <ReactTooltip id={field.id} float variant="dark" aria-haspopup="true">
                 <SelectorPreview
                   selector={field.selector}
                   chooseSelector={chooseSelector}

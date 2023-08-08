@@ -38,13 +38,15 @@ export const updateProjectNote: RouteMiddleware<
 
   if (existingNote) {
     // Update existing.
-    await context.connection.query(sql`update project_notes set note = ${note} where id = ${existingNote.id}`);
+    await context.connection.query(
+      sql`update project_notes set note = ${note}, updated = now() where id = ${existingNote.id}`
+    );
 
     context.status = 200;
   } else {
     // Create new.
     await context.connection.query(
-      sql`insert into project_notes (type, note, project_id, user_id, resource_id, site_id, id) 
+      sql`insert into project_notes (type, note, project_id, user_id, resource_id, site_id, id, created, updated) 
       values (
         ${'personal'},
         ${note},
@@ -52,7 +54,9 @@ export const updateProjectNote: RouteMiddleware<
         ${userId},
         ${resourceId},
         ${siteId},
-        ${generateId()}
+        ${generateId()},
+        now(),
+        now()
       )`
     );
 

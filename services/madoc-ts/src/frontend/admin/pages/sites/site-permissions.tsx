@@ -10,7 +10,7 @@ import { DefaultSelect } from '../../../shared/form/DefaulSelect';
 import { ErrorMessage } from '../../../shared/callouts/ErrorMessage';
 import { WidePage } from '../../../shared/layout/WidePage';
 import { ModalButton } from '../../../shared/components/Modal';
-import { AutocompleteUser, UserAutocomplete } from '../../../shared/components/UserAutocomplete';
+import { AutocompleteUser, UserAutocomplete } from '../../../site/features/UserAutocomplete';
 import { useApi } from '../../../shared/hooks/use-api';
 import { useData } from '../../../shared/hooks/use-data';
 import { useUserDetails } from '../../../shared/hooks/use-user-details';

@@ -38,6 +38,8 @@ export const GlobalHeaderMenuLabel = styled.button`
   font-size: 1em;
   border-top: 2px solid transparent;
   border-bottom: 2px solid transparent;
+  display: flex;
+  padding: 0.4em 0.75em;
   &:focus {
     color: rgba(255, 255, 255, 1);
     border-bottom: 2px solid dodgerblue;

@@ -1,4 +1,3 @@
-import { useApi } from '../../shared/hooks/use-api';
 import { useUser } from '../../shared/hooks/use-site';
 import { useSiteConfiguration } from '../features/SiteConfigurationContext';
 import { useManifestTask } from './use-manifest-task';

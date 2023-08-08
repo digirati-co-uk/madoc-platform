@@ -299,6 +299,18 @@ export const siteConfigurationModel: {
         label: 'Enable rotation of images',
         value: 'enableRotation',
       },
+      {
+        label: 'Enable autosave',
+        value: 'enableAutoSave',
+      },
+      {
+        label: 'Enable tooltip descriptions',
+        value: 'enableTooltipDescriptions',
+      },
+      {
+        label: 'Enable split-view',
+        value: 'enableSplitView',
+      },
     ],
   },
   reviewOptions: {
@@ -823,9 +835,21 @@ export const ProjectConfigContributions: {
         value: 'disableSaveForLater',
       },
       {
+        label: 'Enable autosave',
+        value: 'enableAutoSave',
+      },
+      {
+        label: 'Enable tooltip descriptions',
+        value: 'enableTooltipDescriptions',
+      },
+      {
         label: 'Allow personal notes',
         description: 'allow users to take personal notes only visible to themselves on canvases in a project',
         value: 'allowPersonalNotes',
+      },
+      {
+        label: 'Enable split view',
+        value: 'enableSplitView',
       },
     ],
   },

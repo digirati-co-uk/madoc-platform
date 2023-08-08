@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import * as MoleculesPagination from '../../src/frontend/admin/molecules/Pagination';
-import { NavigationButton, PaginationContainer } from '../../src/frontend/shared/components/CanvasNavigationMinimalist';
+import { NavigationButton, PaginationContainer } from '../../src/frontend/shared/components/NavigationButton';
 import { PaginationNumbered } from '../../src/frontend/shared/components/Pagination';
 import * as SharedPagination from '../../src/frontend/shared/components/Pagination';
 

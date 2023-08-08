@@ -49,7 +49,9 @@
       "preventContributionAfterSubmission": false,
       "preventMultipleUserSubmissionsPerResource": false,
       "preventContributionAfterManifestUnassign": false,
-      "hideViewerControls": false
+      "hideViewerControls": false,
+      "enableTooltipDescriptions": false,
+      "enableSplitView": false
     },
     "projectPageOptions": {
       "hideStartContributing": false,

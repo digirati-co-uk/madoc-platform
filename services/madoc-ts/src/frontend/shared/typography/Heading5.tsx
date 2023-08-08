@@ -18,6 +18,6 @@ export const SingleLineHeading5 = styled(Heading5)`
 
 export const Subheading5 = styled.div`
   font-size: 0.9em;
-  color: #999;
+  color: #6b6b6b;
   margin-bottom: 0.5em;
 `;

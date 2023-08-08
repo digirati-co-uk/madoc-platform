@@ -1,13 +1,13 @@
 import { Preset } from '@atlas-viewer/atlas';
-import React, { Suspense } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { CanvasFull } from '../../../../types/canvas-full';
 import { parseUrn } from '../../../../utility/parse-urn';
 import { ViewContentFetch } from '../../../admin/molecules/ViewContentFetch';
 import { TinyButton } from '../../navigation/Button';
-import { ContentExplorer } from '../../components/ContentExplorer';
+import { ContentExplorer } from '../../features/ContentExplorer';
 import { ViewContent } from '../../components/ViewContent';
-import { ViewExternalContent } from '../../components/ViewExternalContent';
+import { ViewExternalContent } from './ViewExternalContent';
 import { BrowserComponent } from '../../utility/browser-component';
 import { CaptureModel } from '../types/capture-model';
 

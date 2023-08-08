@@ -3,7 +3,7 @@ import React, { useMemo } from 'react';
 import { Outlet } from 'react-router-dom';
 import { EditorialContext } from '../../../../types/schemas/site-page';
 import { SitePage } from '../../../../types/site-pages-recursive';
-import { BreadcrumbContext } from '../../../shared/components/Breadcrumbs';
+import { BreadcrumbContext } from '../../blocks/Breadcrumbs';
 import { useApi } from '../../../shared/hooks/use-api';
 import { SlotProvider } from '../../../shared/page-blocks/slot-context';
 import { UniversalComponent } from '../../../types';

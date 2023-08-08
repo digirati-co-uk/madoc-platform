@@ -9,7 +9,7 @@ import { Heading5 } from '../../../../shared/typography/Heading5';
 import { CroppedImage } from '../../../../shared/atoms/Images';
 import { ImageStripBox } from '../../../../shared/atoms/ImageStrip';
 import { ModalButton } from '../../../../shared/components/Modal';
-import { SimpleAtlasViewer } from '../../../../shared/components/SimpleAtlasViewer';
+import { SimpleAtlasViewer } from '../../../../shared/features/SimpleAtlasViewer';
 import { useApi } from '../../../../shared/hooks/use-api';
 import { useData } from '../../../../shared/hooks/use-data';
 import { useLocationQuery } from '../../../../shared/hooks/use-location-query';

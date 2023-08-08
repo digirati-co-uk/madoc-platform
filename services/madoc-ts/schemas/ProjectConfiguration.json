@@ -264,6 +264,12 @@
         },
         "enableRotation": {
           "type": "boolean"
+        },
+        "enableAutoSave": {
+          "type": "boolean"
+        },
+        "enableTooltipDescriptions": {
+          "type": "boolean"
         }
       }
     },

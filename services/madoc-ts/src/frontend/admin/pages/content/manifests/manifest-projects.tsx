@@ -43,11 +43,9 @@ export const ManifestProjects = createUniversalComponent<ManifestProjectsType>(
         <hr />
         {projects.map(project => (
           <SnippetLarge
-            margin
             key={project.id}
             linkAs={HrefLink}
             label={<LocaleString>{project.label}</LocaleString>}
-            portrait={false}
             subtitle={<LocaleString>{project.summary}</LocaleString>}
             link={`/projects/${project.id}`}
             buttonText="view project"

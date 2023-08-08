@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Heading1 } from '../../shared/typography/Heading1';
 import { Slot } from '../../shared/page-blocks/slot';
-import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
+import { DisplayBreadcrumbs } from '../blocks/Breadcrumbs';
 import { useRouteContext } from '../hooks/use-route-context';
 
 export const ItemNotFound: React.FC = () => {

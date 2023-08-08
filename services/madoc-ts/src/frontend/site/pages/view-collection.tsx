@@ -1,12 +1,12 @@
 import React from 'react';
-import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
+import { DisplayBreadcrumbs } from '../blocks/Breadcrumbs';
 import { Slot } from '../../shared/page-blocks/slot';
-import { CollectionFilterOptions } from '../features/CollectionFilterOptions';
-import { CollectionItemPagination } from '../features/CollectionItemPagination';
-import { CollectionPaginatedItems } from '../features/CollectionPaginatedItems';
-import { CollectionTitle } from '../features/CollectionTitle';
+import { CollectionFilterOptions } from '../blocks/CollectionFilterOptions';
+import { CollectionItemPagination } from '../blocks/CollectionItemPagination';
+import { CollectionPaginatedItems } from '../blocks/CollectionPaginatedItems';
+import { CollectionTitle } from '../blocks/CollectionTitle';
 import { usePaginatedCollection } from '../hooks/use-paginated-collection';
-import { CollectionMetadata } from '../features/CollectionMetadata';
+import { CollectionMetadata } from '../blocks/CollectionMetadata';
 
 export const ViewCollection: React.FC = () => {
   const { isLoading } = usePaginatedCollection();

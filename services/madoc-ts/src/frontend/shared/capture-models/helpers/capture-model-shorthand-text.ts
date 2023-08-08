@@ -48,6 +48,12 @@ function addTemplateValuesToDocument(
             }
             break;
           }
+          case 'label': {
+            if (modifier.value) {
+              field.label = modifier.value;
+            }
+            break;
+          }
           case 'defaultLang': {
             if (modifier.value) {
               defaultLang = modifier.value;
@@ -148,7 +154,7 @@ export function captureModelShorthandText(
     .filter(Boolean);
   const fields = bulkItems.map(t =>
     templatedValueFormat<
-      'many' | 'default' | 'type' | 'lang' | 'langs' | 'defaultLang' | 'description' | 'pluralLabel'
+      'many' | 'default' | 'type' | 'lang' | 'langs' | 'defaultLang' | 'description' | 'pluralLabel' | 'label'
     >(t)
   );
 

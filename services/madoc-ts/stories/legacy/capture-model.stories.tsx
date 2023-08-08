@@ -1,10 +1,12 @@
 import {Revisions} from '../../src/frontend/shared/capture-models/editor/stores/revisions/index';
-import { URLContextExplorer } from '../../src/frontend/shared/components/ContentExplorer';
+
 import * as React from 'react';
+import { ViewExternalContent } from "../../src/frontend/shared/capture-models/new/ViewExternalContent";
+import { URLContextExplorer } from "../../src/frontend/shared/features/ContentExplorer";
 import { TinyButton } from '../../src/frontend/shared/navigation/Button';
 import { RevisionNavigation } from '../../src/frontend/shared/capture-models/RevisionNavigation';
 import { VaultProvider } from 'react-iiif-vault';
-import { ViewExternalContent } from '../../src/frontend/shared/components/ViewExternalContent';
+
 import '../../src/frontend/shared/capture-models/refinements/index';
 
 export default { title: 'Legacy/Capture models' };

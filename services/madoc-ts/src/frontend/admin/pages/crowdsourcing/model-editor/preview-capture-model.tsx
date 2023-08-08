@@ -1,12 +1,11 @@
 import { VaultProvider } from 'react-iiif-vault';
-import React, { Suspense, useState } from 'react';
+import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useCaptureModel } from '../../../../shared/capture-models/editor/components/EditorContext/EditorContext';
 import { BackToChoicesButton } from '../../../../shared/capture-models/new/components/BackToChoicesButton';
 import { EditorSlots } from '../../../../shared/capture-models/new/components/EditorSlots';
 import { RevisionProviderWithFeatures } from '../../../../shared/capture-models/new/components/RevisionProviderWithFeatures';
 import { useApi } from '../../../../shared/hooks/use-api';
-import { ContentExplorer } from '../../../../shared/components/ContentExplorer';
+import { ContentExplorer } from '../../../../shared/features/ContentExplorer';
 import { useData } from '../../../../shared/hooks/use-data';
 import { Button, ButtonRow, TinyButton } from '../../../../shared/navigation/Button';
 import '../../../../shared/capture-models/refinements';

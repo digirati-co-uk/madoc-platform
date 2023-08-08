@@ -32,5 +32,17 @@ export const updateProjectStatus: RouteMiddleware<{ id: string }, UpdateProjectS
       and site_id = ${siteId}
   `);
 
+  if (status === 1) {
+    // Project has started. We should set the "Start date" if not already set.
+    await context.connection.query(sql`
+      update iiif_project set start_date = now()
+      where
+        ${projectId ? sql`id = ${projectId}` : SQL_EMPTY}
+        ${projectSlug ? sql`slug = ${projectSlug}` : SQL_EMPTY}
+        and site_id = ${siteId}
+        and start_date is null
+    `);
+  }
+
   context.response.status = 204;
 };

@@ -32,6 +32,8 @@ export const getAllProjectNotes: RouteMiddleware = async context => {
        n.id as personal_notes__id,
        n.note as personal_notes__note,
        n.type as personal_notes__type,
+       n.updated as personal_notes__updated,
+       n.created as personal_notes__created,
            
        -- iiif resource ---
        ir.id as iiif__id,
@@ -63,6 +65,7 @@ export const getAllProjectNotes: RouteMiddleware = async context => {
     and im.site_id = ${siteId}
     and im2.key = 'label'
     and im2.site_id = ${siteId}
+    order by n.updated desc
     limit ${notesPerPage} offset ${(page - 1) * notesPerPage}
   `);
 
@@ -74,6 +77,8 @@ export const getAllProjectNotes: RouteMiddleware = async context => {
         id: next.personal_notes__id,
         note: next.personal_notes__note,
         type: next.personal_notes__type,
+        updated: next.personal_notes__updated,
+        created: next.personal_notes__created,
         resource: {
           id: next.iiif__id,
           type: next.iiif__type,

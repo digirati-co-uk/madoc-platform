@@ -1,17 +1,17 @@
 import React from 'react';
 import { castBool } from '../../../utility/cast-bool';
-import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
-import { CanvasVaultContext } from '../../shared/components/CanvasVaultContext';
+import { DisplayBreadcrumbs } from '../blocks/Breadcrumbs';
+import { CanvasVaultContext } from '../../shared/capture-models/CanvasVaultContext';
 import { useLocationQuery } from '../../shared/hooks/use-location-query';
 import { Slot } from '../../shared/page-blocks/slot';
-import { CanvasConfigurationViewer } from '../features/CanvasConfigurationViewer';
-import { CanvasHighlightedRegions } from '../features/CanvasHighlightedRegions';
-import { CanvasPageHeader } from '../features/CanvasPageHeader';
-import { CanvasThumbnailNavigation } from '../features/CanvasThumbnailNavigation';
-import { ContinueCanvasSubmission } from '../features/contributor/ContinueCanvasSubmission';
-import { HighlightedCanvasSearchResults } from '../features/HighlightedCanvasSearchResults';
-import { ManifestMetadata } from '../features/ManifestMetadata';
-import { RedirectToNextCanvas } from '../features/RedirectToNextCanvas';
+import { CanvasConfigurationViewer } from '../blocks/CanvasConfigurationViewer';
+import { CanvasHighlightedRegions } from '../features/canvas/CanvasHighlightedRegions';
+import { CanvasPageHeader } from '../blocks/CanvasPageHeader';
+import { CanvasThumbnailNavigation } from '../blocks/CanvasThumbnailNavigation';
+import { ContinueCanvasSubmission } from '../blocks/ContinueCanvasSubmission';
+import { HighlightedCanvasSearchResults } from '../blocks/HighlightedCanvasSearchResults';
+import { ManifestMetadata } from '../blocks/ManifestMetadata';
+import { RedirectToNextCanvas } from '../features/canvas/RedirectToNextCanvas';
 import { useSiteConfiguration } from '../features/SiteConfigurationContext';
 import { useCanvasNavigation } from '../hooks/use-canvas-navigation';
 
