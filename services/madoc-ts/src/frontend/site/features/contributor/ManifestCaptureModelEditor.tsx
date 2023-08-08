@@ -11,7 +11,6 @@ import { SimpleSaveButton } from '../../../shared/capture-models/new/components/
 import { RevisionRequest } from '../../../shared/capture-models/types/revision-request';
 import { LocaleString } from '../../../shared/components/LocaleString';
 import { useApi } from '../../../shared/hooks/use-api';
-import { useCurrentUser } from '../../../shared/hooks/use-current-user';
 import { EmptyState } from '../../../shared/layout/EmptyState';
 import { Heading2 } from '../../../shared/typography/Heading2';
 import { isEditingAnotherUsersRevision } from '../../../shared/utility/is-editing-another-users-revision';

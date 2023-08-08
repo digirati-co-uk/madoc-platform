@@ -521,6 +521,7 @@ export const prepareResourceClaim: RouteMiddleware<{ id: string }, ResourceClaim
       config,
       task: parent,
       userId: id,
+      manifestClaim: config.claimGranularity === 'manifest',
     })
   ) {
     throw new RequestError('Maximum number of contributors reached');
@@ -633,7 +634,6 @@ export const createResourceClaim: RouteMiddleware<{ id: string }, ResourceClaim>
     };
     return;
   }
-
 
   if (claim.canvasId) {
     if (

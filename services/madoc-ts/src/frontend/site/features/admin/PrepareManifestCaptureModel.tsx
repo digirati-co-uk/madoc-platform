@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { ErrorMessage } from '../../../shared/callouts/ErrorMessage';
 import { InfoMessage } from '../../../shared/callouts/InfoMessage';
 import { Spinner } from '../../../shared/icons/Spinner';
-import { usePreparedCanvasModel } from '../../hooks/use-prepared-canvas-model';
 import { usePreparedManifestModel } from '../../hooks/use-prepared-manifest-model';
 
 /**

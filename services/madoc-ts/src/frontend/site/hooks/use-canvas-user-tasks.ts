@@ -78,11 +78,11 @@ export function useCanvasUserTasks() {
       : true;
 
     const canSubmitAfterSubmission = config.project.modelPageOptions?.preventContributionAfterSubmission
-      ? userContributions?.some(task => task.status !== 2)
+      ? !userContributions?.some(task => task.status === 2)
       : true;
 
     const canSubmitMultiple = config.project.modelPageOptions?.preventMultipleUserSubmissionsPerResource
-      ? !userContributions || userContributions.length === 0
+      ? !userContributions || userContributions.length === 0 || userContributions?.some(task => task.status === 1)
       : true;
 
     const allTasksDone = userContributions.length
