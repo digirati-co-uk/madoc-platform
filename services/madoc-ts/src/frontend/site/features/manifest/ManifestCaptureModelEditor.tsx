@@ -45,8 +45,6 @@ export function ManifestCaptureModelEditor({ revision }: { revision: string; isS
   const allowMultiple = !config.project.modelPageOptions?.preventMultipleUserSubmissionsPerResource;
   const isEditing = isEditingAnotherUsersRevision(captureModel, revision, user);
   const autoSave = config.project.modelPageOptions?.enableAutoSave;
-  const preventFurtherSubmission = !allowMultiple && allTasksDone;
-  const isEditing = isEditingAnotherUsersRevision(captureModel, revision, user.user);
 
   const features: RevisionProviderFeatures = isPreparing
     ? {

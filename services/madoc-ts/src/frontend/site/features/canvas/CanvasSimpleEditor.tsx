@@ -53,12 +53,6 @@ export function CanvasSimpleEditor({ revision, isSegmentation }: CanvasSimpleEdi
 
   const { isAdmin } = useUserPermissions();
   const autosave = config.project.modelPageOptions?.enableAutoSave;
-  const canContribute =
-    user &&
-    user.scope &&
-    (user.scope.indexOf('site.admin') !== -1 ||
-      user.scope.indexOf('models.admin') !== -1 ||
-      user.scope.indexOf('models.contribute') !== -1);
 
   const isModelAdmin =
     user && user.scope && (user.scope.indexOf('site.admin') !== -1 || user.scope.indexOf('models.admin') !== -1);

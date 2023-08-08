@@ -3,7 +3,6 @@ import { useNavigation } from '../../editor/hooks/useNavigation';
 import { Revisions } from '../../editor/stores/revisions';
 import { isEntity } from '../../helpers/is-entity';
 import { EditorRenderingConfig, EditorSlots, ProfileProvider } from './EditorSlots';
-import {AutosaveRevision, RetreiveAutosaveRevision} from "../features/AutosaveRevision";
 
 export const DefaultTopLevelEditor: EditorRenderingConfig['TopLevelEditor'] = () => {
   const state = Revisions.useStoreState(s => ({
