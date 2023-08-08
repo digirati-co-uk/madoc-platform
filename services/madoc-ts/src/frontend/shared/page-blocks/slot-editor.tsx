@@ -13,6 +13,7 @@ import { ErrorBoundary } from '../utility/error-boundary';
 import { BlockCreator } from './block-creator';
 import { BlockEditorForm } from './block-editor';
 import { BlockLabel } from './block-label';
+import { BlockLanguageEditor } from './block-language-editor';
 import { ExplainSlot } from './explain-slot';
 import { PageEditorButton } from './PageEditor';
 import { ErrorMessage } from '../callouts/ErrorMessage';
@@ -32,6 +33,7 @@ import { CustomEditorTypes } from './custom-editor-types';
 type SlotEditorProps = {
   slot: SiteSlot;
   blocks: SiteBlock[];
+  visibleBlocks: SiteBlock[];
   layout?: string;
   context?: EditorialContext;
   onUpdateSlot?: () => void;
@@ -116,19 +118,21 @@ export const SlotEditor: React.FC<SlotEditorProps> = props => {
   const slotSurface = useRef<SurfaceProps>(props.slot?.props?.surface || {});
   const isVertical = props.layout === 'flex' || props.layout === 'flex-center';
 
+  const blocks = isEditing ? props.blocks : props.visibleBlocks;
+
   useEffect(() => {
-    setBlockOrder(props.blocks.map(block => block.id));
-  }, [props.blocks]);
+    setBlockOrder(blocks.map(block => block.id));
+  }, [blocks]);
 
   const orderedBlocks = useMemo(() => {
-    const blocksToShow: SiteBlock[] = [...props.blocks];
+    const blocksToShow: SiteBlock[] = [...blocks];
 
     blocksToShow.sort((a: SiteBlock, b: SiteBlock) => {
       return blockOrder.indexOf(a.id) > blockOrder.indexOf(b.id) ? 1 : -1;
     });
 
     return blocksToShow;
-  }, [blockOrder, props.blocks]);
+  }, [blockOrder, blocks]);
 
   const api = useApi();
 
@@ -385,6 +389,7 @@ export const SlotEditor: React.FC<SlotEditorProps> = props => {
                                     </EditingBlockLabel>
                                   </EditingBlocksBarLeft>
                                   <EditingBlocksBarRight>
+                                    <BlockLanguageEditor block={block} onUpdateBlock={props.onUpdateBlock} />
                                     <ErrorBoundary>
                                       <BlockEditorForm
                                         as={Button}

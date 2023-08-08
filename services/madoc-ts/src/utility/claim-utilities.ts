@@ -59,6 +59,7 @@ export function canUserClaimResource(options: {
   if (maxContributors === false || typeof maxContributors === 'undefined') {
     return true;
   }
+
   if (hasUserAlreadyClaimed) {
     return true;
   }
@@ -68,7 +69,7 @@ export function canUserClaimResource(options: {
   const users: string[] = [];
   for (const task of subtasks) {
     if (task.assignee) {
-      if (!users.includes(task.assignee.id)) {
+      if (task.assignee.id !== `urn:madoc:user:${options.userId}` && !users.includes(task.assignee.id)) {
         users.push(task.assignee.id);
       }
     }

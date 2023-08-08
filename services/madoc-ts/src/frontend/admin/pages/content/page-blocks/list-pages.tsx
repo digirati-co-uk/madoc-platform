@@ -4,6 +4,7 @@ import { LocaleString } from '../../../../shared/components/LocaleString';
 import { useData } from '../../../../shared/hooks/use-data';
 import { useSite } from '../../../../shared/hooks/use-site';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
+import { HrefLink } from '../../../../shared/utility/href-link';
 import { UniversalComponent } from '../../../../types';
 
 type ListPagesType = {
@@ -33,6 +34,8 @@ export const ListPages: UniversalComponent<ListPagesType> = createUniversalCompo
               );
             })
           : null}
+        <hr />
+        <HrefLink href="/page-blocks/new-page">+ New page</HrefLink>
       </div>
     );
   },

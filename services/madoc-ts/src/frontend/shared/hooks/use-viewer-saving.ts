@@ -1,6 +1,6 @@
 import { Revisions } from '../capture-models/editor/stores/revisions/index';
 import { RevisionRequest } from '../capture-models/types/revision-request';
-import { useApi, useOptionalApi } from './use-api';
+import { useOptionalApi } from './use-api';
 import { useMutation } from 'react-query';
 import { createContext, useCallback, useContext } from 'react';
 import { useUser } from './use-site';

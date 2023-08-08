@@ -28,7 +28,7 @@ export function validateRevision(
     const filteredDocument = filterDocumentByRevision(req.document, req.revision, captureModel.revisions);
 
     if (!filteredDocument && (req.revision.deletedFields || []).length === 0) {
-      throw new RequestError('Invalid revision');
+      throw new RequestError('Invalid revision: No changes');
     }
 
     // If the source is `structure` we want to make sure a user was associated. We add this to the revision.
