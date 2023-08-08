@@ -35,11 +35,8 @@ export function ManifestUserNotification(props: { isModal?: boolean }) {
   const { inProgress, done, inReview } = filteredTasks;
   const { isActive } = useProjectStatus();
   const { t } = useTranslation();
-  const user = useUser();
   const api = useApi();
-  const { allTasksDone } = useManifestUserTasks();
-  const allowMultiple = !config.project.modelPageOptions?.preventMultipleUserSubmissionsPerResource;
-  const preventFurtherSubmission = !allowMultiple && allTasksDone;
+  const { user, preventFurtherSubmission } = useManifestUserTasks();
   const isEdit = !preventFurtherSubmission && props.isModal;
 
   const [onSubmitForReview] = useMutation(async (tid: string) => {

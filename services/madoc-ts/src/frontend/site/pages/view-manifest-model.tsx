@@ -1,6 +1,5 @@
 import React from 'react';
 import { DisplayBreadcrumbs } from '../blocks/Breadcrumbs';
-import { useCurrentUser } from '../../shared/hooks/use-current-user';
 import { Slot } from '../../shared/page-blocks/slot';
 import { ManifestHeading } from '../blocks/ManifestHeading';
 import { ManifestModelEditor } from '../blocks/ManifestModelEditor';
@@ -19,17 +18,9 @@ import { ManifestModelCanvasPreview } from '../blocks/ManifestModelCanvasPreview
 export function ViewManifestModel() {
   const createLink = useRelativeLinks();
   const { isManifestComplete, hasExpired } = useManifestTask();
-  const { canUserSubmit, isLoading: isLoadingTasks, completedAndHide } = useManifestUserTasks();
-  const user = useCurrentUser(true);
+  const { canUserSubmit, isLoading: isLoadingTasks, completedAndHide, canContribute } = useManifestUserTasks();;
   const { isActive, isPreparing } = useProjectStatus();
   const shadow = useProjectShadowConfiguration();
-
-  const canContribute =
-    user &&
-    user.scope &&
-    (user.scope.indexOf('site.admin') !== -1 ||
-      user.scope.indexOf('models.admin') !== -1 ||
-      user.scope.indexOf('models.contribute') !== -1);
 
   const isReadOnly =
     (!canUserSubmit && !isLoadingTasks) ||

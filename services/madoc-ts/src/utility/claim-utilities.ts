@@ -5,42 +5,77 @@ import { CrowdsourcingManifestTask } from '../gateway/tasks/crowdsourcing-manife
 import { CrowdsourcingTask } from '../gateway/tasks/crowdsourcing-task';
 import { ProjectFull } from '../types/project-full';
 
-export function manifestTaskCountsAsContribution(task: BaseTask) {
+export function resourceTaskCountsAsContribution(task: BaseTask) {
   return task.type === 'crowdsourcing-task' && task.status !== -1;
 }
-
-export function canvasTaskCountsAsContribution(task: BaseTask) {
-  return task.type === 'crowdsourcing-task' && task.status !== -1;
-}
-
-export function canUserClaimManifest(options: { task: CrowdsourcingManifestTask; config: ProjectFull['config'] }) {
+export function canUserClaimResource(options: {
+  task: CrowdsourcingCanvasTask | CrowdsourcingManifestTask | CrowdsourcingCollectionTask;
+  manifestClaim?: CrowdsourcingTask | boolean;
+  config: ProjectFull['config'];
+  userId: number;
+  revisionId?: string;
+}) {
   // Assumptions
   // - User does not already have manifest claim
+  // - User has permission to claim
 
-  if (options.task.type !== 'crowdsourcing-manifest-task') {
+  if (options.config.claimGranularity === 'manifest' && !options.manifestClaim) {
     return false;
   }
 
-  if (options.config.claimGranularity !== 'manifest') {
-    // This might change.
-    return true;
-  }
-
-  if (options.config.contributionMode === 'transcription') {
-    // Anything specific for transcription mode?
-  }
-
   const maxContributors = options.task.state?.maxContributors || options.config.maxContributionsPerResource;
+
+  const preventContributionAfterRejection = options.config.modelPageOptions?.preventContributionAfterRejection;
+  const preventMultipleUserSubmissionsPerResource =
+    options.config.modelPageOptions?.preventMultipleUserSubmissionsPerResource;
+
+  // check if max submissions or has been rejected
+  let hasUserAlreadyClaimed = false;
+  if (preventMultipleUserSubmissionsPerResource || preventContributionAfterRejection) {
+    for (const subtask of options.task.subtasks || []) {
+      if (
+        subtask.type === 'crowdsourcing-task' &&
+        subtask.assignee &&
+        subtask.assignee.id === `urn:madoc:user:${options.userId}`
+      ) {
+        if (preventContributionAfterRejection && subtask.status === -1) {
+          return false;
+        }
+
+        if (
+          preventMultipleUserSubmissionsPerResource &&
+          (subtask.status === 2 || subtask.status === 3) &&
+          options.revisionId !== subtask?.state?.revisionId
+        ) {
+          return false;
+        }
+
+        hasUserAlreadyClaimed = true;
+      }
+    }
+  }
 
   // No maximum.
   if (maxContributors === false || typeof maxContributors === 'undefined') {
     return true;
   }
 
-  // Has to be less than the stated maximum
-  const subtasks = (options.task.subtasks || []).filter(manifestTaskCountsAsContribution);
+  if (hasUserAlreadyClaimed) {
+    return true;
+  }
+  const subtasks = (options.task.subtasks || []).filter(resourceTaskCountsAsContribution);
 
-  return subtasks.length < maxContributors;
+  // check unique contributors
+  const users: string[] = [];
+  for (const task of subtasks) {
+    if (task.assignee) {
+      if (task.assignee.id !== `urn:madoc:user:${options.userId}` && !users.includes(task.assignee.id)) {
+        users.push(task.assignee.id);
+      }
+    }
+  }
+
+  return users.length < maxContributors;
 }
 
 export function findUseManifestTaskFromList(manifestId: number | string, userId: number | string, tasks: BaseTask[]) {
@@ -78,72 +113,4 @@ export function findUserManifestTask(manifestId: number | string, userId: number
   }
 
   return findUseManifestTaskFromList(manifestId, userId, parent.subtasks);
-}
-
-export function canUserClaimCanvas(options: {
-  parentTask: CrowdsourcingCanvasTask | CrowdsourcingManifestTask | CrowdsourcingCollectionTask;
-  manifestClaim?: CrowdsourcingTask | boolean;
-  config: ProjectFull['config'];
-  userId: number;
-  revisionId?: string;
-}) {
-  const maxContributors = options.parentTask.state?.maxContributors || options.config.maxContributionsPerResource;
-
-  const preventContributionAfterRejection = options.config.modelPageOptions?.preventContributionAfterRejection;
-  const preventMultipleUserSubmissionsPerResource =
-    options.config.modelPageOptions?.preventMultipleUserSubmissionsPerResource;
-
-  let hasUserAlreadyClaimed = false;
-
-  if (preventContributionAfterRejection || preventMultipleUserSubmissionsPerResource) {
-    for (const subtask of options.parentTask.subtasks || []) {
-      if (
-        subtask.type === 'crowdsourcing-task' &&
-        subtask.assignee &&
-        subtask.assignee.id === `urn:madoc:user:${options.userId}`
-      ) {
-        if (preventContributionAfterRejection && subtask.status === -1) {
-          return false;
-        }
-
-        if (
-          preventMultipleUserSubmissionsPerResource &&
-          (subtask.status === 2 || subtask.status === 3) &&
-          options.revisionId !== subtask?.state?.revisionId
-        ) {
-          return false;
-        }
-
-        hasUserAlreadyClaimed = true;
-      }
-    }
-  }
-
-  // This should have been created before this point.
-  if (options.config.claimGranularity === 'manifest' && !options.manifestClaim) {
-    return false;
-  }
-
-  // No maximum.
-  if (maxContributors === false || typeof maxContributors === 'undefined') {
-    return true;
-  }
-
-  if (hasUserAlreadyClaimed) {
-    return true;
-  }
-
-  // Has to be less than the stated maximum
-  const subtasks = (options.parentTask.subtasks || []).filter(canvasTaskCountsAsContribution);
-
-  const users: string[] = [];
-  for (const task of subtasks) {
-    if (task.assignee) {
-      if (!users.includes(task.assignee.id)) {
-        users.push(task.assignee.id);
-      }
-    }
-  }
-
-  return users.length < maxContributors;
 }

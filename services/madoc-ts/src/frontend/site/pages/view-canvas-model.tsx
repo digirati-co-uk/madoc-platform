@@ -2,7 +2,6 @@ import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { castBool } from '../../../utility/cast-bool';
 import { DisplayBreadcrumbs } from '../blocks/Breadcrumbs';
-import { useCurrentUser } from '../../shared/hooks/use-current-user';
 import { useLocationQuery } from '../../shared/hooks/use-location-query';
 import { AutoSlotLoader } from '../../shared/page-blocks/auto-slot-loader';
 import { Slot } from '../../shared/page-blocks/slot';
@@ -29,8 +28,8 @@ export const ViewCanvasModel: React.FC = () => {
   const { canvasId } = useRouteContext();
   const { showCanvasNavigation, showWarning } = useCanvasNavigation();
   const { isManifestComplete, hasExpired } = useManifestTask();
-  const { canUserSubmit, isLoading: isLoadingTasks, completedAndHide } = useCanvasUserTasks();
-  const user = useCurrentUser(true);
+  const { canUserSubmit, canContribute, isLoading: isLoadingTasks, completedAndHide } = useCanvasUserTasks();
+
   const { goToNext } = useLocationQuery<any>();
   const shouldGoToNext = castBool(goToNext);
   const {
@@ -38,12 +37,6 @@ export const ViewCanvasModel: React.FC = () => {
   } = useSiteConfiguration();
   const createLink = useRelativeLinks();
   const { isActive, isPreparing } = useProjectStatus();
-  const canContribute =
-    user &&
-    user.scope &&
-    (user.scope.indexOf('site.admin') !== -1 ||
-      user.scope.indexOf('models.admin') !== -1 ||
-      user.scope.indexOf('models.contribute') !== -1);
 
   const { showCaptureModelOnManifest } = useProjectShadowConfiguration();
 

@@ -27,7 +27,7 @@ export function CanvasSimpleEditor({ revision, isSegmentation }: CanvasSimpleEdi
   const { projectId, canvasId } = useRouteContext();
   const { data: projectModel } = useCanvasModel();
   const [{ captureModel }, , modelRefetch] = useLoadedCaptureModel(projectModel?.model?.id, undefined, canvasId);
-  const { updateClaim, allTasksDone, maxContributorsReached, canUserSubmit, markedAsUnusable } = useCanvasUserTasks();
+  const { updateClaim, preventFurtherSubmission, canContribute, markedAsUnusable } = useCanvasUserTasks();
   const { isPreparing } = useProjectStatus();
   const annotationTheme = useProjectAnnotationStyles();
   const user = useCurrentUser(true);
@@ -45,18 +45,14 @@ export function CanvasSimpleEditor({ revision, isSegmentation }: CanvasSimpleEdi
   const api = useApi();
   const readOnlyAnnotations = useReadOnlyAnnotations(true);
   const allowMultiple = !config.project.modelPageOptions?.preventMultipleUserSubmissionsPerResource;
+
   const hideViewerControls = !!config.project.modelPageOptions?.hideViewerControls;
   const forkMode = !!config.project.forkMode;
-  const preventFurtherSubmission = (!allowMultiple && allTasksDone) || (allTasksDone && maxContributorsReached);
+
   const isEditing = isEditingAnotherUsersRevision(captureModel, revision, user.user);
+
   const { isAdmin } = useUserPermissions();
   const autosave = config.project.modelPageOptions?.enableAutoSave;
-  const canContribute =
-    user &&
-    user.scope &&
-    (user.scope.indexOf('site.admin') !== -1 ||
-      user.scope.indexOf('models.admin') !== -1 ||
-      user.scope.indexOf('models.contribute') !== -1);
 
   const isModelAdmin =
     user && user.scope && (user.scope.indexOf('site.admin') !== -1 || user.scope.indexOf('models.admin') !== -1);

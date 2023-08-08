@@ -14,5 +14,5 @@ export const siteProjectUpdates: RouteMiddleware = async context => {
     throw new NotFound();
   }
 
-  context.response.body = await siteApi.listProjectUpdates(projectSlug, page);
+  context.response.body = await siteApi.listProjectUpdates(projectSlug);
 };
