@@ -139,11 +139,12 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
         if (revision) {
           const revisionRequest = await api.crowdsourcing.getCaptureModelRevision(revision);
           if (revisionRequest) {
+            // @todo mark revision _request_ as rejected.
             // await api.deleteCaptureModelRevision(revisionRequest);
-            await api.updateTask(task.id, {
-              status: -1,
-              status_text: `rejected`,
-            });
+            // await api.updateTask(task.id, {
+            //   status: -1,
+            //   status_text: `rejected`,
+            // });
           }
         }
         if (task.parent_task) {
