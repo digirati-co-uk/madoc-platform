@@ -6,7 +6,7 @@ import { SuccessMessage } from '../../shared/callouts/SuccessMessage';
 import { WarningMessage } from '../../shared/callouts/WarningMessage';
 import { useApi } from '../../shared/hooks/use-api';
 import { useData } from '../../shared/hooks/use-data';
-import { useUser } from '../../shared/hooks/use-site';
+import { useSite, useUser } from '../../shared/hooks/use-site';
 import { Button, ButtonRow } from '../../shared/navigation/Button';
 import { serverRendererFor } from '../../shared/plugins/external/server-renderer-for';
 
@@ -15,6 +15,8 @@ export function SiteTerms() {
   const user = useUser();
   const accepted = user?.terms?.hasAccepted;
   const api = useApi();
+  const site = useSite();
+  const isAdmin = user && user.scope && user.scope.indexOf('site.admin') !== -1;
 
   const { data } = useData(
     SiteTerms,
@@ -56,15 +58,25 @@ export function SiteTerms() {
         <SuccessMessage>{t('You have accepted the terms of use for this site.')}</SuccessMessage>
       ) : null}
 
-      <StaticMarkdownBlock markdown={data?.latest?.terms?.markdown || ''} />
+      <div style={{ maxWidth: 750, margin: 'auto' }}>
+        <StaticMarkdownBlock markdown={data?.latest?.terms?.markdown || ''} />
 
-      {user && !accepted ? (
-        <ButtonRow>
-          <Button onClick={() => acceptTerms()} disabled={acceptTermsStatus.isLoading}>
-            Accept terms
-          </Button>
-        </ButtonRow>
-      ) : null}
+        {isAdmin ? (
+          <ButtonRow>
+            <Button as="a" href={`/s/${site.slug}/admin/configure/site/terms-and-conditions`}>
+              {t('Edit terms')}
+            </Button>
+          </ButtonRow>
+        ) : null}
+
+        {user && !accepted ? (
+          <ButtonRow>
+            <Button onClick={() => acceptTerms()} disabled={acceptTermsStatus.isLoading}>
+              Accept terms
+            </Button>
+          </ButtonRow>
+        ) : null}
+      </div>
     </div>
   );
 }

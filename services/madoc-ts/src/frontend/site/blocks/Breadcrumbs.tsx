@@ -4,11 +4,15 @@ import { Helmet as _Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
+import { Tooltip as ReactTooltip } from 'react-tooltip';
+import { DefaultBlockIcon } from '../../shared/page-blocks/AddBlock';
+import { HrefLink } from '../../shared/utility/href-link';
 import { useCurrentAdminPages } from '../hooks/use-current-admin-pages';
-import { useSite } from '../../shared/hooks/use-site';
+import { useSite, useUser } from '../../shared/hooks/use-site';
 import { ErrorBoundary } from '../../shared/utility/error-boundary';
 import { LocaleString, useLocaleString } from '../../shared/components/LocaleString';
 import styled, { css } from 'styled-components';
+import { useRelativeLinks } from '../hooks/use-relative-links';
 
 type BreadcrumbContextType = {
   project?: { name: InternationalString; id: number | string };
@@ -92,6 +96,26 @@ const ViewInAdmin = styled.div`
   font-size: 0.75em;
 `;
 
+const BlocksButton = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.4em 0.8em;
+  border-radius: 3px;
+  margin-left: 0.5em;
+
+  svg {
+    font-size: 25px;
+    color: #999;
+  }
+
+  &:hover {
+    background: #f0f0f0;
+    svg {
+      color: #5071f4;
+    }
+  }
+`;
 const DividerIcon: React.FC<{ className?: string }> = ({ className }) => (
   <svg className={className} xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 0 24 24" width="16">
     <path d="M0 0h24v24H0z" fill="none" />
@@ -163,6 +187,8 @@ export const DisplayBreadcrumbs: React.FC<BreadcrumbProps> = ({ currentPage, tex
   const breads = useBreadcrumbs();
   const location = useLocation();
   const adminLinks = useCurrentAdminPages();
+  const user = useUser();
+  const isAdmin = user && user.scope && user.scope.indexOf('site.admin') !== -1;
   const { t } = useTranslation();
 
   const stack = useMemo(() => {
@@ -297,6 +323,7 @@ export const DisplayBreadcrumbs: React.FC<BreadcrumbProps> = ({ currentPage, tex
   ]);
   const activePage = stack.find(s => s.url === location.pathname);
   const [pageTitle] = useLocaleString(activePage?.label);
+  const createLink = useRelativeLinks();
 
   if (stack.length === 0) {
     return <React.Fragment />;
@@ -336,6 +363,20 @@ export const DisplayBreadcrumbs: React.FC<BreadcrumbProps> = ({ currentPage, tex
             );
           })}
         </BreadcrumbAdmin>
+      ) : null}
+      {isAdmin ? (
+        <>
+          <HrefLink
+            href={createLink({ subRoute: '_blocks' })}
+            data-tooltip-id="page-block"
+            data-tooltip-content="View page blocks"
+          >
+            <BlocksButton>
+              <DefaultBlockIcon />
+            </BlocksButton>
+          </HrefLink>
+          <ReactTooltip place="bottom" variant="dark" id={`page-block`} />
+        </>
       ) : null}
     </BreadcrumbList>
   );
