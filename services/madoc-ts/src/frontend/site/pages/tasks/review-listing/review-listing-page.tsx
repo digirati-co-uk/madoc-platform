@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useNavigate, useParams } from 'react-router-dom';
 import styled, { css } from 'styled-components';
@@ -21,8 +21,6 @@ import { LayoutHandle } from '../../../../shared/layout/LayoutContainer';
 import ResizeHandleIcon from '../../../../shared/icons/ResizeHandleIcon';
 import { useInfiniteAction } from '../../../hooks/use-infinite-action';
 import { RefetchProvider } from '../../../../shared/utility/refetch-context';
-import { useRouteContext } from '../../../hooks/use-route-context';
-import { ReviewNavigation } from './ReviewNagivation';
 import { EmptyState } from '../../../../shared/layout/EmptyState';
 import ListItemIcon from '../../../../shared/icons/ListItemIcon';
 import { useKeyboardListNavigation } from '../../../hooks/use-keyboard-list-navigation';
@@ -129,10 +127,8 @@ const HeaderLink = styled.a`
 export function ReviewListingPage() {
   const { t } = useTranslation();
   const params = useParams<{ taskId?: string }>();
-  const { projectId } = useRouteContext();
   const createLink = useRelativeLinks();
   const { sort_by = '', ...query } = useLocationQuery();
-  const navigate = useNavigate();
 
   const { widthB, refs } = useResizeLayout(`review-dashboard-resize`, {
     left: true,
@@ -162,16 +158,6 @@ export function ReviewListingPage() {
     isFetchingMore,
     container: refs.resizableDiv,
   });
-
-  const beforeNavigate = useCallback(
-    async (newTaskId, page, getNext) => {
-      if (!isFetchingMore && canFetchMore && getNext) {
-        await fetchMore();
-      }
-      navigate(createLink({ taskId: undefined, subRoute: `reviews/${newTaskId}`, query: { sort_by }, hash: page }));
-    },
-    [canFetchMore, createLink, fetchMore, isFetchingMore, navigate, sort_by]
-  );
 
   const QuerySortToggle = (field: string) => {
     const sort = sort_by;
@@ -293,13 +279,6 @@ export function ReviewListingPage() {
         <TaskPreviewContainer>
           {params.taskId ? (
             <>
-              <ReviewNavigation
-                handleNavigation={beforeNavigate}
-                taskId={params.taskId}
-                pages={pages}
-                projectId={projectId}
-                query={sort_by ? { sort_by } : undefined}
-              />
               <Outlet />
             </>
           ) : (
