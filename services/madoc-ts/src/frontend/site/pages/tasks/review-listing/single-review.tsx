@@ -48,6 +48,7 @@ import { useProjectAnnotationStyles } from '../../../hooks/use-project-annotatio
 import UnlockSmileyIcon from '../../../../shared/icons/UnlockSmileyIcon';
 import { useCurrentUser } from '../../../../shared/hooks/use-current-user';
 import { ManifestSnippet } from '../../../../shared/features/ManifestSnippet';
+import { ReviewNavigation } from './ReviewNagivation';
 
 const ReviewContainer = styled.div`
   position: relative;
@@ -58,6 +59,10 @@ const ReviewContainer = styled.div`
 
   &[data-is-max-window='true'] {
     height: 100vh;
+
+    ${CanvasViewerControls} {
+      top: 9em;
+    }
   }
 `;
 
@@ -76,6 +81,8 @@ const Label = styled.div`
   font-weight: 600;
   padding: 0.6em;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const SubLabel = styled.div`
@@ -162,11 +169,13 @@ const Assignee = styled.div`
 
 function ViewSingleReview({
   task,
+  taskId,
   review,
   toggle,
   isOpen,
 }: {
   task: CrowdsourcingTask & { id: string };
+  taskId?: string;
   review: (CrowdsourcingReview & { id: string }) | null;
   toggle: any;
   isOpen: boolean;
@@ -239,6 +248,8 @@ function ViewSingleReview({
               </LocaleString>
             )}
           </SubLabel>
+
+          <ReviewNavigation taskId={taskId} />
         </ReviewHeader>
         <EmptyState>
           <UnlockSmileyIcon />
@@ -265,7 +276,7 @@ function ViewSingleReview({
       }}
       annotationTheme={annotationTheme}
     >
-      <ReviewContainer data-is-max-window={isOpen}>
+      <ReviewContainer id={'review-container'} data-is-max-window={isOpen}>
         <ReviewHeader>
           <Label>
             {metadata && metadata.subject ? <LocaleString>{metadata.subject.label}</LocaleString> : task.name}
@@ -278,6 +289,8 @@ function ViewSingleReview({
               </LocaleString>
             )}
           </SubLabel>
+
+          <ReviewNavigation taskId={taskId} />
         </ReviewHeader>
         <ReviewActionBar>
           <div style={{ display: 'flex' }}>
@@ -429,7 +442,13 @@ export function SingleReview() {
         } else
           return (
             <RefetchProvider refetch={refetch}>
-              <ViewSingleReview task={data.task} review={data.review} toggle={toggle} isOpen={isOpen} />
+              <ViewSingleReview
+                taskId={params.taskId}
+                task={data.task}
+                review={data.review}
+                toggle={toggle}
+                isOpen={isOpen}
+              />
             </RefetchProvider>
           );
       }}

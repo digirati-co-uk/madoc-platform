@@ -7,7 +7,6 @@ import { SlotTabs } from '../../tailwind/components/slot-tabs';
 import { DisplayBreadcrumbs } from '../blocks/Breadcrumbs';
 import { AvailableBlocks } from '../../shared/page-blocks/available-blocks';
 import { Slot } from '../../shared/page-blocks/slot';
-
 import { MostRecentProjectUpdate } from '../../tailwind/blocks/project/MostRecentProjectUpdate';
 import { PostNewProjectUpdate } from '../../tailwind/blocks/project/PostNewProjectUpdate';
 import { ProjectBanner } from '../../tailwind/blocks/project/ProjectBanner';
