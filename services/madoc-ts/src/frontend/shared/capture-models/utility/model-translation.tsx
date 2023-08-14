@@ -10,5 +10,5 @@ export function ModelTranslation(props: { children?: string }) {
     const converted = tModel(props.children.replace(':', '&#58;'));
     return <span dangerouslySetInnerHTML={{ __html: converted }} />;
   }
-  return <>{props.children}</>;
+  return <>{tModel(props.children)}</>;
 }
