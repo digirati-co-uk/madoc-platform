@@ -29,7 +29,6 @@ import { FullScreenExitIcon } from '../../../shared/icons/FullScreenExitIcon';
 import { FullScreenEnterIcon } from '../../../shared/icons/FullScreenEnterIcon';
 import { MaximiseWindow } from '../../../shared/layout/MaximiseWindow';
 import { PreviewIcon } from '../../../shared/icons/PreviewIcon';
-import { useLoadedCaptureModel } from '../../../shared/hooks/use-loaded-capture-model';
 import { WarningMessage } from '../../../shared/callouts/WarningMessage';
 import {
   CanvasViewerButton,
@@ -38,6 +37,7 @@ import {
   CanvasViewerGrid,
   CanvasViewerGridContent,
   CanvasViewerGridSidebar,
+  SelectPortal,
 } from '../../../shared/atoms/CanvasViewerGrid';
 import { useCrowdsourcingTaskDetails } from '../../hooks/use-crowdsourcing-task-details';
 import { useReviewConfiguration } from '../../hooks/use-review-configuration';
@@ -209,6 +209,7 @@ const PreviewCrowdsourcingTask: React.FC<{
                   <CanvasViewerEditorStyleReset>
                     <EditorSlots.TopLevelEditor />
                   </CanvasViewerEditorStyleReset>
+                  <SelectPortal id="autocomplete-portal" />
 
                   <EditorSlots.SubmitButton captureModel={captureModel} />
                 </CanvasViewerGridSidebar>

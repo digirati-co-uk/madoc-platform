@@ -8,7 +8,6 @@ import { defaultTheme } from '../../../shared/capture-models/editor/themes';
 import { DirectEditButton } from '../../../shared/capture-models/new/components/DirectEditButton';
 import { EditorSlots } from '../../../shared/capture-models/new/components/EditorSlots';
 import { RevisionProviderWithFeatures } from '../../../shared/capture-models/new/components/RevisionProviderWithFeatures';
-import { apiHooks } from '../../../shared/hooks/use-api-query';
 import { useApiTask } from '../../../shared/hooks/use-api-task';
 import { ArrowBackIcon } from '../../../shared/icons/ArrowBackIcon';
 import { EditIcon } from '../../../shared/icons/EditIcon';
@@ -30,6 +29,7 @@ import {
   CanvasViewerGrid,
   CanvasViewerGridContent,
   CanvasViewerGridSidebar,
+  SelectPortal,
 } from '../../../shared/atoms/CanvasViewerGrid';
 import { useCrowdsourcingTaskDetails } from '../../hooks/use-crowdsourcing-task-details';
 import { ApproveSubmission } from './actions/approve-submission';
@@ -128,6 +128,7 @@ export function PreviewManifestCrowdsourcingTask(props: {
                   <CanvasViewerEditorStyleReset>
                     <EditorSlots.TopLevelEditor />
                   </CanvasViewerEditorStyleReset>
+                  <SelectPortal id="autocomplete-portal" />
 
                   <EditorSlots.SubmitButton captureModel={captureModel} />
                 </CanvasViewerGridSidebar>

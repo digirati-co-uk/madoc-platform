@@ -61,3 +61,7 @@ export const CanvasViewerEditorStyleReset = styled.div`
   min-height: 0;
   overflow-y: auto;
 `;
+export const SelectPortal = styled.div`
+  position: relative;
+  bottom: 3em;
+`;

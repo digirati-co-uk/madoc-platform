@@ -112,13 +112,22 @@ export const AutocompleteField: FieldComponent<AutocompleteFieldProps> = props =
     },
     [props.requestInitial, props.dataSource, hasFetched, api, t]
   );
-
+  const [menuPortal, setMenuPortal] = useState<HTMLElement | undefined>(undefined);
   useEffect(() => {
     if (props.requestInitial) {
       onSearchChange(props.value?.uri || '');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.requestInitial]);
+
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      const portalID = document.getElementById('autocomplete-portal');
+      if (portalID) {
+        setMenuPortal(portalID);
+      }
+    }
+  }, []);
 
   return (
     <>
@@ -151,6 +160,7 @@ export const AutocompleteField: FieldComponent<AutocompleteFieldProps> = props =
         getOptionLabel={(option: any) => option.label}
         renderOptionLabel={renderOptionLabel}
         menuItemSize={boxHeight}
+        menuPortalTarget={menuPortal}
       />
       {error ? <ErrorMessage>{error}</ErrorMessage> : null}
     </>

@@ -11,6 +11,7 @@ import {
   CanvasViewerControls,
   CanvasViewerEditorStyleReset,
   CanvasViewerGrid,
+  SelectPortal,
 } from '../../../../shared/atoms/CanvasViewerGrid';
 import { useData } from '../../../../shared/hooks/use-data';
 import { PreviewIcon } from '../../../../shared/icons/PreviewIcon';
@@ -344,6 +345,7 @@ function ViewSingleReview({
             <CanvasViewerEditorStyleReset>
               <EditorSlots.TopLevelEditor />
             </CanvasViewerEditorStyleReset>
+            <SelectPortal id="autocomplete-portal" />
             <EditorSlots.SubmitButton captureModel={captureModel} />
           </div>
           <div style={{ flex: 1, minWidth: 200, display: 'flex', flexDirection: 'column' }}>

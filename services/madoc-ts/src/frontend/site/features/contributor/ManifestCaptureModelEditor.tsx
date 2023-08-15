@@ -21,8 +21,8 @@ import { useModelPageConfiguration } from '../../hooks/use-model-page-configurat
 import { useProject } from '../../hooks/use-project';
 import { useProjectStatus } from '../../hooks/use-project-status';
 import { RouteContext, useRouteContext } from '../../hooks/use-route-context';
-import { CanvasModelUserStatus } from './CanvasModelUserStatus';
-import { CanvasViewerEditorStyleReset } from '../../../shared/atoms/CanvasViewerGrid';
+import { CanvasModelUserStatus } from '../canvas/CanvasModelUserStatus';
+import { CanvasViewerEditorStyleReset, SelectPortal } from '../../../shared/atoms/CanvasViewerGrid';
 import { useSiteConfiguration } from '../SiteConfigurationContext';
 import { useLoadedCaptureModel } from '../../../shared/hooks/use-loaded-capture-model';
 
@@ -145,6 +145,7 @@ export function ManifestCaptureModelEditor({ revision }: { revision: string; isS
             <CanvasViewerEditorStyleReset>
               <EditorSlots.TopLevelEditor />
             </CanvasViewerEditorStyleReset>
+            <SelectPortal id="autocomplete-portal" />
           </>
         ) : postSubmission ? (
           <div>
@@ -157,6 +158,7 @@ export function ManifestCaptureModelEditor({ revision }: { revision: string; isS
             <CanvasViewerEditorStyleReset>
               <EditorSlots.TopLevelEditor />
             </CanvasViewerEditorStyleReset>
+            <SelectPortal id="autocomplete-portal" />
 
             <EditorSlots.SubmitButton afterSave={onAfterSave} />
           </>

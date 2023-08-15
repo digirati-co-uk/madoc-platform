@@ -15,6 +15,7 @@ import {
   CanvasViewerGrid,
   CanvasViewerGridContent,
   CanvasViewerGridSidebar,
+  SelectPortal,
 } from '../../atoms/CanvasViewerGrid';
 import { CreateModelTestCase } from '../../../site/features/admin/CreateModelTestCase';
 import { OpenSeadragonViewer } from '../../../site/features/OpenSeadragonViewer.lazy';
@@ -357,6 +358,7 @@ export function CoreModelEditor({
                   <CanvasViewerEditorStyleReset>
                     <EditorSlots.TopLevelEditor />
                   </CanvasViewerEditorStyleReset>
+                  <SelectPortal id="autocomplete-portal" />
 
                   <EditorSlots.SubmitButton afterSave={onAfterSave} />
                 </>
