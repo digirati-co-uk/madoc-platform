@@ -15,13 +15,16 @@ export function annotationPageToRegions(annotationPage: AnnotationPage) {
   for (const annotation of annotationPage.items) {
     if (typeof annotation.target === 'string') {
       const parsed = parseSelectorTarget(annotation.target);
-      if (!annotation || !annotation.body || !(annotation.body as any).value) {
+
+      const isTag = Array.isArray(annotation.body);
+
+      if (!annotation || !annotation.body || (!(annotation.body as any).value && !isTag)) {
         continue;
       }
       if (typeof parsed !== 'string') {
         regions.push({
           id: (annotation as any)['madoc:selectorId'] || annotation.id,
-          label: (annotation.body as any).value,
+          label: isTag ? annotation.body[1].value : (annotation.body as any).value,
           target: parsed,
         });
       }
