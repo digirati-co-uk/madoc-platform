@@ -21,7 +21,7 @@ import { useModelPageConfiguration } from '../../hooks/use-model-page-configurat
 import { useProject } from '../../hooks/use-project';
 import { useProjectStatus } from '../../hooks/use-project-status';
 import { RouteContext, useRouteContext } from '../../hooks/use-route-context';
-import { CanvasModelUserStatus } from '../canvas/CanvasModelUserStatus';
+import { CanvasModelUserStatus } from './CanvasModelUserStatus';
 import { CanvasViewerEditorStyleReset, SelectPortal } from '../../../shared/atoms/CanvasViewerGrid';
 import { useSiteConfiguration } from '../SiteConfigurationContext';
 import { useLoadedCaptureModel } from '../../../shared/hooks/use-loaded-capture-model';
