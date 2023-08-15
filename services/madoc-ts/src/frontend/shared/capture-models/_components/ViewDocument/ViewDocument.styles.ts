@@ -59,7 +59,6 @@ export const FieldSection = styled.div`
 `;
 
 export const DocumentSectionField = styled.div`
-  //border-bottom: 1px solid #eee;
   padding-bottom: 0.4em;
   margin-bottom: 0.2em;
   background: #fff;
@@ -97,4 +96,5 @@ export const FieldPreviewWrapper = styled.div`
   flex-wrap: wrap;
   align-items: center;
   row-gap: 0.5em;
+  overflow: auto;
 `;

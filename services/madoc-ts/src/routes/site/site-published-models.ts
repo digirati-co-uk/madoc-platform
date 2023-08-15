@@ -204,7 +204,11 @@ export const sitePublishedModels: RouteMiddleware<{ slug: string; id: string }> 
             }
             const selector = field.selector ? resolveSelector(field.selector, undefined, true) : null;
             const canAddAnnotation = selectors
-              ? !!(selector && selector.state && typeof field.value === 'string')
+              ? !!(
+                  selector &&
+                  selector.state &&
+                  (typeof field.value === 'string' || typeof field.value.uri === 'string')
+                )
               : true;
             if (selector && canAddAnnotation && field.value) {
               annotations.push(
