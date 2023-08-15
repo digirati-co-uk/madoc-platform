@@ -1,4 +1,4 @@
-import { AnnotationW3C } from '@iiif/presentation-3';
+import { AnnotationW3C } from '@iiif/ presentation-3';
 import { Annotation } from '@iiif/presentation-2';
 import { BaseField } from '../frontend/shared/capture-models/types/field-types';
 
@@ -13,7 +13,6 @@ export function captureModelFieldToW3CAnnotation(
   const gatewayHost = options.gatewayHost;
   const path = options.path;
 
-  console.log('hi');
   if (value && value.uri) {
     return {
       id: `${gatewayHost}${path}/${id}`,
@@ -69,8 +68,6 @@ export function captureModelFieldToOpenAnnotation(
   const madocCanvasId = options.madocCanvasId;
   const gatewayHost = options.gatewayHost;
   const path = options.path;
-
-  console.log('hi');
 
   return {
     '@id': `${gatewayHost}${path}/${id}`,
