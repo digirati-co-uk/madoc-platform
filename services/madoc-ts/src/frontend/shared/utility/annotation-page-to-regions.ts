@@ -24,7 +24,7 @@ export function annotationPageToRegions(annotationPage: AnnotationPage) {
       if (typeof parsed !== 'string') {
         regions.push({
           id: (annotation as any)['madoc:selectorId'] || annotation.id,
-          label: isTag ? annotation.body[1].value : (annotation.body as any).value,
+          label: isTag ? (annotation.body as any)[1].value : (annotation.body as any).value,
           target: parsed,
         });
       }
