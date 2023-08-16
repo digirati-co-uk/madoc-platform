@@ -19,11 +19,26 @@ export const CanvasViewerGridContent = styled.div<{ $vertical?: boolean }>`
 
 export const CanvasViewerGridSidebar = styled.div<{ $vertical?: boolean }>`
   width: ${props => (props.$vertical ? '100%' : '420px')};
-  max-height: 100%;
+  max-height: 80vh;
+  min-height: 100%;
   display: flex;
   flex-direction: column;
+  overflow: auto;
 `;
 
+export const CanvasViewerEditorStyleReset = styled.div`
+  font-size: 13px;
+  padding: 0 1em;
+  //overflow-x: scroll;
+`;
+
+export const ContributionSaveButton = styled.div`
+  background: white;
+  position: sticky;
+  bottom: 0;
+  z-index: 9;
+  border-top: 1px solid rgb(197, 190, 190);
+`;
 export const CanvasViewerContentOverlay = styled.div`
   position: absolute;
   bottom: 50%;
@@ -53,11 +68,4 @@ export const CanvasViewerButton = styled(Button)`
   &:focus {
     outline: 2px solid orange;
   }
-`;
-
-export const CanvasViewerEditorStyleReset = styled.div`
-  font-size: 13px;
-  padding: 0 1em;
-  min-height: 0;
-  overflow-y: auto;
 `;
