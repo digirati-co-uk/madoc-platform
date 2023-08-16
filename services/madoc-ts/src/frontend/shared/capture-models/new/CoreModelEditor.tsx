@@ -15,6 +15,7 @@ import {
   CanvasViewerGrid,
   CanvasViewerGridContent,
   CanvasViewerGridSidebar,
+  ContributionSaveButton,
 } from '../../atoms/CanvasViewerGrid';
 import { CreateModelTestCase } from '../../../site/features/admin/CreateModelTestCase';
 import { OpenSeadragonViewer } from '../../../site/features/OpenSeadragonViewer.lazy';
@@ -358,7 +359,9 @@ export function CoreModelEditor({
                     <EditorSlots.TopLevelEditor />
                   </CanvasViewerEditorStyleReset>
 
-                  <EditorSlots.SubmitButton afterSave={onAfterSave} />
+                  <ContributionSaveButton>
+                    <EditorSlots.SubmitButton afterSave={onAfterSave} />
+                  </ContributionSaveButton>
                 </>
               ) : (
                 <EmptyState>{t('Loading your model')}</EmptyState>

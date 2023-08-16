@@ -22,7 +22,7 @@ import { useProject } from '../../hooks/use-project';
 import { useProjectStatus } from '../../hooks/use-project-status';
 import { RouteContext, useRouteContext } from '../../hooks/use-route-context';
 import { CanvasModelUserStatus } from './CanvasModelUserStatus';
-import { CanvasViewerEditorStyleReset } from '../../../shared/atoms/CanvasViewerGrid';
+import { CanvasViewerEditorStyleReset, ContributionSaveButton } from '../../../shared/atoms/CanvasViewerGrid';
 import { useSiteConfiguration } from '../SiteConfigurationContext';
 import { useLoadedCaptureModel } from '../../../shared/hooks/use-loaded-capture-model';
 
@@ -158,7 +158,9 @@ export function ManifestCaptureModelEditor({ revision }: { revision: string; isS
               <EditorSlots.TopLevelEditor />
             </CanvasViewerEditorStyleReset>
 
-            <EditorSlots.SubmitButton afterSave={onAfterSave} />
+            <ContributionSaveButton>
+              <EditorSlots.SubmitButton afterSave={onAfterSave} />
+            </ContributionSaveButton>
           </>
         ) : (
           <EmptyState>{t('Loading your model')}</EmptyState>
