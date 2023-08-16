@@ -14,6 +14,7 @@ import { castBool } from '../../utility/cast-bool';
 import { parseEtag } from '../../utility/parse-etag';
 import { traverseStructure } from '../../utility/traverse-structure';
 import { optionalUserWithScope, userWithScope } from '../../utility/user-with-scope';
+import { CheckboxFieldProps } from '../../frontend/shared/capture-models/editor/input-types/CheckboxField/CheckboxField';
 
 export type LocalisationSiteConfig = {
   defaultLanguage: string;
@@ -130,6 +131,12 @@ async function loadLocaleTemplate(userApi: ApiClientWithoutExtensions, namespace
             if (field.pluralLabel) foundStrings.add(field.pluralLabel);
             if ((field as TextFieldProps).placeholder) {
               foundStrings.add((field as TextFieldProps).placeholder as string);
+            }
+            if ((field as CheckboxFieldProps).inlineLabel) {
+              foundStrings.add((field as CheckboxFieldProps).inlineLabel as string);
+            }
+            if ((field as CheckboxFieldProps).inlineDescription) {
+              foundStrings.add((field as CheckboxFieldProps).inlineDescription as string);
             }
           },
           visitEntity(entity) {

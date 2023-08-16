@@ -349,7 +349,7 @@ function ViewSingleReview({
           ) : null}
         </ReviewActionBar>
         <ReviewPreview>
-          <div style={{ flexGrow: 1, maxWidth: 300 }}>
+          <div style={{ flexGrow: 1, maxWidth: 300, overflowX: 'scroll' }}>
             <CanvasViewerEditorStyleReset>
               <EditorSlots.TopLevelEditor />
             </CanvasViewerEditorStyleReset>

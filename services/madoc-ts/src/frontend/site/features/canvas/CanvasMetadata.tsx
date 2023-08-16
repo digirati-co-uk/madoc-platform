@@ -17,7 +17,7 @@ export const CanvasMetadata: React.FC<{ compact?: boolean; showEmptyMessage?: bo
   const createLink = useRelativeLinks();
   const { canvas } = useMetadataSuggestionConfiguration();
 
-  if (!data || !metadataConfig) {
+  if (!data) {
     return null;
   }
 

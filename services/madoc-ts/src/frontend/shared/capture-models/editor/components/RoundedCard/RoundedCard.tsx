@@ -40,7 +40,7 @@ const CardWrapper = styled.article<{ size: CardSize; interactive: boolean }>`
   margin-bottom: ${props => getCard(props, 'margin')};
   //box-shadow: ${props => getTheme(props).card.shadow};
   border: 1px solid #ddd;
-  z-index: 2;
+  z-index: 10;
   ${props =>
     props.interactive &&
     css`
