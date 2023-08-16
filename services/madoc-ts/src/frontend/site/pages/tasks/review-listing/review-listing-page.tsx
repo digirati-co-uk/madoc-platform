@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Outlet, useNavigate, useParams } from 'react-router-dom';
+import { Link, Outlet, useNavigate, useParams } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 import { SubjectSnippet } from '../../../../../extensions/tasks/resolvers/subject-resolver';
 import { CrowdsourcingTask } from '../../../../../gateway/tasks/crowdsourcing-task';
@@ -14,7 +14,7 @@ import { serverRendererFor } from '../../../../shared/plugins/external/server-re
 import { HrefLink } from '../../../../shared/utility/href-link';
 import { useRelativeLinks } from '../../../hooks/use-relative-links';
 import { useTaskMetadata } from '../../../hooks/use-task-metadata';
-import { Button, ButtonIcon } from '../../../../shared/navigation/Button';
+import { Button, ButtonIcon, LinkButton, TextButton } from '../../../../shared/navigation/Button';
 import { Chevron } from '../../../../shared/icons/Chevron';
 import { useResizeLayout } from '../../../../shared/hooks/use-resize-layout';
 import { LayoutHandle } from '../../../../shared/layout/LayoutContainer';
@@ -180,6 +180,15 @@ export function ReviewListingPage() {
   return (
     <RefetchProvider refetch={refetch}>
       <DisplayBreadcrumbs currentPage={t('Reviews')} />
+
+      <div style={{ paddingBottom: '0.5em' }}>
+        <TextButton
+          as={Link}
+          to={createLink({ projectId: projectId, subRoute: 'tasks', query: { type: 'crowdsourcing-review' } })}
+        >
+          {t('Task view')}
+        </TextButton>
+      </div>
 
       <ReviewListingContainer ref={refs.container as any}>
         <TaskListContainer ref={refs.resizableDiv as any} style={{ width: widthB }}>

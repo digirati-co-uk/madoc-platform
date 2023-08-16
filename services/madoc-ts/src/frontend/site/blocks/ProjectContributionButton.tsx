@@ -2,20 +2,17 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import { useRecentUserTasks } from '../../shared/hooks/use-recent-user-tasks';
-import { CSSThirdGrid, GridButton } from '../../shared/layout/Grid';
+import { CSSThirdGrid } from '../../shared/layout/Grid';
 import { Heading3 } from '../../shared/typography/Heading3';
 import { ContinueTaskDisplay } from '../features/tasks/ContinueTaskDisplay';
-import { HrefLink } from '../../shared/utility/href-link';
 import { useProject } from '../hooks/use-project';
 import { useProjectShadowConfiguration } from '../hooks/use-project-shadow-configuration';
 import { useProjectStatus } from '../hooks/use-project-status';
-import { useRelativeLinks } from '../hooks/use-relative-links';
 
 export const ProjectContributionButton: React.FC = () => {
   const { t } = useTranslation();
   const { data: project } = useProject();
   const { isActive } = useProjectStatus();
-  const createLink = useRelativeLinks();
   const { showCaptureModelOnManifest } = useProjectShadowConfiguration();
 
   const recentTasks = useRecentUserTasks(3);
@@ -39,12 +36,6 @@ export const ProjectContributionButton: React.FC = () => {
             </div>
           );
         })}
-        <GridButton
-          as={HrefLink}
-          href={createLink({ projectId: project.id, subRoute: 'tasks', query: { type: 'crowdsourcing-task' } })}
-        >
-          {t('View all contributions')}
-        </GridButton>
       </CSSThirdGrid>
     </div>
   );
@@ -52,7 +43,7 @@ export const ProjectContributionButton: React.FC = () => {
 
 blockEditorFor(ProjectContributionButton, {
   type: 'default.ProjectContributionButton',
-  label: 'Continue where you left off',
+  label: 'Continue where you left off (LEGACY)',
   anyContext: ['project'],
   requiredContext: ['project'],
   editor: {},

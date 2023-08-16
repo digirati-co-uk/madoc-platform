@@ -8,7 +8,7 @@ export const GridContainer = styled.div<{ $justify?: string }>`
 
 export const GridButton = styled.button`
   display: flex;
-  width: 191px;
+  width: auto;
   height: 100%;
   padding: 8px 10px;
   flex-direction: column;

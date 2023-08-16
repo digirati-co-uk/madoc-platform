@@ -42,8 +42,8 @@ export const ProjectActions: React.FC<{
             as={Link}
             to={
               options.reviewerDashboard
-                ? createLink({ projectId: project.id, subRoute: 'reviews' })
-                : createLink({ projectId: project.id, subRoute: 'tasks', query: { type: 'crowdsourcing-review' } })
+                ? createLink({ projectId: project.id, subRoute: 'tasks', query: { type: 'crowdsourcing-review' } })
+                : createLink({ projectId: project.id, subRoute: 'reviews' })
             }
           >
             {t('Reviews')}
