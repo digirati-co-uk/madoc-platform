@@ -20,6 +20,7 @@ export const CanvasViewerGridContent = styled.div<{ $vertical?: boolean }>`
 export const CanvasViewerGridSidebar = styled.div<{ $vertical?: boolean }>`
   width: ${props => (props.$vertical ? '100%' : '420px')};
   max-height: 80vh;
+  min-height: 100%;
   display: flex;
   flex-direction: column;
   overflow: auto;
@@ -28,7 +29,7 @@ export const CanvasViewerGridSidebar = styled.div<{ $vertical?: boolean }>`
 export const CanvasViewerEditorStyleReset = styled.div`
   font-size: 13px;
   padding: 0 1em;
-  overflow-x: scroll;
+  //overflow-x: scroll;
 `;
 
 export const ContributionSaveButton = styled.div`
