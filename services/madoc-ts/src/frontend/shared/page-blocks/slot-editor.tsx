@@ -29,6 +29,7 @@ import {
 import { SlotLayout } from '../layout/SlotLayout';
 import { SurfaceEditor } from './surface-editor';
 import { CustomEditorTypes } from './custom-editor-types';
+import { SlotScope } from './slot-scope';
 
 type SlotEditorProps = {
   slot: SiteSlot;
@@ -317,11 +318,11 @@ export const SlotEditor: React.FC<SlotEditorProps> = props => {
         {props.small ? null : (
           <ModalButton
             as={SlotEditorWhy}
-            title="Why am I seeing this slot?"
+            title="See slot scope"
             modalSize={'md'}
-            render={({ close }) => <ExplainSlot context={props.context} slot={props.slot} />}
+            render={({ close }) => <SlotScope context={props.context} slot={props.slot} />}
           >
-            Why am I seeing this slot?
+            See slot scope
           </ModalButton>
         )}
       </SlotEditorContainer>

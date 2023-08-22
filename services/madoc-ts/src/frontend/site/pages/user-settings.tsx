@@ -33,7 +33,6 @@ export function UserSettings() {
     } catch (e) {
       // ignore.
     }
-
     const fields: UserInformationRequest['fields'] = {};
     const extraVisibility: UserInformationRequest['extraVisibility'] = {};
     const userInfo = ref.current?.getData();
@@ -78,6 +77,8 @@ export function UserSettings() {
 
   const profileEnabled = !!data.model?.properties.gravitar;
 
+  console.log(data);
+  console.log('hihi');
   return (
     <div key={updatedAt}>
       {saveSettingsStatus.isSuccess ? <SuccessMessage $margin>Settings saved</SuccessMessage> : null}
