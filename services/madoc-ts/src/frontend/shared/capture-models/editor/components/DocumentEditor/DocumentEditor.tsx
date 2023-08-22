@@ -28,6 +28,7 @@ export type DocumentEditorProps = {
   setDescription: (label: string) => void;
   setAllowMultiple: (allow: boolean) => void;
   setRequired: (allow: boolean) => void;
+  setDependant: (payload?: any) => void;
   setLabelledBy: (label: string) => void;
   setPluralLabel: (label: string) => void;
   selectField: (term: string) => void;
@@ -50,6 +51,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   deselectField,
   setAllowMultiple,
   setRequired,
+  setDependant,
   setPluralLabel,
   setLabelledBy,
   addField,
@@ -169,6 +171,30 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                           {t('Required field')}
                         </StyledFormLabel>
                       </StyledFormField>
+                      {subtreeFields && (
+                        <StyledFormField>
+                          <StyledFormLabel>
+                            {t('Depends on? (This field will only appear if the dependant field has a value)')}
+                          </StyledFormLabel>
+                          <Dropdown
+                            placeholder={t('Choose a field')}
+                            fluid
+                            selection
+                            options={subtreeFields.map(
+                              f =>
+                                f && {
+                                  key: f.value.id,
+                                  text: f.term || '',
+                                  value: f.value.id,
+                                }
+                            )}
+                            value={subtree.dependant}
+                            onChange={val => {
+                              setDependant(val || undefined);
+                            }}
+                          />
+                        </StyledFormField>
+                      )}
                       {subtree.allowMultiple ? (
                         <StyledFormField>
                           <StyledFormLabel>

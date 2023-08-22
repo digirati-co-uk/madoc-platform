@@ -40,6 +40,7 @@ export const FullDocumentEditor: React.FC = () => {
           setLabel={actions.setLabel}
           setAllowMultiple={actions.setAllowMultiple}
           setRequired={actions.setRequired}
+          setDependant={actions.setDependant}
           setLabelledBy={actions.setLabelledBy}
           setPluralLabel={actions.setPluralLabel}
           deselectField={actions.deselectField}

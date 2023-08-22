@@ -31,6 +31,7 @@ export type DocumentModel = {
   setSelectorState: Action<DocumentModel, { selectorType: string; selector: BaseSelector['state'] }>;
   setAllowMultiple: Action<DocumentModel, boolean>;
   setRequired: Action<DocumentModel, boolean>;
+  setDependant: Action<DocumentModel, string>; // dependants ID
   setLabelledBy: Action<DocumentModel, string>;
   setPluralLabel: Action<DocumentModel, string>;
 

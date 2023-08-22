@@ -29,6 +29,7 @@ const Test: React.FC = () => {
           setLabelledBy={actions.setLabelledBy}
           setAllowMultiple={actions.setAllowMultiple}
           setRequired={actions.setRequired}
+          setDependant={actions.setDependant}
           deselectField={actions.deselectField}
           popSubtree={actions.popSubtree}
           pushSubtree={actions.pushSubtree}

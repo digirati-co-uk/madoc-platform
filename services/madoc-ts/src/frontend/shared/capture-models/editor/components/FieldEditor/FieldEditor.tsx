@@ -12,7 +12,7 @@ import { ConfirmButton } from '../../atoms/ConfirmButton';
 import { ChooseSelectorButton } from '../ChooseSelectorButton/ChooseSelectorButton';
 import { ChooseFieldButton } from '../ChooseFieldButton/ChooseFieldButton';
 import { FormPreview } from '../FormPreview/FormPreview';
-import { Dropdown, DropdownOption } from '../../atoms/Dropdown';
+import { Dropdown } from '../../atoms/Dropdown';
 import {
   StyledCheckbox,
   StyledFormField,
@@ -133,7 +133,9 @@ export const FieldEditor: React.FC<{
           ) : null}
           {subtreeFields && (
             <StyledFormField>
-              <StyledFormLabel>{t('Depends on? (This field will only appear if the dependant field has a value)')}</StyledFormLabel>
+              <StyledFormLabel>
+                {t('Depends on? (Chosen field will only appear if the this field has a value)')}
+              </StyledFormLabel>
               <Dropdown
                 placeholder={t('Choose a field')}
                 fluid

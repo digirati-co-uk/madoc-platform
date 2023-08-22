@@ -175,6 +175,15 @@ export const DocumentStore = createContextStore<
       resolveSubtree(state.subtreePath, state.document).required = payload;
     }),
 
+    // set the ID of the field this field depends on
+    setDependant: action((state, payload) => {
+      if (!payload) {
+        delete resolveSubtree(state.subtreePath, state.document).dependant;
+      } else {
+        resolveSubtree(state.subtreePath, state.document).dependant = payload;
+      }
+    }),
+
     setPluralLabel: action((state, payload) => {
       if (!payload) {
         delete resolveSubtree(state.subtreePath, state.document).pluralLabel;
