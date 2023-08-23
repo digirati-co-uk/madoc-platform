@@ -71,6 +71,8 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
   const [metadataOpen, setMetadataOpen] = useState(false);
   const [customLabelledBy, setCustomLabelBy] = useState(false);
 
+  const filteredFields = subtreeFields?.filter(f => f.term !== subtree.label);
+
   const subtreeFieldOptions = useMemo(
     () => [
       {
@@ -180,12 +182,12 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({
                             placeholder={t('Choose a field')}
                             fluid
                             selection
-                            options={subtreeFields.map(
+                            options={filteredFields.map(
                               f =>
                                 f && {
                                   key: f.value.id,
                                   text: f.term || '',
-                                  value: f.value.id,
+                                  value: f.term,
                                 }
                             )}
                             value={subtree.dependant}

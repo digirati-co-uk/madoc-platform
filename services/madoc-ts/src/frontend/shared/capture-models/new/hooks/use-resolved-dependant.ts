@@ -1,18 +1,43 @@
-import { CaptureModel } from '../../types/capture-model';
 import { BaseField } from '../../types/field-types';
-import { resolveSelector } from '../../helpers/resolve-selector';
-import { isRequiredSelectorIncomplete } from '../../utility/is-required-selector-incomplete';
 import { Revisions } from '../../editor/stores/revisions';
-import { traverseDocument } from '../../helpers/traverse-document';
-import { filterRevises } from '../../helpers/filter-revises';
-import { DocumentStore } from '../../editor/stores/document/document-store';
 
-export function useResolvedDependant(entityOrField: CaptureModel['document'] | BaseField) {
-  const revisionId = Revisions.useStoreState(s => s.currentRevisionId);
+export function useResolvedDependant(entityOrField: BaseField) {
   const currentRevision = Revisions.useStoreState(s => s.currentRevision);
-  const properties = currentRevision;
-  // const isBlockingForm = isRequiredSelectorIncomplete(resolvedSelector);
-  console.log(currentRevision);
-  const hasValue = true;
-  return [currentRevision, { hasValue }] as const;
+  const revisionDocument = currentRevision?.document;
+  const fieldsToValidate: any[] = [];
+
+  if (entityOrField.dependant) {
+    const dependantField = currentRevision?.document.properties[entityOrField.dependant];
+
+    if (revisionDocument) {
+      if (dependantField && dependantField.length) {
+        for (const singleFieldOrEntity of dependantField) {
+          if (singleFieldOrEntity.properties) {
+            const properties = Object.keys(singleFieldOrEntity.properties);
+            for (const property of properties) {
+              const subFieldOrEntity = singleFieldOrEntity.properties[property];
+              if (subFieldOrEntity && subFieldOrEntity.length) {
+                for (const singleSubFieldOrEntity of subFieldOrEntity) {
+                  fieldsToValidate.push(singleSubFieldOrEntity);
+                }
+              }
+            }
+          } else {
+            fieldsToValidate.push(singleFieldOrEntity);
+          }
+        }
+      }
+    }
+
+    if (fieldsToValidate.length) {
+      for (const field of fieldsToValidate) {
+        if (!field.value || field.value === '') {
+          return false;
+        }
+      }
+      return true;
+    }
+    return true;
+  }
+  return true;
 }

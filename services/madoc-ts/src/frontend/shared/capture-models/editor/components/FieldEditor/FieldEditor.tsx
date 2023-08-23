@@ -49,6 +49,7 @@ export const FieldEditor: React.FC<{
   const field = ctx.fields[props.type];
   const [defaultValue, setDefaultValue] = useState<any>(props.value);
 
+  const filteredFields = subtreeFields?.filter(f => f.term !== props.label);
   if (!field) {
     throw new Error(`Plugin ${props.type} does not exist`);
   }
@@ -131,7 +132,7 @@ export const FieldEditor: React.FC<{
               </StyledFormLabel>
             </StyledFormField>
           ) : null}
-          {subtreeFields && (
+          {filteredFields && (
             <StyledFormField>
               <StyledFormLabel>
                 {t('Depends on? (Chosen field will only appear if the this field has a value)')}
@@ -140,14 +141,13 @@ export const FieldEditor: React.FC<{
                 placeholder={t('Choose a field')}
                 fluid
                 selection
-                options={subtreeFields.map(f =>
-                  f
-                    ? {
-                        key: f.value.id,
-                        text: f.term || '',
-                        value: f.value.id,
-                      }
-                    : null
+                options={filteredFields.map(
+                  f =>
+                    f.term !== props.label && {
+                      key: f.value.id,
+                      text: f.term || '',
+                      value: f.term,
+                    }
                 )}
                 value={dependantField}
                 onChange={val => {
