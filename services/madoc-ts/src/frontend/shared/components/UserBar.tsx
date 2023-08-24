@@ -185,7 +185,7 @@ export const UserBar: React.FC<{
                     {t('View site')}
                   </GlobalHeaderMenuItem>
 
-                  <GlobalHeaderMenuItem href={`/s/${site.slug}/profile`} {...itemProps[2 + adminIdx]}>
+                  <GlobalHeaderMenuItem href={`/s/${site.slug}/users/${user.id}`} {...itemProps[2 + adminIdx]}>
                     {t('Account')}
                   </GlobalHeaderMenuItem>
                   <GlobalHeaderMenuItem
@@ -209,7 +209,7 @@ export const UserBar: React.FC<{
                     {t('View site')}
                   </GlobalHeaderMenuItem>
 
-                  <GlobalHeaderMenuItem as={HrefLink} href={`/profile`} {...itemProps[2 + adminIdx]}>
+                  <GlobalHeaderMenuItem as={HrefLink} href={`/users/${user.id}`} {...itemProps[2 + adminIdx]}>
                     {t('Account')}
                   </GlobalHeaderMenuItem>
                   <GlobalHeaderMenuItem

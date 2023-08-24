@@ -269,7 +269,7 @@ export const ViewUser: UniversalComponent<ViewUserType> = createUniversalCompone
               {isSelf ? (
                 <ProfileAction>
                   <EditIcon />
-                  <HrefLink href="/dashboard/settings">Edit profile</HrefLink>
+                  <HrefLink href="/dashboard/settings">{t('Edit profile')}</HrefLink>
                 </ProfileAction>
               ) : null}
             </ProfileActions>

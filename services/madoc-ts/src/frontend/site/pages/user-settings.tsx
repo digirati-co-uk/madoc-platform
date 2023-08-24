@@ -11,8 +11,10 @@ import { RevisionRequest } from '../../shared/capture-models/types/revision-requ
 import { useApi } from '../../shared/hooks/use-api';
 import { useData } from '../../shared/hooks/use-data';
 import { useSite, useUser } from '../../shared/hooks/use-site';
+import { EditIcon } from '../../shared/icons/EditIcon';
 import { Button, ButtonRow } from '../../shared/navigation/Button';
 import { serverRendererFor } from '../../shared/plugins/external/server-renderer-for';
+import { HrefLink } from '../../shared/utility/href-link';
 
 export function UserSettings() {
   const { data, refetch, updatedAt } = useData(UserSettings);
@@ -83,6 +85,7 @@ export function UserSettings() {
       {saveSettingsStatus.isSuccess ? <SuccessMessage $margin>Settings saved</SuccessMessage> : null}
 
       <h2>Profile</h2>
+
       {profileEnabled ? (
         <div>
           <div style={{ width: 100, borderRadius: '50%', overflow: 'hidden' }}>
@@ -98,6 +101,10 @@ export function UserSettings() {
           ) : null}
         </div>
       ) : null}
+      <div style={{ display: 'flex', gap: 10, alignItems: 'center', margin: '20px 0' }}>
+        <EditIcon />
+        <HrefLink href="/profile">{t('Edit display name or password')}</HrefLink>
+      </div>
       {data.model ? (
         <EditShorthandCaptureModel ref={ref} onChange={handleChange} template={data.model} fullDocument />
       ) : null}

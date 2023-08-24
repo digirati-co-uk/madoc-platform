@@ -1,10 +1,11 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+import { HrefLink } from '../../../shared/utility/href-link';
 import { FooterImageGrid } from '../../blocks/FooterImageGrid';
 import { RenderFragment } from '../../../shared/components/RenderFragment';
 import { GlobalSearch } from '../../../shared/form/GlobalSearch';
-import { useSiteTheme } from '../../../shared/hooks/use-site';
+import { useSite, useSiteTheme } from '../../../shared/hooks/use-site';
 import { FlexSpacer } from '../../../shared/layout/FlexSpacer';
 import { SiteFooter, SiteFooterBackground } from '../../../shared/layout/SiteFooter';
 import { AutoSlotLoader } from '../../../shared/page-blocks/auto-slot-loader';
@@ -32,6 +33,7 @@ const GlobalFooterContainer = styled.div`
 export const GlobalFooter: React.FC = () => {
   const { t, i18n } = useTranslation();
   const siteTheme = useSiteTheme();
+  const site = useSite();
 
   const themFooter =
     siteTheme &&
@@ -50,7 +52,15 @@ export const GlobalFooter: React.FC = () => {
         <SiteFooterBackground>
           <SiteFooter>
             <Slot name="global-footer" layout="flex-center" source={{ id: 'global-footer', type: 'global' }}>
-              <StyledGlobalFooter>{t('Powered by Madoc')}</StyledGlobalFooter>
+              <StyledGlobalFooter>
+                {t('Powered by Madoc')}
+                {site.latestTerms ? (
+                  <span>
+                    <span style={{ margin: '0 1em', display: 'inline-block' }}>|</span>
+                    <HrefLink href="/terms">{t('Terms of use')}</HrefLink>
+                  </span>
+                ) : null}
+              </StyledGlobalFooter>
               <AvailableBlocks names={['simple-markdown-block']}>
                 <GlobalMenuStack />
                 <FlexSpacer />
