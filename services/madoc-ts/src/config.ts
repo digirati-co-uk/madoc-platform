@@ -20,6 +20,11 @@ function validNumber(t: string | undefined, defaultValue: number) {
 }
 
 export const config: EnvConfig = {
+  build: {
+    time: process.env.BUILD_TIME || 'unknown',
+    version: process.env.BUILD_VERSION || 'unknown',
+    revision: process.env.BUILD_REVISION || 'unknown',
+  },
   flags: {
     capture_model_api_migrated: castBool(process.env.CAPTURE_MODEL_API_MIGRATED, false),
   },

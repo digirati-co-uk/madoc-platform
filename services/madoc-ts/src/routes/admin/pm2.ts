@@ -1,4 +1,5 @@
 import pm2, { ProcessDescription } from 'pm2';
+import { config } from '../../config';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { onlyGlobalAdmin } from '../../utility/user-with-scope';
 
@@ -47,6 +48,7 @@ export const pm2Status: RouteMiddleware = async context => {
   const list = await pm2List();
 
   context.response.body = {
+    build: config.build,
     list: list.map(item => {
       return {
         id: item.pm_id,

@@ -43,6 +43,10 @@ RUN yarn install --no-interactive --frozen-lockfile --production=true
 
 FROM node:18-bullseye
 
+ARG BUILD_TIME='unknown'
+ARG BUILD_VERSION='unknown'
+ARG BUILD_REVISION='unknown'
+
 WORKDIR /home/node/app
 
 RUN npm install -g pm2@5
@@ -63,6 +67,10 @@ ENV DATABASE_SCHEMA=public
 ENV DATABASE_PASSWORD=postgres
 ENV NODE_ENV=production
 ENV API_GATEWAY_HOST=http://gateway
+
+ENV BUILD_TIME=${BUILD_TIME}
+ENV BUILD_VERSION=${BUILD_VERSION}
+ENV BUILD_REVISION=${BUILD_REVISION}
 
 EXPOSE 3000
 EXPOSE 3001
