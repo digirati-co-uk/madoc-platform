@@ -433,6 +433,10 @@ export const siteConfigurationModel: {
         value: 'hidePageNavLinks',
       },
       {
+        label: 'Show reviews link',
+        value: 'showReviews',
+      },
+      {
         label: 'Hide the search bar',
         value: 'hideSearchBar',
       },
@@ -528,6 +532,10 @@ export const NonProjectOptions: {
       {
         label: 'Hide the page navigation links',
         value: 'hidePageNavLinks',
+      },
+      {
+        label: 'Show reviews link',
+        value: 'showReviews',
       },
       {
         label: 'Hide the search bar',

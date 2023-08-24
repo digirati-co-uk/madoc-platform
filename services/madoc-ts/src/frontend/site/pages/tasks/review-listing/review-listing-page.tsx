@@ -126,7 +126,8 @@ const HeaderLink = styled.a`
 
 export function ReviewListingPage() {
   const { t } = useTranslation();
-  const params = useParams<{ taskId?: string }>();
+  const params = useParams<{ taskId?: string; slug?: string }>();
+  const projectId = params.slug;
   const createLink = useRelativeLinks();
   const { sort_by = '', ...query } = useLocationQuery();
 
@@ -324,7 +325,12 @@ function SingleReviewTableRow({
       $active={active}
       onClick={() =>
         navigate(
-          createLink({ taskId: undefined, subRoute: `reviews/${task.id}`, query, hash: page ? page.toString() : '1' })
+          createLink({
+            subRoute: `reviews`,
+            taskId: task.id,
+            query,
+            hash: page ? page.toString() : '1',
+          })
         )
       }
     >
@@ -343,7 +349,7 @@ function SingleReviewTableRow({
         )}
       </SimpleTable.Cell>
       {/* resource name */}
-      <SimpleTable.Cell>
+      <SimpleTable.Cell style={{ maxWidth: '7em' }}>
         {metadata.subject && metadata.subject.type === 'manifest'
           ? ''
           : metadata.subject?.label && <LocaleString>{metadata.subject.label}</LocaleString>}
@@ -368,12 +374,12 @@ serverRendererFor(ReviewListingPage, {
   },
   getData: async (key, vars, api) => {
     const slug = vars.projectSlug;
-    const project = await api.getProject(slug);
+    const project = slug ? await api.getProject(slug) : undefined;
 
     return api.getTasks(vars.page, {
-      all_tasks: false,
+      all_tasks: !project?.task_id,
       type: 'crowdsourcing-task',
-      root_task_id: project.task_id,
+      root_task_id: project?.task_id,
       per_page: 20,
       detail: true,
       ...vars.query,

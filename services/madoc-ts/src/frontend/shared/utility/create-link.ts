@@ -13,9 +13,9 @@ export function createLink(opt: {
   hash?: string;
 }) {
   const subRoute = opt.subRoute ? `/${opt.subRoute}` : '';
-  const suffix = `${subRoute}${opt.query && Object.keys(opt.query).length ? `?${stringify(opt.query)}` : ''}${
-    opt.hash ? `#${opt.hash}` : ''
-  }`;
+  const query = opt.query && Object.keys(opt.query).length ? `?${stringify(opt.query)}` : '';
+  const hash = opt.hash ? `#${opt.hash}` : '';
+  const suffix = `${subRoute}${query}${hash}`;
   const canvasSubRoute = opt.admin ? 'canvases' : 'c';
 
   // Tasks.
@@ -25,6 +25,13 @@ export function createLink(opt: {
         return `/projects/${opt.projectId}/tasks/${opt.parentTaskId}/subtasks/${opt.taskId}${suffix}`;
       }
       return `/tasks/${opt.parentTaskId}/subtasks/${opt.taskId}${suffix}`;
+    }
+    if (opt.subRoute === 'tasks' || opt.subRoute === 'reviews') {
+      if (opt.projectId) {
+        return `/projects/${opt.projectId}/${opt.subRoute}/${opt.taskId}${query}${hash}`;
+      }
+
+      return `/${opt.subRoute}/${opt.taskId}${query}${hash}`;
     }
     if (opt.projectId) {
       return `/projects/${opt.projectId}/tasks/${opt.taskId}${suffix}`;
@@ -82,6 +89,10 @@ export function createLink(opt: {
 
   if (opt.projectId) {
     return `/projects/${opt.projectId}${suffix}`;
+  }
+
+  if (opt.subRoute === 'tasks' || opt.subRoute === 'reviews') {
+    return `/${opt.subRoute}${query}${hash}`;
   }
 
   return '';

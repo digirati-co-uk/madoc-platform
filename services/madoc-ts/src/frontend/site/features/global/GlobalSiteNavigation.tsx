@@ -23,6 +23,7 @@ export function GlobalSiteNavigation(props: {
   const showCollections = enableCollections && !project.headerOptions?.hideCollectionsLink;
   const showDashboard = user && !project.headerOptions?.hideDashboardLink;
   const showNavLinks = !project.headerOptions?.hidePageNavLinks;
+  const showReviews = !!project.headerOptions?.showReviews;
   const isExtraActive = props.extraNavItems ? props.extraNavItems.some(i => i.slug === location.pathname) : false;
 
   return (
@@ -45,6 +46,11 @@ export function GlobalSiteNavigation(props: {
       {showDashboard ? (
         <LightNavigationItem $active={location.pathname.startsWith('/dashboard') && !isExtraActive}>
           <HrefLink href="/dashboard">{t('User dashboard')}</HrefLink>
+        </LightNavigationItem>
+      ) : null}
+      {showReviews ? (
+        <LightNavigationItem $active={location.pathname.startsWith('/reviews') && !isExtraActive}>
+          <HrefLink href="/reviews">{t('Reviews')}</HrefLink>
         </LightNavigationItem>
       ) : null}
       {props.extraNavItems?.length

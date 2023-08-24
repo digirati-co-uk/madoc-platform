@@ -580,6 +580,27 @@ export function createRoutes(Components: RouteComponents): CreateRouteType {
       ],
     },
     {
+      path: '/reviews',
+      element: <Components.ReviewListingPage />,
+      exact: true,
+    },
+    {
+      path: '/reviews/:taskId',
+      element: <Components.ReviewListingPage />,
+      children: [
+        {
+          path: '/reviews/:taskId',
+          element: <Components.TaskLoader />,
+          children: [
+            {
+              index: true,
+              element: <Components.SingleReview />,
+            },
+          ],
+        },
+      ],
+    },
+    {
       path: '/tasks',
       element: <Components.AllTasks />,
       exact: true,

@@ -94,6 +94,7 @@ export type ProjectConfiguration = {
     hideCollectionsLink?: boolean;
     hideDashboardLink?: boolean;
     hidePageNavLinks?: boolean;
+    showReviews?: boolean;
     hideSearchBar?: boolean;
   };
   activityStreams?: {
