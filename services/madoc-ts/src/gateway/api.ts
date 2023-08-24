@@ -370,6 +370,7 @@ export class ApiClient {
       headers = {},
       raw = false,
       formData = false,
+      allow404 = false,
     }: {
       method?: 'GET' | 'PUT' | 'POST' | 'PATCH' | 'DELETE' | 'OPTIONS' | 'HEAD';
       body?: Body;
@@ -381,6 +382,7 @@ export class ApiClient {
       headers?: any;
       raw?: boolean;
       formData?: boolean;
+      allow404?: boolean;
     } = {}
   ): Promise<Return> {
     if (!publicRequest && !jwt) {
@@ -404,6 +406,9 @@ export class ApiClient {
 
     if (response.error) {
       if (response.status === 404) {
+        if (allow404) {
+          return null as any;
+        }
         throw new NotFound(`${method} ${endpoint} not found`);
       }
 
@@ -729,7 +734,9 @@ export class ApiClient {
   }
 
   async getProjectMemberEmails(id: string | number) {
-    return this.request<{ users: Array<{ id: number; name: string; email: string }> }>(`/api/madoc/projects/${id}/member-emails`);
+    return this.request<{ users: Array<{ id: number; name: string; email: string }> }>(
+      `/api/madoc/projects/${id}/member-emails`
+    );
   }
 
   async addProjectMember(id: string | number, userId: string | number, role?: ProjectMember['role']) {
@@ -2188,8 +2195,9 @@ export class ApiClient {
 
   async searchGetIIIF(id: string) {
     try {
-      return this.request(`/api/search/iiif/${id}`);
+      return this.request(`/api/search/iiif/${id}`, { allow404: true });
     } catch (err) {
+      console.log('caught error?', err);
       return undefined;
     }
   }

@@ -38,4 +38,13 @@
 
 
 
+/** Highlight all styled components */
+/*
+*[class*="-sc-"]:hover {
+    outline: 3px solid red !important;
+}
 
+*[class*="-sc-"] {
+    outline: 3px solid #eee !important;
+}
+*/

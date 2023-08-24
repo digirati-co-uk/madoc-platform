@@ -5,6 +5,7 @@ import { userWithScope } from '../../../utility/user-with-scope';
 
 export const deleteCanvasSummary: RouteMiddleware<{ id: number }> = async context => {
   const { siteId } = userWithScope(context, ['site.admin']);
+
   const canvasId = context.params.id;
 
   context.response.body = await buildCanvasDeletionSummary(canvasId, siteId, () => context.connection);

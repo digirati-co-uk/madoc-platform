@@ -15,7 +15,11 @@ type ManifestSearchIndexType = {
 
 export const ManifestSearchIndex = createUniversalComponent<ManifestSearchIndexType>(
   () => {
-    const { data, isError, refetch } = useData(ManifestSearchIndex, {}, { retry: 0 });
+    const { data, isLoading: isManifestLoading, refetch } = useData(
+      ManifestSearchIndex,
+      {},
+      { retry: 0, useErrorBoundary: false }
+    );
     const { data: structure } = useData(EditManifestStructure);
     const { id } = useParams<{ id: string }>();
     const totalCanvases = structure?.items.length || 0;
@@ -23,7 +27,11 @@ export const ManifestSearchIndex = createUniversalComponent<ManifestSearchIndexT
       await refetch();
     });
 
-    if (isError) {
+    if (isManifestLoading) {
+      return <div>loading...</div>;
+    }
+
+    if (!data) {
       return (
         <div>
           Item is not in the search index
@@ -32,10 +40,6 @@ export const ManifestSearchIndex = createUniversalComponent<ManifestSearchIndexT
           </Button>
         </div>
       );
-    }
-
-    if (!data) {
-      return <div>loading...</div>;
     }
 
     return (

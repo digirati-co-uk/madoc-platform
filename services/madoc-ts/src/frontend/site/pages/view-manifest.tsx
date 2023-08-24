@@ -36,7 +36,7 @@ export function ViewManifest() {
     if (!manifest) {
       return null;
     }
-    return <Navigate to={createLink({ canvasId: manifest?.items[0].id, subRoute: 'model' })} />;
+    return <Navigate replace to={createLink({ canvasId: manifest?.items[0].id, subRoute: 'model' })} />;
   }
 
   return (
