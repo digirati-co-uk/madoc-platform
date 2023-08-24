@@ -79,13 +79,13 @@ Hotfix release for submissions in progress.
 
 ### Changed
 - Changed language on user dash from 'reviews' to 'review tasks' to differentiate between the two
+- Improved 'delete all contributions' by deleting all user tasks as well as capture model
 - Changed the project heading block to contain optional image and start contributing button
 - Added max number option for allowMultiple fields in capture model
 
 ### Changed
 - Changed language on user dash from 'reviews' to 'review tasks' to differentiate between the two
 - Improved 'delete all contributions' by deleting all user tasks as well as capture model
-
 
 ## [v2.1.0](https://github.com/digirati-co-uk/madoc-platform/compare/v2.0.8...v2.1.0)
 
