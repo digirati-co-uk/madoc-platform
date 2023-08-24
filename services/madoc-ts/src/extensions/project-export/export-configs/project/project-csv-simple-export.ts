@@ -38,7 +38,7 @@ export const projectCsvSimpleExport: ExportConfig = {
             label: 'Submission filter',
             inlineLabel: 'Include reviews',
             description: 'Include submissions being reviewed in the export.',
-          },
+          } as any,
         },
       };
     }
