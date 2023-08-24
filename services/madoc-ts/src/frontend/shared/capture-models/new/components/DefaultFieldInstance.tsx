@@ -5,6 +5,7 @@ import { BaseField } from '../../types/field-types';
 import { useSlotConfiguration } from './EditorSlots';
 import { FieldSet } from '../../../form/FieldSet';
 import { useResolvedSelector } from '../hooks/use-resolved-selector';
+import { useResolvedDependant } from '../hooks/use-resolved-dependant';
 
 export const DefaultFieldInstance: React.FC<{
   field: BaseField;
@@ -17,6 +18,7 @@ export const DefaultFieldInstance: React.FC<{
   const { immutableFields = [] } = useSlotConfiguration();
   const immutable = immutableFields.indexOf(property) !== -1;
   const [selector, { isBlockingForm }] = useResolvedSelector(field);
+  const dependantValue = useResolvedDependant(field);
   const disableForm = isBlockingForm;
 
   useEffect(() => {
@@ -46,6 +48,9 @@ export const DefaultFieldInstance: React.FC<{
     return null;
   }
 
+  if (!dependantValue) {
+    return null;
+  }
   return (
     <FieldSet
       onFocus={onFocus}
