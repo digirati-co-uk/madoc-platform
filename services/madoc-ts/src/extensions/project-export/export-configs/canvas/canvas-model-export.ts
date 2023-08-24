@@ -14,6 +14,7 @@ export const canvasModelExport: ExportConfig = {
     filePerProject: true,
     defaultValues: {
       format: 'json',
+      reviews: false,
     },
     editor: {
       project_id: {
@@ -34,6 +35,12 @@ export const canvasModelExport: ExportConfig = {
           { value: 'capture-model-with-pages-resolved', text: 'capture-model-with-pages-resolved' },
         ],
       } as any,
+      reviews: {
+        type: 'checkbox-field',
+        label: 'Submission filter',
+        inlineLabel: 'Include reviews',
+        description: 'Include submissions being reviewed in the export.',
+      },
     },
   },
   hookConfig(subject, options, config) {
@@ -58,6 +65,7 @@ export const canvasModelExport: ExportConfig = {
     const resp = await options.api.getSiteCanvasPublishedModels(subject.id, {
       project_id: project?.id,
       format: options.config?.format || 'json',
+      reviews: !!options.config?.reviews,
     });
 
     // @todo it would be better if getSiteCanvasPublishedModels returned a project-id if known.
