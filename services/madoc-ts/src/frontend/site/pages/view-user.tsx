@@ -164,7 +164,7 @@ function ContributionSnippet({ task, first }: { task: CrowdsourcingTask; first: 
   const resourceLink =
     metadata.subject && metadata.subject.parent && metadata.project
       ? `/projects/${metadata.project.slug}/manifests/${metadata.subject.parent.id}/c/${metadata.subject.id}`
-      : metadata.subject && metadata.subject.type === 'manifest'
+      : metadata.subject && metadata.subject.type === 'manifest' && metadata.project
       ? `/projects/${metadata.project.slug}/manifests/${metadata.subject.id}`
       : null;
 
