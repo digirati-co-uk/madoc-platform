@@ -14,6 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 -->
 
+### Added
+- New cron-job to restart the queue at 3am every day (local to the server)
+
 ## [v2.1.4](https://github.com/digirati-co-uk/madoc-platform/compare/v2.1.3...v2.1.4)
 
 ### Fixes

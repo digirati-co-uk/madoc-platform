@@ -28,11 +28,16 @@ async function pm2List() {
 
 export async function pm2Restart(process: string) {
   return new Promise<void>((resolve, reject) => {
+    const timeout = setTimeout(() => {
+      reject(new Error('Restart timed out'));
+    }, 5 * 60 * 1000); // 5 minutes
     pm2.reload(process, err => {
       if (err) {
+        clearTimeout(timeout);
         reject(err);
         return;
       }
+      clearTimeout(timeout);
       resolve();
     });
   });
