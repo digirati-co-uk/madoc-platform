@@ -14,7 +14,7 @@ import { serverRendererFor } from '../../../../shared/plugins/external/server-re
 import { HrefLink } from '../../../../shared/utility/href-link';
 import { useRelativeLinks } from '../../../hooks/use-relative-links';
 import { useTaskMetadata } from '../../../hooks/use-task-metadata';
-import { Button, ButtonIcon, LinkButton, TextButton } from '../../../../shared/navigation/Button';
+import { Button, ButtonIcon, TextButton } from '../../../../shared/navigation/Button';
 import { Chevron } from '../../../../shared/icons/Chevron';
 import { useResizeLayout } from '../../../../shared/hooks/use-resize-layout';
 import { LayoutHandle } from '../../../../shared/layout/LayoutContainer';

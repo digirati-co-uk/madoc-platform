@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { Revisions } from '../../editor/stores/revisions/index';
 import { useSlotContext } from '../components/EditorSlots';
 import { useCurrentEntity } from './use-current-entity';
+import { useResolvedDependant } from './use-resolved-dependant';
 
 export function useManagePropertyList(property: string) {
   const { configuration } = useSlotContext();
@@ -17,6 +18,9 @@ export function useManagePropertyList(property: string) {
     removeInstance: a.removeInstance,
   }));
   const canAddAnother = Boolean(maxMultiple ? maxMultiple > fields.length : true);
+
+  // @ts-ignore
+  const dependantValue = useResolvedDependant(fields[0]);
 
   const createNewEntity = useCallback(() => {
     if (configuration.allowEditing) {
@@ -60,6 +64,7 @@ export function useManagePropertyList(property: string) {
     canRemove: configuration.allowEditing,
     canAdd: configuration.allowEditing,
     removeItem,
+    dependantValue: dependantValue,
     createNewEntity,
     createNewField,
   };

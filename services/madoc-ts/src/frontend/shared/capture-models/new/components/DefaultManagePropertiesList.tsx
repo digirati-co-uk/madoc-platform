@@ -62,6 +62,7 @@ export const DefaultManagePropertyList: EditorRenderingConfig['ManagePropertyLis
     canAddAnother,
     canAdd,
     canRemove,
+    dependantValue,
     label,
     createNewEntity,
     createNewField,
@@ -83,7 +84,7 @@ export const DefaultManagePropertyList: EditorRenderingConfig['ManagePropertyLis
     }
   };
 
-  if (!allowMultiple || (!canRemove && !canAdd)) {
+  if (!allowMultiple || (!canRemove && !canAdd) || !dependantValue) {
     return <>{children}</>;
   }
 
