@@ -5,6 +5,7 @@ import json from 'koa-json';
 import logger from 'koa-logger';
 import Ajv from 'ajv';
 import { strategies } from './auth';
+import { bounceQueue } from './cron/bounce-queue';
 import { checkExpiredManifests } from './cron/check-expired-manifests';
 import './frontend/shared/plugins/globals';
 import { CompletionsExtension } from './extensions/completions/extension';
@@ -150,6 +151,14 @@ export async function createApp(config: ExternalConfig, env: EnvConfig) {
         await pool.connect(async connection => {
           await checkExpiredManifests({ ...app.context, connection } as any, fireDate);
         });
+      })
+    );
+
+    (app.context.cron as CronJobs).addJob(
+      'restart-queue',
+      'Restart queue 3am once a day',
+      schedule.scheduleJob('0 3 * * *', async function() {
+        await bounceQueue();
       })
     );
   }
