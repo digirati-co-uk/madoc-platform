@@ -4,7 +4,7 @@ import { useSite, useUser } from '../hooks/use-site';
 import { HrefLink } from '../utility/href-link';
 import { useLocation } from 'react-router-dom';
 
-export function TermsPopup() {
+export function TermsPopup({ admin }: { admin?: boolean }) {
   const user = useUser();
   const site = useSite();
   const { t } = useTranslation();
@@ -91,9 +91,15 @@ export function TermsPopup() {
         ) : (
           <p>{t('The terms of use for this site have changed since you last accepted them.')}</p>
         )}
-        <HrefLink style={{ color: '#fff', marginTop: '1em', display: 'block' }} href={`/terms`}>
-          {termsMessage}
-        </HrefLink>
+        {admin ? (
+          <a style={{ color: '#fff', marginTop: '1em', display: 'block' }} href={`/s/${site.slug}/terms`}>
+            {termsMessage}
+          </a>
+        ) : (
+          <HrefLink style={{ color: '#fff', marginTop: '1em', display: 'block' }} href={`/terms`}>
+            {termsMessage}
+          </HrefLink>
+        )}
       </div>
     </div>
   );

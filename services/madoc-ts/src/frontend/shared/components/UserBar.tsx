@@ -137,7 +137,7 @@ export const UserBar: React.FC<{
 
   return (
     <>
-      <TermsPopup />
+      <TermsPopup admin={admin} />
 
       <UserBarContainer>
         <UserBarInstallation>{systemConfig.installationTitle}</UserBarInstallation>
