@@ -181,6 +181,12 @@ export const AdminSidebar: React.FC = () => {
             <AdminMenuSubItem as={HrefLink} href="/site/permissions">
               {t('Site permissions')}
             </AdminMenuSubItem>
+            <AdminMenuSubItem as={HrefLink} href="/configure/site/terms-and-conditions">
+              {t('Site terms and conditions')}
+            </AdminMenuSubItem>
+            <AdminMenuSubItem as={HrefLink} href="/configure/site/terms">
+              {t('External terms list')}
+            </AdminMenuSubItem>
             <AdminMenuSubItem as={HrefLink} href="/site/invitations">
               {t('Invitations')}
             </AdminMenuSubItem>
