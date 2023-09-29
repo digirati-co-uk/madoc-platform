@@ -71,7 +71,7 @@ module.exports = {
       allowTemplateLiterals: true
     }],
     'space-before-blocks': ERROR,
-    'space-before-function-paren': OFF
+    'space-before-function-parent': OFF
   },
   settings: {
     react: {

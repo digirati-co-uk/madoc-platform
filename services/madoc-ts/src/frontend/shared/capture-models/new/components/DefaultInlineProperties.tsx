@@ -21,6 +21,7 @@ export const DefaultInlineProperties: EditorRenderingConfig['InlineProperties'] 
       {props.label && showTitle ? (
         <FieldHeader
           label={tModel(props.label)}
+          labelFor={props.label}
           description={props.description ? tModel(props.description) : undefined}
         />
       ) : null}
