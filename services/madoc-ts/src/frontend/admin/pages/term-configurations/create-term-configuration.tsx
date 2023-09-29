@@ -175,11 +175,15 @@ export function CreateTermConfiguration() {
           <form onSubmit={submitUrl} style={{ marginTop: 20 }}>
             <InputContainer wide>
               <InputLabel>Example search query</InputLabel>
-              <Input type="text" name="example" value="https://openlibrary.org/search.json?q=the+lord+of+the+rings" />
+              <Input
+                type="text"
+                name="example"
+                defaultValue="https://openlibrary.org/search.json?q=the+lord+of+the+rings"
+              />
             </InputContainer>
             <InputContainer wide>
               <InputLabel>URL Template</InputLabel>
-              <Input type="text" name="url" value="https://openlibrary.org/search.json?q=%" />
+              <Input type="text" name="url" defaultValue="https://openlibrary.org/search.json?q=%" />
             </InputContainer>
             <Button type="submit" disabled={isLoading}>
               Preview
