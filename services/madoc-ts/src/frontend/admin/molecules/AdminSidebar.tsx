@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
+import { ModelDocumentIcon } from '../../shared/icons/ModelDocumentIcon';
 import {
   AdminMenuContainer,
   AdminMenuItem,
@@ -43,6 +44,7 @@ export const AdminSidebar: React.FC = () => {
     isManageManifests,
     isLocalisation,
     isMedia,
+    isPageBlocks,
     isSiteGlobal,
   } = useMemo(() => {
     return {
@@ -53,6 +55,7 @@ export const AdminSidebar: React.FC = () => {
         pathname.startsWith('/import/manifest') ||
         pathname.startsWith('/enrichment/ocr'),
       isProjects: pathname.startsWith('/projects'),
+      isPageBlocks: pathname.startsWith('/page-blocks'),
       isSiteConfiguration:
         pathname.startsWith('/configure') ||
         pathname.startsWith('/system') ||
@@ -134,6 +137,15 @@ export const AdminSidebar: React.FC = () => {
               <MediaIcon />
             </AdminMenuItemIcon>
             <AdminMenuItemLabel>{t('Media')}</AdminMenuItemLabel>
+          </AdminMenuItem>
+        </AdminMenuItemContainer>
+
+        <AdminMenuItemContainer>
+          <AdminMenuItem as={HrefLink} href="/page-blocks" $active={isPageBlocks}>
+            <AdminMenuItemIcon>
+              <ModelDocumentIcon color="#fff" />
+            </AdminMenuItemIcon>
+            <AdminMenuItemLabel>{t('Site pages')}</AdminMenuItemLabel>
           </AdminMenuItem>
         </AdminMenuItemContainer>
 

@@ -100,7 +100,7 @@ export const Homepage: UniversalComponent<HomepageType> = createUniversalCompone
                   <Link to="/collections">{t('Manage collections', { count: 2 })}</Link>
                 </li>
                 <li>
-                  <Link to="/page-blocks">{t('Customise site pages')}</Link>
+                  <Link to="/page-blocks">{t('Site pages')}</Link>
                 </li>
                 <li>
                   <Link to="/i18n">{t('Localisation')}</Link>
