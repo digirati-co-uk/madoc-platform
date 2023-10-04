@@ -43,7 +43,7 @@ export const AddSubpageButton: React.FC<{ onCreate?: (page: SitePage) => void }>
     <ModalButton
       as={PageEditorButton}
       title="Add new subpage"
-      render={() => <PageCreator defaultPath={page.path} onUpdate={req => (subpage.current = req)} />}
+      render={() => <PageCreator page={{ path: page.path }} onUpdate={req => (subpage.current = req)} />}
       footerAlignRight
       renderFooter={({ close }) => {
         return (

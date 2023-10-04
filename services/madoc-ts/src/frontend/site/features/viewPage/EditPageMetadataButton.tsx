@@ -39,14 +39,7 @@ export const EditPageMetadataButton: React.FC<{ onUpdate?: (page: SitePage) => v
     <ModalButton
       as={PageEditorButton}
       title="Edit page metadata"
-      render={() => (
-        <PageCreator
-          defaultDescription={page.description}
-          defaultTitle={page.title}
-          defaultPath={page.path}
-          onUpdate={req => (newPage.current = req)}
-        />
-      )}
+      render={() => <PageCreator page={page} onUpdate={req => (newPage.current = req)} />}
       footerAlignRight
       renderFooter={({ close }) => {
         return (
