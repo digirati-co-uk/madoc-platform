@@ -171,6 +171,7 @@ export class PageBlocksRepository extends BaseRepository {
     where ${parentPage}
       and page.hide_from_navigation = false
       and page.site_id = ${siteId}
+    order by page.navigation_order
   `;
   }
 
@@ -193,7 +194,7 @@ export class PageBlocksRepository extends BaseRepository {
       }
     }
 
-    return Object.values(pageMap);
+    return pages;
   }
 
   async getNavigationRoot(pathToFind: string, siteId: number) {
