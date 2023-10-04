@@ -1,0 +1,18 @@
+{
+  "sandboxes": ["new", "vanilla"],
+  "node": "16",
+  "installCommand": "custom-install",
+  "buildCommand": "custom-build",
+  "packages": [
+    "services/madoc-ts/npm/components",
+    "services/madoc-ts/npm/config",
+    "services/madoc-ts/npm/capture-models",
+    "services/madoc-ts/npm/registry"
+  ],
+  "publishDirectory": {
+    "@madoc.io/components": "services/madoc-ts/npm/components",
+    "@madoc.io/config": "services/madoc-ts/npm/config",
+    "@madoc.io/capture-models": "services/madoc-ts/npm/capture-models",
+    "@madoc.io/registry": "services/madoc-ts/npm/registry"
+  }
+}

@@ -20,7 +20,10 @@
     "noImplicitAny": true,
     "downlevelIteration": true,
     "noUnusedLocals": false,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "paths": {
+      "@/npm/*": ["./src/npm/*"]
+    }
   },
   "exclude": [
     "node_modules",

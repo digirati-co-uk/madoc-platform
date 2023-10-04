@@ -1,0 +1,6 @@
+{
+  "scripts": {
+    "custom-install": "cd services/madoc-ts && yarn install",
+    "custom-build": "cd services/madoc-ts && yarn build-npm"
+  }
+}

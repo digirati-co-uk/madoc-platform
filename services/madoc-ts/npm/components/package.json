@@ -1,0 +1,45 @@
+{
+  "name": "@madoc.io/components",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "dist/cjs/index.cjs",
+  "module": "dist/esm/index.mjs",
+  "files": [
+    "dist",
+    "index.d.ts",
+    "dist-umd"
+  ],
+  "types": "index.d.ts",
+  "keywords": [
+    "iiif",
+    "typescript"
+  ],
+  "exports": {
+    ".": {
+      "require": "./dist/cjs/index.js",
+      "import": "./dist/esm/index.mjs"
+    },
+    "./index.d.ts": {
+        "require": "./index.d.ts",
+        "import": "./index.d.ts"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "*": [
+        "index.d.ts"
+      ]
+    }
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.4.0-pre.13",
+    "react-query": "^2.26.4",
+    "styled-components": "5.3.3"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "globalName": "MadocComponents"
+}

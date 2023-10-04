@@ -1,0 +1,27 @@
+{
+  "name": "@madoc.io/config",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "dist/cjs/index.cjs",
+  "module": "dist/esm/index.mjs",
+  "files": [
+    "dist",
+    "dist-umd"
+  ],
+  "keywords": [
+    "iiif",
+    "typescript"
+  ],
+  "exports": {
+    ".": {
+      "require": "./dist/cjs/index.js",
+      "import": "./dist/esm/index.mjs"
+    }
+  },
+  "dependencies": {
+    "csv-stringify": "^6.4.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

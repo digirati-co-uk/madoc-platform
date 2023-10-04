@@ -1,5 +1,6 @@
 import react from '@vitejs/plugin-react';
 import { readFileSync } from 'fs';
+import { resolve } from 'path';
 
 const pkg = JSON.parse(readFileSync('./package.json').toString());
 
@@ -68,6 +69,7 @@ export function createConfig(name, entry) {
       alias: {
         'react-iiif-vault': 'react-iiif-vault/react17',
         'react-dom/client': 'react-dom',
+        '@/npm': resolve(__dirname, '../src/npm'),
       },
     },
     build: {

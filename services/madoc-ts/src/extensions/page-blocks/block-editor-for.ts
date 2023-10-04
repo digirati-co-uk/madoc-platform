@@ -3,7 +3,7 @@ import { BaseField } from '../../frontend/shared/capture-models/types/field-type
 import { blockConfigFor } from '../../frontend/shared/plugins/external/block-config-for';
 import { BlockHook } from '../../types/block-hook';
 import { EditorialContext } from '../../types/schemas/site-page';
-import { PageBlockDefinition, PageBlockEditor, PageBlockExtension } from './extension';
+import { PageBlockDefinition, PageBlockEditor, PageBlockExtension } from '@/npm/registry';
 
 export function blockEditorFor<Props, MappedProps = Props>(
   Component: React.FC<Props>,

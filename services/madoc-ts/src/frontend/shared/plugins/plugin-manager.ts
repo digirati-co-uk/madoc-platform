@@ -1,5 +1,5 @@
 import { RouteObject } from 'react-router-dom';
-import { PageBlockExtension } from '../../../extensions/page-blocks/extension';
+import { PageBlockExtension } from '@/npm/registry';
 import { ProjectExportExtension } from '../../../extensions/project-export/extension';
 import { ProjectTemplateExtension } from '../../../extensions/projects/extension';
 import { ThemeExtension } from '../../../extensions/themes/extension';

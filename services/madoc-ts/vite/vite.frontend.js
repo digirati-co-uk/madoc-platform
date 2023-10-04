@@ -1,5 +1,6 @@
 import react from '@vitejs/plugin-react';
 import { defineConfig, splitVendorChunkPlugin } from 'vite';
+import { resolve } from "path";
 
 export default defineConfig({
   clearScreen: false,
@@ -7,6 +8,7 @@ export default defineConfig({
     alias: {
       'react-iiif-vault': 'react-iiif-vault/react17',
       'react-dom/client': 'react-dom',
+      '@/npm': resolve(__dirname, '../src/npm'),
     },
   },
   optimizeDeps: {

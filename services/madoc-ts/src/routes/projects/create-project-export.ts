@@ -22,7 +22,7 @@ export const createProjectExport: RouteMiddleware<{ id: string }, ProjectExportR
     const task = await siteApi.newTask(
       exportResourceTask.createTask(
         {
-          ...context.request.body.request,
+          ...(context.request as any).body.request,
           subject: {
             type: 'project',
             id: projectId,
