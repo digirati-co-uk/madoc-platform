@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New customisable "Terms" page that users can accept
 - Term API configuration admin interface
 - Added TailwindCSS to the project
+- Model fields can be dependent on each-others values
 
 <!-- 
 ### Fixed

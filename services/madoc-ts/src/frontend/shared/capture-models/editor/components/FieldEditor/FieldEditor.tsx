@@ -62,7 +62,6 @@ export const FieldEditor: React.FC<{
   const [dataSource, setDataSource] = useState<string[]>(props.dataSources || []);
   const [dependantField, setDependantField] = useState<string | undefined>(props.dependant || undefined);
 
-  console.log(dependantField);
   return (
     <BrowserComponent fallback="loading...">
       <Formik
