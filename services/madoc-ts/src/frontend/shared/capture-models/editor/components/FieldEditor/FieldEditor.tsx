@@ -62,6 +62,7 @@ export const FieldEditor: React.FC<{
   const [dataSource, setDataSource] = useState<string[]>(props.dataSources || []);
   const [dependantField, setDependantField] = useState<string | undefined>(props.dependant || undefined);
 
+  console.log(dependantField);
   return (
     <BrowserComponent fallback="loading...">
       <Formik
@@ -134,21 +135,19 @@ export const FieldEditor: React.FC<{
           ) : null}
           {filteredFields && (
             <StyledFormField>
-              <StyledFormLabel>
-                {t('Depends on? (Chosen field will only appear if the this field has a value)')}
-              </StyledFormLabel>
+              <StyledFormLabel>{t('Depends on? (This field will appear if chosen field has value)')}</StyledFormLabel>
               <Dropdown
                 placeholder={t('Choose a field')}
+                isClearable={true}
                 fluid
                 selection
-                options={filteredFields.map(
-                  f =>
-                    f.term !== props.label && {
-                      key: f.value.id,
-                      text: f.term || '',
-                      value: f.term,
-                    }
-                )}
+                options={filteredFields.map(f => {
+                  return {
+                    key: f.value.id,
+                    text: f.term || '',
+                    value: f.term,
+                  };
+                })}
                 value={dependantField}
                 onChange={val => {
                   setDependantField(val || undefined);
