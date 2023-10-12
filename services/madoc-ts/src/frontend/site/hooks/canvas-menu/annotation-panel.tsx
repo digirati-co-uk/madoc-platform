@@ -51,7 +51,7 @@ export function useAnnotationPanel(active: boolean): CanvasMenuHook {
   ) : (
     <AnnotationContainer>
       <ButtonRow>
-        {regions.length !== 0 || regionCollections.length > 1 ? (
+        {regions.length !== 0 && regionCollections.length > 1 ? (
           <SmallButton onClick={() => setCurrentCollection(undefined)}>{t('Back to list')}</SmallButton>
         ) : null}
       </ButtonRow>
