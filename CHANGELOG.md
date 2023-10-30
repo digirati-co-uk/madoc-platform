@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.1.3...main)
+<!-- 
+### Fixed
+### Added
+### Changed
+### Removed
+-->
 
 ### Added
 - New "custom auto-complete" configurations for external APIs (MAD-1408)
@@ -17,12 +23,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added TailwindCSS to the project
 - Model fields can be dependent on each-others values
 
-<!-- 
 ### Fixed
-### Added
-### Changed
-### Removed
--->
+- Manifest canvas model now allows rotation (MAD-1425)
+- Scroll on large field lists (MAD-1323)
 
 ## [v2.1.3](https://github.com/digirati-co-uk/madoc-platform/compare/v2.1.2...v2.1.3)
 

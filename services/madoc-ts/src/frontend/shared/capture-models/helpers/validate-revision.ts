@@ -46,7 +46,6 @@ export function validateRevision(
       // If the source is `structure` we also want to check the attached structureId and compare it against
       // the fields loaded. Although these may drift over time, for new items they must match.
       const structure = findStructure(captureModel, req.revision.structureId);
-      console.log(structure);
 
       // Model Root field (new option - allowCustomModelRoot)
       // Fork Values boolean
