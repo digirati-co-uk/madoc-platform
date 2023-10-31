@@ -98,6 +98,8 @@ export function useManifestUserTasks() {
         ? !!userContributions.find(t => (t.status === 2 || t.status === 3) && !t.state.revisionId)
         : false);
 
+    const submittedTasks = userContributions.find(t => t.status === 2);
+
     return {
       user,
       isLoading,
@@ -113,6 +115,7 @@ export function useManifestUserTasks() {
       updatedAt,
       refetch,
       preventFurtherSubmission,
+      submittedTasks,
     };
   }, [
     manifestTask,

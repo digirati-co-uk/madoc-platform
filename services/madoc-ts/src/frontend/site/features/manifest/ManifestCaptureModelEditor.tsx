@@ -24,6 +24,7 @@ import { CanvasModelUserStatus } from '../canvas/CanvasModelUserStatus';
 import { CanvasViewerEditorStyleReset, ContributionSaveButton } from '../../../shared/atoms/CanvasViewerGrid';
 import { useSiteConfiguration } from '../SiteConfigurationContext';
 import { useLoadedCaptureModel } from '../../../shared/hooks/use-loaded-capture-model';
+import { useRevisionList } from '../../../shared/capture-models/new/hooks/use-revision-list';
 
 export function ManifestCaptureModelEditor({ revision }: { revision: string; isSegmentation?: boolean }) {
   const { t } = useTranslation();
@@ -31,7 +32,14 @@ export function ManifestCaptureModelEditor({ revision }: { revision: string; isS
   const { data: projectModel } = useManifestModel();
   const { data: project } = useProject();
   const [{ captureModel }, , modelRefetch] = useLoadedCaptureModel(projectModel?.model?.id, undefined, undefined);
-  const { updateClaim, preventFurtherSubmission, canContribute, markedAsUnusable, user } = useManifestUserTasks();
+  const {
+    updateClaim,
+    preventFurtherSubmission,
+    canContribute,
+    markedAsUnusable,
+    user,
+    submittedTasks,
+  } = useManifestUserTasks();
   const { isPreparing } = useProjectStatus();
   const config = useSiteConfiguration();
   const {
@@ -88,11 +96,13 @@ export function ManifestCaptureModelEditor({ revision }: { revision: string; isS
     return null;
   }
 
+  const s = submittedTasks?.state.revisionId;
+
   return (
     <RevisionProviderWithFeatures
       features={features}
-      key={revision}
-      revision={revision}
+      key={revision || s}
+      revision={revision || s}
       captureModel={captureModel}
       slotConfig={{
         editor: {
@@ -121,7 +131,7 @@ export function ManifestCaptureModelEditor({ revision }: { revision: string; isS
         <CanvasModelUserStatus isEditing={isEditing} />
         {preventFurtherSubmission ? (
           <>
-            <EmptyState style={{ fontSize: '1.25em' }} $box>
+            <EmptyState style={{ fontSize: '1.25em', margin: 0 }} $box>
               <strong>{t('Task is complete!')}</strong>
               <span style={{ color: 'black', margin: 0 }}>
                 {markedAsUnusable

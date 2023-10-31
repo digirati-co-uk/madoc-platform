@@ -101,7 +101,7 @@ export const ManifestActions: React.FC<props> = ({ alignment }) => {
     }
     return (
       <Button as={HrefLink} href={createLink({ subRoute: 'model' })} $primary $large>
-        {userManifestTask && done.length ? t('View submission') : t('Start contributing')}
+        {userManifestTask && (done.length || inReview.length) ? t('View submission') : t('Start contributing')}
       </Button>
     );
   };

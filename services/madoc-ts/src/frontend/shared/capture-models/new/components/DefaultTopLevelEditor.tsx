@@ -14,7 +14,6 @@ export const DefaultTopLevelEditor: EditorRenderingConfig['TopLevelEditor'] = ()
   }));
   const [currentView] = useNavigation();
 
-  // console.log(state.revisionSubtreeFields);
   if (currentView && currentView.type === 'choice' && !state.currentRevisionId && !state.revisionSubtree) {
     return <EditorSlots.Choice key={state.currentRevisionId || undefined} />;
   }
