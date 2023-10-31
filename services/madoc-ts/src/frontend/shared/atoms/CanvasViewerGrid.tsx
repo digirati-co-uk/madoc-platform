@@ -29,7 +29,8 @@ export const CanvasViewerGridSidebar = styled.div<{ $vertical?: boolean }>`
 export const CanvasViewerEditorStyleReset = styled.div`
   font-size: 13px;
   padding: 0 1em;
-  //overflow-x: scroll;
+  overflow-y: scroll;
+  max-height: 60vh;
 `;
 
 export const ContributionSaveButton = styled.div`

@@ -105,7 +105,7 @@ export function ManifestModelCanvasPreview(props: { isModel?: boolean }) {
       </CanvasNavigator>
 
       <CanvasViewer>
-        <StandaloneCanvasViewer canvasId={canvasId} />
+        <StandaloneCanvasViewer canvasId={canvasId} isModel={isModel} />
       </CanvasViewer>
     </CustomRouteContext>
   );
