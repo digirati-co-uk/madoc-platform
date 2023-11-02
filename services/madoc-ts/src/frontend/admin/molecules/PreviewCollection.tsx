@@ -49,18 +49,20 @@ export const PreviewCollection: React.FC<{
   );
 
   useVaultEffect(
-    vault => {
+    async vault => {
       if (props.manifestIds && props.manifestIds.length) {
         const mans: ManifestNormalized[] = [];
-        props.manifestIds.forEach(id => {
-          vault.loadManifest(id).then(man => {
-            if (man?.type !== 'Manifest') {
-              setError('Invalid manifest');
-            } else {
-              mans.push(man);
-            }
-          });
-        });
+        await Promise.all(
+          props.manifestIds.map(async id => {
+            await vault.loadManifest(id).then(man => {
+              if (man?.type !== 'Manifest') {
+                setError('Invalid manifest');
+              } else {
+                mans.push(man);
+              }
+            });
+          })
+        );
         setManifests(mans);
       }
     },
