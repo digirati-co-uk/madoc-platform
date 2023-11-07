@@ -5,8 +5,6 @@ import { NotFound } from '../../utility/errors/not-found';
 import { parseUrn } from '../../utility/parse-urn';
 import { userWithScope } from '../../utility/user-with-scope';
 import { RequestError } from '../../utility/errors/request-error';
-import { Simulate } from 'react-dom/test-utils';
-import error = Simulate.error;
 
 export const assignRandomResource: RouteMiddleware<
   { id: string },
