@@ -5,6 +5,8 @@ import { NotFound } from '../../utility/errors/not-found';
 import { parseUrn } from '../../utility/parse-urn';
 import { userWithScope } from '../../utility/user-with-scope';
 import { RequestError } from '../../utility/errors/request-error';
+import { Simulate } from 'react-dom/test-utils';
+import error = Simulate.error;
 
 export const assignRandomResource: RouteMiddleware<
   { id: string },
@@ -121,11 +123,13 @@ export const assignRandomResource: RouteMiddleware<
       });
 
       for (const subject of taskSubjects.subjects) {
-        withoutCanvasId.push(subject.subject);
+        if (subject.status !== -1) {
+          withoutCanvasId.push(subject.subject);
+        }
       }
 
       for (const subject of taskCanvasSubjects.subjects) {
-        if (subject.status === 3 || subject.status === -1 || (isTranscriberMode && subject.status === 2)) {
+        if (subject.status === 3 || (isTranscriberMode && subject.status === 2)) {
           withoutCanvasId.push(subject.subject);
         }
       }
