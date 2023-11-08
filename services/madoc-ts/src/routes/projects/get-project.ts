@@ -8,7 +8,8 @@ import { parseProjectId } from '../../utility/parse-project-id';
 import { optionalUserWithScope } from '../../utility/user-with-scope';
 
 export const getProject: RouteMiddleware<{ id: string }> = async context => {
-  const { siteId, siteUrn, id: userId } = optionalUserWithScope(context, []);
+  const { siteId, siteUrn } = optionalUserWithScope(context, []);
+  const userId = context.state.jwt?.user.id;
   const scope = context.state.jwt?.scope || [];
   const isAdmin = scope.indexOf('site.admin') !== -1;
   const staticConfiguration = context.externalConfig.defaultSiteConfiguration;
