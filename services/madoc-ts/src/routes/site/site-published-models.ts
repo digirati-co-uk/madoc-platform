@@ -29,11 +29,12 @@ export type SitePublishedModelsQuery = {
   selectors?: boolean;
   derived_from?: string;
   version?: 'source' | '3.0' | '2.1';
+  reviews?: boolean;
   m?: string;
 };
 
 export const sitePublishedModels: RouteMiddleware<{ slug: string; id: string }> = async context => {
-  const { site, siteApi } = context.state;
+  const { site, siteApi, jwt } = context.state;
   const {
     derived_from,
     format,
@@ -42,6 +43,8 @@ export const sitePublishedModels: RouteMiddleware<{ slug: string; id: string }> 
     m: manifestId,
   } = context.query as SitePublishedModelsQuery;
   const selectors = castBool(context.query.selectors);
+
+  const isAdmin = jwt?.scope.indexOf('site.admin') !== -1;
 
   if (version !== 'source' && !manifestId) {
     throw new RequestError('Cannot request models with version and no manifest ID');
@@ -102,8 +105,10 @@ export const sitePublishedModels: RouteMiddleware<{ slug: string; id: string }> 
 
   const ms = [];
 
+  const published = isAdmin ? !castBool(context.query.reviews) : true;
+
   for (const model of models) {
-    ms.push(siteApi.getCaptureModel(model.id, { published: true }));
+    ms.push(siteApi.getCaptureModel(model.id, { published }));
   }
 
   const defaultOptions = {

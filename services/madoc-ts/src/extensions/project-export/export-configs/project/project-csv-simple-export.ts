@@ -33,6 +33,12 @@ export const projectCsvSimpleExport: ExportConfig = {
             outputIdAsString: true,
             clearable: true,
           },
+          reviews: {
+            type: 'checkbox-field',
+            label: 'Submission filter',
+            inlineLabel: 'Include reviews',
+            description: 'Include submissions being reviewed in the export.',
+          } as any,
         },
       };
     }
@@ -44,7 +50,7 @@ export const projectCsvSimpleExport: ExportConfig = {
     // This will probably be a pretty long-running task.
 
     const allPublished = await options.api.getProjectFieldsRaw(subject.id, {
-      status: 'approved',
+      status: options.config.reviews ? 'all' : 'approved',
       entity: options.config.entity,
     });
 

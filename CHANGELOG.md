@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.1.3...main)
+## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.1.4...main)
+
 <!-- 
 ### Fixed
 ### Added
@@ -26,6 +28,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Manifest canvas model now allows rotation (MAD-1425)
 - Scroll on large field lists (MAD-1323)
+- New cron-job to restart the queue at 3am every day (local to the server)
+
+## [v2.1.4](https://github.com/digirati-co-uk/madoc-platform/compare/v2.1.3...v2.1.4)
+
+### Fixes
+
+- Metadata disappearing
+- Check if max contributors includes current user (NS-31)
+- Autocomplete display in sidebar (NS-29)
+- Missing model translations (NS-36)
+- Tags on capture model page (NS-37)
+- Dropdown overflow bug
+- Bug with deleting all contributions (MAD-1293)
+
 
 ## [v2.1.3](https://github.com/digirati-co-uk/madoc-platform/compare/v2.1.2...v2.1.3)
 
