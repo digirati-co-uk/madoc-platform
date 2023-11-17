@@ -5,15 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.1.3...main)
-## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.1.4...main)
-
+## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.2.0...main)
 <!-- 
 ### Fixed
 ### Added
 ### Changed
 ### Removed
 -->
+
+## [v2.2.0](https://github.com/digirati-co-uk/madoc-platform/compare/v2.1.4...v2.2.0)
+
+[Full Release notes](https://docs.madoc.io/releases/v2.2)
+
+### Overview
+- User profiles + user data
+- Project members
+- Project feedback
+- Project updates
+- New project page blocks
+- Site terms and conditions
+- Configurable auto-complete
+- IIIF Viewer changes
+- Review dashboard
+- Local Autosave
+- Page block translations
+- Technical changes
 
 ### Added
 - New "custom auto-complete" configurations for external APIs (MAD-1408)
