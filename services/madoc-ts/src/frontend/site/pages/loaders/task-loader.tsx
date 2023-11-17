@@ -4,7 +4,7 @@ import { BaseTask } from '../../../../gateway/tasks/base-task';
 import { UniversalComponent } from '../../../types';
 import { createUniversalComponent } from '../../../shared/utility/create-universal-component';
 import { useStaticData } from '../../../shared/hooks/use-data';
-import { BreadcrumbContext } from '../../../shared/components/Breadcrumbs';
+import { BreadcrumbContext } from '../../blocks/Breadcrumbs';
 
 export type TaskContext<Task extends BaseTask, ParentTask = Task> = {
   task: Task & { id: string };

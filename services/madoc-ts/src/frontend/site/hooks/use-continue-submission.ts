@@ -1,22 +1,19 @@
 import { useMemo } from 'react';
-import { useUser } from '../../shared/hooks/use-site';
 import { useSiteConfiguration } from '../features/SiteConfigurationContext';
 import { useCanvasUserTasks } from './use-canvas-user-tasks';
 import { useManifestUserTasks } from './use-manifest-user-tasks';
 
 export function useContinueSubmission() {
   const canvasTasks = useCanvasUserTasks();
-  const manifestTasks = useManifestUserTasks();
+  const { user, userTasks } = useManifestUserTasks();
   const config = useSiteConfiguration();
-  const user = useUser();
 
   return useMemo(() => {
     let inProgress = 0;
     let completed = 0;
     let assigned = 0;
 
-    const tasks =
-      config.project.contributionMode === 'transcription' ? canvasTasks?.userTasks : manifestTasks.userTasks;
+    const tasks = config.project.contributionMode === 'transcription' ? canvasTasks?.userTasks : userTasks;
 
     const allModels =
       tasks && tasks.length
@@ -48,11 +45,5 @@ export function useContinueSubmission() {
       completed,
       loaded: !!tasks,
     };
-  }, [
-    canvasTasks?.userTasks,
-    config.project.claimGranularity,
-    config.project.contributionMode,
-    manifestTasks.userTasks,
-    user,
-  ]);
+  }, [canvasTasks?.userTasks, config.project.claimGranularity, config.project.contributionMode, userTasks, user]);
 }

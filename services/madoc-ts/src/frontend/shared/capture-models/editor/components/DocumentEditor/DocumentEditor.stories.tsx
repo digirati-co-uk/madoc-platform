@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { CaptureModel } from '../../../types/capture-model';
 import { DocumentEditor } from './DocumentEditor';
 import { DocumentStore } from '../../stores/document/document-store';
 
@@ -27,6 +26,7 @@ const Inner = () => {
     setSelector: a.setSelector,
     setAllowMultiple: a.setAllowMultiple,
     setRequired: a.setRequired,
+    setDependant: a.setDependant,
     setLabelledBy: a.setLabelledBy,
     setPluralLabel: a.setPluralLabel,
   }));
@@ -41,6 +41,7 @@ const Inner = () => {
         setLabel={actions.setLabel}
         setAllowMultiple={actions.setAllowMultiple}
         setRequired={actions.setRequired}
+        setDependant={actions.setDependant}
         setLabelledBy={actions.setLabelledBy}
         setPluralLabel={actions.setPluralLabel}
         popSubtree={actions.popSubtree}

@@ -121,11 +121,13 @@ export const assignRandomResource: RouteMiddleware<
       });
 
       for (const subject of taskSubjects.subjects) {
-        withoutCanvasId.push(subject.subject);
+        if (subject.status !== -1) {
+          withoutCanvasId.push(subject.subject);
+        }
       }
 
       for (const subject of taskCanvasSubjects.subjects) {
-        if (subject.status === 3 || subject.status === -1 || (isTranscriberMode && subject.status === 2)) {
+        if (subject.status === 3 || (isTranscriberMode && subject.status === 2)) {
           withoutCanvasId.push(subject.subject);
         }
       }

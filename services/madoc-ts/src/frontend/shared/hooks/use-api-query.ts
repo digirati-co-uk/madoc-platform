@@ -66,6 +66,7 @@ export type GetApiMethods = keyof Pick<
   | 'getSiteManifests'
   | 'getSitePage'
   | 'getSiteProject'
+  | 'getSiteProjectRecent'
   | 'getSiteProjects'
   | 'getSiteProjectCanvasModel'
   | 'getSiteProjectCanvasTasks'
@@ -89,6 +90,10 @@ export type GetApiMethods = keyof Pick<
   | 'getSiteProjectManifestModel'
   | 'getLocale'
   | 'getAutomatedUsers'
+  | 'getAllPersonalNotes'
+  | 'getAllProjectFeedback'
+  | 'getAllSiteProjectMembers'
+  | 'getProjectMemberEmails'
 >;
 
 const keys = Object.getOwnPropertyNames(ApiClient.prototype);

@@ -2,7 +2,7 @@ import '../../src/frontend/shared/capture-models/editor/bundle';
 import { hydrateCompressedModel } from '../../src/frontend/shared/capture-models/helpers/hydrate-compressed-model';
 import * as React from 'react';
 import { ViewDocument } from '../../src/frontend/shared/capture-models/inspector/ViewDocument';
-import { RevisionList } from '../../src/frontend/shared/components/RevisionList';
+import { RevisionList } from '../../src/frontend/shared/capture-models/RevisionList';
 
 const fixtureOptions = [
   {

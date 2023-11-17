@@ -22,6 +22,7 @@ type Props<T extends BaseField = BaseField> = {
   selectorPreview?: any;
   disabled?: boolean;
   required?: boolean;
+  dependant?: string;
   selectorLabel?: string;
 
   // @todo other things for the selector.

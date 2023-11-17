@@ -2,8 +2,10 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery } from 'react-query';
 import { Navigate } from 'react-router-dom';
+import { EnvConfig } from '../../../../types/env-config';
 import { Pm2Status } from '../../../../types/pm2';
 import { Statistic, StatisticContainer, StatisticLabel, StatisticNumber } from '../../../shared/atoms/Statistics';
+import { TimeAgo } from '../../../shared/atoms/TimeAgo';
 import { useApi } from '../../../shared/hooks/use-api';
 import { WidePage } from '../../../shared/layout/WidePage';
 import { useData } from '../../../shared/hooks/use-data';
@@ -16,7 +18,7 @@ import { UniversalComponent } from '../../../types';
 import { AdminHeader } from '../../molecules/AdminHeader';
 
 type SystemStatusType = {
-  data: { list: Pm2Status[] };
+  data: { list: Pm2Status[]; build: EnvConfig['build'] };
   query: unknown;
   params: unknown;
   variables: unknown;
@@ -50,6 +52,12 @@ export const SystemStatus: UniversalComponent<SystemStatusType> = createUniversa
       });
     });
 
+    const [migrateProjectMembers, migrateProjectMembersStatus] = useMutation(async () => {
+      return api.request(`/api/madoc/system/migrate-project-members`, {
+        method: 'POST',
+      });
+    });
+
     const { memory, cpu } = data
       ? data.list.reduce(
           (state, next) => {
@@ -78,6 +86,47 @@ export const SystemStatus: UniversalComponent<SystemStatusType> = createUniversa
         </StatisticContainer>
 
         <WidePage>
+          {data ? (
+            <div>
+              <h3>Madoc Version</h3>
+              <ul>
+                <li>
+                  <strong>Version: </strong>
+                  {data.build.version.startsWith('v') ? (
+                    <a
+                      href={`https://github.com/digirati-co-uk/madoc-platform/releases/tag/${data.build.version}`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      {data.build.version}
+                    </a>
+                  ) : (
+                    data.build.version
+                  )}
+                </li>
+                <li>
+                  <strong>Revision: </strong>
+                  {data.build.revision === 'unknown' ? (
+                    'unknown'
+                  ) : (
+                    <a
+                      href="https://github.com/digirati-co-uk/madoc-platform/commit/630a0aa3c2d02b9badfc84916a2d60aca4eef9bc"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      {data.build.revision}
+                    </a>
+                  )}
+                </li>
+                {data.build.time !== 'unknown' ? (
+                  <li>
+                    <strong>Built at: </strong>
+                    <TimeAgo date={new Date(data.build.time)} />
+                  </li>
+                ) : null}
+              </ul>
+            </div>
+          ) : null}
           {systemCheck ? (
             <div>
               <h3>{systemCheck.email.enabled ? 'Email server is running' : 'Email server is not running'}</h3>
@@ -107,6 +156,9 @@ export const SystemStatus: UniversalComponent<SystemStatusType> = createUniversa
             <Button onClick={() => migrateModels()} disabled={migrateModelsStatus.isLoading}>
               {t('Migrate models')}
             </Button>
+            <Button onClick={() => migrateProjectMembers()} disabled={migrateProjectMembersStatus.isLoading}>
+              Migrate project members
+            </Button>
           </ButtonRow>
 
           {migrateModelsStatus.data ? (
@@ -119,6 +171,8 @@ export const SystemStatus: UniversalComponent<SystemStatusType> = createUniversa
               </SuccessMessage>
             )
           ) : null}
+
+          {migrateProjectMembersStatus.data ? <SuccessMessage>Migration complete</SuccessMessage> : null}
 
           {data
             ? data.list.map(item => {

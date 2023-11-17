@@ -1,5 +1,6 @@
 import React from 'react';
 import { CreateRouteType } from '../types';
+import { BlocksPage } from './pages/blocks';
 
 type BaseRouteComponents = typeof import('./components');
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -11,6 +12,11 @@ export function createRoutes(Components: RouteComponents): CreateRouteType {
       path: '/madoc/*',
       exact: true,
       element: <Components.RedirectPage />,
+    },
+    {
+      path: '/terms',
+      exact: true,
+      element: <Components.SiteTerms />,
     },
     {
       path: '/collections',
@@ -104,6 +110,10 @@ export function createRoutes(Components: RouteComponents): CreateRouteType {
                       path: '*',
                       element: <Components.ViewPage />,
                     },
+                    {
+                      path: '_blocks',
+                      element: <Components.BlocksPage />,
+                    },
                   ],
                 },
               ],
@@ -116,6 +126,10 @@ export function createRoutes(Components: RouteComponents): CreateRouteType {
                   path: '*',
                   element: <Components.ViewPage />,
                 },
+                {
+                  path: '_blocks',
+                  element: <Components.BlocksPage />,
+                },
               ],
             },
           ],
@@ -127,6 +141,10 @@ export function createRoutes(Components: RouteComponents): CreateRouteType {
             {
               path: '*',
               element: <Components.ViewPage />,
+            },
+            {
+              path: '_blocks',
+              element: <Components.BlocksPage />,
             },
           ],
         },
@@ -204,6 +222,10 @@ export function createRoutes(Components: RouteComponents): CreateRouteType {
                   path: '*',
                   element: <Components.ViewPage />,
                 },
+                {
+                  path: '_blocks',
+                  element: <Components.BlocksPage />,
+                },
               ],
             },
           ],
@@ -215,6 +237,10 @@ export function createRoutes(Components: RouteComponents): CreateRouteType {
             {
               path: '*',
               element: <Components.ViewPage />,
+            },
+            {
+              path: '_blocks',
+              element: <Components.BlocksPage />,
             },
           ],
         },
@@ -321,6 +347,11 @@ export function createRoutes(Components: RouteComponents): CreateRouteType {
                   element: <Components.ViewManifestModel />,
                 },
                 {
+                  path: '/projects/:slug/collections/:collectionId/manifests/:manifestId/model/:canvasId',
+                  exact: true,
+                  element: <Components.ViewManifestModel />,
+                },
+                {
                   path: '/projects/:slug/collections/:collectionId/manifests/:manifestId/uv',
                   exact: true,
                   element: <Components.ViewManifestUV />,
@@ -352,6 +383,10 @@ export function createRoutes(Components: RouteComponents): CreateRouteType {
                           path: '*',
                           element: <Components.ViewPage />,
                         },
+                        {
+                          path: '_blocks',
+                          element: <Components.BlocksPage />,
+                        },
                       ],
                     },
                   ],
@@ -364,6 +399,10 @@ export function createRoutes(Components: RouteComponents): CreateRouteType {
                       path: '*',
                       element: <Components.ViewPage />,
                     },
+                    {
+                      path: '_blocks',
+                      element: <Components.BlocksPage />,
+                    },
                   ],
                 },
               ],
@@ -375,6 +414,10 @@ export function createRoutes(Components: RouteComponents): CreateRouteType {
                 {
                   path: '*',
                   element: <Components.ViewPage />,
+                },
+                {
+                  path: '_blocks',
+                  element: <Components.BlocksPage />,
                 },
               ],
             },
@@ -453,6 +496,10 @@ export function createRoutes(Components: RouteComponents): CreateRouteType {
                       path: '*',
                       element: <Components.ViewPage />,
                     },
+                    {
+                      path: '_blocks',
+                      element: <Components.BlocksPage />,
+                    },
                   ],
                 },
               ],
@@ -464,6 +511,10 @@ export function createRoutes(Components: RouteComponents): CreateRouteType {
                 {
                   path: '*',
                   element: <Components.ViewPage />,
+                },
+                {
+                  path: '_blocks',
+                  element: <Components.BlocksPage />,
                 },
               ],
             },
@@ -524,6 +575,31 @@ export function createRoutes(Components: RouteComponents): CreateRouteType {
             {
               path: '*',
               element: <Components.ViewPage />,
+            },
+            {
+              path: '_blocks',
+              element: <Components.BlocksPage />,
+            },
+          ],
+        },
+      ],
+    },
+    {
+      path: '/reviews',
+      element: <Components.ReviewListingPage />,
+      exact: true,
+    },
+    {
+      path: '/reviews/:taskId',
+      element: <Components.ReviewListingPage />,
+      children: [
+        {
+          path: '/reviews/:taskId',
+          element: <Components.TaskLoader />,
+          children: [
+            {
+              index: true,
+              element: <Components.SingleReview />,
             },
           ],
         },
@@ -587,6 +663,11 @@ export function createRoutes(Components: RouteComponents): CreateRouteType {
           path: '/dashboard/reviews',
           exact: true,
           element: <Components.UserReviews />,
+        },
+        {
+          path: '/dashboard/settings',
+          exact: true,
+          element: <Components.UserSettings />,
         },
         {
           path: '/dashboard',
@@ -654,6 +735,10 @@ export function createRoutes(Components: RouteComponents): CreateRouteType {
         {
           path: '*',
           element: <Components.ViewPage />,
+        },
+        {
+          path: '_blocks',
+          element: <Components.BlocksPage />,
         },
       ],
     },

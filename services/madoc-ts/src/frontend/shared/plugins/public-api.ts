@@ -1,4 +1,3 @@
-import { UpdateModelConfigRequest } from '../../../gateway/api-definitions/update-model-config';
 import { useCollectionList } from '../../site/hooks/use-collection-list';
 import { useRouteContext } from '../../site/hooks/use-route-context';
 import { useCustomTheme, usePageTheme } from '../../themes/helpers/CustomThemeProvider';
@@ -9,13 +8,10 @@ import { LoadingBlock } from '../callouts/LoadingBlock';
 import { SmallToast } from '../callouts/SmallToast';
 import { SuccessMessage } from '../callouts/SuccessMessage';
 import { WarningMessage } from '../callouts/WarningMessage';
-import {
-  RevisionProviderFeatures,
-  RevisionProviderWithFeatures,
-} from '../capture-models/new/components/RevisionProviderWithFeatures';
+import { RevisionProviderWithFeatures } from '../capture-models/new/components/RevisionProviderWithFeatures';
 import { EditorContentViewer } from '../capture-models/new/EditorContent';
-import { CanvasVaultContext } from '../components/CanvasVaultContext';
-import { SingleProject } from '../components/SingleProject';
+import { CanvasVaultContext } from '../capture-models/CanvasVaultContext';
+import { SingleProject } from '../../site/blocks/SingleProject';
 import { DefaultSelect } from '../form/DefaulSelect';
 import { GlobalSearch } from '../form/GlobalSearch';
 import {
@@ -104,7 +100,7 @@ import { Button } from '../navigation/Button';
 import { LocaleString } from '../components/LocaleString';
 import { useApi } from '../hooks/use-api';
 import { useSite, useUser } from '../hooks/use-site';
-import AdminPageTitle from '../typography/AdminPageTitle';
+import { AdminPageTitle } from '../typography/AdminPageTitle';
 import { AttributionText } from '../typography/AttributionText';
 import { GlobalStyles } from '../typography/GlobalStyles';
 import { Heading1 } from '../typography/Heading1';
@@ -119,13 +115,10 @@ import { atoms, useAtoms } from './use-atoms';
 import { useComponents } from './use-components';
 import { useModule } from './use-module';
 import {
-  EditorRenderingConfig,
   EditorSlots,
   ProfileProvider,
-  ProfileConfig,
   useProfile,
   useProfileOverride,
-  EditorConfig,
   useSlotConfiguration,
   useSlotContext,
 } from '../capture-models/new/components/EditorSlots';

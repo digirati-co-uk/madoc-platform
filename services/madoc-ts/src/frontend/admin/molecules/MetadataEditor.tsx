@@ -32,6 +32,7 @@ export type MetadataEditorProps = {
   availableLanguages: string[];
   defaultLocale?: string;
   allowCustomLanguage?: boolean;
+  multiline?: boolean;
   label?: string;
   disabled?: boolean;
   // Actions.
@@ -180,7 +181,8 @@ export const MetadataEditor: React.FC<MetadataEditorProps> = props => {
     );
   }
 
-  const Component: typeof IntlMultiline = api && api.getIsServer() ? (IntlInput as any) : IntlMultiline;
+  const Component: typeof IntlMultiline =
+    props.multiline === false || (api && api.getIsServer()) ? (IntlInput as any) : IntlMultiline;
 
   return (
     <MetadataEditorContainer enabled={!disabled} fluid={fluid}>

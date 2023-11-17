@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { CloseIcon } from '../../shared/icons/CloseIcon';
 import { LoadingBlock } from '../../shared/callouts/LoadingBlock';
 import { SearchBox } from '../../shared/atoms/SearchBox';
-import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
+import { DisplayBreadcrumbs } from '../blocks/Breadcrumbs';
 import { LocaleString } from '../../shared/components/LocaleString';
 import { Pagination } from '../../shared/components/Pagination';
 import {
@@ -18,9 +18,9 @@ import {
   SearchFilterTitle,
   SearchFilterToggle,
 } from '../../shared/components/SearchFilters';
-import { SearchResults, TotalResults } from '../../shared/components/SearchResults';
+import { SearchResults, TotalResults } from '../features/search/SearchResults';
 import { AddIcon } from '../../shared/icons/AddIcon';
-import { useSiteConfiguration } from '../features/SiteConfigurationContext';
+import { useSiteConfiguration } from '../../site/features/SiteConfigurationContext';
 import { useSearch } from '../hooks/use-search';
 import { useSearchFacets } from '../hooks/use-search-facets';
 import { useSearchQuery } from '../hooks/use-search-query';

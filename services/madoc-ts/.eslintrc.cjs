@@ -20,6 +20,7 @@ module.exports = {
   rules: {
     'react/prop-types': 0,
     'import/named': 0,
+    'react/react-in-jsx-scope': 0,
     '@typescript-eslint/explicit-function-return-type': 0,
     '@typescript-eslint/no-explicit-any': 0,
     '@typescript-eslint/explicit-module-boundary-types': 0,
@@ -70,7 +71,7 @@ module.exports = {
       allowTemplateLiterals: true
     }],
     'space-before-blocks': ERROR,
-    'space-before-function-paren': OFF
+    'space-before-function-parent': OFF
   },
   settings: {
     react: {

@@ -9,11 +9,13 @@ import { optionalUserWithScope } from '../../utility/user-with-scope';
 
 export const getProject: RouteMiddleware<{ id: string }> = async context => {
   const { siteId, siteUrn } = optionalUserWithScope(context, []);
+  const userId = context.state.jwt?.user.id;
   const scope = context.state.jwt?.scope || [];
+  const isAdmin = scope.indexOf('site.admin') !== -1;
   const staticConfiguration = context.externalConfig.defaultSiteConfiguration;
 
   const { projectSlug, projectId } = parseProjectId(context.params.id);
-  const onlyPublished = scope.indexOf('site.admin') !== -1 ? castBool(context.request.query.published) : true;
+  const onlyPublished = isAdmin ? castBool(context.request.query.published) : true;
 
   if (!projectId && !projectSlug) {
     throw new NotFound();
@@ -51,6 +53,8 @@ export const getProject: RouteMiddleware<{ id: string }> = async context => {
 
   const countManifests = config.shadow?.showCaptureModelOnManifest;
 
+  const isProjectMember = userId ? await context.projects.isUserProjectMember(userId, project.id) : false;
+
   statistics['0'] = countManifests ? content.manifests - taskStats.total : content.canvases - taskStats.total;
   statistics['1'] = taskStatuses['1'] || 0;
   statistics['2'] = taskStatuses['2'] || 0;
@@ -59,6 +63,7 @@ export const getProject: RouteMiddleware<{ id: string }> = async context => {
   context.response.body = {
     ...project,
     statistics,
+    isProjectMember,
     content,
     config,
     annotationTheme: annotationStyles ? annotationStyles.theme : null,

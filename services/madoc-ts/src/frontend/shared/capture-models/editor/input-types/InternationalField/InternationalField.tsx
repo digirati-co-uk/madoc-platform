@@ -21,6 +21,7 @@ export const InternationalField: FieldComponent<InternationalFieldProps> = ({
   id,
   label,
   updateValue,
+  multiline,
   disabled,
 }) => {
   const defaultLocale = useDefaultLocale();
@@ -31,6 +32,7 @@ export const InternationalField: FieldComponent<InternationalFieldProps> = ({
       <MetadataEditor
         metadataKey={label}
         id={id}
+        multiline={multiline}
         disabled={disabled}
         fluid={true}
         availableLanguages={supportedLocales}

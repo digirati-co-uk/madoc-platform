@@ -12,7 +12,8 @@ const Helmet = _Helmet as any;
 export const _Heading1 = styled.h1<{ $margin?: boolean }>`
   font-size: 2em;
   font-weight: 600;
-  margin-bottom: 0.2em;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
   width: 100%;
   position: relative;
   z-index: 3;

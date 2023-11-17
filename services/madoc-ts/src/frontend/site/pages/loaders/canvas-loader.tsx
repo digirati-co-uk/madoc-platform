@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { CanvasFull } from '../../../../types/canvas-full';
-import { BreadcrumbContext } from '../../../shared/components/Breadcrumbs';
+import { BreadcrumbContext } from '../../blocks/Breadcrumbs';
 import { ApiArgs } from '../../../shared/hooks/use-api-query';
 import { useData } from '../../../shared/hooks/use-data';
 import { HighlightedRegionProvider } from '../../../shared/hooks/use-highlighted-regions';

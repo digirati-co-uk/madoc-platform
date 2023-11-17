@@ -1,5 +1,5 @@
 import React from 'react';
-import { BreadcrumbDivider, BreadcrumbItem, BreadcrumbList } from '../components/Breadcrumbs';
+import { BreadcrumbDivider, BreadcrumbItem, BreadcrumbList } from '../../site/blocks/Breadcrumbs';
 import { HomeIcon } from '../icons/HomeIcon';
 import { useBreads } from './hooks/use-breads';
 

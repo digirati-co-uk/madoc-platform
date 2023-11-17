@@ -6,7 +6,7 @@ import { useData } from '../../../../shared/hooks/use-data';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
 import { CanvasContext, useVaultEffect, VaultProvider } from 'react-iiif-vault';
 import { CanvasNormalized } from '@iiif/presentation-3';
-import { SimpleAtlasViewer } from '../../../../shared/components/SimpleAtlasViewer';
+import { SimpleAtlasViewer } from '../../../../shared/features/SimpleAtlasViewer';
 
 type CanvasDetailsType = {
   params: { id: number; manifestId: number };

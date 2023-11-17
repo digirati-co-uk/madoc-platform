@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useQuery } from 'react-query';
 import { annotationPageToRegions } from '../utility/annotation-page-to-regions';
-import parseSelectorTarget from '../utility/parse-selector-target';
 
 export function useAnnotationPage(pageId?: string) {
   const [highlightedAnnotation, setHighlightedAnnotation] = useState<string | undefined>(undefined);

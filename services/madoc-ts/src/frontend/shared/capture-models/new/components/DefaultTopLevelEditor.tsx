@@ -10,6 +10,7 @@ export const DefaultTopLevelEditor: EditorRenderingConfig['TopLevelEditor'] = ()
     revisionSubtreeField: s.revisionSubtreeField,
     revisionSubtree: s.revisionSubtree,
     revisionSubtreePath: s.revisionSubtreePath,
+    revisionSubtreeFields: s.revisionSubtreeFields,
   }));
   const [currentView] = useNavigation();
 

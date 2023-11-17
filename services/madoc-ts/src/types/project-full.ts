@@ -1,6 +1,7 @@
 import { InternationalString } from '@iiif/presentation-3';
 import { ProjectTemplate, ProjectTemplateConfig } from '../extensions/projects/types';
 import { AnnotationStyles } from './annotation-styles';
+import { ProjectUpdate } from './projects';
 import { ProjectConfiguration } from './schemas/project-configuration';
 
 export type Project<Template extends ProjectTemplate = never> = {
@@ -15,6 +16,10 @@ export type Project<Template extends ProjectTemplate = never> = {
   template?: Template['type'];
   template_config?: ProjectTemplateConfig<Template>;
   status: number;
+  dueDate?: Date;
+  startDate?: Date;
+  membersOnly?: boolean;
+  placeholderImage?: string;
 };
 
 export type ProjectFull<Template extends ProjectTemplate = never> = Project<Template> & {
@@ -30,4 +35,6 @@ export type ProjectFull<Template extends ProjectTemplate = never> = Project<Temp
   };
   config: Partial<ProjectConfiguration>;
   annotationTheme?: AnnotationStyles['theme'] | null;
+  isProjectMember?: boolean;
+  latestUpdate?: ProjectUpdate | null;
 };

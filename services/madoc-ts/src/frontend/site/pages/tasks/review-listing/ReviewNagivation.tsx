@@ -1,10 +1,14 @@
-import React from 'react';
-import { createLink } from '../../../../shared/utility/create-link';
+import React, { useCallback } from 'react';
 import styled from 'styled-components';
-import { NavigationButton, PaginationText } from '../../../../shared/components/CanvasNavigationMinimalist';
+import { NavigationButton, PaginationText } from '../../../../shared/components/NavigationButton';
 import { CrowdsourcingTask } from '../../../../../gateway/tasks/crowdsourcing-task';
 import { useTranslation } from 'react-i18next';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocationQuery } from '../../../../shared/hooks/use-location-query';
+import { useRouteContext } from '../../../hooks/use-route-context';
+import { useInfiniteData } from '../../../../shared/hooks/use-data';
+import { ReviewListingPage } from '../../../components';
+import { useRelativeLinks } from '../../../hooks/use-relative-links';
 
 const PaginationContainer = styled.div`
   display: flex;
@@ -16,7 +20,6 @@ const PaginationContainer = styled.div`
   align-items: center;
   width: 130px;
   padding: 0;
-  margin-left: auto;
   button {
     border: none;
     background-color: transparent;
@@ -28,23 +31,42 @@ const PaginationContainer = styled.div`
 `;
 
 export const ReviewNavigation: React.FC<{
-  handleNavigation?: (taskId: string, page: number | string, getNext?: boolean) => Promise<void> | void;
   taskId?: string;
-  projectId?: string;
-  subRoute?: string;
-  pages?: any;
-  query?: any;
-  size?: string | undefined;
-}> = ({ taskId: id, pages: pages, projectId, subRoute, query, handleNavigation }) => {
+}> = ({ taskId: id }) => {
   const { hash } = useLocation();
   const hsh = hash.slice(1);
   const pg = hsh ? Number(hsh) - 1 : 0;
+  const { projectId } = useRouteContext();
+  const { sort_by = '', ...query } = useLocationQuery();
+  const navigate = useNavigate();
+  const { t } = useTranslation();
+  const createLink = useRelativeLinks();
+
+  const { data: pages, fetchMore, canFetchMore, isFetchingMore } = useInfiniteData(ReviewListingPage, undefined, {
+    keepPreviousData: true,
+    getFetchMore: lastPage => {
+      if (lastPage.pagination.totalPages === 0 || lastPage.pagination.totalPages === lastPage.pagination.page) {
+        return undefined;
+      }
+      return {
+        page: lastPage.pagination.page + 1,
+      };
+    },
+  });
 
   const idx = pages && pages[pg] ? pages[pg].tasks.findIndex((i: CrowdsourcingTask) => i.id === id) : -1;
-  const { t } = useTranslation();
-
   // results per page = 20
   const totalIndex = 20 * pg + (idx + 1);
+
+  const beforeNavigate = useCallback(
+    async (newTaskId, page, getNext): Promise<void> => {
+      if (!isFetchingMore && canFetchMore && getNext) {
+        await fetchMore();
+      }
+      navigate(createLink({ taskId: undefined, subRoute: `reviews/${newTaskId}`, query: { sort_by }, hash: page }));
+    },
+    [canFetchMore, createLink, fetchMore, isFetchingMore, navigate, sort_by]
+  );
 
   if (!pages || idx === -1) {
     return null;
@@ -57,10 +79,10 @@ export const ReviewNavigation: React.FC<{
         <NavigationButton
           alignment="left"
           onClick={e => {
-            if (handleNavigation) {
+            if (beforeNavigate) {
               e.preventDefault();
               if (pages[pg - 1].tasks) {
-                handleNavigation(prevPageItem.id, pg - 1);
+                return beforeNavigate(prevPageItem.id, pg - 1, false);
               }
             }
           }}
@@ -85,10 +107,10 @@ export const ReviewNavigation: React.FC<{
         <NavigationButton
           alignment="right"
           onClick={e => {
-            if (handleNavigation) {
+            if (beforeNavigate) {
               e.preventDefault();
               if (pages[pg + 1].tasks) {
-                handleNavigation(nextPageItem.id, pg + 2, idx + 2 > pages[pg].tasks.length - 1);
+                return beforeNavigate(nextPageItem.id, pg + 2, idx + 2 > pages[pg].tasks.length - 1);
               }
             }
           }}
@@ -111,10 +133,10 @@ export const ReviewNavigation: React.FC<{
         <NavigationButton
           alignment="left"
           onClick={e => {
-            if (handleNavigation) {
+            if (beforeNavigate) {
               e.preventDefault();
               if (pages[pg].tasks) {
-                handleNavigation(pages[pg].tasks[idx - 1].id, pg + 1);
+                return beforeNavigate(pages[pg].tasks[idx - 1].id, pg + 1, false);
               }
             }
           }}
@@ -134,17 +156,16 @@ export const ReviewNavigation: React.FC<{
         <NavigationButton
           alignment="right"
           onClick={e => {
-            if (handleNavigation) {
+            if (beforeNavigate) {
               e.preventDefault();
               if (pages[pg].tasks) {
-                handleNavigation(pages[pg].tasks[idx + 1].id, pg + 1, idx + 2 > pages[pg].tasks.length - 1);
+                return beforeNavigate(pages[pg].tasks[idx + 1].id, pg + 1, idx + 2 > pages[pg].tasks.length - 1);
               }
             }
           }}
           link={createLink({
             projectId,
             taskId: pages[pg].tasks[idx + 1].id,
-            subRoute,
             query,
           })}
           item={pages[pg].tasks[idx + 1]}

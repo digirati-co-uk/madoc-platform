@@ -4,9 +4,9 @@ import React, { useState } from 'react';
 import { CanvasFull } from '../../../types/canvas-full';
 import { useViewerHeight } from '../../site/hooks/use-viewer-height';
 import { apiHooks } from '../hooks/use-api-query';
-import { SimpleAtlasViewer } from './SimpleAtlasViewer';
+import { SimpleAtlasViewer } from '../features/SimpleAtlasViewer';
 
-export const CanvasViewer: React.FC<{ canvas: CanvasFull['canvas'] }> = ({ canvas }) => {
+export const CanvasViewer: React.FC<{ canvas: CanvasFull['canvas']; isModel?: boolean }> = ({ canvas, isModel }) => {
   const [canvasRef, setCanvasRef] = useState<CanvasNormalized>();
   const height = useViewerHeight();
 
@@ -27,15 +27,15 @@ export const CanvasViewer: React.FC<{ canvas: CanvasFull['canvas'] }> = ({ canva
     <>
       {canvasRef ? (
         <CanvasContext canvas={canvasRef.id}>
-          <SimpleAtlasViewer style={{ height }} />
+          <SimpleAtlasViewer style={{ height }} isModel={isModel} />
         </CanvasContext>
       ) : null}
     </>
   );
 };
 
-export function StandaloneCanvasViewer(props: { canvasId: number }) {
+export function StandaloneCanvasViewer(props: { canvasId: number; isModel?: boolean }) {
   const { data: canvas } = apiHooks.getCanvasById(() => (props.canvasId ? [props.canvasId] : undefined));
 
-  return <>{canvas ? <CanvasViewer canvas={canvas.canvas} /> : null}</>;
+  return <>{canvas ? <CanvasViewer canvas={canvas.canvas} isModel={props.isModel} /> : null}</>;
 }

@@ -108,6 +108,7 @@ export const siteFrontend: RouteMiddleware = async (context, next) => {
             window.__HMR_PROTOCOL__ = '${viteProtocol === 'https' ? 'wss' : 'ws'}';
           </script>
           <script type="module" src="${viteProtocol}://${hostname}:3088/src/frontend/site/client.ts"></script>
+          <link rel="stylesheet" href="${viteProtocol}://${hostname}:3088/src/frontend/site/index.css" />
           ${result.head}
         </head>
         <body ${result.bodyAttributes}>

@@ -1,11 +1,11 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Heading1 } from '../../shared/typography/Heading1';
-import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
+import { DisplayBreadcrumbs } from '../blocks/Breadcrumbs';
 import { Slot } from '../../shared/page-blocks/slot';
-import { AllCollectionsPaginatedItems } from '../features/AllCollectionsPaginatedItems';
-import { AllCollectionsPagination } from '../features/AllCollectionsPagination';
-import { StaticPage } from '../features/StaticPage';
+import { AllCollectionsPaginatedItems } from '../blocks/AllCollectionsPaginatedItems';
+import { AllCollectionsPagination } from '../blocks/AllCollectionsPagination';
+import { StaticPage } from '../features/viewPage/StaticPage';
 
 export const AllCollections: React.FC = () => {
   const { t } = useTranslation();

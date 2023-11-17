@@ -299,6 +299,18 @@ export const siteConfigurationModel: {
         label: 'Enable rotation of images',
         value: 'enableRotation',
       },
+      {
+        label: 'Enable autosave',
+        value: 'enableAutoSave',
+      },
+      {
+        label: 'Enable tooltip descriptions',
+        value: 'enableTooltipDescriptions',
+      },
+      {
+        label: 'Enable split-view',
+        value: 'enableSplitView',
+      },
     ],
   },
   reviewOptions: {
@@ -338,7 +350,7 @@ export const siteConfigurationModel: {
         value: 'hideRandomCanvas',
       },
       {
-        label: 'Show reviewer dashboard',
+        label: 'Hide reviewer dashboard',
         value: 'reviewerDashboard',
       },
     ],
@@ -419,6 +431,10 @@ export const siteConfigurationModel: {
       {
         label: 'Hide the page navigation links',
         value: 'hidePageNavLinks',
+      },
+      {
+        label: 'Show reviews link',
+        value: 'showReviews',
       },
       {
         label: 'Hide the search bar',
@@ -518,6 +534,10 @@ export const NonProjectOptions: {
         value: 'hidePageNavLinks',
       },
       {
+        label: 'Show reviews link',
+        value: 'showReviews',
+      },
+      {
         label: 'Hide the search bar',
         value: 'hideSearchBar',
       },
@@ -567,7 +587,7 @@ export const ProjectConfigInterface: {
         value: 'hideRandomCanvas',
       },
       {
-        label: 'hide reviewer dashboard',
+        label: 'Hide reviewer dashboard',
         value: 'reviewerDashboard',
       },
     ],
@@ -828,9 +848,21 @@ export const ProjectConfigContributions: {
         value: 'disableSaveForLater',
       },
       {
+        label: 'Enable autosave',
+        value: 'enableAutoSave',
+      },
+      {
+        label: 'Enable tooltip descriptions',
+        value: 'enableTooltipDescriptions',
+      },
+      {
         label: 'Allow personal notes',
         description: 'allow users to take personal notes only visible to themselves on canvases in a project',
         value: 'allowPersonalNotes',
+      },
+      {
+        label: 'Enable split view',
+        value: 'enableSplitView',
       },
     ],
   },

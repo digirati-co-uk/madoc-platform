@@ -13,7 +13,7 @@ import { CrowdsourcingReview } from '../../../gateway/tasks/crowdsourcing-review
 import { CrowdsourcingTask } from '../../../gateway/tasks/crowdsourcing-task';
 import { Pagination } from '../../../types/schemas/_pagination';
 import { isAdmin, isContributor, isReviewer } from '../../shared/utility/user-roles';
-import { UserGreeting } from '../features/contributor/UserGreeting';
+import { UserGreeting } from '../features/home/UserGreeting';
 
 type UserHomepageType = {
   query: unknown;
@@ -69,6 +69,10 @@ export const UserHomepage: UniversalComponent<UserHomepageType> = createUniversa
               <HrefLink href="/dashboard/my-sites">{t('My sites')}</HrefLink>
             </DashboardTab>
           ) : null}
+
+          <DashboardTab $active={location.pathname === '/dashboard/settings'}>
+            <HrefLink href="/dashboard/settings">{t('Settings')}</HrefLink>
+          </DashboardTab>
         </DashboardTabs>
 
         <Outlet />

@@ -5,8 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.1.4...main)
-
+## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.2.0...main)
 <!-- 
 ### Fixed
 ### Added
@@ -14,7 +13,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 -->
 
+## [v2.2.0](https://github.com/digirati-co-uk/madoc-platform/compare/v2.1.4...v2.2.0)
+
+[Full Release notes](https://docs.madoc.io/releases/v2.2)
+
+### Overview
+- User profiles + user data
+- Project members
+- Project feedback
+- Project updates
+- New project page blocks
+- Site terms and conditions
+- Configurable auto-complete
+- IIIF Viewer changes
+- Review dashboard
+- Local Autosave
+- Page block translations
+- Technical changes
+
 ### Added
+- New "custom auto-complete" configurations for external APIs (MAD-1408)
+- New configuration to allow model field descriptions to be displayed as tooltips (MAD-1329)
+- IIIF Collection endpoint for Madoc Collections (MAD-1407)
+- New User preferences + profile options
+- New customisable "Terms" page that users can accept
+- Term API configuration admin interface
+- Added TailwindCSS to the project
+- Model fields can be dependent on each-others values
+
+### Fixed
+- Manifest canvas model now allows rotation (MAD-1425)
+- Scroll on large field lists (MAD-1323)
 - New cron-job to restart the queue at 3am every day (local to the server)
 
 ## [v2.1.4](https://github.com/digirati-co-uk/madoc-platform/compare/v2.1.3...v2.1.4)
@@ -88,6 +117,11 @@ Hotfix release for submissions in progress.
 - Changed language on user dash from 'reviews' to 'review tasks' to differentiate between the two
 - Improved 'delete all contributions' by deleting all user tasks as well as capture model
 - Changed the project heading block to contain optional image and start contributing button
+- Added max number option for allowMultiple fields in capture model
+
+### Changed
+- Changed language on user dash from 'reviews' to 'review tasks' to differentiate between the two
+- Improved 'delete all contributions' by deleting all user tasks as well as capture model
 
 ## [v2.1.0](https://github.com/digirati-co-uk/madoc-platform/compare/v2.0.8...v2.1.0)
 

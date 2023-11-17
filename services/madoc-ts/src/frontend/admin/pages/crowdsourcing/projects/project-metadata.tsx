@@ -10,10 +10,11 @@ import { useData } from '../../../../shared/hooks/use-data';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
 import { SuccessMessage } from '../../../../shared/callouts/SuccessMessage';
 import { ErrorMessage } from '../../../../shared/callouts/ErrorMessage';
+import { ProjectBannerEditor } from './project-banner';
 
 type ProjectMetadataType = {
   params: { id: number };
-  query: {};
+  query: any;
   variables: { id: number };
   data: {
     metadata: ParsedMetadata;
@@ -60,7 +61,7 @@ export const ProjectMetadata: UniversalComponent<ProjectMetadataType> = createUn
         setSuccess('Changes saved');
       } catch (err) {
         setSuccess('');
-        setError(err.message || 'Unknown error');
+        setError((err as any).message || 'Unknown error');
       }
     });
 
@@ -72,6 +73,9 @@ export const ProjectMetadata: UniversalComponent<ProjectMetadataType> = createUn
       <>
         {success ? <SuccessMessage>{success}</SuccessMessage> : null}
         {error ? <ErrorMessage>{error}</ErrorMessage> : null}
+
+        <ProjectBannerEditor />
+
         <MetadataListEditor
           key={invalidateTime}
           metadata={data.metadata}

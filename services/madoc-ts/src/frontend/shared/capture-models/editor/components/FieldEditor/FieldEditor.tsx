@@ -12,6 +12,7 @@ import { ConfirmButton } from '../../atoms/ConfirmButton';
 import { ChooseSelectorButton } from '../ChooseSelectorButton/ChooseSelectorButton';
 import { ChooseFieldButton } from '../ChooseFieldButton/ChooseFieldButton';
 import { FormPreview } from '../FormPreview/FormPreview';
+import { Dropdown } from '../../atoms/Dropdown';
 import {
   StyledCheckbox,
   StyledFormField,
@@ -39,7 +40,8 @@ export const FieldEditor: React.FC<{
   onChangeFieldType?: (type: string, defaults: any, term?: string) => void;
   setSaveHandler?: (handler: () => void) => void;
   sourceTypes?: Array<FieldSource>;
-}> = ({ onSubmit, onDelete, onChangeFieldType, sourceTypes, field: props, term }) => {
+  subtreeFields?: any[];
+}> = ({ onSubmit, onDelete, onChangeFieldType, sourceTypes, field: props, term, subtreeFields }) => {
   const { t } = useTranslation();
   const ctx = useContext(PluginContext);
   const { fields, selectors } = useContext(PluginContext);
@@ -47,6 +49,7 @@ export const FieldEditor: React.FC<{
   const field = ctx.fields[props.type];
   const [defaultValue, setDefaultValue] = useState<any>(props.value);
 
+  const filteredFields = subtreeFields?.filter(f => f.term !== props.label);
   if (!field) {
     throw new Error(`Plugin ${props.type} does not exist`);
   }
@@ -57,6 +60,7 @@ export const FieldEditor: React.FC<{
     return sourceType.fieldTypes.indexOf(props.type) !== -1;
   });
   const [dataSource, setDataSource] = useState<string[]>(props.dataSources || []);
+  const [dependantField, setDependantField] = useState<string | undefined>(props.dependant || undefined);
 
   return (
     <BrowserComponent fallback="loading...">
@@ -70,6 +74,7 @@ export const FieldEditor: React.FC<{
                 type: props.type,
                 selector,
                 dataSources: dataSource && dataSource.length ? dataSource : undefined,
+                dependent: dependantField ? dependantField : undefined,
                 value: defaultValue,
               }),
               term
@@ -81,6 +86,7 @@ export const FieldEditor: React.FC<{
                 type: props.type,
                 selector,
                 dataSources: dataSource && dataSource.length ? dataSource : undefined,
+                dependant: dependantField ? dependantField : undefined,
                 value: defaultValue,
               },
               term
@@ -126,6 +132,28 @@ export const FieldEditor: React.FC<{
               </StyledFormLabel>
             </StyledFormField>
           ) : null}
+          {filteredFields && (
+            <StyledFormField>
+              <StyledFormLabel>{t('Depends on? (This field will appear if chosen field has value)')}</StyledFormLabel>
+              <Dropdown
+                placeholder={t('Choose a field')}
+                isClearable={true}
+                fluid
+                selection
+                options={filteredFields.map(f => {
+                  return {
+                    key: f.value.id,
+                    text: f.term || '',
+                    value: f.term,
+                  };
+                })}
+                value={dependantField}
+                onChange={val => {
+                  setDependantField(val || undefined);
+                }}
+              />
+            </StyledFormField>
+          )}
           {dataSources ? (
             <StyledFormField>
               <StyledFormLabel>

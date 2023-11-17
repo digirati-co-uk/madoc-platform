@@ -18,7 +18,7 @@ export type DropdownProps = {
   isClearable?: boolean;
   value?: string;
   options: Array<DropdownOption>;
-  onChange: (value?: string) => void;
+  onChange: (value?: string | null) => void;
 };
 
 function getValue(option: DropdownOption) {
@@ -48,9 +48,8 @@ export const Dropdown: React.FC<DropdownProps> = ({
   onChange,
 }) => {
   const onOptionChange = useCallback((option: DropdownOption | null): void => {
-    if (option) {
-      onChange(option ? option.value : undefined);
-    }
+    onChange(option ? option.value : undefined);
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

@@ -1,20 +1,19 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { castBool } from '../../../utility/cast-bool';
-import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
-import { useCurrentUser } from '../../shared/hooks/use-current-user';
+import { DisplayBreadcrumbs } from '../blocks/Breadcrumbs';
 import { useLocationQuery } from '../../shared/hooks/use-location-query';
 import { AutoSlotLoader } from '../../shared/page-blocks/auto-slot-loader';
 import { Slot } from '../../shared/page-blocks/slot';
-import { CanvasModelCompleteMessage } from '../features/contributor/CanvasModelCompleteMessage';
-import { CanvasModelEditor } from '../features/contributor/CanvasModelEditor';
-import { CanvasModelPrepareActions } from '../features/admin/CanvasModelPrepareActions';
-import { CanvasModelReadOnlyViewer } from '../features/CanvasModelReadOnlyViewer';
-import { CanvasNotAvailableToBrowse } from '../features/CanvasNotAvailableToBrowse';
-import { CanvasPageHeader } from '../features/CanvasPageHeader';
-import { CanvasTaskWarningMessage } from '../features/contributor/CanvasTaskWarningMessage';
-import { CanvasThumbnailNavigation } from '../features/CanvasThumbnailNavigation';
-import { PrepareCanvasCaptureModel } from '../features/admin/PrepareCanvasCaptureModel';
+import { CanvasModelCompleteMessage } from '../blocks/CanvasModelCompleteMessage';
+import { CanvasModelEditor } from '../blocks/CanvasModelEditor';
+import { CanvasModelPrepareActions } from '../blocks/CanvasModelPrepareActions';
+import { CanvasModelReadOnlyViewer } from '../blocks/CanvasModelReadOnlyViewer';
+import { CanvasNotAvailableToBrowse } from '../blocks/CanvasNotAvailableToBrowse';
+import { CanvasPageHeader } from '../blocks/CanvasPageHeader';
+import { CanvasTaskWarningMessage } from '../blocks/CanvasTaskWarningMessage';
+import { CanvasThumbnailNavigation } from '../blocks/CanvasThumbnailNavigation';
+import { PrepareCanvasCaptureModel } from '../features/canvas/PrepareCanvasCaptureModel';
 import { useSiteConfiguration } from '../features/SiteConfigurationContext';
 import { useCanvasNavigation } from '../hooks/use-canvas-navigation';
 import { useCanvasUserTasks } from '../hooks/use-canvas-user-tasks';
@@ -23,14 +22,14 @@ import { useProjectShadowConfiguration } from '../hooks/use-project-shadow-confi
 import { useProjectStatus } from '../hooks/use-project-status';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 import { useRouteContext } from '../hooks/use-route-context';
-import { RedirectToNextCanvas } from '../features/RedirectToNextCanvas';
+import { RedirectToNextCanvas } from '../features/canvas/RedirectToNextCanvas';
 
 export const ViewCanvasModel: React.FC = () => {
   const { canvasId } = useRouteContext();
   const { showCanvasNavigation, showWarning } = useCanvasNavigation();
   const { isManifestComplete, hasExpired } = useManifestTask();
-  const { canUserSubmit, isLoading: isLoadingTasks, completedAndHide } = useCanvasUserTasks();
-  const user = useCurrentUser(true);
+  const { canUserSubmit, canContribute, isLoading: isLoadingTasks, completedAndHide } = useCanvasUserTasks();
+
   const { goToNext } = useLocationQuery<any>();
   const shouldGoToNext = castBool(goToNext);
   const {
@@ -38,12 +37,6 @@ export const ViewCanvasModel: React.FC = () => {
   } = useSiteConfiguration();
   const createLink = useRelativeLinks();
   const { isActive, isPreparing } = useProjectStatus();
-  const canContribute =
-    user &&
-    user.scope &&
-    (user.scope.indexOf('site.admin') !== -1 ||
-      user.scope.indexOf('models.admin') !== -1 ||
-      user.scope.indexOf('models.contribute') !== -1);
 
   const { showCaptureModelOnManifest } = useProjectShadowConfiguration();
 

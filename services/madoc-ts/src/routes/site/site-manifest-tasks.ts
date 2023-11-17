@@ -2,7 +2,7 @@ import { CrowdsourcingManifestTask } from '../../gateway/tasks/crowdsourcing-man
 import { CrowdsourcingTask } from '../../gateway/tasks/crowdsourcing-task';
 import { ProjectManifestTasks } from '../../types/manifest-tasks';
 import { RouteMiddleware } from '../../types/route-middleware';
-import { canUserClaimManifest, findUserManifestTask } from '../../utility/claim-utilities';
+import { canUserClaimResource, findUserManifestTask } from '../../utility/claim-utilities';
 
 export const siteManifestTasks: RouteMiddleware<{
   slug: string;
@@ -102,7 +102,12 @@ export const siteManifestTasks: RouteMiddleware<{
 
   const canClaimManifest = user
     ? manifestTask
-      ? canUserClaimManifest({ task: manifestTask as CrowdsourcingManifestTask, config })
+      ? canUserClaimResource({
+          userId: user,
+          task: manifestTask as CrowdsourcingManifestTask,
+          config,
+          manifestClaim: true,
+        })
       : true
     : false;
 

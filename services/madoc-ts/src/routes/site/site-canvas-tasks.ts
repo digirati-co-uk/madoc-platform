@@ -1,7 +1,6 @@
 import { CrowdsourcingManifestTask } from '../../gateway/tasks/crowdsourcing-manifest-task';
-import { CrowdsourcingTask } from '../../gateway/tasks/crowdsourcing-task';
 import { RouteMiddleware } from '../../types/route-middleware';
-import { canUserClaimCanvas, canUserClaimManifest, findUserManifestTask } from '../../utility/claim-utilities';
+import { canUserClaimResource, findUserManifestTask } from '../../utility/claim-utilities';
 
 export const siteCanvasTasks: RouteMiddleware<{
   slug: string;
@@ -47,7 +46,7 @@ export const siteCanvasTasks: RouteMiddleware<{
 
   const canClaimManifest = user
     ? manifestTask
-      ? canUserClaimManifest({ task: manifestTask as CrowdsourcingManifestTask, config })
+      ? canUserClaimResource({ task: manifestTask as CrowdsourcingManifestTask, config, userId: user })
       : true
     : false;
 

@@ -1,10 +1,10 @@
 import React from 'react';
-import { ReviewerTasks } from '../../features/reviewer/ReviewerTasks';
+import { ReviewerTasksTable } from '../../features/userDash/ReviewerTasksTable';
 
 export const UserReviews: React.FC = () => {
   return (
     <>
-      <ReviewerTasks />
+      <ReviewerTasksTable />
     </>
   );
 };

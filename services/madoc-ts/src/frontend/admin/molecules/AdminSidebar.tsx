@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
+import { ModelDocumentIcon } from '../../shared/icons/ModelDocumentIcon';
 import {
   AdminMenuContainer,
   AdminMenuItem,
@@ -21,7 +22,7 @@ import {
   SiteSwitcherBackButton,
   SiteSwitcherContainer,
   SiteSwitcherSiteName,
-} from '../../shared/components/AdminMenu';
+} from '../components/AdminMenu';
 import { useSite, useUser } from '../../shared/hooks/use-site';
 import { HrefLink } from '../../shared/utility/href-link';
 
@@ -43,6 +44,7 @@ export const AdminSidebar: React.FC = () => {
     isManageManifests,
     isLocalisation,
     isMedia,
+    isPageBlocks,
     isSiteGlobal,
   } = useMemo(() => {
     return {
@@ -53,6 +55,7 @@ export const AdminSidebar: React.FC = () => {
         pathname.startsWith('/import/manifest') ||
         pathname.startsWith('/enrichment/ocr'),
       isProjects: pathname.startsWith('/projects'),
+      isPageBlocks: pathname.startsWith('/page-blocks'),
       isSiteConfiguration:
         pathname.startsWith('/configure') ||
         pathname.startsWith('/system') ||
@@ -138,6 +141,15 @@ export const AdminSidebar: React.FC = () => {
         </AdminMenuItemContainer>
 
         <AdminMenuItemContainer>
+          <AdminMenuItem as={HrefLink} href="/page-blocks" $active={isPageBlocks}>
+            <AdminMenuItemIcon>
+              <ModelDocumentIcon color="#fff" />
+            </AdminMenuItemIcon>
+            <AdminMenuItemLabel>{t('Site pages')}</AdminMenuItemLabel>
+          </AdminMenuItem>
+        </AdminMenuItemContainer>
+
+        <AdminMenuItemContainer>
           <AdminMenuItem as={HrefLink} href="/i18n" $active={isLocalisation}>
             <AdminMenuItemIcon>
               <InternationalisationIcon />
@@ -180,6 +192,12 @@ export const AdminSidebar: React.FC = () => {
             </AdminMenuSubItem>
             <AdminMenuSubItem as={HrefLink} href="/site/permissions">
               {t('Site permissions')}
+            </AdminMenuSubItem>
+            <AdminMenuSubItem as={HrefLink} href="/configure/site/terms-and-conditions">
+              {t('Site terms and conditions')}
+            </AdminMenuSubItem>
+            <AdminMenuSubItem as={HrefLink} href="/configure/site/terms">
+              {t('External terms list')}
             </AdminMenuSubItem>
             <AdminMenuSubItem as={HrefLink} href="/site/invitations">
               {t('Invitations')}

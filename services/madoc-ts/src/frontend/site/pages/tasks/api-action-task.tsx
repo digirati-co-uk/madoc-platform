@@ -9,9 +9,9 @@ import { ApiActionTask } from '../../../../gateway/tasks/api-action-task';
 import { Button, ButtonRow } from '../../../shared/navigation/Button';
 import { ErrorMessage } from '../../../shared/callouts/ErrorMessage';
 import { SuccessMessage } from '../../../shared/callouts/SuccessMessage';
-import { CanvasSnippet } from '../../../shared/components/CanvasSnippet';
+import { CanvasSnippet } from '../../../shared/features/CanvasSnippet';
 import { CodeBlock } from '../../../shared/components/CodeBlock.lazy';
-import { ManifestSnippet } from '../../../shared/components/ManifestSnippet';
+import { ManifestSnippet } from '../../../shared/features/ManifestSnippet';
 import { useApi } from '../../../shared/hooks/use-api';
 
 const resolveSubjectId = (subject: ApiDefinitionSubject, request: ApiRequest<any, any>) => {

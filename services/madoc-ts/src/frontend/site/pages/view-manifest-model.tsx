@@ -1,36 +1,26 @@
 import React from 'react';
-import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
-import { useCurrentUser } from '../../shared/hooks/use-current-user';
+import { DisplayBreadcrumbs } from '../blocks/Breadcrumbs';
 import { Slot } from '../../shared/page-blocks/slot';
-import { ManifestHeading } from '../features/ManifestHeading';
-import { ManifestModelEditor } from '../features/contributor/ManifestModelEditor';
-import { ManifestPagination } from '../features/ManifestPagination';
-import { ManifestUserNotification } from '../features/contributor/ManifestUserNotification';
-import { PrepareManifestsCaptureModel } from '../features/admin/PrepareManifestCaptureModel';
-import { RequiredStatement } from '../features/RequiredStatement';
+import { ManifestHeading } from '../blocks/ManifestHeading';
+import { ManifestModelEditor } from '../blocks/ManifestModelEditor';
+import { ManifestPagination } from '../blocks/ManifestPagination';
+import { ManifestUserNotification } from '../blocks/ManifestUserNotification';
+import { PrepareManifestsCaptureModel } from '../features/manifest/PrepareManifestCaptureModel';
+import { RequiredStatement } from '../blocks/RequiredStatement';
 import { useManifestTask } from '../hooks/use-manifest-task';
 import { useManifestUserTasks } from '../hooks/use-manifest-user-tasks';
 import { useProjectShadowConfiguration } from '../hooks/use-project-shadow-configuration';
 import { useProjectStatus } from '../hooks/use-project-status';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 import { Navigate } from 'react-router-dom';
-import '../features/ManifestHero';
-import { ManifestModelCanvasPreview } from '../features/ManifestModelCanvasPreview';
+import { ManifestModelCanvasPreview } from '../blocks/ManifestModelCanvasPreview';
 
 export function ViewManifestModel() {
   const createLink = useRelativeLinks();
   const { isManifestComplete, hasExpired } = useManifestTask();
-  const { canUserSubmit, isLoading: isLoadingTasks, completedAndHide } = useManifestUserTasks();
-  const user = useCurrentUser(true);
+  const { canUserSubmit, isLoading: isLoadingTasks, completedAndHide, canContribute } = useManifestUserTasks();;
   const { isActive, isPreparing } = useProjectStatus();
   const shadow = useProjectShadowConfiguration();
-
-  const canContribute =
-    user &&
-    user.scope &&
-    (user.scope.indexOf('site.admin') !== -1 ||
-      user.scope.indexOf('models.admin') !== -1 ||
-      user.scope.indexOf('models.contribute') !== -1);
 
   const isReadOnly =
     (!canUserSubmit && !isLoadingTasks) ||

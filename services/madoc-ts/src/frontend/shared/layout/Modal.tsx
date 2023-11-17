@@ -8,7 +8,7 @@ export const ModalBackground = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 20;
+  z-index: 23;
   background: rgba(0, 0, 0, 0.4);
 `;
 
@@ -18,7 +18,7 @@ export const ModalContainer = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 21;
+  z-index: 24;
   display: flex;
 `;
 

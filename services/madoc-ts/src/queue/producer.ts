@@ -1,4 +1,5 @@
 import { Job, Worker, WorkerOptions } from 'bullmq';
+import { ApiClient } from '../gateway/api';
 import * as manifest from '../gateway/tasks/import-manifest';
 import * as collection from '../gateway/tasks/import-collection';
 import * as canvas from '../gateway/tasks/import-canvas';
@@ -44,11 +45,13 @@ function getSiteId(context: string[]) {
 const worker = new Worker(
   'madoc-ts',
   async job => {
-    let contextualApi = api;
+    let contextualApi: ApiClient = api;
+    let isContextual = false;
 
     if (job.data && job.data.context) {
       const siteId = getSiteId(job.data.context);
       if (siteId) {
+        isContextual = true;
         contextualApi = api.asUser({ siteId }, {}, true);
       }
     }
@@ -152,6 +155,10 @@ const worker = new Worker(
         }
       }
       throw e;
+    } finally {
+      if (isContextual && contextualApi) {
+        contextualApi.dispose();
+      }
     }
   },
   configOptions

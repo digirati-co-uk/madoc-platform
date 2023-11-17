@@ -1,6 +1,6 @@
 import { InternationalString } from '@iiif/presentation-3';
 import { useMemo } from 'react';
-import { FacetConfig } from '../../shared/components/MetadataFacetEditor';
+import { FacetConfig } from '../../shared/features/MetadataFacetEditor';
 import { apiHooks, paginatedApiHooks } from '../../shared/hooks/use-api-query';
 import { useSiteConfiguration } from '../features/SiteConfigurationContext';
 import { useRouteContext } from './use-route-context';

@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { Navigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { CrowdsourcingReview } from '../../../../../gateway/tasks/crowdsourcing-review';
 import { CrowdsourcingTask } from '../../../../../gateway/tasks/crowdsourcing-task';
 import { EditorSlots } from '../../../../shared/capture-models/new/components/EditorSlots';
@@ -47,11 +47,8 @@ import { extractIdFromUrn } from '../../../../../utility/parse-urn';
 import { useProjectAnnotationStyles } from '../../../hooks/use-project-annotation-styles';
 import UnlockSmileyIcon from '../../../../shared/icons/UnlockSmileyIcon';
 import { useCurrentUser } from '../../../../shared/hooks/use-current-user';
-import { ManifestCanvasGrid } from '../../../features/ManifestCanvasGrid';
-import { PreviewManifest } from '../../../../admin/molecules/PreviewManifest';
-import { ViewContentFetch } from '../../../../admin/molecules/ViewContentFetch';
-import { ProjectManifests } from '../../../features/ProjectManifests';
-import { ManifestSnippet } from '../../../../shared/components/ManifestSnippet';
+import { ManifestSnippet } from '../../../../shared/features/ManifestSnippet';
+import { ReviewNavigation } from './ReviewNagivation';
 
 const ReviewContainer = styled.div`
   position: relative;
@@ -62,6 +59,10 @@ const ReviewContainer = styled.div`
 
   &[data-is-max-window='true'] {
     height: 100vh;
+
+    ${CanvasViewerControls} {
+      top: 9em;
+    }
   }
 `;
 
@@ -80,6 +81,8 @@ const Label = styled.div`
   font-weight: 600;
   padding: 0.6em;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const SubLabel = styled.div`
@@ -166,11 +169,13 @@ const Assignee = styled.div`
 
 function ViewSingleReview({
   task,
+  taskId,
   review,
   toggle,
   isOpen,
 }: {
   task: CrowdsourcingTask & { id: string };
+  taskId?: string;
   review: (CrowdsourcingReview & { id: string }) | null;
   toggle: any;
   isOpen: boolean;
@@ -243,6 +248,8 @@ function ViewSingleReview({
               </LocaleString>
             )}
           </SubLabel>
+
+          <ReviewNavigation taskId={taskId} />
         </ReviewHeader>
         <EmptyState>
           <UnlockSmileyIcon />
@@ -269,7 +276,7 @@ function ViewSingleReview({
       }}
       annotationTheme={annotationTheme}
     >
-      <ReviewContainer data-is-max-window={isOpen}>
+      <ReviewContainer id={'review-container'} data-is-max-window={isOpen}>
         <ReviewHeader>
           <Label>
             {metadata && metadata.subject ? <LocaleString>{metadata.subject.label}</LocaleString> : task.name}
@@ -282,6 +289,8 @@ function ViewSingleReview({
               </LocaleString>
             )}
           </SubLabel>
+
+          <ReviewNavigation taskId={taskId} />
         </ReviewHeader>
         <ReviewActionBar>
           <div style={{ display: 'flex' }}>
@@ -404,7 +413,13 @@ function ViewSingleReview({
               metadata.subject?.id &&
               metadata.subject.type === 'manifest' && (
                 <>
-                  <ManifestSnippet id={metadata.subject?.id} stackedThumbnail flat portrait hideButton />
+                  <ManifestSnippet
+                    id={metadata.subject?.id}
+                    data-is-stacked={true}
+                    data-is-flatd={true}
+                    data-is-portrait={true}
+                    hideButton
+                  />
                 </>
               )
             )}
@@ -427,7 +442,13 @@ export function SingleReview() {
         } else
           return (
             <RefetchProvider refetch={refetch}>
-              <ViewSingleReview task={data.task} review={data.review} toggle={toggle} isOpen={isOpen} />
+              <ViewSingleReview
+                taskId={params.taskId}
+                task={data.task}
+                review={data.review}
+                toggle={toggle}
+                isOpen={isOpen}
+              />
             </RefetchProvider>
           );
       }}

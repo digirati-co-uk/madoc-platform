@@ -44,6 +44,7 @@ const CheckboxContainer = styled.fieldset<{ inline?: boolean }>`
 `;
 
 export const CheckboxFieldList: FieldComponent<CheckboxListFieldProps> = props => {
+  const value = props.value || {};
   const { t: tModel } = useModelTranslation();
   return (
     <CheckboxContainer disabled={props.disabled}>
@@ -55,10 +56,10 @@ export const CheckboxFieldList: FieldComponent<CheckboxListFieldProps> = props =
               value={option.value}
               id={props.id}
               aria-label={option.label}
-              checked={props.value[option.value]}
+              checked={value[option.value]}
               onChange={v => {
                 props.updateValue({
-                  ...(props.value || {}),
+                  ...(value || {}),
                   [option.value]: v.target.checked,
                 });
               }}

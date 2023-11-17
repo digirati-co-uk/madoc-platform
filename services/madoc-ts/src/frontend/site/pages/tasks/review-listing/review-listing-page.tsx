@@ -1,11 +1,11 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Outlet, useNavigate, useParams } from 'react-router-dom';
+import { Link, Outlet, useNavigate, useParams } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 import { SubjectSnippet } from '../../../../../extensions/tasks/resolvers/subject-resolver';
 import { CrowdsourcingTask } from '../../../../../gateway/tasks/crowdsourcing-task';
 import { SimpleStatus } from '../../../../shared/atoms/SimpleStatus';
-import { DisplayBreadcrumbs } from '../../../../shared/components/Breadcrumbs';
+import { DisplayBreadcrumbs } from '../../../blocks/Breadcrumbs';
 import { LocaleString } from '../../../../shared/components/LocaleString';
 import { useInfiniteData } from '../../../../shared/hooks/use-data';
 import { useLocationQuery } from '../../../../shared/hooks/use-location-query';
@@ -14,15 +14,13 @@ import { serverRendererFor } from '../../../../shared/plugins/external/server-re
 import { HrefLink } from '../../../../shared/utility/href-link';
 import { useRelativeLinks } from '../../../hooks/use-relative-links';
 import { useTaskMetadata } from '../../../hooks/use-task-metadata';
-import { Button, ButtonIcon } from '../../../../shared/navigation/Button';
+import { Button, ButtonIcon, TextButton } from '../../../../shared/navigation/Button';
 import { Chevron } from '../../../../shared/icons/Chevron';
 import { useResizeLayout } from '../../../../shared/hooks/use-resize-layout';
 import { LayoutHandle } from '../../../../shared/layout/LayoutContainer';
 import ResizeHandleIcon from '../../../../shared/icons/ResizeHandleIcon';
 import { useInfiniteAction } from '../../../hooks/use-infinite-action';
 import { RefetchProvider } from '../../../../shared/utility/refetch-context';
-import { useRouteContext } from '../../../hooks/use-route-context';
-import { ReviewNavigation } from './ReviewNagivation';
 import { EmptyState } from '../../../../shared/layout/EmptyState';
 import ListItemIcon from '../../../../shared/icons/ListItemIcon';
 import { useKeyboardListNavigation } from '../../../hooks/use-keyboard-list-navigation';
@@ -78,6 +76,9 @@ const ThickTableRow = styled(SimpleTable.Row)<{ $active?: boolean }>`
 `;
 
 const HeaderLink = styled.a`
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
   color: black;
 
   svg {
@@ -125,11 +126,10 @@ const HeaderLink = styled.a`
 
 export function ReviewListingPage() {
   const { t } = useTranslation();
-  const params = useParams<{ taskId?: string }>();
-  const { projectId } = useRouteContext();
+  const params = useParams<{ taskId?: string; slug?: string }>();
+  const projectId = params.slug;
   const createLink = useRelativeLinks();
   const { sort_by = '', ...query } = useLocationQuery();
-  const navigate = useNavigate();
 
   const { widthB, refs } = useResizeLayout(`review-dashboard-resize`, {
     left: true,
@@ -160,16 +160,6 @@ export function ReviewListingPage() {
     container: refs.resizableDiv,
   });
 
-  const beforeNavigate = useCallback(
-    async (newTaskId, page, getNext) => {
-      if (!isFetchingMore && canFetchMore && getNext) {
-        await fetchMore();
-      }
-      navigate(createLink({ taskId: undefined, subRoute: `reviews/${newTaskId}`, query: { sort_by }, hash: page }));
-    },
-    [canFetchMore, createLink, fetchMore, isFetchingMore, navigate, sort_by]
-  );
-
   const QuerySortToggle = (field: string) => {
     const sort = sort_by;
     if (sort && sort.includes(`${field}:desc`)) {
@@ -191,6 +181,15 @@ export function ReviewListingPage() {
   return (
     <RefetchProvider refetch={refetch}>
       <DisplayBreadcrumbs currentPage={t('Reviews')} />
+
+      <div style={{ paddingBottom: '0.5em' }}>
+        <TextButton
+          as={Link}
+          to={createLink({ projectId: projectId, subRoute: 'tasks', query: { type: 'crowdsourcing-review' } })}
+        >
+          {t('Task view')}
+        </TextButton>
+      </div>
 
       <ReviewListingContainer ref={refs.container as any}>
         <TaskListContainer ref={refs.resizableDiv as any} style={{ width: widthB }}>
@@ -290,13 +289,6 @@ export function ReviewListingPage() {
         <TaskPreviewContainer>
           {params.taskId ? (
             <>
-              <ReviewNavigation
-                handleNavigation={beforeNavigate}
-                taskId={params.taskId}
-                pages={pages}
-                projectId={projectId}
-                query={sort_by ? { sort_by } : undefined}
-              />
               <Outlet />
             </>
           ) : (
@@ -333,7 +325,12 @@ function SingleReviewTableRow({
       $active={active}
       onClick={() =>
         navigate(
-          createLink({ taskId: undefined, subRoute: `reviews/${task.id}`, query, hash: page ? page.toString() : '1' })
+          createLink({
+            subRoute: `reviews`,
+            taskId: task.id,
+            query,
+            hash: page ? page.toString() : '1',
+          })
         )
       }
     >
@@ -352,7 +349,7 @@ function SingleReviewTableRow({
         )}
       </SimpleTable.Cell>
       {/* resource name */}
-      <SimpleTable.Cell>
+      <SimpleTable.Cell style={{ maxWidth: '7em' }}>
         {metadata.subject && metadata.subject.type === 'manifest'
           ? ''
           : metadata.subject?.label && <LocaleString>{metadata.subject.label}</LocaleString>}
@@ -377,12 +374,12 @@ serverRendererFor(ReviewListingPage, {
   },
   getData: async (key, vars, api) => {
     const slug = vars.projectSlug;
-    const project = await api.getProject(slug);
+    const project = slug ? await api.getProject(slug) : undefined;
 
     return api.getTasks(vars.page, {
-      all_tasks: false,
+      all_tasks: !project?.task_id,
       type: 'crowdsourcing-task',
-      root_task_id: project.task_id,
+      root_task_id: project?.task_id,
       per_page: 20,
       detail: true,
       ...vars.query,
