@@ -35,7 +35,7 @@ export const AssignManifestToUser: React.FC = () => {
     }
   );
 
-  if (project.claimGranularity === 'canvas' || project.contributionMode !== 'transcription') {
+  if (project.claimGranularity === 'canvas') {
     return null;
   }
 

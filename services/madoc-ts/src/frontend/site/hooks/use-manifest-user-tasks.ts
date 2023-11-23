@@ -77,7 +77,9 @@ export function useManifestUserTasks() {
       : true;
 
     const canSubmitMultiple = config.project.modelPageOptions?.preventMultipleUserSubmissionsPerResource
-      ? !userContributions || userContributions.length === 0 || userContributions?.some(task => task.status === 1)
+      ? !userContributions ||
+        userContributions.length === 0 ||
+        userContributions?.some(task => task.status === 0 || task.status === 1)
       : true;
 
     const allTasksDone = userContributions.length

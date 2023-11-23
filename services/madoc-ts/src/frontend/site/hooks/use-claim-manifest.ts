@@ -12,6 +12,7 @@ export function useClaimManifest() {
     isManifestComplete,
     isFetched: manifestTaskFetched,
     userTasks,
+    manifestTask,
     refetch,
     canClaimManifest,
   } = useManifestTask();
@@ -22,7 +23,7 @@ export function useClaimManifest() {
   const validManifestTask = (userTasks || []).find(task =>
     preventContributionAfterManifestUnassign ? task.status !== -1 : task
   );
-  const doesUserHaveManifestClaim = !!validManifestTask;
+  const doesUserHaveManifestClaim = !!manifestTask;
   const isManifestClaimRequired =
     manifestId && config.project.claimGranularity === 'manifest' && !doesUserHaveManifestClaim;
 
