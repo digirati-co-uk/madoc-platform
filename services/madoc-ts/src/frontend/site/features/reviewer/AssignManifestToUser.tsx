@@ -34,6 +34,16 @@ export const AssignManifestToUser: React.FC = () => {
       throwOnError: true,
     }
   );
+  const [unassignUser] = useMutation(
+    async (taskId: string) => {
+      if (projectId) {
+        await api.updateTask(taskId, { status: -1, status_text: 'unassigned' });
+      }
+    },
+    {
+      throwOnError: true,
+    }
+  );
 
   if (project.claimGranularity === 'canvas' /*|| project.contributionMode !== 'transcription'*/) {
     return null;
@@ -47,7 +57,7 @@ export const AssignManifestToUser: React.FC = () => {
     <ModalButton
       as={Button}
       title={t('Assign manifest to user')}
-      render={() => <AssignUserToManifestTask onAssign={assignUser} />}
+      render={() => <AssignUserToManifestTask onAssign={assignUser} onUnassign={unassignUser} />}
     >
       {t('Assign')}
     </ModalButton>
