@@ -13,6 +13,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 -->
 
+
+### Added
+- Experimental "Polygon" selector for capture models
+
+### Fixed
+- Fixed bug with manifest granularity capture models not appearing
+
 ## [v2.2.0](https://github.com/digirati-co-uk/madoc-platform/compare/v2.1.4...v2.2.0)
 
 [Full Release notes](https://docs.madoc.io/releases/v2.2)

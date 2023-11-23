@@ -153,6 +153,7 @@ export function CanvasViewer({
               <LayoutSidebar
                 ref={refs.resizableDiv as any}
                 data-space={sidebarSpace}
+                data-sidebar-size={parseFloat(widthB) > 440 ? 'large' : parseFloat(widthB) > 330 ? 'medium' : 'small'}
                 style={{ width: widthB, border: `1px solid ${borderColor}` }}
               >
                 <div style={{ margin: '1em', borderBottom: '1px solid #ddd' }}>
