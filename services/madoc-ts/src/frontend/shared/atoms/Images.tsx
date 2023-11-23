@@ -5,31 +5,40 @@ export const CroppedImage = styled.div<{
   $fluid?: boolean;
   $covered?: boolean;
   $rect?: boolean;
+  $poly?: boolean;
 }>`
   background: #000;
   padding: 2px;
-  aspect-ratio: ${props => (props.$rect ? '1.618' : '1')};
   display: flex;
   justify-content: center;
   align-items: center;
   overflow: hidden;
 
-  &[data-size='tiny'] {
-    width: 40px;
-    height: 40px;
+  *[data-sidebar-size='medium'] & {
+    width: 64px;
+    height: 64px;
+  }
+
+  *[data-sidebar-size='large'] & {
+    width: 150px;
+    height: 150px;
   }
 
   ${props =>
-    props.$fluid &&
-    css`
-      width: auto;
-      height: auto;
-      max-height: 150px;
-      padding: 0;
-      img {
-        max-height: 150px;
-      }
-    `}
+    props.$fluid
+      ? css`
+          width: auto;
+          height: auto;
+          max-height: 150px;
+          padding: 0;
+          img,
+          svg {
+            max-height: 150px;
+          }
+        `
+      : css`
+          aspect-ratio: ${props.$rect ? '1.618' : '1'};
+        `}
 
   img {
     display: inline-block;
