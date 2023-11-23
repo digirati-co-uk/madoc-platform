@@ -4,6 +4,7 @@ import { RevisionRequest } from '../../shared/capture-models/types/revision-requ
 import { useApi } from '../../shared/hooks/use-api';
 import { useSiteConfiguration } from '../features/SiteConfigurationContext';
 import { useInvalidateAfterSubmission } from './use-invalidate-after-submission';
+import { useManifestUserTasks } from './use-manifest-user-tasks';
 import { useProjectCanvasTasks } from './use-project-canvas-tasks';
 import { RouteContext } from './use-route-context';
 
@@ -14,6 +15,11 @@ export function useCanvasUserTasks() {
   const api = useApi();
   const { user, scope = defaultScope } = api.getIsServer() ? { user: undefined } : api.getCurrentUser() || {};
   const { data: canvasTask, isLoading, refetch, updatedAt } = useProjectCanvasTasks();
+  let manifestTasks: ReturnType<typeof useManifestUserTasks> | null = null;
+  if (config.project.claimGranularity === 'manifest') {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    manifestTasks = useManifestUserTasks();
+  }
 
   const [updateClaim] = useMutation(
     async ({ revisionRequest: response, context }: { revisionRequest: RevisionRequest; context: RouteContext }) => {
@@ -49,7 +55,11 @@ export function useCanvasUserTasks() {
   );
 
   return useMemo(() => {
-    const userTasks = canvasTask ? canvasTask.userTasks : undefined;
+    let userTasks = canvasTask ? canvasTask.userTasks : undefined;
+    if (manifestTasks) {
+      userTasks = manifestTasks.userTasks;
+    }
+
     const userContributions = (userTasks || []).filter(
       task => task.type === 'crowdsourcing-task' && task.status !== -1
     );
@@ -60,8 +70,12 @@ export function useCanvasUserTasks() {
         scope.indexOf('models.contribute') === -1 ||
         scope.indexOf('models.admin') === -1);
 
-    const canClaimCanvas =
+    let canClaimCanvas =
       user && (config.project.claimGranularity ? config.project.claimGranularity === 'canvas' : true);
+
+    if (config.project.claimGranularity === 'manifest' && manifestTasks) {
+      canClaimCanvas = manifestTasks.canContribute || manifestTasks.canUserSubmit;
+    }
 
     const maxContributors =
       canvasTask?.maxContributors && canvasTask.totalContributors
@@ -71,7 +85,10 @@ export function useCanvasUserTasks() {
     // if max contributors reached check that the current user isnt one of them
     const maxContributorsReached = maxContributors ? !userTasks?.some(t => t.type === 'crowdsourcing-task') : false;
 
-    const canUserSubmit = user && !!canvasTask?.canUserSubmit;
+    let canUserSubmit = user && !!canvasTask?.canUserSubmit;
+    if (config.project.claimGranularity === 'manifest' && manifestTasks) {
+      canUserSubmit = manifestTasks.canUserSubmit;
+    }
 
     const canSubmitAfterRejection = config.project.modelPageOptions?.preventContributionAfterRejection
       ? !userTasks?.some(task => task.status === -1)
@@ -121,6 +138,7 @@ export function useCanvasUserTasks() {
       preventFurtherSubmission,
     };
   }, [
+    manifestTasks,
     canvasTask,
     config.project.allowSubmissionsWhenCanvasComplete,
     config.project.claimGranularity,

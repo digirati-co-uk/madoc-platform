@@ -268,7 +268,6 @@ export function CoreModelEditor({
         annotationTheme={annotationTheme}
       >
         {!isPreparing && mode === 'transcription' ? <TranscriberModeWorkflowBar /> : null}
-
         <CanvasViewer key={canvasViewerPins ? JSON.stringify(canvasViewerPins) : undefined} pins={canvasViewerPins}>
           {enableHighlightedRegions ? <CanvasHighlightedRegions /> : null}
           <CanvasViewerGrid $vertical={isVertical} ref={gridRef}>
@@ -321,6 +320,8 @@ export function CoreModelEditor({
                   </CanvasViewerButton>
                 </CanvasViewerControls>
               )}
+
+              <CanvasViewerControls id="atlas-controls" data-position="left" />
 
               <CanvasViewerContentOverlay>
                 <SmallToast $active={showPanWarning}>{t('Hold space to pan and zoom')}</SmallToast>

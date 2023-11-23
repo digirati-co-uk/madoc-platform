@@ -41,6 +41,7 @@ export type InjectedSelectorProps<T> = {
   displaySelector?: (selectorId: string) => void;
   hideSelector?: (selectorId: string) => void;
   currentSelectorId?: string;
+  fieldId?: string;
   isTopLevel?: boolean;
   bucket?: AnnotationBuckets;
   isAdjacent?: boolean;
@@ -65,4 +66,5 @@ export type SelectorSpecification<Props extends BaseSelector = BaseSelector, CT 
     [contentType in CT]: FC<Props & InjectedSelectorProps<Props['state']>>;
   };
   Editor?: FC<Required<Omit<Props, 'state'>>>;
+  Toolbar?: FC<Props & InjectedSelectorProps<Props['state']>>;
 };

@@ -1,0 +1,79 @@
+.controls {
+    fill: #fff;
+    stroke: #000;
+    stroke-width: 1px;
+}
+.controls:hover {
+    fill: pink;
+}
+.controls--selected {
+    fill: red;
+}
+.controls--selected.controls--bounds {
+    opacity: 0.5;
+    fill: #fff;
+}
+
+
+.marker {
+    fill: #fff;
+    stroke: #000;
+    stroke-width: 2px;
+}
+
+
+.se {
+    cursor: se-resize;
+}
+
+.sw {
+    cursor: sw-resize;
+}
+
+.ne {
+    cursor: ne-resize;
+}
+
+.nw {
+    cursor: nw-resize;
+}
+
+.move {
+    cursor: move;
+}
+
+.crosshair {
+    cursor: crosshair;
+}
+
+.copy {
+    cursor: copy;
+}
+
+.rotate {
+    cursor: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAADRElEQVRYCe2VT0iTcRjHnZsuR8LSkOGhqcRIBoHSFIL0pDcbSLfqMtnNUycJT/PgIQRvgngYIhQd8jB0NKnNTU0rdeSf0BoTbXN/rE23mfv79n3GDBu+f9zothc+vL/n93ue7/O8v/f3p6ys9JRmoIgZYBimDtQWIVF4KBLXg6/AWUwR5YWUgIRKxNknJib8JpMphPa7Yoq4Ug1IdBvsjY6OziOQUavV7kwmE0Wf/kpChTgjyR1wMDQ0ZKfkYrE4NTMzYwsEAmvoPwYmcK8QbUExEF9wuVzLlDwfmUwWGxsbs8EnBl4AsSBRPicIVYBX4C5QgM3p6WkrFSCRSJKTk5NW+h2tra3fqE+lUu0Hg0FamBQj4tPnHYfIQDQa3cF/DqB9H9wE6xaLxUYJlUqlN7cGEmaz2VZVVXVKs3F2duaG3wBvAi4HCCghHmxsbPTodLoV2DS9t8ANsLK4uDjvdDodaM8DJXjp8Xg+UWGdnZ1bsMOgnisH5xiCDbOzszYSNBqNVthvzgPQrgZ2YAEy6sdbDBwjIyPZHUIFwn5+HnPlN4KXtFrtOmmn02kfbNVFEdgyIM3rU8fj8X2K6enpobVAi5b1YV0kCKxA1KnD4ViSSqWitrY2hUgk+qcANlXEhmpqasorKyuTPp8vg7g6Nl/WfojUgouPjdU5bwBBWy0tLd9RQBzteN6wcBPBP3t7e9e6uro20f4FePc2fGjbxpA80dDQ4EX7B1dGvrvgfVNT0++5uTl1OBz2QEjLJZYbe4JzYDeRSFSgeDf6PguIudwF1eu8Xm92W9FMwHYD+eXe2V1A94RPo9Hswofx+/2rsJ+y+fP2I1gCNvr7+z/k9jtMxgUegb+zh/Y18JgOq8HBwQVKrtfrl9G3CyS8ibgcIPAAJABzcnKy1dfXtxIKhTZg0powg7cgdHh4uNrR0bFNybu7u7/kTk4Nl7bgMSR4BtLDw8PZW5CSKBSKIJKEU6mUTy6XH1MfMT4+ThdSBAhZL4JroFOO7oGP9PUGg8He3Ny8h8PpKJlMHrS3t+9MTU1ZI5HINnzo8Pk/VzKERYD+vxHsgfPnAI3X4CHg3arCP5vHE8mug2oet9JwaQZKM8A5A38AUaOUifLn9bEAAAAASUVORK5CYII=") 8 8, pointer;
+}
+.draw {
+    cursor: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAABSElEQVRYCe2TvWqEQBSFtxa09xECwSo/26dIL9iIog9i52P4JilCSLrdJGz6pA5sqs0PQqJuzoGdMBl0DehstpiBi3PH6z3fnBknEzOMA8aBDgfW7WOF5WnHJ+MuUx8df0UYhvOmaV52AtEGQCAJ4nTcLSvdZADOy7J8dF13SYgoioQT+iBkAIoj/2yBWGJdDwQar2D3LXfMnfdAnCgGDk8BMOWF64OI43iGOjphIIQTx8P9Vzr89TiSJJmhlsfxvxCbO7EXEEeKmcPTLcfxxV/VsqwPqKzTNBV3YncQRVFcUVyEBHGAtXGH6oTYOVR+ADjP8/watRfjqm+6qRCqOHPHcd5Q96oFgE37IHzfv0fNgzaAbRCe5z1VVfUMgHOtADJElmU3tm2/B0FwV9c1xSPt4kIAYoeISwTPfYE4E+/M0zhgHOhy4BtfABNjetwFVwAAAABJRU5ErkJggg==") 4 4, pointer;
+}
+
+.shape {
+    cursor: pointer;
+    fill: rgba(119, 24, 196, 0.25);
+    pointer-events: visible;
+}
+
+.shape:hover {
+    fill: rgba(119, 24, 196, 0.5);
+}
+
+.shape-line {
+    stroke: rgba(119, 24, 196, 0.25);
+    stroke-width: 3px;
+    fill: none;
+    pointer-events: visible;
+}
+
+.shape-line:hover {
+    stroke: rgba(119, 24, 196, 0.5);
+}

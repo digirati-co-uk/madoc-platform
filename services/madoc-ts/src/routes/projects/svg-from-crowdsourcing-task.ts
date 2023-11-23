@@ -1,4 +1,5 @@
 import { sql } from 'slonik';
+import { PolygonSelectorProps } from '../../frontend/shared/capture-models/editor/selector-types/PolygonSelector/PolygonSelector';
 import { traverseDocument } from '../../frontend/shared/capture-models/helpers/traverse-document';
 import { api } from '../../gateway/api.server';
 import { CrowdsourcingTask } from '../../gateway/tasks/crowdsourcing-task';
@@ -32,16 +33,51 @@ export const svgFromCrowdsourcingTask: RouteMiddleware = async context => {
 
   const revision = await context.captureModels.getRevision(revisionId, siteId, {});
   const document = revision.document;
+  let minX = Infinity;
+  let minY = Infinity;
+  let maxX = -Infinity;
+  let maxY = -Infinity;
   const selectors: Array<{ x: number; y: number; width: number; height: number }> = [];
+  const svgSelectors: Array<PolygonSelectorProps['state']> = [];
   traverseDocument(document, {
     visitSelector: selector => {
       if (selector.type === 'box-selector' && selector.state) {
         selectors.push(selector.state);
+        if (selector.state.x < minX) {
+          minX = selector.state.x;
+        }
+        if (selector.state.y < minY) {
+          minY = selector.state.y;
+        }
+        if (selector.state.x + selector.state.width > maxX) {
+          maxX = selector.state.x + selector.state.width;
+        }
+        if (selector.state.y + selector.state.height > maxY) {
+          maxY = selector.state.y + selector.state.height;
+        }
+      }
+      if (selector.type === 'polygon-selector' && selector.state) {
+        svgSelectors.push(selector.state);
+        const points = selector.state?.shape?.points || [];
+        for (const point of points) {
+          if (point[0] < minX) {
+            minX = point[0];
+          }
+          if (point[1] < minY) {
+            minY = point[1];
+          }
+          if (point[0] > maxX) {
+            maxX = point[0];
+          }
+          if (point[1] > maxY) {
+            maxY = point[1];
+          }
+        }
       }
     },
   });
 
-  if (!selectors.length) {
+  if (!selectors.length || !svgSelectors.length) {
     context.response.body = { empty: true };
     return;
   }
@@ -52,10 +88,10 @@ export const svgFromCrowdsourcingTask: RouteMiddleware = async context => {
     where ir.id = ${subject.id} and site_id = ${siteId}
   `);
 
-  let x = Math.min(...selectors.map(s => s.x));
-  let y = Math.min(...selectors.map(s => s.y));
-  let width = Math.max(...selectors.map(s => s.x + s.width)) - x;
-  let height = Math.max(...selectors.map(s => s.y + s.height)) - y;
+  let x = minX;
+  let y = minY;
+  let width = maxX - x;
+  let height = maxY - y;
 
   width = width * 1.2;
   height = height * 1.2;
@@ -114,6 +150,18 @@ export const svgFromCrowdsourcingTask: RouteMiddleware = async context => {
       ${finalSelectors
         .map(s => {
           return `<rect x="${s.x}" y="${s.y}" width="${s.width}" height="${s.height}" fill="none" stroke-width="${strokeWidth}px" />`;
+        })
+        .join('')}
+      ${svgSelectors
+        .map(s => {
+          const points = s?.shape?.points || [];
+          const shape = s?.shape?.open ? 'polyline' : 'polygon';
+          if (points.length > 2) {
+            return `<${shape} points="${points
+              .map(p => `${p[0]},${p[1]}`)
+              .join(' ')}" fill="none" stroke-width="${strokeWidth}px" />`;
+          }
+          return '';
         })
         .join('')}
     </svg>

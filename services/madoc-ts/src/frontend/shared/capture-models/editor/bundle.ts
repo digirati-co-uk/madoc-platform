@@ -15,3 +15,4 @@ import './input-types/BorderField';
 
 // Default selectors
 import './selector-types/BoxSelector';
+import './selector-types/PolygonSelector';

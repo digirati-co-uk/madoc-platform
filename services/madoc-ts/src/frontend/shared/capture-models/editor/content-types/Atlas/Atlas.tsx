@@ -2,7 +2,10 @@ import { ImageService } from '@iiif/presentation-3';
 import React from 'react';
 import { webglSupport } from '../../../../utility/webgl-support';
 import { AnnotationStyleProvider, useAnnotationStyles } from '../../../AnnotationStyleContext';
+import { getRevisionFieldFromPath } from '../../../helpers/get-revision-field-from-path';
+import { EditorSlots } from '../../../new/components/EditorSlots';
 import { BaseContent, ContentOptions } from '../../../types/content-types';
+import { Revisions } from '../../stores/revisions/index';
 import { useAllSelectors, useCurrentSelector, useSelectorActions } from '../../stores/selectors/selector-hooks';
 import {
   useExternalManifest,
@@ -34,6 +37,8 @@ export interface AtlasViewerProps extends BaseContent {
   options: ContentOptions<AtlasCustomOptions>;
 }
 
+const defaultPreset = ['default-preset', { runtimeOptions: { maxOverZoom: 5 } }] as any;
+
 const Canvas: React.FC<{
   isEditing?: boolean;
   onDeselect?: () => void;
@@ -55,6 +60,7 @@ const Canvas: React.FC<{
       onCreated={onCreated}
       mode={isEditing ? 'sketch' : 'explore'}
       unstable_webglRenderer={webglSupport() && unstable_webglRenderer}
+      renderPreset={defaultPreset}
       controllerConfig={controllerConfig}
       height="100%"
     >
@@ -128,11 +134,11 @@ export const AtlasViewer: React.FC<AtlasViewerProps> = props => {
           controllerConfig={props.options?.custom?.controllerConfig}
           onCreated={props.options?.custom?.onCreateAtlas}
           isEditing={!!currentSelector}
-          onDeselect={() => {
-            if (currentSelector) {
-              actions.clearSelector();
-            }
-          }}
+          // onDeselect={() => {
+          //   if (currentSelector) {
+          //     actions.clearSelector();
+          //   }
+          // }}
         >
           {selectors}
           {currentSelector}

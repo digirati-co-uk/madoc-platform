@@ -64,19 +64,7 @@ export function captureModelToIndexables(contentId: string, model: CaptureModel[
         indexable_float: null,
         indexable_int: null,
         indexable_json: null,
-        selector:
-          field.selector && field.selector.type === 'box-selector' && field.selector.state
-            ? {
-                'box-selector': [
-                  [
-                    field.selector.state.x,
-                    field.selector.state.y,
-                    field.selector.state.width,
-                    field.selector.state.height,
-                  ],
-                ],
-              }
-            : null,
+        selector: selectorToBox(field.selector),
         language_iso639_2: 'eng',
         language_iso639_1: 'en',
         language_display: 'english',
@@ -89,4 +77,33 @@ export function captureModelToIndexables(contentId: string, model: CaptureModel[
   return indexables.filter(indexable => {
     return revisedIds.indexOf(indexable.content_id) === -1;
   });
+}
+
+function selectorToBox(selector: any): SearchIndexable['selector'] {
+  if (!selector) {
+    return null;
+  }
+  if (selector.type === 'box-selector' && selector.state) {
+    return {
+      'box-selector': [[selector.state.x, selector.state.y, selector.state.width, selector.state.height]],
+    };
+  }
+
+  if (selector.type === 'polygon-selector' && selector.state && selector.state.shape) {
+    const shape = selector.state.shape;
+    const points: Array<[number, number]> = shape?.points || [];
+    if (points.length > 2) {
+      return {
+        'box-selector': [
+          [
+            Math.min(...points.map(p => p[0])),
+            Math.min(...points.map(p => p[1])),
+            Math.max(...points.map(p => p[0])),
+            Math.max(...points.map(p => p[1])),
+          ],
+        ],
+      };
+    }
+  }
+  return null;
 }

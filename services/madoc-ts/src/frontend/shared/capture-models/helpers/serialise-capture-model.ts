@@ -12,7 +12,8 @@ export function serialiseCaptureModel<T = any>(
 
   const newDoc = {} as any;
   const metadataAgg = metadataAggregate ? metadataAggregate.aggregate : {};
-  const isSelectorValid = (selector?: BaseSelector) => selector && selector.state && selector.type === 'box-selector';
+  const isSelectorValid = (selector?: BaseSelector) =>
+    selector && selector.state && (selector.type === 'box-selector' || selector.type === 'polygon-selector');
 
   if (properties.length === 0) {
     return undefined; // Always return undefined if there are no properties.
