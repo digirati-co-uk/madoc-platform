@@ -190,7 +190,6 @@
     "styled-theming": "^2.2.0",
     "ts-loader": "^7.0.2",
     "typesafe-actions": "^5.1.0",
-    "universalviewer": "next",
     "use-debounce": "^3.3.0",
     "use-match-media-hook": "^1.0.1",
     "use-open-seadragon": "^1.0.0",
