@@ -1,7 +1,9 @@
 import React from 'react';
+import { JsSnippetBlock } from '../../shared/atoms/JsSnippetBlock';
 import { ErrorMessage } from '../../shared/callouts/ErrorMessage';
 import { FlexSpacer } from '../../shared/layout/FlexSpacer';
 import { GlobalSearch } from '../../shared/form/GlobalSearch';
+import { AvailableBlocks } from '../../shared/page-blocks/available-blocks';
 import { GlobalStyles } from '../../shared/typography/GlobalStyles';
 import { SiteHeader, SiteHeaderBackground } from '../../shared/layout/SiteHeader';
 import { useApi, useIsApiRestarting } from '../../shared/hooks/use-api';
@@ -23,6 +25,9 @@ export const GlobalSiteHeader: React.FC<{ menu?: any }> = () => {
             <GlobalMenuStack />
             <FlexSpacer />
             <GlobalSearch />
+            <AvailableBlocks>
+              <JsSnippetBlock js="" />
+            </AvailableBlocks>
           </Slot>
         </SiteHeader>
       </SiteHeaderBackground>
