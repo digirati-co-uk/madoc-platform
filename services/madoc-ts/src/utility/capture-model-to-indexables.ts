@@ -80,6 +80,9 @@ export function captureModelToIndexables(contentId: string, model: CaptureModel[
 }
 
 function selectorToBox(selector: any): SearchIndexable['selector'] {
+  if (!selector) {
+    return null;
+  }
   if (selector.type === 'box-selector' && selector.state) {
     return {
       'box-selector': [[selector.state.x, selector.state.y, selector.state.width, selector.state.height]],
