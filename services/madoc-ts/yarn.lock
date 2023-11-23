@@ -20,15 +20,16 @@
     "@jridgewell/gen-mapping" "^0.1.0"
     "@jridgewell/trace-mapping" "^0.3.9"
 
-"@atlas-viewer/atlas@^2.0.0-alpha.19", "@atlas-viewer/atlas@https://pkg.csb.dev/atlas-viewer/atlas/commit/842002cd/@atlas-viewer/atlas":
-  version "2.0.0-alpha.20"
-  resolved "https://pkg.csb.dev/atlas-viewer/atlas/commit/842002cd/@atlas-viewer/atlas#a813557e7befc31fcff2204f72e6501fa158762b"
+"@atlas-viewer/atlas@^2.0.0-alpha.19", "@atlas-viewer/atlas@https://pkg.csb.dev/atlas-viewer/atlas/commit/cb45453e/@atlas-viewer/atlas":
+  version "2.0.0-alpha.22"
+  resolved "https://pkg.csb.dev/atlas-viewer/atlas/commit/cb45453e/@atlas-viewer/atlas#cf1abe0309e275dfb33856d2bc821f10e0c09638"
   dependencies:
     "@atlas-viewer/dna" "^0.5.0"
     "@atlas-viewer/iiif-image-api" "^2.0.5"
     "@iiif/presentation-3" ">=1"
     "@iiif/vault" "^0.9.18"
     "@iiif/vault-helpers" "^0.9.7"
+    lru-cache "^7.17.0"
     nanoid "^3.1.9"
     normalize-wheel "^1.0.1"
     react-reconciler "^0.26.2"
@@ -16540,6 +16541,11 @@ lru-cache@^6.0.0:
   dependencies:
     yallist "^4.0.0"
 
+lru-cache@^7.17.0:
+  version "7.18.3"
+  resolved "https://registry.yarnpkg.com/lru-cache/-/lru-cache-7.18.3.tgz#f793896e0fd0e954a59dfdd82f0773808df6aa89"
+  integrity sha512-jumlc0BIUrS3qJGgIkWZsyfAM7NCWiBcCDhnd+3NNM5KbBmLTgHVfWBcg6W+rLUsIpzpERPsvwUP7CckAQSOoA==
+
 luxon@^1.26.0:
   version "1.26.0"
   resolved "https://registry.yarnpkg.com/luxon/-/luxon-1.26.0.tgz#d3692361fda51473948252061d0f8561df02b578"
@@ -19169,6 +19175,11 @@ polished@^4.2.2:
   integrity sha512-Sz2Lkdxz6F2Pgnpi9U5Ng/WdWAUZxmHrNPoVlm3aAemxoy2Qy7LGjQg4uf8qKelDAUW94F4np3iH2YPf2qefcQ==
   dependencies:
     "@babel/runtime" "^7.17.8"
+
+polygon-editor@0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/polygon-editor/-/polygon-editor-0.0.1.tgz#50d2d3bd4a093fe13b5b1471601517d8254a3505"
+  integrity sha512-PKuIso/VWkAx/RviK+zu3LLE3HD7Y/BFvDI3MyyaQ8d5pl5WkccHKzfixlUN6zF3XrTIwIijpZ5BmlZRmYCcEg==
 
 popmotion@9.0.0-beta-8, popmotion@^8.7.6:
   version "8.7.6"
