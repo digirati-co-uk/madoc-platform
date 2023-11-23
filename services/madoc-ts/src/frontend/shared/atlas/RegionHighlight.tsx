@@ -35,8 +35,6 @@ export function RegionHighlight({
 }) {
   const saveCallback = useCallback(
     (bounds: any) => {
-      console.trace();
-      console.log(region, bounds)
       if (isEditing) {
         onSave({ id: region.id, x: region.x, y: region.y, height: region.height, width: region.width, ...bounds });
       }
