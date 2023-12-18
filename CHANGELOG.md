@@ -26,6 +26,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Dropdown overflow bug
 - Bug with deleting all contributions (MAD-1293)
 
+### Added
+- Basic Google Analytics page block (NS-45)
+
 
 ## [v2.1.3](https://github.com/digirati-co-uk/madoc-platform/compare/v2.1.2...v2.1.3)
 
