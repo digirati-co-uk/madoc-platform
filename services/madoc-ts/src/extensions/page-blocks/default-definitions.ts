@@ -1,4 +1,5 @@
 import { JsSnippetBlock } from '../../frontend/shared/atoms/JsSnippetBlock';
+import { GABlock } from '../../frontend/shared/atoms/GABlock';
 import { CanvasPanelBlock } from '../../frontend/shared/components/CanvasPanelBlock';
 import { SingleCollection } from '../../frontend/shared/components/SingleCollection';
 import { SingleProject } from '../../frontend/shared/components/SingleProject';
@@ -23,6 +24,7 @@ export function getDefaultPageBlockDefinitions(): PageBlockDefinition<any, any, 
     (FeaturedItem as any)[Symbol.for('slot-model')] as any,
     (EmbedItem as any)[Symbol.for('slot-model')] as any,
     (JsSnippetBlock as any)[Symbol.for('slot-model')] as any,
+    (GABlock as any)[Symbol.for('slot-model')] as any,
     simpleMarkdownBlock,
   ];
 }
