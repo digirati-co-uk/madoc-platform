@@ -32,7 +32,9 @@ export const GABlock: React.FC<{ gtag: string }> = ({ gtag }) => {
         </script>
       </Helmet>
     );
-  } else return null;
+  }
+  
+  return null;
 };
 
 blockEditorFor(GABlock, {
