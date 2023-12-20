@@ -12,7 +12,7 @@ type CrowdsourcedTranscriptionOptions = {
 export const crowdsourcedTranscription: ProjectTemplate<CrowdsourcedTranscriptionOptions> = {
   type: '@madoc.io/crowdsourced-transcription',
   metadata: {
-    label: 'Transcription project',
+    label: 'Plaintext transcription project',
     actionLabel: 'Start transcribing',
     description: `Add or crowdsource transcriptions for your canvases using a plaintext field. 
     If the IIIF has existing plaintext associated with each canvas, that will be used as a starting

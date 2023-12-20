@@ -5,10 +5,11 @@ export const customProject: ProjectTemplate = {
   metadata: {
     label: 'Canvas annotation project (custom)',
     description: `
-      Add or crowdsource annotations for your canvases using a custom Capture Model. The annotations can both be 
-      added to individual images/canvases as a whole or can target specific regions on the images/canvases. These 
-      canvas annotations will be submitted for review, where you will be able to accept, reject, correct or 
-      merge contributions.
+      Add or crowdsource annotations for your canvases using a custom Capture Model. The annotations 
+      can both be added to individual images/canvases as a whole or can target specific regions on 
+      the images/canvases. You can switch the default 'annotation mode' to 'transcription mode' if 
+      you are working with series of textual documents. All of the canvas annotations will be 
+      submitted for review, where you will be able to accept, reject, correct or merge contributions.
     `,
     thumbnail: `<svg width="109" height="109" xmlns="http://www.w3.org/2000/svg">
         <g fill="none" fill-rule="evenodd">
