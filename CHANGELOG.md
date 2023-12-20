@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 -->
 
+### Fixed
+- Fixed styling for Simple HTML Block (reset by tailwind / MAD-1449)
+
 ## [v2.2.1](https://github.com/digirati-co-uk/madoc-platform/compare/v2.2.0...v2.2.1)
 
 
