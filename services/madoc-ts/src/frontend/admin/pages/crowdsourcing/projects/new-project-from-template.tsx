@@ -39,7 +39,9 @@ export const NewProjectFromTemplate: React.FC = () => {
   const [autoSlug, setAutoSlug] = useState(true);
   const defaultLocale = useDefaultLocale();
   const availableLanguages = useSupportedLocales();
-  const [isSelected, setIsSelected] = useState(false);
+  const [isSelected, setIsSelected] = useState(
+    Boolean(query.template && query.template.startsWith('urn:madoc:project:'))
+  );
   const [template, isRemote, templateStatus] = useRemoteProjectTemplate(
     chosenTemplateType === 'remote' ? query.template : chosenTemplateType,
     isSelected

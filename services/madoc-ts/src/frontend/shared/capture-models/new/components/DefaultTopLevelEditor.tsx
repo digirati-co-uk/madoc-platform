@@ -18,7 +18,7 @@ export const DefaultTopLevelEditor: EditorRenderingConfig['TopLevelEditor'] = ()
     return <EditorSlots.Choice key={state.currentRevisionId || undefined} />;
   }
 
-  if (!currentView || currentView.type === 'model') {
+  if (!currentView || currentView.type === 'model' || !!state.currentRevisionId) {
     if (state.revisionSubtreeField && !isEntity(state.revisionSubtreeField)) {
       return (
         <EditorSlots.EditorWrapper>

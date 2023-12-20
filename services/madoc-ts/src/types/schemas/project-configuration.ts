@@ -69,7 +69,6 @@ export type ProjectConfiguration = {
     hideSearchButton?: boolean;
     hideRandomManifest?: boolean;
     hideRandomCanvas?: boolean;
-    reviewerDashboard?: boolean;
   };
   reviewOptions?: {
     allowMerging?: boolean;
@@ -139,7 +138,6 @@ export type ProjectConfigurationNEW = {
     hideSearchButton?: boolean;
     hideRandomManifest?: boolean;
     hideRandomCanvas?: boolean;
-    reviewerDashboard?: boolean;
   };
 
   // collectionPageOptions?: {

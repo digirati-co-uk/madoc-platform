@@ -56,7 +56,9 @@ export function useCanvasUserTasks() {
 
   return useMemo(() => {
     let userTasks = canvasTask ? canvasTask.userTasks : undefined;
-    if (manifestTasks) {
+    const isManifestGranularity = config.project.claimGranularity === 'manifest';
+
+    if (isManifestGranularity && manifestTasks) {
       userTasks = manifestTasks.userTasks;
     }
 
@@ -73,7 +75,7 @@ export function useCanvasUserTasks() {
     let canClaimCanvas =
       user && (config.project.claimGranularity ? config.project.claimGranularity === 'canvas' : true);
 
-    if (config.project.claimGranularity === 'manifest' && manifestTasks) {
+    if (isManifestGranularity && manifestTasks) {
       canClaimCanvas = manifestTasks.canContribute || manifestTasks.canUserSubmit;
     }
 
@@ -83,10 +85,14 @@ export function useCanvasUserTasks() {
         : false;
 
     // if max contributors reached check that the current user isnt one of them
-    const maxContributorsReached = maxContributors ? !userTasks?.some(t => t.type === 'crowdsourcing-task') : false;
+    let maxContributorsReached = maxContributors ? !userTasks?.some(t => t.type === 'crowdsourcing-task') : false;
+
+    if (isManifestGranularity && manifestTasks) {
+      maxContributorsReached = maxContributorsReached && !manifestTasks.canUserSubmit;
+    }
 
     let canUserSubmit = user && !!canvasTask?.canUserSubmit;
-    if (config.project.claimGranularity === 'manifest' && manifestTasks) {
+    if (isManifestGranularity && manifestTasks) {
       canUserSubmit = manifestTasks.canUserSubmit;
     }
 

@@ -12,9 +12,10 @@ import { TableContainer, TableRow, TableRowLabel } from '../../../shared/layout/
 import { AutocompleteUser, UserAutocomplete } from '../UserAutocomplete';
 import { useManifestTask } from '../../hooks/use-manifest-task';
 
-export const AssignUserToManifestTask: React.FC<{ onAssign: (user: AutocompleteUser) => Promise<void> }> = ({
-  onAssign,
-}) => {
+export const AssignUserToManifestTask: React.FC<{
+  onAssign: (user: AutocompleteUser) => Promise<void>;
+  onUnassign: (taskId: string) => Promise<void>;
+}> = ({ onAssign, onUnassign }) => {
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -42,6 +43,19 @@ export const AssignUserToManifestTask: React.FC<{ onAssign: (user: AutocompleteU
           setError(err.message);
         });
     }
+  };
+
+  const unassignManifest = (taskId: string) => {
+    setError('');
+    setIsLoading(true);
+    onUnassign(taskId)
+      .then(async () => {
+        await refetch();
+        setIsLoading(false);
+      })
+      .catch((err: ApiError) => {
+        setError(err.message);
+      });
   };
 
   const alreadyAssigned = crowdsourcingManifestTasks
@@ -78,6 +92,11 @@ export const AssignUserToManifestTask: React.FC<{ onAssign: (user: AutocompleteU
                 t('unassigned')
               )}
               <TableRowLabel $flex>{task.name}</TableRowLabel>
+              <TableRowLabel>
+                <Button $error onClick={() => unassignManifest(task.id as string)}>
+                  {t('Unassign')}
+                </Button>
+              </TableRowLabel>
             </TableRow>
           ))}
         </TableContainer>

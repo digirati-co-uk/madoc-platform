@@ -88,6 +88,7 @@ export const ProjectBanner: React.FC<{ project: ProjectListItem; admin?: boolean
           <ProjectBannerTitleInner>
             <ProjectBannerTitle>{project.label}</ProjectBannerTitle>
             <ProjectBannerSummary>{project.summary}</ProjectBannerSummary>
+            {template ? <ProjectBannerSummary>{template.metadata.label}</ProjectBannerSummary> : null}
           </ProjectBannerTitleInner>
         </ProjectBannerTitleContainer>
         {status ? <ProjectStatus status={project.status} template={project.template} /> : null}

@@ -349,10 +349,6 @@ export const siteConfigurationModel: {
         label: 'Hide go to random canvas',
         value: 'hideRandomCanvas',
       },
-      {
-        label: 'Hide reviewer dashboard',
-        value: 'reviewerDashboard',
-      },
     ],
   },
   manifestPageOptions: {
@@ -585,10 +581,6 @@ export const ProjectConfigInterface: {
       {
         label: 'Hide go to random canvas',
         value: 'hideRandomCanvas',
-      },
-      {
-        label: 'Hide reviewer dashboard',
-        value: 'reviewerDashboard',
       },
     ],
   },

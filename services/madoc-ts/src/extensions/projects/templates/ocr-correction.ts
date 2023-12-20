@@ -12,12 +12,12 @@ type OCRCorrectionOptions = {
 export const ocrCorrection: ProjectTemplate<OCRCorrectionOptions> = {
   type: '@madoc.io/ocr-correction',
   metadata: {
-    label: 'OCR Correction',
+    label: 'OCR Correction project',
     actionLabel: 'Correct OCR',
-    description: `Content added to this project will be available to browse 
-    and users will be able to correct any OCR that has been detected and imported. These
-    images will be submitted for review, where you will be able to accept, reject
-    or merge contributions.`,
+    description: `Correct or crowdsource corrections for pre-existing OCR. Content with OCR added to this 
+    project will be available to browse and users will be able to correct any OCR on images/canvases that 
+    has been detected and imported. These OCR corrections will be submitted for review, where you will 
+    be able to accept, reject, correct or merge contributions.`,
     documentation: 'https://docs.madoc.io/user-guide/ocr/adding-ocr-correction-to-capture-model',
     version: '1.0.0',
     thumbnail: `<svg width="109px" height="109px" viewBox="0 0 109 109" xmlns="http://www.w3.org/2000/svg">

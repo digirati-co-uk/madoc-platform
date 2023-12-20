@@ -48,4 +48,84 @@ export const GlobalStyles = createGlobalStyle`
   .selector-preview-svg {
     stroke: red;
   }
+
+  /* HTML Block styles (un-reset tailwind) */
+  .simple-html-block {
+      ol {
+        list-style: decimal;
+        padding-left: 2em;
+      }
+      ul {
+        list-style: disc;
+        padding-left: 2em;
+      }
+      li {
+        margin: 0.5em 0;
+      }
+      
+      p {
+        margin: 1em 0;
+      }
+      
+      h1 {
+        font-size: 1.5em;
+        margin: 1em 0;
+      }
+      
+      h2 {
+        font-size: 1.25em;
+        margin: 1em 0;
+      }
+      
+      h3 {
+        font-size: 1.1em;
+        margin: 1em 0;
+      }
+      
+      h4 {
+        font-size: 1em;
+        margin: 1em 0;
+      }
+      
+      h5 {
+        font-size: 0.9em;
+        margin: 1em 0;
+      }
+      
+      h6 {
+        font-size: 0.8em;
+        margin: 1em 0;
+      }
+      
+      blockquote {
+        margin: 1em 0;
+        padding-left: 1em;
+        border-left: 2px solid #ccc;
+      }
+      
+      pre {
+        margin: 1em 0;
+        padding: 1em;
+        background: #eee;
+        border-radius: 0.5em;
+      }
+      
+      code {
+        font-family: monospace;
+      }
+      
+      a {
+        color: #333;
+      }
+      a:hover {
+        color: #000;
+        text-decoration: underline;
+      }
+      
+      img {
+        max-width: 100%;
+      }
+      
+      
+  }
 `;

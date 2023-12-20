@@ -1,3 +1,4 @@
+import { getValue } from '@iiif/vault-helpers';
 import { generateId } from '../../frontend/shared/capture-models/helpers/generate-id';
 import { traverseDocument } from '../../frontend/shared/capture-models/helpers/traverse-document';
 import { CaptureModel } from '../../frontend/shared/capture-models/types/capture-model';
@@ -41,11 +42,15 @@ export const exportProjectTemplate: RouteMiddleware<{ id: string }> = async cont
   });
   traverseStructure(newStructure as any, updateId);
 
+  const key = Object.keys(project.label || {})[0];
+  const values = key && project.label[key] ? project.label[key] : [];
+  const value = values && values.length ? values[0] : 'Untitled project';
+
   context.response.body = {
     type: `template-${project.id}-${project.slug}`,
     metadata: {
-      label: `Project ${project.id} export`,
-      description: `An export of project ${project.slug}`,
+      label: `${value} (copy)`,
+      description: `Copy of ${value}`,
       version: '1.0.0',
     },
     configuration: {

@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { BrowserComponent } from '../../../../utility/browser-component';
 import { useField } from '../../../plugin-api/hooks/use-field';
 import { useSelectorStatus } from '../../../plugin-api/hooks/use-selector-status';
@@ -49,6 +50,7 @@ export const FieldWrapper: React.FC<Props> = ({
   selectorLabel,
   disabled,
 }) => {
+  const { t } = useTranslation();
   const [value, setValue] = useState(field.value);
   const updateValue = useCallback(
     newValue => {
@@ -80,7 +82,7 @@ export const FieldWrapper: React.FC<Props> = ({
   useEffect(() => componentWillUnmount, [componentWillUnmount]);
 
   return (
-    <BrowserComponent fallback={typeof fallback !== 'undefined' ? fallback : 'loading...'}>
+    <BrowserComponent fallback={typeof fallback !== 'undefined' ? fallback : t('loading...')}>
       <FieldSection>
         {hideHeader ? null : (
           <FieldHeader
@@ -103,7 +105,7 @@ export const FieldWrapper: React.FC<Props> = ({
         )}
         {fieldComponent || ''}
       </FieldSection>
-      {field.required || selector?.required ? <small>* required</small> : null}
+      {field.required || selector?.required ? <small>* {t('required')}</small> : null}
     </BrowserComponent>
   );
 };

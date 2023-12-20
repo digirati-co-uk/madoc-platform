@@ -15,7 +15,7 @@ const definition: HTMLPageBlockDefinition<{ html: string }> = {
     html: '',
   },
   render: data => {
-    return data.html;
+    return `<div class="simple-html-block">${data.html}</div>`;
   },
 };
 

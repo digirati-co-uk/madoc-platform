@@ -18,7 +18,7 @@ import { UniversalComponent } from '../../types';
 import { createUniversalComponent } from '../../shared/utility/create-universal-component';
 import { useInfiniteData } from '../../shared/hooks/use-data';
 import { Pagination as PaginationType } from '../../../types/schemas/_pagination';
-import { Navigate, Outlet, useNavigate, useParams } from 'react-router-dom';
+import { Link, Navigate, Outlet, useNavigate, useParams } from 'react-router-dom';
 import { useLocationQuery } from '../../shared/hooks/use-location-query';
 import { TaskFilterStatuses } from '../features/tasks/TaskFilterStatuses';
 import { TaskFilterType } from '../features/tasks/TaskFilterType';
@@ -27,6 +27,7 @@ import { useGoToQuery } from '../hooks/use-go-to-query';
 import { useInfiniteAction } from '../hooks/use-infinite-action';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 import ResizeHandleIcon from '../../shared/icons/ResizeHandleIcon';
+import { useRouteContext } from '../hooks/use-route-context';
 
 type AllTasksType = {
   query: any;
@@ -49,6 +50,7 @@ export const AllTasks: UniversalComponent<AllTasksType> = createUniversalCompone
     });
     const { taskId, slug } = useParams<{ taskId?: string; slug?: string }>();
     const { page, ...query } = useLocationQuery();
+    const { projectId } = useRouteContext();
     const user = useUser();
     const isAdmin = user && user.scope && user.scope.indexOf('site.admin') !== -1;
     const isReviewer = isAdmin || (user && user.scope && user.scope.indexOf('tasks.create') !== -1);
@@ -99,10 +101,18 @@ export const AllTasks: UniversalComponent<AllTasksType> = createUniversalCompone
       return <Navigate to="/" />;
     }
 
+    const viewProjectDash = projectId ? createLink({ projectId, subRoute: 'reviews' }) : undefined;
+
     return (
       <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
         <DisplayBreadcrumbs currentPage={t('Tasks')} />
         <ButtonRow>
+          {viewProjectDash ? (
+            <Button as={Link} to={viewProjectDash}>
+              {t('View project dashboard')}
+            </Button>
+          ) : null}
+
           {query.subject ? (
             <Button onClick={() => goToQuery({ subject: undefined })}>{t('Clear image filter')}</Button>
           ) : null}

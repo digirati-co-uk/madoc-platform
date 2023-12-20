@@ -22,8 +22,11 @@ type MetadataSuggestionsOptions = {
 export const metadataSuggestions: ProjectTemplate<MetadataSuggestionsOptions> = {
   type: '@madoc.io/metadata-suggestions',
   metadata: {
-    label: 'Metadata suggestions',
-    description: 'Crowd source the metadata for your canvases or manifests',
+    label: 'Manifest metadata project',
+    description: `Add or crowdsource metadata for your manifests using a custom Capture Model. The 
+    metadata are added to the entire manifest as a whole, not to the individual images/canvases. It is not 
+    possible to add annotations to specific regions on the images/canvases. The manifest metadata will be 
+    submitted for review, where you will be able to accept, reject, correct or merge contributions.`,
     version: '1.0.0',
     thumbnail: `<svg width="109px" height="109px" viewBox="0 0 109 109" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
     <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
