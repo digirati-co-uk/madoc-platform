@@ -12,12 +12,14 @@ type CrowdsourcedTranscriptionOptions = {
 export const crowdsourcedTranscription: ProjectTemplate<CrowdsourcedTranscriptionOptions> = {
   type: '@madoc.io/crowdsourced-transcription',
   metadata: {
-    label: 'Crowdsourced Transcription',
+    label: 'Transcription project',
     actionLabel: 'Start transcribing',
-    description: `Content added to this project will be available to browse 
-    and users will be able to pick up and transcribe individual images. These
-    images will be submitted for review, where you will be able to accept, reject
-    or merge contributions.`,
+    description: `Add or crowdsource transcriptions for your canvases using a plaintext field. 
+    If the IIIF has existing plaintext associated with each canvas, that will be used as a starting
+    point for the transcription. Content added to this project will be available to browse and users 
+    will be able to pick up and transcribe or correct individual images/canvases. These 
+    transcriptions or corrections will be submitted for review, where you will be able to accept, reject or 
+    correct contributions.`,
     documentation: 'https://docs.madoc.io/incomplete-user-guide/workflows/transcribing-a-set-of-images',
     version: '1.0.0',
     thumbnail: `<svg width="109" height="109" xmlns="http://www.w3.org/2000/svg">

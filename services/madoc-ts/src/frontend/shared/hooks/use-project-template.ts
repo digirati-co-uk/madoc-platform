@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useQuery } from 'react-query';
 import { ProjectTemplate } from '../../../extensions/projects/types';
+import { useApi } from './use-api';
 import { useProjectTemplates } from './use-project-templates';
 
 export function useProjectTemplate(name?: string): ProjectTemplate | undefined {
@@ -14,10 +15,16 @@ export function useRemoteProjectTemplate(
   enabled = false
 ): [ProjectTemplate | undefined, boolean, string] {
   const existing = useProjectTemplate(nameOrUrl);
-  const isRemote = nameOrUrl.startsWith('http');
+  const api = useApi();
+  const isInternal = nameOrUrl.startsWith('urn:madoc:project:');
+  const isRemote = nameOrUrl.startsWith('http') || isInternal;
   const { data, status } = useQuery(
     ['get-remote-template', { key: nameOrUrl }],
     async () => {
+      if (isInternal) {
+        return await api.exportProject(parseInt(nameOrUrl.replace('urn:madoc:project:', ''), 10));
+      }
+
       const fetched = await fetch(nameOrUrl);
       return fetched.json();
     },

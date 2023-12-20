@@ -1,6 +1,7 @@
 import { Outlet } from 'react-router-dom';
 import { useProjectTemplate } from '../../../../shared/hooks/use-project-template';
 import { useSite } from '../../../../shared/hooks/use-site';
+import { HrefLink } from '../../../../shared/utility/href-link';
 import { UniversalComponent } from '../../../../types';
 import React from 'react';
 import { LocaleString } from '../../../../shared/components/LocaleString';
@@ -56,6 +57,20 @@ export const Project: UniversalComponent<ProjectType> = createUniversalComponent
           subtitle={
             <>
               <a href={`/s/${slug}/projects/${data.slug}`}>{t('Go to project on site')}</a>
+              {projectTemplate && projectTemplate.type !== 'custom' ? (
+                <div>
+                  <strong>{projectTemplate.metadata.label}</strong> |{' '}
+                  <HrefLink href={`/projects/create/${projectTemplate.type}`}>
+                    Create new project using this template →
+                  </HrefLink>
+                </div>
+              ) : (
+                <div>
+                  <HrefLink href={`/projects/create/remote?template=urn:madoc:project:${data.id}`}>
+                    Duplicate project →
+                  </HrefLink>
+                </div>
+              )}
             </>
           }
         />

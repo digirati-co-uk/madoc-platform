@@ -3,9 +3,12 @@ import { ProjectTemplate } from '../types';
 export const customProject: ProjectTemplate = {
   type: 'custom',
   metadata: {
-    label: 'Custom project',
+    label: 'Canvas annotation project (custom)',
     description: `
-      Take control with all advanced options of projects to build your own Capture model.
+      Add or crowdsource annotations for your canvases using a custom Capture Model. The annotations can both be 
+      added to individual images/canvases as a whole or can target specific regions on the images/canvases. These 
+      canvas annotations will be submitted for review, where you will be able to accept, reject, correct or 
+      merge contributions.
     `,
     thumbnail: `<svg width="109" height="109" xmlns="http://www.w3.org/2000/svg">
         <g fill="none" fill-rule="evenodd">

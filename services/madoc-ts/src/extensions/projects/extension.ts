@@ -17,10 +17,10 @@ export class ProjectTemplateExtension extends RegistryExtension<ProjectTemplate>
       registryName: ProjectTemplateExtension.REGISTRY,
     });
     this.api = api;
-    ProjectTemplateExtension.register(crowdsourcedTranscription);
-    ProjectTemplateExtension.register(customProject);
-    ProjectTemplateExtension.register(ocrCorrection);
     ProjectTemplateExtension.register(metadataSuggestions);
+    ProjectTemplateExtension.register(customProject);
+    ProjectTemplateExtension.register(crowdsourcedTranscription);
+    ProjectTemplateExtension.register(ocrCorrection);
   }
 
   dispose() {
