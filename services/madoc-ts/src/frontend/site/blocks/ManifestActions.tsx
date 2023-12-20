@@ -112,7 +112,7 @@ export const ManifestActions: React.FC<props> = ({ alignment }) => {
           <ContinueButtons />
         ) : claimGranularity === 'manifest' && showButton ? (
           <GoToFirstCanvas $primary $large navigateToModel>
-            {userManifestTask && done.length ? t('View submission') : t('View submission')}
+            {userManifestTask && done.length ? t('View submission') : t('Start contributing')}
           </GoToFirstCanvas>
         ) : showButton ? (
           <GoToRandomCanvas $primary $large label={{ none: [t('Start contributing')] }} navigateToModel />
