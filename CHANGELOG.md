@@ -18,6 +18,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed incorrect button label on Manifest page (MAD-1447)
 - Fixed blocking of project contribution in Manifest Granularity (MAD-1447)
 - Fixed bug with correcting submissions when there are multiple choices (MAD-1453)
+- Fixed project dashboard default option (MAD-1452)
+
+### Removed
+- Removed config option `projectPageOptions.reviewerDashboard` (MAD-1452)
 
 ## [v2.2.1](https://github.com/digirati-co-uk/madoc-platform/compare/v2.2.0...v2.2.1)
 
