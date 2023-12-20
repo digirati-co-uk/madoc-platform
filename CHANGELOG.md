@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fixed styling for Simple HTML Block (reset by tailwind / MAD-1449)
 - Fixed incorrect button label on Manifest page (MAD-1447)
+- Fixed blocking of project contribution in Manifest Granularity (MAD-1447)
 
 ## [v2.2.1](https://github.com/digirati-co-uk/madoc-platform/compare/v2.2.0...v2.2.1)
 
