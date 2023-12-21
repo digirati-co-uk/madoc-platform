@@ -22,7 +22,7 @@ export const defaultStory = () => {
         <AccordionItem
           large
           label="Interface"
-          description="With description"
+          description="Customise project pages, manifest pages and canvas pages"
           icon={<InterfaceIcon />}
           maxHeight={false}
         >
@@ -34,7 +34,7 @@ export const defaultStory = () => {
         <AccordionItem
           large
           label="Search & browse"
-          description="With description"
+          description="Customise navigation and search options"
           icon={<SearchIcon />}
           maxHeight={false}
         >
@@ -46,7 +46,7 @@ export const defaultStory = () => {
         <AccordionItem
           large
           label="Contributions"
-          description="With description"
+          description="Customise the contribution process, contribution interface and submission process"
           icon={<ContributionIcon />}
           maxHeight={false}
         >
@@ -62,7 +62,7 @@ export const defaultStory = () => {
         <AccordionItem
           large
           label="Review process"
-          description="With description"
+          description="Customise the review process and reviewers"
           icon={<ReviewIcon />}
           maxHeight={false}
         >
@@ -71,7 +71,7 @@ export const defaultStory = () => {
           </div>
         </AccordionItem>
 
-        <AccordionItem large label="Other" description="With description" icon={<SettingsIcon />} maxHeight={false}>
+        <AccordionItem large label="Other" description="Remainder category" icon={<SettingsIcon />} maxHeight={false}>
           <div style={{ height: '650px' }}>
             <EditShorthandCaptureModel key={4} data={ProjectConfigOther} template={ProjectConfigOther} />
           </div>

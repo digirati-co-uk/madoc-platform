@@ -66,6 +66,7 @@ export const Project: UniversalComponent<ProjectType> = createUniversalComponent
                 </div>
               ) : (
                 <div>
+                  <strong>{t('Custom project')}</strong> |{' '}
                   <HrefLink href={`/projects/create/remote?template=urn:madoc:project:${data.id}`}>
                     Duplicate project →
                   </HrefLink>

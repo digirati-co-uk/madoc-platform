@@ -51,7 +51,7 @@ export const NewProjectFromTemplate: React.FC = () => {
     try {
       return await api.createProject(config);
     } catch (e) {
-      return { error: e.message };
+      return { error: (e as any).message };
     }
   });
   const isError = !!data?.error;
