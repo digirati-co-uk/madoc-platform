@@ -29,8 +29,9 @@ export const EmptyState = styled.div<{ $box?: boolean; $noMargin?: boolean }>`
   svg {
     margin-bottom: 1.5em;
   }
-  
-  span {
+
+  > span,
+  > div {
     font-size: 0.8em;
     width: 400px;
     margin-top: 1em;
