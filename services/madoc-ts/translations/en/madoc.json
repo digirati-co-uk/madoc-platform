@@ -880,6 +880,8 @@
   "Submit for review": "Submit for review",
   "Submitted": "Submitted",
   "Submitting feedback": "Submitting feedback",
+  "Successfully assigned {{count}} reviews": "Successfully assigned {{count}} reviews",
+  "Successfully assigned {{count}} reviews_plural": "Successfully assigned {{count}} reviews",
   "Suggest edit": "Suggest edit",
   "Suggested translations": "Suggested translations",
   "Switch to {{name}}": "Switch to {{name}}",
