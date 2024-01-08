@@ -123,6 +123,15 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
     }
     case 'assigned': {
       const task = await api.getTask<CrowdsourcingReview>(taskId);
+      const assignee: any = task.assignee;
+
+      if (assignee) {
+        const user = typeof assignee?.id === 'string' ? parseUrn(assignee?.id) : { id: assignee?.id };
+        const siteId = getSiteFromTask(task); // @todo this needs to be extracted from the task.
+        if (user && user.id) {
+          await execBot(user.id, siteId, api, task, name);
+        }
+      }
 
       await api.notifications.taskAssignmentNotification('You have been assigned a review', task);
 
