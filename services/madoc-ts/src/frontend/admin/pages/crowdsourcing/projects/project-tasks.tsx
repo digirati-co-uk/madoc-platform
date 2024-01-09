@@ -44,7 +44,7 @@ export const ProjectTasks: UniversalComponent<ProjectTasksType> = createUniversa
           root_task_id: (project as ProjectFull).task_id,
           type: 'crowdsourcing-review',
           detail: true,
-          status: [1, 2],
+          status: [0, 1, 2],
         });
 
         // 2. Filter those that are not assigned to the selected reviewer
