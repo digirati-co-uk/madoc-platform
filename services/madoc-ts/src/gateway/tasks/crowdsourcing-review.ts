@@ -102,7 +102,9 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
           const project = projects.projects[0];
           if (project) {
             try {
-              assignee = (await api.crowdsourcing.assignUserToReview(project.id, task.id)).user;
+              const response = await api.crowdsourcing.assignUserToReview(project.id, task.id);
+              assignee = response.user;
+              console.log('Assignment reason', response.reason, `(task: ${task.id})`);
             } catch (e) {
               // Only possible when the project is broken (collection removed)
               console.log(e);
