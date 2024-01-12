@@ -1,4 +1,5 @@
 import React, { useRef, useState } from 'react';
+import { useMutation } from 'react-query';
 import { useParams } from 'react-router-dom';
 import { CrowdsourcingReview } from '../../../../../gateway/tasks/crowdsourcing-review';
 import { CrowdsourcingTask } from '../../../../../gateway/tasks/crowdsourcing-task';
@@ -12,7 +13,9 @@ import {
   CanvasViewerEditorStyleReset,
   CanvasViewerGrid,
 } from '../../../../shared/atoms/CanvasViewerGrid';
+import { useApi } from '../../../../shared/hooks/use-api';
 import { useData } from '../../../../shared/hooks/use-data';
+import { CloseIcon } from '../../../../shared/icons/CloseIcon';
 import { PreviewIcon } from '../../../../shared/icons/PreviewIcon';
 import { EmptyState } from '../../../../shared/layout/EmptyState';
 import {
@@ -24,6 +27,7 @@ import { serverRendererFor } from '../../../../shared/plugins/external/server-re
 import { HrefLink } from '../../../../shared/utility/href-link';
 import { RefetchProvider, useRefetch } from '../../../../shared/utility/refetch-context';
 import { useCrowdsourcingTaskDetails } from '../../../hooks/use-crowdsourcing-task-details';
+import { useRelativeLinks } from '../../../hooks/use-relative-links';
 import { ApproveSubmission } from '../actions/approve-submission';
 import { RejectSubmission } from '../actions/reject-submission';
 import { RequestChanges } from '../actions/request-changes';
@@ -31,7 +35,7 @@ import { LocaleString } from '../../../../shared/components/LocaleString';
 import { useTaskMetadata } from '../../../hooks/use-task-metadata';
 import { SubjectSnippet } from '../../../../../extensions/tasks/resolvers/subject-resolver';
 import { SimpleStatus } from '../../../../shared/atoms/SimpleStatus';
-import { Button } from '../../../../shared/navigation/Button';
+import { Button, ButtonRow } from '../../../../shared/navigation/Button';
 import useDropdownMenu from 'react-accessible-dropdown-menu-hook';
 import { EditIcon } from '../../../../shared/icons/EditIcon';
 import { DirectEditButton } from '../../../../shared/capture-models/new/components/DirectEditButton';
@@ -191,6 +195,7 @@ function ViewSingleReview({
   } = useCrowdsourcingTaskDetails(task);
 
   const refetch = useRefetch();
+  const createLink = useRelativeLinks();
   const metadata = useTaskMetadata<{ subject?: SubjectSnippet }>(task);
   const [isEditing, setIsEditing] = useState(false);
   // const isLocked = props.lockedTasks && props.lockedTasks.indexOf(props.task.id) !== -1;
@@ -214,6 +219,18 @@ function ViewSingleReview({
   const gridRef = useRef<any>();
   const runtime = useRef<Runtime>();
   const annotationTheme = useProjectAnnotationStyles();
+  const api = useApi();
+  const [unassignUser] = useMutation(
+    async () => {
+      if (task) {
+        await api.updateTask(task.id, { status: -1, status_text: 'unassigned' });
+        await refetch();
+      }
+    },
+    {
+      throwOnError: true,
+    }
+  );
 
   const goHome = () => {
     if (runtime.current) {
@@ -234,6 +251,44 @@ function ViewSingleReview({
   };
 
   if (!review) {
+    if (task.status === -1) {
+      // Task has been rejected
+      return (
+        <>
+          <ReviewHeader>
+            <Label>
+              {metadata && metadata.subject ? <LocaleString>{metadata.subject.label}</LocaleString> : task.name}
+            </Label>
+
+            <SubLabel>
+              {metadata.subject && metadata.subject.parent && (
+                <LocaleString style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {metadata.subject.parent.label}
+                </LocaleString>
+              )}
+            </SubLabel>
+
+            <ReviewNavigation taskId={taskId} />
+          </ReviewHeader>
+          <EmptyState>
+            <CloseIcon />
+            {t('This task has been rejected.')}
+            <div>
+              <HrefLink
+                href={createLink({
+                  taskId: task.id,
+                  subRoute: 'tasks',
+                  query: { type: 'crowdsourcing-task' },
+                })}
+              >
+                {t('View task')}
+              </HrefLink>
+            </div>
+          </EmptyState>
+        </>
+      );
+    }
+
     return (
       <>
         <ReviewHeader>
@@ -253,8 +308,13 @@ function ViewSingleReview({
         </ReviewHeader>
         <EmptyState>
           <UnlockSmileyIcon />
-          This task is not yet ready for review.
-          <span>This means this task has been assigned or is in progress, but nothing has been submitted</span>
+          {t('This task is not yet ready for review.')}
+          <span>{t('This means this task has been assigned or is in progress, but nothing has been submitted')}</span>
+          <br />
+
+          <ButtonRow $center>
+            <Button onClick={() => unassignUser()}>Unassign from user</Button>
+          </ButtonRow>
         </EmptyState>
       </>
     );
@@ -315,7 +375,7 @@ function ViewSingleReview({
                 <EditorToolbarIcon>
                   <EditIcon />
                 </EditorToolbarIcon>
-                <EditorToolbarLabel>{isEditing ? 'Exit Correction' : 'Make Correction'}</EditorToolbarLabel>
+                <EditorToolbarLabel>{isEditing ? t('Exit Correction') : t('Make Correction')}</EditorToolbarLabel>
               </EditorToolbarButton>
 
               <RequestChanges
@@ -358,7 +418,7 @@ function ViewSingleReview({
           <div style={{ flex: 1, minWidth: 200, display: 'flex', flexDirection: 'column' }}>
             <ReviewDropdownContainer>
               <Button $link {...buttonProps}>
-                View options
+                {t('View options')}
               </Button>
               <ReviewDropdownPopup $visible={isDropdownOpen} role="menu">
                 <>
@@ -371,7 +431,7 @@ function ViewSingleReview({
                       <EditorToolbarIcon>
                         <PreviewIcon />
                       </EditorToolbarIcon>
-                      <EditorToolbarLabel>View resource</EditorToolbarLabel>
+                      <EditorToolbarLabel>{t('View resource')}</EditorToolbarLabel>
                     </EditorToolbarButton>
                   ) : null}
                   {manifestLink ? (
@@ -379,7 +439,7 @@ function ViewSingleReview({
                       <EditorToolbarIcon>
                         <PreviewIcon />
                       </EditorToolbarIcon>
-                      <EditorToolbarLabel>View manifest</EditorToolbarLabel>
+                      <EditorToolbarLabel>{t('View manifest')}</EditorToolbarLabel>
                     </EditorToolbarButton>
                   ) : null}
                 </>
