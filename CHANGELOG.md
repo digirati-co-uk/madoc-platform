@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.2.1...main)
+## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.2.2...main)
 <!-- 
 ### Fixed
 ### Added
@@ -13,10 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 -->
 
+## [v2.2.2](https://github.com/digirati-co-uk/madoc-platform/compare/v2.2.1...2.2.2)
+
 ### Added
 - New descriptions and ordering for project templates (MAD-1428)
 - New "Duplicate project" action on projects
-
 
 ### Fixed
 - Fixed styling for Simple HTML Block (reset by tailwind / MAD-1449)
