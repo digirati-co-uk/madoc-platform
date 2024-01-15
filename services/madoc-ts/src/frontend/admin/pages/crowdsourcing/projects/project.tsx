@@ -60,6 +60,10 @@ export const Project: UniversalComponent<ProjectType> = createUniversalComponent
               {projectTemplate && projectTemplate.type !== 'custom' ? (
                 <div>
                   <strong>{projectTemplate.metadata.label}</strong> |{' '}
+                  <HrefLink href={`/projects/create/remote?template=urn:madoc:project:${data.id}`}>
+                    Duplicate project →
+                  </HrefLink>{' '}
+                  |{' '}
                   <HrefLink href={`/projects/create/${projectTemplate.type}`}>
                     Create new project using this template →
                   </HrefLink>
