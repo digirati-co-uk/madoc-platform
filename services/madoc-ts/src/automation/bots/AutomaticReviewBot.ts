@@ -1,4 +1,4 @@
-import { getValue } from '@iiif/vault-helpers';
+import { getValue } from '@iiif/helpers/i18n';
 import { SiteUser } from '../../extensions/site-manager/types';
 import { ApiClient } from '../../gateway/api';
 import { CrowdsourcingReview } from '../../gateway/tasks/crowdsourcing-review';

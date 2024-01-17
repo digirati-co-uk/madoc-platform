@@ -1,5 +1,5 @@
 import { AnnotationPage } from '@iiif/presentation-3';
-import { Vault } from '@iiif/vault';
+import { Vault } from '@iiif/helpers/vault';
 import { sql } from 'slonik';
 import { deprecationGetItemsJson } from '../../deprecations/01-local-source-canvas';
 import { gatewayHost } from '../../gateway/api.server';
@@ -95,7 +95,7 @@ export const siteManifestBuild: RouteMiddleware<{
   };
 
   const vault = new Vault();
-  const builder = new IIIFBuilder(vault);
+  const builder = new IIIFBuilder(vault as any);
   const site = context.state.site;
   const siteSlug = context.params.slug;
   const manifestId = Number(context.params.id);
@@ -107,7 +107,7 @@ export const siteManifestBuild: RouteMiddleware<{
   const rows = await context.connection.any(sql<IIIFExportRow>`
       select 
         -- Derived.
-        dervied_manifest.resource_id as derived__id,
+        derived_manifest.resource_id as derived__id,
         -- IIIF
         iiif.id as iiif__id,
         iiif.type as iiif__type,
@@ -142,18 +142,18 @@ export const siteManifestBuild: RouteMiddleware<{
         linking.format as linking__format,
         linking.properties as linking__properties
          
-      from iiif_derived_resource dervied_manifest
+      from iiif_derived_resource derived_manifest
       -- get the list of canvases
-      left join iiif_derived_resource_items manifest_items on dervied_manifest.resource_id = manifest_items.resource_id and manifest_items.site_id = ${site.id}
+      left join iiif_derived_resource_items manifest_items on derived_manifest.resource_id = manifest_items.resource_id and manifest_items.site_id = ${site.id}
       -- get the IIIF data for the manifest
-      left join iiif_resource iiif on (dervied_manifest.resource_id = iiif.id or manifest_items.item_id = iiif.id)
+      left join iiif_resource iiif on (derived_manifest.resource_id = iiif.id or manifest_items.item_id = iiif.id)
       -- get metadata
       left join iiif_metadata metadata on iiif.id = metadata.resource_id and metadata.site_id = ${site.id}
       -- get linking
       left join iiif_linking linking on iiif.id = linking.resource_id and linking.site_id = ${site.id}
       
-      where dervied_manifest.resource_id = ${manifestId}
-        and dervied_manifest.site_id = ${site.id}
+      where derived_manifest.resource_id = ${manifestId}
+        and derived_manifest.site_id = ${site.id}
   `);
 
   function reduceIIIFExportRows(items: readonly IIIFExportRow[]) {
@@ -642,7 +642,7 @@ export const siteManifestBuild: RouteMiddleware<{
             canvas.createAnnotationPage(item.id, annotationPage => {
               if (item.items) {
                 for (const annotation of item.items) {
-                  annotationPage.createAnnotation(annotation);
+                  annotationPage.createAnnotation(annotation as any);
                 }
               }
             });

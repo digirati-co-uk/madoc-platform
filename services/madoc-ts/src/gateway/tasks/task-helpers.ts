@@ -4,15 +4,16 @@ import {
   UnknownSizeImage,
   VariableSizeImage,
 } from '@atlas-viewer/iiif-image-api';
-import { createThumbnailHelper } from '@iiif/vault-helpers';
+import { createThumbnailHelper } from '@iiif/helpers/thumbnail';
 import * as path from 'path';
 import { MANIFESTS_PATH } from '../../paths';
 import { BaseTask } from './base-task';
 import mkdirp from 'mkdirp';
 import { promises, existsSync } from 'fs';
 import cache from 'memory-cache';
-import { Vault } from '@iiif/vault';
-import { CanvasNormalized, Manifest, ManifestNormalized } from '@iiif/presentation-3';
+import { Vault } from '@iiif/helpers/vault';
+import { Manifest } from '@iiif/presentation-3';
+import { CanvasNormalized, ManifestNormalized } from '@iiif/presentation-3-normalized';
 import { createHash } from 'crypto';
 const { readFile, writeFile } = promises;
 import fetch from 'node-fetch';
@@ -75,9 +76,7 @@ export function loadFileWithRetries(file: string): Promise<string> {
 }
 
 export function manifestHash(manifestId: string) {
-  return createHash('sha1')
-    .update(manifestId)
-    .digest('hex');
+  return createHash('sha1').update(manifestId).digest('hex');
 }
 
 export async function loadManifest(file: string) {

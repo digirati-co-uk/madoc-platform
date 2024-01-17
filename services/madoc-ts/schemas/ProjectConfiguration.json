@@ -290,9 +290,6 @@
         },
         "hideRandomCanvas": {
           "type": "boolean"
-        },
-        "reviewerDashboard": {
-          "type": "boolean"
         }
       }
     },
@@ -361,6 +358,9 @@
           "type": "boolean"
         },
         "hidePageNavLinks": {
+          "type": "boolean"
+        },
+        "showReviews": {
           "type": "boolean"
         },
         "hideSearchBar": {

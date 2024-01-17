@@ -1,4 +1,4 @@
-import { getValue } from '@iiif/vault-helpers';
+import { getValue } from '@iiif/helpers/i18n';
 import { stringify } from 'query-string';
 import React from 'react';
 import useDropdownMenu from 'react-accessible-dropdown-menu-hook';
@@ -16,7 +16,7 @@ import { CanvasViewerButton } from '../../shared/atoms/CanvasViewerGrid';
 
 function pascal(str: string) {
   // @ts-ignore
-  return str.replaceAll(/[^a-zA-Z\d\s:]/g, '').replace(/^\w|[A-Z]|\b\w|\s+/g, function(match, index) {
+  return str.replaceAll(/[^a-zA-Z\d\s:]/g, '').replace(/^\w|[A-Z]|\b\w|\s+/g, function (match, index) {
     if (+match === 0) return ''; // or if (/\s+/.test(match)) for white spaces
     return match.toUpperCase();
   });

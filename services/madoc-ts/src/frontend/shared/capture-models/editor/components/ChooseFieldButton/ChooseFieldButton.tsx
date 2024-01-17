@@ -29,7 +29,7 @@ export const ChooseFieldButton: React.FC<Props> = ({ onChange, fieldType }) => {
       selection
       value={value}
       onChange={v => {
-        setValue(v);
+        setValue(v || '');
       }}
       options={
         Object.values(fields)

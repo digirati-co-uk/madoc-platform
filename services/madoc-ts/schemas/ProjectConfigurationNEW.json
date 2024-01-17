@@ -98,9 +98,6 @@
         },
         "hideRandomCanvas": {
           "type": "boolean"
-        },
-        "reviewerDashboard": {
-          "type": "boolean"
         }
       }
     },

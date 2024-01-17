@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CollectionNormalized, ManifestNormalized } from '@iiif/presentation-3';
+import { CollectionNormalized, ManifestNormalized } from '@iiif/presentation-3-normalized';
 import { useVaultEffect } from 'react-iiif-vault';
 import { LocaleString } from '../../shared/components/LocaleString';
 import { TableActions, TableContainer, TableRow, TableRowLabel } from '../../shared/layout/Table';
@@ -38,7 +38,7 @@ export const PreviewCollection: React.FC<{
 
           if (col) {
             setCollection(col);
-            setManifests(vault.get(col.items));
+            setManifests(vault.get(col.items as ManifestNormalized[]));
           } else {
             // error?
           }
