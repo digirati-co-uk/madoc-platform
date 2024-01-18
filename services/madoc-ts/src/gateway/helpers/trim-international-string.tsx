@@ -5,11 +5,11 @@ export function trimInternationalString(intString: InternationalString | undefin
     return { none: [defaultText || 'Untitled'] };
   }
 
-  for (const [, values] of Object.entries(intString || {})) {
+  for (const values of Object.values(intString || {})) {
     if (values) {
       for (let i = 0; i < values.length; i++) {
         if (values[i].length > 3000) {
-          values[i] = values[i].substring(0, 3000);
+          values[i] = values[i].slice(0, 3000);
         }
       }
     }
