@@ -13,9 +13,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 -->
 
+### Added
+- Added "line mode" on SVG selector
+- Added "line box mode" on SVG selector
+- Added "Circle" shape on SVG selector (40 points)
+- New "cut" cursor when holding Shift on SVG selector
+
+
 ### Fixed
-- Atlas Viewer / Canvas Panel memory leak when browsing canvases
-- Bug with Polygon selector and not being able to drag a box to select points
+- Fixed Atlas Viewer / Canvas Panel memory leak when browsing canvases
+- Fixed bug with Polygon selector and not being able to drag a box to select points
+- Fixed bug when selecting a polygon from the sidebar
+- Fixed broken images on SVG cropped selector 
+- Fixed bug with maxOverZoom
 
 ### Changed
 - Updated `polygon-editor` to v0.0.2

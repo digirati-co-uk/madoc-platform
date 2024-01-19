@@ -13,9 +13,10 @@ import { annotationPageToRegions } from '../utility/annotation-page-to-regions';
 import { useLoadedCaptureModel } from './use-loaded-capture-model';
 import { useCanvasModel } from '../../site/hooks/use-canvas-model';
 import { useUser } from './use-site';
+import { PolygonSelectorProps } from '../capture-models/editor/selector-types/PolygonSelector/PolygonSelector';
 export interface ReadOnlyAnnotation {
   id: string;
-  target: { x: number; y: number; width: number; height: number };
+  target: { x: number; y: number; width: number; height: number } | PolygonSelectorProps['state'];
   style: AnnotationThemeDefinition;
 }
 
@@ -38,7 +39,7 @@ export function useReadOnlyAnnotations(isModelPage = false): ReadOnlyAnnotation[
         : undefined,
     { refetchOnWindowFocus: false }
   );
-  const [{ captureModel }, , modelRefetch] = useLoadedCaptureModel(canvasModel?.model?.id, undefined, canvasId);
+  const [{ captureModel }] = useLoadedCaptureModel(canvasModel?.model?.id, undefined, canvasId);
 
   const modelPageShowAnnotations = config.project?.modelPageShowAnnotations || 'when-open';
   const modelPageShowDocument = config.project?.modelPageShowDocument || 'when-open';

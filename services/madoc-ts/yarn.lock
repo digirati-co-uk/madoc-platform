@@ -18682,10 +18682,10 @@ polished@^4.2.2:
   dependencies:
     "@babel/runtime" "^7.17.8"
 
-polygon-editor@0.0.2:
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/polygon-editor/-/polygon-editor-0.0.2.tgz#04594d55071f5d7c9d55be6c0e9b81cc3862c379"
-  integrity sha512-HaspUHqwaE3MsH5CcHsL9P2/tLvr0AiFhTrLMTILHGinm4VeA+rCokouG7SsPIT07QiAxbeZM8Qymp4tByG6SA==
+polygon-editor@0.0.4:
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/polygon-editor/-/polygon-editor-0.0.4.tgz#71c6327a7cdc13f6db76d7687387bfc233a2184a"
+  integrity sha512-meDMpdEJdYB8VueoHjSmWKjHbA1kV7U83bxl3GDJNg6ZpBp5oTCsUWe8PCifTe0MxNRF+elZFae/yfMs0PjhLg==
 
 popmotion@9.0.0-beta-8, popmotion@^8.7.6:
   version "8.7.6"
@@ -19750,10 +19750,10 @@ react-i18next@11.18.4, react-i18next@^11.18.4, react-i18next@^11.7.0:
     "@babel/runtime" "^7.14.5"
     html-parse-stringify "^3.0.1"
 
-react-iiif-vault@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/react-iiif-vault/-/react-iiif-vault-1.0.1.tgz#a1dabc5047c246c42fc46c8522dbac474884d3ac"
-  integrity sha512-Oc9LkBitzsWCiXvoGw1VVZtwv0vTGF8sijJqJod+VCuzhNP7Rw7kbROOgiKVGhearRWy+Mdl31IV+N98orSDVA==
+react-iiif-vault@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/react-iiif-vault/-/react-iiif-vault-1.0.2.tgz#d73596fa7c12956fb321ed2e42d3c3dfca4c686e"
+  integrity sha512-fDI0+wIqqPNqw2BCh1DPh2UNn4yjx+aeAUO6/QLnF+8wNRaTwVeh2+OQNnfrDZAnQJurNUdsSTnOddiPEZiHLQ==
   dependencies:
     "@atlas-viewer/atlas" "^2.0.1"
     "@atlas-viewer/iiif-image-api" "^2.1.1"
