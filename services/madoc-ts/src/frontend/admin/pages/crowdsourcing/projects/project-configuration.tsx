@@ -47,16 +47,17 @@ export const ProjectConfiguration: React.FC = () => {
 
   const { scrollToTop } = useAdminLayout();
   const api = useApi();
-  const { data: _projectConfiguration, refetch, updatedAt } = apiHooks.getSiteConfiguration(
-    () => (params.id ? [{ project_id: params.id, show_source: true }] : undefined),
-    {
-      refetchOnWindowFocus: false,
-      forceFetchOnMount: false,
-      refetchInterval: false,
-      refetchIntervalInBackground: false,
-      refetchOnReconnect: false,
-    }
-  );
+  const {
+    data: _projectConfiguration,
+    refetch,
+    updatedAt,
+  } = apiHooks.getSiteConfiguration(() => (params.id ? [{ project_id: params.id, show_source: true }] : undefined), {
+    refetchOnWindowFocus: false,
+    forceFetchOnMount: false,
+    refetchInterval: false,
+    refetchIntervalInBackground: false,
+    refetchOnReconnect: false,
+  });
 
   const { _source, ...projectConfiguration } = useMemo(() => {
     if (!_projectConfiguration) {
@@ -117,7 +118,7 @@ export const ProjectConfiguration: React.FC = () => {
           large
           overflow
           label="Interface"
-          description="With description"
+          description="Customise project pages, manifest pages and canvas pages"
           icon={<InterfaceIcon aria-hidden="true" />}
           maxHeight={false}
           {...getItemProps(0)}
@@ -136,7 +137,7 @@ export const ProjectConfiguration: React.FC = () => {
           large
           overflow
           label="Search & browse"
-          description="With description"
+          description="Customise navigation and search options"
           icon={<SearchIcon aria-hidden="true" />}
           maxHeight={false}
           {...getItemProps(1)}
@@ -154,7 +155,7 @@ export const ProjectConfiguration: React.FC = () => {
           large
           overflow
           label="Contributions"
-          description="With description"
+          description="Customise the contribution process, contribution interface and submission process"
           icon={<ContributionIcon aria-hidden="true" />}
           maxHeight={false}
           {...getItemProps(2)}
@@ -172,7 +173,7 @@ export const ProjectConfiguration: React.FC = () => {
           large
           overflow
           label="Review process"
-          description="With description"
+          description="Customise the review process and reviewers"
           icon={<ReviewIcon aria-hidden="true" />}
           maxHeight={false}
           {...getItemProps(3)}
@@ -190,7 +191,7 @@ export const ProjectConfiguration: React.FC = () => {
           large
           overflow
           label="Other"
-          description="With description"
+          description="Miscellaneous settings"
           icon={<SettingsIcon aria-hidden="true" />}
           maxHeight={false}
           {...getItemProps(4)}
