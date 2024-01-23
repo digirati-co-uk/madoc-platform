@@ -30,7 +30,7 @@ export async function runApiRequest(
       method: definition.method,
       body: request.body || undefined,
     });
-  } catch (e) {
+  } catch (e: any) {
     return {
       success: false,
       errors: [e.message],

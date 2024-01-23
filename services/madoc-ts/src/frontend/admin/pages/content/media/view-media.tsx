@@ -1,5 +1,5 @@
 import { CanvasContext, useVaultEffect, VaultProvider } from 'react-iiif-vault';
-import { CanvasNormalized } from '@iiif/presentation-3';
+import { CanvasNormalized } from '@iiif/presentation-3-normalized';
 import React, { useState } from 'react';
 import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';

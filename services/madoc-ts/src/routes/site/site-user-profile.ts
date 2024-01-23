@@ -116,7 +116,7 @@ export const siteUserProfile: RouteMiddleware = async context => {
 
   const profile: PublicUserProfile = {
     user: publicUser,
-    info: requested.allowedDetails,
+    info: requested.allowedDetails as any,
     statistics,
     recentTasks: recentTasks.tasks,
     infoLabels: customLabels,

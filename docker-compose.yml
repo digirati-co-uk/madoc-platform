@@ -92,9 +92,6 @@ services:
     links:
       - shared-postgres
       - madoc-ts-vite
-    depends_on:
-      shared-postgres:
-        condition: service_healthy
 
   tasks-api:
     tty: true
@@ -113,9 +110,6 @@ services:
     links:
       - shared-postgres
       - gateway-redis
-    depends_on:
-      shared-postgres:
-        condition: service_healthy
 
   model-api:
     tty: true
@@ -131,9 +125,6 @@ services:
       - DATABASE_PASSWORD=${POSTGRES_MODELS_API_PASSWORD}
     links:
       - shared-postgres
-    depends_on:
-      shared-postgres:
-        condition: service_healthy
 
   shared-postgres:
     build:
@@ -157,11 +148,6 @@ services:
       - POSTGRES_SEARCH_API_USER=${POSTGRES_SEARCH_API_USER}
       - POSTGRES_SEARCH_API_SCHEMA=${POSTGRES_SEARCH_API_SCHEMA}
       - POSTGRES_SEARCH_API_PASSWORD=${POSTGRES_SEARCH_API_PASSWORD}
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
 
     ports:
       - "${PORTS_SHARED_POSTGRES:-5400}:5432"
@@ -202,9 +188,8 @@ services:
       - GATEWAY_HOST=${GATEWAY_HOST}
     volumes:
       - ./var/files/storage-api:/home/node/app/files
-    depends_on:
-      shared-postgres:
-        condition: service_healthy
+    links:
+      - shared-postgres
 
   search:
     image: ghcr.io/digirati-co-uk/madoc-search-service:247f854b1258e3971907e6912cef2374a1da8474

@@ -1,12 +1,12 @@
 import { RouteMiddleware } from '../../../types/route-middleware';
 import { userWithScope } from '../../../utility/user-with-scope';
-import { addLinks, mapLink } from '../../../database/queries/linking-queries';
+import { ResourceLinkRow, addLinks, mapLink } from '../../../database/queries/linking-queries';
 import { RequestError } from '../../../utility/errors/request-error';
 import { extractLink } from '../../../utility/extract-links';
 import { sql } from 'slonik';
 
 export const addLinking: RouteMiddleware<
-  {},
+  unknown,
   { link: any; property: string; source?: string; label?: string; resource_id: string }
 > = async context => {
   const { siteId } = userWithScope(context, ['site.admin']);
@@ -29,7 +29,9 @@ export const addLinking: RouteMiddleware<
   await context.connection.query(linkQuery);
 
   context.response.body = mapLink(
-    await context.connection.one(sql`select * from iiif_linking where site_id=${siteId} and uri=${link.id}`)
+    await context.connection.one(
+      sql<ResourceLinkRow>`select * from iiif_linking where site_id=${siteId} and uri=${link.id}`
+    )
   );
 
   context.response.status = 201;

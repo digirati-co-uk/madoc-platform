@@ -140,8 +140,9 @@ const worker = new Worker(
           // No our task.
           return true;
       }
-    } catch (e) {
+    } catch (e: any) {
       console.log('failed', job.data.type, e && e.status, e && e.message);
+      console.log(e);
       if (e && e.status && e.status === 404) {
         return true;
       }

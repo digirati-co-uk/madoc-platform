@@ -1,4 +1,3 @@
-import { getValue } from '@iiif/vault-helpers';
 import { generateId } from '../../frontend/shared/capture-models/helpers/generate-id';
 import { traverseDocument } from '../../frontend/shared/capture-models/helpers/traverse-document';
 import { CaptureModel } from '../../frontend/shared/capture-models/types/capture-model';

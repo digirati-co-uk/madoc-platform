@@ -1,5 +1,5 @@
 import { CanvasContext, useVault } from 'react-iiif-vault';
-import { CanvasNormalized } from '@iiif/presentation-3';
+import { CanvasNormalized } from '@iiif/presentation-3-normalized';
 import React, { useEffect, useState } from 'react';
 import { useRouteContext } from '../../site/hooks/use-route-context';
 import { CanvasLoader } from '../../site/pages/loaders/canvas-loader';

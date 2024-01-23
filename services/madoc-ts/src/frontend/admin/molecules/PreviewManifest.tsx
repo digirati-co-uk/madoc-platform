@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { CanvasNormalized, ManifestNormalized } from '@iiif/presentation-3';
+import { CanvasNormalized, ManifestNormalized } from '@iiif/presentation-3-normalized';
 import { CanvasContext, useThumbnail, useVaultEffect } from 'react-iiif-vault';
 import { ErrorMessage } from '../../shared/callouts/ErrorMessage';
 import { Heading3 } from '../../shared/typography/Heading3';

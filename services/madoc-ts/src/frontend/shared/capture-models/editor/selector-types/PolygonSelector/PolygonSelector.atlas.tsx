@@ -2,7 +2,6 @@ import { InputShape } from 'polygon-editor';
 import { useCanvas } from 'react-iiif-vault';
 import { useAnnotationStyles } from '../../../AnnotationStyleContext';
 import { BaseSelector, SelectorTypeProps } from '../../../types/selector-types';
-import { Revisions } from '../../stores/revisions/index';
 import { useSelectorEvents } from '../../stores/selectors/selector-helper';
 import { CreateCustomShape } from './components/CreateCustomShape';
 

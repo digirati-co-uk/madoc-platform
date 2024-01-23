@@ -34,7 +34,7 @@ export const DropdownField: FieldComponent<DropdownFieldProps> = props => {
       value={props.value}
       isClearable={props.clearable}
       onChange={v => {
-        props.updateValue(v);
+        props.updateValue(v || undefined);
       }}
     />
   );

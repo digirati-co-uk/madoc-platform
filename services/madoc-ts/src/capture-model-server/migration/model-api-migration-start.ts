@@ -51,7 +51,7 @@ export const modelApiMigrationStart: RouteMiddleware = async context => {
     // For each capture model, we need to check which site its in, and then import it.
     context.response.body = await userApi.getTask(baseTask.id);
   } catch (e) {
-    context.response.body = { err: e.toString() };
+    context.response.body = { err: (e as Error).toString() };
     context.response.status = 500;
   }
 };

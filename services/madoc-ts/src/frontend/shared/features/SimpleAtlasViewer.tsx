@@ -20,6 +20,7 @@ import { BrowserComponent } from '../utility/browser-component';
 import { OpenSeadragonViewer } from './OpenSeadragonViewer.lazy';
 import { RotateIcon } from '../icons/RotateIcon';
 import { useModelPageConfiguration } from '../../site/hooks/use-model-page-configuration';
+import { PolygonSelectorProps } from '../capture-models/editor/selector-types/PolygonSelector/PolygonSelector';
 
 export const SimpleAtlasViewer = React.forwardRef<
   any,
@@ -89,8 +90,17 @@ export const SimpleAtlasViewer = React.forwardRef<
       const found = readOnlyAnnotations.find(r => {
         return r.id === e.selectorId;
       });
-      if (found) {
-        runtime.current?.world.gotoRegion(found.target);
+      if (found && found.target) {
+        if ((found.target as any).type === 'polygon') {
+          const target: Exclude<PolygonSelectorProps['state'], null> = found.target as any;
+          const x = Math.min(...target.shape.points.map(p => p[0]));
+          const y = Math.min(...target.shape.points.map(p => p[1]));
+          const width = Math.max(...target.shape.points.map(p => p[0])) - x;
+          const height = Math.max(...target.shape.points.map(p => p[1])) - y;
+          runtime.current?.world.gotoRegion({ x, y, width, height });
+        } else {
+          runtime.current?.world.gotoRegion(found.target as any);
+        }
       }
     });
   }, [readOnlyAnnotations, controller]);

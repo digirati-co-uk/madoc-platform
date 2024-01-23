@@ -7,12 +7,11 @@ import * as importCanvas from './import-canvas';
 import * as manifestOcr from './process-manifest-ocr';
 import { createTask as createSearchIndexTask } from './search-index-task';
 import * as tasks from './task-helpers';
-import { Vault } from '@iiif/vault';
+import { Vault } from '@iiif/helpers/vault';
 import fetch from 'node-fetch';
 import { ImportCanvasTask } from './import-canvas';
 import { iiifGetLabel } from '../../utility/iiif-get-label';
 import { ApiClient } from '../api';
-import { ContentResource } from '@iiif/presentation-3';
 import del from 'del';
 import { trimInternationalString } from '../helpers/trim-international-string';
 export const type = 'madoc-manifest-import';
@@ -95,8 +94,10 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
       const summary = iiifManifest.label;
       const metadata = iiifManifest.metadata;
 
-      metadata.map(item => {
-        item.value = trimInternationalString(item.value);
+      metadata.forEach(item => {
+        if (item.value) {
+          item.value = trimInternationalString(item.value);
+        }
       });
 
       // 3. POST request to `/api/madoc/iiif/manifests`
@@ -115,11 +116,10 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
             behavior: iiifManifest.behavior || undefined,
             rights: iiifManifest?.rights || undefined,
             navDate: iiifManifest?.navDate || undefined,
-            homepage: iiifManifest.homepage ? vault.get<ContentResource>(iiifManifest.homepage) : undefined,
-            logo: iiifManifest.logo ? vault.get<ContentResource>(iiifManifest.logo) : undefined,
+            homepage: iiifManifest.homepage ? vault.get(iiifManifest.homepage) : undefined,
             partOf: iiifManifest.partOf ? iiifManifest.partOf : undefined,
-            rendering: iiifManifest.rendering ? vault.get<ContentResource>(iiifManifest.rendering) : undefined,
-            seeAlso: iiifManifest.seeAlso ? vault.get<ContentResource>(iiifManifest.seeAlso) : undefined,
+            rendering: iiifManifest.rendering ? vault.get(iiifManifest.rendering) : undefined,
+            seeAlso: iiifManifest.seeAlso ? vault.get(iiifManifest.seeAlso) : undefined,
             service: iiifManifest.service,
             services: iiifManifest.services,
             start: iiifManifest.start ? vault.get(iiifManifest.start) : undefined,
@@ -253,7 +253,7 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
         return;
       }
 
-      const orderedSubtasks = subtasks.sort(function(a, b) {
+      const orderedSubtasks = subtasks.sort(function (a, b) {
         return a.state.canvasOrder - b.state.canvasOrder;
       });
 

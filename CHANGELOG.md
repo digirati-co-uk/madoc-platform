@@ -13,6 +13,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 -->
 
+### Added
+- Added "line mode" on SVG selector
+- Added "line box mode" on SVG selector
+- Added "Circle" shape on SVG selector (40 points)
+- New "cut" cursor when holding Shift on SVG selector
+
+
+### Fixed
+- Fixed Atlas Viewer / Canvas Panel memory leak when browsing canvases
+- Fixed bug with Polygon selector and not being able to drag a box to select points
+- Fixed bug when selecting a polygon from the sidebar
+- Fixed broken images on SVG cropped selector 
+- Fixed bug with maxOverZoom
+
+### Changed
+- Updated `polygon-editor` to v0.0.2
+- Updated `@iiif/vault` and `@iiif/vault-helpers` to `@iiif/helpers`
+- Updated `@iiif/presentation-3` types to v2.x
+- Updated `@atlas-viewer/atlas` to v2.x
+- Updated `react-iiif-vault` to v1.x
+
 ## [v2.2.2](https://github.com/digirati-co-uk/madoc-platform/compare/v2.2.1...2.2.2)
 
 ### Added

@@ -37,7 +37,8 @@ export interface AtlasViewerProps extends BaseContent {
   options: ContentOptions<AtlasCustomOptions>;
 }
 
-const defaultPreset = ['default-preset', { runtimeOptions: { maxOverZoom: 5 } }] as any;
+const runtimeOptions = { maxOverZoom: 5 };
+const defaultPreset = ['default-preset', { runtimeOptions }] as any;
 
 const Canvas: React.FC<{
   isEditing?: boolean;
@@ -61,6 +62,7 @@ const Canvas: React.FC<{
       mode={isEditing ? 'sketch' : 'explore'}
       unstable_webglRenderer={webglSupport() && unstable_webglRenderer}
       renderPreset={defaultPreset}
+      runtimeOptions={runtimeOptions}
       controllerConfig={controllerConfig}
       height="100%"
     >
@@ -98,7 +100,6 @@ export const AtlasViewer: React.FC<AtlasViewerProps> = props => {
     ...(props.options && props.options.selectorVisibility ? props.options.selectorVisibility : {}),
   };
   const selectors = useAllSelectors('atlas', selectorVisibility);
-  const [actions] = useSelectorActions();
 
   if (!isLoaded) {
     return null;

@@ -1,4 +1,4 @@
-import { create, createStore } from 'zustand';
+import { create } from 'zustand';
 
 // 1. Which have been selected
 //    - add
@@ -16,7 +16,23 @@ export type DefaultContext = {
   collection_id: undefined | number;
 };
 
-export const useExportBuilder = create((set, get) => ({
+export const useExportBuilder = create<{
+  choices: Record<
+    string,
+    {
+      is_complete: boolean;
+      config: any;
+
+      //
+    }
+  >;
+  reset(): void;
+  add(type: string, config: any, is_complete?: boolean): void;
+  remove(type: string): void;
+  configure(type: string, config: any): void;
+  complete(type: string): void;
+  uncomplete(type: string): void;
+}>(set => ({
   choices: {} as Record<
     string,
     {

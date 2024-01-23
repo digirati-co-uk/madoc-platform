@@ -14,6 +14,11 @@ import { ThemeIcon } from '../../../../../icons/ThemeIcon';
 import { TriangleIcon } from '../../../../../icons/TriangleIcon';
 import { useSvgEditor } from '../helpers/use-svg-editor';
 import { ShapeToolProps } from '../PolygonSelector.types';
+import { BugIcon } from '../../../../../icons/BugIcon';
+import { circle40 } from '../helpers/shapes';
+import { LineBoxIcon } from '../../../../../icons/LineBoxIcon';
+import { CircleIcon } from '../../../../../icons/CircleIcon';
+import { LineIcon } from '../../../../../icons/LineIcon';
 
 const themes = [
   {
@@ -113,6 +118,9 @@ export function CreateCustomShape(props: ShapeToolProps) {
     if (transitionDirection) {
       wrapperClasses.push(transitionDirection);
     }
+    if (state.actionIntentType === 'cut-line' && state.modifiers?.Shift) {
+      wrapperClasses.push('cursor-cut');
+    }
     if (isHoveringPoint || state.transitionIntentType === 'move-shape' || state.transitionIntentType === 'move-point') {
       wrapperClasses.push('move');
     }
@@ -142,6 +150,8 @@ export function CreateCustomShape(props: ShapeToolProps) {
     isAddingPoint,
     isHoveringPoint,
     isSplitting,
+    state.modifiers?.Shift,
+    state.actionIntentType,
     state.transitionIntentType,
     transitionDirection,
     transitionRotate,
@@ -165,18 +175,36 @@ export function CreateCustomShape(props: ShapeToolProps) {
               helper.stamps.clear();
               helper.draw.enable();
             }}
-            data-active={!state.selectedStamp && showShapes && state.drawMode}
+            data-active={!state.lineMode && !state.selectedStamp && showShapes && state.drawMode}
           >
             <DrawIcon />
           </CanvasViewerButton>
           <CanvasViewerButton
-            data-active={!state.selectedStamp && showShapes && !state.drawMode}
+            data-active={!state.lineMode && !state.selectedStamp && showShapes && !state.drawMode}
             onClick={() => {
               helper.stamps.clear();
               helper.draw.disable();
+              helper.modes.disableLineBoxMode();
+              helper.modes.disableLineMode();
             }}
           >
             <PolygonIcon />
+          </CanvasViewerButton>
+          <CanvasViewerButton
+            data-active={state.lineMode && !state.lineBoxMode}
+            onClick={() => {
+              helper.modes.enableLineMode();
+            }}
+          >
+            <LineIcon />
+          </CanvasViewerButton>
+          <CanvasViewerButton
+            data-active={state.lineBoxMode}
+            onClick={() => {
+              helper.modes.enableLineBoxMode();
+            }}
+          >
+            <LineBoxIcon />
           </CanvasViewerButton>
           <CanvasViewerButtonMenu
             label={'Select shape'}
@@ -206,6 +234,15 @@ export function CreateCustomShape(props: ShapeToolProps) {
                   helper.stamps.hexagon();
                 },
                 selected: state.selectedStamp?.id === 'hexagon',
+                disabled: false,
+              },
+              {
+                label: 'Circle',
+                icon: <CircleIcon />,
+                onClick: () => {
+                  helper.stamps.set(circle40);
+                },
+                selected: state.selectedStamp?.id === circle40.id,
                 disabled: false,
               },
             ]}

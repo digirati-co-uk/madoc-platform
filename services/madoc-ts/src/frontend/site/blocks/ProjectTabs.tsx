@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import styled from 'styled-components';
-import { ProjectMyWorkTab } from '../features/project/ProjectMyWorkTab';
-import { ProjectContentTab } from '../features/project/ProjectContentTab';
+
+import { ProjectMyWork } from '../../tailwind/blocks/project/ProjectMyWork';
+import { ProjectContent } from '../../admin/pages/crowdsourcing/projects/project-content';
+
 // import { ProjectContributorsTab } from './ProjectContributorsTab';
 
 const TabContainer = styled.div`
@@ -67,12 +69,12 @@ export const ProjectTabs: React.FC = () => {
     {
       id: '1',
       title: 'My work',
-      content: <ProjectMyWorkTab />,
+      content: <ProjectMyWork />,
     },
     {
       id: '2',
       title: 'Manifests and Collections',
-      content: <ProjectContentTab />,
+      content: <ProjectContent />,
     },
     // {
     //   id: '3',

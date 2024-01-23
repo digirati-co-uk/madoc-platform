@@ -84,7 +84,10 @@ const HeaderLink = styled.a`
   svg {
     fill: #555555;
     vertical-align: middle;
-    transition: background-color 0.2s, height 0.3s, transform 0.5s;
+    transition:
+      background-color 0.2s,
+      height 0.3s,
+      transform 0.5s;
     transition-timing-function: ease-in-out;
     height: 2px;
     width: 12px;
@@ -129,7 +132,7 @@ export function ReviewListingPage() {
   const params = useParams<{ taskId?: string; slug?: string }>();
   const projectId = params.slug;
   const createLink = useRelativeLinks();
-  const { sort_by = '', ...query } = useLocationQuery();
+  const { sort_by = '' } = useLocationQuery();
 
   const { widthB, refs } = useResizeLayout(`review-dashboard-resize`, {
     left: true,
@@ -137,21 +140,23 @@ export function ReviewListingPage() {
     minWidthPx: 200,
   });
 
-  const { data: pages, fetchMore, refetch, canFetchMore, isFetchingMore } = useInfiniteData(
-    ReviewListingPage,
-    undefined,
-    {
-      keepPreviousData: true,
-      getFetchMore: lastPage => {
-        if (lastPage.pagination.totalPages === 0 || lastPage.pagination.totalPages === lastPage.pagination.page) {
-          return undefined;
-        }
-        return {
-          page: lastPage.pagination.page + 1,
-        };
-      },
-    }
-  );
+  const {
+    data: pages,
+    fetchMore,
+    refetch,
+    canFetchMore,
+    isFetchingMore,
+  } = useInfiniteData(ReviewListingPage, undefined, {
+    keepPreviousData: true,
+    getFetchMore: lastPage => {
+      if (lastPage.pagination.totalPages === 0 || lastPage.pagination.totalPages === lastPage.pagination.page) {
+        return undefined;
+      }
+      return {
+        page: lastPage.pagination.page + 1,
+      };
+    },
+  });
 
   const [loadMoreButton] = useInfiniteAction({
     fetchMore,
@@ -370,7 +375,7 @@ function SingleReviewTableRow({
 
 serverRendererFor(ReviewListingPage, {
   getKey: (params, { preview, ...query }) => {
-    return ['all-review-tasks', { query, projectSlug: params.slug }];
+    return ['all-review-tasks', { query, projectSlug: params.slug, page: query.page || 1 }];
   },
   getData: async (key, vars, api) => {
     const slug = vars.projectSlug;

@@ -293,7 +293,11 @@ export const routes: RouteObject[] = [
     element: <NewProjectPage />,
   },
   {
-    path: '/projects/create/:template*',
+    path: '/projects/create/:template',
+    element: <NewProjectFromTemplate />,
+  },
+  {
+    path: '/projects/create/:template/*',
     element: <NewProjectFromTemplate />,
   },
   {

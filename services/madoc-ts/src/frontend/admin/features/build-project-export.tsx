@@ -1,4 +1,4 @@
-import { getValue } from '@iiif/vault-helpers';
+import { getValue } from '@iiif/helpers/i18n';
 import deepmerge from 'deepmerge';
 import React, { useEffect, useState } from 'react';
 import { useMutation } from 'react-query';
@@ -26,7 +26,7 @@ export function BuildProjectExport() {
   const configs = useProjectExports();
   const store = useExportBuilder();
   const [finishChoice, setFinishChoices] = useState(false);
-  const selectedTypes = useExportBuilder((s: any) => Object.keys(s.choices), shallow);
+  const selectedTypes = useExportBuilder(s => Object.keys(s.choices), shallow);
   const allComplete =
     useExportBuilder(
       (s: any) =>
@@ -94,6 +94,7 @@ export function BuildProjectExport() {
     );
   });
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => () => store.reset(), []);
 
   const isGenerating = !generateExportStatus.isIdle;

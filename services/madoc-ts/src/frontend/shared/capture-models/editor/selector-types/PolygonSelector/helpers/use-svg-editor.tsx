@@ -20,6 +20,7 @@ export function useSvgEditor(options: SvgEditorOptions, deps: any[]) {
   const transitionDraw = useRef<any>();
   const transitionShape = useRef<any>();
   const pointLine = useRef<any>();
+  const lineBox = useRef<any>();
   const [transitionDirection, setTransitionDirection] = useState<string | null>(null);
   const [transitionRotate, setTransitionRotate] = useState<boolean>(false);
   const { helper, state } = useHelper(
@@ -32,6 +33,7 @@ export function useSvgEditor(options: SvgEditorOptions, deps: any[]) {
       svgHelpers.updateSelectBox(selectBox.current, renderState, slowState);
       svgHelpers.updatePointLine(pointLine.current, renderState, slowState);
       svgHelpers.updateDrawPreview(transitionDraw.current, renderState, slowState, 3);
+      svgHelpers.updateLineBox(lineBox.current, renderState);
       setTransitionDirection(renderState.transitionDirection);
       setTransitionRotate(renderState.transitionRotate);
     },
@@ -166,6 +168,16 @@ export function useSvgEditor(options: SvgEditorOptions, deps: any[]) {
           style={{ pointerEvents: 'none' }}
         />
 
+        {state.lineBoxMode && state.actionIntentType === 'close-line-box' ? (
+          <polygon
+            fill="rgba(255, 0, 0, .4)"
+            ref={lineBox}
+            stroke="#000"
+            strokeWidth={2}
+            vectorEffect="non-scaling-stroke"
+          />
+        ) : null}
+
         {state.transitionIntentType === 'draw-shape' && state.transitioning ? (
           <polyline
             ref={transitionDraw}
@@ -206,7 +218,9 @@ export function useSvgEditor(options: SvgEditorOptions, deps: any[]) {
         ) : null}
 
         {!state.transitioning &&
-        (state.actionIntentType === 'add-open-point' || state.actionIntentType === 'close-shape') ? (
+        (state.actionIntentType === 'add-open-point' ||
+          state.actionIntentType === 'close-shape' ||
+          state.actionIntentType === 'close-shape-line') ? (
           <polyline
             stroke="#000"
             ref={pointLine}

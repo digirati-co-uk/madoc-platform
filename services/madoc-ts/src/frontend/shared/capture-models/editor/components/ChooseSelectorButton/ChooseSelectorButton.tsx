@@ -22,8 +22,8 @@ export const ChooseSelectorButton: React.FC<Props> = ({ value: initialValue, onC
         selection
         value={value}
         onChange={val => {
-          onChange(val);
-          setValue(val);
+          onChange(val || undefined);
+          setValue(val || undefined);
         }}
         options={[
           {

@@ -21,7 +21,11 @@ export const ViewSelector: React.FC<{
   const [image, setImage] = useState('');
   const [mask, setMask] = useState<any | null>(null);
   const selectorId = selector?.id;
+  const [didError, setDidError] = useState(false);
 
+  const handleSvgError = (e: any) => {
+    setDidError(true);
+  };
   useEffect(() => {
     if (!selector) return;
 
@@ -40,15 +44,30 @@ export const ViewSelector: React.FC<{
           const Shape = selector.state.shape.open ? 'polyline' : 'polygon';
           setMask(
             <svg width="100%" height="100%" viewBox={`0 0 ${(x2 - x1) * ratio} ${(y2 - y1) * ratio}`}>
-              <defs>
-                <mask id={`selector-mask-${selector.id}`}>
-                  <Shape
-                    points={points.map(p => `${(p[0] - x1) * ratio},${(p[1] - y1) * ratio}`).join(' ')}
-                    style={{ fill: 'white', stroke: 'white', strokeWidth: 2 }}
+              {!didError ? (
+                <>
+                  <defs>
+                    <mask id={`selector-mask-${selector.id}`}>
+                      <Shape
+                        points={points.map(p => `${(p[0] - x1) * ratio},${(p[1] - y1) * ratio}`).join(' ')}
+                        style={{ fill: 'white', stroke: 'white', strokeWidth: 2 }}
+                      />
+                    </mask>
+                  </defs>
+                  <image
+                    href={cropped}
+                    mask={`url(#selector-mask-${selector.id})`}
+                    width="100%"
+                    height="100%"
+                    {...({ onError: handleSvgError } as any)}
                   />
-                </mask>
-              </defs>
-              <image href={cropped} mask={`url(#selector-mask-${selector.id})`} width="100%" height="100%" />
+                </>
+              ) : (
+                <Shape
+                  points={points.map(p => `${(p[0] - x1) * ratio},${(p[1] - y1) * ratio}`).join(' ')}
+                  style={{ fill: 'white', stroke: '#000', strokeWidth: 2 }}
+                />
+              )}
             </svg>
           );
         }
