@@ -45,7 +45,7 @@ export const Register: React.FC = () => {
     }
   }, [form?.registerSuccess, query.success, user]);
 
-  if (!user && !systemConfig.enableRegistrations) {
+  if (!user && !systemConfig.enableRegistrations && !form?.invitation) {
     return <Navigate to="/login" />;
   }
 

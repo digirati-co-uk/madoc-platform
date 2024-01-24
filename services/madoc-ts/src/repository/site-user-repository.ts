@@ -1177,9 +1177,11 @@ export class SiteUserRepository extends BaseRepository {
   }
 
   async getInvitation(invitationId: string, siteId: number): Promise<UserInvitation> {
-    return SiteUserRepository.mapInvitationWithUsers(
-      await this.connection.any(SiteUserRepository.query.getInvitation(invitationId, siteId))
-    );
+    const invitations = await this.connection.any(SiteUserRepository.query.getInvitation(invitationId, siteId));
+    if (!invitations.length) {
+      throw new NotFound();
+    }
+    return SiteUserRepository.mapInvitationWithUsers(invitations);
   }
 
   async createInvitationRedemption(invitationId: string, userId: number, siteId: number) {
