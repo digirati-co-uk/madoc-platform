@@ -40,6 +40,8 @@ export const SearchFilterItemList = styled.div`
   background: #fff;
   //height: 0;
   overflow: hidden;
+  max-height: 320px;
+  overflow-y: auto;
 `;
 
 export const SearchFilterButton = styled.button`

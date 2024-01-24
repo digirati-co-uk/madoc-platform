@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added "line box mode" on SVG selector
 - Added "Circle" shape on SVG selector (40 points)
 - New "cut" cursor when holding Shift on SVG selector
+- Max height on search facets + scroll
 
 
 ### Fixed
