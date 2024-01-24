@@ -13,17 +13,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 -->
 
-### Changed
-- Add short descriptions for admin Search & Metadata actions + correct site config. page titles (MAD-1466)
-- Changed Default site-wide project configuration to use new form (MAD-1438)
-- Made "Go to site" link a button on project admin (MAD-1465)
-
 ### Added
 - Added "line mode" on SVG selector
 - Added "line box mode" on SVG selector
 - Added "Circle" shape on SVG selector (40 points)
 - New "cut" cursor when holding Shift on SVG selector
 - Max height on search facets + scroll
+- Added "Delete all manifests" to Delete Collection page (MAD-1461)
 
 
 ### Fixed
@@ -34,6 +30,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed bug with maxOverZoom
 
 ### Changed
+- Add short descriptions for admin Search & Metadata actions + correct site config. page titles (MAD-1466)
+- Changed Default site-wide project configuration to use new form (MAD-1438)
+- Made "Go to site" link a button on project admin (MAD-1465)
 - Updated `polygon-editor` to v0.0.2
 - Updated `@iiif/vault` and `@iiif/vault-helpers` to `@iiif/helpers`
 - Updated `@iiif/presentation-3` types to v2.x

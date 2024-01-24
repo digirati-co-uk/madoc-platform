@@ -17,12 +17,13 @@ import { removeIiifFromDisk } from '../../../utility/deletion-utils';
 import { buildCollectionDeletionSummary } from './delete-collection-summary';
 import { DatabasePoolConnectionType, sql } from 'slonik';
 import { deleteManifest } from '../manifests/delete-manifest';
+import { castBool } from '../../../utility/cast-bool';
 
 export const deleteCollectionEndpoint: RouteMiddleware<{ id: number }> = async context => {
   const { siteId } = userWithScope(context, ['site.admin']);
   const collectionId = context.params.id;
 
-  await deleteCollection(collectionId, siteId, () => context.connection, false);
+  await deleteCollection(collectionId, siteId, () => context.connection, castBool(context.query.recursive));
 
   context.response.status = 204;
 };
