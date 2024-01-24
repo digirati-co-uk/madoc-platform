@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 -->
 
+### Changed
+- Add short descriptions for admin Search & Metadata actions + correct site config. page titles (MAD-1466)
+
 ### Added
 - Added "line mode" on SVG selector
 - Added "line box mode" on SVG selector

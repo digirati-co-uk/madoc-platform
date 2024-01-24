@@ -24,7 +24,8 @@ export const SiteProjectConfiguration: React.FC = () => {
   return (
     <>
       <AdminHeader
-        title="Site configuration"
+        title="Site default project configuration"
+        subtitle="Default configuration for projects on this site. This default configuration is overridden by specific project configuration"
         breadcrumbs={[
           { label: 'Site admin', link: '/' },
           { label: 'Configure site', link: '/configure/site' },

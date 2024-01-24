@@ -171,16 +171,16 @@ export const AdminSidebar: React.FC = () => {
               {t('Site details')}
             </AdminMenuSubItem>
             <AdminMenuSubItem as={HrefLink} href="/configure/site/project">
-              {t('Project configuration')}
+              {t('Site default project configuration')}
             </AdminMenuSubItem>
             <AdminMenuSubItem as={HrefLink} href="/configure/site/metadata">
-              {t('Metadata configuration')}
+              {t('Site metadata display configuration')}
             </AdminMenuSubItem>
             <AdminMenuSubItem as={HrefLink} href="/configure/site/system">
-              {t('Site-wide configuration')}
+              {t('Site general configuration')}
             </AdminMenuSubItem>
             <AdminMenuSubItem as={HrefLink} href="/enrichment/search-indexing">
-              {t('Search indexing')}
+              {t('Site search indexing')}
             </AdminMenuSubItem>
             {isGlobalAdmin ? (
               <AdminMenuSubItem as={HrefLink} href="/system/themes">
