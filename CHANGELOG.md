@@ -33,6 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add short descriptions for admin Search & Metadata actions + correct site config. page titles (MAD-1466)
 - Changed Default site-wide project configuration to use new form (MAD-1438)
 - Made "Go to site" link a button on project admin (MAD-1465)
+- Changed ordering of Manifest listing - newest first (MAD-1391)
 - Updated `polygon-editor` to v0.0.2
 - Updated `@iiif/vault` and `@iiif/vault-helpers` to `@iiif/helpers`
 - Updated `@iiif/presentation-3` types to v2.x
