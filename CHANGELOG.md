@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added "Assignee" filtering to Review dashboard (MAD-1320)
 - Added "Status" filtering to Review Dashboard (MAD-1320)
 - Added "Clear filters" to Review Dashboard (MAD-1320)
+- Added page block options to "Collection Filter Options" on project collections (MAD-1281)
 
 
 ### Fixed
