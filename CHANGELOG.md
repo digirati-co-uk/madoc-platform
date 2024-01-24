@@ -36,6 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed bug with refreshing task list
 - Fixed server rendering (notification count, footer slot)
 - Fixed registrations with an invitation on sites without registrations enabled (MAD-1388)
+- Fixed tooltips on Manifest granularity project (MAD-1434)
 
 ### Changed
 - Add short descriptions for admin Search & Metadata actions + correct site config. page titles (MAD-1466)

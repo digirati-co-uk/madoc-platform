@@ -37,7 +37,6 @@ export function CanvasSimpleEditor({ revision, isSegmentation }: CanvasSimpleEdi
     disablePreview = false,
     disableNextCanvas = false,
     enableRotation = false,
-    enableAutoSave = false,
     enableTooltipDescriptions = false,
   } = useModelPageConfiguration();
   const mode = useContributionMode();

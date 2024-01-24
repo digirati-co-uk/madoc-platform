@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BackToChoicesButton } from '../../../shared/capture-models/new/components/BackToChoicesButton';
 import { DirectEditButton } from '../../../shared/capture-models/new/components/DirectEditButton';
@@ -24,7 +24,7 @@ import { CanvasModelUserStatus } from '../canvas/CanvasModelUserStatus';
 import { CanvasViewerEditorStyleReset, ContributionSaveButton } from '../../../shared/atoms/CanvasViewerGrid';
 import { useSiteConfiguration } from '../SiteConfigurationContext';
 import { useLoadedCaptureModel } from '../../../shared/hooks/use-loaded-capture-model';
-import { useRevisionList } from '../../../shared/capture-models/new/hooks/use-revision-list';
+import { CaptureModelVisualSettings } from '../../../shared/capture-models/editor/components/CaptureModelVisualSettings/CaptureModelVisualSettings';
 
 export function ManifestCaptureModelEditor({ revision }: { revision: string; isSegmentation?: boolean }) {
   const { t } = useTranslation();
@@ -32,20 +32,15 @@ export function ManifestCaptureModelEditor({ revision }: { revision: string; isS
   const { data: projectModel } = useManifestModel();
   const { data: project } = useProject();
   const [{ captureModel }, , modelRefetch] = useLoadedCaptureModel(projectModel?.model?.id, undefined, undefined);
-  const {
-    updateClaim,
-    preventFurtherSubmission,
-    canContribute,
-    markedAsUnusable,
-    user,
-    submittedTasks,
-  } = useManifestUserTasks();
+  const { updateClaim, preventFurtherSubmission, canContribute, markedAsUnusable, user, submittedTasks } =
+    useManifestUserTasks();
   const { isPreparing } = useProjectStatus();
   const config = useSiteConfiguration();
   const {
     disableSaveForLater = false,
     disablePreview = false,
     disableNextCanvas = false,
+    enableTooltipDescriptions = false,
   } = useModelPageConfiguration();
   const api = useApi();
   const [postSubmission, setPostSubmission] = useState(false);
@@ -53,6 +48,13 @@ export function ManifestCaptureModelEditor({ revision }: { revision: string; isS
   const allowMultiple = !config.project.modelPageOptions?.preventMultipleUserSubmissionsPerResource;
   const isEditing = isEditingAnotherUsersRevision(captureModel, revision, user);
   const autoSave = config.project.modelPageOptions?.enableAutoSave;
+
+  const visualConfig = useMemo<Partial<CaptureModelVisualSettings>>(
+    () => ({
+      descriptionTooltip: enableTooltipDescriptions,
+    }),
+    [enableTooltipDescriptions]
+  );
 
   const features: RevisionProviderFeatures = isPreparing
     ? {
@@ -71,10 +73,10 @@ export function ManifestCaptureModelEditor({ revision }: { revision: string; isS
         SubmitButton: DirectEditButton,
       }
     : isEditing
-    ? {
-        SubmitButton: SimpleSaveButton,
-      }
-    : {};
+      ? {
+          SubmitButton: SimpleSaveButton,
+        }
+      : {};
 
   async function onAfterSave(ctx: { revisionRequest: RevisionRequest; context: RouteContext }) {
     if (!isEditing && !isPreparing) {
@@ -104,6 +106,7 @@ export function ManifestCaptureModelEditor({ revision }: { revision: string; isS
       key={revision || s}
       revision={revision || s}
       captureModel={captureModel}
+      visualConfig={visualConfig}
       slotConfig={{
         editor: {
           allowEditing: !preventFurtherSubmission,
