@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { createLink } from '../../shared/utility/create-link';
 import { useRouteContext } from './use-route-context';
 
-export function useRelativeLinks() {
+export function useRelativeLinks(defaultOpts?: { subRoute?: string }) {
   const { canvasId, taskId, manifestId, parentTaskId, collectionId, projectId } = useRouteContext();
 
   return useCallback(
@@ -27,6 +27,7 @@ export function useRelativeLinks() {
         taskId,
         parentTaskId,
         canvasId,
+        ...(defaultOpts || {}),
         ...opts,
       });
     },

@@ -4,6 +4,7 @@ import styled, { css } from 'styled-components';
 interface SimpleStatusProps {
   status: number;
   status_text: string;
+  onClick?: (e: any) => void;
 }
 
 export const baseTab = css`
@@ -53,17 +54,17 @@ const Rejected = styled.div`
 export function SimpleStatus(props: SimpleStatusProps) {
   switch (props.status) {
     case 4:
-      return <Request>{props.status_text}</Request>;
+      return <Request onClick={props.onClick}>{props.status_text}</Request>;
     case 3:
-      return <Approved>{props.status_text}</Approved>;
+      return <Approved onClick={props.onClick}>{props.status_text}</Approved>;
     case 2:
-      return <Review>{props.status_text}</Review>;
+      return <Review onClick={props.onClick}>{props.status_text}</Review>;
     case 1:
-      return <Progress>{props.status_text}</Progress>;
+      return <Progress onClick={props.onClick}>{props.status_text}</Progress>;
     case 0:
-      return <Assigned>{props.status_text}</Assigned>;
+      return <Assigned onClick={props.onClick}>{props.status_text}</Assigned>;
     default:
     case -1:
-      return <Rejected>{props.status_text}</Rejected>;
+      return <Rejected onClick={props.onClick}>{props.status_text}</Rejected>;
   }
 }

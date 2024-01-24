@@ -22,6 +22,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added "Delete all manifests" to Delete Collection page (MAD-1461)
 - Added a way to filter out Sites from the site list using `[archived]` in the site title. (MAD-1270)
 - Added 2 new buttons to submissions in progress "Manually put into review" and "View submission" (MAD-1467)
+- Added "Assignee" filtering to Review dashboard (MAD-1320)
+- Added "Status" filtering to Review Dashboard (MAD-1320)
+- Added "Clear filters" to Review Dashboard (MAD-1320)
 
 
 ### Fixed
