@@ -2,16 +2,13 @@ import React from 'react';
 import styled, { css } from 'styled-components';
 import { HrefLink } from '../utility/href-link';
 
-export const ButtonIcon = styled.span`
-  transform: translate(-8px, -4px);
+export const ButtonIcon = styled.div`
+  transform: translate(-5px, -6px);
   height: 0.85em;
   width: 1.5em;
   position: relative;
-  display: inline-block;
+  display: block;
   svg {
-    position: absolute;
-    left: 0;
-    top: 0;
     fill: #fff;
     height: 24px;
     width: 24px;
@@ -29,33 +26,36 @@ export const Button = styled.button<{
 }>`
   cursor: pointer;
   padding: 0.4em 1em;
+  align-items: center;
   font-size: 0.9em;
   line-height: 1.18em;
   border-radius: 3px;
   background: #fff;
   text-decoration: none;
-  display: inline-block;
+  display: inline-flex;
   letter-spacing: 0.25px;
   vertical-align: top;
-  transition: color 0.1s, background-color 0.1s, border-color 0.1s;
+  transition:
+    color 0.1s,
+    background-color 0.1s,
+    border-color 0.1s;
   white-space: nowrap;
-  
+
   // Alternative with github style gradient
   background: linear-gradient(180deg, #fafbfc 0%, #eff3f6 90%);
   border: 1px solid rgba(27, 31, 35, 0.15);
   color: #333;
 
-  &[type="submit"] {
+  &[type='submit'] {
     background: linear-gradient(180deg, #fafbfc 0%, #eff3f6 90%);
   }
-  
-  
+
   ${props =>
     props.$link &&
     css`
       border-color: transparent;
     `}
-  
+
   ${props =>
     props.$large &&
     css`
@@ -74,18 +74,20 @@ export const Button = styled.button<{
     color: #333;
   }
 
-  &:hover, &:focus {
+  &:hover,
+  &:focus {
     // Alternative with github style gradient
     background: linear-gradient(180deg, #f0f3f6 0%, #e6ebf1 90%);
     border-color: rgba(27, 31, 35, 0.15);
     color: #000;
   }
-  
+
   &:focus {
     outline: none;
   }
 
-  &:disabled, &[disabled] {
+  &:disabled,
+  &[disabled] {
     opacity: 0.6;
     cursor: not-allowed;
     pointer-events: none;
