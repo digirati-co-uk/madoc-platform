@@ -147,7 +147,9 @@ export function ReviewListingPage() {
     canFetchMore,
     isFetchingMore,
   } = useInfiniteData(ReviewListingPage, undefined, {
-    keepPreviousData: true,
+    // keepPreviousData: true,
+    refetchOnMount: true,
+    forceFetchOnMount: true,
     getFetchMore: lastPage => {
       if (lastPage.pagination.totalPages === 0 || lastPage.pagination.totalPages === lastPage.pagination.page) {
         return undefined;

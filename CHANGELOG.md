@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Max height on search facets + scroll
 - Added "Delete all manifests" to Delete Collection page (MAD-1461)
 - Added a way to filter out Sites from the site list using `[archived]` in the site title. (MAD-1270)
+- Added 2 new buttons to submissions in progress "Manually put into review" and "View submission" (MAD-1467)
 
 
 ### Fixed
@@ -29,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed bug when selecting a polygon from the sidebar
 - Fixed broken images on SVG cropped selector 
 - Fixed bug with maxOverZoom
+- Fixed bug with refreshing task list
 
 ### Changed
 - Add short descriptions for admin Search & Metadata actions + correct site config. page titles (MAD-1466)

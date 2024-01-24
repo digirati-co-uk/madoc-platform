@@ -41,7 +41,7 @@ export const updateRevisionTask: RouteMiddleware<{ taskId: string; task: any }> 
         throw new Error('Not authorised');
       }
       await userApi.updateTask<CrowdsourcingTask>(id, taskBody);
-      context.response.status = 200;
+      context.response.status = 204;
       return;
     }
     throw new Error('Task has no delegated reviewers');
@@ -52,5 +52,5 @@ export const updateRevisionTask: RouteMiddleware<{ taskId: string; task: any }> 
   }
 
   await userApi.updateTask<CrowdsourcingTask>(id, taskBody);
-  context.response.status = 200;
+  context.response.status = 204;
 };

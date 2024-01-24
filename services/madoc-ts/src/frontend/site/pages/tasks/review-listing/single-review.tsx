@@ -47,12 +47,13 @@ import { HomeIcon } from '../../../../shared/icons/HomeIcon';
 import { MinusIcon } from '../../../../shared/icons/MinusIcon';
 import { PlusIcon } from '../../../../shared/icons/PlusIcon';
 import { useTranslation } from 'react-i18next';
-import { extractIdFromUrn } from '../../../../../utility/parse-urn';
+import { extractIdFromUrn, parseUrn } from '../../../../../utility/parse-urn';
 import { useProjectAnnotationStyles } from '../../../hooks/use-project-annotation-styles';
 import UnlockSmileyIcon from '../../../../shared/icons/UnlockSmileyIcon';
 import { useCurrentUser } from '../../../../shared/hooks/use-current-user';
 import { ManifestSnippet } from '../../../../shared/features/ManifestSnippet';
 import { ReviewNavigation } from './ReviewNagivation';
+import { ErrorMessage } from '../../../../shared/callouts/ErrorMessage';
 
 const ReviewContainer = styled.div`
   position: relative;
@@ -184,15 +185,8 @@ function ViewSingleReview({
   toggle: any;
   isOpen: boolean;
 }) {
-  const {
-    captureModel,
-    revisionId,
-    wasRejected,
-    canvas,
-    project,
-    canvasLink,
-    manifestLink,
-  } = useCrowdsourcingTaskDetails(task);
+  const { captureModel, revisionId, wasRejected, canvas, project, canvasLink, editLink, manifestLink } =
+    useCrowdsourcingTaskDetails(task);
 
   const refetch = useRefetch();
   const createLink = useRelativeLinks();
@@ -230,6 +224,44 @@ function ViewSingleReview({
     {
       throwOnError: true,
     }
+  );
+
+  const [manualReview, manualReviewData] = useMutation(
+    async () => {
+      if (task) {
+        const assignee = task.assignee ? task.assignee.id : undefined;
+        if (!assignee) throw new Error('No assignee');
+        const assigneeId = parseUrn(assignee)?.id;
+        if (!assigneeId) throw new Error('No assignee');
+
+        const isCanvas = task.metadata?.subject?.type === 'canvas';
+        const isManifest = task.metadata?.subject?.type === 'manifest';
+        const canvasId = task.metadata?.subject.id;
+        const manifestId = task.metadata?.subject?.parent?.id;
+        const projectId = project?.id;
+
+        if (!projectId) throw new Error('No project');
+        if (!manifestId) throw new Error('No manifest');
+        if (!canvasId) throw new Error('No canvas');
+        if (isManifest) {
+          throw new Error('Manifest not supported yet');
+        }
+        if (!isCanvas) throw new Error('Not a canvas');
+
+        await api.createResourceClaim(projectId, {
+          revisionId,
+          manifestId,
+          canvasId,
+          status: 2,
+          userId: assigneeId,
+        });
+
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        await refetch();
+      }
+    },
+    { throwOnError: false }
   );
 
   const goHome = () => {
@@ -312,8 +344,27 @@ function ViewSingleReview({
           <span>{t('This means this task has been assigned or is in progress, but nothing has been submitted')}</span>
           <br />
 
+          {manualReviewData.isError ? (
+            <div>
+              <ErrorMessage>
+                <strong>{t('There was an error trying to put this task into review')}</strong> <br />{' '}
+                {(manualReviewData.error as any).message}
+              </ErrorMessage>
+            </div>
+          ) : null}
+
           <ButtonRow $center>
-            <Button onClick={() => unassignUser()}>Unassign from user</Button>
+            <Button onClick={() => unassignUser()}>{t('Unassign from user')}</Button>
+            {task.state.revisionId ? (
+              <>
+                <Button onClick={() => manualReview()}>{t('Manually put into review')}</Button>
+                {editLink ? (
+                  <Button as={HrefLink} href={editLink}>
+                    {t('View submission')}
+                  </Button>
+                ) : null}
+              </>
+            ) : null}
           </ButtonRow>
         </EmptyState>
       </>
@@ -396,8 +447,9 @@ function ViewSingleReview({
               <ApproveSubmission
                 project={project}
                 userTaskId={task.id}
-                onApprove={() => {
-                  refetch();
+                onApprove={async () => {
+                  await new Promise(resolve => setTimeout(resolve, 1000));
+                  await refetch();
                 }}
                 reviewTaskId={review.id}
               />
@@ -492,7 +544,7 @@ function ViewSingleReview({
 
 export function SingleReview() {
   const params = useParams<{ taskId: string }>();
-  const { data, refetch } = useData(SingleReview);
+  const { data, refetch, updatedAt } = useData(SingleReview);
 
   return (
     <MaximiseWindow>
@@ -503,6 +555,7 @@ export function SingleReview() {
           return (
             <RefetchProvider refetch={refetch}>
               <ViewSingleReview
+                key={updatedAt}
                 taskId={params.taskId}
                 task={data.task}
                 review={data.review}
