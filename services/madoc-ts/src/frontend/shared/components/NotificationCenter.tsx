@@ -41,7 +41,9 @@ const NotificationContainer = styled.div<{ $visible?: boolean }>`
 
   color: #000;
   background: #ffffff;
-  box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.21), 0 0px 0px 1px rgba(0, 0, 0, 0.21);
+  box-shadow:
+    0 3px 8px 0 rgba(0, 0, 0, 0.21),
+    0 0px 0px 1px rgba(0, 0, 0, 0.21);
   border-radius: 5px;
 
   ${props =>
@@ -266,9 +268,9 @@ export const NotificationCenter: React.FC<{ isAdmin?: boolean }> = ({ isAdmin })
       return api.notifications.getNotificationCount();
     },
     {
-      refetchInterval: 2 * 60 * 1000, // Refresh every 2 minutes
+      refetchInterval: 15 * 60 * 1000, // Refresh every 15 minutes
       enabled: !!user,
-      staleTime: 2 * 60 * 1000,
+      staleTime: 15 * 60 * 1000,
     }
   );
   const { data, refetch } = useQuery(
