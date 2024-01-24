@@ -13,6 +13,8 @@ import { SubjectSnippet } from '../../../../shared/components/SubjectSnippet';
 import { ViewCrowdsourcingTask } from '../../../molecules/ViewCrowdsourcingTask';
 import { ViewCrowdsourcingCanvasTask } from '../../tasks/crowdsourcing-canvas-task';
 import { Project } from './project';
+import { Button, ButtonRow } from '../../../../shared/navigation/Button';
+import { useSite } from '../../../../shared/hooks/use-site';
 
 type ProjectTasksType = {
   params: { id: number; taskId?: string };
@@ -24,21 +26,36 @@ type ProjectTasksType = {
 
 export const ProjectTasks: UniversalComponent<ProjectTasksType> = createUniversalComponent<ProjectTasksType>(
   () => {
+    const site = useSite();
     const { data: project } = useData(Project);
     const { t } = useTranslation();
     const { data: task } = useData(ProjectTasks);
+
+    const goToReviews = (
+      <ButtonRow>
+        <Button as="a" href={`/s/${site.slug}/projects/${project.id}/reviews`}>
+          {t('Go to reviews')}
+        </Button>
+      </ButtonRow>
+    );
 
     if (!task || !project) {
       return <>Loading...</>;
     }
 
     if (task.type === 'crowdsourcing-canvas-task') {
-      return <ViewCrowdsourcingCanvasTask projectId={project.id} task={task as any} />;
+      return (
+        <>
+          {goToReviews}
+          <ViewCrowdsourcingCanvasTask projectId={project.id} task={task as any} />
+        </>
+      );
     }
 
     if (task.type === 'crowdsourcing-task') {
       return (
         <>
+          {goToReviews}
           <ViewCrowdsourcingTask project={project} task={task as CrowdsourcingTask} />
           {(task.subtasks || []).map(subtask => (
             <TableRow key={subtask.id}>
@@ -57,6 +74,7 @@ export const ProjectTasks: UniversalComponent<ProjectTasksType> = createUniversa
 
     return (
       <div>
+        {goToReviews}
         {task.parent_task ? <Link to={`/projects/${project.id}/tasks/${task.parent_task}`}>Back</Link> : null}
         {task.root_task ? (
           <>

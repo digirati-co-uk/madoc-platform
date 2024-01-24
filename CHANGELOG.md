@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added "Status" filtering to Review Dashboard (MAD-1320)
 - Added "Clear filters" to Review Dashboard (MAD-1320)
 - Added page block options to "Collection Filter Options" on project collections (MAD-1281)
+- Added link to reviews from "Crowdsourcing" tab in project admin (MAD-1468)
 
 
 ### Fixed
