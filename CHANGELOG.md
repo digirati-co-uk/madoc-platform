@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Add short descriptions for admin Search & Metadata actions + correct site config. page titles (MAD-1466)
+- Changed Default site-wide project configuration to use new form (MAD-1438)
 
 ### Added
 - Added "line mode" on SVG selector
