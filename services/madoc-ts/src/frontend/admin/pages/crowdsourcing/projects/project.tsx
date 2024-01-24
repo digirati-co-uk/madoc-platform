@@ -10,6 +10,7 @@ import { WidePage } from '../../../../shared/layout/WidePage';
 import { useTranslation } from 'react-i18next';
 import { useData } from '../../../../shared/hooks/use-data';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
+import { Button } from '../../../../shared/navigation/Button';
 
 type ProjectType = {
   params: { id: string };
@@ -56,7 +57,9 @@ export const Project: UniversalComponent<ProjectType> = createUniversalComponent
           title={<LocaleString>{data.label}</LocaleString>}
           subtitle={
             <>
-              <a href={`/s/${slug}/projects/${data.slug}`}>{t('Go to project on site')}</a>
+              <Button as="a" href={`/s/${slug}/projects/${data.slug}`}>
+                {t('Go to project on site')}
+              </Button>
               {projectTemplate && projectTemplate.type !== 'custom' ? (
                 <div>
                   <strong>{projectTemplate.metadata.label}</strong> |{' '}
@@ -70,7 +73,7 @@ export const Project: UniversalComponent<ProjectType> = createUniversalComponent
                 </div>
               ) : (
                 <div>
-                  <strong>{t('Custom project')}</strong> |{' '}
+                  <strong>{t('Canvas annotation project')}</strong> |{' '}
                   <HrefLink href={`/projects/create/remote?template=urn:madoc:project:${data.id}`}>
                     Duplicate project →
                   </HrefLink>
