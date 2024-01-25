@@ -2,6 +2,7 @@ import { gatewayHost } from '../../gateway/api.server';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { NotFound } from '../../utility/errors/not-found';
 import { optionalUserWithScope } from '../../utility/user-with-scope';
+import { ACTIVITY_PER_PAGE } from '../activity-stream-config';
 
 export const getActivityStreamPage: RouteMiddleware<{
   primaryStream: string;
@@ -20,7 +21,7 @@ export const getActivityStreamPage: RouteMiddleware<{
     throw new NotFound();
   }
 
-  const perPage = 10;
+  const perPage = ACTIVITY_PER_PAGE;
   const page = Number(context.params.page);
   const [totalItems, orderedItems] = await Promise.all([
     context.changeDiscovery.getTotalItems({ primaryStream, secondaryStream }, siteId),

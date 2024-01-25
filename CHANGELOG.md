@@ -41,6 +41,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed tooltips on Manifest granularity project (MAD-1434)
 - Fixed Locale name in heading (MAD-1152)
 - Fixed token refreshing
+- Fixed activity stream pagination (NS-52)
 
 ### Changed
 - Add short descriptions for admin Search & Metadata actions + correct site config. page titles (MAD-1466)

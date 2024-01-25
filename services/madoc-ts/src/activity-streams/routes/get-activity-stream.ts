@@ -2,6 +2,7 @@ import { RouteMiddleware } from '../../types/route-middleware';
 import { NotFound } from '../../utility/errors/not-found';
 import { optionalUserWithScope } from '../../utility/user-with-scope';
 import { gatewayHost } from '../../gateway/api.server';
+import { ACTIVITY_PER_PAGE } from '../activity-stream-config';
 
 export const getActivityStream: RouteMiddleware<{
   primaryStream: string;
@@ -18,7 +19,7 @@ export const getActivityStream: RouteMiddleware<{
     throw new NotFound();
   }
 
-  const perPage = 100;
+  const perPage = ACTIVITY_PER_PAGE;
   const totalItems = await context.changeDiscovery.getTotalItems({ primaryStream, secondaryStream }, siteId);
 
   const firstPage = 0;

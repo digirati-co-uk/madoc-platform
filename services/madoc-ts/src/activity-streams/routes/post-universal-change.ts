@@ -36,10 +36,10 @@ export const postUniversalChange: RouteMiddleware<
     evType === 'Collection'
       ? (await userApi.getCollectionById(id)).collection
       : evType === 'Manifest'
-      ? (await userApi.getManifestById(id)).manifest
-      : evType === 'Canvas'
-      ? (await userApi.getCanvasById(id)).canvas
-      : undefined;
+        ? (await userApi.getManifestById(id)).manifest
+        : evType === 'Canvas'
+          ? (await userApi.getCanvasById(id)).canvas
+          : undefined;
 
   const label = resource ? (Object.values(resource.label)[0] || [])[0] : undefined;
 
