@@ -174,27 +174,82 @@ export const SystemStatus: UniversalComponent<SystemStatusType> = createUniversa
 
           {migrateProjectMembersStatus.data ? <SuccessMessage>Migration complete</SuccessMessage> : null}
 
-          {data
-            ? data.list.map(item => {
-                return (
-                  <div key={item.id}>
-                    <h3>{item.name}</h3>
-                    <div>
-                      <strong>Status</strong> <span>{item.status}</span>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 20 }}>
+            {data
+              ? data.list.map(item => {
+                  const memory = Math.round((item.monit.memory / item.max_memory_restart) * 100);
+                  return (
+                    <div
+                      key={item.id}
+                      style={{
+                        background: '#eee',
+                        borderRadius: 5,
+                        padding: 30,
+                        display: 'flex',
+                        flexDirection: 'column',
+                      }}
+                    >
+                      <h3 style={{ margin: 0, marginBottom: 10, borderBottom: '1px solid #CCC', paddingBottom: 10 }}>
+                        {item.name}
+                      </h3>
+                      <div>
+                        <strong>Status:</strong> <span>{item.status}</span>
+                      </div>
+                      <div>
+                        <strong>Instances:</strong> <span>{item.instances}</span>
+                      </div>
+                      <div>
+                        <strong>Restarted:</strong>{' '}
+                        <span>
+                          <TimeAgo date={new Date(item.uptime)} />
+                        </span>
+                      </div>
+                      <br />
+                      <div>
+                        <strong>CPU:</strong> <span>{item.monit.cpu}%</span>
+                      </div>
+                      <div style={{ display: 'flex', background: '#ddd', marginTop: 5, marginBottom: 20 }}>
+                        <div
+                          style={{
+                            height: 3,
+                            background: item.monit.cpu > 70 ? 'orange' : item.monit.cpu > 90 ? 'red' : 'green',
+                            width: `${Math.round(item.monit.cpu)}%`,
+                          }}
+                        />
+                      </div>
+                      <div>
+                        <strong>Memory</strong> <span>{Math.round(item.monit.memory / 1000 / 10) / 100}mb</span>
+                        <span> ({memory}%)</span>
+                      </div>
+                      <div style={{ display: 'flex', background: '#ddd', marginTop: 5, marginBottom: 15 }}>
+                        <div
+                          style={{
+                            height: 3,
+                            background: memory > 70 ? 'orange' : memory > 90 ? 'red' : 'green',
+                            width: `${memory}%`,
+                          }}
+                        />
+                      </div>
+                      <div style={{ fontSize: '0.6em' }}>
+                        {Object.entries(item.stats).map(([name, { value, unit }]) => {
+                          return (
+                            <div key={name}>
+                              <strong>{name}</strong>: <span>{value}</span>
+                              <span>{unit}</span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                      <div style={{ marginTop: 20 }}>
+                        <Button onClick={() => restart(item.name as any)} disabled={restartStatus.isLoading}>
+                          {t('Restart')}
+                        </Button>
+                      </div>
                     </div>
-                    <div>
-                      <strong>Instances</strong> <span>{item.instances}</span>
-                    </div>
-                    <div>
-                      <strong>CPU</strong> <span>{item.monit.cpu}%</span>
-                    </div>
-                    <div>
-                      <strong>Memory</strong> <span>{Math.round(item.monit.memory / 1000 / 10) / 100}mb</span>
-                    </div>
-                  </div>
-                );
-              })
-            : null}
+                  );
+                })
+              : null}
+          </div>
         </WidePage>
       </>
     );

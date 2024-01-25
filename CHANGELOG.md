@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added page block options to "Collection Filter Options" on project collections (MAD-1281)
 - Added link to reviews from "Crowdsourcing" tab in project admin (MAD-1468)
 - Added better links to and from register and login pages (NS-56)
+- Added more information to system status page (NS-43)
 
 
 ### Fixed
