@@ -1517,8 +1517,8 @@ export class SiteUserRepository extends BaseRepository {
 
     const exp = payload.exp * 1000;
     const time = new Date().getTime();
-    const allowedTime = time + refreshWindow * 1000;
-    const canRefresh = exp - allowedTime > 0;
+    const allowedTime = exp + refreshWindow * 1000;
+    const canRefresh = allowedTime - time > 0;
     const hasExpired = exp - time < 0;
 
     if (!hasExpired) {

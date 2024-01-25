@@ -2,6 +2,7 @@ import { sql } from 'slonik';
 import { createSignedToken } from './create-signed-token';
 import { AuthenticatedUser } from '../types/authenticated-user';
 import { Context } from 'koa';
+import { DEFAULT_TOKEN_EXPIRY, DEFAULT_TOKEN_REFRESH } from '../config';
 
 export async function getJwtCookies(
   context: Context,
@@ -16,9 +17,9 @@ export async function getJwtCookies(
   const cookiesToAdd: Array<{ name: string; value: string; options: any }> = [];
   let lastToken;
   let siteToken;
-  const expiresIn = context.externalConfig.tokenExpires || 24 * 60 * 60 * 7; // 7-day token.
+  const expiresIn = context.externalConfig.tokenExpires || DEFAULT_TOKEN_EXPIRY; // 7-day token.
   const cookieName = context.externalConfig.cookieName || 'madoc';
-  const refreshWindow = context.externalConfig.tokenRefresh || 24 * 60 * 60; // 24-hour refresh
+  const refreshWindow = context.externalConfig.tokenRefresh || DEFAULT_TOKEN_REFRESH; // 24-hour refresh
 
   const siteIds: string[] = [];
   // Loop all of the sites the user is to be logged into.
