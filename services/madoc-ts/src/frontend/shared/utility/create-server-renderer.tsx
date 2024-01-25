@@ -252,6 +252,9 @@ export function createServerRenderer(
       if (label === 'Welsh') {
         label = 'Cymraeg';
       }
+      if (label === 'Dutch') {
+        label = 'Nederlands';
+      }
 
       return { label: label, code: ln };
     };
