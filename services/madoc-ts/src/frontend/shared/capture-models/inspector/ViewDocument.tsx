@@ -82,7 +82,7 @@ export const ViewDocument: React.FC<{
     <div style={{ padding: padding ? 20 : 0 }}>
       {renderedList.map(({ label, description, rendered }, n) => (
         <React.Fragment key={n}>
-          {!hideTitle ? <h3>{tModel(label)}</h3> : null}
+          {!hideTitle ? <h3 style={{ margin: 0, color: '#5066DD', fontWeight: 500 }}>{tModel(label)}</h3> : null}
           {!hideTitle ? <p>{description ? tModel(description) : ''}</p> : null}
           {rendered}
         </React.Fragment>
