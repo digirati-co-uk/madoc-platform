@@ -1,5 +1,5 @@
 import { stringify } from 'query-string';
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { siteManagerHooks } from '../../../../extensions/site-manager/hooks';
@@ -20,9 +20,17 @@ import {
 } from '../../../shared/atoms/SystemUI';
 import { useSite, useUser } from '../../../shared/hooks/use-site';
 import { AdminHeader } from '../../molecules/AdminHeader';
+import {
+  Input,
+  InputCheckboxContainer,
+  InputCheckboxInputContainer,
+  InputContainer,
+  InputLabel,
+} from '../../../shared/form/Input';
 
 export const ListSites: React.FC = () => {
   const { t } = useTranslation();
+  const [archived, setArchived] = useState(false);
   const user = useUser();
   const currentSite = useSite();
   const query = useLocationQuery();
@@ -38,17 +46,25 @@ export const ListSites: React.FC = () => {
     if (!data?.sites) {
       return [];
     }
-    if (!search) {
+    if (!search && archived) {
       return data.sites;
     }
     return data.sites.filter(site => {
+      if (!archived && site.title.toLocaleLowerCase().includes('[archived]')) {
+        return false;
+      }
+
+      if (!search) {
+        return true;
+      }
+
       return (
         site.title.toLowerCase().indexOf(search) !== -1 ||
         (site.summary || '').toLowerCase().indexOf(search) !== -1 ||
         site.slug.toLowerCase().indexOf(search) !== -1
       );
     });
-  }, [search, data]);
+  }, [query, search, data, archived]);
 
   if (user?.role !== 'global_admin') {
     return <Navigate to={'/'} />;
@@ -78,7 +94,7 @@ export const ListSites: React.FC = () => {
           initialValue={query.order_by}
           initialDesc={query.desc}
           maxWidth
-          items={['title', 'slug', 'modified', 'created']}
+          items={['title', 'slug', 'created']}
           onSearch={q => {
             navigate(
               `${location.pathname}${
@@ -102,6 +118,16 @@ export const ListSites: React.FC = () => {
             );
           }}
         />
+        <div style={{ maxWidth: 800, margin: 'auto' }}>
+          <InputContainer>
+            <InputCheckboxContainer>
+              <InputCheckboxInputContainer $checked={archived}>
+                <Input type="checkbox" id="archived" checked={archived} onChange={e => setArchived(e.target.checked)} />
+              </InputCheckboxInputContainer>
+              <InputLabel htmlFor="archived">Include archived</InputLabel>
+            </InputCheckboxContainer>
+          </InputContainer>
+        </div>
 
         {filteredSites.map(site => {
           const stats = {

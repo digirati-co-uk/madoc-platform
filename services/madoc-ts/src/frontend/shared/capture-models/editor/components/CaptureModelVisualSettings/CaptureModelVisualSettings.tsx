@@ -12,6 +12,8 @@ export const CaptureModelVisualSettingsContext = createContext<CaptureModelVisua
   descriptionTooltip: false,
 });
 
+CaptureModelVisualSettingsContext.displayName = 'CaptureModelVisualSettings';
+
 export function useCaptureModelVisualSettings() {
   return useContext(CaptureModelVisualSettingsContext);
 }

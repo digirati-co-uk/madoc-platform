@@ -1,30 +1,36 @@
-import React from 'react';
-import { useTranslation } from 'react-i18next';
+import React, { useMemo } from 'react';
 import { useMutation } from 'react-query';
-import { useNavigate } from 'react-router-dom';
 import { WidePage } from '../../../shared/layout/WidePage';
-import { EditShorthandCaptureModel } from '../../../shared/capture-models/EditorShorthandCaptureModel';
-import { postProcessConfiguration, siteConfigurationModel } from '../../../shared/configuration/site-config';
+import { postProcessConfiguration } from '../../../shared/configuration/site-config';
 import { useApi } from '../../../shared/hooks/use-api';
 import { apiHooks } from '../../../shared/hooks/use-api-query';
 import { AdminHeader } from '../../molecules/AdminHeader';
+import { ProjectConfigurationNEW } from '../../../../types/schemas/project-configuration';
+import { migrateConfig } from '../../../../utility/config-migrations';
+import { EditProjectConfiguration } from '../../components/EditProjectConfiguration';
 
 export const SiteProjectConfiguration: React.FC = () => {
-  const { data: value, refetch } = apiHooks.getSiteConfiguration(() => []);
+  const { data: _siteConfiguration, refetch, updatedAt } = apiHooks.getSiteConfiguration(() => []);
   const api = useApi();
-  const { t } = useTranslation();
-  const navigate = useNavigate();
+  const { _source, ...siteConfiguration } = useMemo(() => {
+    if (!_siteConfiguration) {
+      return {} as ProjectConfigurationNEW;
+    }
 
-  const [saveConfig] = useMutation(async (rev: any) => {
-    await api.saveSiteConfiguration(postProcessConfiguration(rev));
+    return migrateConfig.version1to2(_siteConfiguration);
+  }, [_siteConfiguration]);
+
+  const [saveConfig] = useMutation(async (config: any) => {
+    const toSave = migrateConfig.version2to1(config);
+    await api.saveSiteConfiguration(postProcessConfiguration(toSave));
     await refetch();
-    navigate(`/configure/site?success=true`);
   });
 
   return (
     <>
       <AdminHeader
-        title="Site configuration"
+        title="Site default project configuration"
+        subtitle="Default configuration for projects on this site. This default configuration is overridden by specific project configuration"
         breadcrumbs={[
           { label: 'Site admin', link: '/' },
           { label: 'Configure site', link: '/configure/site' },
@@ -32,15 +38,12 @@ export const SiteProjectConfiguration: React.FC = () => {
         ]}
       />
       <WidePage>
-        <div style={{ maxWidth: 600 }}>
-          <EditShorthandCaptureModel
-            enableSearch
-            searchLabel={t('Search configuration')}
-            data={value}
-            template={siteConfigurationModel}
-            onSave={saveConfig}
-          />
-        </div>
+        <EditProjectConfiguration
+          old={false}
+          updateKey={updatedAt}
+          configuration={siteConfiguration}
+          onSave={saveConfig}
+        />
       </WidePage>
     </>
   );

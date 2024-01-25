@@ -163,6 +163,7 @@ export function getManifestList({
   canvasSubQuery,
   labelQuery,
   onlyPublished,
+  oldestFirst,
 }: {
   siteId: number;
   page: number;
@@ -171,6 +172,7 @@ export function getManifestList({
   onlyPublished?: boolean;
   canvasSubQuery?: TaggedTemplateLiteralInvocationType<{ resource_id: number }>;
   labelQuery?: string;
+  oldestFirst?: boolean;
 }) {
   if (canvasSubQuery) {
     const parentJoin = parentId
@@ -200,6 +202,7 @@ export function getManifestList({
         where i.type = 'manifest'
         ${parentWhere}
         group by ir.resource_id, i.type, canvas_count.item_total
+        ${oldestFirst ? sql`order by ir.id desc` : sql``}
         limit ${manifestCount} offset ${(page - 1) * manifestCount}
     `;
   }
@@ -217,6 +220,7 @@ export function getManifestList({
         ${onlyPublished ? sql`and manifests.published = true` : SQL_EMPTY}
         and midr.resource_id = ${parentId}
         and midr.site_id = ${siteId}
+      ${oldestFirst ? sql`order by manifests.id desc` : sql``}
       limit ${manifestCount} offset ${(page - 1) * manifestCount}
   `;
   }
@@ -234,6 +238,7 @@ export function getManifestList({
       and manifests.site_id = ${siteId}
       ${onlyPublished ? sql`and manifests.published = true` : SQL_EMPTY}
       and im.resource_id is not null
+      ${oldestFirst ? sql`order by manifests.id desc` : sql``}
       limit ${manifestCount} offset ${(page - 1) * manifestCount}
   `;
   }
@@ -249,6 +254,7 @@ export function getManifestList({
       and manifests.site_id = ${siteId}
       ${onlyPublished ? sql`and manifests.published = true` : SQL_EMPTY} 
       and im.resource_id is not null
+      ${oldestFirst ? sql`order by manifests.id desc` : sql``}
       limit ${manifestCount} offset ${(page - 1) * manifestCount}
   `;
 }

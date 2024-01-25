@@ -5,16 +5,20 @@ import { pluginStore } from './globals';
 
 export const PluginContext = React.createContext<PluginStore>(pluginStore);
 
+PluginContext.displayName = 'Plugins';
+
 export const PluginProvider: React.FC = ({ children }) => {
   return <PluginContext.Provider value={pluginStore}>{children}</PluginContext.Provider>;
 };
 
 export const ContentContext = createContext<{ type: string; state: any }>({ type: 'none', state: {} });
 
+ContentContext.displayName = 'Content';
+
 export function ContentProvider<
   Content extends ContentTypeMap,
   K extends keyof ContentTypeMap,
-  State = Content[K]['state']
+  State = Content[K]['state'],
 >({
   type,
   state,

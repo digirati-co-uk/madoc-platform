@@ -19,6 +19,9 @@ function validNumber(t: string | undefined, defaultValue: number) {
   return asNumber;
 }
 
+export const DEFAULT_TOKEN_EXPIRY = 60 * 60 * 24 * 14; // 14 days
+export const DEFAULT_TOKEN_REFRESH = 60 * 60 * 24 * 2; // 2 days
+
 export const config: EnvConfig = {
   build: {
     time: process.env.BUILD_TIME || 'unknown',

@@ -1,7 +1,7 @@
 {
   "cookieName": "madoc",
-  "tokenExpires": 25200,
-  "tokenRefresh": 3600,
+  "tokenExpires": 1209600,
+  "tokenRefresh": 172800,
   "defaultSiteConfiguration": {
     "allowCollectionNavigation": true,
     "allowManifestNavigation": true,
@@ -35,10 +35,10 @@
     "shortExpiryTime": "10",
     "longExpiryTime": "1440",
     "modelPageShowAnnotations": "when-open",
-    "modelPageShowDocument":"when-open",
+    "modelPageShowDocument": "when-open",
     "atlasBackground": "#f9f9f9",
     "canvasPageShowAnnotations": "when-open",
-    "canvasPageShowDocument":"when-open",
+    "canvasPageShowDocument": "when-open",
     "forkMode": false,
     "reviewOptions": {
       "allowMerging": false
@@ -95,11 +95,7 @@
     }
   },
   "permissions": {
-    "admin": [
-      "site.admin",
-      "tasks.admin",
-      "models.admin"
-    ],
+    "admin": ["site.admin", "tasks.admin", "models.admin"],
     "reviewer": [
       "tasks.create",
       "tasks.progress",
@@ -117,13 +113,7 @@
       "models.view_published",
       "site.view"
     ],
-    "transcriber": [
-      "tasks.progress",
-      "models.revision",
-      "models.contribute",
-      "models.view_published",
-      "site.view"
-    ],
+    "transcriber": ["tasks.progress", "models.revision", "models.contribute", "models.view_published", "site.view"],
     "limited-transcriber": [
       "tasks.progress",
       "models.revision",
@@ -131,13 +121,7 @@
       "models.view_published",
       "site.view"
     ],
-    "viewer": [
-      "models.view_published",
-      "site.view"
-    ],
-    "editor": [
-      "models.view_published",
-      "site.view"
-    ]
+    "viewer": ["models.view_published", "site.view"],
+    "editor": ["models.view_published", "site.view"]
   }
 }

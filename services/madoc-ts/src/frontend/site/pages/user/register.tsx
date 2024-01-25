@@ -12,6 +12,8 @@ import { LocaleString } from '../../../shared/components/LocaleString';
 import { useLocationQuery } from '../../../shared/hooks/use-location-query';
 import { useFormResponse, useSite, useSystemConfig, useUser } from '../../../shared/hooks/use-site';
 import { HrefLink } from '../../../shared/utility/href-link';
+import { ArrowForwardIcon } from '../../../shared/icons/ArrowForwardIcon';
+import { LoginMessage } from '../../../tailwind/components/LoginMessage';
 
 export const Register: React.FC = () => {
   const { t } = useTranslation();
@@ -45,7 +47,7 @@ export const Register: React.FC = () => {
     }
   }, [form?.registerSuccess, query.success, user]);
 
-  if (!user && !systemConfig.enableRegistrations) {
+  if (!user && !systemConfig.enableRegistrations && !form?.invitation) {
     return <Navigate to="/login" />;
   }
 
@@ -124,6 +126,13 @@ export const Register: React.FC = () => {
           {systemConfig?.registerHeader ? (
             <div dangerouslySetInnerHTML={{ __html: systemConfig.registerHeader }} style={{ marginBottom: '1em' }} />
           ) : null}
+          <LoginMessage>
+            {t('Already have an account?')}{' '}
+            <HrefLink href="/login" style={{ display: 'flex', alignItems: 'center', gap: 5, marginLeft: 'auto' }}>
+              {t('Login')}
+              <ArrowForwardIcon />
+            </HrefLink>
+          </LoginMessage>
           <InputContainer>
             <InputLabel htmlFor="name">{t('Display name')}</InputLabel>
             <Input type="text" name="name" id="name" defaultValue={form?.name} />
@@ -139,10 +148,7 @@ export const Register: React.FC = () => {
           ) : null}
           <InputContainer>
             <LoginActions>
-              <div style={{ flex: 1 }}>
-                {t('Already have an account?')} <HrefLink href="/login">{t('Login')}</HrefLink>
-              </div>
-              <Button type="submit" $primary>
+              <Button type="submit" $primary style={{ marginLeft: 'auto' }}>
                 {t('Register')}
               </Button>
             </LoginActions>

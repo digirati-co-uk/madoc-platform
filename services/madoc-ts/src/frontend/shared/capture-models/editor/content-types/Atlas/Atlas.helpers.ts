@@ -2,7 +2,7 @@ import { ImageService } from '@iiif/presentation-3';
 import { useCallback } from 'react';
 import { createContext } from '../../../helpers/create-context';
 
-export const [useImageServiceContext, ImageServiceContext] = createContext<ImageService>();
+export const [useImageServiceContext, ImageServiceContext] = createContext<ImageService>('ImageService');
 
 export function useCroppedRegion() {
   const imageService = useImageServiceContext();

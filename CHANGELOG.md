@@ -18,6 +18,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added "line box mode" on SVG selector
 - Added "Circle" shape on SVG selector (40 points)
 - New "cut" cursor when holding Shift on SVG selector
+- Max height on search facets + scroll
+- Added "Delete all manifests" to Delete Collection page (MAD-1461)
+- Added a way to filter out Sites from the site list using `[archived]` in the site title. (MAD-1270)
+- Added 2 new buttons to submissions in progress "Manually put into review" and "View submission" (MAD-1467)
+- Added "Assignee" filtering to Review dashboard (MAD-1320)
+- Added "Status" filtering to Review Dashboard (MAD-1320)
+- Added "Clear filters" to Review Dashboard (MAD-1320)
+- Added page block options to "Collection Filter Options" on project collections (MAD-1281)
+- Added link to reviews from "Crowdsourcing" tab in project admin (MAD-1468)
+- Added better links to and from register and login pages (NS-56)
+- Added more information to system status page (NS-43)
+- Added display names for React Contexts for better debugging
 
 
 ### Fixed
@@ -26,8 +38,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed bug when selecting a polygon from the sidebar
 - Fixed broken images on SVG cropped selector 
 - Fixed bug with maxOverZoom
+- Fixed bug with refreshing task list
+- Fixed server rendering (notification count, footer slot)
+- Fixed registrations with an invitation on sites without registrations enabled (MAD-1388)
+- Fixed tooltips on Manifest granularity project (MAD-1434)
+- Fixed Locale name in heading (MAD-1152)
+- Fixed token refreshing
+- Fixed activity stream pagination (NS-52)
 
 ### Changed
+- Add short descriptions for admin Search & Metadata actions + correct site config. page titles (MAD-1466)
+- Changed Default site-wide project configuration to use new form (MAD-1438)
+- Made "Go to site" link a button on project admin (MAD-1465)
+- Changed ordering of Manifest listing - newest first (MAD-1391)
+- Changed notification refetch to every 15 minutes, instead of 2 minutes.
+- Labels on Canvas navigation on a Manifest granularity project (MAD-1429)
+- Changed size of document panel labels
+- Made default annotation styles more visible for annotations panel (MAD-1362)
 - Updated `polygon-editor` to v0.0.2
 - Updated `@iiif/vault` and `@iiif/vault-helpers` to `@iiif/helpers`
 - Updated `@iiif/presentation-3` types to v2.x

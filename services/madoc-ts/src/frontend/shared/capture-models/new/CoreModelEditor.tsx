@@ -212,14 +212,14 @@ export function CoreModelEditor({
         InlineProperties: isSegmentation ? SegmentationInlineProperties : undefined,
       }
     : isEditing || mode === 'transcription'
-    ? {
-        SubmitButton: SimpleSaveButton,
-      }
-    : disablePreview
-    ? {
-        SubmitButton: SubmitWithoutPreview,
-      }
-    : {};
+      ? {
+          SubmitButton: SimpleSaveButton,
+        }
+      : disablePreview
+        ? {
+            SubmitButton: SubmitWithoutPreview,
+          }
+        : {};
   const components = { ..._components, ...(customComponents || {}) };
 
   const profileConfig: { [key: string]: Partial<EditorRenderingConfig> } = {

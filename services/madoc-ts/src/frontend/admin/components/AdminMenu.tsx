@@ -295,6 +295,8 @@ const AdminMainScrollContext = React.createContext({
   },
 });
 
+AdminMainScrollContext.displayName = 'AdminMainScroll';
+
 export const useAdminLayout = () => {
   return useContext(AdminMainScrollContext);
 };

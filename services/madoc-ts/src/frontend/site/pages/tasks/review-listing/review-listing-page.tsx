@@ -14,7 +14,7 @@ import { serverRendererFor } from '../../../../shared/plugins/external/server-re
 import { HrefLink } from '../../../../shared/utility/href-link';
 import { useRelativeLinks } from '../../../hooks/use-relative-links';
 import { useTaskMetadata } from '../../../hooks/use-task-metadata';
-import { Button, ButtonIcon, TextButton } from '../../../../shared/navigation/Button';
+import { Button, ButtonIcon, ButtonRow, TextButton } from '../../../../shared/navigation/Button';
 import { Chevron } from '../../../../shared/icons/Chevron';
 import { useResizeLayout } from '../../../../shared/hooks/use-resize-layout';
 import { LayoutHandle } from '../../../../shared/layout/LayoutContainer';
@@ -132,7 +132,7 @@ export function ReviewListingPage() {
   const params = useParams<{ taskId?: string; slug?: string }>();
   const projectId = params.slug;
   const createLink = useRelativeLinks();
-  const { sort_by = '' } = useLocationQuery();
+  const { sort_by = '', status, assignee } = useLocationQuery();
 
   const { widthB, refs } = useResizeLayout(`review-dashboard-resize`, {
     left: true,
@@ -147,7 +147,9 @@ export function ReviewListingPage() {
     canFetchMore,
     isFetchingMore,
   } = useInfiniteData(ReviewListingPage, undefined, {
-    keepPreviousData: true,
+    // keepPreviousData: true,
+    refetchOnMount: true,
+    forceFetchOnMount: true,
     getFetchMore: lastPage => {
       if (lastPage.pagination.totalPages === 0 || lastPage.pagination.totalPages === lastPage.pagination.page) {
         return undefined;
@@ -188,12 +190,19 @@ export function ReviewListingPage() {
       <DisplayBreadcrumbs currentPage={t('Reviews')} />
 
       <div style={{ paddingBottom: '0.5em' }}>
-        <TextButton
-          as={Link}
-          to={createLink({ projectId: projectId, subRoute: 'tasks', query: { type: 'crowdsourcing-review' } })}
-        >
-          {t('Task view')}
-        </TextButton>
+        <ButtonRow>
+          <TextButton
+            as={Link}
+            to={createLink({ projectId: projectId, subRoute: 'tasks', query: { type: 'crowdsourcing-review' } })}
+          >
+            {t('Task view')}
+          </TextButton>
+          {status || assignee ? (
+            <TextButton as={Link} to={createLink({ projectId: projectId, subRoute: 'reviews', query: {} })}>
+              {t('Reset filters')}
+            </TextButton>
+          ) : null}
+        </ButtonRow>
       </div>
 
       <ReviewListingContainer ref={refs.container as any}>
@@ -319,7 +328,7 @@ function SingleReviewTableRow({
   index: number;
 }) {
   const { ...query } = useLocationQuery();
-  const createLink = useRelativeLinks();
+  const createLink = useRelativeLinks({ subRoute: 'reviews' });
   const navigate = useNavigate();
   const metadata = useTaskMetadata<{ subject?: SubjectSnippet }>(task);
 
@@ -328,7 +337,8 @@ function SingleReviewTableRow({
       tabIndex={index === 0 ? 0 : -1}
       data-review-task-row={index}
       $active={active}
-      onClick={() =>
+      onClick={e => {
+        if ((e.target as any)?.tagName === 'A') return;
         navigate(
           createLink({
             subRoute: `reviews`,
@@ -336,8 +346,8 @@ function SingleReviewTableRow({
             query,
             hash: page ? page.toString() : '1',
           })
-        )
-      }
+        );
+      }}
     >
       {/* manifest */}
       <SimpleTable.Cell style={{ maxWidth: 300 }}>
@@ -365,10 +375,27 @@ function SingleReviewTableRow({
       </SimpleTable.Cell>
       {/* status */}
       <SimpleTable.Cell>
-        <SimpleStatus status={task.status} status_text={task.status_text || ''} />
+        <SimpleStatus
+          onClick={e => {
+            e.stopPropagation();
+            navigate(createLink({ subRoute: `reviews`, taskId: task.id, query: { status: task.status } }));
+          }}
+          status={task.status}
+          status_text={task.status_text || ''}
+        />
       </SimpleTable.Cell>
       {/* assignee */}
-      <SimpleTable.Cell>{task.assignee ? task.assignee.name : ''}</SimpleTable.Cell>
+      <SimpleTable.Cell
+        onClick={e => {
+          if (task.assignee) {
+            e.stopPropagation();
+            navigate(createLink({ subRoute: `reviews`, taskId: task.id, query: { assignee: task.assignee.id } }));
+          }
+        }}
+        className="hover:underline"
+      >
+        {task.assignee ? task.assignee.name : ''}
+      </SimpleTable.Cell>
     </ThickTableRow>
   );
 }

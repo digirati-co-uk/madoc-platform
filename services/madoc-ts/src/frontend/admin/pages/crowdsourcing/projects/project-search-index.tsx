@@ -10,6 +10,15 @@ export const ProjectSearchIndex = () => {
 
   return (
     <div>
+      <p>Index manifests in the project search to:</p>
+      <ul>
+        <li>Add all current manifests in this project to the project search</li>
+        <li>and/or delete manifests that have been deleted from this project from the project search.</li>
+      </ul>
+      <p>
+        This process may take some time, and will be run in the background. Once pressed you can navigate away from this
+        page.
+      </p>
       <Button disabled={isLoading} onClick={() => indexContext()}>
         Index all manifests {isLoading ? ` ${percent}%` : null}
       </Button>

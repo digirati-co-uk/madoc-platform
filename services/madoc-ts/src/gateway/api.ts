@@ -1055,8 +1055,8 @@ export class ApiClient {
     });
   }
 
-  async deleteCollection(id: number): Promise<void> {
-    return this.request(`/api/madoc/iiif/collections/${id}`, {
+  async deleteCollection(id: number, query?: { recursive?: boolean }): Promise<void> {
+    return this.request(`/api/madoc/iiif/collections/${id}${query ? `?${stringify(query)}` : ''}`, {
       method: 'DELETE',
     });
   }

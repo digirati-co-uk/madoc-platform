@@ -140,6 +140,8 @@ export function getDefaultContextValue(): EditorRenderingConfig {
 
 const Context = React.createContext<EditorRenderingConfig | null>(null);
 
+Context.displayName = 'EditorSlots';
+
 export function useSlotContext() {
   const ctx = useContext(Context);
   if (!ctx) {
@@ -155,6 +157,8 @@ export function useSlotConfiguration() {
 }
 
 const ProfileContext = React.createContext<string | undefined>(undefined);
+
+ProfileContext.displayName = 'Profile';
 
 export const useProfile = () => {
   return useContext(ProfileContext);

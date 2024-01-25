@@ -15,7 +15,19 @@ import { useProjectPageConfiguration } from '../hooks/use-project-page-configura
 import { useSiteConfiguration } from '../features/SiteConfigurationContext';
 import { StartContributingButton } from '../features/project/StartContributingButton';
 
-export const CollectionFilterOptions: React.FC = () => {
+export interface CollectionFilterOptionsProps {
+  buttons?: {
+    hideFilterButton?: boolean;
+    hideSearchButton?: boolean;
+    hideRandomManifest?: boolean;
+    hideRandomCanvas?: boolean;
+    hideStartContributing?: boolean;
+  };
+}
+
+export function CollectionFilterOptions(props: CollectionFilterOptionsProps) {
+  const { hideFilterButton, hideSearchButton, hideRandomManifest, hideRandomCanvas, hideStartContributing } =
+    props.buttons || {};
   const { t } = useTranslation();
   const { data } = usePaginatedData(CollectionLoader);
 
@@ -32,9 +44,9 @@ export const CollectionFilterOptions: React.FC = () => {
 
   return (
     <>
-      <StartContributingButton />
+      {hideStartContributing ? null : <StartContributingButton />}
       <ButtonRow>
-        {showDoneButton || filter ? (
+        {!hideFilterButton && (showDoneButton || filter) ? (
           <Button
             as={HrefLink}
             href={createLink({
@@ -44,19 +56,53 @@ export const CollectionFilterOptions: React.FC = () => {
             {filter ? t('Show completed') : t('Hide completed')}
           </Button>
         ) : null}
-        <Button as={Link} to={createLink({ subRoute: 'search' })}>
-          {t('Search this collection')}
-        </Button>
-        {allowCollectionNavigation && !options.hideRandomManifest && <GoToRandomManifest />}
-        {allowManifestNavigation && !options.hideRandomCanvas && <GoToRandomCanvas />}
+        {hideSearchButton ? null : (
+          <Button as={Link} to={createLink({ subRoute: 'search' })}>
+            {t('Search this collection')}
+          </Button>
+        )}
+        {!hideRandomManifest && allowCollectionNavigation && !options.hideRandomManifest ? (
+          <GoToRandomManifest />
+        ) : null}
+        {!hideRandomCanvas && allowManifestNavigation && !options.hideRandomCanvas ? <GoToRandomCanvas /> : null}
       </ButtonRow>
     </>
   );
-};
+}
 
 blockEditorFor(CollectionFilterOptions, {
   requiredContext: ['collection'],
-  editor: {},
+  defaultProps: {
+    buttons: {},
+  },
+  editor: {
+    buttons: {
+      type: 'checkbox-list-field',
+      label: 'Button display options',
+      options: [
+        {
+          label: 'Hide filter button',
+          value: 'hideFilterButton',
+        },
+        {
+          label: 'Hide search button',
+          value: 'hideSearchButton',
+        },
+        {
+          label: 'Hide random manifest',
+          value: 'hideRandomManifest',
+        },
+        {
+          label: 'Hide random canvas',
+          value: 'hideRandomCanvas',
+        },
+        {
+          label: 'Hide start contributing',
+          value: 'hideStartContributing',
+        },
+      ],
+    },
+  },
   label: 'Collection filter options',
   type: 'default.CollectionFilterOptions',
 });

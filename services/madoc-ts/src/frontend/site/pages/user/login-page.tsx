@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
 import { Button } from '../../../shared/navigation/Button';
 import { ErrorMessage } from '../../../shared/callouts/ErrorMessage';
-import { FlexSpacer } from '../../../shared/layout/FlexSpacer';
 import { Heading1 } from '../../../shared/typography/Heading1';
 import { Input, InputContainer, InputLabel } from '../../../shared/form/Input';
 import { LoginActions, LoginContainer } from '../../../shared/layout/LoginContainer';
@@ -12,6 +11,8 @@ import { SuccessMessage } from '../../../shared/callouts/SuccessMessage';
 import { useLocationQuery } from '../../../shared/hooks/use-location-query';
 import { useFormResponse, useSite, useSystemConfig, useUser } from '../../../shared/hooks/use-site';
 import { HrefLink } from '../../../shared/utility/href-link';
+import { ArrowForwardIcon } from '../../../shared/icons/ArrowForwardIcon';
+import { LoginMessage } from '../../../tailwind/components/LoginMessage';
 
 export const LoginPage: React.FC = () => {
   const { t } = useTranslation();
@@ -33,6 +34,17 @@ export const LoginPage: React.FC = () => {
         <Heading1 $margin>{t('Login')}</Heading1>
         {system?.loginHeader ? (
           <div dangerouslySetInnerHTML={{ __html: system.loginHeader }} style={{ marginBottom: '1em' }} />
+        ) : null}
+        {system.enableRegistrations ? (
+          <LoginMessage>
+            <span>{t(`Don't have an account?`)}</span>
+            <HrefLink
+              href={`/register?${stringify({ redirect })}`}
+              style={{ display: 'flex', alignItems: 'center', gap: 5, marginLeft: 'auto' }}
+            >
+              {t('Sign up now')} <ArrowForwardIcon />
+            </HrefLink>
+          </LoginMessage>
         ) : null}
         <form method="post" action={`/s/${site.slug}/login?${stringify({ redirect })}`}>
           <InputContainer $error={didError}>

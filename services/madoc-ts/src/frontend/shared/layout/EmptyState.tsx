@@ -33,7 +33,7 @@ export const EmptyState = styled.div<{ $box?: boolean; $noMargin?: boolean }>`
   > span,
   > div {
     font-size: 0.8em;
-    width: 400px;
+    max-width: 600px;
     margin-top: 1em;
     color: #717171;
   }

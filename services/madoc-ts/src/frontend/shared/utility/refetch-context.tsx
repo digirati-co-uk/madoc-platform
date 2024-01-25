@@ -4,6 +4,8 @@ const RefetchReactContext = React.createContext(async () => {
   // no-op
 });
 
+RefetchReactContext.displayName = 'Refetch';
+
 export function useRefetch() {
   return useContext(RefetchReactContext);
 }

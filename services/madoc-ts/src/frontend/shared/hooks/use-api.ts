@@ -3,6 +3,8 @@ import { ApiClient } from '../../../gateway/api';
 
 export const ApiContext = createContext<ApiClient | undefined>(undefined);
 
+ApiContext.displayName = 'Api';
+
 export const useApi = () => {
   const api = useContext(ApiContext);
 

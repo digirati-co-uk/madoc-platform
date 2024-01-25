@@ -39,7 +39,7 @@ export const parseJwt: RouteMiddleware<{ slug?: string }> = async (context, next
   // Only from the context of the Madoc site /s/{slug}/madoc
   if (slug) {
     const cookieName = context.externalConfig.cookieName || 'madoc';
-    const refreshWindow = context.externalConfig.tokenRefresh || 60 * 60 * 24 * 1000; // 24 hours.
+    const refreshWindow = context.externalConfig.tokenRefresh || DEFAULT_TOKEN_REFRESH; // 24 hours.
     const cookie = context.cookies.get(`${cookieName}/${slug}`, { signed: process.env.NODE_ENV !== 'test' });
 
     if (cookie) {

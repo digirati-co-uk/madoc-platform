@@ -32,6 +32,7 @@ export const RootLoader: UniversalComponent<RootLoaderType> = createUniversalCom
     const user = useUser();
     const { data } = useStaticData(RootLoader, [], {
       cacheTime: 24 * 60 * 60,
+      keepPreviousData: true,
     });
     const { i18n } = useTranslation();
     const siteTheme = useSiteTheme();

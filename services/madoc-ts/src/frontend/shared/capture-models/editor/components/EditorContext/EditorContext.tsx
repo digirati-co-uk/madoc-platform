@@ -5,7 +5,7 @@ import { DocumentStore } from '../../stores/document/document-store';
 import { StructureStore } from '../../stores/structure/structure-store';
 import { useDebouncedCallback } from 'use-debounce';
 
-export const [useCaptureModel, CaptureModelProvider] = createContext<CaptureModel>();
+export const [useCaptureModel, CaptureModelProvider] = createContext<CaptureModel>('CaptureModel');
 
 const ChangeObserver: React.FC<{
   onDocumentChange: (doc: CaptureModel['document']) => void;

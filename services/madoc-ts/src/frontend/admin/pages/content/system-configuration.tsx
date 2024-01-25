@@ -86,11 +86,11 @@ export const SiteSystemConfiguration: React.FC = () => {
   return (
     <>
       <AdminHeader
-        title="Site configuration"
+        title="Site general configuration"
         breadcrumbs={[
           { label: 'Site admin', link: '/' },
           { label: 'Configure site', link: '/configure/site' },
-          { label: 'Site-wide configuration', link: '/configure/site/system' },
+          { label: 'Site general configuration', link: '/configure/site/system' },
         ]}
       />
       <WidePage>

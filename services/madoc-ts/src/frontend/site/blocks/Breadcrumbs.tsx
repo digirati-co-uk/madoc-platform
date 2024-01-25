@@ -132,6 +132,8 @@ export const BreadcrumbDivider = styled(DividerIcon)`
 
 const BreadcrumbReactContext = React.createContext<BreadcrumbContextType>({});
 
+BreadcrumbReactContext.displayName = 'Breadcrumbs';
+
 export const useBreadcrumbs: () => BreadcrumbContextType = () => {
   return useContext(BreadcrumbReactContext) || {};
 };

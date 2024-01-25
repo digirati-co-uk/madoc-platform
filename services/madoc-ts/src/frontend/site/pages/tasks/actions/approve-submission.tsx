@@ -67,9 +67,9 @@ export const ApproveSubmission: React.FC<{
                 }
               : undefined,
         })
-        .then(() => {
+        .then(async () => {
+          await onApprove();
           setIsLoading(false);
-          onApprove();
         });
     }
   }, [acceptedRevision, api.crowdsourcing, api.projectTemplates, onApprove, project, site.id, userTaskId]);

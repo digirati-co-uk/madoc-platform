@@ -1,3 +1,4 @@
+import { DEFAULT_TOKEN_REFRESH } from '../../config';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { NotFound } from '../../utility/errors/not-found';
 import { getJwtCookies } from '../../utility/get-jwt-cookies';
@@ -7,13 +8,15 @@ export const refreshToken: RouteMiddleware<{ slug: string }, { token: string }> 
   const { token } = context.requestBody;
 
   // Configuration
-  const refreshWindow = context.externalConfig.tokenRefresh || 60 * 60 * 24; // 24 hours.
+  const refreshWindow = context.externalConfig.tokenRefresh || DEFAULT_TOKEN_REFRESH; // 24 hours.
 
   try {
-    const { canRefresh, hasExpired, siteId, details: userResp } = await context.siteManager.refreshExpiredToken(
-      token,
-      refreshWindow
-    );
+    const {
+      canRefresh,
+      hasExpired,
+      siteId,
+      details: userResp,
+    } = await context.siteManager.refreshExpiredToken(token, refreshWindow);
 
     if (!hasExpired) {
       context.response.status = 200;

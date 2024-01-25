@@ -12,6 +12,8 @@ interface ViewerSavingContextType {
 
 export const ViewerSavingContext = createContext<ViewerSavingContextType>({});
 
+ViewerSavingContext.displayName = 'ViewerSaving';
+
 function useViewerSavingContext() {
   return useContext(ViewerSavingContext) || {};
 }

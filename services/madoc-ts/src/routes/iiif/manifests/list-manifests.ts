@@ -57,6 +57,7 @@ export const listManifests: RouteMiddleware = async context => {
         canvasSubQuery,
         labelQuery,
         onlyPublished,
+        oldestFirst: true,
       }),
       siteId,
       ['label']

@@ -26,6 +26,7 @@ import { CreateRouteType } from '../../types';
 import { Helmet } from 'react-helmet';
 import localeCodes from 'locale-codes';
 import '../required-modules';
+import { RootLoader } from '../../site/pages/loaders/root-loader';
 
 function makeRoutes(routeComponents: any) {
   return [
@@ -204,12 +205,20 @@ export function createServerRenderer(
       const headerSlotRequest = prefetchCache.prefetchQuery(['slot-request', { slotIds: ['global-header'] }], () =>
         getSlots({ slotIds: ['global-header'] }, { collector: blockCollector })
       );
+      const footerSlotRequest = prefetchCache.prefetchQuery(['slot-request', { slotIds: ['global-footer'] }], () =>
+        getSlots({ slotIds: ['global-footer'] }, { collector: blockCollector })
+      );
 
       requests.push(slotRequest);
       requests.push(headerSlotRequest);
+      requests.push(footerSlotRequest);
 
-      await headerSlotRequest;
-      await slotRequest;
+      if (user) {
+        const notificationsSlotRequest = prefetchCache.prefetchQuery(['notifications-count'], () =>
+          userApi.notifications.getNotificationCount()
+        );
+        requests.push(notificationsSlotRequest);
+      }
 
       if (site) {
         const processedWithHooks = [];
@@ -242,6 +251,9 @@ export function createServerRenderer(
       let label = localeCodes.getByTag(ln).local || localeCodes.getByTag(ln).name;
       if (label === 'Welsh') {
         label = 'Cymraeg';
+      }
+      if (label === 'Dutch') {
+        label = 'Nederlands';
       }
 
       return { label: label, code: ln };

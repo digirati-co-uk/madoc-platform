@@ -38,6 +38,8 @@ const SlotReactContext = React.createContext<ReactContextType>({
   },
 });
 
+SlotReactContext.displayName = 'Slot';
+
 export const useSlots = () => {
   return useContext(SlotReactContext);
 };

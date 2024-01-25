@@ -34,7 +34,7 @@ export const DeleteProject: UniversalComponent<DeleteProjectType> = createUniver
         {data ? (
           <>
             <p>
-              This project contains <strong>{data?.collectionCount}</strong> collections, and
+              This project contains <strong>{data?.collectionCount}</strong> collections, and{' '}
               <strong>{data?.manifestCount}</strong> manifests. These will not be deleted.
             </p>
             {data.search?.indexed ? <p>This item is currently in the search index, it will be removed</p> : null}
