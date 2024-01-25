@@ -58,6 +58,8 @@ import mitt, { Handler } from 'mitt';
 
 const SelectorHelperReactContext = createContext(mitt());
 
+SelectorHelperReactContext.displayName = 'SelectorHelper';
+
 export type SelectorHelperEventTypes =
   | 'click'
   | 'hover'

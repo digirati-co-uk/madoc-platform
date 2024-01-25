@@ -58,6 +58,8 @@ export function getDefaultAnnotationStyles(): AnnotationStyles['theme'] {
 }
 const AnnotationStyleContext = createContext<AnnotationStyles['theme']>(getDefaultAnnotationStyles());
 
+AnnotationStyleContext.displayName = 'AnnotationStyle';
+
 export function useAnnotationStyles() {
   return useContext(AnnotationStyleContext);
 }

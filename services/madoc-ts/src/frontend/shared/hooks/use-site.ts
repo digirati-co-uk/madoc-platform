@@ -24,6 +24,8 @@ const SiteReactContext = React.createContext<
   | undefined
 >(undefined);
 
+SiteReactContext.displayName = 'Site';
+
 export const useSiteTheme = () => {
   const details = useContext(SiteReactContext);
 

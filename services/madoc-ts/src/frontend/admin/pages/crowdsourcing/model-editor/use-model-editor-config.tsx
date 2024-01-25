@@ -9,6 +9,8 @@ export type ModelEditorConfig = {
 
 const ModelEditorConfigContext = React.createContext<ModelEditorConfig | null>(null);
 
+ModelEditorConfigContext.displayName = 'ModelEditorConfig';
+
 export const ModelEditorProvider: React.FC<{ template?: string }> = ({ template, children }) => {
   const config = useProjectTemplate(template);
   const editorConfig = config?.configuration?.captureModels;

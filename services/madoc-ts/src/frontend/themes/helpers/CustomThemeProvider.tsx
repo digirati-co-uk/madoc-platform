@@ -21,6 +21,8 @@ const CustomTheme = React.createContext<{
   themeOverrides: {},
 });
 
+CustomTheme.displayName = 'Theme';
+
 export const nullTheme = {};
 
 export function usePageTheme(page: any) {

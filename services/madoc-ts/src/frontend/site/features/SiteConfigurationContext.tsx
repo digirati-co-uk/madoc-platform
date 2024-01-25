@@ -21,6 +21,8 @@ const defaultSiteConfigurationContext: SiteConfigurationContext = {
 
 const Context = React.createContext<SiteConfigurationContext>(defaultSiteConfigurationContext);
 
+Context.displayName = 'SiteConfiguration';
+
 export function useSiteConfiguration() {
   return useContext(Context);
 }

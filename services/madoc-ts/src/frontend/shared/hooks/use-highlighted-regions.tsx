@@ -48,6 +48,8 @@ const defaultContext: HighlightedRegionContext = {
 
 const HighlightedRegions = React.createContext(defaultContext);
 
+HighlightedRegions.displayName = 'HighlightedRegions';
+
 export function useHighlightedRegions() {
   return useContext(HighlightedRegions);
 }
