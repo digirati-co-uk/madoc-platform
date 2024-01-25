@@ -2,9 +2,9 @@ import styled, { css } from 'styled-components';
 
 export const DocumentLabel = styled.div`
   position: relative;
-  font-size: 11px;
-  font-weight: 600;
-  color: #999;
+  font-size: 13px;
+  font-weight: 500;
+  color: #555;
   display: flex;
   align-items: center;
 `;
@@ -17,7 +17,7 @@ export const DocumentLabelIcon = styled.div`
 `;
 
 export const DocumentDescription = styled.div`
-  font-size: 11px;
+  font-size: 13px;
   color: #999;
 `;
 

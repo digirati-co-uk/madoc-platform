@@ -52,6 +52,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Changed ordering of Manifest listing - newest first (MAD-1391)
 - Changed notification refetch to every 15 minutes, instead of 2 minutes.
 - Labels on Canvas navigation on a Manifest granularity project (MAD-1429)
+- Changed size of document panel labels
 - Updated `polygon-editor` to v0.0.2
 - Updated `@iiif/vault` and `@iiif/vault-helpers` to `@iiif/helpers`
 - Updated `@iiif/presentation-3` types to v2.x
