@@ -4,4 +4,5 @@ export type ProjectSnippet = {
   id: number;
   label: InternationalString;
   summary: InternationalString;
+  thumbnail?: string;
 };

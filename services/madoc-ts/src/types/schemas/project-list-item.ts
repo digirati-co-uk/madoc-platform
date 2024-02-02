@@ -10,4 +10,5 @@ export type ProjectListItem = {
   summary: InternationalString;
   status: number;
   template?: string;
+  thumbnail?: string;
 };
