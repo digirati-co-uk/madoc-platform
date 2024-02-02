@@ -31,41 +31,47 @@ export const ViewSelector: React.FC<{
 
     if (selector.type === 'polygon-selector' && selector.state && selector.state.shape) {
       const points = selector.state.shape.points as Array<[number, number]>;
-      if (points && points.length > 2) {
-        const x1 = Math.min(...points.map(p => p[0]));
-        const y1 = Math.min(...points.map(p => p[1]));
-        const x2 = Math.max(...points.map(p => p[0]));
-        const y2 = Math.max(...points.map(p => p[1]));
+      const isOpen = selector.state.shape.open;
+      if (points && ((points.length > 1 && isOpen) || (points.length > 2 && !isOpen))) {
+        const padding = 30;
+        const x1 = Math.min(...points.map(p => p[0])) - padding;
+        const y1 = Math.min(...points.map(p => p[1])) - padding;
+        const x2 = Math.max(...points.map(p => p[0])) + padding;
+        const y2 = Math.max(...points.map(p => p[1])) + padding;
         const cropped = croppedRegion({ x: x1, y: y1, width: x2 - x1, height: y2 - y1 });
         if (cropped) {
           const ratio = 1;
 
           setImage(cropped);
-          const Shape = selector.state.shape.open ? 'polyline' : 'polygon';
+
+          const Shape = isOpen ? 'polyline' : 'polygon';
+          const svgPoints = points.map(p => `${(p[0] - x1) * ratio},${(p[1] - y1) * ratio}`).join(' ');
+
           setMask(
             <svg width="100%" height="100%" viewBox={`0 0 ${(x2 - x1) * ratio} ${(y2 - y1) * ratio}`}>
               {!didError ? (
                 <>
                   <defs>
                     <mask id={`selector-mask-${selector.id}`}>
-                      <Shape
-                        points={points.map(p => `${(p[0] - x1) * ratio},${(p[1] - y1) * ratio}`).join(' ')}
-                        style={{ fill: 'white', stroke: 'white', strokeWidth: 2 }}
-                      />
+                      <rect x="0" y="0" width="100%" height="100%" fill="rgba(255, 255, 255, .1)" />
+                      <Shape points={svgPoints} style={{ fill: 'white', stroke: '#000', strokeWidth: 4 }} />
                     </mask>
                   </defs>
                   <image
                     href={cropped}
-                    mask={`url(#selector-mask-${selector.id})`}
+                    mask={isOpen ? undefined : `url(#selector-mask-${selector.id})`}
                     width="100%"
                     height="100%"
                     {...({ onError: handleSvgError } as any)}
                   />
+                  {isOpen ? (
+                    <polyline points={svgPoints} style={{ fill: 'none', stroke: 'red', strokeWidth: 4 }} />
+                  ) : null}
                 </>
               ) : (
                 <Shape
-                  points={points.map(p => `${(p[0] - x1) * ratio},${(p[1] - y1) * ratio}`).join(' ')}
-                  style={{ fill: 'white', stroke: '#000', strokeWidth: 2 }}
+                  points={svgPoints}
+                  style={isOpen ? { stroke: '#000', strokeWidth: 2 } : { fill: 'white', stroke: 'red', strokeWidth: 2 }}
                 />
               )}
             </svg>
