@@ -60,6 +60,7 @@ export const listProjects: RouteMiddleware = async context => {
       task_id: project.task_id,
       status: project.status,
       template: project.template_name,
+      thumbnail: project.placeholder_image,
     };
   });
 

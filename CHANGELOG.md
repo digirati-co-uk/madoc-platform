@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added better links to and from register and login pages (NS-56)
 - Added more information to system status page (NS-43)
 - Added display names for React Contexts for better debugging
+- Added new "Grid view" for projects, enabled in page blocks
 
 
 ### Fixed

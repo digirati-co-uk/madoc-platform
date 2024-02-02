@@ -1,9 +1,7 @@
 import { InternationalString } from '@iiif/presentation-3';
-import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
-import { Project } from '../../../types/project-full';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 import { ObjectContainer } from '../../shared/atoms/ObjectContainer';
 import { ProjectStatus } from '../../shared/atoms/ProjectStatus';
@@ -11,12 +9,13 @@ import { useAccessibleColor } from '../../shared/hooks/use-accessible-color';
 import { Button } from '../../shared/navigation/Button';
 import { Heading3, Subheading3 } from '../../shared/typography/Heading3';
 import { LocaleString } from '../../shared/components/LocaleString';
+import { ProjectListItem } from '../../../types/schemas/project-list-item';
 
 interface SingleProjectProps {
   customButtonLabel?: InternationalString;
   project?: { id: string };
   background?: string;
-  data?: Project;
+  data?: ProjectListItem;
   radius?: string;
 }
 
