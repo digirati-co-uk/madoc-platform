@@ -29,7 +29,7 @@ export function ViewEntity({
   const ref = useRef<HTMLDivElement>(null);
   const helper = useSelectorHelper();
   const [isCollapsed, setIsCollapsed] = useState(collapsed || !!entity.selector);
-  const selector = entity.selector ? resolveSelector(entity.selector, highlightRevisionChanges) : undefined;
+  const selector = entity.selector ? resolveSelector(entity.selector, highlightRevisionChanges, true) : undefined;
   const selectorId = selector?.id;
   const { t: tModel } = useModelTranslation();
   const label = getEntityLabel(entity, undefined, false, tModel);
