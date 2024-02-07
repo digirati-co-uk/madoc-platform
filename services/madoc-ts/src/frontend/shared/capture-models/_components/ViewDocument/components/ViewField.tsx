@@ -20,7 +20,7 @@ export function ViewField({
 
   const helper = useSelectorHelper();
 
-  const selector = field.selector ? resolveSelector(field.selector, revisionId) : undefined;
+  const selector = field.selector ? resolveSelector(field.selector, revisionId, true) : undefined;
   const selectorId = selector?.id;
   const [isOn, trigger] = useDecayState();
 

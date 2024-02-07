@@ -1,18 +1,42 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { HTMLPortal, mergeStyles, useAtlas } from '@atlas-viewer/atlas';
+import { useMemo, useState } from 'react';
+import { HTMLPortal } from '@atlas-viewer/atlas';
 import { HotSpot } from '../atoms/HotSpot';
 import { useSelectorEvents } from '../capture-models/editor/stores/selectors/selector-helper';
 import { ReadOnlyAnnotation } from '../hooks/use-read-only-annotations';
+import { useCanvas } from 'react-iiif-vault';
 
 // Avoid bad types from Atlas.
 const CustomHTMLPortal = HTMLPortal as any;
 
-export function ViewReadOnlyAnnotation({ id, style, target, ...props }: ReadOnlyAnnotation) {
+function isBox(target: any): target is { x: number; y: number; width: number; height: number } {
+  return typeof target === 'object' && 'x' in target && 'y' in target && 'width' in target && 'height' in target;
+}
+
+function getBounds(target: ReadOnlyAnnotation['target'], { width, height }: { width?: number; height?: number }) {
+  if (isBox(target)) {
+    return target;
+  }
+
+  if (target && target.shape && target.shape.points) {
+    const x = target.shape.points.map((p: any) => p[0]);
+    const y = target.shape.points.map((p: any) => p[1]);
+    return {
+      x: Math.min(...x),
+      y: Math.min(...y),
+      width: Math.max(...x) - Math.min(...x),
+      height: Math.max(...y) - Math.min(...y),
+    };
+  }
+
+  return { x: 0, y: 0, width: 0, height: 0 };
+}
+
+export function ViewReadOnlyAnnotation({ id, style, target: originalTarget, ...props }: ReadOnlyAnnotation) {
+  const canvas = useCanvas();
   const { onClick, onHover } = useSelectorEvents(id);
   const [isOpen, setIsOpen] = useState(false);
-  const atlas = useAtlas();
   const [isHover, setIsHover] = useState(false);
-  const { interactive, hotspot, hotspotSize, hidden, ...allStyles } = style;
+  const { interactive, hotspot, hotspotSize, hidden: _, ...allStyles } = style;
 
   const styleToApply = useMemo(() => {
     if (hotspot) {
@@ -22,30 +46,56 @@ export function ViewReadOnlyAnnotation({ id, style, target, ...props }: ReadOnly
     return allStyles;
   }, [allStyles, hotspot, isHover, isOpen]);
 
+  if (!canvas) {
+    return null;
+  }
+
+  const target = getBounds(originalTarget, canvas);
+
+  const Shape = 'shape' as any;
+  const Box = 'box' as any;
+
+  const getShape = () => {
+    if (!originalTarget || !target) {
+      return null;
+    }
+
+    if (isBox(originalTarget)) {
+      return (
+        <Box
+          id={`${hotspot ? 'hotspot' : 'non-hotspot'}/box-${id}`}
+          html
+          interactive={interactive}
+          {...props}
+          style={styleToApply}
+          target={{ x: 0, y: 0, width: target.width, height: target.height }}
+          onClick={onClick}
+          onMouseEnter={onHover}
+        />
+      );
+    }
+
+    return (
+      <Shape
+        id={`${hotspot ? 'hotspot' : 'non-hotspot'}/shape-${id}`}
+        points={originalTarget.shape.points.map(p => [p[0] - target.x, p[1] - target.y])}
+        open={originalTarget.shape.open}
+        relativeStyle={true}
+        {...props}
+        style={style}
+        target={{ x: 0, y: 0, width: target.width, height: target.height }}
+        onClick={onClick}
+        onMouseEnter={onHover}
+      />
+    );
+  };
+
   return (
-    <world-object
-      id={`readonly-${id}`}
-      x={target.x}
-      y={target.y}
-      width={target.width}
-      height={target.height}
-      onClick={() => {
-        onClick();
-      }}
-      onMouseEnter={() => {
-        onHover();
-      }}
-    >
+    <world-object id={`readonly-${id}`} x={target.x} y={target.y} width={target.width} height={target.height}>
       {hotspot ? (
         <>
-          <box
-            id={`hotspot/${id}`}
-            html
-            interactive={interactive}
-            {...props}
-            style={styleToApply}
-            target={{ x: 0, y: 0, width: target.width, height: target.height }}
-          />
+          {getShape()}
+
           <CustomHTMLPortal
             id={`portal/${id}`}
             relativeStyle
@@ -64,14 +114,7 @@ export function ViewReadOnlyAnnotation({ id, style, target, ...props }: ReadOnly
           </CustomHTMLPortal>
         </>
       ) : (
-        <box
-          id={`non-hotspot/${id}`}
-          html
-          interactive={interactive}
-          {...props}
-          style={styleToApply}
-          target={{ x: 0, y: 0, width: target.width, height: target.height }}
-        />
+        getShape()
       )}
     </world-object>
   );
