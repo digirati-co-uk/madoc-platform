@@ -131,6 +131,7 @@
     "memory-cache": "^0.2.0",
     "mirador": "^3.2.0",
     "mirador-image-tools": "^0.11.0",
+    "mitt": "3.0.1",
     "mjml": "^4.9.3",
     "mjml-react": "^2.0.0",
     "mkdirp": "^1.0.4",

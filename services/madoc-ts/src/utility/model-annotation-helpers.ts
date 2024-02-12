@@ -1,6 +1,7 @@
 import { AnnotationW3C } from '@iiif/presentation-3';
 import { Annotation } from '@iiif/presentation-2';
 import { BaseField } from '../frontend/shared/capture-models/types/field-types';
+import { PolygonSelectorProps } from '../frontend/shared/capture-models/editor/selector-types/PolygonSelector/PolygonSelector';
 
 export function captureModelFieldToW3CAnnotation(
   id: string,
@@ -64,8 +65,8 @@ export function polygonSelectorToW3CTarget(canvas: string, selector: BaseField['
     return canvas;
   }
 
-  const selectorState = selector?.state;
-  const points: Array<[number, number]> = selectorState?.shape?.points || [];
+  const selectorState: PolygonSelectorProps['state'] = selector?.state;
+  const points: Array<[number, number]> = selectorState?.shape?.points || ([] as any);
   if (!points.length) {
     return canvas;
   }
@@ -77,7 +78,7 @@ export function polygonSelectorToW3CTarget(canvas: string, selector: BaseField['
       type: 'SvgSelector',
       value: `<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'><g><path d='M${points
         .map(p => p.join(','))
-        .join(' ')}' /></g></svg>`,
+        .join(' ')}${selectorState?.shape.open ? '' : ' Z'}' /></g></svg>`,
     },
   };
 }
