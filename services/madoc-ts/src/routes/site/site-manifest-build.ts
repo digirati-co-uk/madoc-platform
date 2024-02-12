@@ -4,7 +4,7 @@ import { sql } from 'slonik';
 import { deprecationGetItemsJson } from '../../deprecations/01-local-source-canvas';
 import { gatewayHost } from '../../gateway/api.server';
 import { RouteMiddleware } from '../../types/route-middleware';
-import { IIIFBuilder } from 'iiif-builder';
+import { IIIFBuilder } from '@iiif/builder';
 import { NotFound } from '../../utility/errors/not-found';
 import { createMetadataReducer } from '../../utility/iiif-metadata';
 import cache from 'memory-cache';
