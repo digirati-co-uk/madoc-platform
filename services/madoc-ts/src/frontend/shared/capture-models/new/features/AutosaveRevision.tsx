@@ -27,15 +27,10 @@ export const AutosaveRevision: React.FC = () => {
     if (isEmpty) {
       return;
     }
-    localforage
-      .setItem(`autosave-${currentRevision.captureModelId}`, currentRevision)
-      .then(value => {
-        console.log('saved!');
-      })
-      .catch(err => {
-        console.log(err);
-        throw new Error(t('Unable to save your submission'));
-      });
+    localforage.setItem(`autosave-${currentRevision.captureModelId}`, currentRevision).catch(err => {
+      console.log(err);
+      throw new Error(t('Unable to save your submission'));
+    });
   });
 
   const [getSavedRevision, rev] = useMutation(async () => {
@@ -62,14 +57,9 @@ export const AutosaveRevision: React.FC = () => {
       importRevision({ revisionRequest: rev.data });
       selectRevision({ revisionId: rev.data.revision.id });
 
-      localforage
-        .removeItem(`autosave-${currentRevision?.captureModelId}`)
-        .then(() => {
-          console.log('Key is cleared!');
-        })
-        .catch(err => {
-          console.log(err);
-        });
+      localforage.removeItem(`autosave-${currentRevision?.captureModelId}`).catch(err => {
+        console.log(err);
+      });
     }
   };
 
