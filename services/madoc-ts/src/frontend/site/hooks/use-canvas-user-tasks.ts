@@ -81,7 +81,7 @@ export function useCanvasUserTasks() {
 
     const maxContributors =
       canvasTask?.maxContributors && canvasTask.totalContributors
-        ? canvasTask.maxContributors >= canvasTask.totalContributors
+        ? canvasTask.maxContributors <= canvasTask.totalContributors
         : false;
 
     // if max contributors reached check that the current user isnt one of them
