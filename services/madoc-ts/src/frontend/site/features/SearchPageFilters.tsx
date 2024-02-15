@@ -112,7 +112,7 @@ export const SearchPageFilters: React.FC<SearchPageFiltersProps> = ({ checkBoxCo
                       checked={isSelected !== 0}
                       onChange={(e: { target: { checked: any } }) =>
                         e.target.checked
-                          ? queueSingleFacet(item.key, item.values)
+                          ? queueSingleFacet(item.key, item.values, item.type)
                           : dequeueSingleFacet(item.key, item.values)
                       }
                     />

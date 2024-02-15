@@ -6,7 +6,6 @@ import { useSiteConfiguration } from '../features/SiteConfigurationContext';
 import { useRouteContext } from './use-route-context';
 import { useSearchQuery } from './use-search-query';
 import { useBreadcrumbs } from '../../shared/components/Breadcrumbs';
-import { useSearchFacets } from './use-search-facets';
 
 function normalizeDotKey(key: string) {
   return key.startsWith('metadata.') ? key.slice('metadata.'.length).toLowerCase() : key.toLowerCase();
@@ -18,7 +17,6 @@ export function useSearch() {
 
   const { projectId, collectionId, manifestId } = useRouteContext();
   const { fulltext, appliedFacets, page, rscType } = useSearchQuery();
-  const { clearAllFacets } = useSearchFacets();
   const {
     project: { searchStrategy, claimGranularity, searchOptions },
   } = useSiteConfiguration();
@@ -27,8 +25,7 @@ export function useSearch() {
 
   useEffect(() => {
     if (topicId) {
-      // clearAllFacets();
-      appliedFacets.push({ k: 'entity', v: topicId });
+      appliedFacets.push({ k: 'entity', v: topicId, t: 'entity' });
     }
     return;
   }, [appliedFacets, topicId, topic]);
@@ -55,21 +52,21 @@ export function useSearch() {
     return [returnList, displayOrder, idMap];
   }, [searchFacetConfig.data, topicId]);
 
-  const topicFacets = appliedFacets.map(facet =>
-    facet.k === 'entity'
+  const topicFacets = appliedFacets.map(facet => {
+    return facet.k === 'entity'
       ? {
           type: 'entity',
           group_id: facet.v,
         }
       : {
-          type: 'metadata',
+          type: facet.t,
           subtype: facet.k,
           value: facet.v,
-        }
-  );
+        };
+  });
 
   const searchQFacets = appliedFacets.map(facet => ({
-    type: 'metadata',
+    type: facet.t,
     subtype: facet.k,
     value: facet.v,
   }));
@@ -137,32 +134,65 @@ export function useSearch() {
     const metadataFacets = searchResults.resolvedData?.facets?.metadata || {};
     const entityFacets = searchResults.resolvedData?.facets?.entity || {};
 
-    const facetType = { ...metadataFacets, ...entityFacets };
+    // const facetType = { ...metadataFacets, ...entityFacets };
     const showAllFacets = facetDisplayOrder.length === 0;
-    for (const facet of Object.keys(facetType)) {
-      const values = Object.keys(facetType[facet]);
-      const normalisedKey = facet.toLowerCase();
+    // for (const facet of Object.keys(facetType)) {
+    //   const values = Object.keys(facetType[facet]);
+    //   const normalisedKey = facet.toLowerCase();
 
-      if (showAllFacets) {
-        facetIdMap[facet] = {
+    for (const mfacet of Object.keys(metadataFacets)) {
+      const values = Object.keys(metadataFacets[mfacet]);
+      const normalisedKey = mfacet.toLowerCase();
+
+      if (metadataFacets) {
+        facetIdMap[mfacet] = {
           config: {
-            keys: [facet],
+            keys: [mfacet],
             values: [],
-            label: { none: [facet] },
-            id: facet,
+            label: { none: [mfacet] },
+            id: mfacet,
+            type: 'metadata',
           },
-          keys: [facet],
+          keys: [mfacet],
         };
-        facetDisplayOrder.push(facet);
+        facetDisplayOrder.push(mfacet);
       }
-
       for (const value of values) {
         mappedSearchResponseMetadata[normalisedKey] = mappedSearchResponseMetadata[normalisedKey]
           ? mappedSearchResponseMetadata[normalisedKey]
           : [];
         mappedSearchResponseMetadata[normalisedKey].push({
           value,
-          count: facetType[facet] ? (facetType[facet] as any)[value] || 0 : 0,
+          count: metadataFacets[mfacet] ? (metadataFacets[mfacet] as any)[value] || 0 : 0,
+          key: normalisedKey,
+        });
+      }
+    }
+
+    for (const efacet of Object.keys(entityFacets)) {
+      const values = Object.keys(entityFacets[efacet]);
+      const normalisedKey = efacet.toLowerCase();
+
+      if (entityFacets) {
+        facetIdMap[efacet] = {
+          config: {
+            keys: [efacet],
+            values: [],
+            label: { none: [efacet] },
+            id: efacet,
+            type: 'entity',
+          },
+          keys: [efacet],
+        };
+        facetDisplayOrder.push(efacet);
+      }
+      for (const value of values) {
+        mappedSearchResponseMetadata[normalisedKey] = mappedSearchResponseMetadata[normalisedKey]
+          ? mappedSearchResponseMetadata[normalisedKey]
+          : [];
+        mappedSearchResponseMetadata[normalisedKey].push({
+          value,
+          count: entityFacets[efacet] ? (entityFacets[efacet] as any)[value] || 0 : 0,
           key: normalisedKey,
         });
       }
@@ -173,6 +203,7 @@ export function useSearch() {
       id: string;
       label: InternationalString;
       items: Array<{
+        type?: string;
         key: string;
         label: InternationalString;
         values: string[];
@@ -190,6 +221,7 @@ export function useSearch() {
           label: InternationalString;
           values: string[];
           count: number;
+          type?: string;
         }>;
       } = {
         id: id,
@@ -211,6 +243,7 @@ export function useSearch() {
             key: normalizeDotKey(fieldsToMap.keys[0]),
             count: mappedCount,
             label: value.label,
+            type: fieldsToMap.config.type,
           });
         }
       } else {
@@ -224,6 +257,7 @@ export function useSearch() {
                 key: fieldValue.key,
                 values: [fieldValue.value],
                 count: fieldValue.count,
+                type: fieldsToMap.config.type,
               }))
             );
           }
