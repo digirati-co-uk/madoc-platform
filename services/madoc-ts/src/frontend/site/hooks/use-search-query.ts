@@ -4,7 +4,11 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useLocationQuery } from '../../shared/hooks/use-location-query';
 import { useRouteContext } from './use-route-context';
 
-export type FacetQueryValue = { k: string; v: string };
+export type FacetQueryValue = {
+  t: any;
+  k: string;
+  v: string;
+};
 
 export function useSearchQuery() {
   const query = useLocationQuery<{ fulltext?: string; rscType?: string; facets?: string; page?: string }>();

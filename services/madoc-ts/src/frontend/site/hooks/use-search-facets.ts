@@ -28,12 +28,12 @@ export function useSearchFacets() {
   };
 
   // Actions
-  const applyFacet = (key: string, values: string[]) => {
+  const applyFacet = (key: string, values: string[], type: string | undefined) => {
     if (isFacetSelected(key, values)) {
       return;
     }
 
-    setQuery(fulltext, [...appliedFacets, ...values.map(value => ({ k: key, v: value }))], rscType, 1);
+    setQuery(fulltext, [...appliedFacets, ...values.map(value => ({ k: key, v: value, t: type }))], rscType, 1);
   };
 
   const clearSingleFacet = (key: string, values: string[]) => {
@@ -61,7 +61,7 @@ export function useSearchFacets() {
     setAppliedFacetQueue([]);
   };
 
-  const queueSingleFacet = (key: string, values: string[]) => {
+  const queueSingleFacet = (key: string, values: string[], type: string | undefined) => {
     setToRemoveFacetQueue(queue => {
       return queue.filter(facet => !(facet.k === key && values.indexOf(facet.v) !== -1));
     });
@@ -70,17 +70,17 @@ export function useSearchFacets() {
       if (found.length) {
         return queue;
       }
-      return [...queue, ...values.map(value => ({ k: key, v: value }))];
+      return [...queue, ...values.map(value => ({ k: key, v: value, t: type }))];
     });
   };
 
-  const dequeueSingleFacet = (key: string, values: string[]) => {
+  const dequeueSingleFacet = (key: string, values: string[], type: string | undefined) => {
     setToRemoveFacetQueue(queue => {
       const found = queue.filter(facet => facet.k === key && values.indexOf(facet.v) !== -1);
       if (found.length) {
         return queue;
       }
-      return [...queue, ...values.map(value => ({ k: key, v: value }))];
+      return [...queue, ...values.map(value => ({ k: key, v: value, t: type }))];
     });
     setAppliedFacetQueue(queue => {
       return queue.filter(facet => !(facet.k === key && values.indexOf(facet.v) !== -1));

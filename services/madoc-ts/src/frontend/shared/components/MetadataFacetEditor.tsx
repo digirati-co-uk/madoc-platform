@@ -133,6 +133,7 @@ export type FacetConfig = {
   label: InternationalString;
   keys: string[];
   values?: FacetConfigValue[];
+  type?: string;
 };
 
 type FacetConfigActions =

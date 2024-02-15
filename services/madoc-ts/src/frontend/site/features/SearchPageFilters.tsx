@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import {
   SearchFilterContainer,
   SearchFilterItem,
+  SearchFilterItemCount,
   SearchFilterItemList,
   SearchFilterLabel,
   SearchFilterTitle,
@@ -111,13 +112,14 @@ export const SearchPageFilters: React.FC<SearchPageFiltersProps> = ({ checkBoxCo
                       checked={isSelected !== 0}
                       onChange={(e: { target: { checked: any } }) =>
                         e.target.checked
-                          ? queueSingleFacet(item.key, item.values)
+                          ? queueSingleFacet(item.key, item.values, item.type)
                           : dequeueSingleFacet(item.key, item.values)
                       }
                     />
                     <SearchFilterLabel htmlFor={itemHash}>
                       <LocaleString>{item.label}</LocaleString>
                     </SearchFilterLabel>
+                    <SearchFilterItemCount>({item.count})</SearchFilterItemCount>
                   </SearchFilterItem>
                 );
               })}

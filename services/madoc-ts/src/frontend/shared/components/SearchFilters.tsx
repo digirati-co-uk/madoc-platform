@@ -77,7 +77,7 @@ export const SearchFilterItemCount = styled.div`
   font-size: 0.7em;
   border-radius: 5px;
   margin-right: 0.4em;
-  background: #eee;
+  //background: #eee;
   color: #555;
 `;
 
