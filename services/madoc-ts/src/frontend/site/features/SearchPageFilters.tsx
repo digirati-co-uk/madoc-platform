@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import {
   SearchFilterContainer,
   SearchFilterItem,
+  SearchFilterItemCount,
   SearchFilterItemList,
   SearchFilterLabel,
   SearchFilterTitle,
@@ -118,6 +119,7 @@ export const SearchPageFilters: React.FC<SearchPageFiltersProps> = ({ checkBoxCo
                     <SearchFilterLabel htmlFor={itemHash}>
                       <LocaleString>{item.label}</LocaleString>
                     </SearchFilterLabel>
+                    <SearchFilterItemCount>({item.count})</SearchFilterItemCount>
                   </SearchFilterItem>
                 );
               })}
