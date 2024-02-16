@@ -12,7 +12,7 @@ import { HrefLink } from '../utility/href-link';
 import { LocaleString } from './LocaleString';
 
 export const ResultsContainer = styled.div<{ $isFetching?: boolean }>`
-  flex: 1 1 0px;
+  flex: 1 1 0;
   transition: opacity 0.2s;
 
   ${props =>
