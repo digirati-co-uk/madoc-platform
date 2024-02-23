@@ -5,17 +5,13 @@ import { apiHooks, paginatedApiHooks } from '../../shared/hooks/use-api-query';
 import { useSiteConfiguration } from '../features/SiteConfigurationContext';
 import { useRouteContext } from './use-route-context';
 import { useSearchQuery } from './use-search-query';
-import { useBreadcrumbs } from '../../shared/components/Breadcrumbs';
 
 function normalizeDotKey(key: string) {
   return key.startsWith('metadata.') ? key.slice('metadata.'.length).toLowerCase() : key.toLowerCase();
 }
 
 export function useSearch() {
-  const { topic } = useBreadcrumbs();
-  const topicId = topic?.id;
-
-  const { projectId, collectionId, manifestId } = useRouteContext();
+  const { projectId, collectionId, manifestId, topic } = useRouteContext();
   const { fulltext, appliedFacets, page, rscType } = useSearchQuery();
   const {
     project: { searchStrategy, claimGranularity, searchOptions },
@@ -24,14 +20,14 @@ export function useSearch() {
   const searchFacetConfig = apiHooks.getSiteSearchFacetConfiguration(() => []);
 
   useEffect(() => {
-    if (topicId) {
-      appliedFacets.push({ k: 'entity', v: topicId, t: 'entity' });
+    if (topic) {
+      appliedFacets.push({ k: 'entity', v: topic, t: 'entity' });
     }
     return;
-  }, [appliedFacets, topicId, topic]);
+  }, [appliedFacets, topic]);
 
   const [facetsToRequest, facetDisplayOrder, facetIdMap] = useMemo(() => {
-    const facets = !topicId && searchFacetConfig.data ? searchFacetConfig.data.facets : [];
+    const facets = !topic && searchFacetConfig.data ? searchFacetConfig.data.facets : [];
     const returnList: string[] = [];
     const idMap: { [id: string]: { config: FacetConfig; keys: string[] } } = {};
     const displayOrder: string[] = [];
@@ -50,7 +46,7 @@ export function useSearch() {
       }
     }
     return [returnList, displayOrder, idMap];
-  }, [searchFacetConfig.data, topicId]);
+  }, [searchFacetConfig.data, topic]);
 
   const topicFacets = appliedFacets.map(facet => {
     return facet.k === 'entity'
@@ -103,7 +99,7 @@ export function useSearch() {
           collectionId ||
           manifestId ||
           projectId ||
-          topicId),
+          topic),
     }
   );
 
