@@ -25,10 +25,10 @@
     "@jridgewell/gen-mapping" "^0.1.0"
     "@jridgewell/trace-mapping" "^0.3.9"
 
-"@atlas-viewer/atlas@^2.0.1", "@atlas-viewer/atlas@^2.0.5":
-  version "2.0.5"
-  resolved "https://registry.yarnpkg.com/@atlas-viewer/atlas/-/atlas-2.0.5.tgz#2a61b09a12f9dcc81b4ae1f6cee8ad210f4b0c51"
-  integrity sha512-c0oTXRkwDdBobe+bJL859U+y+R6SlUO0DK96mNr8wx+qky+0Hf8xLVLwz4/L3867boE7CP+iudoNgyusLUQJvg==
+"@atlas-viewer/atlas@>=2.0.6", "@atlas-viewer/atlas@^2.0.6":
+  version "2.0.6"
+  resolved "https://registry.yarnpkg.com/@atlas-viewer/atlas/-/atlas-2.0.6.tgz#1fc38ac940565e343a565e85e214bac7dc182921"
+  integrity sha512-F49H68s6TZ07DLlG1NajVDu/AEzzsuoUqbidMlGLN9VoBTyxoWbeDjXF4W/Keg/T4KDAOaE3MlvtZ6ggr2u7pA==
   dependencies:
     "@atlas-viewer/dna" "^0.5.0"
     "@atlas-viewer/iiif-image-api" "^2.0.5"
@@ -47,7 +47,7 @@
   resolved "https://registry.yarnpkg.com/@atlas-viewer/dna/-/dna-0.5.0.tgz#aab824540b59dc3897e2ba4cdb51a53e47ed3311"
   integrity sha512-vHyMwXoCFq6ymk+wOVIkMphUo+I+wBRoA2tBf1AIUZWJMsk51cBtO2qzOaZQUh/TmrzrqEY5aEAtgBj52LVRUg==
 
-"@atlas-viewer/iiif-image-api@2.1.1", "@atlas-viewer/iiif-image-api@^2.0.5", "@atlas-viewer/iiif-image-api@^2.1.1":
+"@atlas-viewer/iiif-image-api@2.1.1", "@atlas-viewer/iiif-image-api@>=2.1.1", "@atlas-viewer/iiif-image-api@^2.0.5", "@atlas-viewer/iiif-image-api@^2.1.1":
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/@atlas-viewer/iiif-image-api/-/iiif-image-api-2.1.1.tgz#da01b09e7d29c21f6524b6f632368f48e8eb9d5a"
   integrity sha512-g7gleRz0Guxwj/JqtppiqloabUTCew61GBzon+ZZ7mXpnMQ+zMupLaI1jHfGxM1Xy9a1+zMwPuUTXqTFkEyueA==
@@ -2765,10 +2765,10 @@
     "@iiif/presentation-3" "^2.1.3"
     "@iiif/presentation-3-normalized" "^0.9.7"
 
-"@iiif/helpers@^1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@iiif/helpers/-/helpers-1.0.3.tgz#77bfa92ecc727d3b4edbfb84bb98915b75c2d599"
-  integrity sha512-kJ4zhQ6WFeiXCQ3SNRNIQNtt3pt5rS25QZRpdiPYjoRvJTw76S8Jbt2U1s+BA8VzvuTNtjKvrqictmszoighGg==
+"@iiif/helpers@>=1.0.6", "@iiif/helpers@^1.0.3", "@iiif/helpers@^1.0.5", "@iiif/helpers@^1.0.6":
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/@iiif/helpers/-/helpers-1.0.6.tgz#d9b8971d4db27ee7cce5d0e4e71964d055f16928"
+  integrity sha512-sI+6Ed9WBoh66Rk+z2oFY2vSZ2t4VIw3SJWKBFGLQbjeB6gHfsf7mlncXAEtscX1ZCr6S2w+RfcMXu/fOUo5PA==
   dependencies:
     "@iiif/presentation-2" "1.0.4"
     "@iiif/presentation-3" "2.1.3"
@@ -2779,21 +2779,7 @@
     parse-svg-path "^0.1.2"
     svg-arc-to-cubic-bezier "^3.2.0"
 
-"@iiif/helpers@^1.0.5":
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/@iiif/helpers/-/helpers-1.0.5.tgz#266c1351f3a736d440d26bd4e45e644dc96e5d45"
-  integrity sha512-YaRtJdacwPXs7K+TT1Go7SMhbRS33SIEYutVJMN5bZ1z4Gx4t67nzKWrngCh7bbn+qMBfOjv2zhSssIbyvqi+g==
-  dependencies:
-    "@iiif/presentation-2" "1.0.4"
-    "@iiif/presentation-3" "2.1.3"
-    "@iiif/presentation-3-normalized" "0.9.7"
-    "@types/geojson" "7946.0.13"
-  optionalDependencies:
-    abs-svg-path "^0.1.1"
-    parse-svg-path "^0.1.2"
-    svg-arc-to-cubic-bezier "^3.2.0"
-
-"@iiif/parser@2.0.1", "@iiif/parser@^2.0.1":
+"@iiif/parser@2.0.1":
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/@iiif/parser/-/parser-2.0.1.tgz#2140adb92b5b27db3c70104b069e20bc8cbdcb84"
   integrity sha512-RnHzBnYiI49I+cV9uxkhvUBqNSqj90pX+0hRRZgQ51EO0Sww7l1G44e6pg66PFxiDsIRXrkk34I63fYB9L1VrA==
@@ -2803,7 +2789,7 @@
     "@iiif/presentation-3-normalized" "^0.9.7"
     "@types/geojson" "^7946.0.10"
 
-"@iiif/parser@^2.0.2":
+"@iiif/parser@>=2.0.2", "@iiif/parser@^2.0.2":
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/@iiif/parser/-/parser-2.0.2.tgz#0bd054429d635b197c7875cc45ad173658b7b834"
   integrity sha512-ffqki1eJVVbWp1A+ulRgiojeCJH8eGyRIrAkyT60tHNXBWfYlkLTadFjFfyHlwWavT5BFI4nZtFTrwQXDtylQA==
@@ -2813,12 +2799,7 @@
     "@iiif/presentation-3-normalized" "^0.9.7"
     "@types/geojson" "^7946.0.10"
 
-"@iiif/presentation-2@1.*":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@iiif/presentation-2/-/presentation-2-1.0.1.tgz#0d76fedfeac65b31afcc30d9a8dc17f2e57041e4"
-  integrity sha512-iWF6rgAi9ksSwbH/4uJW1/49DOL1wN2mLKovu0qy1GYtCTg42bryAxYtnBsw6LrJZWykTStv7R3DynChfECmnA==
-
-"@iiif/presentation-2@1.0.4", "@iiif/presentation-2@^1.0.4":
+"@iiif/presentation-2@1.0.4", "@iiif/presentation-2@>=1.*", "@iiif/presentation-2@^1.0.4":
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/@iiif/presentation-2/-/presentation-2-1.0.4.tgz#1664aee995462fdf66ec8dfbae54fc22b4f79c97"
   integrity sha512-hJakpq62VBajesLJrYPtFm6hcn6c/HkKP7CmKZ5atuzu40m0nifWYsqigR1l9sZGvhhHb/DRshPmiW/0GNrJoA==
@@ -2828,7 +2809,7 @@
   resolved "https://registry.yarnpkg.com/@iiif/presentation-2/-/presentation-2-1.0.2.tgz#c712c4a40cc5b7291b8d92646b0ec8b8215b9b3d"
   integrity sha512-EN/p+td5VrHvUsQXV26VkaDFW0HG2GPRaibPlxJRip8au8ABBrOYPIcBH69Hyk3I0UnW3xzK2VsZ9TcuQEn0Mw==
 
-"@iiif/presentation-3-normalized@0.9.7", "@iiif/presentation-3-normalized@^0.9.7":
+"@iiif/presentation-3-normalized@0.9.7", "@iiif/presentation-3-normalized@>=0.9.7", "@iiif/presentation-3-normalized@^0.9.7":
   version "0.9.7"
   resolved "https://registry.yarnpkg.com/@iiif/presentation-3-normalized/-/presentation-3-normalized-0.9.7.tgz#19386234e07c91c996d15ac5e1d86d1e1882e128"
   integrity sha512-Aqk0sYBFIH5W3wmVxW02tnAFbNzUU5oPygGQjvszB3PP2nSkFQ1skVjqJhQPPZTyi/de1qcJUrgSy0vp6s+c5A==
@@ -2842,7 +2823,7 @@
   dependencies:
     "@types/geojson" "^7946.0.7"
 
-"@iiif/presentation-3@2.1.3", "@iiif/presentation-3@>=2", "@iiif/presentation-3@^2.0.5", "@iiif/presentation-3@^2.1.3":
+"@iiif/presentation-3@2.1.3", "@iiif/presentation-3@>=2", "@iiif/presentation-3@>=2.1.3", "@iiif/presentation-3@^2.0.5", "@iiif/presentation-3@^2.1.3":
   version "2.1.3"
   resolved "https://registry.yarnpkg.com/@iiif/presentation-3/-/presentation-3-2.1.3.tgz#745cf3ec1f8d828b1e3aba88c3f15e6dc8e80710"
   integrity sha512-0V9LL+UPGknn4vdEJuJnuK0BsOL93dmr4PrdXg9fSE9HUq/2P0jkp4yGJR13f7N9OpmcRsEQjqWqVceWHB8Bow==
@@ -16044,6 +16025,11 @@ lodash.sortby@^4.7.0:
   resolved "https://registry.yarnpkg.com/lodash.sortby/-/lodash.sortby-4.7.0.tgz#edd14c824e2cc9c1e0b0a1b42bb5210516a42438"
   integrity sha1-7dFMgk4sycHgsKG0K7UhBRakJDg=
 
+lodash.throttle@^4.1.1:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/lodash.throttle/-/lodash.throttle-4.1.1.tgz#c23e91b710242ac70c37f1e1cda9274cc39bf2f4"
+  integrity sha512-wIkUCfVKpVsWo3JSZlc+8MB5it+2AN5W8J7YVMST30UrvcQNZ1Okbj+rbVniijTWE6FGYy4XJq/rHkas8qJMLQ==
+
 lodash.uniq@4.5.0:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/lodash.uniq/-/lodash.uniq-4.5.0.tgz#d0225373aeb652adc1bc82e4945339a842754773"
@@ -19690,10 +19676,10 @@ react-error-boundary@^2.3.1:
   dependencies:
     "@babel/runtime" "^7.11.2"
 
-react-error-boundary@^3.1.4:
-  version "3.1.4"
-  resolved "https://registry.yarnpkg.com/react-error-boundary/-/react-error-boundary-3.1.4.tgz#255db92b23197108757a888b01e5b729919abde0"
-  integrity sha512-uM9uPzZJTF6wRQORmSrvOIgt4lJ9MC1sNgEOj2XGsDTRE4kmpWxg7ENK9EWNKJRMAOY9z0MuF4yIfl6gp4sotA==
+react-error-boundary@^4.0.12:
+  version "4.0.12"
+  resolved "https://registry.yarnpkg.com/react-error-boundary/-/react-error-boundary-4.0.12.tgz#59f8f1dbc53bbbb34fc384c8db7cf4082cb63e2c"
+  integrity sha512-kJdxdEYlb7CPC1A0SeUY38cHpjuu6UkvzKiAmqmOFL21VRfMhOcWxTCBgLVCO0VEMh9JhFNcVaXlV4/BTpiwOA==
   dependencies:
     "@babel/runtime" "^7.12.5"
 
@@ -19738,22 +19724,22 @@ react-i18next@11.18.4, react-i18next@^11.18.4, react-i18next@^11.7.0:
     "@babel/runtime" "^7.14.5"
     html-parse-stringify "^3.0.1"
 
-react-iiif-vault@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/react-iiif-vault/-/react-iiif-vault-1.0.2.tgz#d73596fa7c12956fb321ed2e42d3c3dfca4c686e"
-  integrity sha512-fDI0+wIqqPNqw2BCh1DPh2UNn4yjx+aeAUO6/QLnF+8wNRaTwVeh2+OQNnfrDZAnQJurNUdsSTnOddiPEZiHLQ==
+react-iiif-vault@^1.0.9:
+  version "1.0.9"
+  resolved "https://registry.yarnpkg.com/react-iiif-vault/-/react-iiif-vault-1.0.9.tgz#50cb3893fc92d05f53794c5d58a3a707cc0255ab"
+  integrity sha512-+mc7i6n9aLGvuhf5Mpx79a8NwD5GDZJpbttlO6M9YL/H42SIpdjyCSIAc2Cc2qjvKhWkBg7EoluKHjKLGSUCVQ==
   dependencies:
-    "@atlas-viewer/atlas" "^2.0.1"
-    "@atlas-viewer/iiif-image-api" "^2.1.1"
-    "@iiif/helpers" "^1.0.3"
-    "@iiif/parser" "^2.0.1"
-    "@iiif/presentation-2" "1.*"
-    "@iiif/presentation-3" "^2.1.3"
-    "@iiif/presentation-3-normalized" "^0.9.7"
+    "@atlas-viewer/atlas" ">=2.0.6"
+    "@atlas-viewer/iiif-image-api" ">=2.1.1"
+    "@iiif/helpers" ">=1.0.6"
+    "@iiif/parser" ">=2.0.2"
+    "@iiif/presentation-2" ">=1.*"
+    "@iiif/presentation-3" ">=2.1.3"
+    "@iiif/presentation-3-normalized" ">=0.9.7"
     react "^16.10.2 || ^17.0.2 || ^18.2.0"
     react-dom "^16.10.2 || ^17.0.2 || ^18.2.0"
-    react-error-boundary "^3.1.4"
-    zustand "4.4.7"
+    react-error-boundary "^4.0.12"
+    react-lazy-load-image-component "^1.6.0"
 
 react-image@^4.0.1:
   version "4.0.3"
@@ -19794,6 +19780,14 @@ react-is@^18.0.0:
   version "18.2.0"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-18.2.0.tgz#199431eeaaa2e09f86427efbb4f1473edb47609b"
   integrity sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w==
+
+react-lazy-load-image-component@^1.6.0:
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/react-lazy-load-image-component/-/react-lazy-load-image-component-1.6.0.tgz#f262c2f163052d71011e282031fd60aafa6494ac"
+  integrity sha512-8KFkDTgjh+0+PVbH+cx0AgxLGbdTsxWMnxXzU5HEUztqewk9ufQAu8cstjZhyvtMIPsdMcPZfA0WAa7HtjQbBQ==
+  dependencies:
+    lodash.debounce "^4.0.8"
+    lodash.throttle "^4.1.1"
 
 react-medium-image-zoom@^3.1.3:
   version "3.1.3"
@@ -24455,13 +24449,6 @@ yocto-queue@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/yocto-queue/-/yocto-queue-1.0.0.tgz#7f816433fb2cbc511ec8bf7d263c3b58a1a3c251"
   integrity sha512-9bnSc/HEW2uRy67wc+T8UwauLuPJVn28jb+GtJY16iiKWyvmYJRXVT4UamsAEGQfPohgr2q4Tq0sQbQlxTfi1g==
-
-zustand@4.4.7:
-  version "4.4.7"
-  resolved "https://registry.yarnpkg.com/zustand/-/zustand-4.4.7.tgz#355406be6b11ab335f59a66d2cf9815e8f24038c"
-  integrity sha512-QFJWJMdlETcI69paJwhSMJz7PPWjVP8Sjhclxmxmxv/RYI7ZOvR5BHX+ktH0we9gTWQMxcne8q1OY8xxz604gw==
-  dependencies:
-    use-sync-external-store "1.2.0"
 
 zustand@^4.3.2:
   version "4.3.2"
