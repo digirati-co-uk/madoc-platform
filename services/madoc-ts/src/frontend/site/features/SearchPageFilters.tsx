@@ -113,7 +113,7 @@ export const SearchPageFilters: React.FC<SearchPageFiltersProps> = ({ checkBoxCo
                       onChange={(e: { target: { checked: any } }) =>
                         e.target.checked
                           ? queueSingleFacet(item.key, item.values, item.type)
-                          : dequeueSingleFacet(item.key, item.values)
+                          : dequeueSingleFacet(item.key, item.values, item.type)
                       }
                     />
                     <SearchFilterLabel htmlFor={itemHash}>
