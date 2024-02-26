@@ -60,7 +60,7 @@ export function EditTopicType() {
     const copy: any = {
       ...entityTypeModel,
     };
-    delete copy.label;
+    // delete copy.label;
     // dont allow editing featured if not enough to chose from
     // backend automatically picks first 3
     if (data && data.topic_count < 4) {
