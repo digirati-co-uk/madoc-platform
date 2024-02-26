@@ -11,7 +11,6 @@ import { SimpleDropdown } from '../../shared/atoms/SimpleDropdown';
 import { Button, ButtonIcon } from '../../shared/navigation/Button';
 import { GridIcon } from '../../shared/icons/GridIcon';
 import { ListIcon } from '../../shared/icons/ListIcon';
-import useDropdownMenu from 'react-accessible-dropdown-menu-hook';
 
 interface SearchPageResultsProps {
   background?: string;
