@@ -18,8 +18,16 @@ export function EditTopic() {
   const [createNewEntity, status] = useMutation(async (updatedData: any) => {
     if (!data) return;
 
-    updatedData.other_data.main_image = ParseEntityMedia(updatedData.other_data.main_image);
-    updatedData.other_data.thumbnail = ParseEntityMedia(updatedData.other_data.thumbnail);
+    console.log(data.other_data);
+
+    if (updatedData.thumbnail.id && data.other_data?.thumbnail?.id !== updatedData.thumbnail.id) {
+      console.log('1');
+      updatedData.thumbnail = ParseEntityMedia(updatedData.thumbnail);
+    }
+    if (updatedData.hero.id && data.other_data?.main_image?.id !== updatedData.hero.id) {
+      console.log('2');
+      updatedData.hero = ParseEntityMedia(updatedData.hero);
+    }
 
     if (updatedData.featured_resources) {
       const ftRes = updatedData.featured_resources;
@@ -34,12 +42,18 @@ export function EditTopic() {
         updatedData.featured_resources = Object.values(ftRes);
       }
     }
-    const resp = api.enrichment.upsertEntity({ id: data.id, ...updatedData });
+
+    updatedData.other_data.thumbnail = updatedData.thumbnail;
+    updatedData.other_data.main_image = updatedData.hero;
+    const resp = api.enrichment.upsertEntity({
+      id: data.id,
+      ...updatedData,
+    });
 
     await refetch();
-
     return resp;
   });
+
   const model = useMemo(() => {
     const copy: any = {
       ...entityModel,
@@ -54,6 +68,7 @@ export function EditTopic() {
 
     return copy;
   }, [data]);
+
   if (!data) {
     return <div>{t('Loading...')}</div>;
   }
@@ -76,7 +91,7 @@ export function EditTopic() {
       <CustomEditorTypes>
         <EditShorthandCaptureModel
           template={model}
-          data={data}
+          data={{ ...data, thumbnail: data.other_data?.thumbnail, hero: data.other_data?.main_image }}
           onSave={async input => {
             await createNewEntity(input);
           }}

@@ -11,21 +11,13 @@ export const entityTypeModel: CaptureModelShorthand<EntityTypeQuery> = {
       label: 'Featured topic',
       pluralLabel: 'Featured topics',
     },
-    other_data: {
-      allowMultiple: false,
-      label: 'Images',
-      labelledBy: 'id',
-    },
   },
+
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   thumbnail: { type: 'madoc-media-explorer', label: 'Thumbnail' },
   hero: { type: 'madoc-media-explorer', label: 'Hero image' },
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
   'featured_topics.slug': { type: 'topic-explorer', label: 'featured topics' },
-  // 'other_data.main_image': { type: 'madoc-media-explorer', label: 'Hero image' },
-  // 'other_data.thumbnail': { type: 'madoc-media-explorer', label: 'Thumbnail' },
 };
 
 export const entityModel: CaptureModelShorthand<EntityQuery> = {
@@ -55,10 +47,10 @@ export const entityModel: CaptureModelShorthand<EntityQuery> = {
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
+  thumbnail: { type: 'madoc-media-explorer', label: 'Thumbnail' },
+  hero: { type: 'madoc-media-explorer', label: 'Hero image' },
   'featured_resources.madoc_id': { type: 'topic-item-explorer', label: 'featured resources' },
   'other_data.topic_summary': { type: 'international-field', label: 'Summary' },
   'other_data.secondary_heading': { type: 'international-field', label: 'Secondary heading' },
   'other_data.aliases': { type: 'international-field', label: 'Aliases', allowMultiple: true },
-  'other_data.main_image': { type: 'madoc-media-explorer', label: 'Hero image' },
-  'other_data.thumbnail': { type: 'madoc-media-explorer', label: 'Thumbnail' },
 };
