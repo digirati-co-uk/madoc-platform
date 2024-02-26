@@ -19,9 +19,13 @@ export const entityTypeModel: CaptureModelShorthand<EntityTypeQuery> = {
   },
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
+  thumbnail: { type: 'madoc-media-explorer', label: 'Thumbnail' },
+  hero: { type: 'madoc-media-explorer', label: 'Hero image' },
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   'featured_topics.slug': { type: 'topic-explorer', label: 'featured topics' },
-  'other_data.main_image': { type: 'madoc-media-explorer', label: 'Hero image' },
-  'other_data.thumbnail': { type: 'madoc-media-explorer', label: 'Thumbnail' },
+  // 'other_data.main_image': { type: 'madoc-media-explorer', label: 'Hero image' },
+  // 'other_data.thumbnail': { type: 'madoc-media-explorer', label: 'Thumbnail' },
 };
 
 export const entityModel: CaptureModelShorthand<EntityQuery> = {
