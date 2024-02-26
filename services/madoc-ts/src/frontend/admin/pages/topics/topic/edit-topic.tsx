@@ -18,14 +18,10 @@ export function EditTopic() {
   const [createNewEntity, status] = useMutation(async (updatedData: any) => {
     if (!data) return;
 
-    console.log(data.other_data);
-
     if (updatedData.thumbnail.id && data.other_data?.thumbnail?.id !== updatedData.thumbnail.id) {
-      console.log('1');
       updatedData.thumbnail = ParseEntityMedia(updatedData.thumbnail);
     }
     if (updatedData.hero.id && data.other_data?.main_image?.id !== updatedData.hero.id) {
-      console.log('2');
       updatedData.hero = ParseEntityMedia(updatedData.hero);
     }
 
