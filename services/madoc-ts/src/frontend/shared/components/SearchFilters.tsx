@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components';
 
 export const SearchFilterContainer = styled.div`
   width: 100%;
-  padding-right: 1em;
+  padding-right: 2em;
 `;
 
 export const SearchFilterCheckbox = styled.div`
