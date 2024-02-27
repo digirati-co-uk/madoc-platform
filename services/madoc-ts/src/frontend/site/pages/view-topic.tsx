@@ -11,6 +11,7 @@ import { TopicActions } from '../features/TopicActions';
 import { TopicAuthorities } from '../features/TopicAuthorities';
 import { TopicHeroImage } from '../features/TopicHeroImage';
 import { SearchPageResults } from '../features/SearchPageResults';
+import { SearchPageSearch } from '../features/SearchPageSearch';
 import { useTopic } from './loaders/topic-loader';
 export const ViewTopic = () => {
   const { data } = useTopic();
@@ -52,6 +53,7 @@ export const ViewTopic = () => {
 
           <div style={{ width: '100%' }}>
             <Slot name="topic-item-results">
+              <SearchPageSearch />
               <AppliedFacets />
               <SearchPageResults />
             </Slot>

@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import styled, { css } from 'styled-components';
-
 import { InputBorderless } from '../form/Input';
-import { LinkButton } from '../navigation/Button';
-import { SearchIcon } from '../icons/SearchIcon';
+import { Button, LinkButton } from '../navigation/Button';
+import { CloseIcon } from '../icons/CloseIcon';
+import { useTranslation } from 'react-i18next';
+import { Simulate } from 'react-dom/test-utils';
+import submit = Simulate.submit;
 
 const SearchContainer = styled.div<{ $isFocus?: boolean; $isAdmin?: boolean }>`
   padding: 0.2em 0.4em;
@@ -15,6 +17,7 @@ const SearchContainer = styled.div<{ $isFocus?: boolean; $isAdmin?: boolean }>`
   line-height: 1.3em;
   width: 100%;
   max-width: 700px;
+  min-width: 500px;
   box-shadow: none;
   &:focus {
     border-color: #333;
@@ -56,9 +59,10 @@ export const SearchBox: React.FC<{
 }> = ({ isAdmin, onSearch, placeholder = 'Search', large = false, value = '' }) => {
   const [isFocus, setIsFocus] = useState(false);
   const [searchValue, setSearchValue] = useState(value);
+  const { t } = useTranslation();
   return (
     <form
-      style={{ marginRight: '20px' }}
+      style={{ marginRight: '20px', display: 'flex' }}
       onSubmit={ev => {
         ev.preventDefault();
         onSearch(searchValue);
@@ -74,10 +78,13 @@ export const SearchBox: React.FC<{
           onChange={(e: any) => setSearchValue(e.target.value)}
           placeholder={placeholder}
         />
-        <LinkButton>
-          <SearchIcon />
+        <LinkButton onClick={() => setSearchValue('')} style={{ display: 'flex', alignItems: 'center' }}>
+          <CloseIcon style={{ fill: '#333', height: '18px' }} />
         </LinkButton>
       </SearchContainer>
+      <Button $primary type={'submit'}>
+        {t('Search')}
+      </Button>
     </form>
   );
 };

@@ -9,7 +9,7 @@ import {
   SearchFilterLabel,
   SearchFilterTitle,
 } from '../../shared/components/SearchFilters';
-import { ButtonRow, TinyButton } from '../../shared/navigation/Button';
+import { Button, ButtonRow, TextButton, TinyButton } from '../../shared/navigation/Button';
 import { LocaleString } from '../../shared/components/LocaleString';
 import { useSearchQuery } from '../hooks/use-search-query';
 import { useSearchFacets } from '../hooks/use-search-facets';
@@ -58,39 +58,13 @@ export const SearchPageFilters: React.FC<SearchPageFiltersProps> = ({ checkBoxCo
     <SearchFilterContainer>
       <SearchFilterTitle>{filterHeader}</SearchFilterTitle>
 
-      <SearchBox onSearch={setFullTextQuery} placeholder="Keywords" value={fulltext} key={fulltext} />
-
-      <DropdownContainer>
-        <Dropdown
-          key={fulltext}
-          placeholder={t('Type')}
-          value={rscType}
-          onChange={val => {
-            setResourceType(val || '');
-          }}
-          options={[
-            {
-              value: '',
-              text: 'All',
-            },
-            {
-              value: 'manifest',
-              text: 'Documents',
-            },
-            {
-              value: 'canvas',
-              text: 'Pages',
-            },
-          ]}
-        />
-      </DropdownContainer>
-      <ButtonRow>
-        <TinyButton disabled={!inQueue} onClick={() => applyAllFacets()}>
-          {t('Apply')}
-        </TinyButton>
-        <TinyButton disabled={!appliedFacets.length} onClick={() => clearAllFacets()}>
+      <ButtonRow $noMargin>
+        <Button $primary disabled={!inQueue} onClick={() => applyAllFacets()}>
+          {t('Apply filters')}
+        </Button>
+        <Button disabled={!appliedFacets.length} onClick={() => clearAllFacets()}>
           {t('Clear')}
-        </TinyButton>
+        </Button>
       </ButtonRow>
 
       {displayFacets?.map(facet => {
