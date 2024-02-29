@@ -79,7 +79,7 @@ export function AllTopicTypeItems(props: AllTopicTypeItemsProps) {
           <TypeText style={{ color: props.textColor }}>
             <LocaleString as={Heading3}>{type.label || { en: ['...'] }}</LocaleString>
             <CountText>
-              <span>{type.topic_count}</span> {t('Objects')}
+              <span>{type.topic_count}</span> {type.title}
             </CountText>
             <Button $primary as={Link} to={createLink({ topicType: type.slug })}>
               {t('Go to topic type')}
