@@ -82,7 +82,7 @@ export function AllTopicTypeItems(props: AllTopicTypeItemsProps) {
               <span>{type.topic_count}</span> {type.title}
             </CountText>
             <Button $primary as={Link} to={createLink({ topicType: type.slug })}>
-              {t('Go to topic type')}
+              {t('Explore documents by language')}
             </Button>
           </TypeText>
 
