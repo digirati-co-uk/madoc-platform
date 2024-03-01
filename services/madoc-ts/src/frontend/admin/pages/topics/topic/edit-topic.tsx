@@ -25,6 +25,8 @@ export function EditTopic() {
       updatedData.hero = ParseEntityMedia(updatedData.hero);
     }
 
+    console.log(updatedData);
+
     if (updatedData.featured_resources) {
       const ftRes = updatedData.featured_resources;
       if (Array.isArray(ftRes)) {
