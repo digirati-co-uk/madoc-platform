@@ -99,7 +99,9 @@ export function useSearch() {
           collectionId ||
           manifestId ||
           projectId ||
-          topic),
+          !!topic),
+      cacheTime: 1000 * 60 * 60,
+      staleTime: 0,
     }
   );
 
@@ -264,6 +266,6 @@ export function useSearch() {
     }
 
     return displayList;
-  }, [facetDisplayOrder, facetIdMap, searchResults.resolvedData]);
+  }, [facetDisplayOrder, facetIdMap, searchResults.resolvedData, searchFacetConfig.isLoading, searchResults.isLoading]);
   return [searchResults, displayFacets, searchFacetConfig.isLoading || searchResults.isLoading] as const;
 }
