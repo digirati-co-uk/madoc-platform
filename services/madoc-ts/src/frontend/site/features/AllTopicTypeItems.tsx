@@ -90,7 +90,7 @@ export function AllTopicTypeItems(props: AllTopicTypeItemsProps) {
               <span>{type.topic_count}</span> <LocaleString>{type.label || { en: ['...'] }}</LocaleString>
             </CountText>
             <Button $primary as={Link} to={createLink({ topicType: type.slug })}>
-              {t('Explore documents by language')}
+              {t('Explore')}
             </Button>
           </TypeText>
 

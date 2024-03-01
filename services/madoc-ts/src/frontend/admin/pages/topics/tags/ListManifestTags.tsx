@@ -27,8 +27,8 @@ export function ListManifestTags() {
   }>();
   const [selectedId, setSelectedId] = useState<string | undefined>(undefined);
 
-  const onSelect = (id: string | undefined) => {
-    setSelectedId(id);
+  const onSelect = (i: string | undefined) => {
+    setSelectedId(i);
   };
 
   const [createTag, createTagStatus] = useMutation(async (entityId: string) => {

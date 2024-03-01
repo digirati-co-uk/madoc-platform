@@ -12,7 +12,7 @@ import { useTranslation } from 'react-i18next';
 import { parseUrn } from '../../../../../utility/parse-urn';
 export function ListTopicResources() {
   const { data: topic } = useTopic();
-  const [{ data, isLoading, latestData }, { query, page }] = useTopicItems(topic?.id);
+  const [{ data, isLoading, latestData }, { query, page }] = useTopicItems(topic?.slug);
   const { t } = useTranslation();
 
   const link = (id: string) => {

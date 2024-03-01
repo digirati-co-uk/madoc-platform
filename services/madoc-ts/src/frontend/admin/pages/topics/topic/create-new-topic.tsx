@@ -94,7 +94,7 @@ export function CreateNewTopic() {
   }
 
   return (
-    <div>
+    <div style={{ paddingBottom: '3em' }}>
       <Heading2>{t('Create new Topic')}</Heading2>
       {status.isError && <ErrorMessage>{t('Error...')}</ErrorMessage>}
       <CustomEditorTypes>

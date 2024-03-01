@@ -82,7 +82,7 @@ export function EditTopic() {
   }
 
   return (
-    <div style={{ padding: '1em 0' }}>
+    <div style={{ paddingBottom: '3em' }}>
       {status.isError && <ErrorMessage>{t('Error...')}</ErrorMessage>}
       <CustomEditorTypes>
         <EditShorthandCaptureModel

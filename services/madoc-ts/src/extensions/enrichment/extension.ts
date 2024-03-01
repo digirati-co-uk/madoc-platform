@@ -149,12 +149,12 @@ export class EnrichmentExtension extends BaseDjangoExtension {
 
   // Entity - List, filtered by chosen Entity Type
   getEntities(slug: string, page?: number) {
-    return this.api.request<EntitiesListResponse>(`/api/enrichment/entity/${slug}/?page=${page}`);
+    return this.api.request<any>(`/api/enrichment/entity/${slug}/?page=${page}`);
   }
 
   // Entity - Retrieve
   getEntity(entity_type_slug: string, slug: string) {
-    return this.api.request<EntityFull>(`/api/enrichment/entity/${entity_type_slug}/${slug}/`);
+    return this.api.request<any>(`/api/enrichment/entity/${entity_type_slug}/${slug}/`);
   }
 
   // Entity - Upsert
@@ -175,7 +175,7 @@ export class EnrichmentExtension extends BaseDjangoExtension {
   }
 
   // Entity - Autocomplete Search
-  entityAutoComplete(type: string, fullText: string, page = 1) {
+  entityAutoComplete(type?: string, fullText: string, page = 1) {
     return this.api.request<EntityAutoCompleteResponse>(`/api/enrichment/entity_autocomplete/?${stringify({ page })}`, {
       method: 'POST',
       body: {
