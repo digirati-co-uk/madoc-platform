@@ -9,6 +9,7 @@ export type CrowdSourcingBannerProps = {
   buttonLink?: string;
   buttonLabel?: string;
   height?: number;
+  shadowOpacity: string;
   image: {
     id: string;
     image: string;
@@ -31,8 +32,9 @@ const MastheadMain = styled.div`
   position: relative;
 `;
 
-const MastheadIntro = styled.div<{ $right?: boolean; $height?: string }>`
-  background-color: rgba(51, 51, 51, 0.8);
+const MastheadIntro = styled.div<{ $right?: boolean; $height?: string; $opacity?: string; $width?: string }>`
+  //background-color: rgba(51, 51, 51, 0.8);
+  background-color: ${props => (props.$opacity ? ` rgba(0,0,0, ${props.$opacity});` : 'rgba(51, 51, 51,0.8)')};
   padding: 20px;
   width: 33.3333333333%;
   min-height: ${props => props.$height || '550px'};
@@ -74,6 +76,7 @@ export const CrowdSourcingBanner: React.FC<CrowdSourcingBannerProps> = props => 
       {props.title || props.description || props.buttonLink ? (
         <MastheadMain>
           <MastheadIntro
+            $opacity={props.shadowOpacity}
             $height={props.height ? `${props.height}px` : undefined}
             $right={props.panelAlignment === 'right'}
           >
@@ -102,6 +105,7 @@ blockEditorFor(CrowdSourcingBanner, {
     panelAlignment: 'left',
     buttonLabel: '',
     buttonLink: '',
+    shadowOpacity: '',
   },
   svgIcon: props => (
     <svg width="1em" height="1em" viewBox="0 0 151 84" xmlns="http://www.w3.org/2000/svg" {...props}>
@@ -124,6 +128,7 @@ blockEditorFor(CrowdSourcingBanner, {
         { value: 'right', text: 'Right aligned' },
       ],
     },
+    shadowOpacity: { type: 'text-field', label: 'Shadow opacity', description: 'as decimal eg 0.5 is 50% opacity' },
     image: {
       label: 'Image',
       type: 'madoc-media-explorer',
