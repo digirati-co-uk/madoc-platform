@@ -52,7 +52,6 @@ export const TopicSnippetCard: React.FC<{
   const createLocaleString = useCreateLocaleString();
   const { t } = useTranslation();
 
-  console.log('hello?');
   return (
     <TopicSnippetContainer
       data-is-small={size === 'small'}
