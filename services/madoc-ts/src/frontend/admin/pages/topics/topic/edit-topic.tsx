@@ -18,14 +18,12 @@ export function EditTopic() {
   const [createNewEntity, status] = useMutation(async (updatedData: any) => {
     if (!data) return;
 
-    if (updatedData.thumbnail.id && data.other_data?.thumbnail?.id !== updatedData.thumbnail.id) {
+    if (updatedData.thumbnail && data.other_data?.thumbnail?.id !== updatedData.thumbnail.id) {
       updatedData.thumbnail = ParseEntityMedia(updatedData.thumbnail);
     }
     if (updatedData.hero.id && data.other_data?.main_image?.id !== updatedData.hero.id) {
       updatedData.hero = ParseEntityMedia(updatedData.hero);
     }
-
-    console.log(updatedData);
 
     if (updatedData.featured_resources) {
       const ftRes = updatedData.featured_resources;
