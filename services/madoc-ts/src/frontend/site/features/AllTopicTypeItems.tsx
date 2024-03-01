@@ -39,8 +39,8 @@ const TypeText = styled.div`
     border: 1px solid #002d4b;
     background-color: white;
     color: #002d4b;
-    border-radius: 50px;
-    padding: 1em;
+    border-radius: 20px;
+    padding: 0.8em;
     margin-top: 1em;
 
     &:hover {
@@ -87,7 +87,7 @@ export function AllTopicTypeItems(props: AllTopicTypeItemsProps) {
           <TypeText style={{ color: props.textColor }}>
             <LocaleString as={Heading3}>{type.label || { en: ['...'] }}</LocaleString>
             <CountText>
-              <span>{type.topic_count}</span> <LocaleString>{type.label || { en: ['...'] }}</LocaleString>
+              <span>{type.topic_count}</span> <LocaleString>{type.title || { en: ['...'] }}</LocaleString>
             </CountText>
             <Button $primary as={Link} to={createLink({ topicType: type.slug })}>
               {t('Explore')}
