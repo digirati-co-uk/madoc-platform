@@ -162,7 +162,7 @@
     "react-functional-select": "^3.3.3",
     "react-helmet": "^6.1.0",
     "react-i18next": "^11.18.4",
-    "react-iiif-vault": "https://pkg.csb.dev/digirati-co-uk/react-iiif-vault/commit/548ec37f/react-iiif-vault",
+    "react-iiif-vault": "^1.0.9",
     "react-intersection-observer": "^8.26.2",
     "react-mosaic-component": "^4.1.1",
     "react-query": "^2.26.4",
