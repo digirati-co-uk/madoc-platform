@@ -95,12 +95,12 @@ export function useSearch() {
         (!!facetsToRequest.length ||
           !!fulltext ||
           fulltext === '' ||
+          facets ||
           !!rscType ||
           collectionId ||
           manifestId ||
           projectId ||
           !!topic),
-      cacheTime: 1000 * 60 * 60,
       staleTime: 0,
     }
   );

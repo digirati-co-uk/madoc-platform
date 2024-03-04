@@ -165,7 +165,7 @@
     "react-iiif-vault": "^1.0.9",
     "react-intersection-observer": "^8.26.2",
     "react-mosaic-component": "^4.1.1",
-    "react-query": "^2.26.4",
+    "react-query": "^3.6.1",
     "react-router": "^6.4.0-pre.13",
     "react-router-dom": "^6.4.0-pre.13",
     "react-rte": "0.16.1",
