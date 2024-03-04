@@ -19,6 +19,9 @@ export function useSearch() {
   const { searchMultipleFields, nonLatinFulltext, onlyShowManifests } = searchOptions || {};
   const searchFacetConfig = apiHooks.getSiteSearchFacetConfiguration(() => []);
 
+  console.log('topic:', topic);
+  console.log('isLoading', searchFacetConfig.isLoading);
+
   useEffect(() => {
     if (topic) {
       appliedFacets.push({ k: 'entity', v: topic, t: 'entity' });
@@ -267,6 +270,6 @@ export function useSearch() {
     }
 
     return displayList;
-  }, [facetDisplayOrder, facetIdMap, searchResults.resolvedData, searchFacetConfig.isLoading, searchResults.isLoading]);
+  }, [facetDisplayOrder, facetIdMap, searchResults.resolvedData]);
   return [searchResults, displayFacets, searchFacetConfig.isLoading || searchResults.isLoading] as const;
 }

@@ -37,7 +37,7 @@ export const SearchPageResults: React.FC<SearchPageResultsProps> = ({
   if (!searchResults) {
     return null;
   }
-  return isLoading && !searchResponse ? (
+  return isLoading || !searchResponse ? (
     <LoadingBlock />
   ) : (
     <>
