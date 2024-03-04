@@ -68,8 +68,7 @@ export function useSearch() {
   }));
 
   const facets = topic ? topicFacets : searchQFacets;
-  const waitForTopic = topic ? !!topicFacets : true;
-
+  const waitForTopic = topic ? !!facets.length : true;
   const searchResults = paginatedApiHooks.getSiteSearchQuery(
     () => [
       {
