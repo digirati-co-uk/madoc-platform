@@ -175,7 +175,7 @@ export class EnrichmentExtension extends BaseDjangoExtension {
   }
 
   // Entity - Autocomplete Search
-  entityAutoComplete(type?: string, fullText: string, page = 1) {
+  entityAutoComplete(type?: string, fullText?: string, page = 1) {
     return this.api.request<EntityAutoCompleteResponse>(`/api/enrichment/entity_autocomplete/?${stringify({ page })}`, {
       method: 'POST',
       body: {
