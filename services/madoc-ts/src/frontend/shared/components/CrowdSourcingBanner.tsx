@@ -10,6 +10,7 @@ export type CrowdSourcingBannerProps = {
   buttonLabel?: string;
   height?: number;
   shadowOpacity: string;
+  padding?: string;
   image: {
     id: string;
     image: string;
@@ -32,10 +33,16 @@ const MastheadMain = styled.div`
   position: relative;
 `;
 
-const MastheadIntro = styled.div<{ $right?: boolean; $height?: string; $opacity?: string; $width?: string }>`
+const MastheadIntro = styled.div<{
+  $right?: boolean;
+  $height?: string;
+  $opacity?: string;
+  $width?: string;
+  $padding?: string;
+}>`
   //background-color: rgba(51, 51, 51, 0.8);
   background-color: ${props => (props.$opacity ? ` rgba(0,0,0, ${props.$opacity});` : 'rgba(51, 51, 51,0.8)')};
-  padding: 20px;
+  padding: ${props => (props.$padding ? props.$padding : '20px')};
   width: 33.3333333333%;
   min-height: ${props => props.$height || '550px'};
   ${props =>
@@ -79,6 +86,7 @@ export const CrowdSourcingBanner: React.FC<CrowdSourcingBannerProps> = props => 
             $opacity={props.shadowOpacity}
             $height={props.height ? `${props.height}px` : undefined}
             $right={props.panelAlignment === 'right'}
+            $padding={props.padding ? `${props.padding}px` : undefined}
           >
             <MastheadTitle>{props.title}</MastheadTitle>
             <MastheadDescription>{props.description}</MastheadDescription>
@@ -106,6 +114,7 @@ blockEditorFor(CrowdSourcingBanner, {
     buttonLabel: '',
     buttonLink: '',
     shadowOpacity: '',
+    padding: '',
   },
   svgIcon: props => (
     <svg width="1em" height="1em" viewBox="0 0 151 84" xmlns="http://www.w3.org/2000/svg" {...props}>
@@ -134,6 +143,7 @@ blockEditorFor(CrowdSourcingBanner, {
       type: 'madoc-media-explorer',
     },
     height: { type: 'text-field', label: 'Height (number)' },
+    padding: { type: 'text-field', label: 'Padding (number)' },
     buttonLabel: { type: 'text-field', label: 'Button label' },
     buttonLink: { type: 'text-field', label: 'Button link' },
   },
