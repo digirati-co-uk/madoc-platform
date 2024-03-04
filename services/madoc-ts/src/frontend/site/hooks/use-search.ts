@@ -95,7 +95,7 @@ export function useSearch() {
         (!!facetsToRequest.length ||
           !!fulltext ||
           fulltext === '' ||
-          facets ||
+          !!facets ||
           !!rscType ||
           collectionId ||
           manifestId ||
