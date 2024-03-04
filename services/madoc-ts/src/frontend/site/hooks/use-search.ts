@@ -68,6 +68,7 @@ export function useSearch() {
   }));
 
   const facets = topic ? topicFacets : searchQFacets;
+  const waitForTopic = topic ? !!topicFacets : true;
 
   const searchResults = paginatedApiHooks.getSiteSearchQuery(
     () => [
@@ -92,6 +93,7 @@ export function useSearch() {
     {
       enabled:
         !searchFacetConfig.isLoading &&
+        waitForTopic &&
         (!!facetsToRequest.length ||
           !!fulltext ||
           fulltext === '' ||
