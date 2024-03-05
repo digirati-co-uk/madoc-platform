@@ -105,12 +105,13 @@ export const GetTopic: React.FC<{
       }
     | string;
 }> = ({ value }) => {
+  const { topicType } = useParams<Record<'topicType', any>>();
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   const slug = !value.slug && typeof value === 'string' ? value : value.slug;
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  const type = !value.type && typeof value === 'string' ? value : value.type;
+  const type = !value.type && typeof value === 'string' ? topicType : value.type;
   const { data } = useApiTopic(type, slug);
 
   if (data) {

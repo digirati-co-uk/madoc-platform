@@ -21,7 +21,7 @@ export function EditTopic() {
     if (updatedData.thumbnail && data.other_data?.thumbnail?.id !== updatedData.thumbnail.id) {
       updatedData.thumbnail = ParseEntityMedia(updatedData.thumbnail);
     }
-    if (updatedData.hero.id && data.other_data?.main_image?.id !== updatedData.hero.id) {
+    if (updatedData.hero && updatedData.hero.id && data.other_data?.main_image?.id !== updatedData.hero.id) {
       updatedData.hero = ParseEntityMedia(updatedData.hero);
     }
 

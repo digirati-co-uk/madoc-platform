@@ -58,7 +58,7 @@ export function CreateNewTopic() {
 
     if (!hasTopic) {
       // input.type_slug = type?.slug;
-      input.type_slug = input.type_slug.label;
+      input.type_slug = input.type_slug.label.toLowerCase();
       console.log(input.type_slug);
     }
     return {
