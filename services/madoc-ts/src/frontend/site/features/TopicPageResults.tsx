@@ -12,7 +12,6 @@ import { Button, ButtonIcon } from '../../shared/navigation/Button';
 import { GridIcon } from '../../shared/icons/GridIcon';
 import { ListIcon } from '../../shared/icons/ListIcon';
 import { useTopicSearch } from '../hooks/use-topic-search';
-import { useRouteContext } from '../hooks/use-route-context';
 
 interface TopicPageResultsProps {
   background?: string;

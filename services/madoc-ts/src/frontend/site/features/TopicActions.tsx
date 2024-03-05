@@ -25,7 +25,9 @@ export const TopicActions: React.FC<props> = ({ alignment }) => {
   const { appliedFacets } = useSearchQuery();
   const { data } = useTopic();
 
-  query.facets = !appliedFacets.length ? JSON.stringify([{ k: 'entity', v: router.topic, t: 'entity' }]) : query.facets;
+  query.facets = !appliedFacets.length
+    ? JSON.stringify([{ k: router.topicType, v: router.topic, t: 'entity' }])
+    : query.facets;
 
   return (
     <TopicActionWrapper>
