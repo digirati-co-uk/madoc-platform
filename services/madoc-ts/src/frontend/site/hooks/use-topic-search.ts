@@ -75,7 +75,13 @@ export function useTopicSearch() {
     {
       enabled:
         !searchFacetConfig.isLoading &&
-        (!!facetsToRequest.length || !!fulltext || fulltext === '' || !!topicFacets || !!rscType || !!topic),
+        (!!facetsToRequest.length ||
+          !!fulltext ||
+          fulltext === '' ||
+          !!topicFacets ||
+          !!rscType ||
+          !!topic ||
+          topicType),
       staleTime: 0,
     }
   );

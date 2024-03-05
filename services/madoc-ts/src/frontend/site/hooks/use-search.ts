@@ -11,7 +11,7 @@ function normalizeDotKey(key: string) {
 }
 
 export function useSearch() {
-  const { projectId, collectionId, manifestId, topic } = useRouteContext();
+  const { projectId, collectionId, manifestId, topic, topicType } = useRouteContext();
   const { fulltext, appliedFacets, page, rscType } = useSearchQuery();
   const {
     project: { searchStrategy, claimGranularity, searchOptions },
@@ -46,6 +46,7 @@ export function useSearch() {
       ? {
           type: 'entity',
           group_id: facet.v,
+          subtype: topicType,
         }
       : {
           type: facet.t,
@@ -84,7 +85,10 @@ export function useSearch() {
           !!rscType ||
           collectionId ||
           manifestId ||
+          topic ||
+          topicType ||
           projectId),
+      staleTime: 0,
     }
   );
 
