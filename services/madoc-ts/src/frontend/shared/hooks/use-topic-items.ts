@@ -1,7 +1,6 @@
 import { usePaginatedQuery } from 'react-query';
 import { useApi } from './use-api';
 import { useSearchQuery } from '../../site/hooks/use-search-query';
-import { apiHooks } from './use-api-query';
 
 export function useTopicItems(slug?: string) {
   const api = useApi();

@@ -1,5 +1,5 @@
 import { InternationalString } from '@iiif/presentation-3';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { FacetConfig } from '../../shared/components/MetadataFacetEditor';
 import { apiHooks, paginatedApiHooks } from '../../shared/hooks/use-api-query';
 import { useSiteConfiguration } from '../features/SiteConfigurationContext';
@@ -18,13 +18,6 @@ export function useSearch() {
   } = useSiteConfiguration();
   const { searchMultipleFields, nonLatinFulltext, onlyShowManifests } = searchOptions || {};
   const searchFacetConfig = apiHooks.getSiteSearchFacetConfiguration(() => []);
-
-  useEffect(() => {
-    if ((topic && !appliedFacets.length) || topic) {
-      appliedFacets.push({ k: 'entity', v: topic, t: 'entity' });
-    }
-    return;
-  }, [appliedFacets, topic]);
 
   const [facetsToRequest, facetDisplayOrder, facetIdMap] = useMemo(() => {
     const facets = !topic && searchFacetConfig.data ? searchFacetConfig.data.facets : [];
@@ -48,7 +41,7 @@ export function useSearch() {
     return [returnList, displayOrder, idMap];
   }, [searchFacetConfig.data, topic]);
 
-  const topicFacets = appliedFacets.map(facet => {
+  const facets = appliedFacets.map(facet => {
     return facet.k === 'entity'
       ? {
           type: 'entity',
@@ -61,14 +54,6 @@ export function useSearch() {
         };
   });
 
-  const searchQFacets = appliedFacets.map(facet => ({
-    type: facet.t,
-    subtype: facet.k,
-    value: facet.v,
-  }));
-
-  const facets = topic ? topicFacets : searchQFacets;
-  const waitForTopic = topic ? !!facets.length : true;
   const searchResults = paginatedApiHooks.getSiteSearchQuery(
     () => [
       {
@@ -92,7 +77,6 @@ export function useSearch() {
     {
       enabled:
         !searchFacetConfig.isLoading &&
-        waitForTopic &&
         (!!facetsToRequest.length ||
           !!fulltext ||
           fulltext === '' ||
@@ -100,9 +84,7 @@ export function useSearch() {
           !!rscType ||
           collectionId ||
           manifestId ||
-          projectId ||
-          !!topic),
-      staleTime: 0,
+          projectId),
     }
   );
 
@@ -132,12 +114,6 @@ export function useSearch() {
 
     const metadataFacets = searchResults.resolvedData?.facets?.metadata || {};
     const entityFacets = searchResults.resolvedData?.facets?.entity || {};
-
-    // const facetType = { ...metadataFacets, ...entityFacets };
-    const showAllFacets = facetDisplayOrder.length === 0;
-    // for (const facet of Object.keys(facetType)) {
-    //   const values = Object.keys(facetType[facet]);
-    //   const normalisedKey = facet.toLowerCase();
 
     for (const mfacet of Object.keys(metadataFacets)) {
       const values = Object.keys(metadataFacets[mfacet]);
