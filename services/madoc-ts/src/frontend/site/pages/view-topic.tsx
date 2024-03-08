@@ -13,6 +13,7 @@ import { TopicHeroImage } from '../features/TopicHeroImage';
 import { SearchPageResults } from '../features/SearchPageResults';
 import { SearchPageSearch } from '../features/SearchPageSearch';
 import { useTopic } from './loaders/topic-loader';
+import { TopicPageResults } from '../features/TopicPageResults';
 export const ViewTopic = () => {
   const { data } = useTopic();
   return (
@@ -55,7 +56,7 @@ export const ViewTopic = () => {
             <Slot name="topic-item-results">
               <SearchPageSearch />
               <AppliedFacets />
-              <SearchPageResults />
+              <TopicPageResults />
             </Slot>
 
             <Slot name="topic-items-pagination">

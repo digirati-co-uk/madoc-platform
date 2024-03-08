@@ -10,8 +10,8 @@ function normalizeDotKey(key: string) {
   return key.startsWith('metadata.') ? key.slice('metadata.'.length).toLowerCase() : key.toLowerCase();
 }
 
-export function useSearch() {
-  const { projectId, collectionId, manifestId, topic, topicType } = useRouteContext();
+export function useTopicSearch() {
+  const { topic, topicType } = useRouteContext();
   const { fulltext, appliedFacets, page, rscType } = useSearchQuery();
   const {
     project: { searchStrategy, claimGranularity, searchOptions },
@@ -41,7 +41,7 @@ export function useSearch() {
     return [returnList, displayOrder, idMap];
   }, [searchFacetConfig.data, topic]);
 
-  const facets = appliedFacets.map(facet => {
+  const topicFacets = appliedFacets.map(facet => {
     return facet.k === 'entity'
       ? {
           type: 'entity',
@@ -58,13 +58,10 @@ export function useSearch() {
   const searchResults = paginatedApiHooks.getSiteSearchQuery(
     () => [
       {
-        projectId,
-        collectionId,
-        manifestId,
         fulltext: fulltext,
         facet_fields: facetsToRequest.length ? facetsToRequest : undefined,
         //  @todo stringify facets.
-        facets: facets,
+        facets: [...topicFacets, { type: 'entity', group_id: topic || '', subtype: topicType || '' }],
         resource_type: rscType,
         facet_on_manifests: true,
         search_type: searchStrategy as any,
@@ -81,37 +78,15 @@ export function useSearch() {
         (!!facetsToRequest.length ||
           !!fulltext ||
           fulltext === '' ||
-          !!facets ||
+          !!topicFacets ||
           !!rscType ||
-          collectionId ||
-          manifestId ||
-          topic ||
-          topicType ||
-          projectId),
+          !!topic ||
+          topicType),
       staleTime: 0,
     }
   );
 
   const displayFacets = useMemo(() => {
-    // We need to display the facets. We have two lists.
-    // mappedFacets:
-    // {
-    //   title: {id: "8159f355-3ca7-4f25-8100-80919b20a064", keys: ['metadata.Title'], values: Array(0), label: {…}}
-    // }
-    //
-    // searchResponse.data.facets
-    // {
-    //   metadata: {
-    //     title: {
-    //       'Wunder der Vererbung': 1,
-    //     }
-    //   }
-    // }
-    //
-    // And we want to format this into a single list. The following rules applied:
-    // - If mapped facets contains multiple keys, they should be merged together.
-    // - If the values list is not empty, only those values should be used.
-    // - The internationalised label should be used
     const mappedSearchResponseMetadata: {
       [key: string]: Array<{ key: string; value: string; count: number; configuration?: FacetConfig }>;
     } = {};

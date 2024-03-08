@@ -55,7 +55,7 @@ export const TopicCard: React.FC<{
         </LocaleString>
 
         <Subheading3>
-          {topic.tagged_resource_count || 0} {t('Resources')}
+          {topic.tagged_resource_count || 0} {t('appearances')}
         </Subheading3>
 
         <Heading5 style={{ padding: 0 }}>{t('PART OF')}</Heading5>

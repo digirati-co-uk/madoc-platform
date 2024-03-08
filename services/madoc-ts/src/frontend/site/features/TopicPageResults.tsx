@@ -11,8 +11,9 @@ import { SimpleDropdown } from '../../shared/atoms/SimpleDropdown';
 import { Button, ButtonIcon } from '../../shared/navigation/Button';
 import { GridIcon } from '../../shared/icons/GridIcon';
 import { ListIcon } from '../../shared/icons/ListIcon';
+import { useTopicSearch } from '../hooks/use-topic-search';
 
-interface SearchPageResultsProps {
+interface TopicPageResultsProps {
   background?: string;
   grid?: boolean;
   snippet?: boolean;
@@ -21,7 +22,7 @@ interface SearchPageResultsProps {
   imageStyle?: string;
 }
 
-export const SearchPageResults: React.FC<SearchPageResultsProps> = ({
+export const TopicPageResults: React.FC<TopicPageResultsProps> = ({
   snippet,
   cardBorder,
   textColor,
@@ -29,7 +30,7 @@ export const SearchPageResults: React.FC<SearchPageResultsProps> = ({
   imageStyle,
 }) => {
   const { t } = useTranslation();
-  const [{ resolvedData: searchResponse, latestData }, displayFacets, isLoading] = useSearch();
+  const [{ resolvedData: searchResponse, latestData }, displayFacets, isLoading] = useTopicSearch();
   const { rawQuery, page, fulltext } = useSearchQuery();
   const searchResults = searchResponse ? searchResponse.results : [];
 
@@ -99,10 +100,10 @@ export const SearchPageResults: React.FC<SearchPageResultsProps> = ({
   );
 };
 
-blockEditorFor(SearchPageResults, {
-  label: 'Search Page Results',
-  type: 'default.SearchPageResults',
-  anyContext: ['collection', 'manifest', 'canvas', 'project', 'topic', 'topicType'],
+blockEditorFor(TopicPageResults, {
+  label: 'topic Page Results',
+  type: 'default.TopicPageResults',
+  anyContext: ['topic', 'topicType'],
   requiredContext: ['page'],
   defaultProps: {
     background: '',

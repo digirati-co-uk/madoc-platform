@@ -19,10 +19,14 @@ export function EditTopicType() {
   const [createNewEntityType, status] = useMutation(async (updatedData: any) => {
     if (!data) return;
 
-    if (updatedData.thumbnail.id && data.other_data?.thumbnail?.id !== updatedData.thumbnail.id) {
+    if (
+      updatedData.thumbnail &&
+      updatedData.thumbnail.id &&
+      data.other_data?.thumbnail?.id !== updatedData.thumbnail.id
+    ) {
       updatedData.thumbnail = ParseEntityMedia(updatedData.thumbnail);
     }
-    if (updatedData.hero.id && data.other_data?.main_image?.id !== updatedData.hero.id) {
+    if (updatedData.hero && updatedData.hero.id && data.other_data?.main_image?.id !== updatedData.hero.id) {
       updatedData.hero = ParseEntityMedia(updatedData.hero);
     }
 
@@ -39,6 +43,7 @@ export function EditTopicType() {
           .filter((f: string) => f !== undefined);
 
         updatedData.featured_topics = ogIds?.concat(newIds);
+        return;
       }
       updatedData.featured_topics = [];
     }

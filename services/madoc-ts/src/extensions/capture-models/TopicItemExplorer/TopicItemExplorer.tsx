@@ -29,7 +29,7 @@ export const TopicItemExplorer: FieldComponent<TopicItemExplorerProps> = ({ valu
     ['topic-items', {}],
     async (key, _, page?: number) => {
       return api.getSearchQuery(
-        { facets: [{ type: 'entity', group_id: data?.id }], resource_type: 'manifest' } as any,
+        { facets: [{ type: 'entity', group_id: topic }], resource_type: 'manifest' } as any,
         page
       );
     },

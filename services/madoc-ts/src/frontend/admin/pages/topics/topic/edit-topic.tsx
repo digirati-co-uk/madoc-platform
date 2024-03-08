@@ -18,10 +18,10 @@ export function EditTopic() {
   const [createNewEntity, status] = useMutation(async (updatedData: any) => {
     if (!data) return;
 
-    if (updatedData.thumbnail.id && data.other_data?.thumbnail?.id !== updatedData.thumbnail.id) {
+    if (updatedData.thumbnail && data.other_data?.thumbnail?.id !== updatedData.thumbnail.id) {
       updatedData.thumbnail = ParseEntityMedia(updatedData.thumbnail);
     }
-    if (updatedData.hero.id && data.other_data?.main_image?.id !== updatedData.hero.id) {
+    if (updatedData.hero && updatedData.hero.id && data.other_data?.main_image?.id !== updatedData.hero.id) {
       updatedData.hero = ParseEntityMedia(updatedData.hero);
     }
 
@@ -82,7 +82,7 @@ export function EditTopic() {
   }
 
   return (
-    <div style={{ padding: '1em 0' }}>
+    <div style={{ paddingBottom: '3em' }}>
       {status.isError && <ErrorMessage>{t('Error...')}</ErrorMessage>}
       <CustomEditorTypes>
         <EditShorthandCaptureModel

@@ -3,7 +3,6 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
-import { CollectionFull } from '../../../types/schemas/collection-full';
 import { useRelativeLinks } from '../../site/hooks/use-relative-links';
 import { CroppedImage } from '../atoms/Images';
 import { ImageStrip, ImageStripBox } from '../atoms/ImageStrip';
@@ -16,12 +15,15 @@ import { Heading3, Subheading3 } from '../typography/Heading3';
 import { SingleLineHeading5, Subheading5 } from '../typography/Heading5';
 import { HrefLink } from '../utility/href-link';
 import { LocaleString, useCreateLocaleString } from './LocaleString';
+import { Topic } from '../../../types/schemas/topics';
+import { useTopicItems } from '../hooks/use-topic-items';
+import { extractIdFromUrn } from '../../../utility/parse-urn';
 
-interface SingleCollectionProps {
+interface SingleTopicProps {
   customButtonLabel?: InternationalString;
-  collection?: { id: string; label: InternationalString };
+  topic?: { id: string; slug: string; type: string };
   background?: string;
-  data?: CollectionFull & { collection: CollectionFull['collection'] & { itemCount: number } };
+  data?: Topic;
   radius?: string;
   snippet?: boolean;
   imageStyle?: string;
@@ -29,18 +31,16 @@ interface SingleCollectionProps {
   textColor?: string;
   cardBorder?: string;
 }
-export function SingleCollection(props: SingleCollectionProps) {
+export function SingleTopic(props: SingleTopicProps) {
   const { t } = useTranslation();
   const createLink = useRelativeLinks();
   const createLocaleString = useCreateLocaleString();
-
   const { data, customButtonLabel } = props;
   const accessibleTextColor = useAccessibleColor(props.background || '#eeeeee');
   const radius = props.radius ? parseInt(props.radius, 10) : undefined;
+  const [{ data: topicItems, isLoading }] = useTopicItems(props.topic?.slug);
 
-  const collection = data?.collection;
-
-  if (!props.collection || !data || !collection) {
+  if (!props.topic || !data || !topicItems) {
     return null;
   }
 
@@ -51,44 +51,52 @@ export function SingleCollection(props: SingleCollectionProps) {
           <LocaleString
             as={Link}
             to={createLink({
-              collectionId: collection.id,
+              topic: data.slug,
+              topicType: data.type_slug,
             })}
           >
-            {collection.label}
+            {data.title}
           </LocaleString>
         </Heading3>
-        <Subheading3>{t('{{count}} items', { count: collection.itemCount })}</Subheading3>
-        {collection.items.length === 0 ? null : (
+        <Subheading3>{t('{{count}} items', { count: data.tagged_resource_count })}</Subheading3>
+        {topicItems.pagination.totalResults === 0 ? null : (
           <ImageStrip>
-            {collection.items.map((manifest: any) => (
-              <Link
-                to={createLink({
-                  collectionId: collection.id,
-                  manifestId: manifest.id,
-                })}
-                key={manifest.id}
-              >
-                <ImageStripBox
-                  $size="small"
-                  $bgColor={props.cardBackground}
-                  $color={props.textColor}
-                  $border={props.cardBorder}
+            {topicItems.results.slice(0, 6).map((item: any) => {
+              return (
+                <Link
+                  to={createLink({
+                    topic: data.slug,
+                    topicType: data.type_slug,
+                    canvasId: extractIdFromUrn(item.contexts.find((e: string) => e.includes('canvas'))),
+                    manifestId: extractIdFromUrn(item.contexts.find((e: string) => e.includes('manifest'))),
+                  })}
+                  key={item.id}
                 >
-                  <CroppedImage $size="small" $covered={props.imageStyle === 'covered'}>
-                    {manifest.thumbnail ? (
-                      <img alt={createLocaleString(manifest.label, t('Manifest thumbnail'))} src={manifest.thumbnail} />
-                    ) : null}
-                  </CroppedImage>
-                  <LocaleString as={SingleLineHeading5}>{manifest.label}</LocaleString>
-                  <Subheading5>{t('{{count}} images', { count: manifest.canvasCount })}</Subheading5>
-                </ImageStripBox>
-              </Link>
-            ))}
-            {collection.items.length < (collection.itemCount || collection.items.length) ? (
+                  <ImageStripBox
+                    $size="small"
+                    $bgColor={props.cardBackground}
+                    $color={props.textColor}
+                    $border={props.cardBorder}
+                  >
+                    <CroppedImage $size="small" $covered={props.imageStyle === 'covered'}>
+                      {item.madoc_thumbnail ? (
+                        <img alt={createLocaleString(item.label, t('Manifest thumbnail'))} src={item.madoc_thumbnail} />
+                      ) : null}
+                    </CroppedImage>
+                    <LocaleString as={SingleLineHeading5}>{item.label}</LocaleString>
+                    {item.canvasCount && (
+                      <Subheading5>{t('{{count}} images', { count: item.canvasCount })}</Subheading5>
+                    )}
+                  </ImageStripBox>
+                </Link>
+              );
+            })}
+            {topicItems.results.length > 6 ? (
               <div>
                 <Link
                   to={createLink({
-                    collectionId: collection.id,
+                    topic: data.slug,
+                    topicType: data.type_slug,
                   })}
                 >
                   <MoreContainer>
@@ -99,7 +107,7 @@ export function SingleCollection(props: SingleCollectionProps) {
                     </MoreIconContainer>
                     <MoreLabel>
                       {t('{{count}} more', {
-                        count: (collection.itemCount || collection.items.length) - collection.items.length,
+                        count: topicItems.pagination.totalResults - 6,
                       })}
                     </MoreLabel>
                   </MoreContainer>
@@ -113,58 +121,43 @@ export function SingleCollection(props: SingleCollectionProps) {
             $primary
             as={HrefLink}
             href={createLink({
-              collectionId: collection.id,
+              topic: data.slug,
+              topicType: data.type_slug,
             })}
           >
-            {customButtonLabel ? <LocaleString>{customButtonLabel}</LocaleString> : t('view collection')}
+            {customButtonLabel ? <LocaleString>{customButtonLabel}</LocaleString> : t('view topic')}
           </Button>
         </ButtonRow>
       </ObjectContainer>
     );
   }
 
-  if (!data) {
-    return (
-      <SnippetLarge
-        margin
-        label={'...'}
-        subtitle={t('Collection')}
-        summary={'...'}
-        linkAs={HrefLink}
-        buttonText={customButtonLabel ? <LocaleString>{customButtonLabel}</LocaleString> : t('view collection')}
-        link={createLink({ collectionId: collection.id })}
-        {...props}
-      />
-    );
-  }
-
-  const thumbnail = data.collection.thumbnail
-    ? data.collection.thumbnail
-    : data.collection.items[0] && data.collection.items[0].thumbnail
-    ? data.collection.items[0].thumbnail
-    : undefined;
+  const thumbnail = data.other_data?.thumbnail?.url
+    ? data.other_data?.thumbnail?.url
+    : data.other_data?.main_image?.url;
 
   return (
     <SnippetLarge
       margin
-      label={<LocaleString>{data.collection.label}</LocaleString>}
-      subtitle={t('Collection with {{count}} manifests', { count: data.pagination.totalResults })}
-      summary={<LocaleString>{data.collection.summary}</LocaleString>}
+      label={<LocaleString>{data.label}</LocaleString>}
+      subtitle={t('topic with {{count}} ', { count: data.tagged_resource_count })}
+      summary={<LocaleString>{data.description}</LocaleString>}
       linkAs={HrefLink}
       thumbnail={thumbnail}
-      buttonText={customButtonLabel ? <LocaleString>{customButtonLabel}</LocaleString> : t('view collection')}
-      link={createLink({ collectionId: collection.id })}
+      buttonText={customButtonLabel ? <LocaleString>{customButtonLabel}</LocaleString> : t('view topic')}
+      link={createLink({ topic: data.id })}
       {...props}
     />
   );
 }
 
-blockEditorFor(SingleCollection, {
-  label: 'Single collection',
-  type: 'SingleCollection',
+// @ts-ignore
+blockEditorFor(SingleTopic, {
+  label: 'Single topic',
+  type: 'SingleTopic',
   defaultProps: {
     customButtonLabel: '',
-    collection: null,
+    topic: null,
     background: null,
     radius: null,
     snippet: false,
@@ -175,8 +168,10 @@ blockEditorFor(SingleCollection, {
   },
   hooks: [
     {
-      name: 'getSiteCollection',
-      creator: props => (props.collection ? [props.collection.id] : undefined),
+      name: 'getSiteTopic',
+      creator: props => {
+        return props.topic ? [props.topic.type, props.topic.slug] : undefined;
+      },
       mapToProps: (props, data) => {
         return { ...props, data };
       },
@@ -186,9 +181,9 @@ blockEditorFor(SingleCollection, {
     customButtonLabel: { type: 'text-field', label: 'Custom button label' },
     background: { type: 'color-field', label: 'Background color', defaultValue: '#eeeeee' },
     radius: { type: 'text-field', label: 'Border radius', defaultValue: '' },
-    collection: {
-      label: 'Collection',
-      type: 'collection-explorer',
+    topic: {
+      label: 'Topic',
+      type: 'topic-explorer',
     },
     snippet: { type: 'checkbox-field', label: 'Layout', inlineLabel: 'Show as snippet' },
     cardBackground: { label: 'Card background color', type: 'color-field' },
