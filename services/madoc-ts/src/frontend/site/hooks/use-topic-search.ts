@@ -11,7 +11,7 @@ function normalizeDotKey(key: string) {
 }
 
 export function useTopicSearch() {
-  const { topic, topicType } = useRouteContext();
+  const { topic } = useRouteContext();
   const { fulltext, appliedFacets, page, rscType } = useSearchQuery();
   const {
     project: { searchStrategy, claimGranularity, searchOptions },
@@ -46,7 +46,6 @@ export function useTopicSearch() {
       ? {
           type: 'entity',
           group_id: facet.v,
-          subtype: topicType,
         }
       : {
           type: facet.t,
@@ -61,7 +60,7 @@ export function useTopicSearch() {
         fulltext: fulltext,
         facet_fields: facetsToRequest.length ? facetsToRequest : undefined,
         //  @todo stringify facets.
-        facets: [...topicFacets, { type: 'entity', group_id: topic || '', subtype: topicType || '' }],
+        facets: [...topicFacets, { type: 'entity', group_id: topic || '' }],
         resource_type: rscType,
         facet_on_manifests: true,
         search_type: searchStrategy as any,
@@ -75,13 +74,7 @@ export function useTopicSearch() {
     {
       enabled:
         !searchFacetConfig.isLoading &&
-        (!!facetsToRequest.length ||
-          !!fulltext ||
-          fulltext === '' ||
-          !!topicFacets ||
-          !!rscType ||
-          !!topic ||
-          topicType),
+        (!!facetsToRequest.length || !!fulltext || fulltext === '' || !!topicFacets.length || !!rscType || !!topic),
       staleTime: 0,
     }
   );
