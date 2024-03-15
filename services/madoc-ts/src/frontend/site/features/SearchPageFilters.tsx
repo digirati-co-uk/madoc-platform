@@ -17,6 +17,8 @@ import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for
 import { CheckboxBtn } from '../../shared/atoms/CheckboxBtn';
 import { useSearch } from '../hooks/use-search';
 import { Accordion } from '../../shared/atoms/Accordion';
+import { Spinner } from '../../shared/icons/Spinner';
+import { EmptyState } from '../../shared/layout/EmptyState';
 
 const DropdownContainer = styled.div`
   margin: 1em 1em 1em 0;
@@ -53,6 +55,13 @@ export const SearchPageFilters: React.FC<SearchPageFiltersProps> = ({ checkBoxCo
 
   if (!uniqueFacets) {
     return null;
+  }
+  if (isLoading) {
+    return (
+      <EmptyState style={{ width: '200px' }}>
+        <Spinner stroke="#000" />
+      </EmptyState>
+    );
   }
   return (
     <SearchFilterContainer>
