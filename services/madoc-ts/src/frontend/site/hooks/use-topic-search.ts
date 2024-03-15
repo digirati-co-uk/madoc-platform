@@ -223,5 +223,6 @@ export function useTopicSearch() {
 
     return displayList;
   }, [facetDisplayOrder, facetIdMap, searchResults.resolvedData]);
+  console.log(displayFacets);
   return [searchResults, displayFacets, searchFacetConfig.isLoading || searchResults.isLoading] as const;
 }
