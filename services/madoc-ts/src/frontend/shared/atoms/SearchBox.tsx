@@ -60,6 +60,15 @@ export const SearchBox: React.FC<{
   const [isFocus, setIsFocus] = useState(false);
   const [searchValue, setSearchValue] = useState(value);
   const { t } = useTranslation();
+
+  const handleEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      onSearch(searchValue);
+    }
+    return;
+  };
+
   return (
     <form
       style={{ marginRight: '20px', display: 'flex' }}
@@ -72,6 +81,7 @@ export const SearchBox: React.FC<{
         <InputBorderless
           onFocus={() => setIsFocus(true)}
           onBlur={() => setIsFocus(false)}
+          onKeyDown={e => handleEnter(e)}
           type="text"
           id={!large ? 'search' : `searchLarge`}
           value={searchValue}
