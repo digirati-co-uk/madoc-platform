@@ -5,6 +5,7 @@ import { Button, ButtonRow } from '../../shared/navigation/Button';
 import { useData } from '../../shared/hooks/use-data';
 import { useLocalStorage } from '../../shared/hooks/use-local-storage';
 import { CanvasLoader } from '../pages/loaders/canvas-loader';
+import { HomeIcon } from '../../shared/icons/HomeIcon';
 
 const PlaintextContainer = styled.div``;
 
@@ -53,8 +54,11 @@ export const CanvasPlaintext: React.FC<{ onSwitch?: () => void; switchLabel?: st
     <PlaintextContainer>
       <PlaintextActions>
         <ButtonRow $noMargin>
-          <Button onClick={() => setFontMultiplier(0.9)}>
-            {t('atlas__zoom_home_text', { defaultValue: 'Reset' })}
+          <Button
+            onClick={() => setFontMultiplier(0.9)}
+            aria-label={t('atlas__zoom_home_text', { defaultValue: 'Reset' })}
+          >
+            <HomeIcon />
           </Button>
           <Button disabled={fontMultiplier < 0.3} onClick={() => setFontMultiplier(m => m * 0.9)}>
             {t('atlas__zoom_out_text', { defaultValue: '-' })}
