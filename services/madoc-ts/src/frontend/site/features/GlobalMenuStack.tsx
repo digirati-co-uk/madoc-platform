@@ -44,11 +44,21 @@ export const GlobalMenuStack: React.FC<{
   hideSiteTitle?: boolean;
   showHomepageMenu?: boolean;
   maxWidth?: number;
+  fontWeight?: 'normal' | 'light' | 'bold';
   extraLinks?: {
     slug?: string;
     text?: string;
   }[];
-}> = ({ logo, hideSiteTitle, maxWidth, logoOptions = {}, menuOptions = {}, showHomepageMenu, extraLinks }) => {
+}> = ({
+  logo,
+  hideSiteTitle,
+  maxWidth,
+  logoOptions = {},
+  menuOptions = {},
+  showHomepageMenu,
+  extraLinks,
+  fontWeight,
+}) => {
   const site = useSite();
   const { project } = useSiteConfiguration();
   const showSiteTitle = typeof hideSiteTitle === 'undefined' ? !project.headerOptions?.hideSiteTitle : !hideSiteTitle;
@@ -71,7 +81,7 @@ export const GlobalMenuStack: React.FC<{
         </SiteTitle>
       )}
       <SiteMenuContainer data-full-width={menuOptions.fullWidth}>
-        <GlobalSiteNavigation showHomepageMenu={showHomepageMenu} extraNavItems={extraLinks} />
+        <GlobalSiteNavigation showHomepageMenu={showHomepageMenu} extraNavItems={extraLinks} fontWeight={fontWeight} />
       </SiteMenuContainer>
     </SiteDetails>
   );
@@ -93,6 +103,7 @@ blockEditorFor(GlobalMenuStack, {
     menuOptions: {
       fullWidth: false,
     },
+    fontWeight: 'normal',
     maxWidth: null,
     extraLinks: [
       {
@@ -150,6 +161,24 @@ blockEditorFor(GlobalMenuStack, {
       label: 'Homepage menu',
       type: 'checkbox-field',
       inlineLabel: 'Show home as menu item',
+    },
+    fontWeight: {
+      label: 'Font weight - Menu items ',
+      type: 'dropdown-field',
+      options: [
+        {
+          text: 'Bold',
+          value: 'bold',
+        },
+        {
+          text: 'Normal',
+          value: 'normal',
+        },
+        {
+          text: 'Light',
+          value: 'lighter',
+        },
+      ],
     },
     extraLinks: {
       allowMultiple: true,

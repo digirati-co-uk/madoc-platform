@@ -9,6 +9,7 @@ import { useSiteConfiguration } from './SiteConfigurationContext';
 
 export function GlobalSiteNavigation(props: {
   showHomepageMenu?: boolean;
+  fontWeight?: string;
   extraNavItems?: {
     slug?: string;
     text?: string;
@@ -30,27 +31,39 @@ export function GlobalSiteNavigation(props: {
   return (
     <LightNavigation>
       {props.showHomepageMenu ? (
-        <LightNavigationItem $active={location.pathname === '/'}>
+        <LightNavigationItem $active={location.pathname === '/'} style={{ fontWeight: props.fontWeight }}>
           <HrefLink href="/">{t('Home')}</HrefLink>
         </LightNavigationItem>
       ) : null}
       {showProjects ? (
-        <LightNavigationItem $active={location.pathname.startsWith('/projects') && !isExtraActive}>
+        <LightNavigationItem
+          $active={location.pathname.startsWith('/projects') && !isExtraActive}
+          style={{ fontWeight: props.fontWeight }}
+        >
           <HrefLink href="/projects">{t('Projects')}</HrefLink>
         </LightNavigationItem>
       ) : null}
       {showCollections ? (
-        <LightNavigationItem $active={location.pathname.startsWith('/collections') && !isExtraActive}>
+        <LightNavigationItem
+          $active={location.pathname.startsWith('/collections') && !isExtraActive}
+          style={{ fontWeight: props.fontWeight }}
+        >
           <HrefLink href="/collections">{t('Collections')}</HrefLink>
         </LightNavigationItem>
       ) : null}
       {showTopics ? (
-        <LightNavigationItem $active={location.pathname.startsWith('/topic') && !isExtraActive}>
+        <LightNavigationItem
+          $active={location.pathname.startsWith('/topic') && !isExtraActive}
+          style={{ fontWeight: props.fontWeight }}
+        >
           <HrefLink href="/topics">{t('Topics')}</HrefLink>
         </LightNavigationItem>
       ) : null}
       {showDashboard ? (
-        <LightNavigationItem $active={location.pathname.startsWith('/dashboard') && !isExtraActive}>
+        <LightNavigationItem
+          $active={location.pathname.startsWith('/dashboard') && !isExtraActive}
+          style={{ fontWeight: props.fontWeight }}
+        >
           <HrefLink href="/dashboard">{t('User dashboard')}</HrefLink>
         </LightNavigationItem>
       ) : null}
@@ -58,7 +71,11 @@ export function GlobalSiteNavigation(props: {
         ? props.extraNavItems.map((item, i) => {
             return (
               item.slug && (
-                <LightNavigationItem key={i} $active={location.pathname === item.slug}>
+                <LightNavigationItem
+                  key={i}
+                  $active={location.pathname === item.slug}
+                  style={{ fontWeight: props.fontWeight }}
+                >
                   <HrefLink href={item.slug}>{item.text ? t(item.text) : item.slug}</HrefLink>
                 </LightNavigationItem>
               )
