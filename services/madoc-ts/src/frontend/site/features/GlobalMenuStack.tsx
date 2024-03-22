@@ -44,7 +44,7 @@ export const GlobalMenuStack: React.FC<{
   hideSiteTitle?: boolean;
   showHomepageMenu?: boolean;
   maxWidth?: number;
-  fontWeight?: 'normal' | 'light' | 'bold';
+  fontWeight?: 'normal' | 'lighter' | 'bold';
   extraLinks?: {
     slug?: string;
     text?: string;

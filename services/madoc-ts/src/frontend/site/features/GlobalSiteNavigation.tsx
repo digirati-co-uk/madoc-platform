@@ -9,7 +9,7 @@ import { useSiteConfiguration } from './SiteConfigurationContext';
 
 export function GlobalSiteNavigation(props: {
   showHomepageMenu?: boolean;
-  fontWeight?: string;
+  fontWeight?: 'normal' | 'bold' | 'lighter';
   extraNavItems?: {
     slug?: string;
     text?: string;
