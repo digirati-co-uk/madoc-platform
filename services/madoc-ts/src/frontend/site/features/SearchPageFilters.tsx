@@ -110,6 +110,14 @@ export const SearchPageFilters: React.FC<SearchPageFiltersProps> = ({ checkBoxCo
           </Accordion>
         );
       })}
+      <ButtonRow $noMargin>
+        <Button $primary disabled={!inQueue} onClick={() => applyAllFacets()}>
+          {t('Apply filters')}
+        </Button>
+        <Button disabled={!appliedFacets.length} onClick={() => clearAllFacets()}>
+          {t('Clear')}
+        </Button>
+      </ButtonRow>
     </SearchFilterContainer>
   );
 };
