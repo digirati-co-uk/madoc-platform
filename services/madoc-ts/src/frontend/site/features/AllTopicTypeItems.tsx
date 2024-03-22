@@ -13,18 +13,23 @@ import { CroppedImage } from '../../shared/atoms/Images';
 const ListWrapper = styled.div`
   padding-top: 1em;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 2em;
 `;
 
 const TypeCard = styled.div`
   display: flex;
-  border: 1px solid #002d4b;
+  border: 3px solid #002d4b;
   background-color: white;
   margin-bottom: 20px;
   justify-content: space-evenly;
   max-height: 250px;
   min-width: 45%;
+  border-radius: 4px;
+
+  &:hover {
+    border: 3px solid rgba(4, 102, 166, 0.5) !important;
+  }
 `;
 
 const TypeText = styled.div`
@@ -41,7 +46,6 @@ const TypeText = styled.div`
     color: #002d4b;
     border-radius: 20px;
     padding: 0.8em;
-    margin-top: 1em;
 
     &:hover {
       background-color: #002d4b;
@@ -53,7 +57,7 @@ const TypeText = styled.div`
 const CountText = styled.div`
   font-weight: 400;
   font-size: 1em;
-  margin: 1em 0 2em 0;
+  margin: 1em 0;
 
   span {
     color: #707070;
