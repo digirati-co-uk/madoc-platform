@@ -16,9 +16,9 @@ import { useSearchFacets } from '../hooks/use-search-facets';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import { CheckboxBtn } from '../../shared/atoms/CheckboxBtn';
 import { useSearch } from '../hooks/use-search';
-import { SearchBox } from '../../shared/atoms/SearchBox';
 import { Accordion } from '../../shared/atoms/Accordion';
-import { Dropdown } from '../../shared/capture-models/editor/atoms/Dropdown';
+import { Spinner } from '../../shared/icons/Spinner';
+import { EmptyState } from '../../shared/layout/EmptyState';
 
 const DropdownContainer = styled.div`
   margin: 1em 1em 1em 0;
@@ -51,8 +51,17 @@ export const SearchPageFilters: React.FC<SearchPageFiltersProps> = ({ checkBoxCo
     setResourceType,
   } = useSearchFacets();
 
-  if (!displayFacets) {
+  const uniqueFacets = [...new Map(displayFacets.map(v => [v.id, v])).values()];
+
+  if (!uniqueFacets) {
     return null;
+  }
+  if (isLoading) {
+    return (
+      <EmptyState style={{ width: '200px' }}>
+        <Spinner stroke="#000" />
+      </EmptyState>
+    );
   }
   return (
     <SearchFilterContainer>
@@ -67,7 +76,7 @@ export const SearchPageFilters: React.FC<SearchPageFiltersProps> = ({ checkBoxCo
         </Button>
       </ButtonRow>
 
-      {displayFacets?.map(facet => {
+      {uniqueFacets?.map(facet => {
         if (facet.items.length === 0) {
           return null;
         }
@@ -101,6 +110,14 @@ export const SearchPageFilters: React.FC<SearchPageFiltersProps> = ({ checkBoxCo
           </Accordion>
         );
       })}
+      <ButtonRow $noMargin>
+        <Button $primary disabled={!inQueue} onClick={() => applyAllFacets()}>
+          {t('Apply filters')}
+        </Button>
+        <Button disabled={!appliedFacets.length} onClick={() => clearAllFacets()}>
+          {t('Clear')}
+        </Button>
+      </ButtonRow>
     </SearchFilterContainer>
   );
 };

@@ -46,6 +46,7 @@ const SurfaceStyled = styled.div<{
   $color?: string;
   $textAlign?: 'left' | 'center' | 'right';
   $fullWidth?: boolean;
+  $halfWidth?: boolean;
   $padding?: 'none' | 'sm' | 'md' | 'lg';
   $marginBottom?: 'none' | 'sm' | 'md' | 'lg';
   $fontSize?: 'sm' | 'md' | 'lg';
@@ -63,6 +64,7 @@ const SurfaceStyled = styled.div<{
   margin-bottom: ${parseProp('$marginBottom', '0')};
   margin-left: ${props => (props.$fullWidth ? '-3em' : '')};
   margin-right: ${props => (props.$fullWidth ? '-3em' : '')};
+  max-width: ${props => (props.$halfWidth ? '60vw' : '')};
 `;
 
 export type SurfaceProps = {
@@ -70,6 +72,7 @@ export type SurfaceProps = {
   background?: string;
   textColor?: string;
   fullWidth?: boolean;
+  halfWidth?: boolean;
   textAlign?: 'left' | 'center' | 'right';
   font?: string;
   padding?: 'none' | 'sm' | 'md' | 'lg';
@@ -83,6 +86,7 @@ export const Surface: React.FC<SurfaceProps> = ({
   textAlign,
   textColor,
   fullWidth,
+  halfWidth,
   background,
   font,
   fontSize,
@@ -103,6 +107,7 @@ export const Surface: React.FC<SurfaceProps> = ({
       $background={background}
       $textAlign={textAlign}
       $fullWidth={fullWidth}
+      $halfWidth={halfWidth}
       $font={font}
       $padding={padding}
       $fontSize={fontSize}
@@ -121,6 +126,7 @@ blockEditorFor(Surface, {
   defaultProps: {
     textColor: '',
     fullWidth: false,
+    halfWidth: false,
     background: '',
     font: '',
     padding: 'none',
@@ -134,6 +140,7 @@ blockEditorFor(Surface, {
     background: { label: 'Background color', type: 'color-field' },
     font: { label: 'Font (from google)', type: 'text-field' },
     fullWidth: { label: 'Display as full width?', type: 'checkbox-field' },
+    halfWidth: { label: 'Display as half width?', type: 'checkbox-field' },
     padding: {
       label: 'Padding size',
       description: 'How much padding should the surface have. (default: none)',
