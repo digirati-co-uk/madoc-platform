@@ -9,16 +9,16 @@ import {
   SearchFilterLabel,
   SearchFilterTitle,
 } from '../../shared/components/SearchFilters';
-import { ButtonRow, TinyButton } from '../../shared/navigation/Button';
+import { Button, ButtonRow, TextButton, TinyButton } from '../../shared/navigation/Button';
 import { LocaleString } from '../../shared/components/LocaleString';
 import { useSearchQuery } from '../hooks/use-search-query';
 import { useSearchFacets } from '../hooks/use-search-facets';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import { CheckboxBtn } from '../../shared/atoms/CheckboxBtn';
 import { useSearch } from '../hooks/use-search';
-import { SearchBox } from '../../shared/atoms/SearchBox';
 import { Accordion } from '../../shared/atoms/Accordion';
-import { Dropdown } from '../../shared/capture-models/editor/atoms/Dropdown';
+import { Spinner } from '../../shared/icons/Spinner';
+import { EmptyState } from '../../shared/layout/EmptyState';
 
 const DropdownContainer = styled.div`
   margin: 1em 1em 1em 0;
@@ -51,49 +51,32 @@ export const SearchPageFilters: React.FC<SearchPageFiltersProps> = ({ checkBoxCo
     setResourceType,
   } = useSearchFacets();
 
-  if (!displayFacets) {
+  const uniqueFacets = [...new Map(displayFacets.map(v => [v.id, v])).values()];
+
+  if (!uniqueFacets) {
     return null;
+  }
+  if (isLoading) {
+    return (
+      <EmptyState style={{ width: '200px' }}>
+        <Spinner stroke="#000" />
+      </EmptyState>
+    );
   }
   return (
     <SearchFilterContainer>
       <SearchFilterTitle>{filterHeader}</SearchFilterTitle>
 
-      <SearchBox onSearch={setFullTextQuery} placeholder="Keywords" value={fulltext} key={fulltext} />
-
-      <DropdownContainer>
-        <Dropdown
-          key={fulltext}
-          placeholder={t('Type')}
-          value={rscType}
-          onChange={val => {
-            setResourceType(val || '');
-          }}
-          options={[
-            {
-              value: '',
-              text: 'All',
-            },
-            {
-              value: 'manifest',
-              text: 'Documents',
-            },
-            {
-              value: 'canvas',
-              text: 'Pages',
-            },
-          ]}
-        />
-      </DropdownContainer>
-      <ButtonRow>
-        <TinyButton disabled={!inQueue} onClick={() => applyAllFacets()}>
-          {t('Apply')}
-        </TinyButton>
-        <TinyButton disabled={!appliedFacets.length} onClick={() => clearAllFacets()}>
+      <ButtonRow $noMargin>
+        <Button $primary disabled={!inQueue} onClick={() => applyAllFacets()}>
+          {t('Apply filters')}
+        </Button>
+        <Button disabled={!appliedFacets.length} onClick={() => clearAllFacets()}>
           {t('Clear')}
-        </TinyButton>
+        </Button>
       </ButtonRow>
 
-      {displayFacets?.map(facet => {
+      {uniqueFacets?.map(facet => {
         if (facet.items.length === 0) {
           return null;
         }
@@ -113,7 +96,7 @@ export const SearchPageFilters: React.FC<SearchPageFiltersProps> = ({ checkBoxCo
                       onChange={(e: { target: { checked: any } }) =>
                         e.target.checked
                           ? queueSingleFacet(item.key, item.values, item.type)
-                          : dequeueSingleFacet(item.key, item.values)
+                          : dequeueSingleFacet(item.key, item.values, item.type)
                       }
                     />
                     <SearchFilterLabel htmlFor={itemHash}>
@@ -127,6 +110,14 @@ export const SearchPageFilters: React.FC<SearchPageFiltersProps> = ({ checkBoxCo
           </Accordion>
         );
       })}
+      <ButtonRow $noMargin>
+        <Button $primary disabled={!inQueue} onClick={() => applyAllFacets()}>
+          {t('Apply filters')}
+        </Button>
+        <Button disabled={!appliedFacets.length} onClick={() => clearAllFacets()}>
+          {t('Clear')}
+        </Button>
+      </ButtonRow>
     </SearchFilterContainer>
   );
 };

@@ -7,6 +7,7 @@ import { SearchPageResults } from '../features/SearchPageResults';
 import { DisplayBreadcrumbs } from '../../shared/components/Breadcrumbs';
 import { SearchHeading } from '../features/SearchPageHeading';
 import { AutoSlotLoader } from '../../shared/page-blocks/auto-slot-loader';
+import { SearchPageSearch } from '../features/SearchPageSearch';
 
 export const Search = () => {
   return (
@@ -27,12 +28,16 @@ export const Search = () => {
         </div>
 
         <div style={{ width: '100%' }}>
+          <Slot name="search-page-top">
+            <SearchPageSearch />
+            <AppliedFacets />
+          </Slot>
+
           <Slot name="search-page-pagination">
             <SearchPagination />
           </Slot>
 
           <Slot name="search-page-results">
-            <AppliedFacets />
             <SearchPageResults />
           </Slot>
 

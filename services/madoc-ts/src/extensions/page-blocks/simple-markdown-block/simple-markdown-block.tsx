@@ -8,6 +8,7 @@ import { ModalFooter } from '../../../frontend/shared/layout/Modal';
 import { blockEditorFor } from '../block-editor-for';
 import { PageBlockEditor, ReactPageBlockDefinition } from '../extension';
 import { StaticMarkdownBlock } from './static-markdown-block';
+import { maxWidth } from '../../../frontend/site/variables/global';
 
 const MarkdownEditorWrapper = styled.div`
   padding: 0.6em 0.6em 0.6em 2em;

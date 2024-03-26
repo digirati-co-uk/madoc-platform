@@ -2,6 +2,7 @@ import { useQuery } from 'react-query';
 import { useApi } from './use-api';
 
 export function useApiTopic(type?: string, slug?: string | null) {
+  console.log('hi', type, slug);
   const api = useApi();
   return useQuery(
     ['api-topic', { type: type, slug: slug }],

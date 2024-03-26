@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom';
 import { createLink } from '../../shared/utility/create-link';
 import styled from 'styled-components';
 import { useTopic } from '../pages/loaders/topic-loader';
+import { useSearchQuery } from '../hooks/use-search-query';
 
 const TopicActionWrapper = styled.div`
   display: flex;
@@ -21,12 +22,16 @@ export const TopicActions: React.FC<props> = ({ alignment }) => {
   const { t } = useTranslation();
   const router = useRouteContext();
   const query = useLocationQuery();
+  const { appliedFacets } = useSearchQuery();
   const { data } = useTopic();
+
+  query.facets = !appliedFacets.length
+    ? JSON.stringify([{ k: router.topicType, v: router.topic, t: 'entity' }])
+    : query.facets;
 
   return (
     <TopicActionWrapper>
       <h3 style={{ fontSize: '1.5em' }}>{t('Explore all resources')}</h3>
-      {/*might be more to add here in the future */}
       <ButtonRow $center={alignment === 'center'} $right={alignment === 'right'}>
         {data && (
           <Button
@@ -39,7 +44,6 @@ export const TopicActions: React.FC<props> = ({ alignment }) => {
               hash: data.id,
             })}
           >
-            {/*  todo - better language here ???*/}
             {t('View in search')}
           </Button>
         )}

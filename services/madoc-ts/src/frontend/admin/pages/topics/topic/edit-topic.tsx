@@ -18,8 +18,12 @@ export function EditTopic() {
   const [createNewEntity, status] = useMutation(async (updatedData: any) => {
     if (!data) return;
 
-    updatedData.other_data.main_image = ParseEntityMedia(updatedData.other_data.main_image);
-    updatedData.other_data.thumbnail = ParseEntityMedia(updatedData.other_data.thumbnail);
+    if (updatedData.thumbnail && data.other_data?.thumbnail?.id !== updatedData.thumbnail.id) {
+      updatedData.thumbnail = ParseEntityMedia(updatedData.thumbnail);
+    }
+    if (updatedData.hero && updatedData.hero.id && data.other_data?.main_image?.id !== updatedData.hero.id) {
+      updatedData.hero = ParseEntityMedia(updatedData.hero);
+    }
 
     if (updatedData.featured_resources) {
       const ftRes = updatedData.featured_resources;
@@ -34,12 +38,18 @@ export function EditTopic() {
         updatedData.featured_resources = Object.values(ftRes);
       }
     }
-    const resp = api.enrichment.upsertEntity({ id: data.id, ...updatedData });
+
+    updatedData.other_data.thumbnail = updatedData.thumbnail;
+    updatedData.other_data.main_image = updatedData.hero;
+    const resp = api.enrichment.upsertEntity({
+      id: data.id,
+      ...updatedData,
+    });
 
     await refetch();
-
     return resp;
   });
+
   const model = useMemo(() => {
     const copy: any = {
       ...entityModel,
@@ -54,6 +64,7 @@ export function EditTopic() {
 
     return copy;
   }, [data]);
+
   if (!data) {
     return <div>{t('Loading...')}</div>;
   }
@@ -71,12 +82,12 @@ export function EditTopic() {
   }
 
   return (
-    <div style={{ padding: '1em 0' }}>
+    <div style={{ paddingBottom: '3em' }}>
       {status.isError && <ErrorMessage>{t('Error...')}</ErrorMessage>}
       <CustomEditorTypes>
         <EditShorthandCaptureModel
           template={model}
-          data={data}
+          data={{ ...data, thumbnail: data.other_data?.thumbnail, hero: data.other_data?.main_image }}
           onSave={async input => {
             await createNewEntity(input);
           }}

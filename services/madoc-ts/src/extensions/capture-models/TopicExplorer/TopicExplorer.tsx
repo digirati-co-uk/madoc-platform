@@ -20,6 +20,7 @@ export type TopicExplorerProps = {
   value: {
     slug?: string;
     id?: string;
+    type: string;
   } | null;
 };
 
@@ -34,7 +35,6 @@ export const TopicExplorer: FieldComponent<TopicExplorerProps> = ({ value, updat
       return api.enrichment.entityAutoComplete(topicType, '', page);
     },
     {
-      enabled: !!topicType,
       getFetchMore: lastPage => {
         if (lastPage.pagination.totalPages === lastPage.pagination.page) {
           return undefined;
@@ -69,19 +69,21 @@ export const TopicExplorer: FieldComponent<TopicExplorerProps> = ({ value, updat
           {pages?.map((page, key) => {
             return (
               <React.Fragment key={key}>
-                {page.results.map(item => (
-                  <RoundedCard
-                    key={item.id}
-                    size="small"
-                    interactive
-                    onClick={() => {
-                      updateValue({ slug: item.slug, id: item.id });
-                    }}
-                  >
-                    <LocaleString as={Subheading1}>{item.title}</LocaleString>
-                    <LocaleString as={Subheading3}>{item.label}</LocaleString>
-                  </RoundedCard>
-                ))}
+                {page.results.map(item => {
+                  return (
+                    <RoundedCard
+                      key={item.id}
+                      size="small"
+                      interactive
+                      onClick={() => {
+                        updateValue({ slug: item.slug, id: item.id, type: item.type_slug });
+                      }}
+                    >
+                      <LocaleString as={Subheading1}>{item.title}</LocaleString>
+                      <LocaleString as={Subheading3}>{item.label}</LocaleString>
+                    </RoundedCard>
+                  );
+                })}
               </React.Fragment>
             );
           })}
@@ -98,16 +100,19 @@ export const GetTopic: React.FC<{
   value:
     | {
         slug?: string;
+        type?: string;
         id?: string;
       }
     | string;
 }> = ({ value }) => {
   const { topicType } = useParams<Record<'topicType', any>>();
-
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   const slug = !value.slug && typeof value === 'string' ? value : value.slug;
-  const { data } = useApiTopic(topicType, slug);
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  const type = !value.type && typeof value === 'string' ? topicType : value.type;
+  const { data } = useApiTopic(type, slug);
 
   if (data) {
     return <TopicSnippetCard topic={data} cardBorder="black" size={'small'} />;

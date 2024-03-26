@@ -205,7 +205,7 @@ services:
         condition: service_healthy
 
   search:
-    image: digirati/madoc-enrichment:qa-deploy
+    image: digirati/madoc-enrichment:latest
 #    build:
 #      context: services/enrichment
 #      dockerfile: Dockerfile
@@ -231,9 +231,11 @@ services:
       - INLINE_WORKER=True
       - GOOGLE_APPLICATION_CREDENTIALS=/app/starsky_google_credentials
       - OCR_ENGINE=Google
+      - DEFAULT_DBPEDIA_URL=http://dbpedia-spotlight/rest
     links:
       - shared-postgres
       - gateway-redis
+      - spotlight.en
 #    volumes:
 #      - ./services/enrichment/app:/app:delegated
     ports:
@@ -243,3 +245,13 @@ services:
     sysctls:
       - net.core.somaxconn=1024
       - net.ipv4.tcp_syncookies=0
+
+  spotlight.en:
+    image: digirati/spotlight-alpine:multi-platform
+    container_name: dbpedia-spotlight
+    volumes:
+      - ./spotlight-model:/opt/spotlight/models
+    restart: unless-stopped
+    ports:
+      - "2222:80"
+    command: spotlight.sh en

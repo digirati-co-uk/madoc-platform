@@ -23,7 +23,7 @@ export function ListAllTopics() {
             link={`${topic.type_slug}/${topic.slug}`}
             buttonText={t('View Topic')}
             hideButton={!topic.type}
-            subtitle={`${topic.tagged_resource_count} ${t('resources tagged')}`}
+            subtitle={`${topic.tagged_resource_count} ${t('appearances')}`}
             thumbnail={topic.other_data?.thumbnail?.url}
             margin
             fluid

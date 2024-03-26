@@ -58,7 +58,7 @@ export function CreateNewTopic() {
 
     if (!hasTopic) {
       // input.type_slug = type?.slug;
-      input.type_slug = input.type_slug.label;
+      input.type_slug = input.type_slug.label.toLowerCase();
       console.log(input.type_slug);
     }
     return {
@@ -94,7 +94,7 @@ export function CreateNewTopic() {
   }
 
   return (
-    <div>
+    <div style={{ paddingBottom: '3em' }}>
       <Heading2>{t('Create new Topic')}</Heading2>
       {status.isError && <ErrorMessage>{t('Error...')}</ErrorMessage>}
       <CustomEditorTypes>

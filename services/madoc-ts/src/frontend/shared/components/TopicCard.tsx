@@ -54,11 +54,10 @@ export const TopicCard: React.FC<{
           {topic.title}
         </LocaleString>
 
-        {topic.tagged_resource_count && (
-          <Subheading3>
-            {topic.tagged_resource_count} {t('Resources')}
-          </Subheading3>
-        )}
+        <Subheading3>
+          {topic.tagged_resource_count || 0} {t('appearances')}
+        </Subheading3>
+
         <Heading5 style={{ padding: 0 }}>{t('PART OF')}</Heading5>
         {topic.type_title.length ? (
           <TypePill as={LocaleString}>{topic.type_title}</TypePill>

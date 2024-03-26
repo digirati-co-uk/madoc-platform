@@ -8,7 +8,7 @@ export function useTopicItems(slug?: string) {
   const query = { fulltext: fulltext, facets: appliedFacets, page: page };
 
   const resp = usePaginatedQuery(
-    ['topic-items', { id: slug, page }],
+    ['topic-resource-items', { id: slug, page }],
     async () => {
       return api.getSearchQuery(
         {

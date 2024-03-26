@@ -28,8 +28,8 @@ export const TopicTypeListLoader: UniversalComponent<TopicTypeListLoaderType> = 
     getKey: (params, query) => {
       return ['site-topic-types-list', { page: Number(query.page) || 1 }];
     },
-    getData: async (key, vars, api) => {
-      return await api.getSiteTopicTypes(vars.page);
+    getData: (key, vars, api) => {
+      return api.getSiteTopicTypes(vars.page);
     },
   }
 );

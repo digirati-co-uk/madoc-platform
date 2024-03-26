@@ -19,8 +19,16 @@ export function EditTopicType() {
   const [createNewEntityType, status] = useMutation(async (updatedData: any) => {
     if (!data) return;
 
-    updatedData.other_data.main_image = ParseEntityMedia(updatedData.other_data.main_image);
-    updatedData.other_data.thumbnail = ParseEntityMedia(updatedData.other_data.thumbnail);
+    if (
+      updatedData.thumbnail &&
+      updatedData.thumbnail.id &&
+      data.other_data?.thumbnail?.id !== updatedData.thumbnail.id
+    ) {
+      updatedData.thumbnail = ParseEntityMedia(updatedData.thumbnail);
+    }
+    if (updatedData.hero && updatedData.hero.id && data.other_data?.main_image?.id !== updatedData.hero.id) {
+      updatedData.hero = ParseEntityMedia(updatedData.hero);
+    }
 
     if (data.topic_count > 0) {
       if (updatedData.featured_topics) {
@@ -35,12 +43,17 @@ export function EditTopicType() {
           .filter((f: string) => f !== undefined);
 
         updatedData.featured_topics = ogIds?.concat(newIds);
+        return;
       }
       updatedData.featured_topics = [];
     }
     const resp = api.enrichment.upsertEntityType({
       id: data.id,
       label: data.label,
+      other_data: {
+        thumbnail: updatedData.thumbnail,
+        main_image: updatedData.hero,
+      },
       ...updatedData,
     });
 
@@ -56,7 +69,7 @@ export function EditTopicType() {
     // dont allow editing featured if not enough to chose from
     // backend automatically picks first 3
     if (data && data.topic_count < 4) {
-      delete copy.featured_topics;
+      delete copy['featured_topics.slug'];
     }
     return copy;
   }, [data]);
@@ -83,7 +96,7 @@ export function EditTopicType() {
       <CustomEditorTypes>
         <EditShorthandCaptureModel
           template={model}
-          data={{ ...data }}
+          data={{ ...data, thumbnail: data.other_data?.thumbnail, hero: data.other_data?.main_image }}
           onSave={async d => {
             await createNewEntityType(d);
           }}

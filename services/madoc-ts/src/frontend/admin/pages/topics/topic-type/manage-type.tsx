@@ -17,7 +17,7 @@ export function ManageType() {
   const site = useSite();
   const { deleted } = useLocationQuery();
 
-  const label = <LocaleString>{data?.label || { none: ['...'] }}</LocaleString>;
+  const label = <LocaleString>{data?.title || { none: ['...'] }}</LocaleString>;
 
   return (
     <>
