@@ -12,6 +12,7 @@ import { TagPill } from '../hooks/canvas-menu/tagging-panel';
 import { AutoCompleteEntitySnippet } from '../../../extensions/enrichment/types';
 import { AddTagButton } from './AddTagButton';
 import { useTranslation } from 'react-i18next';
+import { LocaleString } from '../../shared/components/LocaleString';
 
 export const TopicPill = styled(TagPill)`
   border-color: orange;
@@ -19,7 +20,8 @@ export const TopicPill = styled(TagPill)`
 export const AddTopicButton: React.FC<{
   statusLoading: boolean;
   onSelected: (slug: string | undefined) => void;
-}> = ({ onSelected, statusLoading }) => {
+  postSubmission: boolean;
+}> = ({ onSelected, statusLoading, postSubmission }) => {
   const container = useRef<HTMLDivElement>(null);
   const [fullText, setFulltext] = React.useState('');
   const [isLoading, setIsLoading] = React.useState(false);
@@ -56,6 +58,33 @@ export const AddTopicButton: React.FC<{
     setIsLoading(false);
   };
 
+  if (selected && postSubmission) {
+    return (
+      <div>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '5px',
+            backgroundColor: 'rgba(197,232,197,0.32)',
+            padding: '0.5em',
+            borderRadius: '4px',
+          }}
+        >
+          <p> {t('Canvas tagged with')}: </p>
+
+          <b> {t('Topic Type')}: </b>
+          <TopicPill style={{ alignSelf: 'start' }}>{selected.label}</TopicPill>
+
+          <b> {t('Tag')}: </b>
+          <TagPill style={{ alignSelf: 'start' }}>
+            <LocaleString>{selected.title}</LocaleString>
+          </TagPill>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div style={{ maxWidth: '100%' }}>
       <p>{t('Choose a topic type first')}</p>
@@ -78,6 +107,7 @@ export const AddTopicButton: React.FC<{
             typeLabel={selected.label}
             statusLoading={statusLoading}
             onSelected={onSelected}
+            postSubmission={false}
             hideTopic
           />
         </>

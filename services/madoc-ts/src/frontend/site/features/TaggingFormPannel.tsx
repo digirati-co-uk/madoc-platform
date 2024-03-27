@@ -52,7 +52,7 @@ export const TaggingFormPannel = () => {
   const { canvasId } = useRouteContext();
   const api = useApi();
   const ResourceTags = useGetResourceTags();
-
+  const [postSubmission, setPostSubmission] = useState(false);
   const [selectedId, setSelectedId] = useState<string | undefined>(undefined);
 
   const [remove, removeStatus] = useMutation(async (id: string) => {
@@ -76,19 +76,33 @@ export const TaggingFormPannel = () => {
       <ModalButton
         style={{ fontWeight: '500', display: 'block', marginBottom: '0.5em' }}
         title={t('Tag this resource')}
-        render={() => <AddTopicButton onSelected={onSelect} statusLoading={addStatus.isLoading} />}
+        render={() => (
+          <AddTopicButton onSelected={onSelect} statusLoading={addStatus.isLoading} postSubmission={postSubmission} />
+        )}
         footerAlignRight
         renderFooter={({ close }) => (
           <ButtonRow $noMargin>
-            <Button
-              $primary
-              disabled={!selectedId}
-              onClick={() => {
-                addTag(selectedId).then(() => close());
-              }}
-            >
-              {t('Submit')}
-            </Button>
+            {postSubmission ? (
+              <Button
+                $primary
+                onClick={() => {
+                  setSelectedId(undefined);
+                  setPostSubmission(false);
+                }}
+              >
+                {t('Add another')}
+              </Button>
+            ) : (
+              <Button
+                $primary
+                disabled={!selectedId}
+                onClick={() => {
+                  addTag(selectedId).then(() => setPostSubmission(true));
+                }}
+              >
+                {t('Submit')}
+              </Button>
+            )}
             <Button
               onClick={() => {
                 setSelectedId(undefined);
@@ -100,7 +114,14 @@ export const TaggingFormPannel = () => {
           </ButtonRow>
         )}
       >
-        <Button>{t('Add new')}</Button>
+        <Button
+          onClick={() => {
+            setPostSubmission(false);
+            setSelectedId(undefined);
+          }}
+        >
+          {t('Add new')}
+        </Button>
       </ModalButton>
       {ResourceTags.length === 0 ? (
         <MetadataEmptyState style={{ marginTop: 100 }}>{t('No tags')}</MetadataEmptyState>
@@ -119,20 +140,34 @@ export const TaggingFormPannel = () => {
                   typeLabel={tagType.type}
                   onSelected={onSelect}
                   statusLoading={addStatus.isLoading}
+                  postSubmission={postSubmission}
                 />
               )}
               footerAlignRight
               renderFooter={({ close }) => (
                 <ButtonRow $noMargin>
-                  <Button
-                    $primary
-                    disabled={!selectedId}
-                    onClick={() => {
-                      addTag(selectedId).then(() => close());
-                    }}
-                  >
-                    {t('Submit')}
-                  </Button>
+                  {postSubmission ? (
+                    <Button
+                      $primary
+                      onClick={() => {
+                        setSelectedId(undefined);
+                        setPostSubmission(false);
+                      }}
+                    >
+                      {t('Add another')}
+                    </Button>
+                  ) : (
+                    <Button
+                      $primary
+                      disabled={!selectedId}
+                      onClick={() => {
+                        addTag(selectedId).then(() => setPostSubmission(true));
+                      }}
+                    >
+                      {t('Submit')}
+                    </Button>
+                  )}
+
                   <Button
                     onClick={() => {
                       setSelectedId(undefined);

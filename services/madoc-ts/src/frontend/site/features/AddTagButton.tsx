@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Button } from '../../shared/navigation/Button';
 import { CloseIcon } from '../../shared/icons/CloseIcon';
 import { useApi } from '../../shared/hooks/use-api';
@@ -28,13 +28,20 @@ export const AddTagButton: React.FC<{
   statusLoading: boolean;
   onSelected: (id: string | undefined) => void;
   hideTopic?: boolean;
-}> = ({ typeSlug, typeLabel, onSelected, statusLoading, hideTopic }) => {
+  postSubmission: boolean;
+}> = ({ typeSlug, typeLabel, onSelected, statusLoading, hideTopic, postSubmission }) => {
   const container = useRef<HTMLDivElement>(null);
   const [fullText, setFulltext] = React.useState('');
   const [isLoading, setIsLoading] = React.useState(false);
   const [selected, setSelected] = React.useState<AutoCompleteEntitySnippet | null>(null);
   const api = useApi();
   const { t } = useTranslation();
+
+  useEffect(() => {
+    if (!postSubmission && selected) {
+      setSelected(null);
+    }
+  }, [postSubmission]);
 
   const { data: pages, fetchMore, canFetchMore, isFetchingMore, isLoading: queryLoading } = useInfiniteQuery(
     ['topic-autocomplete', { fullText, typeSlug }],
@@ -68,6 +75,26 @@ export const AddTagButton: React.FC<{
   // const { data } = useEnrichmentResource();
   // const tags = data?.entity_tags;
   // const appliedTagIDs = tags?.map(tag => tag.entity.id);
+
+  if (selected && postSubmission) {
+    return (
+      <div>
+        <div
+          style={{
+            display: 'flex',
+            backgroundColor: 'rgba(197,232,197,0.32)',
+            padding: '0.5em',
+            borderRadius: '4px',
+          }}
+        >
+          <p> {t('Canvas tagged with')}: </p>
+          <TagPill style={{ alignSelf: 'end' }}>
+            <LocaleString>{selected.title}</LocaleString>
+          </TagPill>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>
