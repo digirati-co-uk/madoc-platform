@@ -367,6 +367,11 @@ export const router = new TypedRouter({
     '/api/madoc/iiif/autocomplete/collections',
     getCollectionAutocomplete,
   ],
+  'post-collection-autocomplete': [
+    TypedRouter.POST,
+    '/api/madoc/iiif/autocomplete/collections',
+    getCollectionAutocomplete,
+  ],
   'get-flat-collection-statistics': [
     TypedRouter.GET,
     '/api/madoc/iiif/collections/:id/statistics',
@@ -413,6 +418,7 @@ export const router = new TypedRouter({
   'put-manifest-details': [TypedRouter.PUT, '/api/madoc/iiif/manifests/:id/details', updateManifestDetails],
   'get-manifest-collections': [TypedRouter.GET, '/api/madoc/iiif/manifests/:id/collections', getManifestCollections],
   'get-manifest-autocomplete': [TypedRouter.GET, '/api/madoc/iiif/autocomplete/manifests', getManifestAutocomplete],
+  'post-manifest-autocomplete': [TypedRouter.POST, '/api/madoc/iiif/autocomplete/manifests', getManifestAutocomplete],
   'get-manifest-linking': [TypedRouter.GET, '/api/madoc/iiif/manifests/:id/linking', getLinking],
   'get-manifest-canvas-linking': [TypedRouter.GET, '/api/madoc/iiif/manifests/:id/canvas-linking', getParentLinking],
   'search-index-manifest': [TypedRouter.POST, '/api/madoc/iiif/manifests/:id/index', indexManifest],

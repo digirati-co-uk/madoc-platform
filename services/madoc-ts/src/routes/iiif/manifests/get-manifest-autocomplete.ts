@@ -4,15 +4,22 @@ import { parseProjectId } from '../../../utility/parse-project-id';
 import { SQL_EMPTY, SQL_INT_ARRAY } from '../../../utility/postgres-tags';
 import { userWithScope } from '../../../utility/user-with-scope';
 
-export const getManifestAutocomplete: RouteMiddleware = async context => {
+export const getManifestAutocomplete: RouteMiddleware<{}, { blacklist_ids?: number[] }> = async context => {
   const { siteId } = userWithScope(context, ['site.admin']);
-  const { q, project_id, blacklist_ids, page } = context.query;
+  const { q, project_id, blacklist_ids = [], page } = context.query;
   const { projectId, projectSlug } = parseProjectId(project_id);
 
   const blackListIds = (blacklist_ids || '')
     .split(',')
     .map((blacklistId: string) => Number(blacklistId))
     .filter((blacklistId: number) => !Number.isNaN(blacklistId));
+
+  if (context.requestBody) {
+    const postBlacklistIds = context.requestBody.blacklist_ids;
+    if (postBlacklistIds && Array.isArray(postBlacklistIds)) {
+      blackListIds.push(...postBlacklistIds);
+    }
+  }
 
   if (!q) {
     context.response.body = [];
@@ -38,7 +45,7 @@ export const getManifestAutocomplete: RouteMiddleware = async context => {
       and im.resource_id is not null
       ${projectId ? sql`and ip.id = ${projectId}` : SQL_EMPTY}
       ${projectSlug ? sql`and ip.slug = ${projectSlug}` : SQL_EMPTY}
-      and iiif_derived_resource.id = any(${sql.array(blackListIds, SQL_INT_ARRAY)}) is false
+      and iiif_derived_resource.resource_id = any(${sql.array(blackListIds, SQL_INT_ARRAY)}) is false
       and iiif_derived_resource.site_id = ${siteId}
     limit ${pageSize} ${offset > 0 ? sql`offset ${offset}` : SQL_EMPTY};
   `;
