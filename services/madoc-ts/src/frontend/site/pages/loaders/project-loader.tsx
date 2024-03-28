@@ -54,7 +54,7 @@ export const ProjectLoader: UniversalComponent<ProjectLoaderType> = createUniver
               <InfoMessage $wide>
                 {t('Please login to contribute to this project')}
                 <Button style={{ marginLeft: '1em' }} $primary as={HrefLink} href={`/login?${stringify({ redirect })}`}>
-                  Login
+                  {t('Login')}
                 </Button>
               </InfoMessage>
             ) : null}

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 import { CloseIcon } from '../../../icons/CloseIcon';
 import { useSelectorHelper } from '../../editor/stores/selectors/selector-helper';
+import { useModelTranslation } from '../../hooks/use-model-translation';
 import { useManagePropertyList } from '../hooks/use-manage-property-list';
 import { EditorRenderingConfig } from './EditorSlots';
 
@@ -69,6 +70,7 @@ export const DefaultManagePropertyList: EditorRenderingConfig['ManagePropertyLis
   } = useManagePropertyList(property);
 
   const { t } = useTranslation();
+  const { t: tModel } = useModelTranslation();
   const helper = useSelectorHelper();
 
   const onMouseEnter = (selector?: string) => () => {
@@ -117,7 +119,7 @@ export const DefaultManagePropertyList: EditorRenderingConfig['ManagePropertyLis
       {canAdd && canAddAnother ? (
         <NewInstanceContainer>
           <AddNewInstance onClick={type === 'entity' ? createNewEntity : createNewField}>
-            {t('Add another {{label}}', { label })}
+            {t('Add another {{label}}', { label: tModel(label) })}
           </AddNewInstance>
         </NewInstanceContainer>
       ) : null}

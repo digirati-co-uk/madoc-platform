@@ -27,8 +27,9 @@ export const postActivity: RouteMiddleware<
   ChangeDiscoveryActivityRequest & {
     options?: ActivityOptions;
   }
-> = async context => {
-  const { siteId } = optionalUserWithScope(context, ['site.admin']);
+> = async (context) => {
+  // @todo in the future we should create a site permission specifically for this.
+  const { siteId } = optionalUserWithScope(context, ['tasks.create']);
   const { action: unmappedAction, primaryStream, secondaryStream } = context.params;
   const action = actionMap[unmappedAction];
   const {
@@ -102,7 +103,7 @@ export const postActivity: RouteMiddleware<
     );
 
     // Artificial 50ms delay to prevent any chance of timestamps being identical.
-    await new Promise(resolve => setTimeout(resolve, 50));
+    await new Promise((resolve) => setTimeout(resolve, 50));
   }
 
   if (!doesObjectExist && (action === 'Remove' || action === 'Delete')) {
