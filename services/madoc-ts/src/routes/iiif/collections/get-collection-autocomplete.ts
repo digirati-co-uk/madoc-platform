@@ -19,6 +19,13 @@ export const getCollectionAutocomplete: RouteMiddleware = async context => {
     return;
   }
 
+  if (context.requestBody) {
+    const postBlacklistIds = context.requestBody.blacklist_ids;
+    if (postBlacklistIds && Array.isArray(postBlacklistIds)) {
+      blackListIds.push(...postBlacklistIds);
+    }
+  }
+
   const pageSize = 10;
   const offset = (page - 1) * pageSize;
 
@@ -39,7 +46,7 @@ export const getCollectionAutocomplete: RouteMiddleware = async context => {
       and flat = false
       ${projectId ? sql`and ip.id = ${projectId}` : SQL_EMPTY}
       ${projectSlug ? sql`and ip.slug = ${projectSlug}` : SQL_EMPTY}
-      and iiif_derived_resource.id = any(${sql.array(blackListIds, SQL_INT_ARRAY)}) is false
+      and iiif_derived_resource.resource_id = any(${sql.array(blackListIds, SQL_INT_ARRAY)}) is false
       and iiif_derived_resource.site_id = ${siteId}
     limit ${pageSize} ${offset > 0 ? sql`offset ${offset}` : SQL_EMPTY};
   `;
