@@ -26,6 +26,13 @@ export const getManifestAutocomplete: RouteMiddleware<{}, { blacklist_ids?: numb
     return;
   }
 
+  if (context.requestBody) {
+    const postBlacklistIds = context.requestBody.blacklist_ids;
+    if (postBlacklistIds && Array.isArray(postBlacklistIds)) {
+      blackListIds.push(...postBlacklistIds);
+    }
+  }
+
   const pageSize = 10;
   const offset = (page - 1) * pageSize;
 
