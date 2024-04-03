@@ -148,8 +148,8 @@ export class EnrichmentExtension extends BaseDjangoExtension {
   }
 
   // Entity - List, filtered by chosen Entity Type
-  getEntities(slug: string, page?: number) {
-    return this.api.request<any>(`/api/enrichment/entity/${slug}/?page=${page}`);
+  getEntities(slug: string, page?: number, order_by?: string) {
+    return this.api.request<any>(`/api/enrichment/entity/${slug}/?page=${page}&order_by=${order_by}`);
   }
 
   // Entity - Retrieve

@@ -9,14 +9,16 @@ import { AutoSlotLoader } from '../../../shared/page-blocks/auto-slot-loader';
 
 export type TopicTypeLoaderType = {
   params: { topicType: string };
-  variables: { topicType: string; page: number };
-  query: { page?: string };
+  variables: { topicType: string; page: number; order_by: string };
+  query: { page?: string; order_by: string };
   data: TopicType;
 };
 
 export function useTopicType() {
-  const params = useParams<{ topicType?: string }>();
-  return usePaginatedData(TopicTypeLoader, undefined, { enabled: params.topicType && params.topicType !== '_' });
+  const params = useParams<{ topicType?: string; order_by?: string }>();
+  return usePaginatedData(TopicTypeLoader, undefined, {
+    enabled: params.topicType && params.topicType !== '_',
+  });
 }
 
 export const TopicTypeLoader: UniversalComponent<TopicTypeLoaderType> = createUniversalComponent<TopicTypeLoaderType>(
@@ -35,10 +37,13 @@ export const TopicTypeLoader: UniversalComponent<TopicTypeLoaderType> = createUn
   },
   {
     getKey: (params, query) => {
-      return ['site-topic-type', { topicType: params.topicType, page: Number(query.page) || 1 }];
+      return [
+        'site-topic-type',
+        { topicType: params.topicType, page: Number(query.page) || 1, order_by: query.order_by || '' },
+      ];
     },
     getData: async (key, vars, api) => {
-      return await api.getSiteTopicType(vars.topicType, vars.page);
+      return await api.getSiteTopicType(vars.topicType, vars.page, vars.order_by);
     },
   }
 );

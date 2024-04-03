@@ -2170,8 +2170,8 @@ export class ApiClient {
   getSiteTopicTypes(page = 1) {
     return this.publicRequest<TopicTypeListResponse>(`/madoc/api/topics?page=${page}`);
   }
-  getSiteTopicType(slug: string, page: number) {
-    return this.publicRequest<TopicType>(`/madoc/api/topics/${slug}?page=${page}`);
+  getSiteTopicType(slug: string, page: number, order_by: string) {
+    return this.publicRequest<TopicType>(`/madoc/api/topics/${slug}?page=${page}&order_by=${order_by}`);
   }
   getSiteEnrichmentResource(id: string) {
     return this.publicRequest<EnrichmentResource>(`/madoc/api/resource/${id}`);
