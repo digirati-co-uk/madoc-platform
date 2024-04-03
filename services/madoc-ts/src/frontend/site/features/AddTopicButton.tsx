@@ -55,7 +55,8 @@ export const AddTopicButton: React.FC<{
   const startAutoComplete = (val: string) => {
     setIsLoading(true);
     setFulltext(val);
-    setIsLoading(false);
+    const timeout = setTimeout(() => setIsLoading(false), 1000);
+    return () => clearTimeout(timeout);
   };
 
   if (selected && postSubmission) {

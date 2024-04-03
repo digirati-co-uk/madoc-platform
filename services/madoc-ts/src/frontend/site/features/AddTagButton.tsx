@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { lazy, useEffect, useRef } from 'react';
 import { Button } from '../../shared/navigation/Button';
 import { CloseIcon } from '../../shared/icons/CloseIcon';
 import { useApi } from '../../shared/hooks/use-api';
@@ -69,7 +69,8 @@ export const AddTagButton: React.FC<{
   const startAutoComplete = (val: string) => {
     setIsLoading(true);
     setFulltext(val);
-    setIsLoading(false);
+    const timeout = setTimeout(() => setIsLoading(false), 1000);
+    return () => clearTimeout(timeout);
   };
 
   // const { data } = useEnrichmentResource();
@@ -154,7 +155,7 @@ export const AddTagButton: React.FC<{
           </InputContainer>
           {isLoading || queryLoading ? (
             <EmptyState>
-              <Spinner /> ...{t('loading')}
+              <Spinner stroke="#000" />
             </EmptyState>
           ) : !pages || (pages[0].pagination.totalResults === 0 && fullText) ? (
             <TagResults>
