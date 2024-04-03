@@ -16,6 +16,7 @@ interface SearchPageResultsProps {
   background?: string;
   grid?: boolean;
   snippet?: boolean;
+  trunSnippet?: boolean;
   textColor?: string;
   cardBorder?: string;
   imageStyle?: string;
@@ -23,6 +24,7 @@ interface SearchPageResultsProps {
 
 export const SearchPageResults: React.FC<SearchPageResultsProps> = ({
   snippet,
+  trunSnippet,
   cardBorder,
   textColor,
   background,
@@ -89,6 +91,7 @@ export const SearchPageResults: React.FC<SearchPageResultsProps> = ({
                 textColor={textColor}
                 list={resultsView === 'list'}
                 hideSnippet={snippet}
+                trunicateSnippet={trunSnippet}
                 imageStyle={imageStyle}
               />
             ) : null;
@@ -107,12 +110,14 @@ blockEditorFor(SearchPageResults, {
   defaultProps: {
     background: '',
     snippet: '',
+    trunSnippet: '',
     textColor: '',
     cardBorder: '',
     imageStyle: 'fit',
   },
   editor: {
     snippet: { type: 'checkbox-field', label: 'Snippet', inlineLabel: 'Hide snippet?' },
+    trunSnippet: { type: 'checkbox-field', label: 'Trunicate Snippet', inlineLabel: 'Trunicate snippet?' },
     background: { label: 'Card background color', type: 'color-field' },
     textColor: { label: 'Card text color', type: 'color-field' },
     cardBorder: { label: 'Card border', type: 'color-field' },

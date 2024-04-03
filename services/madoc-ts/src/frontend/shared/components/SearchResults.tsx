@@ -49,6 +49,16 @@ const ResultText = styled.span`
   text-decoration: none;
   line-height: 1.3em;
 `;
+const ResultTextTrunicate = styled.div`
+  text-decoration: none;
+  line-height: 1.3em;
+  position: relative;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
 
 export const ResultTitle = styled.div`
   text-decoration: none;
@@ -118,12 +128,25 @@ export const SearchItem: React.FC<{
   search?: string;
   list?: boolean;
   hideSnippet?: boolean;
+  trunicateSnippet?: boolean;
   border?: string;
   textColor?: string;
   background?: string;
   imageStyle?: string;
   admin?: boolean;
-}> = ({ result, size, search, list, border, textColor, background, imageStyle, hideSnippet, admin }) => {
+}> = ({
+  result,
+  size,
+  search,
+  list,
+  border,
+  textColor,
+  background,
+  imageStyle,
+  hideSnippet,
+  trunicateSnippet,
+  admin,
+}) => {
   const things = ((result && result.contexts) || []).map(value => {
     return parseUrn(typeof value === 'string' ? value : value.id);
   });
@@ -173,9 +196,18 @@ export const SearchItem: React.FC<{
             <TextContainer data-list-item={list} style={{ alignSelf: 'flex-start' }}>
               <LocaleString as={ResultTitle}>{result.label}</LocaleString>
               <LocaleString as={Subtitle}>{result.resource_type}</LocaleString>
-              {snippet && !hideSnippet ? (
+              {snippet && !hideSnippet && !trunicateSnippet ? (
                 <div style={{ paddingBottom: '.8em', maxWidth: 600 }}>
                   <ResultText
+                    key={snippet}
+                    dangerouslySetInnerHTML={{
+                      __html: replaceBreaks(sanitizeLabel(snippet)),
+                    }}
+                  />
+                </div>
+              ) : snippet && trunicateSnippet ? (
+                <div style={{ paddingBottom: '.8em', maxWidth: 600 }}>
+                  <ResultTextTrunicate
                     key={snippet}
                     dangerouslySetInnerHTML={{
                       __html: replaceBreaks(sanitizeLabel(snippet)),
