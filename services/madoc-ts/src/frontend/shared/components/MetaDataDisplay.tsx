@@ -14,16 +14,17 @@ const MetadataDisplayContainer = styled.div<{ $variation?: 'list' | 'table'; $si
       lg: '1em',
       md: '0.8em',
       sm: '0.65em',
-    }[props.$size || 'md'])};
+    })[props.$size || 'md']};
 
   border-spacing: 0;
   max-width: 100%;
   width: 100%;
   flex-wrap: wrap;
   padding: 1em 1.5em;
-  overflow: hidden;
+  overflow-x: hidden;
   box-sizing: border-box;
   min-width: calc(290 + 1.5em);
+  overflow-y: auto;
 `;
 
 const MetaDataKey = styled.td<{
@@ -56,7 +57,7 @@ const MetaDataKey = styled.td<{
             border-bottom: 1px solid #eee;
           `}
       `,
-    }[props.$variation || 'table'])}
+    })[props.$variation || 'table']}
 
   ${props =>
     ({
@@ -79,7 +80,7 @@ const MetaDataKey = styled.td<{
         text-transform: uppercase;
         font-weight: bold;
       `,
-    }[props.$labelStyle || 'bold'])}
+    })[props.$labelStyle || 'bold']}
 
 
   text-decoration: none;
@@ -103,7 +104,7 @@ const MetaDataValue = styled.td<{ $variation?: 'list' | 'table' }>`
         padding: 0;
         margin-bottom: 1em;
       `,
-    }[props.$variation || 'table'])}
+    })[props.$variation || 'table']}
 
   font-size: 1em;
   color: #000000;
@@ -127,7 +128,7 @@ const MetadataContainer = styled.tr<{ $variation?: 'list' | 'table' }>`
         display: block;
         margin-bottom: 1.5em;
       `,
-    }[props.$variation || 'table'])}
+    })[props.$variation || 'table']}
 `;
 
 export const MetaDataDisplay: React.FC<{
