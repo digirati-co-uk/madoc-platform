@@ -2,14 +2,14 @@ import React from 'react';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import { Pagination, PaginationNumbered } from '../../shared/components/Pagination';
 import { useSearchQuery } from '../hooks/use-search-query';
-import { useSearch } from '../hooks/use-search';
+import { useTopicSearch } from '../hooks/use-topic-search';
 
 export const TopicResultsPagination: React.FC<{
   paginationStyle?: boolean;
   position?: 'flex-end' | 'flex-start' | 'center';
 }> = ({ paginationStyle, position }) => {
   const { rawQuery, page } = useSearchQuery();
-  const [{ resolvedData: searchResponse, latestData }, displayFacets, isLoading] = useSearch();
+  const [{ resolvedData: searchResponse, latestData }, displayFacets, isLoading] = useTopicSearch();
   const PaginationComponent = paginationStyle ? PaginationNumbered : Pagination;
 
   const pagination = searchResponse?.pagination;
