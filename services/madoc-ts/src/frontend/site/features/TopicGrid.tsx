@@ -27,11 +27,13 @@ export const TopicGrid: React.FC<{
   cardBorder?: string;
   imageStyle?: string;
 }> = ({ background, textColor, cardBorder }) => {
-  const scrollX = window.scrollX;
-  const scrollY = window.scrollY;
-
   useLayoutEffect(() => {
-    window.scrollTo(scrollX, scrollY);
+    if (typeof window !== 'undefined') {
+      const scrollX = window.scrollX;
+      const scrollY = window.scrollY;
+
+      window.scrollTo(scrollX, scrollY);
+    }
   });
 
   const { data } = useTopicType();
