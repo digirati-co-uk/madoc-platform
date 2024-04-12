@@ -16,8 +16,8 @@ export function ManageTopic() {
   const { data: topicTypeData } = useTopicType();
   const site = useSite();
 
-  const label = <LocaleString>{data?.label || { none: ['...'] }}</LocaleString>;
-  const topicTypeLabel = <LocaleString>{topicTypeData?.label || { none: ['...'] }}</LocaleString>;
+  const label = <LocaleString>{data?.title || { none: ['...'] }}</LocaleString>;
+  const topicTypeLabel = <LocaleString>{topicTypeData?.title || { none: ['...'] }}</LocaleString>;
 
   return (
     <>

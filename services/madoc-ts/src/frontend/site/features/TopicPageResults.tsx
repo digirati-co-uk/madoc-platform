@@ -11,27 +11,26 @@ import { SimpleDropdown } from '../../shared/atoms/SimpleDropdown';
 import { Button, ButtonIcon } from '../../shared/navigation/Button';
 import { GridIcon } from '../../shared/icons/GridIcon';
 import { ListIcon } from '../../shared/icons/ListIcon';
+import { useTopicSearch } from '../hooks/use-topic-search';
 
-interface SearchPageResultsProps {
+interface TopicPageResultsProps {
   background?: string;
   grid?: boolean;
   snippet?: boolean;
-  trunSnippet?: boolean;
   textColor?: string;
   cardBorder?: string;
   imageStyle?: string;
 }
 
-export const SearchPageResults: React.FC<SearchPageResultsProps> = ({
+export const TopicPageResults: React.FC<TopicPageResultsProps> = ({
   snippet,
-  trunSnippet,
   cardBorder,
   textColor,
   background,
   imageStyle,
 }) => {
   const { t } = useTranslation();
-  const [{ resolvedData: searchResponse, latestData }, displayFacets, isLoading] = useSearch();
+  const [{ resolvedData: searchResponse, latestData }, displayFacets, isLoading] = useTopicSearch();
   const { rawQuery, page, fulltext } = useSearchQuery();
   const searchResults = searchResponse ? searchResponse.results : [];
 
@@ -91,7 +90,6 @@ export const SearchPageResults: React.FC<SearchPageResultsProps> = ({
                 textColor={textColor}
                 list={resultsView === 'list'}
                 hideSnippet={snippet}
-                trunicateSnippet={trunSnippet}
                 imageStyle={imageStyle}
               />
             ) : null;
@@ -102,22 +100,20 @@ export const SearchPageResults: React.FC<SearchPageResultsProps> = ({
   );
 };
 
-blockEditorFor(SearchPageResults, {
-  label: 'Search Page Results',
-  type: 'default.SearchPageResults',
-  anyContext: ['collection', 'manifest', 'canvas', 'project', 'topic', 'topicType'],
+blockEditorFor(TopicPageResults, {
+  label: 'topic Page Results',
+  type: 'default.TopicPageResults',
+  anyContext: ['topic', 'topicType'],
   requiredContext: ['page'],
   defaultProps: {
     background: '',
     snippet: '',
-    trunSnippet: '',
     textColor: '',
     cardBorder: '',
     imageStyle: 'fit',
   },
   editor: {
     snippet: { type: 'checkbox-field', label: 'Snippet', inlineLabel: 'Hide snippet?' },
-    trunSnippet: { type: 'checkbox-field', label: 'Trunicate Snippet', inlineLabel: 'Trunicate snippet?' },
     background: { label: 'Card background color', type: 'color-field' },
     textColor: { label: 'Card text color', type: 'color-field' },
     cardBorder: { label: 'Card border', type: 'color-field' },

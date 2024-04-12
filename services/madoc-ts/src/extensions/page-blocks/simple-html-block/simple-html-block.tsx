@@ -1,7 +1,7 @@
 import { captureModelShorthand } from '../../../frontend/shared/capture-models/helpers/capture-model-shorthand';
 import { HTMLPageBlockDefinition } from '../extension';
 
-const definition: HTMLPageBlockDefinition<{ html: string }> = {
+const definition: HTMLPageBlockDefinition<{ html: string; maxWidth?: string }> = {
   label: 'Simple HTML block',
   type: 'simple-html-block',
   renderType: 'html',
@@ -14,6 +14,7 @@ const definition: HTMLPageBlockDefinition<{ html: string }> = {
   defaultData: {
     html: '',
   },
+
   render: data => {
     return data.html;
   },

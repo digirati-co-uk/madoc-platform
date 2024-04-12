@@ -81,7 +81,7 @@ export const TopicSnippetCard: React.FC<{
           )}
           {topic.tagged_resource_count && (
             <Subheading3>
-              {topic.tagged_resource_count} {t('Resources')}
+              {topic.tagged_resource_count} {t('appearances')}
             </Subheading3>
           )}
         </div>

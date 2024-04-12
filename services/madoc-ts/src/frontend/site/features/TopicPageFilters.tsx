@@ -1,5 +1,4 @@
 import React from 'react';
-import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import {
   SearchFilterContainer,
@@ -9,34 +8,24 @@ import {
   SearchFilterLabel,
   SearchFilterTitle,
 } from '../../shared/components/SearchFilters';
-import { Button, ButtonRow, TextButton, TinyButton } from '../../shared/navigation/Button';
+import { Button, ButtonRow } from '../../shared/navigation/Button';
 import { LocaleString } from '../../shared/components/LocaleString';
 import { useSearchQuery } from '../hooks/use-search-query';
 import { useSearchFacets } from '../hooks/use-search-facets';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import { CheckboxBtn } from '../../shared/atoms/CheckboxBtn';
-import { useSearch } from '../hooks/use-search';
 import { Accordion } from '../../shared/atoms/Accordion';
 import { Spinner } from '../../shared/icons/Spinner';
 import { EmptyState } from '../../shared/layout/EmptyState';
+import { useTopicSearch } from '../hooks/use-topic-search';
 
-const DropdownContainer = styled.div`
-  margin: 1em 1em 1em 0;
-  font-size: 0.9em;
-  font-weight: 400;
-
-  & strong {
-    font-size: 0.9em;
-    font-weight: 400;
-  }
-`;
-interface SearchPageFiltersProps {
+interface TopicPageFiltersProps {
   checkBoxColor?: string;
   filterHeader?: string;
 }
 
-export const SearchPageFilters: React.FC<SearchPageFiltersProps> = ({ checkBoxColor, filterHeader }) => {
-  const [{ resolvedData: searchResponse, latestData }, displayFacets, isLoading] = useSearch();
+export const TopicPageFilters: React.FC<TopicPageFiltersProps> = ({ checkBoxColor, filterHeader }) => {
+  const [{ resolvedData: searchResponse, latestData }, displayFacets, isLoading] = useTopicSearch();
   const { t } = useTranslation();
   const { appliedFacets, fulltext, rscType } = useSearchQuery();
 
@@ -47,8 +36,6 @@ export const SearchPageFilters: React.FC<SearchPageFiltersProps> = ({ checkBoxCo
     isFacetSelected,
     applyAllFacets,
     clearAllFacets,
-    setFullTextQuery,
-    setResourceType,
   } = useSearchFacets();
 
   const uniqueFacets = [...new Map(displayFacets.map(v => [v.id, v])).values()];
@@ -122,9 +109,9 @@ export const SearchPageFilters: React.FC<SearchPageFiltersProps> = ({ checkBoxCo
   );
 };
 
-blockEditorFor(SearchPageFilters, {
-  label: 'Search Page Filters',
-  type: 'default.SearchPageFilters',
+blockEditorFor(TopicPageFilters, {
+  label: 'Topic Page Filters',
+  type: 'default.TopicPageFilters',
   anyContext: ['collection', 'manifest', 'canvas', 'project', 'topic', 'topicType'],
   requiredContext: ['page'],
   defaultProps: {

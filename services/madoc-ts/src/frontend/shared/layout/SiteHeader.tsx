@@ -15,6 +15,10 @@ const headerText = themeVariable('header', 'headerText', {
   midnight: '#fff',
 });
 
+const accent = themeVariable('accent', 'primary', {
+  default: '#5b80b2',
+});
+
 export const SiteHeader = styled.div`
   max-width: ${maxWidth};
   width: 100%;
@@ -76,9 +80,10 @@ export const GlobalSearchInput = styled.input`
 export const GlobalSearchButton = styled.button`
   font-size: 0.9em;
   padding: 0.2em 1em;
-  background: #333;
-  color: #fff;
-  border: 2px solid #333;
+  background: ${searchBorder};
+  color: #333;
+  border: 2px solid ${searchBorder};
+
   &:focus {
     outline: none;
     border-color: ${searchBorderFocusColor};

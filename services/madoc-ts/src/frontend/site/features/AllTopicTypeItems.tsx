@@ -10,13 +10,26 @@ import { useRelativeLinks } from '../hooks/use-relative-links';
 import styled from 'styled-components';
 import { CroppedImage } from '../../shared/atoms/Images';
 
+const ListWrapper = styled.div`
+  padding-top: 1em;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 2em;
+`;
+
 const TypeCard = styled.div`
   display: flex;
-  border: 1px solid #002d4b;
+  border: 3px solid #002d4b;
   background-color: white;
   margin-bottom: 20px;
   justify-content: space-evenly;
   max-height: 250px;
+  min-width: 45%;
+  border-radius: 4px;
+
+  &:hover {
+    border: 3px solid rgba(4, 102, 166, 0.5) !important;
+  }
 `;
 
 const TypeText = styled.div`
@@ -31,9 +44,8 @@ const TypeText = styled.div`
     border: 1px solid #002d4b;
     background-color: white;
     color: #002d4b;
-    border-radius: 50px;
-    padding: 1em;
-    margin-top: 1em;
+    border-radius: 20px;
+    padding: 0.8em;
 
     &:hover {
       background-color: #002d4b;
@@ -45,7 +57,7 @@ const TypeText = styled.div`
 const CountText = styled.div`
   font-weight: 400;
   font-size: 1em;
-  margin: 1em 0 2em 0;
+  margin: 1em 0;
 
   span {
     color: #707070;
@@ -73,16 +85,16 @@ export function AllTopicTypeItems(props: AllTopicTypeItemsProps) {
   const createLink = useRelativeLinks();
 
   return (
-    <div style={{ paddingTop: '1em' }}>
+    <ListWrapper>
       {data?.results.map(type => (
         <TypeCard key={type.id} style={{ borderColor: props.borderColor, background: props.cardBackground }}>
           <TypeText style={{ color: props.textColor }}>
             <LocaleString as={Heading3}>{type.label || { en: ['...'] }}</LocaleString>
             <CountText>
-              <span>{type.topic_count}</span> {t('Objects')}
+              <span>{type.topic_count}</span> <LocaleString>{type.title || { en: ['...'] }}</LocaleString>
             </CountText>
             <Button $primary as={Link} to={createLink({ topicType: type.slug })}>
-              {t('Go to topic type')}
+              {t('Explore')}
             </Button>
           </TypeText>
 
@@ -95,7 +107,7 @@ export function AllTopicTypeItems(props: AllTopicTypeItemsProps) {
           </TypeImage>
         </TypeCard>
       ))}
-    </div>
+    </ListWrapper>
   );
 }
 
