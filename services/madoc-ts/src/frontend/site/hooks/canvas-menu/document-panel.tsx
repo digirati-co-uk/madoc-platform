@@ -57,11 +57,13 @@ export function useDocumentPanel(): CanvasMenuHook {
               <ViewDocument hideEmpty key={model.id} document={model.document} filterRevisions={incompleteRevisions} />
             );
           })
-        ) : (
+        ) : projectId ? (
           <MetadataEmptyState style={{ marginTop: 100 }}>{t('No document yet')}</MetadataEmptyState>
-        )
+        ) : null
       ) : !isLoading ? (
-        <MetadataEmptyState style={{ marginTop: 100 }}>{t('No document yet')}</MetadataEmptyState>
+        projectId ? (
+          <MetadataEmptyState style={{ marginTop: 100 }}>{t('No document yet')}</MetadataEmptyState>
+        ) : null
       ) : null}
     </>
   );

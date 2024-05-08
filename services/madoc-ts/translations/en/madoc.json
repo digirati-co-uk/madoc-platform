@@ -1167,6 +1167,7 @@
   "projects": "projects",
   "rejected": "rejected",
   "remove": "remove",
+  "required": "required",
   "requiredStatement": "requiredStatement",
   "search index": "search index",
   "size": "size",

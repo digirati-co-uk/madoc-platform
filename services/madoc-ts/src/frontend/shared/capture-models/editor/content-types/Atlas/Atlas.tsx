@@ -125,7 +125,7 @@ export const AtlasViewer: React.FC<AtlasViewerProps> = props => {
         {`
         .atlas-container {
           --atlas-container-flex: 1 1 0px;
-          --atlas-background: ${backgroundColor || '#f9f9f9'};
+          --atlas-background: ${backgroundColor || '#E4E7F0'};
         }
         `}
       </style>

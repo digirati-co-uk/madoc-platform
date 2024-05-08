@@ -52,11 +52,12 @@ export const ViewDocument: React.FC<{
   //  - Shows it in a list
   const documentList = Array.isArray(documentOrArray) ? documentOrArray : [documentOrArray];
   const renderedList: any[] = [];
+
   for (const document of documentList) {
     const flatProperties = Object.entries(document.properties);
 
     if (flatProperties.length === 0) {
-      return <EmptyState>{t('No document yet')}</EmptyState>;
+      continue;
     }
 
     const rendered = flatProperties
@@ -72,6 +73,10 @@ export const ViewDocument: React.FC<{
         rendered,
       });
     }
+  }
+
+  if (hideEmpty && renderedList.length === 0) {
+    return null;
   }
 
   if (renderedList.length === 0) {
