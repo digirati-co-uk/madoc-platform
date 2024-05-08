@@ -185,11 +185,12 @@ export const LayoutSidebar = styled.div<{ $noScroll?: boolean }>`
 export const LayoutHandle = styled.div<{ $isDragging?: boolean }>`
   width: 12px;
   background: #ddd;
-  height: 48px;
+  height: 100%;
   user-select: none;
   cursor: col-resize;
   display: flex;
   align-items: center;
+  min-height: 48px;
 
   svg {
     fill: #a1a1a1;
