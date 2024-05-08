@@ -48,6 +48,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed activity stream pagination (NS-52)
 - Fixed visibility of selectors in document panel
 - Fixed bug with max contributors (NS-57)
+- Fixed visual bugs with Review Dashboard
 
 ### Changed
 - Add short descriptions for admin Search & Metadata actions + correct site config. page titles (MAD-1466)

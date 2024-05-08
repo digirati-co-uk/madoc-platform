@@ -211,9 +211,9 @@ export function ReviewListingPage() {
             <>Loading...</>
           ) : (
             <>
-              <SimpleTable.Table style={{ borderColor: 'transparent' }}>
+              <SimpleTable.Table style={{ border: 'none' }}>
                 <thead>
-                  <SimpleTable.Row>
+                  <SimpleTable.Row style={{ height: 47 }}>
                     <SimpleTable.Header>
                       <HeaderLink
                         as={HrefLink}
