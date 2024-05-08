@@ -35,6 +35,7 @@ services:
       dockerfile: Dockerfile.vite
     volumes:
       - ./services/madoc-ts/package.json:/home/node/app/package.json:delegated
+      - ./services/madoc-ts/tailwind.config.js:/home/node/app/tailwind.config.js:delegated
       - ./services/madoc-ts/yarn.lock:/home/node/app/yarn.lock:delegated
       - ./services/madoc-ts/src:/home/node/app/src
       - ./services/madoc-ts/vite:/home/node/app/vite

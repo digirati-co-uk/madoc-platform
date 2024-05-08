@@ -30,7 +30,6 @@ export const BreadcrumbList = styled.div`
   padding: 0.5em 0;
   font-size: 0.9em;
   min-height: 2.5em;
-  margin: 0.5em 0;
   align-items: center;
 `;
 
