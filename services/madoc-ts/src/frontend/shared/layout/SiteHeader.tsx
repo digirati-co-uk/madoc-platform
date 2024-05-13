@@ -50,52 +50,6 @@ export const SiteTitle = styled.a`
   }
 `;
 
-export const GlobalSearchContainer = styled.div`
-  flex: 1;
-  margin: 1em 0;
-  width: 100%;
-  max-width: 20em;
-  min-width: 15em;
-  flex-basis: 20em;
-`;
-
-export const GlobalSearchForm = styled.form`
-  display: flex;
-  margin-bottom: 0;
-`;
-
-export const GlobalSearchInput = styled.input`
-  font-size: 0.9em;
-  padding: 0.5em;
-  border: ${searchBorder};
-  border-right: none;
-  border-radius: 0;
-  width: 100%;
-
-  &:focus {
-    border-color: ${searchBorderFocusColor};
-    outline: none;
-  }
-`;
-
-export const GlobalSearchButton = styled.button`
-  font-size: 0.9em;
-  padding: 0.2em 1em;
-  background-color: #333;
-  color: #fff;
-  border: 2px solid #333;
-  &:focus {
-    outline: none;
-    border-color: ${searchBorderFocusColor};
-  }
-
-  /* Tailwind issue. */
-  &[type='submit'],
-  &[type='button'] {
-    background-color: #333;
-  }
-`;
-
 export const SiteMenuContainer = styled.div`
   font-family: ${globalFont};
   &[data-full-width='true'] {

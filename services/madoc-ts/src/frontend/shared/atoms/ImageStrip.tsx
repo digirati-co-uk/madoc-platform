@@ -9,7 +9,7 @@ export const ImageStripBox = styled.div<{
 }>`
   position: relative;
   flex-shrink: 0;
-  padding: 0.25em;
+  padding: 0.5em;
   border-radius: 3px;
   max-width: ${props => (props.$size === 'small' ? '200px' : '')};
   border: 1px solid transparent;
@@ -33,10 +33,7 @@ export const ImageStripBox = styled.div<{
 
 export const ImageStrip = styled.div`
   display: grid;
-  grid-template-columns: repeat(
-          auto-fill,
-          200px
-  );
+  grid-template-columns: repeat(auto-fill, 200px);
   grid-row-gap: 1em;
   overflow-x: auto;
   text-decoration: none;

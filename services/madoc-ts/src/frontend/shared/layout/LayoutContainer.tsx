@@ -186,10 +186,11 @@ export const LayoutHandle = styled.div<{ $isDragging?: boolean }>`
   width: 12px;
   background: #ddd;
   height: 100%;
-  min-height: 42px;
   user-select: none;
   cursor: col-resize;
-  border-radius: 0 0 3px 3px;
+  display: flex;
+  align-items: center;
+  min-height: 48px;
 
   svg {
     fill: #a1a1a1;

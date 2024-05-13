@@ -72,12 +72,13 @@ const ReviewContainer = styled.div`
 `;
 
 const ReviewHeader = styled.div`
-  height: 43px;
+  height: 48px;
   background-color: #f7f7f7;
   display: flex;
   border-bottom: 1px solid #dddddd;
   line-height: 24px;
   position: sticky;
+  align-items: center;
   top: 0;
   z-index: 12;
 `;

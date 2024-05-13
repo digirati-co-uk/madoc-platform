@@ -1,4 +1,9 @@
+import { useMutation } from 'react-query';
 import { CrowdsourcingTask } from '../../../../../gateway/tasks/crowdsourcing-task';
+import { ProjectFull } from '../../../../../types/project-full';
+import { SuccessMessage } from '../../../../shared/callouts/SuccessMessage';
+import { WarningMessage } from '../../../../shared/callouts/WarningMessage';
+import { useApi } from '../../../../shared/hooks/use-api';
 import { EmptyState } from '../../../../shared/layout/EmptyState';
 import { UniversalComponent } from '../../../../types';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
@@ -30,6 +35,35 @@ export const ProjectTasks: UniversalComponent<ProjectTasksType> = createUniversa
     const { data: project } = useData(Project);
     const { t } = useTranslation();
     const { data: task } = useData(ProjectTasks);
+    const api = useApi();
+    const selectedReviewer = project?.config?.manuallyAssignedReviewer;
+    const [assignAllReviews, assignAllReviewsStatus] = useMutation(async () => {
+      if (selectedReviewer) {
+        // 1. Select all reviews in progress
+        const reviewer = await api.getUser(selectedReviewer);
+        const reviews = await api.getTasks(0, {
+          all: true,
+          root_task_id: (project as ProjectFull).task_id,
+          type: 'crowdsourcing-review',
+          detail: true,
+          status: [0, 1, 2],
+        });
+
+        // 2. Filter those that are not assigned to the selected reviewer
+        const toUpdate = reviews.tasks.filter(
+          reviewTask => !reviewTask.assignee || reviewTask.assignee.id !== `urn:madoc:user:${selectedReviewer}`
+        );
+        // 3. Assign them to the selected reviewer
+        if (reviewer?.user) {
+          for (const review of toUpdate) {
+            await api.updateTask(review.id, {
+              assignee: { id: `urn:madoc:user:${selectedReviewer}`, name: `${reviewer.user.name}` },
+            });
+          }
+        }
+        return toUpdate.length;
+      }
+    });
 
     const goToReviews = (
       <ButtonRow>
@@ -95,6 +129,23 @@ export const ProjectTasks: UniversalComponent<ProjectTasksType> = createUniversa
             </TableRowLabel>
           </TableRow>
         ))}
+
+        <ButtonRow>
+          {selectedReviewer ? (
+            <Button disabled={assignAllReviewsStatus.isLoading} onClick={() => assignAllReviews()}>
+              Assign all reviews {assignAllReviewsStatus.isLoading ? '(loading)' : `(id: ${selectedReviewer})`}
+            </Button>
+          ) : null}
+        </ButtonRow>
+        {assignAllReviewsStatus.isSuccess ? (
+          assignAllReviewsStatus.data === 0 ? (
+            <WarningMessage $banner>No reviews to update</WarningMessage>
+          ) : (
+            <SuccessMessage $banner>
+              {t('Successfully assigned {{count}} reviews', { count: assignAllReviewsStatus.data })}
+            </SuccessMessage>
+          )
+        ) : null}
       </div>
     );
   },

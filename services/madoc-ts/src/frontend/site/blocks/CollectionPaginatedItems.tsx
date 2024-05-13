@@ -50,7 +50,7 @@ export function CollectionPaginatedItems(props: {
         >
           <ImageStripBox
             data-view-list={props.list}
-            $border={props.cardBorder ? props.cardBorder : '#999'}
+            $border={props.cardBorder ? props.cardBorder : 'transparent'}
             $color={props.textColor}
             $bgColor={props.background}
           >

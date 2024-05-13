@@ -12,14 +12,14 @@ import { useRelativeLinks } from '../../../hooks/use-relative-links';
 
 const PaginationContainer = styled.div`
   display: flex;
-  position: absolute;
-  right: 0;
-  top: 0;
-  z-index: 13;
+  //position: absolute;
+  //right: 0;
+  //top: 0;
+  //z-index: 13;
+  margin-left: auto;
+  padding-right: 0.5em;
   justify-content: space-between;
   align-items: center;
-  width: 130px;
-  padding: 0;
   button {
     border: none;
     background-color: transparent;
@@ -42,7 +42,12 @@ export const ReviewNavigation: React.FC<{
   const { t } = useTranslation();
   const createLink = useRelativeLinks();
 
-  const { data: pages, fetchMore, canFetchMore, isFetchingMore } = useInfiniteData(ReviewListingPage, undefined, {
+  const {
+    data: pages,
+    fetchMore,
+    canFetchMore,
+    isFetchingMore,
+  } = useInfiniteData(ReviewListingPage, undefined, {
     keepPreviousData: true,
     getFetchMore: lastPage => {
       if (lastPage.pagination.totalPages === 0 || lastPage.pagination.totalPages === lastPage.pagination.page) {
@@ -129,6 +134,13 @@ export const ReviewNavigation: React.FC<{
 
   return (
     <PaginationContainer style={{ display: 'flex' }}>
+      <PaginationText style={{ color: '#999999' }}>
+        {t('{{page}} of {{count}}', {
+          page: totalIndex,
+          count: pages[0].pagination.totalResults,
+        })}
+      </PaginationText>
+
       {idx > 0 ? (
         <NavigationButton
           alignment="left"
@@ -173,14 +185,6 @@ export const ReviewNavigation: React.FC<{
       ) : (
         getNextPage()
       )}
-      {
-        <PaginationText style={{ color: '#999999' }}>
-          {t('{{page}} of {{count}}', {
-            page: totalIndex,
-            count: pages[0].pagination.totalResults,
-          })}
-        </PaginationText>
-      }
     </PaginationContainer>
   );
 };

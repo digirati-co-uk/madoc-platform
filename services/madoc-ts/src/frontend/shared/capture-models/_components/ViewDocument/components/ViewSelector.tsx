@@ -94,7 +94,7 @@ export const ViewSelector: React.FC<{
         }
       }
     }
-  }, [croppedRegion, selector, service]);
+  }, [didError, croppedRegion, selector, service]);
 
   if (!image) {
     return null;
