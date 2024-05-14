@@ -14,11 +14,18 @@ export const getCollection: RouteMiddleware<{ id: number }> = async context => {
 
   const manifestsPerPage = 24;
   const excludeManifests = context.query.excluded;
-  const excluded = Array.isArray(excludeManifests)
+  let excluded = Array.isArray(excludeManifests)
     ? excludeManifests
     : excludeManifests
-    ? excludeManifests.split(',')
-    : undefined;
+      ? excludeManifests.split(',')
+      : undefined;
+
+  if (context.requestBody && context.requestBody.excluded) {
+    excluded = Array.isArray(context.requestBody.excluded)
+      ? context.requestBody.excluded
+      : context.requestBody.excluded.split(',');
+  }
+
   const { total = 0 } = (await context.connection.maybeOne(getResourceCount(collectionId, siteId))) || { total: 0 };
   const adjustedTotal = excluded ? total - excluded.length : total;
   const totalPages = Math.ceil(adjustedTotal / manifestsPerPage) || 1;
@@ -48,10 +55,13 @@ export const getCollection: RouteMiddleware<{ id: number }> = async context => {
 
   const totals = await context.connection.any(getResourceCount([collectionId], siteId));
 
-  const totalsIdMap = totals.reduce((state, row) => {
-    state[row.resource_id] = row.total;
-    return state;
-  }, {} as { [id: string]: number });
+  const totalsIdMap = totals.reduce(
+    (state, row) => {
+      state[row.resource_id] = row.total;
+      return state;
+    },
+    {} as { [id: string]: number }
+  );
 
   const returnCollections = [];
   const collection = table.collections[`${collectionId}`] || {

@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Adding Manifests to projects with large amounts of content
 - Fixed status of Manifest task after submission
+- Fixed "Hide completed" on very large collections
 
 
 ## [v2.2.3](https://github.com/digirati-co-uk/madoc-platform/compare/v2.2.2...v2.2.3) - 13/05/2024
