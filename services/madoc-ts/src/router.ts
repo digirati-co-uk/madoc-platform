@@ -31,7 +31,7 @@ import { getAutomatedUsers } from './routes/manage-site/get-automated-users';
 import { createProjectExport } from './routes/projects/create-project-export';
 import { getProjectFromTask } from './routes/projects/get-project-from-task';
 import { getProjectRawData } from './routes/projects/get-project-raw-data';
-import { listProjectEmails } from "./routes/projects/list-project-emails";
+import { listProjectEmails } from './routes/projects/list-project-emails';
 import { listProjectModelEntityAutocomplete } from './routes/projects/list-project-model-entity-autocomplete';
 import { addProjectFeedback, listProjectFeedback, removeProjectFeedback } from './routes/projects/project-feedback';
 import {
@@ -49,7 +49,7 @@ import {
 } from './routes/projects/project-updates';
 import { svgFromCrowdsourcingTask } from './routes/projects/svg-from-crowdsourcing-task';
 import { updateProjectAnnotationStyle } from './routes/projects/update-project-annotation-style';
-import { updateProjectBanner } from "./routes/projects/update-project-banner";
+import { updateProjectBanner } from './routes/projects/update-project-banner';
 import { updateProjectDuration } from './routes/projects/update-project-duration';
 import { siteRoot } from './routes/root';
 import {
@@ -164,7 +164,7 @@ import { updateProjectStatus } from './routes/projects/update-project-status';
 import { siteManifestTasks } from './routes/site/site-manifest-tasks';
 import { getStaticPage, sitePages } from './routes/site/site-pages';
 import { listProjectsAutocomplete } from './routes/projects/list-projects-autocomplete';
-import { siteProjectMembers } from "./routes/site/site-project-members";
+import { siteProjectMembers } from './routes/site/site-project-members';
 import { siteProjectRecent } from './routes/site/site-project-recent';
 import { siteProjectUpdates } from './routes/site/site-project-updates';
 import { siteTaskMetadata } from './routes/site/site-task-metadata';
@@ -399,6 +399,7 @@ export const router = new TypedRouter({
   // Collection API.
   'list-collections': [TypedRouter.GET, '/api/madoc/iiif/collections', listCollections],
   'get-collection': [TypedRouter.GET, '/api/madoc/iiif/collections/:id', getCollection],
+  'get-collection-bulk': [TypedRouter.POST, '/api/madoc/iiif/collections-bulk/:id', getCollection],
   'create-collection': [
     TypedRouter.POST,
     '/api/madoc/iiif/collections',

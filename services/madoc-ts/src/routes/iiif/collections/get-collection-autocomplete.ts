@@ -6,7 +6,7 @@ import { optionalUserWithScope } from '../../../utility/user-with-scope';
 
 export const getCollectionAutocomplete: RouteMiddleware = async context => {
   const { siteId } = optionalUserWithScope(context, ['site.admin']);
-  const { q, project_id, blacklist_ids, page } = context.query;
+  const { q, project_id, blacklist_ids = '', page } = context.query;
   const { projectId, projectSlug } = parseProjectId(project_id);
 
   const blackListIds = (blacklist_ids || '')

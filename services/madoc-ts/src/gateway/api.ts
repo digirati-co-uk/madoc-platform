@@ -1092,6 +1092,18 @@ export class ApiClient {
   }
 
   async getCollectionById(id: number, page = 0, type?: 'manifest' | 'collection', excluded?: number[]) {
+    if (excluded && excluded.length) {
+      return this.request<CollectionFull>(
+        `/api/madoc/iiif/collections-bulk/${id}${page || type ? `?${stringify({ type, page })}` : ''}`,
+        {
+          body: {
+            excluded,
+          },
+          method: 'POST',
+        }
+      );
+    }
+
     return this.request<CollectionFull>(
       `/api/madoc/iiif/collections/${id}${page || type || excluded ? `?${stringify({ type, page, excluded })}` : ''}`
     );

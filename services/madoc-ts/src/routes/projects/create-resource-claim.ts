@@ -361,10 +361,10 @@ async function upsertCaptureModelForResource(
   const mainTarget = claim.canvasId
     ? { type: 'Canvas', id: `urn:madoc:canvas:${claim.canvasId}` }
     : claim.manifestId
-    ? { type: 'Manifest', id: `urn:madoc:manifest:${claim.manifestId}` }
-    : claim.collectionId
-    ? { type: 'Collection', id: `urn:madoc:collection:${claim.collectionId}` }
-    : undefined;
+      ? { type: 'Manifest', id: `urn:madoc:manifest:${claim.manifestId}` }
+      : claim.collectionId
+        ? { type: 'Collection', id: `urn:madoc:collection:${claim.collectionId}` }
+        : undefined;
 
   if (mainTarget && capture_model_id) {
     const existingModel = await userApi.getAllCaptureModels({
@@ -573,13 +573,10 @@ export const createResourceClaim: RouteMiddleware<{ id: string }, ResourceClaim>
 
   // Check for existing claim
   const [canvasClaim, manifestClaim] = await getTaskFromClaim({ userId: userId, parent, claim });
-
-  const resourceClaim = manifestOnly && !canvasClaim ? manifestClaim : canvasClaim;
-
-  if (resourceClaim) {
-    if (!resourceClaim.state.revisionId && claim.revisionId) {
+  if (canvasClaim) {
+    if (!canvasClaim.state.revisionId && claim.revisionId) {
       context.response.body = {
-        claim: await userApi.updateTask(resourceClaim.id, {
+        claim: await userApi.updateTask(canvasClaim.id, {
           state: {
             revisionId: claim.revisionId,
           },
@@ -592,7 +589,7 @@ export const createResourceClaim: RouteMiddleware<{ id: string }, ResourceClaim>
 
     // @todo this should ALWAYS be false.
     const revisionDontMatch =
-      resourceClaim.state.revisionId && claim.revisionId && resourceClaim.state.revisionId !== claim.revisionId;
+      canvasClaim.state.revisionId && claim.revisionId && canvasClaim.state.revisionId !== claim.revisionId;
     const revisionExistsAndMatch = !revisionDontMatch;
 
     if (config.modelPageOptions?.preventMultipleUserSubmissionsPerResource && revisionDontMatch) {
@@ -600,18 +597,18 @@ export const createResourceClaim: RouteMiddleware<{ id: string }, ResourceClaim>
     }
 
     if (revisionExistsAndMatch) {
-      if (typeof claim.status !== 'undefined' && claim.status !== resourceClaim.status) {
+      if (typeof claim.status !== 'undefined' && claim.status !== canvasClaim.status) {
         if (
           config.modelPageOptions?.preventContributionAfterSubmission &&
-          resourceClaim.status === 2 &&
+          canvasClaim.status === 2 &&
           (claim.status === 0 || claim.status === 1) &&
-          resourceClaim.state.revisionId
+          canvasClaim.state.revisionId
         ) {
           throw new Error('Cannot update task in review');
         }
 
         context.response.body = {
-          claim: await userApi.updateTask(resourceClaim.id, {
+          claim: await userApi.updateTask(canvasClaim.id, {
             status: claim.status,
             status_text: statusToClaimMap[claim.status as any] || 'in progress',
           }),
@@ -620,7 +617,7 @@ export const createResourceClaim: RouteMiddleware<{ id: string }, ResourceClaim>
       }
 
       context.response.body = {
-        claim: await userApi.getTaskById(resourceClaim.id as string, true, 0, undefined, undefined, true),
+        claim: await userApi.getTaskById(canvasClaim.id as string, true, 0, undefined, undefined, true),
       };
       return;
     }
@@ -628,6 +625,55 @@ export const createResourceClaim: RouteMiddleware<{ id: string }, ResourceClaim>
 
   // Can't claim a canvas is you've already claimed the manifest.
   if (manifestClaim) {
+    if (manifestOnly) {
+      if (!manifestClaim.state.revisionId && claim.revisionId) {
+        context.response.body = {
+          claim: await userApi.updateTask(manifestClaim.id, {
+            state: {
+              revisionId: claim.revisionId,
+            },
+            status: claim.status,
+            status_text: statusToClaimMap[claim.status as any] || 'in progress',
+          }),
+        };
+        return;
+      }
+
+      // @todo this should ALWAYS be false.
+      const revisionDontMatch =
+        manifestClaim.state.revisionId && claim.revisionId && manifestClaim.state.revisionId !== claim.revisionId;
+      const revisionExistsAndMatch = !revisionDontMatch;
+
+      if (config.modelPageOptions?.preventMultipleUserSubmissionsPerResource && revisionDontMatch) {
+        throw new Error('Can only submit one revision per resource');
+      }
+
+      if (revisionExistsAndMatch) {
+        if (typeof claim.status !== 'undefined' && claim.status !== manifestClaim.status) {
+          if (
+            config.modelPageOptions?.preventContributionAfterSubmission &&
+            manifestClaim.status === 2 &&
+            (claim.status === 0 || claim.status === 1) &&
+            manifestClaim.state.revisionId
+          ) {
+            throw new Error('Cannot update task in review');
+          }
+
+          context.response.body = {
+            claim: await userApi.updateTask(manifestClaim.id, {
+              status: claim.status,
+              status_text: statusToClaimMap[claim.status as any] || 'in progress',
+            }),
+          };
+          return;
+        }
+
+        context.response.body = {
+          claim: await userApi.getTaskById(manifestClaim.id as string, true, 0, undefined, undefined, true),
+        };
+        return;
+      }
+    }
     // The normal path.
     context.response.body = {
       claim: await userApi.getTaskById(manifestClaim.id as string, true, 0, undefined, undefined, true),
