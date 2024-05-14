@@ -58,5 +58,5 @@ export async function genRSA(force = false) {
   // When this function is called dynamically, it's likely to cause some disruption.
   // And all users will be logged out. This is only temporary, the service will be
   // restarted (without downtime)
-  require('../gateway/api.server').api.invalidateJwt();
+  (await import('../gateway/api.server')).api.invalidateJwt();
 }
