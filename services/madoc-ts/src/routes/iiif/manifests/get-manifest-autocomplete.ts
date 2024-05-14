@@ -6,7 +6,7 @@ import { userWithScope } from '../../../utility/user-with-scope';
 
 export const getManifestAutocomplete: RouteMiddleware<{}, { blacklist_ids?: number[] }> = async context => {
   const { siteId } = userWithScope(context, ['site.admin']);
-  const { q, project_id, blacklist_ids = [], page } = context.query;
+  const { q, project_id, blacklist_ids = '', page } = context.query;
   const { projectId, projectSlug } = parseProjectId(project_id);
 
   const blackListIds = (blacklist_ids || '')
