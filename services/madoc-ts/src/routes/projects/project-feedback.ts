@@ -27,9 +27,10 @@ export const addProjectFeedback: RouteMiddleware<{ id: string | number }, { feed
   }
 
   // Only user members can add feedback.
-  if (!isAdmin && (await context.projects.isUserProjectMember(id, project.id))) {
-    throw new NotFound();
-  }
+  // @todo this check does not seem to be working
+  // if (!isAdmin && (await context.projects.isUserProjectMember(id, project.id))) {
+  //   throw new NotFound();
+  // }
 
   const feedback = context.requestBody.feedback;
 

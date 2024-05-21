@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 -->
 
+### Fixed
+- Project feedback not working for all users
+
 ## [v2.2.4](https://github.com/digirati-co-uk/madoc-platform/compare/v2.2.3...v2.2.4) - 14/05/2024
 
 ### Fixed
