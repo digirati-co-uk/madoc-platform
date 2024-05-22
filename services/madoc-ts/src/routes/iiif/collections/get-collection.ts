@@ -28,7 +28,10 @@ export const getCollection: RouteMiddleware<{ id: number }> = async context => {
 
   const { total = 0 } = (await context.connection.maybeOne(getResourceCount(collectionId, siteId))) || { total: 0 };
   const adjustedTotal = excluded ? total - excluded.length : total;
-  const totalPages = Math.ceil(adjustedTotal / manifestsPerPage) || 1;
+  let totalPages = Math.ceil(adjustedTotal / manifestsPerPage) || 1;
+  if (totalPages < 1) {
+    totalPages = 1;
+  }
   const requestedPage = Number(context.query.page) || 1;
   const page = requestedPage < totalPages ? requestedPage : totalPages;
   const type = adjustedTotal === 0 ? undefined : context.query.type || undefined;
