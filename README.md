@@ -1,5 +1,12 @@
 # Madoc
-This documentation is for the 2.x version of Madoc. The legacy Madoc is available on the [v1.x branch](https://github.com/digirati-co-uk/madoc-platform/tree/v1.x).
+This documentation is for the 2.x version of Madoc. The legacy Madoc is available on the [v1.x branch](https://github.com/digirati-co-uk/madoc-platform/tree/1.1.3).
+
+## Run Madoc locally
+To run Madoc locally for testing, you will need Docker installed. You can find the
+configuration in: https://github.com/digirati-co-uk/madoc-config
+
+## Documentation
+The documentation for Madoc is available at: https://docs.madoc.io
 
 ## LICENSE
 
