@@ -3,7 +3,6 @@ import { BaseField } from '../types/field-types';
 import { isEntityEmpty } from '../utility/is-entity-empty';
 import { isEmptyFieldList } from '../utility/is-field-list-empty';
 import { isEntity, isEntityList } from './is-entity';
-import { traverseDocument } from './traverse-document';
 
 type PostFilter = (fields: BaseField[]) => BaseField[];
 
@@ -15,7 +14,6 @@ export function filterEmptyFields(fields: BaseField[], parent?: CaptureModel['do
   if (isEntityList(fields) && fields.length > 1) {
     // 1st is this allowMultiple?
     const first = fields.find(f => !f.revision) || fields[0];
-
     // In this case, we have a list of entites - but the templated entity might be in there.
     // This is a rough "isEntityEmpty"
     if (first && first.allowMultiple) {
