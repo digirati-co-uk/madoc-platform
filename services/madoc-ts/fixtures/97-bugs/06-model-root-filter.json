@@ -1,0 +1,1638 @@
+{
+  "id": "8a1a1d8e-fc2c-4dc9-901f-5d311253aae4",
+  "structure": {
+    "id": "d67cc46a-b549-4d24-9b79-7989c20b8e66",
+    "label": "Transcribe the Peace Petition 2",
+    "type": "choice",
+    "items": [
+      {
+        "id": "178fca6d-3624-4b8a-9af7-2c50e4034edc",
+        "label": "Peace Petition",
+        "type": "model",
+        "fields": [
+          [
+            "pp2transcription",
+            [
+              "pp2-name",
+              "pp2-address",
+              "pp2-difficult",
+              "pp2-empty"
+            ]
+          ]
+        ],
+        "modelRoot": [
+          "pp2transcription"
+        ],
+        "description": "",
+        "instructions": "Remember to draw a box around the name and address before you transcribe the text.\nPlease ensure that you have read the Guidelines and the FAQ’s before starting the transcription work."
+      }
+    ],
+    "description": ""
+  },
+  "document": {
+    "id": "d8ddef02-b2c3-4e45-b424-36bc9797e0b1",
+    "type": "entity",
+    "label": "Transcribe the Peace Petition",
+    "properties": {
+      "pp2transcription": [
+        {
+          "id": "27212153-bad2-49ba-a49c-0c8b60fef063",
+          "type": "entity",
+          "label": "Transcription",
+          "selector": {
+            "id": "b332f4aa-2a43-4495-8ba0-a7ff73f10153",
+            "type": "box-selector",
+            "state": null
+          },
+          "labelledBy": "{pp2-name} @ {pp2-address}",
+          "properties": {
+            "pp2-name": [
+              {
+                "id": "cdffb45b-91e1-4119-ac56-5ace80d81a16",
+                "type": "text-field",
+                "label": "Name",
+                "value": "",
+                "required": true,
+                "description": "Please transcribe the name you have selected",
+                "pluralField": "Names"
+              }
+            ],
+            "pp2-empty": [
+              {
+                "id": "51504f3a-807c-481b-9210-eccd2d8b4de6",
+                "type": "checkbox-field",
+                "label": "Is this an empty page?",
+                "value": false,
+                "inlineLabel": "Tick this box if the page contains no names to transcribe"
+              }
+            ],
+            "pp2-address": [
+              {
+                "id": "483287f5-2ccf-4c0a-926f-bcf90030b4bf",
+                "type": "text-field",
+                "label": "Address",
+                "value": "",
+                "description": "Please transcribe the address next to the name",
+                "pluralField": "Addresses"
+              }
+            ],
+            "pp2-difficult": [
+              {
+                "id": "a6dde1d3-92b2-4808-bad6-537bb27434d3",
+                "type": "checkbox-field",
+                "label": "Text difficult to transcribe?",
+                "value": "",
+                "inlineLabel": "Tick if you are not confident that your transcription is accurate."
+              }
+            ]
+          },
+          "pluralLabel": "Transcriptions",
+          "allowMultiple": true
+        },
+        {
+          "id": "bfd1afec-630a-418a-b9d9-ee9b7a8fdc5f",
+          "type": "entity",
+          "label": "Transcription",
+          "revision": "d37dde47-f2ed-4f73-8d11-966a6c69deff",
+          "selector": {
+            "id": "9985cdce-0dab-4886-8e23-21b13cdb4fa6",
+            "type": "box-selector",
+            "state": {
+              "x": 202,
+              "y": 600,
+              "width": 3065,
+              "height": 381
+            },
+            "revisedBy": []
+          },
+          "labelledBy": "{pp2-name} @ {pp2-address}",
+          "properties": {
+            "pp2-name": [
+              {
+                "id": "95da2322-4439-4aff-bab2-9a4d03847c96",
+                "type": "text-field",
+                "label": "Name",
+                "value": "Elizabeth Jones",
+                "required": true,
+                "revision": "d37dde47-f2ed-4f73-8d11-966a6c69deff",
+                "description": "Please transcribe the name you have selected",
+                "pluralField": "Names"
+              }
+            ],
+            "pp2-empty": [
+              {
+                "id": "d974ef30-79cd-4348-854f-996ad0b27b37",
+                "type": "checkbox-field",
+                "label": "Is this an empty page?",
+                "value": false,
+                "revision": "d37dde47-f2ed-4f73-8d11-966a6c69deff",
+                "inlineLabel": "Tick this box if the page contains no names to transcribe"
+              }
+            ],
+            "pp2-address": [
+              {
+                "id": "edb617aa-aa64-4983-b58f-1b441c911027",
+                "type": "text-field",
+                "label": "Address",
+                "value": "Police Station, Llanwenog",
+                "revision": "d37dde47-f2ed-4f73-8d11-966a6c69deff",
+                "description": "Please transcribe the address next to the name",
+                "pluralField": "Addresses"
+              }
+            ],
+            "pp2-difficult": [
+              {
+                "id": "5c204aed-e14d-47cd-b7c5-f54b7774cfbf",
+                "type": "checkbox-field",
+                "label": "Text difficult to transcribe?",
+                "value": false,
+                "revision": "d37dde47-f2ed-4f73-8d11-966a6c69deff",
+                "inlineLabel": "Tick if you are not confident that your transcription is accurate."
+              }
+            ]
+          },
+          "pluralLabel": "Transcriptions",
+          "allowMultiple": true
+        },
+        {
+          "id": "257963c1-abce-4124-af8a-dba1d5b718ee",
+          "type": "entity",
+          "label": "Transcription",
+          "revision": "d39d3d75-31e5-4a1a-894d-688063f89b6a",
+          "selector": {
+            "id": "b6355106-9332-48d4-bb86-f684495e2540",
+            "type": "box-selector",
+            "state": {
+              "x": 185,
+              "y": 813,
+              "width": 3250,
+              "height": 283
+            },
+            "revisedBy": []
+          },
+          "labelledBy": "{pp2-name} @ {pp2-address}",
+          "properties": {
+            "pp2-name": [
+              {
+                "id": "e4d76498-0138-4acb-9f1b-0a54686e7dcb",
+                "type": "text-field",
+                "label": "Name",
+                "value": "Lizzie Jones",
+                "required": true,
+                "revision": "d39d3d75-31e5-4a1a-894d-688063f89b6a",
+                "description": "Please transcribe the name you have selected",
+                "pluralField": "Names"
+              }
+            ],
+            "pp2-empty": [
+              {
+                "id": "cd4d0ba6-f663-4c51-b6ff-f62eac3003fc",
+                "type": "checkbox-field",
+                "label": "Is this an empty page?",
+                "value": false,
+                "revision": "d39d3d75-31e5-4a1a-894d-688063f89b6a",
+                "inlineLabel": "Tick this box if the page contains no names to transcribe"
+              }
+            ],
+            "pp2-address": [
+              {
+                "id": "f88e78fe-585a-41cb-b8e0-be50f48a09af",
+                "type": "text-field",
+                "label": "Address",
+                "value": "Derlwyn, Drefach, Llanwenog",
+                "revision": "d39d3d75-31e5-4a1a-894d-688063f89b6a",
+                "description": "Please transcribe the address next to the name",
+                "pluralField": "Addresses"
+              }
+            ],
+            "pp2-difficult": [
+              {
+                "id": "aa8b3c37-83f8-4e12-b00a-fda42e1de0fb",
+                "type": "checkbox-field",
+                "label": "Text difficult to transcribe?",
+                "value": false,
+                "revision": "d39d3d75-31e5-4a1a-894d-688063f89b6a",
+                "inlineLabel": "Tick if you are not confident that your transcription is accurate."
+              }
+            ]
+          },
+          "pluralLabel": "Transcriptions",
+          "allowMultiple": true
+        },
+        {
+          "id": "8b7cb1b2-2680-4b6b-8610-8423d703cc54",
+          "type": "entity",
+          "label": "Transcription",
+          "revision": "f51b1654-bcae-49cd-9f6c-a039d8207929",
+          "selector": {
+            "id": "50c400f9-a81b-4cd3-9adc-91098f4ddc15",
+            "type": "box-selector",
+            "state": {
+              "x": 234,
+              "y": 974,
+              "width": 3162,
+              "height": 226
+            },
+            "revisedBy": []
+          },
+          "labelledBy": "{pp2-name} @ {pp2-address}",
+          "properties": {
+            "pp2-name": [
+              {
+                "id": "692b09d1-c887-49a8-8ca5-555560f1616b",
+                "type": "text-field",
+                "label": "Name",
+                "value": "Elizabeth Jones",
+                "required": true,
+                "revision": "f51b1654-bcae-49cd-9f6c-a039d8207929",
+                "description": "Please transcribe the name you have selected",
+                "pluralField": "Names"
+              }
+            ],
+            "pp2-empty": [
+              {
+                "id": "c2438bab-ceb9-4de1-a9b1-619fbf332c46",
+                "type": "checkbox-field",
+                "label": "Is this an empty page?",
+                "value": false,
+                "revision": "f51b1654-bcae-49cd-9f6c-a039d8207929",
+                "inlineLabel": "Tick this box if the page contains no names to transcribe"
+              }
+            ],
+            "pp2-address": [
+              {
+                "id": "97c8e83f-deb5-4b5a-ac18-d97177cc4ae5",
+                "type": "text-field",
+                "label": "Address",
+                "value": "Derlwyn, Drefach, Llanwenog",
+                "revision": "f51b1654-bcae-49cd-9f6c-a039d8207929",
+                "description": "Please transcribe the address next to the name",
+                "pluralField": "Addresses"
+              }
+            ],
+            "pp2-difficult": [
+              {
+                "id": "4c3701e5-ebab-4dd7-9092-9a9326f082e1",
+                "type": "checkbox-field",
+                "label": "Text difficult to transcribe?",
+                "value": false,
+                "revision": "f51b1654-bcae-49cd-9f6c-a039d8207929",
+                "inlineLabel": "Tick if you are not confident that your transcription is accurate."
+              }
+            ]
+          },
+          "pluralLabel": "Transcriptions",
+          "allowMultiple": true
+        },
+        {
+          "id": "577f7370-23cc-4a3b-bc61-2b3942ff03ad",
+          "type": "entity",
+          "label": "Transcription",
+          "revision": "73c6e344-a6c0-4e2a-8564-3f4e9bd01d6f",
+          "selector": {
+            "id": "df3c8319-762e-4547-ba7d-91ff0092e513",
+            "type": "box-selector",
+            "state": {
+              "x": 234,
+              "y": 1103,
+              "width": 3218,
+              "height": 206
+            },
+            "revisedBy": []
+          },
+          "labelledBy": "{pp2-name} @ {pp2-address}",
+          "properties": {
+            "pp2-name": [
+              {
+                "id": "ba0416c1-daea-486e-8a49-c34bf35f510f",
+                "type": "text-field",
+                "label": "Name",
+                "value": "Jane Williams",
+                "required": true,
+                "revision": "73c6e344-a6c0-4e2a-8564-3f4e9bd01d6f",
+                "description": "Please transcribe the name you have selected",
+                "pluralField": "Names"
+              }
+            ],
+            "pp2-empty": [
+              {
+                "id": "00811184-f840-4b02-babd-97d005830b40",
+                "type": "checkbox-field",
+                "label": "Is this an empty page?",
+                "value": false,
+                "revision": "73c6e344-a6c0-4e2a-8564-3f4e9bd01d6f",
+                "inlineLabel": "Tick this box if the page contains no names to transcribe"
+              }
+            ],
+            "pp2-address": [
+              {
+                "id": "1a45358e-8e97-4204-82be-fb8817ef7747",
+                "type": "text-field",
+                "label": "Address",
+                "value": "Awelfryn, Alltyblacca, Llanwenog",
+                "revision": "73c6e344-a6c0-4e2a-8564-3f4e9bd01d6f",
+                "description": "Please transcribe the address next to the name",
+                "pluralField": "Addresses"
+              }
+            ],
+            "pp2-difficult": [
+              {
+                "id": "e67aaa9e-2f64-4a88-a685-909b539fa1ed",
+                "type": "checkbox-field",
+                "label": "Text difficult to transcribe?",
+                "value": false,
+                "revision": "73c6e344-a6c0-4e2a-8564-3f4e9bd01d6f",
+                "inlineLabel": "Tick if you are not confident that your transcription is accurate."
+              }
+            ]
+          },
+          "pluralLabel": "Transcriptions",
+          "allowMultiple": true
+        },
+        {
+          "id": "dd1b1a54-5518-43fb-be03-b259af715f2d",
+          "type": "entity",
+          "label": "Transcription",
+          "revision": "2dfdff73-47a8-4345-822a-cf05912a2997",
+          "selector": {
+            "id": "977d36af-aaee-4f44-8883-4038f323b673",
+            "type": "box-selector",
+            "state": {
+              "x": 178,
+              "y": 1239,
+              "width": 3316,
+              "height": 220
+            },
+            "revisedBy": []
+          },
+          "labelledBy": "{pp2-name} @ {pp2-address}",
+          "properties": {
+            "pp2-name": [
+              {
+                "id": "18993d08-2889-4f1e-b71b-8de7f1caf3fe",
+                "type": "text-field",
+                "label": "Name",
+                "value": "Elizabeth Rees",
+                "required": true,
+                "revision": "2dfdff73-47a8-4345-822a-cf05912a2997",
+                "description": "Please transcribe the name you have selected",
+                "pluralField": "Names"
+              }
+            ],
+            "pp2-empty": [
+              {
+                "id": "45c14221-b05f-48a1-acba-49dfe28dabad",
+                "type": "checkbox-field",
+                "label": "Is this an empty page?",
+                "value": false,
+                "revision": "2dfdff73-47a8-4345-822a-cf05912a2997",
+                "inlineLabel": "Tick this box if the page contains no names to transcribe"
+              }
+            ],
+            "pp2-address": [
+              {
+                "id": "f9166dba-5179-44bb-ae96-8855a3f73d14",
+                "type": "text-field",
+                "label": "Address",
+                "value": "Teify View, Alltyblaca, Llanwenog",
+                "revision": "2dfdff73-47a8-4345-822a-cf05912a2997",
+                "description": "Please transcribe the address next to the name",
+                "pluralField": "Addresses"
+              }
+            ],
+            "pp2-difficult": [
+              {
+                "id": "813c3812-0ea1-4213-af38-5b61768db47f",
+                "type": "checkbox-field",
+                "label": "Text difficult to transcribe?",
+                "value": false,
+                "revision": "2dfdff73-47a8-4345-822a-cf05912a2997",
+                "inlineLabel": "Tick if you are not confident that your transcription is accurate."
+              }
+            ]
+          },
+          "pluralLabel": "Transcriptions",
+          "allowMultiple": true
+        },
+        {
+          "id": "8968bdf2-86d9-4305-9f00-b19d483d6770",
+          "type": "entity",
+          "label": "Transcription",
+          "revision": "ff1b4a45-b9f3-4676-90f0-f8707bf32258",
+          "selector": {
+            "id": "92fa7fe7-2db2-4242-abf4-c9da50d010d2",
+            "type": "box-selector",
+            "state": {
+              "x": 213,
+              "y": 1379,
+              "width": 3054,
+              "height": 205
+            },
+            "revisedBy": []
+          },
+          "labelledBy": "{pp2-name} @ {pp2-address}",
+          "properties": {
+            "pp2-name": [
+              {
+                "id": "7e3b9464-4665-4869-a621-13f3d520ad9c",
+                "type": "text-field",
+                "label": "Name",
+                "value": "E. M. Williams",
+                "required": true,
+                "revision": "ff1b4a45-b9f3-4676-90f0-f8707bf32258",
+                "description": "Please transcribe the name you have selected",
+                "pluralField": "Names"
+              }
+            ],
+            "pp2-empty": [
+              {
+                "id": "9077e220-645b-4d1e-a9c5-881e65fcec18",
+                "type": "checkbox-field",
+                "label": "Is this an empty page?",
+                "value": false,
+                "revision": "ff1b4a45-b9f3-4676-90f0-f8707bf32258",
+                "inlineLabel": "Tick this box if the page contains no names to transcribe"
+              }
+            ],
+            "pp2-address": [
+              {
+                "id": "f7c52cc6-6e01-46d5-9a15-cb42f96d4814",
+                "type": "text-field",
+                "label": "Address",
+                "value": "Inglis Cottage, Llanwenog",
+                "revision": "ff1b4a45-b9f3-4676-90f0-f8707bf32258",
+                "description": "Please transcribe the address next to the name",
+                "pluralField": "Addresses"
+              }
+            ],
+            "pp2-difficult": [
+              {
+                "id": "69948f18-7fe0-4d00-ac71-d13b4c457e3c",
+                "type": "checkbox-field",
+                "label": "Text difficult to transcribe?",
+                "value": false,
+                "revision": "ff1b4a45-b9f3-4676-90f0-f8707bf32258",
+                "inlineLabel": "Tick if you are not confident that your transcription is accurate."
+              }
+            ]
+          },
+          "pluralLabel": "Transcriptions",
+          "allowMultiple": true
+        },
+        {
+          "id": "289f74d0-a291-4615-9fc0-227d1c183c00",
+          "type": "entity",
+          "label": "Transcription",
+          "revision": "b4f24af9-3017-43e7-8e5b-48483da6d803",
+          "selector": {
+            "id": "6addb95a-cb9a-4525-8f23-4536250e3fc8",
+            "type": "box-selector",
+            "state": {
+              "x": 151,
+              "y": 1504,
+              "width": 3061,
+              "height": 219
+            },
+            "revisedBy": []
+          },
+          "labelledBy": "{pp2-name} @ {pp2-address}",
+          "properties": {
+            "pp2-name": [
+              {
+                "id": "df977dde-a1f9-40db-a484-f93eb95ff5ae",
+                "type": "text-field",
+                "label": "Name",
+                "value": "Gwennie A. Price",
+                "required": true,
+                "revision": "b4f24af9-3017-43e7-8e5b-48483da6d803",
+                "description": "Please transcribe the name you have selected",
+                "pluralField": "Names"
+              }
+            ],
+            "pp2-empty": [
+              {
+                "id": "3814677f-a913-4790-9b17-fb4d9cd551ea",
+                "type": "checkbox-field",
+                "label": "Is this an empty page?",
+                "value": false,
+                "revision": "b4f24af9-3017-43e7-8e5b-48483da6d803",
+                "inlineLabel": "Tick this box if the page contains no names to transcribe"
+              }
+            ],
+            "pp2-address": [
+              {
+                "id": "297fdcb6-d94d-4b6d-994b-704a53ca4c08",
+                "type": "text-field",
+                "label": "Address",
+                "value": "Alltyblacca Farm, Llanwenog",
+                "revision": "b4f24af9-3017-43e7-8e5b-48483da6d803",
+                "description": "Please transcribe the address next to the name",
+                "pluralField": "Addresses"
+              }
+            ],
+            "pp2-difficult": [
+              {
+                "id": "a1397db0-35d5-4879-8f55-6be9b576b7dc",
+                "type": "checkbox-field",
+                "label": "Text difficult to transcribe?",
+                "value": false,
+                "revision": "b4f24af9-3017-43e7-8e5b-48483da6d803",
+                "inlineLabel": "Tick if you are not confident that your transcription is accurate."
+              }
+            ]
+          },
+          "pluralLabel": "Transcriptions",
+          "allowMultiple": true
+        },
+        {
+          "id": "ac47fec1-c9f0-48ea-984e-e29116fa58c8",
+          "type": "entity",
+          "label": "Transcription",
+          "revision": "8693f234-bd9f-47a1-bc39-b3b1e34bd634",
+          "selector": {
+            "id": "e19b67d5-a63e-41d9-9f2c-ff112eb507cb",
+            "type": "box-selector",
+            "state": {
+              "x": 145,
+              "y": 1662.7350465539382,
+              "width": 3180,
+              "height": 189.26495344606178
+            },
+            "revisedBy": []
+          },
+          "labelledBy": "{pp2-name} @ {pp2-address}",
+          "properties": {
+            "pp2-name": [
+              {
+                "id": "5c7d97fe-eed7-418d-b2af-4ec8e21edbc0",
+                "type": "text-field",
+                "label": "Name",
+                "value": "Mary F. Price",
+                "required": true,
+                "revision": "8693f234-bd9f-47a1-bc39-b3b1e34bd634",
+                "description": "Please transcribe the name you have selected",
+                "pluralField": "Names"
+              }
+            ],
+            "pp2-empty": [
+              {
+                "id": "1727f355-4daa-4af9-9f54-fcd21e8c904e",
+                "type": "checkbox-field",
+                "label": "Is this an empty page?",
+                "value": false,
+                "revision": "8693f234-bd9f-47a1-bc39-b3b1e34bd634",
+                "inlineLabel": "Tick this box if the page contains no names to transcribe"
+              }
+            ],
+            "pp2-address": [
+              {
+                "id": "16748905-f8b6-43b8-8ea2-0ab5e4b2342c",
+                "type": "text-field",
+                "label": "Address",
+                "value": "Alltyblacca Farm, Llanwenog",
+                "revision": "8693f234-bd9f-47a1-bc39-b3b1e34bd634",
+                "description": "Please transcribe the address next to the name",
+                "pluralField": "Addresses"
+              }
+            ],
+            "pp2-difficult": [
+              {
+                "id": "4b3a306d-c3e5-4f0b-8db6-5b57af09df51",
+                "type": "checkbox-field",
+                "label": "Text difficult to transcribe?",
+                "value": false,
+                "revision": "8693f234-bd9f-47a1-bc39-b3b1e34bd634",
+                "inlineLabel": "Tick if you are not confident that your transcription is accurate."
+              }
+            ]
+          },
+          "pluralLabel": "Transcriptions",
+          "allowMultiple": true
+        },
+        {
+          "id": "6206fd11-6245-4ba8-99d0-baeebbe9a6e7",
+          "type": "entity",
+          "label": "Transcription",
+          "revision": "3a0a6aa4-5bca-4423-a6f2-7a50ee43b1dd",
+          "selector": {
+            "id": "3802d12a-181b-4063-9dac-36f9b25f8247",
+            "type": "box-selector",
+            "state": {
+              "x": 168,
+              "y": 1789,
+              "width": 3187,
+              "height": 183
+            },
+            "revisedBy": []
+          },
+          "labelledBy": "{pp2-name} @ {pp2-address}",
+          "properties": {
+            "pp2-name": [
+              {
+                "id": "587f45e9-3f77-4a92-84ac-4ab75dcc3ae4",
+                "type": "text-field",
+                "label": "Name",
+                "value": "Mary Evans",
+                "required": true,
+                "revision": "3a0a6aa4-5bca-4423-a6f2-7a50ee43b1dd",
+                "description": "Please transcribe the name you have selected",
+                "pluralField": "Names"
+              }
+            ],
+            "pp2-empty": [
+              {
+                "id": "eb6e86ca-2b88-42f5-8d91-f8b4dd28b234",
+                "type": "checkbox-field",
+                "label": "Is this an empty page?",
+                "value": false,
+                "revision": "3a0a6aa4-5bca-4423-a6f2-7a50ee43b1dd",
+                "inlineLabel": "Tick this box if the page contains no names to transcribe"
+              }
+            ],
+            "pp2-address": [
+              {
+                "id": "ebabf020-33fa-4f06-8800-659891386397",
+                "type": "text-field",
+                "label": "Address",
+                "value": "Nantfach, Alltyblacca, Llanwenog",
+                "revision": "3a0a6aa4-5bca-4423-a6f2-7a50ee43b1dd",
+                "description": "Please transcribe the address next to the name",
+                "pluralField": "Addresses"
+              }
+            ],
+            "pp2-difficult": [
+              {
+                "id": "bdce663f-3009-4d56-81f6-842113583e54",
+                "type": "checkbox-field",
+                "label": "Text difficult to transcribe?",
+                "value": false,
+                "revision": "3a0a6aa4-5bca-4423-a6f2-7a50ee43b1dd",
+                "inlineLabel": "Tick if you are not confident that your transcription is accurate."
+              }
+            ]
+          },
+          "pluralLabel": "Transcriptions",
+          "allowMultiple": true
+        },
+        {
+          "id": "3cdaa4ac-28c0-4376-9140-cc9d27f903e2",
+          "type": "entity",
+          "label": "Transcription",
+          "revision": "5a5c651f-02eb-4b57-a788-fc5872025b4b",
+          "selector": {
+            "id": "f975900e-077e-4079-83c1-1c86479539da",
+            "type": "box-selector",
+            "state": {
+              "x": 141,
+              "y": 1899,
+              "width": 3446,
+              "height": 212
+            },
+            "revisedBy": []
+          },
+          "labelledBy": "{pp2-name} @ {pp2-address}",
+          "properties": {
+            "pp2-name": [
+              {
+                "id": "c4f54cb3-8000-4268-8c29-452423b2fc41",
+                "type": "text-field",
+                "label": "Name",
+                "value": "W. M. Evans",
+                "required": true,
+                "revision": "5a5c651f-02eb-4b57-a788-fc5872025b4b",
+                "description": "Please transcribe the name you have selected",
+                "pluralField": "Names"
+              }
+            ],
+            "pp2-empty": [
+              {
+                "id": "81ce3fce-1413-41e5-ada4-8439815ce2d1",
+                "type": "checkbox-field",
+                "label": "Is this an empty page?",
+                "value": false,
+                "revision": "5a5c651f-02eb-4b57-a788-fc5872025b4b",
+                "inlineLabel": "Tick this box if the page contains no names to transcribe"
+              }
+            ],
+            "pp2-address": [
+              {
+                "id": "120a4acf-f9f5-4cd1-a5b0-9764b70ab6b9",
+                "type": "text-field",
+                "label": "Address",
+                "value": "Pleasant View, Alltyblacca, Llanwenog",
+                "revision": "5a5c651f-02eb-4b57-a788-fc5872025b4b",
+                "description": "Please transcribe the address next to the name",
+                "pluralField": "Addresses"
+              }
+            ],
+            "pp2-difficult": [
+              {
+                "id": "62523231-7246-44a9-a7ac-1baa7dccfece",
+                "type": "checkbox-field",
+                "label": "Text difficult to transcribe?",
+                "value": false,
+                "revision": "5a5c651f-02eb-4b57-a788-fc5872025b4b",
+                "inlineLabel": "Tick if you are not confident that your transcription is accurate."
+              }
+            ]
+          },
+          "pluralLabel": "Transcriptions",
+          "allowMultiple": true
+        },
+        {
+          "id": "e68a99e3-4e8e-423a-aabe-201cf360948d",
+          "type": "entity",
+          "label": "Transcription",
+          "revision": "425ffaba-ba7d-4f41-a400-1081ba2b10bb",
+          "selector": {
+            "id": "6fa3c739-4637-4c5f-ac17-a841464c330d",
+            "type": "box-selector",
+            "state": {
+              "x": 181,
+              "y": 2021,
+              "width": 3456,
+              "height": 219
+            },
+            "revisedBy": []
+          },
+          "labelledBy": "{pp2-name} @ {pp2-address}",
+          "properties": {
+            "pp2-name": [
+              {
+                "id": "792547a2-bb11-4b40-9bd3-54d9e1582721",
+                "type": "text-field",
+                "label": "Name",
+                "value": "Hannah Davies",
+                "required": true,
+                "revision": "425ffaba-ba7d-4f41-a400-1081ba2b10bb",
+                "description": "Please transcribe the name you have selected",
+                "pluralField": "Names"
+              }
+            ],
+            "pp2-empty": [
+              {
+                "id": "942571df-d6ee-4602-ad85-ccba91839d91",
+                "type": "checkbox-field",
+                "label": "Is this an empty page?",
+                "value": false,
+                "revision": "425ffaba-ba7d-4f41-a400-1081ba2b10bb",
+                "inlineLabel": "Tick this box if the page contains no names to transcribe"
+              }
+            ],
+            "pp2-address": [
+              {
+                "id": "a3aa9a0a-6160-4a56-8618-66f5efe8bd24",
+                "type": "text-field",
+                "label": "Address",
+                "value": "Pleasant View, Alltyblacca, Llanwenog",
+                "revision": "425ffaba-ba7d-4f41-a400-1081ba2b10bb",
+                "description": "Please transcribe the address next to the name",
+                "pluralField": "Addresses"
+              }
+            ],
+            "pp2-difficult": [
+              {
+                "id": "6e32c9ea-03a8-462b-af0f-ea79cca6b6fd",
+                "type": "checkbox-field",
+                "label": "Text difficult to transcribe?",
+                "value": false,
+                "revision": "425ffaba-ba7d-4f41-a400-1081ba2b10bb",
+                "inlineLabel": "Tick if you are not confident that your transcription is accurate."
+              }
+            ]
+          },
+          "pluralLabel": "Transcriptions",
+          "allowMultiple": true
+        },
+        {
+          "id": "8304bda8-57dc-4e11-9861-31a433ccc3e1",
+          "type": "entity",
+          "label": "Transcription",
+          "revision": "1b82ccc6-a647-4fe2-be46-3de150066b60",
+          "selector": {
+            "id": "c1a0c260-2dd1-4447-ad5c-e55cc9f23718",
+            "type": "box-selector",
+            "state": {
+              "x": 168,
+              "y": 2144,
+              "width": 3342,
+              "height": 252
+            },
+            "revisedBy": []
+          },
+          "labelledBy": "{pp2-name} @ {pp2-address}",
+          "properties": {
+            "pp2-name": [
+              {
+                "id": "6001af3a-8ae5-426c-8b22-b1a2eba70af7",
+                "type": "text-field",
+                "label": "Name",
+                "value": "Sarah Hannah Jones",
+                "required": true,
+                "revision": "1b82ccc6-a647-4fe2-be46-3de150066b60",
+                "description": "Please transcribe the name you have selected",
+                "pluralField": "Names"
+              }
+            ],
+            "pp2-empty": [
+              {
+                "id": "b66ea404-8aa7-4312-9d2e-24bd68f666ff",
+                "type": "checkbox-field",
+                "label": "Is this an empty page?",
+                "value": false,
+                "revision": "1b82ccc6-a647-4fe2-be46-3de150066b60",
+                "inlineLabel": "Tick this box if the page contains no names to transcribe"
+              }
+            ],
+            "pp2-address": [
+              {
+                "id": "a18d73e0-11d8-4462-b03d-62d08803be52",
+                "type": "text-field",
+                "label": "Address",
+                "value": "Chapel House, Alltyblacca, Llanwenog",
+                "revision": "1b82ccc6-a647-4fe2-be46-3de150066b60",
+                "description": "Please transcribe the address next to the name",
+                "pluralField": "Addresses"
+              }
+            ],
+            "pp2-difficult": [
+              {
+                "id": "4d634832-80fe-439c-bf26-9a62e7e55dca",
+                "type": "checkbox-field",
+                "label": "Text difficult to transcribe?",
+                "value": false,
+                "revision": "1b82ccc6-a647-4fe2-be46-3de150066b60",
+                "inlineLabel": "Tick if you are not confident that your transcription is accurate."
+              }
+            ]
+          },
+          "pluralLabel": "Transcriptions",
+          "allowMultiple": true
+        },
+        {
+          "id": "f2f51578-545e-40f3-9cae-86586a42f709",
+          "type": "entity",
+          "label": "Transcription",
+          "revision": "2f667c9e-63cc-486f-afb8-bf465c4db975",
+          "selector": {
+            "id": "7e3f2279-ad1c-49a6-a3d6-4a7f28e2e023",
+            "type": "box-selector",
+            "state": {
+              "x": 178,
+              "y": 2290,
+              "width": 3309,
+              "height": 239
+            },
+            "revisedBy": []
+          },
+          "labelledBy": "{pp2-name} @ {pp2-address}",
+          "properties": {
+            "pp2-name": [
+              {
+                "id": "cefdf63c-ac6c-4208-a5f5-5405e0fa4851",
+                "type": "text-field",
+                "label": "Name",
+                "value": "Catherine Evans",
+                "required": true,
+                "revision": "2f667c9e-63cc-486f-afb8-bf465c4db975",
+                "description": "Please transcribe the name you have selected",
+                "pluralField": "Names"
+              }
+            ],
+            "pp2-empty": [
+              {
+                "id": "59e0742d-752b-4c86-8731-0292c1e8182b",
+                "type": "checkbox-field",
+                "label": "Is this an empty page?",
+                "value": false,
+                "revision": "2f667c9e-63cc-486f-afb8-bf465c4db975",
+                "inlineLabel": "Tick this box if the page contains no names to transcribe"
+              }
+            ],
+            "pp2-address": [
+              {
+                "id": "0fe6a5f1-a730-4fdf-ade0-d729aa3ca15a",
+                "type": "text-field",
+                "label": "Address",
+                "value": "Ffinnant Arms, Alltyblacca, Llanwenog",
+                "revision": "2f667c9e-63cc-486f-afb8-bf465c4db975",
+                "description": "Please transcribe the address next to the name",
+                "pluralField": "Addresses"
+              }
+            ],
+            "pp2-difficult": [
+              {
+                "id": "1572fa6a-219a-4382-95f3-cb33592012a7",
+                "type": "checkbox-field",
+                "label": "Text difficult to transcribe?",
+                "value": false,
+                "revision": "2f667c9e-63cc-486f-afb8-bf465c4db975",
+                "inlineLabel": "Tick if you are not confident that your transcription is accurate."
+              }
+            ]
+          },
+          "pluralLabel": "Transcriptions",
+          "allowMultiple": true
+        },
+        {
+          "id": "409032b5-187e-46dd-9725-1a86442acdfd",
+          "type": "entity",
+          "label": "Transcription",
+          "revision": "ac782400-171b-4af3-83fe-4055e72f3f3f",
+          "selector": {
+            "id": "ebab08b3-3aab-46ac-a544-70b0cb3b6160",
+            "type": "box-selector",
+            "state": {
+              "x": 148,
+              "y": 2423,
+              "width": 3067,
+              "height": 209
+            },
+            "revisedBy": []
+          },
+          "labelledBy": "{pp2-name} @ {pp2-address}",
+          "properties": {
+            "pp2-name": [
+              {
+                "id": "3ae2b5ac-8fc9-4a34-96a7-1b83125bb5bf",
+                "type": "text-field",
+                "label": "Name",
+                "value": "Rachel Rees",
+                "required": true,
+                "revision": "ac782400-171b-4af3-83fe-4055e72f3f3f",
+                "description": "Please transcribe the name you have selected",
+                "pluralField": "Names"
+              }
+            ],
+            "pp2-empty": [
+              {
+                "id": "4ad52df6-74e4-4e93-8fee-1defab60d678",
+                "type": "checkbox-field",
+                "label": "Is this an empty page?",
+                "value": false,
+                "revision": "ac782400-171b-4af3-83fe-4055e72f3f3f",
+                "inlineLabel": "Tick this box if the page contains no names to transcribe"
+              }
+            ],
+            "pp2-address": [
+              {
+                "id": "a085ba3e-bd50-43a4-a138-e2524847b494",
+                "type": "text-field",
+                "label": "Address",
+                "value": "Brynderw, Llanwenog",
+                "revision": "ac782400-171b-4af3-83fe-4055e72f3f3f",
+                "description": "Please transcribe the address next to the name",
+                "pluralField": "Addresses"
+              }
+            ],
+            "pp2-difficult": [
+              {
+                "id": "81d394d8-2859-408b-b940-06e19cbec7fb",
+                "type": "checkbox-field",
+                "label": "Text difficult to transcribe?",
+                "value": false,
+                "revision": "ac782400-171b-4af3-83fe-4055e72f3f3f",
+                "inlineLabel": "Tick if you are not confident that your transcription is accurate."
+              }
+            ]
+          },
+          "pluralLabel": "Transcriptions",
+          "allowMultiple": true
+        },
+        {
+          "id": "a811e6c2-1800-471b-9a4a-81605a6b144e",
+          "type": "entity",
+          "label": "Transcription",
+          "revision": "3b39b2e5-934f-4f39-b6c9-64bb1ae91fab",
+          "selector": {
+            "id": "1f82c149-2be1-4452-97cf-7e4894f6c94f",
+            "type": "box-selector",
+            "state": {
+              "x": 135,
+              "y": 2552,
+              "width": 3226,
+              "height": 219
+            },
+            "revisedBy": []
+          },
+          "labelledBy": "{pp2-name} @ {pp2-address}",
+          "properties": {
+            "pp2-name": [
+              {
+                "id": "fbdf5794-5611-429a-b880-d0463ed52939",
+                "type": "text-field",
+                "label": "Name",
+                "value": "Jane Evans",
+                "required": true,
+                "revision": "3b39b2e5-934f-4f39-b6c9-64bb1ae91fab",
+                "description": "Please transcribe the name you have selected",
+                "pluralField": "Names"
+              }
+            ],
+            "pp2-empty": [
+              {
+                "id": "bdaa5a05-65d3-4447-b000-f0075732c250",
+                "type": "checkbox-field",
+                "label": "Is this an empty page?",
+                "value": false,
+                "revision": "3b39b2e5-934f-4f39-b6c9-64bb1ae91fab",
+                "inlineLabel": "Tick this box if the page contains no names to transcribe"
+              }
+            ],
+            "pp2-address": [
+              {
+                "id": "361645bb-1b3a-4c48-a208-62aa1249bc91",
+                "type": "text-field",
+                "label": "Address",
+                "value": "Cartref, Alltyblacca, Llanwenog",
+                "revision": "3b39b2e5-934f-4f39-b6c9-64bb1ae91fab",
+                "description": "Please transcribe the address next to the name",
+                "pluralField": "Addresses"
+              }
+            ],
+            "pp2-difficult": [
+              {
+                "id": "5f4a41bf-3a4f-4634-b87f-2201bab30aa2",
+                "type": "checkbox-field",
+                "label": "Text difficult to transcribe?",
+                "value": false,
+                "revision": "3b39b2e5-934f-4f39-b6c9-64bb1ae91fab",
+                "inlineLabel": "Tick if you are not confident that your transcription is accurate."
+              }
+            ]
+          },
+          "pluralLabel": "Transcriptions",
+          "allowMultiple": true
+        },
+        {
+          "id": "ced81f14-7be8-4fe2-90fe-d1a3c344fa9d",
+          "type": "entity",
+          "label": "Transcription",
+          "revision": "f83d0160-64a7-436c-835f-02865da40eac",
+          "selector": {
+            "id": "e063d4bb-3d55-4b6f-8025-49c57d62daee",
+            "type": "box-selector",
+            "state": {
+              "x": 208,
+              "y": 2701,
+              "width": 3435,
+              "height": 202
+            },
+            "revisedBy": []
+          },
+          "labelledBy": "{pp2-name} @ {pp2-address}",
+          "properties": {
+            "pp2-name": [
+              {
+                "id": "f57e995d-2bb8-43f6-b97c-a0cffad563c0",
+                "type": "text-field",
+                "label": "Name",
+                "value": "Anne Lewis",
+                "required": true,
+                "revision": "f83d0160-64a7-436c-835f-02865da40eac",
+                "description": "Please transcribe the name you have selected",
+                "pluralField": "Names"
+              }
+            ],
+            "pp2-empty": [
+              {
+                "id": "0dd707ff-f705-4cd5-b0fa-72c4fb15e7a1",
+                "type": "checkbox-field",
+                "label": "Is this an empty page?",
+                "value": false,
+                "revision": "f83d0160-64a7-436c-835f-02865da40eac",
+                "inlineLabel": "Tick this box if the page contains no names to transcribe"
+              }
+            ],
+            "pp2-address": [
+              {
+                "id": "fe006fcb-df61-4f67-bd96-6779f448ec3c",
+                "type": "text-field",
+                "label": "Address",
+                "value": "Bryn-Teify, Alltyblacca, Llanybyther",
+                "revision": "f83d0160-64a7-436c-835f-02865da40eac",
+                "description": "Please transcribe the address next to the name",
+                "pluralField": "Addresses"
+              }
+            ],
+            "pp2-difficult": [
+              {
+                "id": "6f8b1fab-bf34-434c-b891-099a6b3645e2",
+                "type": "checkbox-field",
+                "label": "Text difficult to transcribe?",
+                "value": false,
+                "revision": "f83d0160-64a7-436c-835f-02865da40eac",
+                "inlineLabel": "Tick if you are not confident that your transcription is accurate."
+              }
+            ]
+          },
+          "pluralLabel": "Transcriptions",
+          "allowMultiple": true
+        },
+        {
+          "id": "3ba1f058-18a2-44d3-ba43-17eee700ac0c",
+          "type": "entity",
+          "label": "Transcription",
+          "revision": "5625a661-a75b-4e1f-8258-1ca7ebd09e38",
+          "selector": {
+            "id": "f1d6215f-a72d-41ad-ac11-13d785115caa",
+            "type": "box-selector",
+            "state": {
+              "x": 191,
+              "y": 2814,
+              "width": 3565,
+              "height": 255
+            },
+            "revisedBy": []
+          },
+          "labelledBy": "{pp2-name} @ {pp2-address}",
+          "properties": {
+            "pp2-name": [
+              {
+                "id": "4f5acead-14d9-436c-a6c5-3fba9141e8c5",
+                "type": "text-field",
+                "label": "Name",
+                "value": "Lizzie M. Williams",
+                "required": true,
+                "revision": "5625a661-a75b-4e1f-8258-1ca7ebd09e38",
+                "description": "Please transcribe the name you have selected",
+                "pluralField": "Names"
+              }
+            ],
+            "pp2-empty": [
+              {
+                "id": "e3c92682-12c3-4da4-8c53-31d9c0431232",
+                "type": "checkbox-field",
+                "label": "Is this an empty page?",
+                "value": false,
+                "revision": "5625a661-a75b-4e1f-8258-1ca7ebd09e38",
+                "inlineLabel": "Tick this box if the page contains no names to transcribe"
+              }
+            ],
+            "pp2-address": [
+              {
+                "id": "0e33eada-915d-4ffd-aab0-e18d4c955ff4",
+                "type": "text-field",
+                "label": "Address",
+                "value": "Bryn-Teify, Alltyblacca, Llanwenog",
+                "revision": "5625a661-a75b-4e1f-8258-1ca7ebd09e38",
+                "description": "Please transcribe the address next to the name",
+                "pluralField": "Addresses"
+              }
+            ],
+            "pp2-difficult": [
+              {
+                "id": "f4b532c8-ef53-4dd5-bb60-6b7314293125",
+                "type": "checkbox-field",
+                "label": "Text difficult to transcribe?",
+                "value": false,
+                "revision": "5625a661-a75b-4e1f-8258-1ca7ebd09e38",
+                "inlineLabel": "Tick if you are not confident that your transcription is accurate."
+              }
+            ]
+          },
+          "pluralLabel": "Transcriptions",
+          "allowMultiple": true
+        }
+      ]
+    }
+  },
+  "revisions": [
+    {
+      "fields": [
+        [
+          "pp2transcription",
+          [
+            "pp2-name",
+            "pp2-address",
+            "pp2-difficult",
+            "pp2-empty"
+          ]
+        ]
+      ],
+      "structureId": "178fca6d-3624-4b8a-9af7-2c50e4034edc",
+      "id": "d37dde47-f2ed-4f73-8d11-966a6c69deff",
+      "revises": "178fca6d-3624-4b8a-9af7-2c50e4034edc",
+      "approved": true,
+      "status": "accepted",
+      "authors": [
+        "urn:madoc:user:216"
+      ],
+      "label": "Peace Petition",
+      "captureModelId": "8a1a1d8e-fc2c-4dc9-901f-5d311253aae4"
+    },
+    {
+      "fields": [
+        [
+          "pp2transcription",
+          [
+            "pp2-name",
+            "pp2-address",
+            "pp2-difficult",
+            "pp2-empty"
+          ]
+        ]
+      ],
+      "structureId": "178fca6d-3624-4b8a-9af7-2c50e4034edc",
+      "id": "d39d3d75-31e5-4a1a-894d-688063f89b6a",
+      "revises": "178fca6d-3624-4b8a-9af7-2c50e4034edc",
+      "approved": true,
+      "status": "accepted",
+      "authors": [
+        "urn:madoc:user:216"
+      ],
+      "label": "Peace Petition",
+      "captureModelId": "8a1a1d8e-fc2c-4dc9-901f-5d311253aae4"
+    },
+    {
+      "fields": [
+        [
+          "pp2transcription",
+          [
+            "pp2-name",
+            "pp2-address",
+            "pp2-difficult",
+            "pp2-empty"
+          ]
+        ]
+      ],
+      "structureId": "178fca6d-3624-4b8a-9af7-2c50e4034edc",
+      "id": "b4f24af9-3017-43e7-8e5b-48483da6d803",
+      "revises": "178fca6d-3624-4b8a-9af7-2c50e4034edc",
+      "approved": true,
+      "status": "accepted",
+      "authors": [
+        "urn:madoc:user:216"
+      ],
+      "label": "Peace Petition",
+      "captureModelId": "8a1a1d8e-fc2c-4dc9-901f-5d311253aae4"
+    },
+    {
+      "fields": [
+        [
+          "pp2transcription",
+          [
+            "pp2-name",
+            "pp2-address",
+            "pp2-difficult",
+            "pp2-empty"
+          ]
+        ]
+      ],
+      "structureId": "178fca6d-3624-4b8a-9af7-2c50e4034edc",
+      "id": "3a0a6aa4-5bca-4423-a6f2-7a50ee43b1dd",
+      "revises": "178fca6d-3624-4b8a-9af7-2c50e4034edc",
+      "approved": true,
+      "status": "accepted",
+      "authors": [
+        "urn:madoc:user:216"
+      ],
+      "label": "Peace Petition",
+      "captureModelId": "8a1a1d8e-fc2c-4dc9-901f-5d311253aae4"
+    },
+    {
+      "fields": [
+        [
+          "pp2transcription",
+          [
+            "pp2-name",
+            "pp2-address",
+            "pp2-difficult",
+            "pp2-empty"
+          ]
+        ]
+      ],
+      "structureId": "178fca6d-3624-4b8a-9af7-2c50e4034edc",
+      "id": "73c6e344-a6c0-4e2a-8564-3f4e9bd01d6f",
+      "revises": "178fca6d-3624-4b8a-9af7-2c50e4034edc",
+      "approved": true,
+      "status": "accepted",
+      "authors": [
+        "urn:madoc:user:216"
+      ],
+      "label": "Peace Petition",
+      "captureModelId": "8a1a1d8e-fc2c-4dc9-901f-5d311253aae4"
+    },
+    {
+      "fields": [
+        [
+          "pp2transcription",
+          [
+            "pp2-name",
+            "pp2-address",
+            "pp2-difficult",
+            "pp2-empty"
+          ]
+        ]
+      ],
+      "structureId": "178fca6d-3624-4b8a-9af7-2c50e4034edc",
+      "id": "ff1b4a45-b9f3-4676-90f0-f8707bf32258",
+      "revises": "178fca6d-3624-4b8a-9af7-2c50e4034edc",
+      "approved": true,
+      "status": "accepted",
+      "authors": [
+        "urn:madoc:user:216"
+      ],
+      "label": "Peace Petition",
+      "captureModelId": "8a1a1d8e-fc2c-4dc9-901f-5d311253aae4"
+    },
+    {
+      "fields": [
+        [
+          "pp2transcription",
+          [
+            "pp2-name",
+            "pp2-address",
+            "pp2-difficult",
+            "pp2-empty"
+          ]
+        ]
+      ],
+      "structureId": "178fca6d-3624-4b8a-9af7-2c50e4034edc",
+      "id": "5a5c651f-02eb-4b57-a788-fc5872025b4b",
+      "revises": "178fca6d-3624-4b8a-9af7-2c50e4034edc",
+      "approved": true,
+      "status": "accepted",
+      "authors": [
+        "urn:madoc:user:216"
+      ],
+      "label": "Peace Petition",
+      "captureModelId": "8a1a1d8e-fc2c-4dc9-901f-5d311253aae4"
+    },
+    {
+      "fields": [
+        [
+          "pp2transcription",
+          [
+            "pp2-name",
+            "pp2-address",
+            "pp2-difficult",
+            "pp2-empty"
+          ]
+        ]
+      ],
+      "structureId": "178fca6d-3624-4b8a-9af7-2c50e4034edc",
+      "id": "8693f234-bd9f-47a1-bc39-b3b1e34bd634",
+      "revises": "178fca6d-3624-4b8a-9af7-2c50e4034edc",
+      "approved": true,
+      "status": "accepted",
+      "authors": [
+        "urn:madoc:user:216"
+      ],
+      "label": "Peace Petition",
+      "captureModelId": "8a1a1d8e-fc2c-4dc9-901f-5d311253aae4"
+    },
+    {
+      "fields": [
+        [
+          "pp2transcription",
+          [
+            "pp2-name",
+            "pp2-address",
+            "pp2-difficult",
+            "pp2-empty"
+          ]
+        ]
+      ],
+      "structureId": "178fca6d-3624-4b8a-9af7-2c50e4034edc",
+      "id": "f51b1654-bcae-49cd-9f6c-a039d8207929",
+      "revises": "178fca6d-3624-4b8a-9af7-2c50e4034edc",
+      "approved": true,
+      "status": "accepted",
+      "authors": [
+        "urn:madoc:user:216"
+      ],
+      "label": "Peace Petition",
+      "captureModelId": "8a1a1d8e-fc2c-4dc9-901f-5d311253aae4"
+    },
+    {
+      "fields": [
+        [
+          "pp2transcription",
+          [
+            "pp2-name",
+            "pp2-address",
+            "pp2-difficult",
+            "pp2-empty"
+          ]
+        ]
+      ],
+      "structureId": "178fca6d-3624-4b8a-9af7-2c50e4034edc",
+      "id": "2dfdff73-47a8-4345-822a-cf05912a2997",
+      "revises": "178fca6d-3624-4b8a-9af7-2c50e4034edc",
+      "approved": true,
+      "status": "accepted",
+      "authors": [
+        "urn:madoc:user:216"
+      ],
+      "label": "Peace Petition",
+      "captureModelId": "8a1a1d8e-fc2c-4dc9-901f-5d311253aae4"
+    },
+    {
+      "fields": [
+        [
+          "pp2transcription",
+          [
+            "pp2-name",
+            "pp2-address",
+            "pp2-difficult",
+            "pp2-empty"
+          ]
+        ]
+      ],
+      "structureId": "178fca6d-3624-4b8a-9af7-2c50e4034edc",
+      "id": "425ffaba-ba7d-4f41-a400-1081ba2b10bb",
+      "revises": "178fca6d-3624-4b8a-9af7-2c50e4034edc",
+      "approved": true,
+      "status": "accepted",
+      "authors": [
+        "urn:madoc:user:216"
+      ],
+      "label": "Peace Petition",
+      "captureModelId": "8a1a1d8e-fc2c-4dc9-901f-5d311253aae4"
+    },
+    {
+      "fields": [
+        [
+          "pp2transcription",
+          [
+            "pp2-name",
+            "pp2-address",
+            "pp2-difficult",
+            "pp2-empty"
+          ]
+        ]
+      ],
+      "structureId": "178fca6d-3624-4b8a-9af7-2c50e4034edc",
+      "id": "1b82ccc6-a647-4fe2-be46-3de150066b60",
+      "revises": "178fca6d-3624-4b8a-9af7-2c50e4034edc",
+      "approved": true,
+      "status": "accepted",
+      "authors": [
+        "urn:madoc:user:216"
+      ],
+      "label": "Peace Petition",
+      "captureModelId": "8a1a1d8e-fc2c-4dc9-901f-5d311253aae4"
+    },
+    {
+      "fields": [
+        [
+          "pp2transcription",
+          [
+            "pp2-name",
+            "pp2-address",
+            "pp2-difficult",
+            "pp2-empty"
+          ]
+        ]
+      ],
+      "structureId": "178fca6d-3624-4b8a-9af7-2c50e4034edc",
+      "id": "2f667c9e-63cc-486f-afb8-bf465c4db975",
+      "revises": "178fca6d-3624-4b8a-9af7-2c50e4034edc",
+      "approved": true,
+      "status": "accepted",
+      "authors": [
+        "urn:madoc:user:216"
+      ],
+      "label": "Peace Petition",
+      "captureModelId": "8a1a1d8e-fc2c-4dc9-901f-5d311253aae4"
+    },
+    {
+      "fields": [
+        [
+          "pp2transcription",
+          [
+            "pp2-name",
+            "pp2-address",
+            "pp2-difficult",
+            "pp2-empty"
+          ]
+        ]
+      ],
+      "structureId": "178fca6d-3624-4b8a-9af7-2c50e4034edc",
+      "id": "ac782400-171b-4af3-83fe-4055e72f3f3f",
+      "revises": "178fca6d-3624-4b8a-9af7-2c50e4034edc",
+      "approved": true,
+      "status": "accepted",
+      "authors": [
+        "urn:madoc:user:216"
+      ],
+      "label": "Peace Petition",
+      "captureModelId": "8a1a1d8e-fc2c-4dc9-901f-5d311253aae4"
+    },
+    {
+      "fields": [
+        [
+          "pp2transcription",
+          [
+            "pp2-name",
+            "pp2-address",
+            "pp2-difficult",
+            "pp2-empty"
+          ]
+        ]
+      ],
+      "structureId": "178fca6d-3624-4b8a-9af7-2c50e4034edc",
+      "id": "3b39b2e5-934f-4f39-b6c9-64bb1ae91fab",
+      "revises": "178fca6d-3624-4b8a-9af7-2c50e4034edc",
+      "approved": true,
+      "status": "accepted",
+      "authors": [
+        "urn:madoc:user:216"
+      ],
+      "label": "Peace Petition",
+      "captureModelId": "8a1a1d8e-fc2c-4dc9-901f-5d311253aae4"
+    },
+    {
+      "fields": [
+        [
+          "pp2transcription",
+          [
+            "pp2-name",
+            "pp2-address",
+            "pp2-difficult",
+            "pp2-empty"
+          ]
+        ]
+      ],
+      "structureId": "178fca6d-3624-4b8a-9af7-2c50e4034edc",
+      "id": "f83d0160-64a7-436c-835f-02865da40eac",
+      "revises": "178fca6d-3624-4b8a-9af7-2c50e4034edc",
+      "approved": true,
+      "status": "accepted",
+      "authors": [
+        "urn:madoc:user:216"
+      ],
+      "label": "Peace Petition",
+      "captureModelId": "8a1a1d8e-fc2c-4dc9-901f-5d311253aae4"
+    },
+    {
+      "fields": [
+        [
+          "pp2transcription",
+          [
+            "pp2-name",
+            "pp2-address",
+            "pp2-difficult",
+            "pp2-empty"
+          ]
+        ]
+      ],
+      "structureId": "178fca6d-3624-4b8a-9af7-2c50e4034edc",
+      "id": "5625a661-a75b-4e1f-8258-1ca7ebd09e38",
+      "revises": "178fca6d-3624-4b8a-9af7-2c50e4034edc",
+      "approved": true,
+      "status": "accepted",
+      "authors": [
+        "urn:madoc:user:216"
+      ],
+      "label": "Peace Petition",
+      "captureModelId": "8a1a1d8e-fc2c-4dc9-901f-5d311253aae4"
+    },
+    {
+      "fields": [
+        [
+          "pp2transcription",
+          [
+            "pp2-name",
+            "pp2-address",
+            "pp2-difficult",
+            "pp2-empty"
+          ]
+        ]
+      ],
+      "structureId": "178fca6d-3624-4b8a-9af7-2c50e4034edc",
+      "id": "63642c5e-5e37-4bba-af33-7e4b9dbf653e",
+      "revises": "178fca6d-3624-4b8a-9af7-2c50e4034edc",
+      "approved": true,
+      "status": "accepted",
+      "authors": [
+        "urn:madoc:user:216"
+      ],
+      "label": "Peace Petition",
+      "captureModelId": "8a1a1d8e-fc2c-4dc9-901f-5d311253aae4"
+    }
+  ],
+  "derivedFrom": "c6db004f-c0d1-444f-bd6f-8889d8daba16",
+  "target": [
+    {
+      "id": "urn:madoc:collection:15687",
+      "type": "Collection"
+    },
+    {
+      "id": "urn:madoc:manifest:15734",
+      "type": "Manifest"
+    },
+    {
+      "id": "urn:madoc:canvas:8697",
+      "type": "Canvas"
+    }
+  ],
+  "contributors": {
+    "urn:madoc:user:216": {
+      "id": "urn:madoc:user:216",
+      "type": "Person",
+      "name": "Mari Williams "
+    }
+  }
+}

@@ -13,6 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 -->
 
+### Fixed
+- Project feedback not working for all users
+- Fixed model root bug with empty submissions (NS-62)
+- Fixing paging issue when hiding completed Manifests (NS-59)
+
 ## [v2.2.4](https://github.com/digirati-co-uk/madoc-platform/compare/v2.2.3...v2.2.4) - 14/05/2024
 
 ### Fixed

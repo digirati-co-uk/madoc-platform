@@ -1,3 +1,4 @@
+import { filterEmptyFields } from '../../../src/frontend/shared/capture-models/helpers/field-post-filters';
 import { filterCaptureModel } from '../../../src/frontend/shared/capture-models/helpers/filter-capture-model';
 import { CaptureModel } from '../../../src/frontend/shared/capture-models/types/capture-model';
 
@@ -131,5 +132,43 @@ describe('filterCaptureModel', () => {
         "type": "entity",
       }
     `);
+  });
+
+  test('filter entity model root bug', () => {
+    const rev = '63642c5e-5e37-4bba-af33-7e4b9dbf653e';
+    const model = require(`../../../fixtures/97-bugs/06-model-root-filter.json`);
+    const flatFields = [
+      ['pp2transcription', 'pp2-name'],
+      ['pp2transcription', 'pp2-address'],
+      ['pp2transcription', 'pp2-difficult'],
+      ['pp2transcription', 'pp2-empty'],
+    ];
+    const allRevisions = ['63642c5e-5e37-4bba-af33-7e4b9dbf653e', '178fca6d-3624-4b8a-9af7-2c50e4034edc'];
+
+    const filtered = filterCaptureModel(
+      rev,
+      model.document,
+      flatFields,
+      (field, parent, key) => {
+        if (field.revision) {
+          return allRevisions.indexOf(field.revision) !== -1;
+        }
+
+        // This will show additional fields - but also empty entities.
+        return true;
+      },
+      [
+        // Filter empty fields.
+        filterEmptyFields,
+      ]
+    );
+
+    expect(filtered).toEqual(null);
+
+    // console.log(JSON.stringify(filtered, null, 2));
+    //
+    // expect(filtered?.properties.pp2transcription).not.toHaveLength(0);
+    // const keys = Object.keys((filtered?.properties.pp2transcription[0] as any).properties);
+    // expect(keys).toEqual(['pp2-name', 'pp2-address', 'pp2-difficult', 'pp2-empty']);
   });
 });

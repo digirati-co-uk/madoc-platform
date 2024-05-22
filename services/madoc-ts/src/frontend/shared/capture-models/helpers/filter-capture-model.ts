@@ -114,6 +114,9 @@ export function filterCaptureModel(
       } else {
         newDocument.properties[rootFieldKey] = postFilter(newDocument.properties[rootFieldKey] as any[], newDocument);
       }
+      if (newDocument.properties[rootFieldKey].length === 0) {
+        delete newDocument.properties[rootFieldKey];
+      }
     }
   }
 

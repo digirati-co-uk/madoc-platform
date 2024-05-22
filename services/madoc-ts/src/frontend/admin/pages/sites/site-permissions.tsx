@@ -28,7 +28,7 @@ export const SitePermissions = () => {
   const [selectedUser, setSelectedUser] = useState<AutocompleteUser | undefined>();
   const [selectedRole, setSelectedRole] = useState('');
   const currentUser = useUserDetails();
-  const [listOfBots, isBot] = useBots();
+  const [, isBot] = useBots();
 
   const isGlobalAdmin = currentUser && currentUser.user.role === 'global_admin';
   const selectedUserExistingRole = data?.users.find(u => u.id === selectedUser?.id)?.site_role;

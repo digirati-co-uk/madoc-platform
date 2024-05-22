@@ -33,7 +33,7 @@ type CollectionAggregate = TaggedTemplateLiteralInvocationType<{
 export function getSingleCollection({
   collectionId,
   siteId,
-  page = 0,
+  page = 1,
   perPage = 24,
   type,
   excludeManifests,
@@ -45,6 +45,9 @@ export function getSingleCollection({
   type?: 'manifest' | 'collection';
   excludeManifests?: number[];
 }) {
+  if (page < 1) {
+    page = 1;
+  }
   const offset = (page - 1) * perPage;
 
   const manifestExclusion = excludeManifests
