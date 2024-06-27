@@ -42,7 +42,7 @@ export const ManifestTaskProgress: React.FC = () => {
 
   const [markAsComplete, markAsCompleteStatus] = useMutation(async () => {
     if (manifestTask) {
-      await api.updateTask(manifestTask.id, {
+      await api.updateRevisionTask(manifestTask.id, {
         status: 3,
         status_text: 'completed',
       });
@@ -52,7 +52,7 @@ export const ManifestTaskProgress: React.FC = () => {
 
   const [markAsIncomplete, markAsIncompleteStatus] = useMutation(async () => {
     if (manifestTask) {
-      await api.updateTask(manifestTask.id, {
+      await api.updateRevisionTask(manifestTask.id, {
         status: 2,
         status_text: 'in progress',
       });
@@ -62,7 +62,7 @@ export const ManifestTaskProgress: React.FC = () => {
 
   const [updateRequiredApprovals, updateRequiredApprovalsStatus] = useMutation(async () => {
     if (manifestTask) {
-      await api.updateTask(manifestTask.id, {
+      await api.updateRevisionTask(manifestTask.id, {
         state: {
           approvalsRequired: requiredApprovals,
         },

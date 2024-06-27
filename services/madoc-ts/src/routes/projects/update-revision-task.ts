@@ -29,7 +29,7 @@ export const updateRevisionTask: RouteMiddleware<{ taskId: string; task: any }> 
     throw new Error('Task could not be updated, no body');
   }
 
-  if (task.type !== 'crowdsourcing-task') {
+  if (task.type !== 'crowdsourcing-task' || 'crowdsourcing-manifest-task') {
     throw new Error(`Task could not be updated, not a valid task`);
   }
 
