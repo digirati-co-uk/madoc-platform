@@ -34,6 +34,8 @@ export const updateRevisionTask: RouteMiddleware<{ taskId: string; task: any }> 
     task.type !== 'crowdsourcing-manifest-task' &&
     task.type !== 'crowdsourcing-canvas-task'
   ) {
+    throw new Error(`Task could not be updated, not a valid task`);
+  }
 
   if (limitedReviewer) {
     if (task.delegated_task) {
