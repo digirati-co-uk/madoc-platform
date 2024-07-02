@@ -22,7 +22,9 @@ export function blockConfigFor(Component: any, model: any) {
           const query = useQuery(
             [hook.name, args],
             async () => {
-              return (api as any)[hook.name](args) as any;
+              if (typeof args !== 'undefined') {
+                return (api as any)[hook.name](...args) as any;
+              }
             },
             {
               enabled: typeof args !== 'undefined',
