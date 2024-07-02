@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - New button to filter manifest tasks from reviews (NS-66)
 
+### Fixed
+- Fixed bug with large projects and adding content (NS-61)
+- Fixed bug with filtering out Manifests/Collections when adding content to projects (NS-61)
+
 ## [v2.2.5](https://github.com/digirati-co-uk/madoc-platform/compare/v2.2.4...v2.2.5) - 22/05/2024
 
 ### Fixed
@@ -68,8 +72,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed visibility of selectors in document panel
 - Fixed bug with max contributors (NS-57)
 - Fixed visual bugs with Review Dashboard
-- Fixed bug with large projects and adding content (NS-61)
-- Fixed bug with filtering out Manifests/Collections when adding content to projects (NS-61)
 
 ### Changed
 - Add short descriptions for admin Search & Metadata actions + correct site config. page titles (MAD-1466)
