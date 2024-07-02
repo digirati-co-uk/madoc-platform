@@ -1210,19 +1210,21 @@ export class ApiClient {
 
   async autocompleteManifests(q: string, project_id?: string, blacklist_ids?: number[], page = 1) {
     return this.request<Array<{ id: number; label: string }>>(
-      `/api/madoc/iiif/autocomplete/manifests?${stringify(
-        { q, project_id, blacklist_ids, page },
-        { arrayFormat: 'comma' }
-      )}`
+      `/api/madoc/iiif/autocomplete/manifests?${stringify({ q, project_id, page }, { arrayFormat: 'comma' })}`,
+      {
+        method: 'POST',
+        body: { blacklist_ids },
+      }
     );
   }
 
   async autocompleteCollections(q: string, project_id?: string, blacklist_ids?: number[], page = 1) {
     return this.request<Array<{ id: number; label: string }>>(
-      `/api/madoc/iiif/autocomplete/collections?${stringify(
-        { q, project_id, blacklist_ids, page },
-        { arrayFormat: 'comma' }
-      )}`
+      `/api/madoc/iiif/autocomplete/collections?${stringify({ q, project_id, page }, { arrayFormat: 'comma' })}`,
+      {
+        method: 'POST',
+        body: { blacklist_ids },
+      }
     );
   }
 

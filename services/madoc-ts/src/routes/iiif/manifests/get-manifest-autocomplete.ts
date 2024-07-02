@@ -14,13 +14,6 @@ export const getManifestAutocomplete: RouteMiddleware<{}, { blacklist_ids?: numb
     .map((blacklistId: string) => Number(blacklistId))
     .filter((blacklistId: number) => !Number.isNaN(blacklistId));
 
-  if (context.requestBody) {
-    const postBlacklistIds = context.requestBody.blacklist_ids;
-    if (postBlacklistIds && Array.isArray(postBlacklistIds)) {
-      blackListIds.push(...postBlacklistIds);
-    }
-  }
-
   if (!q) {
     context.response.body = [];
     return;
