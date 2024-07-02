@@ -14,6 +14,7 @@ import {
 } from '../../utility/model-annotation-helpers';
 import { parseProjectId } from '../../utility/parse-project-id';
 import { gatewayHost } from '../../gateway/api.server';
+import { CaptureModel } from '../../frontend/shared/capture-models/types/capture-model';
 
 export type SitePublishedModelsQuery = {
   format?:
@@ -103,7 +104,7 @@ export const sitePublishedModels: RouteMiddleware<{ slug: string; id: string }> 
     }
   }
 
-  const ms = [];
+  const ms: Array<Promise<CaptureModel>> = [];
 
   const published = isAdmin ? !castBool(context.query.reviews) : true;
 
@@ -126,9 +127,11 @@ export const sitePublishedModels: RouteMiddleware<{ slug: string; id: string }> 
     case 'capture-model':
     case 'capture-model-with-pages':
     default: {
-      const allModels = await Promise.all(ms);
+      const allModels: CaptureModel[] = await Promise.all(ms);
       for (const model of allModels) {
-        const found = projectModels.find(m => m.capture_model_id === model.derivedFrom);
+        const found = projectModels.find(
+          (m: { id: number; capture_model_id: string }) => m.capture_model_id === model.derivedFrom
+        );
         if (found) {
           (model as any).projectId = found.id;
         }
@@ -286,7 +289,9 @@ export const sitePublishedModels: RouteMiddleware<{ slug: string; id: string }> 
                 normalisedValueLists: true,
               });
 
-              const found = projectModels.find(pm => pm.capture_model_id === m.derivedFrom);
+              const found = projectModels.find(
+                (pm: { id: number; capture_model_id: string }) => pm.capture_model_id === m.derivedFrom
+              );
               if (found) {
                 (serialised as any).projectId = found.id;
               }

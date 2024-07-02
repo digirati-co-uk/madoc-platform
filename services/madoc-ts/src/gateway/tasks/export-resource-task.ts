@@ -298,12 +298,13 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
                         case 'url': {
                           // Need to fetch.
                           const response = await fetch(file.content.value);
-                          await fs.writeFile(filePath, response.body, { encoding: file.encoding });
+                          if (!response.body) throw new Error('Writing failed');
+                          await fs.writeFile(filePath, response.body as any, { encoding: file.encoding as any });
                           break;
                         }
                         case 'html':
                         case 'text': {
-                          await fs.writeFile(filePath, file.content.value, { encoding: file.encoding });
+                          await fs.writeFile(filePath, file.content.value, { encoding: file.encoding as any });
                           break;
                         }
                       }

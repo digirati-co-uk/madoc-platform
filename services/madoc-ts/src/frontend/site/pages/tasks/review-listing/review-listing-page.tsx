@@ -24,6 +24,7 @@ import { RefetchProvider } from '../../../../shared/utility/refetch-context';
 import { EmptyState } from '../../../../shared/layout/EmptyState';
 import ListItemIcon from '../../../../shared/icons/ListItemIcon';
 import { useKeyboardListNavigation } from '../../../hooks/use-keyboard-list-navigation';
+import { useLocalStorage } from '../../../../shared/hooks/use-local-storage';
 
 const TaskListContainer = styled.div`
   height: 80vh;
@@ -84,10 +85,7 @@ const HeaderLink = styled.a`
   svg {
     fill: #555555;
     vertical-align: middle;
-    transition:
-      background-color 0.2s,
-      height 0.3s,
-      transform 0.5s;
+    transition: background-color 0.2s, height 0.3s, transform 0.5s;
     transition-timing-function: ease-in-out;
     height: 2px;
     width: 12px;
@@ -133,6 +131,7 @@ export function ReviewListingPage() {
   const projectId = params.slug;
   const createLink = useRelativeLinks();
   const { sort_by = '', status, assignee } = useLocationQuery();
+  const [hideManifests, setHideManifests] = useLocalStorage('hide-manifest-reviews', false);
 
   const { widthB, refs } = useResizeLayout(`review-dashboard-resize`, {
     left: true,
@@ -191,17 +190,21 @@ export function ReviewListingPage() {
 
       <div style={{ paddingBottom: '0.5em' }}>
         <ButtonRow>
-          <TextButton
+          <Button
             as={Link}
             to={createLink({ projectId: projectId, subRoute: 'tasks', query: { type: 'crowdsourcing-review' } })}
           >
             {t('Task view')}
-          </TextButton>
+          </Button>
           {status || assignee ? (
-            <TextButton as={Link} to={createLink({ projectId: projectId, subRoute: 'reviews', query: {} })}>
+            <Button as={Link} to={createLink({ projectId: projectId, subRoute: 'reviews', query: {} })}>
               {t('Reset filters')}
-            </TextButton>
+            </Button>
           ) : null}
+
+          <Button onClick={() => setHideManifests(!hideManifests)}>
+            {hideManifests ? t('Hide manifests') : t('Show manifests')}
+          </Button>
         </ButtonRow>
       </div>
 
@@ -278,6 +281,7 @@ export function ReviewListingPage() {
                             task={task}
                             active={task.id === params.taskId}
                             page={data.pagination.page}
+                            hideManifests={hideManifests}
                           />
                         );
                       })
@@ -321,16 +325,22 @@ function SingleReviewTableRow({
   active,
   page,
   index,
+  hideManifests,
 }: {
   task: CrowdsourcingTask;
   active?: boolean;
   page?: number;
   index: number;
+  hideManifests?: boolean;
 }) {
   const { ...query } = useLocationQuery();
   const createLink = useRelativeLinks({ subRoute: 'reviews' });
   const navigate = useNavigate();
   const metadata = useTaskMetadata<{ subject?: SubjectSnippet }>(task);
+
+  if (metadata.subject?.type === 'manifest' && hideManifests) {
+    return null;
+  }
 
   return (
     <ThickTableRow

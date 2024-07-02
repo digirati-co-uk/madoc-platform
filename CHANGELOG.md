@@ -6,12 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.2.5...main)
-<!-- 
+<!--
 ### Fixed
 ### Added
 ### Changed
 ### Removed
 -->
+### Added
+- New button to filter manifest tasks from reviews (NS-66)
 
 ## [v2.2.5](https://github.com/digirati-co-uk/madoc-platform/compare/v2.2.4...v2.2.5) - 22/05/2024
 
@@ -54,7 +56,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Atlas Viewer / Canvas Panel memory leak when browsing canvases
 - Fixed bug with Polygon selector and not being able to drag a box to select points
 - Fixed bug when selecting a polygon from the sidebar
-- Fixed broken images on SVG cropped selector 
+- Fixed broken images on SVG cropped selector
 - Fixed bug with maxOverZoom
 - Fixed bug with refreshing task list
 - Fixed server rendering (notification count, footer slot)
@@ -184,17 +186,17 @@ Hotfix release for submissions in progress.
 - Fixed contributor buttons not following project config in collection (NS-23)
 - Fixed missing translations in editor (NS-20)
 - Fixed rejecting a submission sometimes removes accepted annotations (MAD-1315)
-- Fixed allow multiple submissions when max contributions reached (MAD-1226) 
+- Fixed allow multiple submissions when max contributions reached (MAD-1226)
 - Fixed not able to add or update annotation styles (MAD-1222)
 - Fixed allow empty search (MAD-1342)
 - Fixed drafts not loading for manifest model (MAD-1316)
 - Fixed 'View contributions' on manifest button taking user to empty task list
 - Fixed review page not showing a manifest preview for manifest tasks and showing manifest title in 'canvas' column
 - Fix manifest model showing as editable for a submitted and approved manifest task
-- Fixed and updated `ManifestActions` and `ManifestUserNotifications` to allow the user to continue submissions, add another and view a completed 
+- Fixed and updated `ManifestActions` and `ManifestUserNotifications` to allow the user to continue submissions, add another and view a completed
 - Fixed only admins being able to review tasks, hide review actions if cant review (NS-17)
 - Fixed autocomplete crashing (NS-28)
-- Fixed infinite requests if no data when using infinite query 
+- Fixed infinite requests if no data when using infinite query
 - Fixed pre-process IIIF Manifest metadata and descriptive fields for validity - 3000 character max (MAD-1379)
 - Fixed regex on search snippet removing 'n' instead of '\n' MAD-1386
 - Fixed importing multiple manifests breaks preview (MAD-1387)
@@ -209,7 +211,7 @@ Hotfix release for submissions in progress.
 - Added required fields in capture model (MAD-211)
 - Added ability to update manifest thumbnail (MAD-1314)
 - Added not found pages for canvas, manifest, project and collection (MAD-1123)
-- Added max number option for allowMultiple fields in capture model 
+- Added max number option for allowMultiple fields in capture model
 - Added new Configuration page for projects (MAD-1365)
 
 ### Changed
@@ -272,8 +274,8 @@ supports a wider range of IIIF resources as a result.
 * Fixed bug with "Max contributors" if user had already started working
 * Fixed "Maximise window" to avoid cutting off the top section of the header
 * Fixed firefox bug where "Define window" button was disabled if selector required
-* Fixed Annotation styled hidden by default 
-* Fixed some fields showing in submission if empty 
+* Fixed Annotation styled hidden by default
+* Fixed some fields showing in submission if empty
 * Fixed email links sometimes not working in email clients - with option link to paste
 
 
@@ -378,14 +380,14 @@ supports a wider range of IIIF resources as a result.
 * CSS - Reduced box-shadows in capture model editor forms
 * Changed all Atlas Viewer instances to use Canvas panel
 * Simplified styling on search results
-* Improved reviewer dashboard view 
-  * Sortable table headers 
-  * Resizable layout 
-  * Full row clickable 
+* Improved reviewer dashboard view
+  * Sortable table headers
+  * Resizable layout
+  * Full row clickable
   * Focus mode & edit added
-  * Clearer language 
-  * Side by side canvas preview and improved styling 
-  * Navigation between items in list 
+  * Clearer language
+  * Side by side canvas preview and improved styling
+  * Navigation between items in list
   * Default to no selected task
   * Added infinite scroll
 
@@ -419,7 +421,7 @@ supports a wider range of IIIF resources as a result.
   see [use-module.ts](https://github.com/digirati-co-uk/madoc-platform/blob/09d566aa4560dc72b878db089b4e1b834c608ed7/services/madoc-ts/src/frontend/shared/plugins/use-module.ts))
 * Move Api keys database code to `ApiKeyRepository`
 * Added flags that can be passed into the `BaseRepository` class
-* Split out `ViewDocument` into more manageable components 
+* Split out `ViewDocument` into more manageable components
 
 ## [2.0.8](https://github.com/digirati-co-uk/madoc-platform/releases/tag/v2.0.8) - 2022-08-24
 
