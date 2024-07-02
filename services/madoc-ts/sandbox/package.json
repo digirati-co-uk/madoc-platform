@@ -1,0 +1,29 @@
+{
+  "name": "madoc-sandbox",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.cjs",
+  "types": "dist/index.d.cts",
+  "type": "module",
+  "scripts": {
+    "build": "tsup index.ts --target node18 --dts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/bun": "latest",
+    "react": "^18.3.1",
+    "@types/koa__router": "^8.0.2",
+    "@types/koa": "^2.11.0",
+    "react-dom": "^18.3.1"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "slonik": "^45.6.0",
+    "tsup": "^8.1.0"
+  }
+}

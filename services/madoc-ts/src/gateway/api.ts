@@ -16,6 +16,7 @@ import { plainTextSource } from '../extensions/capture-models/DynamicDataSources
 import { ExtensionManager } from '../extensions/extension-manager';
 import { NotificationExtension } from '../extensions/notifications/extension';
 import { getDefaultPageBlockDefinitions } from '../extensions/page-blocks/default-definitions';
+import { ExportResourceRequest } from '../extensions/project-export/types';
 import { PageBlockExtension } from '../extensions/page-blocks/extension';
 import { MediaExtension } from '../extensions/media/extension';
 import { ProjectExportExtension } from '../extensions/project-export/extension';
@@ -646,7 +647,11 @@ export class ApiClient {
 
   async createProjectExport(
     id: string,
-    options: import('../routes/projects/create-project-export').ProjectExportRequest
+    options: {
+      label: string;
+      summary?: string;
+      request: Omit<ExportResourceRequest, 'subject' | 'context'>;
+    }
   ) {
     return this.request<{ task: ExportResourceTask }>(`/api/madoc/projects/${id}/export`, {
       method: 'POST',
