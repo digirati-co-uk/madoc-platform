@@ -169,33 +169,33 @@ export class SiteUserRepository extends BaseRepository {
           where sp.site_id = ${siteId}
             and u.is_active = true
             and (
-              sp.role = ANY (${sql.array(roles, 'text')}) 
+              sp.role = ANY (${sql.array(roles, 'text')})
               ${includeAdmins ? sql`or sp.role = 'admin'` : SQL_EMPTY}
             )
       `,
 
     getAuthenticatedSites: (userId: number) => sql<UserSite>`
-      select s.id, sp.role, s.slug, s.title 
-      from site_permission sp 
-        left join site s on sp.site_id = s.id 
+      select s.id, sp.role, s.slug, s.title
+      from site_permission sp
+        left join site s on sp.site_id = s.id
       where user_id=${userId}
     `,
 
     getPublicSites: (userId: number) => sql<UserSite>`
-      select s.id, s.slug, s.title, 'viewer' as role 
-      from site s 
+      select s.id, s.slug, s.title, 'viewer' as role
+      from site s
       where s.is_public = true or s.owner_id=${userId}
     `,
 
     getActiveUserById: (userId: number) => sql<UserRowWithoutPassword>`
       select id, name, lower(email) as email, role, is_active, created, modified, automated, config, terms_accepted
-      from "user" 
+      from "user"
       where is_active = true and id = ${userId}
     `,
 
     getActiveUserByEmail: (email: string) => sql<UserRow>`
-      select id, name, lower(email) as email, created, modified, password_hash, role, is_active, automated 
-      from "user" 
+      select id, name, lower(email) as email, created, modified, password_hash, role, is_active, automated
+      from "user"
       where is_active = true and email = ${email}
     `,
 
@@ -218,11 +218,11 @@ export class SiteUserRepository extends BaseRepository {
 
       return sql<SiteUser>`
         select u.id, u.name, u.role, sp.role as site_role
-        from "user" u 
-          left join site_permission sp 
-              on u.id = sp.user_id 
-        where sp.site_id = ${siteId} 
-          ${q ? sql`and (u.email ilike ${query} or u.name ilike ${query})` : SQL_EMPTY}   
+        from "user" u
+          left join site_permission sp
+              on u.id = sp.user_id
+        where sp.site_id = ${siteId}
+          ${q ? sql`and (u.email ilike ${query} or u.name ilike ${query})` : SQL_EMPTY}
           ${roles.length ? sql`and sp.role = ANY(${sql.array(roles, 'text')}) and sp.role is not null` : SQL_EMPTY}
         group by u.id, sp.user_id, sp.role limit 50
       `;
@@ -279,14 +279,14 @@ export class SiteUserRepository extends BaseRepository {
     `,
 
     listBadgeAwards: (badgeId: string, siteId: number) => sql<BadgeAwardRow>`
-      select 
+      select
           b.*,
-          ba.*, 
+          ba.*,
           u.name as awarded_by_name,
           u2.name as user_name,
           b.id as id,
           ba.id as badge_id
-      from badge_award ba 
+      from badge_award ba
           left join "user" u on u.id = ba.awarded_by
           left join badge b on b.id = ba.badge_id
           left join "user" u2 on u2.id = ba.user_id
@@ -408,7 +408,7 @@ export class SiteUserRepository extends BaseRepository {
     `,
 
     resetPassword: (id: string, sharedHash: string, userId: number, activate: boolean) => sql`
-      insert into password_creation (id, shared_hash, user_id, activate) 
+      insert into password_creation (id, shared_hash, user_id, activate)
         values (${id}, ${sharedHash}, ${userId}, ${Boolean(activate)})
     `,
 
@@ -442,7 +442,7 @@ export class SiteUserRepository extends BaseRepository {
         ${ownerId},
         ${siteId},
         ${req.role},
-        ${req.site_role},                                                                                         
+        ${req.site_role},
         ${req.expires ? sqlDate(req.expires) : null},
         ${req.uses_left || null},
         ${sql.json(req.message || {})},
@@ -557,7 +557,7 @@ export class SiteUserRepository extends BaseRepository {
     },
 
     setSystemConfigValue: (key: string, value: string) => sql`
-      insert into system_config (key, value) values (${key}, ${sql.json({ value })}) 
+      insert into system_config (key, value) values (${key}, ${sql.json({ value })})
       on conflict (key) do update set
         value = ${sql.json({ value })}
     `,
@@ -603,7 +603,7 @@ export class SiteUserRepository extends BaseRepository {
     `,
 
     awardBadge: (award: AwardBadgeRequest, userId: number, siteId: number) => sql<{ id: string }>`
-      insert into badge_award (id, site_id, user_id, project_id, badge_id, awarded_by, reason, tier) values 
+      insert into badge_award (id, site_id, user_id, project_id, badge_id, awarded_by, reason, tier) values
       (
         ${v4()},
         ${siteId},
