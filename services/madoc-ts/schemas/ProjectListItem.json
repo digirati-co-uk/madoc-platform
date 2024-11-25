@@ -39,6 +39,9 @@
     },
     "template": {
       "type": "string"
+    },
+    "thumbnail": {
+      "type": "string"
     }
   },
   "required": [
