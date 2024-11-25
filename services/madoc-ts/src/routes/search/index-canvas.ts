@@ -17,6 +17,14 @@ export const indexCanvas: RouteMiddleware<{ id: string }> = async context => {
   const { siteId, siteUrn } = optionalUserWithScope(context, []);
   const userApi = api.asUser({ siteId });
   const canvasId = Number(context.params.id);
+  const site = await context.siteManager.getSiteById(siteId);
+  const forceIndex = context.query.force === 'true';
+
+  if (site.config.disableSearchIndexing && !forceIndex) {
+    console.log('Search: indexing skipped, Canvas(%d) Site(%d)', canvasId, siteId);
+    context.response.body = { noSearch: true };
+    return;
+  }
 
   const { canvas } = await userApi.getCanvasById(canvasId);
   const sourceId = `http://madoc.dev/urn:madoc:canvas:${canvasId}`;

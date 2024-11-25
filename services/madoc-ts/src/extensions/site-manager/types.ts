@@ -20,6 +20,7 @@ export type SiteSystemConfig = {
   emailActivation: boolean;
   enableNotifications: boolean;
   autoPublishImport: boolean;
+  disableSearchIndexing?: boolean;
   loginHeader?: string;
   loginFooter?: string;
   registerHeader?: string;
