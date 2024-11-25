@@ -669,6 +669,7 @@ export class SiteUserRepository extends BaseRepository {
         enableNotifications: true,
         enableRegistrations: true,
         registeredUserTranscriber: false,
+        disableSearchIndexing: false,
         ...(row.config || {}),
       },
     } as Site;

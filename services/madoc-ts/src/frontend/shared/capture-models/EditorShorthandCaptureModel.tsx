@@ -12,7 +12,7 @@ import { RevisionOnChange } from './new/components/RevisionOnChange';
 import { RevisionProviderWithFeatures } from './new/components/RevisionProviderWithFeatures';
 import { createRevisionFromDocument } from '../utility/create-revision-from-document';
 import { RevisionStoreReference } from './new/components/RevisionStoreReference';
-import { CaptureModel, Revision } from './types/capture-model';
+import { CaptureModel } from './types/capture-model';
 import { RevisionRequest } from './types/revision-request';
 import { InputContainer, InputLabel } from '../form/Input';
 
@@ -172,3 +172,5 @@ export const EditShorthandCaptureModel = forwardRef(
     ) : null;
   }
 );
+
+EditShorthandCaptureModel.displayName = 'EditShorthandCaptureModel';

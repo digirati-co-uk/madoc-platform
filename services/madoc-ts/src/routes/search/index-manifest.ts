@@ -12,6 +12,14 @@ export const indexManifest: RouteMiddleware<{ id: string }> = async context => {
   const { siteId, siteUrn } = optionalUserWithScope(context, []);
   const userApi = api.asUser({ siteId });
   const manifestId = Number(context.params.id);
+  const site = await context.siteManager.getSiteById(siteId);
+  const forceIndex = context.query.force === 'true';
+
+  if (site.config.disableSearchIndexing && !forceIndex) {
+    console.log('Search: indexing skipped, Manifest(%d) Site(%d)', manifestId, siteId);
+    context.response.body = { noSearch: true };
+    return;
+  }
 
   const rows = await context.connection.any(
     getManifestSnippets(
@@ -33,7 +41,8 @@ export const indexManifest: RouteMiddleware<{ id: string }> = async context => {
   const table = mapManifestSnippets(rows);
 
   if (!table.manifests[`${manifestId}`]) {
-    return; // no metadata to index.
+    context.response.body = { noSearch: true };
+    return;
   }
 
   const collectionsWithin = await context.connection.any<{ resource_id: number }>(

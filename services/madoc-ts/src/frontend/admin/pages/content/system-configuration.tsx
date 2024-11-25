@@ -23,6 +23,11 @@ const systemConfigModel = {
     type: 'checkbox-field',
     inlineLabel: 'Automatically publish manifest after importing',
   },
+  disableSearchIndexing: {
+    label: 'Disable search indexing',
+    type: 'checkbox-field',
+    inlineLabel: 'Disable automatic search indexing tasks after contributions',
+  },
   // Login/Register messages
   loginHeader: {
     label: 'Login header message',
@@ -66,6 +71,7 @@ export const SiteSystemConfiguration: React.FC = () => {
     loginFooter: '',
     registerHeader: '',
     registerFooter: '',
+    disableSearchIndexing: false,
     ...(savedConfig as any),
   };
 
