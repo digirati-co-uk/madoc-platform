@@ -2,6 +2,7 @@
 import { api } from '../../gateway/api.server';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { ProjectConfiguration } from '../../types/schemas/project-configuration';
+import { cachePromise, cachePromiseSWR } from '../../utility/cache-helper';
 import { castBool } from '../../utility/cast-bool';
 import { NotFound } from '../../utility/errors/not-found';
 import { parseProjectId } from '../../utility/parse-project-id';
@@ -33,13 +34,22 @@ export const getProject: RouteMiddleware<{ id: string }> = async context => {
 
   const [content, taskStats, projectConfiguration, annotationStyles] = await Promise.all([
     userApi.getCollectionStatistics(project.collection_id),
-    userApi.getTaskStats(project.task_id, {
-      type: 'crowdsourcing-task',
-      root: true,
-      distinct_subjects: true,
-    }),
+    cachePromiseSWR(
+      `task-stats:${project.task_id}`,
+      () =>
+        userApi.getTaskStats(project.task_id, {
+          type: 'crowdsourcing-task',
+          root: true,
+          distinct_subjects: true,
+        }),
+      1000 * 60 * 15 // 15 minutes.
+    ),
     userApi.getConfiguration<ProjectConfiguration>('madoc', [siteUrn, `urn:madoc:project:${project.id}`]),
-    context.annotationStyles.getProjectAnnotationStyle(project.id, siteId),
+    cachePromiseSWR(
+      `annotation-style:${project.id}`,
+      () => context.annotationStyles.getProjectAnnotationStyle(project.id, siteId),
+      1000 * 60 * 15 // 15 minutes.
+    ),
   ]);
 
   const taskStatuses = taskStats.statuses || {};
