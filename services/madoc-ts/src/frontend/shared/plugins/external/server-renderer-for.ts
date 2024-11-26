@@ -10,8 +10,10 @@ export function serverRendererFor<TVariables = any, Data = any>(
     getData?: (key: string, vars: TVariables, api: ApiClient, pathname: string) => Promise<Data>;
     hooks?: AdditionalHooks[];
     theme?: { name: string } & Partial<MadocTheme>;
+    noSsr?: boolean;
   }
 ) {
+  (component as any).noSsr = config.noSsr;
   (component as any).getKey = config.getKey;
   (component as any).getData = config.getData;
   (component as any).hooks = config.hooks;

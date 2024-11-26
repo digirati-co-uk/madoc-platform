@@ -17,6 +17,7 @@ export function createUniversalComponent<
   Component: React.FC,
   options: {
     getKey?: GetKey;
+    noSsr?: boolean;
     getData?: GetData;
     hooks?: AdditionalHooks[];
   }
@@ -26,5 +27,6 @@ export function createUniversalComponent<
   ReturnComponent.getKey = options.getKey;
   ReturnComponent.getData = options.getData;
   ReturnComponent.hooks = options.hooks;
+  ReturnComponent.noSsr = options.noSsr;
   return ReturnComponent;
 }

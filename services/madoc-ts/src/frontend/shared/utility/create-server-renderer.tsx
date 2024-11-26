@@ -138,7 +138,7 @@ export function createServerRenderer(
         routeContext.project = match.params.slug ? match.params.slug : undefined;
       }
 
-      if (route.component && route.component.getKey && route.component.getData) {
+      if (route.component && route.component.getKey && route.component.getData && route.component.noSsr !== true) {
         requests.push(
           prefetchCache.prefetchQuery(
             route.component.getKey(match.params, queryString, path),
@@ -362,7 +362,7 @@ export function createServerRenderer(
         : `
       <script>document.body.classList.add('dev-loading');</script>
       <style>
-      body > * { 
+      body > * {
         transition: opacity 200ms;
       }
       .dev-loading > * {
