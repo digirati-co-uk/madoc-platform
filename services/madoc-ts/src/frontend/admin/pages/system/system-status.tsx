@@ -16,9 +16,11 @@ import { createUniversalComponent } from '../../../shared/utility/create-univers
 import { HrefLink } from '../../../shared/utility/href-link';
 import { UniversalComponent } from '../../../types';
 import { AdminHeader } from '../../molecules/AdminHeader';
+import { SlowRequests } from '../../../../middleware/slow-requests';
+import { TableContainer, TableRow, TableRowLabel } from '../../../shared/layout/Table';
 
 type SystemStatusType = {
-  data: { list: Pm2Status[]; build: EnvConfig['build'] };
+  data: { list: Pm2Status[]; build: EnvConfig['build']; slowRequests: SlowRequests };
   query: unknown;
   params: unknown;
   variables: unknown;
@@ -69,6 +71,8 @@ export const SystemStatus: UniversalComponent<SystemStatusType> = createUniversa
           { memory: 0, cpu: 0 }
         )
       : { memory: 0, cpu: 0 };
+
+    const slowestRequests = Object.values(data?.slowRequests || {}).sort((a, b) => b.slowest - a.slowest);
 
     return (
       <>
@@ -249,6 +253,28 @@ export const SystemStatus: UniversalComponent<SystemStatusType> = createUniversa
                   );
                 })
               : null}
+          </div>
+
+          <div>
+            <h3>Slow requests</h3>
+            <table className="p-2 w-full">
+              <thead>
+                <tr>
+                  <th>Route</th>
+                  <th>Count</th>
+                  <th>Average time</th>
+                  <th>Max time</th>
+                </tr>
+              </thead>
+              {slowestRequests.map(slow => (
+                <tr key={slow.key}>
+                  <td className="p-2">{slow.key}</td>
+                  <td className="p-2">{slow.count}</td>
+                  <td className="p-2">{(slow.avg / 1000).toFixed(2)}s</td>
+                  <td className="p-2">{(slow.slowest / 1000).toFixed(2)}s</td>
+                </tr>
+              ))}
+            </table>
           </div>
         </WidePage>
       </>

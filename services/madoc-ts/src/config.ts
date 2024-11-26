@@ -30,6 +30,7 @@ export const config: EnvConfig = {
   },
   flags: {
     capture_model_api_migrated: castBool(process.env.CAPTURE_MODEL_API_MIGRATED, false),
+    disable_slow_request_tracking: castBool(process.env.DISABLE_SLOW_REQUEST_TRACKING, false),
   },
   postgres: {
     host: process.env.DATABASE_HOST as string,
