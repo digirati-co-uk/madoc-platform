@@ -561,7 +561,7 @@ export class ApiClient {
   }
 
   async getPm2Status() {
-    return this.request<{ list: Pm2Status[]; build: any }>(`/api/madoc/pm2/list`);
+    return this.request<{ list: Pm2Status[]; build: any; slowRequests: any }>(`/api/madoc/pm2/list`);
   }
 
   async pm2Restart(service: 'auth' | 'queue' | 'madoc' | 'scheduler') {

@@ -54,7 +54,12 @@ export const AllTasks: UniversalComponent<AllTasksType> = createUniversalCompone
     const user = useUser();
     const isAdmin = user && user.scope && user.scope.indexOf('site.admin') !== -1;
     const isReviewer = isAdmin || (user && user.scope && user.scope.indexOf('tasks.create') !== -1);
-    const { data: pages, fetchMore, canFetchMore, isFetchingMore } = useInfiniteData(AllTasks, undefined, {
+    const {
+      data: pages,
+      fetchMore,
+      canFetchMore,
+      isFetchingMore,
+    } = useInfiniteData(AllTasks, undefined, {
       getFetchMore: lastPage => {
         if (lastPage.pagination.totalPages === 0 || lastPage.pagination.totalPages === lastPage.pagination.page) {
           return undefined;
@@ -172,6 +177,7 @@ export const AllTasks: UniversalComponent<AllTasksType> = createUniversalCompone
     );
   },
   {
+    noSsr: true,
     getKey: (params, { preview, ...query }) => {
       return ['all-tasks', { query, projectSlug: params.slug }];
     },

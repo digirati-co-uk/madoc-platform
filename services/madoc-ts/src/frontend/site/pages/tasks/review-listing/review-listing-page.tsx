@@ -411,6 +411,7 @@ function SingleReviewTableRow({
 }
 
 serverRendererFor(ReviewListingPage, {
+  noSsr: true,
   getKey: (params, { preview, ...query }) => {
     return ['all-review-tasks', { query, projectSlug: params.slug, page: query.page || 1 }];
   },

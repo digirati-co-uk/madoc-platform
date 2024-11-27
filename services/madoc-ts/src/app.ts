@@ -34,6 +34,7 @@ import cookieParser from 'cookie-parser';
 import schedule from 'node-schedule';
 import passport from 'koa-passport';
 import { WebhookServerExtension } from './webhooks/webhook-server-extension';
+import { slowRequests } from './middleware/slow-requests';
 
 const { readFile, readdir } = promises;
 
@@ -124,17 +125,20 @@ export async function createApp(config: ExternalConfig, env: EnvConfig) {
   }
 
   if (enabled) {
-    passport.serializeUser(function(user: any, done) {
+    passport.serializeUser(function (user: any, done) {
       done(null, user);
     });
 
-    passport.deserializeUser(function(user: any, done) {
+    passport.deserializeUser(function (user: any, done) {
       done(null, user);
     });
 
     app.use(passport.initialize());
   }
 
+  if (!env.flags.disable_slow_request_tracking) {
+    app.use(slowRequests);
+  }
   app.use(errorHandler);
   app.use(staticPage);
   app.use(setJwt);
@@ -147,7 +151,7 @@ export async function createApp(config: ExternalConfig, env: EnvConfig) {
     (app.context.cron as CronJobs).addJob(
       'check-expired-manifests',
       'Check expired manifests',
-      schedule.scheduleJob('*/15 * * * *', async function(fireDate) {
+      schedule.scheduleJob('*/15 * * * *', async function (fireDate) {
         await pool.connect(async connection => {
           await checkExpiredManifests({ ...app.context, connection } as any, fireDate);
         });
@@ -157,7 +161,7 @@ export async function createApp(config: ExternalConfig, env: EnvConfig) {
     (app.context.cron as CronJobs).addJob(
       'restart-queue',
       'Restart queue 3am once a day',
-      schedule.scheduleJob('0 3 * * *', async function() {
+      schedule.scheduleJob('0 3 * * *', async function () {
         await bounceQueue();
       })
     );

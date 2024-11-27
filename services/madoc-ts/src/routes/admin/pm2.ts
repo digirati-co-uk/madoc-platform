@@ -2,6 +2,7 @@ import pm2, { ProcessDescription } from 'pm2';
 import { config } from '../../config';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { onlyGlobalAdmin } from '../../utility/user-with-scope';
+import { getSlowRequests } from '../../middleware/slow-requests';
 
 async function pm2Connect() {
   await new Promise<void>((resolve, reject) =>
@@ -66,6 +67,7 @@ export const pm2Status: RouteMiddleware = async context => {
         uptime: (item as any)?.pm2_env?.pm_uptime,
       };
     }),
+    slowRequests: getSlowRequests(),
   };
 
   pm2.disconnect();
