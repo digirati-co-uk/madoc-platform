@@ -5,15 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.2.6...main)
-<!--
-### Fixed
-### Added
-### Changed
-### Removed
--->
+## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.2.7...main)
 
-## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.2.5...v2.2.6)
+## [v2.2.7](https://github.com/digirati-co-uk/madoc-platform/compare/v2.2.6...v2.2.7)
+
+### Added
+- New button to filter manifest tasks from reviews (NS-66)
+- Stale-while-revalidate memory cache and uses it for slow project queries
+- Adds a new request trace and in-memory store of the slowest requests. (avg, max, count)
+
+(note: The request trace be disabled with the environment variable flag: `DISABLE_SLOW_REQUEST_TRACKING=true`)
+
+### Changed
+- Disables server-side rendering on the 2 review/task pages.
+
+## [v2.2.6](https://github.com/digirati-co-uk/madoc-platform/compare/v2.2.5...v2.2.6)
 
 ### Added
 - New button to filter manifest tasks from reviews (NS-66)
