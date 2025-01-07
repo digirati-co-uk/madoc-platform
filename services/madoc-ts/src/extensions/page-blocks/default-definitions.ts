@@ -9,7 +9,6 @@ import simpleHtmlBlock from './simple-html-block/simple-html-block';
 import currentManifest from './current-manifest-snippet-block';
 import simpleMarkdownBlock from './simple-markdown-block/simple-markdown-block';
 import { EmbedItem } from '../../frontend/site/blocks/EmbedItem';
-import { GABlock } from '../../frontend/shared/atoms/GABlock';
 
 export function getDefaultPageBlockDefinitions(): PageBlockDefinition<any, any, any, any>[] {
   return [
@@ -22,7 +21,6 @@ export function getDefaultPageBlockDefinitions(): PageBlockDefinition<any, any, 
     (SingleCollection as any)[Symbol.for('slot-model')] as any,
     (FeaturedItem as any)[Symbol.for('slot-model')] as any,
     (EmbedItem as any)[Symbol.for('slot-model')] as any,
-    (GABlock as any)[Symbol.for('slot-model')] as any,
     simpleMarkdownBlock,
   ];
 }

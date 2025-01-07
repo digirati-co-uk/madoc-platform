@@ -8,8 +8,6 @@ import { useApi, useIsApiRestarting } from '../../../shared/hooks/use-api';
 import { AutoSlotLoader } from '../../../shared/page-blocks/auto-slot-loader';
 import { Slot } from '../../../shared/page-blocks/slot';
 import { GlobalMenuStack } from '../../blocks/GlobalMenuStack';
-import { GABlock } from '../../../shared/atoms/GABlock';
-import { AvailableBlocks } from '../../../shared/page-blocks/available-blocks';
 
 export const GlobalSiteHeader: React.FC<{ menu?: any }> = () => {
   const api = useApi();
@@ -25,9 +23,6 @@ export const GlobalSiteHeader: React.FC<{ menu?: any }> = () => {
             <GlobalMenuStack />
             <FlexSpacer />
             <GlobalSearch />
-            <AvailableBlocks>
-              <GABlock gtag="" />
-            </AvailableBlocks>
           </Slot>
         </SiteHeader>
       </SiteHeaderBackground>
