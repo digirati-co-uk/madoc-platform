@@ -22,7 +22,6 @@ export const DefaultPostSubmission: EditorRenderingConfig['PostSubmission'] = ({
   const createLink = useRelativeLinks();
   const config = useSiteConfiguration();
 
-  console.log(config);
   const idx = canvasId && structure.data ? structure.data.ids.indexOf(canvasId) : -1;
   if (!structure.data || idx === -1 || !manifestId || !canvasId) {
     return null;
