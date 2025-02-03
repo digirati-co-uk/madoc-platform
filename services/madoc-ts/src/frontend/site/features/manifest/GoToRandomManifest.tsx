@@ -37,8 +37,10 @@ export const GoToRandomManifest: React.FC<{
       disabled={error}
       onClick={async () => {
         let resp = await getRandomManifest();
-        while (resp && notCurrentManifest && manifestId && resp.manifest === manifestId) {
+        let tries = 1;
+        while (resp && notCurrentManifest && manifestId && resp.manifest === manifestId && tries < 5) {
           resp = await getRandomManifest();
+          tries++;
         }
         if (resp && resp.manifest) {
           navigate(
