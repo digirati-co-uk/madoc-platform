@@ -276,6 +276,10 @@ export const siteConfigurationModel: {
         value: 'preventMultipleUserSubmissionsPerResource',
       },
       {
+        label: 'Show random manifest button after last canvas submission',
+        value: 'showRandomManifestAfterSubmission',
+      },
+      {
         label: 'Prevent submissions after expiry (existing canvases)',
         value: 'preventContributionAfterManifestUnassign',
       },
@@ -584,7 +588,7 @@ export const ProjectConfigInterface: {
       },
     ],
   },
-  // ollectionPageOptions: {
+  // collectionPageOptions: {
   //   label: 'Collection page options',
   //   description: '..todo',
   //   type: 'checkbox-list-field',
@@ -769,6 +773,10 @@ export const ProjectConfigContributions: {
   },
   preventMultipleUserSubmissionsPerResource: {
     label: 'Only one submission per user, per resource',
+    type: 'checkbox-field',
+  },
+  showRandomManifestAfterSubmission: {
+    label: 'Show random manifest button after last canvas submission',
     type: 'checkbox-field',
   },
   forkMode: {

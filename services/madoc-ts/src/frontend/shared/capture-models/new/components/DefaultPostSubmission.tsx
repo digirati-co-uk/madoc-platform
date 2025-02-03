@@ -8,6 +8,8 @@ import { SnippetStructure } from '../../../components/StructureSnippet';
 import { useManifestStructure } from '../../../hooks/use-manifest-structure';
 import { HrefLink } from '../../../utility/href-link';
 import { EditorRenderingConfig } from './EditorSlots';
+import { GoToRandomManifest } from '../../../../site/features/manifest/GoToRandomManifest';
+import { useSiteConfiguration } from '../../../../site/features/SiteConfigurationContext';
 
 export const DefaultPostSubmission: EditorRenderingConfig['PostSubmission'] = ({
   onContinue,
@@ -18,7 +20,9 @@ export const DefaultPostSubmission: EditorRenderingConfig['PostSubmission'] = ({
   const { manifestId, canvasId } = useRouteContext();
   const structure = useManifestStructure(manifestId);
   const createLink = useRelativeLinks();
+  const config = useSiteConfiguration();
 
+  console.log(config);
   const idx = canvasId && structure.data ? structure.data.ids.indexOf(canvasId) : -1;
   if (!structure.data || idx === -1 || !manifestId || !canvasId) {
     return null;
@@ -43,6 +47,9 @@ export const DefaultPostSubmission: EditorRenderingConfig['PostSubmission'] = ({
         >
           {t('Next image')}
         </Button>
+      ) : config.project.allowCollectionNavigation &&
+        config.project.modelPageOptions?.showRandomManifestAfterSubmission ? (
+        <GoToRandomManifest $primary notCurrentManifest={true} />
       ) : null}
     </ButtonRow>
   );

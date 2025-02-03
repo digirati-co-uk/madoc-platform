@@ -15,7 +15,8 @@ export const GoToRandomManifest: React.FC<{
   manifestModel?: boolean;
   $primary?: boolean;
   $large?: boolean;
-}> = ({ label, $large, navigateToModel, manifestModel, $primary }) => {
+  notCurrentManifest?: boolean;
+}> = ({ label, $large, navigateToModel, manifestModel, $primary, notCurrentManifest }) => {
   const { projectId } = useRouteContext();
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -23,6 +24,7 @@ export const GoToRandomManifest: React.FC<{
   const [getRandomManifest] = useGetRandomManifest();
   const user = useUser();
   const [error, setError] = useState(false);
+  const { manifestId } = useRouteContext();
 
   if (!projectId || !user) {
     return null;
@@ -33,20 +35,23 @@ export const GoToRandomManifest: React.FC<{
       $primary={$primary}
       $large={$large}
       disabled={error}
-      onClick={() => {
-        getRandomManifest().then(resp => {
-          if (resp && resp.manifest) {
-            navigate(
-              createLink({
-                manifestId: resp.manifest,
-                query: navigateToModel && !manifestModel ? { firstModel: true } : undefined,
-                subRoute: navigateToModel && manifestModel ? 'model' : '',
-              })
-            );
-          } else {
-            setError(true);
-          }
-        });
+      onClick={async () => {
+        let resp = await getRandomManifest();
+        while (resp && notCurrentManifest && manifestId && resp.manifest === manifestId) {
+          resp = await getRandomManifest();
+        }
+        if (resp && resp.manifest) {
+          navigate(
+            createLink({
+              canvasId: undefined,
+              manifestId: resp.manifest,
+              query: navigateToModel && !manifestModel ? { firstModel: true } : undefined,
+              subRoute: navigateToModel && manifestModel ? 'model' : '',
+            })
+          );
+        } else {
+          setError(true);
+        }
       }}
     >
       {error ? t('No available manifests') : label ? <LocaleString>{label}</LocaleString> : t('Go to random Manifest')}

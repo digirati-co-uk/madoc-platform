@@ -403,6 +403,9 @@
             "preventMultipleUserSubmissionsPerResource": {
               "type": "boolean"
             },
+            "showRandomManifestAfterSubmission": {
+              "type": "boolean"
+            },
             "preventContributionAfterManifestUnassign": {
               "type": "boolean"
             }

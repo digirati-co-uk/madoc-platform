@@ -48,6 +48,7 @@
       "preventContributionAfterRejection": false,
       "preventContributionAfterSubmission": false,
       "preventMultipleUserSubmissionsPerResource": false,
+      "showRandomManifestAfterSubmission": true,
       "preventContributionAfterManifestUnassign": false,
       "hideViewerControls": false,
       "enableTooltipDescriptions": false,

@@ -227,6 +227,9 @@
     "preventMultipleUserSubmissionsPerResource": {
       "type": "boolean"
     },
+    "showRandomManifestAfterSubmission": {
+      "type": "boolean"
+    },
     "forkMode": {
       "type": "boolean"
     },
