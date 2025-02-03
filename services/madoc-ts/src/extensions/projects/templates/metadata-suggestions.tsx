@@ -71,6 +71,7 @@ export const metadataSuggestions: ProjectTemplate<MetadataSuggestionsOptions> = 
         preventContributionAfterRejection: false,
         preventContributionAfterSubmission: true,
         preventMultipleUserSubmissionsPerResource: true,
+        showRandomManifestAfterSubmission: true,
         preventContributionAfterManifestUnassign: false,
         hideViewerControls: false,
       },

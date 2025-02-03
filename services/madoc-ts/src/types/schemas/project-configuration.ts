@@ -54,6 +54,7 @@ export type ProjectConfiguration = {
     preventContributionAfterRejection?: boolean;
     preventContributionAfterSubmission?: boolean;
     preventMultipleUserSubmissionsPerResource?: boolean;
+    showRandomManifestAfterSubmission?: boolean;
     preventContributionAfterManifestUnassign?: boolean;
     hideViewerControls?: boolean;
     disableSaveForLater?: boolean;
@@ -187,6 +188,7 @@ export type ProjectConfigurationNEW = {
   contributionMode?: 'transcription' | 'annotation';
   maxContributionsPerResource: false | number;
   preventMultipleUserSubmissionsPerResource?: boolean; // changed removed from parent
+  showRandomManifestAfterSubmission?: boolean; // new
   forkMode?: boolean;
   claimGranularity: 'canvas' | 'manifest';
 

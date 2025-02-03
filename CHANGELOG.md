@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.2.7...main)
 
+### Added
+- Added back in the Basic Google Analytics page block (NS-45) (NS-54)
+- Added config option to continue contributions to another manifest after submission (MAD-1514)
+
 ## [v2.2.7](https://github.com/digirati-co-uk/madoc-platform/compare/v2.2.6...v2.2.7)
 
 ### Added
@@ -18,6 +22,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Disables server-side rendering on the 2 review/task pages.
+
+### Fixed
+- Fixed block editor button 'saved' instead of 'save' (MAD-1475)
 
 ## [v2.2.6](https://github.com/digirati-co-uk/madoc-platform/compare/v2.2.5...v2.2.6)
 

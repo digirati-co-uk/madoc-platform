@@ -56,7 +56,7 @@ const BlockCreatorForm: React.FC<{
           });
         }}
       >
-        Saved
+        Save
       </Button>
     </div>
   );
@@ -75,14 +75,8 @@ export const BlockCreator: React.FC<{
   const site = useSite();
   const [chosenBlockType, setChosenBlockType] = useState<string | undefined>();
 
-  const {
-    filteredBlocks,
-    contextBlocks,
-    pluginBlocks,
-    searchBlocks,
-    availableBlocks,
-    pagePathBlocks,
-  } = useAvailableBlocks(props);
+  const { filteredBlocks, contextBlocks, pluginBlocks, searchBlocks, availableBlocks, pagePathBlocks } =
+    useAvailableBlocks(props);
 
   const chosenBlock = useMemo(() => {
     if (chosenBlockType) {
