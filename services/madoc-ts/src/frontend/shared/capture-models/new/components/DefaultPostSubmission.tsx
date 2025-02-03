@@ -49,7 +49,7 @@ export const DefaultPostSubmission: EditorRenderingConfig['PostSubmission'] = ({
         </Button>
       ) : config.project.allowCollectionNavigation &&
         config.project.modelPageOptions?.showRandomManifestAfterSubmission ? (
-        <GoToRandomManifest $primary notCurrentManifest={true} />
+        <GoToRandomManifest notCurrentManifest={true} label={'Contribute to another manifest'} />
       ) : null}
     </ButtonRow>
   );
