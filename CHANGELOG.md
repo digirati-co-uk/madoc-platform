@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Added back in the Basic Google Analytics page block (NS-45) (NS-54)
+- Added config option to continue contributions to another manifest after submission (MAD-1514)
 
 ## [v2.2.7](https://github.com/digirati-co-uk/madoc-platform/compare/v2.2.6...v2.2.7)
 
