@@ -128,7 +128,7 @@ export const CanvasTaskProgress: React.FC = () => {
                   <ButtonIcon>
                     <WhiteTickIcon />
                   </ButtonIcon>
-                  {t('Mark as complete 1')}
+                  {t('Mark as complete')}
                 </Button>
               </ButtonRow>
               {isAdmin && canvasTask?.state.approvalsRequired && (
