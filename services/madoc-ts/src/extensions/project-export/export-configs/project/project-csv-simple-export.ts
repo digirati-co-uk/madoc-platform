@@ -1,6 +1,7 @@
 import { parseModelTarget } from '../../../../utility/parse-model-target';
 import { ExportFile } from '../../server-export';
 import { ExportConfig, ExportDataOptions, ExportFileDefinition, SupportedExportResource } from '../../types';
+import { api } from '../../../../gateway/api.server';
 
 export const projectCsvSimpleExport: ExportConfig = {
   type: 'project-csv-simple-export',
@@ -77,11 +78,12 @@ export const projectCsvSimpleExport: ExportConfig = {
     }
 
     const mappedList = Object.entries(rowRecord)
-      .map(([key, record]) => {
+      .map(async ([key, record]) => {
         const newRecord: any = {};
 
         newRecord.model_id = record.model_id;
         newRecord.doc_id = record.doc_id;
+        // newRecord.canvas_label = record.canvas.label;
 
         if (record.__fields) {
           for (const field of record.__fields) {
@@ -90,10 +92,14 @@ export const projectCsvSimpleExport: ExportConfig = {
 
           const target = parseModelTarget(record.target);
           if (target.manifest) {
+            const manifest = await api.getManifestById(target.manifest.id);
             newRecord.manifest = target.manifest.id;
+            newRecord.manifest_label = manifest.manifest.label.toLocaleString();
           }
           if (target.canvas) {
+            const canvas = await api.getCanvasById(target.canvas.id);
             newRecord.canvas = target.canvas.id;
+            newRecord.canvas_label = canvas.canvas.label.toLocaleString();
           }
           return newRecord;
         }
