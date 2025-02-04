@@ -68,6 +68,11 @@ export const CanvasTaskProgress: React.FC = () => {
         status: 2,
         status_text: 'in progress',
       });
+      // mark parent as incomplete
+      await api.updateRevisionTask(canvasTask.parent_task, {
+        status: 2,
+        status_text: 'in progress',
+      });
       await refetch();
     }
   });
@@ -123,7 +128,7 @@ export const CanvasTaskProgress: React.FC = () => {
                   <ButtonIcon>
                     <WhiteTickIcon />
                   </ButtonIcon>
-                  {t('Mark as complete')}
+                  {t('Mark as complete 1')}
                 </Button>
               </ButtonRow>
               {isAdmin && canvasTask?.state.approvalsRequired && (
