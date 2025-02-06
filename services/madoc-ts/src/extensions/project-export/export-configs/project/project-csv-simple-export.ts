@@ -1,7 +1,46 @@
 import { parseModelTarget } from '../../../../utility/parse-model-target';
 import { ExportFile } from '../../server-export';
 import { ExportConfig, ExportDataOptions, ExportFileDefinition, SupportedExportResource } from '../../types';
-import { api } from '../../../../gateway/api.server';
+
+const labelCache: { manifestLabels: Record<string, string>; canvasLabels: Record<string, string> } = {
+  manifestLabels: {},
+  canvasLabels: {},
+};
+
+type InternationalString = {
+  [locale: string]: string[];
+};
+
+function getLocaleString(internationalString: InternationalString, locale: string = 'none'): string {
+  return internationalString[locale] ? internationalString[locale][0] : Object.values(internationalString)[0][0];
+}
+
+async function fetchLabels(api: any, manifestIds: number[], canvasIds: number[]) {
+  const newManifestIds = manifestIds.filter(id => id !== undefined && !labelCache.manifestLabels[id.toString()]);
+  const newCanvasIds = canvasIds.filter(id => id !== undefined && !labelCache.canvasLabels[id.toString()]);
+
+  if (newManifestIds.length > 0) {
+    const manifests = await Promise.all(newManifestIds.map(id => api.getManifestById(id)));
+    manifests.forEach(response => {
+      const manifest = response.manifest;
+      if (manifest && manifest.id !== undefined) {
+        labelCache.manifestLabels[manifest.id.toString()] = getLocaleString(manifest.label);
+      }
+    });
+  }
+
+  if (newCanvasIds.length > 0) {
+    const canvases = await Promise.all(newCanvasIds.map(id => api.getCanvasById(id)));
+    canvases.forEach(response => {
+      const canvas = response.canvas;
+      if (canvas && canvas.id !== undefined) {
+        labelCache.canvasLabels[canvas.id.toString()] = getLocaleString(canvas.label);
+      }
+    });
+  }
+
+  return { manifestLabels: labelCache.manifestLabels, canvasLabels: labelCache.canvasLabels };
+}
 
 export const projectCsvSimpleExport: ExportConfig = {
   type: 'project-csv-simple-export',
@@ -48,14 +87,15 @@ export const projectCsvSimpleExport: ExportConfig = {
     subject: SupportedExportResource,
     options: ExportDataOptions<any>
   ): Promise<ExportFileDefinition[] | undefined> {
-    // This will probably be a pretty long-running task.
-
     const allPublished = await options.api.getProjectFieldsRaw(subject.id, {
       status: options.config.reviews ? 'all' : 'approved',
       entity: options.config.entity,
     });
 
     const rowRecord: Record<string, any> = {};
+    const manifestIds: number[] = [];
+    const canvasIds: number[] = [];
+
     for (const item of allPublished) {
       rowRecord[item.doc_id] = rowRecord[item.doc_id] || {
         target: item.target,
@@ -70,7 +110,17 @@ export const projectCsvSimpleExport: ExportConfig = {
 
       rowRecord[item.doc_id][item.key] = rowRecord[item.doc_id][item.key] || [];
       rowRecord[item.doc_id][item.key].push({ value: item.value, id: item.id, revises: item.revises });
+
+      const target = parseModelTarget(item.target);
+      if (target.manifest && target.manifest.id !== undefined) {
+        manifestIds.push(target.manifest.id);
+      }
+      if (target.canvas && target.canvas.id !== undefined) {
+        canvasIds.push(target.canvas.id);
+      }
     }
+
+    const { manifestLabels, canvasLabels } = await fetchLabels(options.api, manifestIds, canvasIds);
 
     function findBest(fields: any[]) {
       const revises = fields.map(r => r.revises);
@@ -78,12 +128,11 @@ export const projectCsvSimpleExport: ExportConfig = {
     }
 
     const mappedList = Object.entries(rowRecord)
-      .map(async ([key, record]) => {
-        const newRecord: any = {};
-
-        newRecord.model_id = record.model_id;
-        newRecord.doc_id = record.doc_id;
-        // newRecord.canvas_label = record.canvas.label;
+      .map(([key, record]) => {
+        const newRecord: any = {
+          model_id: record.model_id,
+          doc_id: record.doc_id,
+        };
 
         if (record.__fields) {
           for (const field of record.__fields) {
@@ -91,15 +140,13 @@ export const projectCsvSimpleExport: ExportConfig = {
           }
 
           const target = parseModelTarget(record.target);
-          if (target.manifest) {
-            const manifest = await api.getManifestById(target.manifest.id);
+          if (target.manifest && target.manifest.id !== undefined) {
             newRecord.manifest = target.manifest.id;
-            newRecord.manifest_label = manifest.manifest.label.toLocaleString();
+            newRecord.manifest_label = manifestLabels[target.manifest.id.toString()];
           }
-          if (target.canvas) {
-            const canvas = await api.getCanvasById(target.canvas.id);
+          if (target.canvas && target.canvas.id !== undefined) {
             newRecord.canvas = target.canvas.id;
-            newRecord.canvas_label = canvas.canvas.label.toLocaleString();
+            newRecord.canvas_label = canvasLabels[target.canvas.id.toString()];
           }
           return newRecord;
         }
