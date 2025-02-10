@@ -1,19 +1,12 @@
 import { parseModelTarget } from '../../../../utility/parse-model-target';
 import { ExportFile } from '../../server-export';
 import { ExportConfig, ExportDataOptions, ExportFileDefinition, SupportedExportResource } from '../../types';
+import { getValue } from '@iiif/helpers/i18n';
 
 const labelCache: { manifestLabels: Record<string, string>; canvasLabels: Record<string, string> } = {
   manifestLabels: {},
   canvasLabels: {},
 };
-
-type InternationalString = {
-  [locale: string]: string[];
-};
-
-function getLocaleString(internationalString: InternationalString, locale: string = 'none'): string {
-  return internationalString[locale] ? internationalString[locale][0] : Object.values(internationalString)[0][0];
-}
 
 async function fetchLabels(api: any, manifestIds: number[], canvasIds: number[]) {
   const newManifestIds = manifestIds.filter(id => id !== undefined && !labelCache.manifestLabels[id.toString()]);
@@ -24,7 +17,7 @@ async function fetchLabels(api: any, manifestIds: number[], canvasIds: number[])
     manifests.forEach(response => {
       const manifest = response.manifest;
       if (manifest && manifest.id !== undefined) {
-        labelCache.manifestLabels[manifest.id.toString()] = getLocaleString(manifest.label);
+        labelCache.manifestLabels[manifest.id.toString()] = getValue(manifest.label);
       }
     });
   }
@@ -34,7 +27,7 @@ async function fetchLabels(api: any, manifestIds: number[], canvasIds: number[])
     canvases.forEach(response => {
       const canvas = response.canvas;
       if (canvas && canvas.id !== undefined) {
-        labelCache.canvasLabels[canvas.id.toString()] = getLocaleString(canvas.label);
+        labelCache.canvasLabels[canvas.id.toString()] = getValue(canvas.label);
       }
     });
   }
