@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fixed block editor button 'saved' instead of 'save' (MAD-1475)
 - Fixed marking canvas as incomplete not marking manifest as incomplete (MAD-1516)
+- Fixed CORS errors in embed item block
 
 ## [v2.2.7](https://github.com/digirati-co-uk/madoc-platform/compare/v2.2.6...v2.2.7)
 

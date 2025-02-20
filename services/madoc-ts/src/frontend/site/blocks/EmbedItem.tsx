@@ -37,7 +37,7 @@ blockEditorFor(EmbedItem, {
     width: '400',
   },
   editor: {
-    link: { type: 'text-field', label: 'src or link' },
+    link: { type: 'text-field', label: 'src or link', description: 'paste an embed src/link without quotes' },
     height: { type: 'text-field', label: 'height (px)' },
     width: { type: 'text-field', label: 'width (px)' },
   },
