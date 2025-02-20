@@ -14,7 +14,14 @@ export const EmbedItem: React.FC<{
 }> = ({ link, height, width }) => {
   return (
     <EmbedWrapper>
-      <iframe src={link} height={height} width={width} loading="lazy" referrerPolicy="no-referrer" sandbox="allow-scripts" />
+      <iframe
+        src={link}
+        height={height}
+        width={width}
+        loading="lazy"
+        referrerPolicy="no-referrer"
+        sandbox="allow-scripts allow-same-origin"
+      />
     </EmbedWrapper>
   );
 };
@@ -30,7 +37,7 @@ blockEditorFor(EmbedItem, {
     width: '400',
   },
   editor: {
-    link: { type: 'text-field', label: 'src or link' },
+    link: { type: 'text-field', label: 'src or link', description: 'paste an embed src/link without quotes' },
     height: { type: 'text-field', label: 'height (px)' },
     width: { type: 'text-field', label: 'width (px)' },
   },
