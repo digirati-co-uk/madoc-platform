@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.2.8...main)
+### Added
+- Added improvements to pagination component, page selection dropdown (NS-68)
+
 
 ## [v2.2.8](https://github.com/digirati-co-uk/madoc-platform/compare/v2.2.7...v2.2.8)
 
