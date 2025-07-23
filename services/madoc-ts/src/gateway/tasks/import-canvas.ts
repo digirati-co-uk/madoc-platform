@@ -2,7 +2,8 @@ import { BaseTask } from './base-task';
 import * as tasks from './task-helpers';
 import { iiifGetLabel } from '../../utility/iiif-get-label';
 import { ApiClient } from '../api';
-import { Canvas } from '@iiif/presentation-3';
+import { Annotation, Canvas } from '@iiif/presentation-3';
+import { canvasToAnnotations } from '../../utility/canvas-to-annotations';
 
 export const type = 'madoc-canvas-import';
 
@@ -108,6 +109,18 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
 
       if (!item) {
         throw new Error('Could not create canvas');
+      }
+
+      const annotationItems = canvasToAnnotations(canvas);
+      if (annotationItems.length) {
+        const annotationIds = [];
+        for (const annotation of annotationItems) {
+          const annotationResource = await api.asUser({ userId, siteId }).createAnnotation(annotation);
+          if (annotationResource) {
+            annotationIds.push(annotationResource.id);
+          }
+        }
+        await api.asUser({ userId, siteId }).updateCanvasAnnotations(item.id, annotationIds);
       }
 
       await api.updateTask(

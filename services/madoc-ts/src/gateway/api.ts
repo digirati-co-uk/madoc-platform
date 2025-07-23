@@ -672,6 +672,24 @@ export class ApiClient {
     });
   }
 
+  async createAnnotation(annotation: any) {
+    return this.request<{ id: number }>(`/api/madoc/iiif/annotations`, {
+      method: 'POST',
+      body: {
+        annotation,
+      },
+    });
+  }
+
+  async updateCanvasAnnotations(canvasId: number, annotationIds: number[]) {
+    return this.request<void>(`/api/madoc/iiif/canvases/${canvasId}/annotations`, {
+      method: 'PUT',
+      body: {
+        annotations: annotationIds,
+      },
+    });
+  }
+
   async updateProjectStatus(id: number, status: number) {
     return this.request<any>(`/api/madoc/projects/${id}/status`, {
       method: 'PUT',
