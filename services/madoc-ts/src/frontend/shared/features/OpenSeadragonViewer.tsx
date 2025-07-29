@@ -1,6 +1,7 @@
 import React, { forwardRef, useImperativeHandle } from 'react';
 import { useCanvas, useRenderingStrategy } from 'react-iiif-vault';
 import { useOpenSeadragon } from 'use-open-seadragon';
+import { useSiteConfiguration } from '../../site/hooks/use-site-configuration';
 
 export const OpenSeadragonViewer = forwardRef(function OpenSeadragonViewer(props, ref) {
   const canvas = useCanvas();
@@ -17,6 +18,7 @@ export const OpenSeadragonViewer = forwardRef(function OpenSeadragonViewer(props
 
 const InnerViewer = forwardRef(function InnerViewer(props: any, fwdRef) {
   const [ref, viewer] = useOpenSeadragon(props.source);
+  const { project } = useSiteConfiguration();
 
   useImperativeHandle(fwdRef, () => ({
     zoomIn() {
@@ -36,7 +38,14 @@ const InnerViewer = forwardRef(function InnerViewer(props: any, fwdRef) {
 
   return (
     <div
-      style={{ flex: '1 1 0px', minWidth: 0, width: '100%', height: '100%', minHeight: 500, background: '#f9f9f9' }}
+      style={{
+        flex: '1 1 0px',
+        minWidth: 0,
+        width: '100%',
+        height: '100%',
+        minHeight: 500,
+        background: project.atlasBackground,
+      }}
       ref={ref}
     />
   );
