@@ -104,3 +104,11 @@ export function getResourceLocalSource(resourceId: number) {
     select local_source from iiif_resource where id = ${resourceId};
   `;
 }
+
+export function createAnnotation(annotation: any, siteId: number, userId: number) {
+  return sql`select create_annotation(${sql.json(annotation)}, ${siteId}, ${userId})`;
+}
+
+export function addCanvasAnnotations(canvasId: number, annotationIds: number[], siteId: number) {
+  return sql`select add_canvas_annotations(${canvasId}, ${sql.array(annotationIds, 'int4')}, ${siteId})`;
+}
