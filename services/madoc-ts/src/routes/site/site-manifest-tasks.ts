@@ -64,9 +64,13 @@ export const siteManifestTasks: RouteMiddleware<{
         const revisionId = task.state?.revisionId;
         const captureModelId = task.parameters?.[0];
         if (captureModelId) {
-          const exists =
-            modelIdExistsCache.has(captureModelId) ??
-            (await context.captureModels.captureModelExists(captureModelId, site.id));
+          let exists: boolean;
+          if (modelIdExistsCache.has(captureModelId)) {
+            exists = modelIdExistsCache.get(captureModelId)!;
+          } else {
+            exists = await context.captureModels.captureModelExists(captureModelId, site.id);
+            modelIdExistsCache.set(captureModelId, exists);
+          }
 
           if (!exists) {
             invalidTasks.push(task.id as string);
