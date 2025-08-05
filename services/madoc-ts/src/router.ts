@@ -277,6 +277,7 @@ import { exportProjectTemplate } from './routes/projects/export-project-template
 import { generateApiKey } from './routes/admin/generate-api-key';
 import { authenticateApi } from './routes/global/api-authentication';
 import { siteListProjectAssigneeStats } from './routes/site/site-list-project-assignee-stats';
+import { deleteProjectCaptureModel } from './routes/projects/delete-project-capture-model';
 
 export const router = new TypedRouter({
   // Normal route
@@ -583,6 +584,11 @@ export const router = new TypedRouter({
     updateProjectNote,
   ],
   'get-project-deletion-summary': [TypedRouter.GET, '/api/madoc/projects/:id/deletion-summary', deleteProjectSummary],
+  'delete-project-capture-model': [
+    TypedRouter.DELETE,
+    '/api/madoc/projects/:id/capture-model/:modelId',
+    deleteProjectCaptureModel,
+  ],
   'delete-project': [TypedRouter.DELETE, '/api/madoc/projects/:id', deleteProjectEndpoint],
   'project-task-svg': [TypedRouter.GET, '/api/madoc/projects/:id/tasks/:taskId/preview-svg', svgFromCrowdsourcingTask],
   // Project updates

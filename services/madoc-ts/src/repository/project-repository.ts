@@ -52,7 +52,7 @@ export class ProjectRepository extends BaseRepository {
 
     // Project members
     listProjectMembers: (projectId: number, siteId: number) => sql<ProjectMemberRow>`
-      select pm.*, u.name as user_name, ip.slug as project_slug from project_members pm 
+      select pm.*, u.name as user_name, ip.slug as project_slug from project_members pm
          left join iiif_project ip on ip.id = pm.project_id
          left outer join "user" u on u.id = pm.user_id
          where project_id = ${projectId} and ip.site_id = ${siteId}
@@ -87,14 +87,14 @@ export class ProjectRepository extends BaseRepository {
     addUserToProject: (userId: number, projectId: number, role?: ProjectMemberRole) =>
       role
         ? sql`
-            insert into project_members (project_id, user_id, role, role_label, role_color) 
+            insert into project_members (project_id, user_id, role, role_label, role_color)
             values (${projectId}, ${userId}, ${role.id}, ${role.label || null}, ${role.color || null})`
         : sql`
             insert into project_members (project_id, user_id) values (${projectId}, ${userId})`,
 
     updateUsersProjectRole: (userId: number, projectId: number, role: ProjectMemberRole) =>
       sql`
-        update project_members set 
+        update project_members set
           role = ${role.id}, role_label = ${role.label || null}, role_color = ${role.color || null}
         where project_id = ${projectId} and user_id = ${userId}`,
 
@@ -171,11 +171,29 @@ export class ProjectRepository extends BaseRepository {
     const projects = await this.connection.many(
       getMetadata<{ resource_id: number; project_id: number }>(
         sql`
-        select *, collection_id as resource_id, iiif_project.id as project_id from iiif_project 
+        select *, collection_id as resource_id, iiif_project.id as project_id from iiif_project
             left join iiif_resource ir on iiif_project.collection_id = ir.id
-        where site_id = ${siteId} 
+        where site_id = ${siteId}
           and iiif_project.task_id = ${taskId}
           ${onlyPublished ? sql`and (iiif_project.status = 1 or iiif_project.status = 2)` : SQL_EMPTY}
+      `,
+        siteId
+      )
+    );
+
+    const mappedProjects = mapMetadata(projects, ProjectRepository.mapProject);
+
+    return mappedProjects[0] as any;
+  }
+
+  async getProjectByCaptureModelId(captureModelId: string, siteId: number): Promise<Project | undefined> {
+    const projects = await this.connection.many(
+      getMetadata<{ resource_id: number; project_id: number }>(
+        sql`
+        select *, collection_id as resource_id, iiif_project.id as project_id from iiif_project
+            left join iiif_resource ir on iiif_project.collection_id = ir.id
+        where site_id = ${siteId}
+          and iiif_project.capture_model_id = ${captureModelId}
       `,
         siteId
       )
@@ -192,9 +210,9 @@ export class ProjectRepository extends BaseRepository {
     const projects = await this.connection.many(
       getMetadata<{ resource_id: number; project_id: number }>(
         sql`
-        select *, collection_id as resource_id, iiif_project.id as project_id from iiif_project 
+        select *, collection_id as resource_id, iiif_project.id as project_id from iiif_project
             left join iiif_resource ir on iiif_project.collection_id = ir.id
-        where site_id = ${siteId} 
+        where site_id = ${siteId}
           ${projectId ? sql`and iiif_project.id = ${projectId}` : SQL_EMPTY}
           ${projectSlug ? sql`and iiif_project.slug = ${projectSlug}` : SQL_EMPTY}
           ${onlyPublished ? sql`and (iiif_project.status = 1 or iiif_project.status = 2)` : SQL_EMPTY}
