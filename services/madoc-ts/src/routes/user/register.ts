@@ -5,6 +5,7 @@ import { gatewayHost } from '../../gateway/api.server';
 import { renderFrontend } from '../../middleware/render-frontend';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { passwordHash } from '../../utility/php-password-hash';
+import { validateEmail } from '../../utility/validate-email';
 
 export const registerPage: RouteMiddleware = async (context, next) => {
   if (context.query.redirect && !context.query.redirect.startsWith('/')) {
@@ -74,7 +75,7 @@ export const registerPage: RouteMiddleware = async (context, next) => {
 
     const { name, email, p1, p2 } = context.requestBody;
 
-    if (!name.trim() || !email.trim()) {
+    if (!name.trim() || !email.trim() || !validateEmail(email)) {
       context.reactFormResponse.unknownError = true;
       context.reactFormResponse.email = email;
       context.reactFormResponse.name = name;

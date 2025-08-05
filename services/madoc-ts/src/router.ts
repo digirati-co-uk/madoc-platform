@@ -278,6 +278,7 @@ import { generateApiKey } from './routes/admin/generate-api-key';
 import { authenticateApi } from './routes/global/api-authentication';
 import { siteListProjectAssigneeStats } from './routes/site/site-list-project-assignee-stats';
 import { deleteProjectCaptureModel } from './routes/projects/delete-project-capture-model';
+import { deleteInvalidUsers } from './routes/admin/delete-invalid-users';
 
 export const router = new TypedRouter({
   // Normal route
@@ -294,6 +295,7 @@ export const router = new TypedRouter({
   'regenerate-keys': [TypedRouter.POST, '/api/madoc/system/key-regen', keyRegenerate],
   'generate-api-key': [TypedRouter.POST, '/api/madoc/system/api-keys', generateApiKey],
   'migrate-project-members': [TypedRouter.POST, '/api/madoc/system/migrate-project-members', migrateProjectMembers],
+  'migrate-invalid-users': [TypedRouter.POST, '/api/madoc/system/migrate-invalid-users', deleteInvalidUsers],
   'get-api-keys': [TypedRouter.GET, '/api/madoc/system/api-keys', listApiKeys],
   'delete-api-key': [TypedRouter.DELETE, '/api/madoc/system/api-keys/:client_id', deleteApiKey],
 
