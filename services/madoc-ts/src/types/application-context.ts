@@ -22,6 +22,7 @@ import { router } from '../router';
 import { DatabasePoolConnectionType } from 'slonik';
 import { Ajv } from 'ajv';
 import { ApiKeyRepository } from '../repository/api-key-repository';
+import { CaptchaRepository } from '../repository/captcha-repository';
 
 type AllRoutes = typeof router;
 
@@ -45,6 +46,7 @@ declare module 'koa' {
     siteManager: SiteUserRepository;
     webhooks: WebhookRepository;
     termConfigurations: TermConfigurationsRepository;
+    captcha: CaptchaRepository;
     pluginManager: PluginManager;
     cron: CronJobs;
 

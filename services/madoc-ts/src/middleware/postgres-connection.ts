@@ -13,39 +13,39 @@ import { ThemeRepository } from '../repository/theme-repository';
 import { ApiKeyRepository } from '../repository/api-key-repository';
 import { EnvConfig } from '../types/env-config';
 import { WebhookRepository } from '../webhooks/webhook-repository';
+import { CaptchaRepository } from '../repository/captcha-repository';
 
-export const postgresConnection = (
-  pool: DatabasePoolType,
-  useConnections = false,
-  env: EnvConfig
-): Middleware => async (context, next) => {
-  async function handleConnection(connection: DatabasePoolConnectionType) {
-    context.connection = connection;
+export const postgresConnection =
+  (pool: DatabasePoolType, useConnections = false, env: EnvConfig): Middleware =>
+  async (context, next) => {
+    async function handleConnection(connection: DatabasePoolConnectionType) {
+      context.connection = connection;
 
-    // Set up repositories.
-    context.pageBlocks = new PageBlocksRepository(connection);
-    context.media = new MediaRepository(connection);
-    context.apiKeys = new ApiKeyRepository(connection);
-    context.plugins = new PluginRepository(connection);
-    context.themes = new ThemeRepository(connection);
-    context.changeDiscovery = new ChangeDiscoveryRepository(connection);
-    context.notifications = new NotificationRepository(connection);
-    context.projects = new ProjectRepository(connection);
-    context.annotationStyles = new AnnotationStylesRepository(connection);
-    context.termConfigurations = new TermConfigurationsRepository(connection);
-    context.captureModels = new CaptureModelRepository(connection, {
-      capture_model_api_migrated: env.flags.capture_model_api_migrated,
-    });
-    context.webhooks = new WebhookRepository(connection);
+      // Set up repositories.
+      context.pageBlocks = new PageBlocksRepository(connection);
+      context.media = new MediaRepository(connection);
+      context.apiKeys = new ApiKeyRepository(connection);
+      context.plugins = new PluginRepository(connection);
+      context.themes = new ThemeRepository(connection);
+      context.changeDiscovery = new ChangeDiscoveryRepository(connection);
+      context.notifications = new NotificationRepository(connection);
+      context.projects = new ProjectRepository(connection);
+      context.annotationStyles = new AnnotationStylesRepository(connection);
+      context.termConfigurations = new TermConfigurationsRepository(connection);
+      context.captureModels = new CaptureModelRepository(connection, {
+        capture_model_api_migrated: env.flags.capture_model_api_migrated,
+      });
+      context.webhooks = new WebhookRepository(connection);
+      context.captcha = new CaptchaRepository(connection);
 
-    await next();
-  }
+      await next();
+    }
 
-  if (useConnections) {
-    await pool.connect(async connection => {
-      await handleConnection(connection);
-    });
-  } else {
-    await handleConnection(pool);
-  }
-};
+    if (useConnections) {
+      await pool.connect(async connection => {
+        await handleConnection(connection);
+      });
+    } else {
+      await handleConnection(pool);
+    }
+  };

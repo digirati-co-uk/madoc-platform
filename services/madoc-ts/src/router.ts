@@ -279,6 +279,7 @@ import { authenticateApi } from './routes/global/api-authentication';
 import { siteListProjectAssigneeStats } from './routes/site/site-list-project-assignee-stats';
 import { deleteProjectCaptureModel } from './routes/projects/delete-project-capture-model';
 import { deleteInvalidUsers } from './routes/admin/delete-invalid-users';
+import { captchaChallenge, captchaRedeem } from './routes/site/site-captcha';
 
 export const router = new TypedRouter({
   // Normal route
@@ -799,6 +800,10 @@ export const router = new TypedRouter({
   // Locale
   'get-locale': [TypedRouter.GET, '/s/:slug/madoc/api/locales/:lng/:ns', getLocale],
   'add-missing-locale': [TypedRouter.POST, '/s/:slug/madoc/api/locales/:lng/:ns', saveMissingLocale],
+
+  // Captcha
+  'captcha-challenge': [TypedRouter.POST, '/s/:slug/madoc/api/captcha/challenge', captchaChallenge],
+  'captcha-redeem': [TypedRouter.POST, '/s/:slug/madoc/api/captcha/redeem', captchaRedeem],
 
   // Frontend
   'admin-frontend': [TypedRouter.GET, '/s/:slug/admin(.*)', adminFrontend],

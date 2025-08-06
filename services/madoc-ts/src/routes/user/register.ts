@@ -73,9 +73,11 @@ export const registerPage: RouteMiddleware = async (context, next) => {
       return;
     }
 
+    const captchaToken = context.requestBody?.['cap-token'];
     const { name, email, p1, p2 } = context.requestBody;
 
-    if (!name.trim() || !email.trim() || !validateEmail(email)) {
+    const isValid = captchaToken ? await context.captcha.validateToken(captchaToken) : false;
+    if (!isValid || !name.trim() || !email.trim() || !validateEmail(email)) {
       context.reactFormResponse.unknownError = true;
       context.reactFormResponse.email = email;
       context.reactFormResponse.name = name;
