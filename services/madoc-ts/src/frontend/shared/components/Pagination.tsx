@@ -131,7 +131,7 @@ export const Pagination: React.FC<{
         style={{ marginLeft: '1em', textDecoration: 'none', verticalAlign: 'middle' }}
         disabled={!prevPage || isLoading}
         as={HrefLink}
-        href={`${pathname}${page > 2 ? `?${pageParam}=1&` : q ? '?' : ''}${q}${hash ? `#${hash}` : ''}`}
+        href={`${pathname}${page > 2 ? `?${pageParam}=${page - 1}&` : q ? '?' : ''}${q}${hash ? `#${hash}` : ''}`}
       >
         <ChevronLeft fill={!prevPage || isLoading ? '#666' : '#5071f4'} />
         {isLoading ? t('loading...') : t('Previous page')}
