@@ -8,7 +8,7 @@ import { ProjectExportSnippet } from '../components/ProjectExportSnippet/Project
 export function ViewProjectExports() {
   const { id } = useParams<{ id: string }>();
 
-  const { data } = apiHooks.getTasks(() => [
+  const { data, refetch } = apiHooks.getTasks(() => [
     0,
     { all: true, type: 'export-resource-task', subject: `urn:madoc:project:${id}`, detail: true },
   ]);
@@ -17,7 +17,14 @@ export function ViewProjectExports() {
     <div>
       <h4>Project exports</h4>
       {(data?.tasks || []).map(task => (
-        <ProjectExportSnippet key={task.id} taskLink={`/tasks/${task.id}`} task={task as any} apiDownload flex />
+        <ProjectExportSnippet
+          key={task.id}
+          taskLink={`/tasks/${task.id}`}
+          onRefresh={refetch}
+          task={task as any}
+          apiDownload
+          flex
+        />
       ))}
       <ButtonRow>
         <Button $primary as={HrefLink} href={`export`}>

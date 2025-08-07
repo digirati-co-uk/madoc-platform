@@ -1,12 +1,12 @@
-import React from 'react';
 import { ExportResourceTask } from '../../../../gateway/tasks/export-resource-task';
 import { createDownload } from '../../../../utility/create-download';
 import { TimeAgo } from '../../../shared/atoms/TimeAgo';
 import { RootStatistics } from '../../../shared/components/RootStatistics';
-import { useApi, useOptionalApi } from '../../../shared/hooks/use-api';
+import { useOptionalApi } from '../../../shared/hooks/use-api';
 import { Button } from '../../../shared/navigation/Button';
 import { HrefLink } from '../../../shared/utility/href-link';
 import { ProjectExportSnippetStyles as S } from './ProjectExportSnippet.styles';
+import { useMutation } from 'react-query';
 
 interface ProjectExportSnippetProps {
   task: ExportResourceTask;
@@ -16,12 +16,27 @@ interface ProjectExportSnippetProps {
   onDownload?: (output: any) => void;
 
   apiDownload?: boolean;
+  onRefresh?: () => void;
 }
-export function ProjectExportSnippet({ task, flex, taskLink, onDownload, apiDownload }: ProjectExportSnippetProps) {
+export function ProjectExportSnippet({
+  task,
+  flex,
+  taskLink,
+  onDownload,
+  apiDownload,
+  onRefresh,
+}: ProjectExportSnippetProps) {
   const output = task.parameters[0].output;
   const api = useOptionalApi();
   const tags = Object.keys(task.parameters[0].exportPlan || {}).flatMap(r =>
     ((task.parameters[0].exportPlan || {}) as any)[r].map((r: any) => r[0])
+  );
+
+  const [manuallyComplete] = useMutation(
+    async () => {
+      return api?.updateTask(task.id!, { status: 3, status_text: 'complete (manually)' });
+    },
+    { onSuccess: onRefresh }
   );
 
   const onDownloadButton = () => {
@@ -63,6 +78,11 @@ export function ProjectExportSnippet({ task, flex, taskLink, onDownload, apiDown
           ))}
         </S.TagList>
       ) : null}
+      {task.status !== 3 && (
+        <Button $primary onClick={() => manuallyComplete()}>
+          Manually complete
+        </Button>
+      )}
       {output && output.type === 'zip' && (onDownload || (apiDownload && api)) ? (
         <S.DownloadBox>
           <S.DownloadLabel>{output.fileName}</S.DownloadLabel>
