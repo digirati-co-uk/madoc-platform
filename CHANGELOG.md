@@ -8,7 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.2.8...main)
 ### Added
 - Added improvements to pagination component, page selection dropdown (NS-68)
-
+- Improved the deletion of all contributions by admin users (NS-76)
+- Improved detection of "Max contributors" by filtering invalid tasks (NS-76)
+- User email validation and migration to delete invalid users (NS-77)
+- Added captcha with proof-of-work to registration page to deter spam (NS-77)
+- Added method to manually mark an export as done and generate a zip (NS-75)
 
 ## [v2.2.8](https://github.com/digirati-co-uk/madoc-platform/compare/v2.2.7...v2.2.8)
 
