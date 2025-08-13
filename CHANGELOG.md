@@ -5,8 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.2.8...main)
+## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.2.9...main)
+
+<!--
 ### Added
+
+### Changed
+
+### Fixed
+
+### Removed
+-->
+
+## [v2.2.9](https://github.com/digirati-co-uk/madoc-platform/compare/v2.2.8...v2.2.9)
+
+### Added
+
 - Added improvements to pagination component, page selection dropdown (NS-68)
 - Improved the deletion of all contributions by admin users (NS-76)
 - Improved detection of "Max contributors" by filtering invalid tasks (NS-76)
@@ -17,11 +31,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [v2.2.8](https://github.com/digirati-co-uk/madoc-platform/compare/v2.2.7...v2.2.8)
 
 ### Added
+
 - Added back in the Basic Google Analytics page block (NS-45) (NS-54)
 - Added config option to continue contributions to another manifest after submission (MAD-1514)
 - Added manifest and canvas labels on CSV export (MAD-1420)
 
 ### Fixed
+
 - Fixed block editor button 'saved' instead of 'save' (MAD-1475)
 - Fixed marking canvas as incomplete not marking manifest as incomplete (MAD-1516)
 - Fixed CORS errors in embed item block
@@ -29,6 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [v2.2.7](https://github.com/digirati-co-uk/madoc-platform/compare/v2.2.6...v2.2.7)
 
 ### Added
+
 - New button to filter manifest tasks from reviews (NS-66)
 - Stale-while-revalidate memory cache and uses it for slow project queries
 - Adds a new request trace and in-memory store of the slowest requests. (avg, max, count)
@@ -36,20 +53,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 (note: The request trace be disabled with the environment variable flag: `DISABLE_SLOW_REQUEST_TRACKING=true`)
 
 ### Changed
+
 - Disables server-side rendering on the 2 review/task pages.
 
 ## [v2.2.6](https://github.com/digirati-co-uk/madoc-platform/compare/v2.2.5...v2.2.6)
 
 ### Added
+
 - New button to filter manifest tasks from reviews (NS-66)
 
 ### Fixed
+
 - Fixed bug with large projects and adding content (NS-61)
 - Fixed bug with filtering out Manifests/Collections when adding content to projects (NS-61)
 
 ## [v2.2.5](https://github.com/digirati-co-uk/madoc-platform/compare/v2.2.4...v2.2.5) - 22/05/2024
 
 ### Fixed
+
 - Project feedback not working for all users
 - Fixed model root bug with empty submissions (NS-62)
 - Fixing paging issue when hiding completed Manifests (NS-59)
@@ -57,14 +78,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [v2.2.4](https://github.com/digirati-co-uk/madoc-platform/compare/v2.2.3...v2.2.4) - 14/05/2024
 
 ### Fixed
+
 - Adding Manifests to projects with large amounts of content
 - Fixed status of Manifest task after submission
 - Fixed "Hide completed" on very large collections
 
-
 ## [v2.2.3](https://github.com/digirati-co-uk/madoc-platform/compare/v2.2.2...v2.2.3) - 13/05/2024
 
 ### Added
+
 - Added "line mode" on SVG selector
 - Added "line box mode" on SVG selector
 - Added "Circle" shape on SVG selector (40 points)
@@ -83,8 +105,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added display names for React Contexts for better debugging
 - Added new "Grid view" for projects, enabled in page blocks
 
-
 ### Fixed
+
 - Fixed Atlas Viewer / Canvas Panel memory leak when browsing canvases
 - Fixed bug with Polygon selector and not being able to drag a box to select points
 - Fixed bug when selecting a polygon from the sidebar
@@ -102,6 +124,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed visual bugs with Review Dashboard
 
 ### Changed
+
 - Add short descriptions for admin Search & Metadata actions + correct site config. page titles (MAD-1466)
 - Changed Default site-wide project configuration to use new form (MAD-1438)
 - Made "Go to site" link a button on project admin (MAD-1465)
@@ -120,10 +143,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [v2.2.2](https://github.com/digirati-co-uk/madoc-platform/compare/v2.2.1...2.2.2)
 
 ### Added
+
 - New descriptions and ordering for project templates (MAD-1428)
 - New "Duplicate project" action on projects
 
 ### Fixed
+
 - Fixed styling for Simple HTML Block (reset by tailwind / MAD-1449)
 - Fixed incorrect button label on Manifest page (MAD-1447)
 - Fixed blocking of project contribution in Manifest Granularity (MAD-1447)
@@ -132,18 +157,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed labeling of "Export project"
 
 ### Removed
+
 - Removed config option `projectPageOptions.reviewerDashboard` (MAD-1452)
 
 ## [v2.2.1](https://github.com/digirati-co-uk/madoc-platform/compare/v2.2.0...v2.2.1)
 
-
 ### Added
+
 - Experimental "Polygon" selector for capture models
 
 ### Fixed
+
 - Fixed bug with manifest granularity capture models not appearing
 
 ### Removed
+
 - Temporary removal of "Universal Viewer" page block
 
 ## [v2.2.0](https://github.com/digirati-co-uk/madoc-platform/compare/v2.1.4...v2.2.0)
@@ -151,6 +179,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [Full Release notes](https://docs.madoc.io/releases/v2.2)
 
 ### Overview
+
 - User profiles + user data
 - Project members
 - Project feedback
@@ -165,6 +194,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Technical changes
 
 ### Added
+
 - New "custom auto-complete" configurations for external APIs (MAD-1408)
 - New configuration to allow model field descriptions to be displayed as tooltips (MAD-1329)
 - IIIF Collection endpoint for Madoc Collections (MAD-1407)
@@ -175,6 +205,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Model fields can be dependent on each-others values
 
 ### Fixed
+
 - Manifest canvas model now allows rotation (MAD-1425)
 - Scroll on large field lists (MAD-1323)
 - New cron-job to restart the queue at 3am every day (local to the server)
@@ -191,28 +222,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Dropdown overflow bug
 - Bug with deleting all contributions (MAD-1293)
 
-
 ## [v2.1.3](https://github.com/digirati-co-uk/madoc-platform/compare/v2.1.2...v2.1.3)
 
 ### Added
+
 - Multi-lingual page blocks (NS-32)
 - Added block customisations to Project header
 
 ### Fixed
+
 - Fix bug when importing Manifests with long labels (NS-29)
 - Fixed saving issue (MAD-1405)
 - Fixed error on Review dashboard (MAD-1405)
 - Fixed error for empty submission (MAD-1403)
 
 ## [v2.1.2](https://github.com/digirati-co-uk/madoc-platform/compare/v2.1.1...v2.1.2)
+
 Hotfix release for submissions in progress.
 
 ### Fixed
+
 - Fixed bug with save for later
 
 ## [v2.1.1](https://github.com/digirati-co-uk/madoc-platform/compare/v2.1.0...v2.1.1)
 
 ### Fixed
+
 - Fixed bug with single line transcriptions in preview mode (NS-11)
 - Fixed review screen resizer min width from 400px to 200px (NS-22)
 - Fixed contributor buttons not following project config in collection (NS-23)
@@ -235,6 +270,7 @@ Hotfix release for submissions in progress.
 - Fixed nested fields not showing up in document panel (NS-25)
 
 ### Added
+
 - Added new "webhook" data model (no usages yet)
 - Added more options to the footer grid block and nested fields (NS-14)
 - Added notification for rejected submission and added view for rejected in contributions panel (MAD-1315)
@@ -247,12 +283,14 @@ Hotfix release for submissions in progress.
 - Added new Configuration page for projects (MAD-1365)
 
 ### Changed
+
 - Changed language on user dash from 'reviews' to 'review tasks' to differentiate between the two
 - Improved 'delete all contributions' by deleting all user tasks as well as capture model
 - Changed the project heading block to contain optional image and start contributing button
 - Added max number option for allowMultiple fields in capture model
 
 ### Changed
+
 - Changed language on user dash from 'reviews' to 'review tasks' to differentiate between the two
 - Improved 'delete all contributions' by deleting all user tasks as well as capture model
 
@@ -261,199 +299,198 @@ Hotfix release for submissions in progress.
 This is a larger release and include changes to bring Madoc inline with Canvas Panel and Manifest Editor, and
 supports a wider range of IIIF resources as a result.
 
-* **🚀 Faster** - Smaller bundles and quicker page loads
-* **✨ New Capture Model API** - Rewritten and simplified this will ensure any further development all happens in the same
+- **🚀 Faster** - Smaller bundles and quicker page loads
+- **✨ New Capture Model API** - Rewritten and simplified this will ensure any further development all happens in the same
   repository. There is a migration step, but it will also migrate on the fly as you go, so no changes required. Once we
   have verified everyone has migrated, we will remove the old service.
-* **📦 New page blocks** - Lots of new page blocks have been added and extra customisation to existing ones
-* **🎨 New theme options** - There are lots of new ways to customise Madoc headers/footers with page blocks or remote URLs
-* **⚡️ Canvas Panel** - Madoc now uses Canvas Panel to render resources and will continue updating to view new types of
+- **📦 New page blocks** - Lots of new page blocks have been added and extra customisation to existing ones
+- **🎨 New theme options** - There are lots of new ways to customise Madoc headers/footers with page blocks or remote URLs
+- **⚡️ Canvas Panel** - Madoc now uses Canvas Panel to render resources and will continue updating to view new types of
   IIIF resources while adding annotation support along the way
 
 ### Fixed
 
-* Fixed creation of `GlobalHeader` page block slot (with `none` as the context)
-* Fixed bug with loading canvases where annotations did not match the source canvas ID
-* Fixed various SSR related bugs
-* Fixed React key error on i18n configuration page
-* Fixed bug with viewing IIIF media items
-* Fixed bug where Capture model previewing in the backend would not refresh correctly
-* Fixed bug where space-bar could not be used if region had not been confirmed in capture model editor
-* Fixed bug with first entity selector not being revised correctly (and not saving)
-* Fixed bug with capture model selectors self-referencing after being cloned
-* Fixed bug with `hydrateCaptureModel` helper producing invalid entities
-* Fixed missing labels when viewing "Document" in sidebar
-* Fixed incorrect selector shown in "Preview" modal and "Document" sidebar.
-* Fixed bug with success modal popup not always showing
-* Fixed metadata page re-flowing issues on Manifest/Canvas pages
-* Fixed z-index issue with the notification window being occluded
-* Fixed task loading bug (incorrect cache key)
-* Fixed SSR bugs relating to global header, footer and static pages (e.g. homepage)
-* Fixed messaging when "Maximum number of contributors reached" instead of "This image is complete"
-* Fixed z-index issue with manifest item filter
-* Fixed styling of continue contributions block
-* Fixed text overflow styling on review dashboard
-* Fixed bug where you could not delete a project if the capture model had already been deleted
-* Fixed missing structure in project export
-* Fixed bug where some empty annotations were exported
-* Fixed annotation format when exporting Presentation 3 Manifest (OA -> W3C)
-* Fixed bug with read-only annotations disappearing
-* Fixed message "login to contribute" on published projects
-* Fixed notification showing on document panel when panel is empty
-* Fixed bug where "choice" was not reset after making a submission
-* Fixed manifest thumbnail bug where it sometimes skipped first canvas
-* Fixed bug with "Start contributing" returning invalid results
-* Fixed bug with "Max contributors" if user had already started working
-* Fixed "Maximise window" to avoid cutting off the top section of the header
-* Fixed firefox bug where "Define window" button was disabled if selector required
-* Fixed Annotation styled hidden by default
-* Fixed some fields showing in submission if empty
-* Fixed email links sometimes not working in email clients - with option link to paste
-
+- Fixed creation of `GlobalHeader` page block slot (with `none` as the context)
+- Fixed bug with loading canvases where annotations did not match the source canvas ID
+- Fixed various SSR related bugs
+- Fixed React key error on i18n configuration page
+- Fixed bug with viewing IIIF media items
+- Fixed bug where Capture model previewing in the backend would not refresh correctly
+- Fixed bug where space-bar could not be used if region had not been confirmed in capture model editor
+- Fixed bug with first entity selector not being revised correctly (and not saving)
+- Fixed bug with capture model selectors self-referencing after being cloned
+- Fixed bug with `hydrateCaptureModel` helper producing invalid entities
+- Fixed missing labels when viewing "Document" in sidebar
+- Fixed incorrect selector shown in "Preview" modal and "Document" sidebar.
+- Fixed bug with success modal popup not always showing
+- Fixed metadata page re-flowing issues on Manifest/Canvas pages
+- Fixed z-index issue with the notification window being occluded
+- Fixed task loading bug (incorrect cache key)
+- Fixed SSR bugs relating to global header, footer and static pages (e.g. homepage)
+- Fixed messaging when "Maximum number of contributors reached" instead of "This image is complete"
+- Fixed z-index issue with manifest item filter
+- Fixed styling of continue contributions block
+- Fixed text overflow styling on review dashboard
+- Fixed bug where you could not delete a project if the capture model had already been deleted
+- Fixed missing structure in project export
+- Fixed bug where some empty annotations were exported
+- Fixed annotation format when exporting Presentation 3 Manifest (OA -> W3C)
+- Fixed bug with read-only annotations disappearing
+- Fixed message "login to contribute" on published projects
+- Fixed notification showing on document panel when panel is empty
+- Fixed bug where "choice" was not reset after making a submission
+- Fixed manifest thumbnail bug where it sometimes skipped first canvas
+- Fixed bug with "Start contributing" returning invalid results
+- Fixed bug with "Max contributors" if user had already started working
+- Fixed "Maximise window" to avoid cutting off the top section of the header
+- Fixed firefox bug where "Define window" button was disabled if selector required
+- Fixed Annotation styled hidden by default
+- Fixed some fields showing in submission if empty
+- Fixed email links sometimes not working in email clients - with option link to paste
 
 ### Added
 
-* Remote header and footer support in themes [@todo provide docs]
-* New Capture Model database within Madoc (previously external API)
-  * Migration process integrated into Admin
-  * Uses different API endpoint `/api/crowdsourcing` -> `/api/madoc/crowdsourcing`
-* Added `iiif-builder` [IIIF Builder](https://github.com/IIIF-Commons/iiif-builder) from IIIF Commons
-* New `CAPTURE_MODEL_API_MIGRATED` environment variable to avoid extra calls to old Capture Model API.
-* Added `CanvasExplorer` capture model field type (editorial only) for selecting canvases within a Manifest context
-* Added new page to Canvas admin page to see JSON representation
-* Added "Download JSON" button to edit translation page in Admin
-* Added support for import "remote" project templates from URL [@todo documentation / button in UI]
-* New and Missing translations [@todo list]
-* Added floating option to canvas status bar (green/orange/blue) styling option
-* Added "Untitled" label for capture model entities without a label
-* Added save on navigate away from capture model (disabled by default)
-* Fixed bug with incorrect zoom on deep zoom images while navigating
-* **Page blocks** - added block options for bread crumbs
-* **Page blocks** - Added new "Footer Image Grid" block
-* **Page blocks** - Added "Featured items" page block
-* **Page blocks** - Added "Project contributors" page block
-* **Page blocks** - Added full width option to IIIF Hero block
-* **Page blocks** - Added lots of styling options to `Heading 1` block
-* **Page blocks** - Added block options for "Single collection" block
-* **Page blocks** - Added block options to "Spacer" with vertical and horizontal support
-* **Page blocks** - Added block options to "Canvas Manifest pagination" block
-* **Page blocks** - Added option to show both Canvas and Manifest labels in "Canvas Page Header" block
-* **Page blocks** - Added new "External links" block
-* **Page blocks** - Added new global footer slot to customise the footer globally
-* **Page blocks** - Added inline menu options and option to hide "Homepage" in the global header
-* **Page blocks** - Added block options to "Manifest actions" block
-* **Page blocks** - Added block options to "Manifest canvas grid" block
-* **Page blocks** - Added full width option to "Manifest hero" block
-* **Page blocks** - Added block options to "Altas canvas viewer" block
-* **Page blocks** - Added block options to "Pagination" block
-* **Page blocks** - Added block options to "Manifest Canvas Grid" block
-* **Page blocks** - Added block options to "Project Manifests" block
-* **Page blocks** - Added block options to "Project Manifests" block
-* **Page blocks** - Added new `project-footer` slot
-* **Page blocks** - Added new block to embed items through iframe
-* Added "reset error" option to attempt to recover from error states
-* Added configuration option for vertical canvas zoom controls layout
-* Added canvas rotation option (without annotation support)
-* Added "Global font" to theme options
-* Added error boundaries so only parts of a page crash (slots)
-* Added error boundary to pages overridden by external plugins (to avoid crashing site, only page)
-* Added extra theme options
-  * option to put the black "user bar" above or below the theme header
-  * Footer JS files
-  * Footer inline JS
-  * Header inline JS
-  * Remote JS / Stylesheets in linked assets
-  * HTML and "main" class names
-* Added `createdAt` and `updatedAt` fields to capture models
-* Added ability to create automated user types
-* Added experimental Auto-review process
-* Added new Export mechanism
-  * Preview Manifest or Canvas exports in the Admin
-  * Run a large project export as a background task and download a zip at the end
-  * Supported exports:
-    * Canvas API - A JSON document with each canvas from the API
-    * Manifest API - A JSON document with each manifest from the API
-    * Canvas model export - Export full raw capture models for each canvas
-    * Canvas plaintext - export plaintext transcriptions for each document
-    * Canvas annotation export - a JSON document with the output of each canvas annotations (w3c/oa/json)
-    * Project API - A JSON document with project metadata
-    * Simple CSV export - exports all capture models into a csv file.
-* Added new interactions in the Document panel for annotations
-* Added secondary view for "X hours ago" to show the date and time on click (browser preference)
-* Added "Generate PDF" option for manifests using [pdiiif](https://pdiiif.jbaiter.de/) from (@jbaiter - [Repository](https://github.com/jbaiter/pdiiif))
-* Added small indication under choices in the capture model UI with number of previous submissions
-* Added new auto-complete endpoints migrated from Madoc 1.x
-  * [searchFAST](http://fast.oclc.org/searchfast/)
-  * [WikiData](https://www.wikidata.org)
-* Added more Dutch translations (Thanks Davy Verbeke)
+- Remote header and footer support in themes [@todo provide docs]
+- New Capture Model database within Madoc (previously external API)
+  - Migration process integrated into Admin
+  - Uses different API endpoint `/api/crowdsourcing` -> `/api/madoc/crowdsourcing`
+- Added `iiif-builder` [IIIF Builder](https://github.com/IIIF-Commons/iiif-builder) from IIIF Commons
+- New `CAPTURE_MODEL_API_MIGRATED` environment variable to avoid extra calls to old Capture Model API.
+- Added `CanvasExplorer` capture model field type (editorial only) for selecting canvases within a Manifest context
+- Added new page to Canvas admin page to see JSON representation
+- Added "Download JSON" button to edit translation page in Admin
+- Added support for import "remote" project templates from URL [@todo documentation / button in UI]
+- New and Missing translations [@todo list]
+- Added floating option to canvas status bar (green/orange/blue) styling option
+- Added "Untitled" label for capture model entities without a label
+- Added save on navigate away from capture model (disabled by default)
+- Fixed bug with incorrect zoom on deep zoom images while navigating
+- **Page blocks** - added block options for bread crumbs
+- **Page blocks** - Added new "Footer Image Grid" block
+- **Page blocks** - Added "Featured items" page block
+- **Page blocks** - Added "Project contributors" page block
+- **Page blocks** - Added full width option to IIIF Hero block
+- **Page blocks** - Added lots of styling options to `Heading 1` block
+- **Page blocks** - Added block options for "Single collection" block
+- **Page blocks** - Added block options to "Spacer" with vertical and horizontal support
+- **Page blocks** - Added block options to "Canvas Manifest pagination" block
+- **Page blocks** - Added option to show both Canvas and Manifest labels in "Canvas Page Header" block
+- **Page blocks** - Added new "External links" block
+- **Page blocks** - Added new global footer slot to customise the footer globally
+- **Page blocks** - Added inline menu options and option to hide "Homepage" in the global header
+- **Page blocks** - Added block options to "Manifest actions" block
+- **Page blocks** - Added block options to "Manifest canvas grid" block
+- **Page blocks** - Added full width option to "Manifest hero" block
+- **Page blocks** - Added block options to "Altas canvas viewer" block
+- **Page blocks** - Added block options to "Pagination" block
+- **Page blocks** - Added block options to "Manifest Canvas Grid" block
+- **Page blocks** - Added block options to "Project Manifests" block
+- **Page blocks** - Added block options to "Project Manifests" block
+- **Page blocks** - Added new `project-footer` slot
+- **Page blocks** - Added new block to embed items through iframe
+- Added "reset error" option to attempt to recover from error states
+- Added configuration option for vertical canvas zoom controls layout
+- Added canvas rotation option (without annotation support)
+- Added "Global font" to theme options
+- Added error boundaries so only parts of a page crash (slots)
+- Added error boundary to pages overridden by external plugins (to avoid crashing site, only page)
+- Added extra theme options
+  - option to put the black "user bar" above or below the theme header
+  - Footer JS files
+  - Footer inline JS
+  - Header inline JS
+  - Remote JS / Stylesheets in linked assets
+  - HTML and "main" class names
+- Added `createdAt` and `updatedAt` fields to capture models
+- Added ability to create automated user types
+- Added experimental Auto-review process
+- Added new Export mechanism
+  - Preview Manifest or Canvas exports in the Admin
+  - Run a large project export as a background task and download a zip at the end
+  - Supported exports:
+    - Canvas API - A JSON document with each canvas from the API
+    - Manifest API - A JSON document with each manifest from the API
+    - Canvas model export - Export full raw capture models for each canvas
+    - Canvas plaintext - export plaintext transcriptions for each document
+    - Canvas annotation export - a JSON document with the output of each canvas annotations (w3c/oa/json)
+    - Project API - A JSON document with project metadata
+    - Simple CSV export - exports all capture models into a csv file.
+- Added new interactions in the Document panel for annotations
+- Added secondary view for "X hours ago" to show the date and time on click (browser preference)
+- Added "Generate PDF" option for manifests using [pdiiif](https://pdiiif.jbaiter.de/) from (@jbaiter - [Repository](https://github.com/jbaiter/pdiiif))
+- Added small indication under choices in the capture model UI with number of previous submissions
+- Added new auto-complete endpoints migrated from Madoc 1.x
+  - [searchFAST](http://fast.oclc.org/searchfast/)
+  - [WikiData](https://www.wikidata.org)
+- Added more Dutch translations (Thanks Davy Verbeke)
 
 ### Changed
 
-* Node updated from 14 -> 18
-* PM2 update from 4.x -> 5.x
-* When creating a capture model revision in "edit mode" empty entities will be "forked" if allowMultiple=true
-* Removed IIIF-Builder code and use published module (`iiif-builder` on NPM)
-* Capture Model API endpoint `/api/crowdsourcing` -> `/api/madoc/crowdsourcing`
-* Updated IIIF/Hyperion dependencies
-  * `@atlas-viewer/atlas` [@todo use published version]
-  * `@hyperion-framework/types` -> `@iiif/presentation-3`
-  * `@hyperion-framework/presentation-2` -> `@iiif/presentation-2`
-  * `@hyperion-framework/parser` -> `@iiif/parser`
-  * `@hyperion-framework/vault` -> `@iiif/vault`
-  * `@hyperion-framework/store` removed
-  * `@hyperion-framework/react-vault` -> `react-iiif-vault`
-* Updated `react-i18next` updated from `11.7.2` to `11.18.4`
-* Updated React Router to 6.4 [@todo update to stable]
-* `CollectionExplorer` capture model field type (editorial only) now uses smaller thumbnails
-* Default query config from `refetchOnMount: true` to `refetchOnMount: 'always'`
-* Changed Canvas/Manifest/Collection grids to
+- Node updated from 14 -> 18
+- PM2 update from 4.x -> 5.x
+- When creating a capture model revision in "edit mode" empty entities will be "forked" if allowMultiple=true
+- Removed IIIF-Builder code and use published module (`iiif-builder` on NPM)
+- Capture Model API endpoint `/api/crowdsourcing` -> `/api/madoc/crowdsourcing`
+- Updated IIIF/Hyperion dependencies
+  - `@atlas-viewer/atlas` [@todo use published version]
+  - `@hyperion-framework/types` -> `@iiif/presentation-3`
+  - `@hyperion-framework/presentation-2` -> `@iiif/presentation-2`
+  - `@hyperion-framework/parser` -> `@iiif/parser`
+  - `@hyperion-framework/vault` -> `@iiif/vault`
+  - `@hyperion-framework/store` removed
+  - `@hyperion-framework/react-vault` -> `react-iiif-vault`
+- Updated `react-i18next` updated from `11.7.2` to `11.18.4`
+- Updated React Router to 6.4 [@todo update to stable]
+- `CollectionExplorer` capture model field type (editorial only) now uses smaller thumbnails
+- Default query config from `refetchOnMount: true` to `refetchOnMount: 'always'`
+- Changed Canvas/Manifest/Collection grids to
   use [CSS Grid](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Grid_Layout)
-* `useLayoutEffect` -> `useBrowserLayoutEffect` to try and fix SSR warnings
-* CSS - Reduced box-shadows in capture model editor forms
-* Changed all Atlas Viewer instances to use Canvas panel
-* Simplified styling on search results
-* Improved reviewer dashboard view
-  * Sortable table headers
-  * Resizable layout
-  * Full row clickable
-  * Focus mode & edit added
-  * Clearer language
-  * Side by side canvas preview and improved styling
-  * Navigation between items in list
-  * Default to no selected task
-  * Added infinite scroll
+- `useLayoutEffect` -> `useBrowserLayoutEffect` to try and fix SSR warnings
+- CSS - Reduced box-shadows in capture model editor forms
+- Changed all Atlas Viewer instances to use Canvas panel
+- Simplified styling on search results
+- Improved reviewer dashboard view
+  - Sortable table headers
+  - Resizable layout
+  - Full row clickable
+  - Focus mode & edit added
+  - Clearer language
+  - Side by side canvas preview and improved styling
+  - Navigation between items in list
+  - Default to no selected task
+  - Added infinite scroll
 
 ### Removed
 
-* Removed external Capture Model API
-* Removed `AutoSelectDefineRegion` behaviour from capture model editor
+- Removed external Capture Model API
+- Removed `AutoSelectDefineRegion` behaviour from capture model editor
 
 ### Security
 
-* Pinned `ws` from `7.4.6` -> `8.8.0`
+- Pinned `ws` from `7.4.6` -> `8.8.0`
 
 ### Development
 
-* Migrated build from Webpack to Vite
-  * Split server builds (auth/queue/producer/server)
-  * Added hot module reloading
-  * Better module splitting in production (-70% bundle size)
-  * Visual indicator that JS is still bundling in development
-* Add HTTPS option for local development
-* Helper scripts now have `.cjs` or `.mjs` extensions
-* Consolidated all File paths to `services/madoc-ts/src/paths`
-* Consolidated all environment variables to `services/madoc-ts/src/paths`
-* Changed all `const { push } = useHistory()` to `const navigate = useNavigate()` (React Router upgrade)
-* Change all `renderUniversalRoutes(...)` to `<Outlet />` (React Router upgrade)
-* Change all `api.getIsServer()` checks to `<BrowserComponent />` wrapper (React router upgrade)
-* Change all `<Redirect />` to `<Navigate />` (React router upgrade)
-* Fork of `RegionHighlight`, `ResizeWorldItem` from Atlas viewer (may be removed in future)
-* Capture model helper `captureModelShorthandText` for creating test fixtures (with values)
-* Removed almost all external modules made available to plugins (breaks code-splitting,
+- Migrated build from Webpack to Vite
+  - Split server builds (auth/queue/producer/server)
+  - Added hot module reloading
+  - Better module splitting in production (-70% bundle size)
+  - Visual indicator that JS is still bundling in development
+- Add HTTPS option for local development
+- Helper scripts now have `.cjs` or `.mjs` extensions
+- Consolidated all File paths to `services/madoc-ts/src/paths`
+- Consolidated all environment variables to `services/madoc-ts/src/paths`
+- Changed all `const { push } = useHistory()` to `const navigate = useNavigate()` (React Router upgrade)
+- Change all `renderUniversalRoutes(...)` to `<Outlet />` (React Router upgrade)
+- Change all `api.getIsServer()` checks to `<BrowserComponent />` wrapper (React router upgrade)
+- Change all `<Redirect />` to `<Navigate />` (React router upgrade)
+- Fork of `RegionHighlight`, `ResizeWorldItem` from Atlas viewer (may be removed in future)
+- Capture model helper `captureModelShorthandText` for creating test fixtures (with values)
+- Removed almost all external modules made available to plugins (breaks code-splitting,
   see [use-module.ts](https://github.com/digirati-co-uk/madoc-platform/blob/09d566aa4560dc72b878db089b4e1b834c608ed7/services/madoc-ts/src/frontend/shared/plugins/use-module.ts))
-* Move Api keys database code to `ApiKeyRepository`
-* Added flags that can be passed into the `BaseRepository` class
-* Split out `ViewDocument` into more manageable components
+- Move Api keys database code to `ApiKeyRepository`
+- Added flags that can be passed into the `BaseRepository` class
+- Split out `ViewDocument` into more manageable components
 
 ## [2.0.8](https://github.com/digirati-co-uk/madoc-platform/releases/tag/v2.0.8) - 2022-08-24
 
@@ -682,7 +719,7 @@ This is a hot fix release.
 - Updated BullMQ [Changelog](https://github.com/taskforcesh/bullmq/blob/master/docs/gitbook/changelog.md)
 - [dev dependency] Updated Jest 26 -> 27
 - [dev dependency] Updated Webpack 4 -> 5
-- [dev dependency]  Updated babel
+- [dev dependency] Updated babel
 - Updated Node to latest LTS
 - [dev dependency] Various security patches
 
