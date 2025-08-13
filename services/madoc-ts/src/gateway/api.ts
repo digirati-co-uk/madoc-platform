@@ -1447,6 +1447,12 @@ export class ApiClient {
     return this.crowdsourcing.deleteCaptureModel(id);
   }
 
+  async deleteProjectCaptureModel(projectId: string, id: string) {
+    await this.request(`/api/madoc/projects/${projectId}/capture-model/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
   /**
    * @deprecated use api.crowdsourcing.cloneCaptureModel() instead
    */

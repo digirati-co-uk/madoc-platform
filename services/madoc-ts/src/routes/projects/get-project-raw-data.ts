@@ -20,8 +20,6 @@ export const getProjectRawData: RouteMiddleware = async context => {
     throw new RequestError('Invalid entity');
   }
 
-  console.log('context.query.entity ->', context.query.entity);
-
   context.response.body = await context.captureModels.getModelFieldRevisionsByProject({
     projectId,
     entity: context.query.entity,

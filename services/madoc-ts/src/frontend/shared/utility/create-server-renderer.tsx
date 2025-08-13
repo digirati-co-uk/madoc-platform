@@ -396,6 +396,7 @@ export function createServerRenderer(
           ${helmet.title.toString()}
           ${helmet.meta.toString()}
           ${helmet.link.toString()}
+          <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
           ${styles}
         `,
       body: `

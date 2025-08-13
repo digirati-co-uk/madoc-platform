@@ -35,10 +35,7 @@ export const Button = styled.button<{
   display: inline-flex;
   letter-spacing: 0.25px;
   vertical-align: top;
-  transition:
-    color 0.1s,
-    background-color 0.1s,
-    border-color 0.1s;
+  transition: color 0.1s, background-color 0.1s, border-color 0.1s;
   white-space: nowrap;
 
   // Alternative with github style gradient
@@ -354,8 +351,13 @@ export const LinkButton = styled.button<{ $inherit?: boolean }>`
   color: ${props => (props.$inherit ? 'inherit' : '#5071f4')};
   text-decoration: underline;
   cursor: pointer;
+  align-items: center;
+  display: flex;
   &:hover {
     color: ${props => (props.$inherit ? 'inherit' : '#42a0db')};
+  }
+  &:disabled {
+    color: red;
   }
 `;
 

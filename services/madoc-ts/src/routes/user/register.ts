@@ -5,6 +5,7 @@ import { gatewayHost } from '../../gateway/api.server';
 import { renderFrontend } from '../../middleware/render-frontend';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { passwordHash } from '../../utility/php-password-hash';
+import { validateEmail } from '../../utility/validate-email';
 
 export const registerPage: RouteMiddleware = async (context, next) => {
   if (context.query.redirect && !context.query.redirect.startsWith('/')) {
@@ -72,9 +73,11 @@ export const registerPage: RouteMiddleware = async (context, next) => {
       return;
     }
 
+    const captchaToken = context.requestBody?.['cap-token'];
     const { name, email, p1, p2 } = context.requestBody;
 
-    if (!name.trim() || !email.trim()) {
+    const isValid = captchaToken ? await context.captcha.validateToken(captchaToken) : false;
+    if (!isValid || !name.trim() || !email.trim() || !validateEmail(email)) {
       context.reactFormResponse.unknownError = true;
       context.reactFormResponse.email = email;
       context.reactFormResponse.name = name;

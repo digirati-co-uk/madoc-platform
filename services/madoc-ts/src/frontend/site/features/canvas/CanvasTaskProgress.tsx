@@ -24,7 +24,7 @@ export const CanvasTaskProgress: React.FC = () => {
   const { buttonProps, isOpen } = useDropdownMenu(1, {
     disableFocusFirstItemOnClick: true,
   });
-  const { canvasId } = useRouteContext();
+  const { canvasId, projectId } = useRouteContext();
   const api = useApi();
   const { canProgress, isAdmin } = useUserPermissions();
   const [prepare] = usePrepareContribution();
@@ -89,20 +89,11 @@ export const CanvasTaskProgress: React.FC = () => {
   });
 
   const [deleteCaptureModel, deleteCaptureModelStatus] = useMutation(async () => {
-    if (canvasModel && canvasModel.model && canvasModel.model.id && userTasks) {
-      await Promise.all(
-        userTasks.map(
-          userTask =>
-            userTask &&
-            userTask.id &&
-            api.deleteTask(userTask.id).catch(err => {
-              console.log(err);
-            })
-        )
-      );
-
-      await api.deleteCaptureModel(canvasModel.model.id);
-      await refetchModel();
+    if (canvasModel && canvasModel.model && canvasModel.model.id) {
+      if (projectId) {
+        await api.deleteProjectCaptureModel(projectId, canvasModel.model.id);
+        await refetchModel();
+      }
     }
   });
 

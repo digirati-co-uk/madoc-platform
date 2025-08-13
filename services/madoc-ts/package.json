@@ -68,6 +68,8 @@
     "@atlas-viewer/atlas": "^2.0.6",
     "@atlas-viewer/iiif-image-api": "^2.1.1",
     "@babel/runtime": "^7.20.13",
+    "@cap.js/server": "^3.0.0",
+    "@cap.js/widget": "^0.1.25",
     "@iiif/builder": "^2.0.0",
     "@iiif/helpers": "^1.0.6",
     "@iiif/parser": "^2.0.2",

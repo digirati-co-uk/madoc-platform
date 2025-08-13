@@ -117,6 +117,7 @@ export const projectCsvSimpleExport: ExportConfig = {
 
     function findBest(fields: any[]) {
       const revises = fields.map(r => r.revises);
+      console.log('FINDING BEST', fields);
       return fields.filter(r => !revises.includes(r.id)).pop() || fields[0];
     }
 
