@@ -27,7 +27,7 @@ import { useSearchQuery } from '../hooks/use-search-query';
 import { ButtonRow, TinyButton } from '../../shared/navigation/Button';
 
 export const Search: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [{ resolvedData: searchResponse, latestData }, displayFacets, isLoading] = useSearch();
   const { rawQuery, page, fulltext, appliedFacets } = useSearchQuery();
   const {
@@ -44,6 +44,89 @@ export const Search: React.FC = () => {
     clearAllFacets,
     setFullTextQuery,
   } = useSearchFacets();
+
+  // Helper function to get label in current language only
+  const getLocalizedLabel = (label: any) => {
+    if (!label) {
+      return label;
+    }
+    
+    // If it's already a string, return it as-is
+    if (typeof label === 'string') {
+      return label;
+    }
+    
+    // Debug: Log the label structure to understand the data
+    console.log('Label structure:', label, 'Current language:', i18n.language);
+    
+    // Handle InternationalString objects
+    if (typeof label === 'object') {
+      const availableLanguages = Object.keys(label);
+      console.log('Available languages:', availableLanguages);
+      
+      // Priority 1: Exact match for current language
+      if (label[i18n.language] && Array.isArray(label[i18n.language])) {
+        return { [i18n.language]: label[i18n.language] };
+      }
+      
+      // Priority 2: Short language code (e.g., 'en' from 'en-US')
+      const currentLangShort = i18n.language.split('-')[0];
+      if (label[currentLangShort] && Array.isArray(label[currentLangShort])) {
+        return { [currentLangShort]: label[currentLangShort] };
+      }
+      
+      // Priority 3: If we have multiple languages and one is 'none', try to find a real language
+      if (availableLanguages.length > 1 && availableLanguages.includes('none')) {
+        // Look for English first as a fallback
+        if (label['en'] && Array.isArray(label['en'])) {
+          return { 'en': label['en'] };
+        }
+        
+        // Then look for any non-'none' language
+        const realLang = availableLanguages.find(lang => lang !== 'none' && lang !== '@none');
+        if (realLang && label[realLang] && Array.isArray(label[realLang])) {
+          return { [realLang]: label[realLang] };
+        }
+      }
+      
+      // Priority 4: Handle the case where we have 'none' with combined language values
+      if (label['none'] && Array.isArray(label['none']) && label['none'].length > 0) {
+        const noneValues = label['none'];
+        console.log('None values:', noneValues);
+        
+        // If there's only one value or if we can't split meaningfully, return as-is
+        if (noneValues.length === 1) {
+          const value = noneValues[0];
+          
+          // Try to detect if this is a combined language string (contains " and ")
+          if (typeof value === 'string' && value.includes(' and ')) {
+            const parts = value.split(' and ').map(part => part.trim());
+            console.log('Split parts:', parts);
+            
+            // For now, just return the first part to show only one language
+            // You could implement more sophisticated language detection here
+            return { [i18n.language]: [parts[0]] };
+          }
+          
+          // Return the single value
+          return { [i18n.language]: [value] };
+        }
+        
+        // Multiple values in 'none' - return the first one
+        return { [i18n.language]: [noneValues[0]] };
+      }
+      
+      // Priority 5: Fallback to first available language
+      if (availableLanguages.length > 0) {
+        const firstLang = availableLanguages[0];
+        if (label[firstLang] && Array.isArray(label[firstLang])) {
+          return { [firstLang]: label[firstLang] };
+        }
+      }
+    }
+    
+    return label;
+  };
 
   return (
     <>
@@ -67,7 +150,7 @@ export const Search: React.FC = () => {
             return (
               <SearchFilterSection key={facet.id}>
                 <SearchFilterSectionTitle>
-                  <LocaleString>{facet.label}</LocaleString>
+                  <LocaleString>{getLocalizedLabel(facet.label)}</LocaleString>
                 </SearchFilterSectionTitle>
                 <SearchFilterItemList>
                   {facet.items.map(item => {
@@ -88,7 +171,7 @@ export const Search: React.FC = () => {
                           />
                         </SearchFilterCheckbox>
                         <SearchFilterLabel htmlFor={itemHash}>
-                          <LocaleString>{item.label}</LocaleString>
+                          <LocaleString>{getLocalizedLabel(item.label)}</LocaleString>
                         </SearchFilterLabel>
                         {showSearchFacetCount ? (
                           <SearchFilterItemCount>

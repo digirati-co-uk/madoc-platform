@@ -49,6 +49,7 @@ export function useSearch() {
         manifestId,
         fulltext: fulltext,
         facet_fields: facetsToRequest.length ? facetsToRequest : undefined,
+
         //  @todo stringify facets.
         facets: appliedFacets.map(facet => ({
           type: 'metadata',
