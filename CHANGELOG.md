@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added button to exclude all manifests from preview collection
 
+### Fixed
+
+- Fixed URL encoding of IIIF Collections and Manifests (NS-74)
+
 <!--
 ### Added
 

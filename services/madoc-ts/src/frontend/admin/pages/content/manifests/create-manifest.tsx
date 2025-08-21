@@ -33,7 +33,7 @@ export const CreateManifest: React.FC = () => {
   const [isCreating, setIsCreating] = useState(false);
   const api = useApi();
   const navigate = useNavigate();
-  const query = useLocationQuery<{ manifest?: string }>();
+  const query = useLocationQuery<{ manifest?: string; manifest_encoded?: string }>();
   const [manifestList, setManifestList] = useState('');
   const [error, setError] = useState('');
   const { data, refetch: refreshTasks } = usePaginatedData(CreateManifest);
@@ -56,7 +56,7 @@ export const CreateManifest: React.FC = () => {
     await refreshTasks();
   });
 
-  const urlManifest = query.manifest;
+  const urlManifest = query.manifest || (query.manifest_encoded ? atob(query.manifest_encoded) : '');
 
   const [chosenManifestList, setChosenManifestList] = useState<string[]>([]);
 
@@ -101,6 +101,7 @@ export const CreateManifest: React.FC = () => {
               {t('Import manifest')}
             </Button>
             <hr />
+            <code className="text-sm p-3 rounded bg-slate-50 space-y-4 block">{urlManifest}</code>
             {error ? (
               <ErrorMessage>{error}</ErrorMessage>
             ) : (
@@ -157,7 +158,7 @@ export const CreateManifest: React.FC = () => {
                       return;
                     }
                     if (list.length === 1) {
-                      navigate(`/import/manifest?manifest=${list[0]}`);
+                      navigate(`/import/manifest?manifest_encoded=${btoa(list[0])}`);
                     } else {
                       setChosenManifestList(list);
                     }
