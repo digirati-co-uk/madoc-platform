@@ -65,6 +65,66 @@ export interface CrowdsourcingTask extends BaseTask {
   };
 }
 
+async function propogateRejectedCrowdsourcingTask(task: CrowdsourcingTask, api: ApiClient) {
+  const assigneeId = task.assignee?.id;
+
+  // Here we check if its a manifest task.
+  const subject = parseUrn(task.subject);
+  if (subject?.type.toLowerCase() !== 'manifest') {
+    // This could indicate its a Canvas task thats been unassigned.
+    // We will ignore it, although in the future this could be a good place
+    // to check the Capture Model and update it.
+    return;
+  }
+
+  // Ignore if we don't have a parent or assignee.
+  if (!task.parent_task || !assigneeId) return;
+
+  // This is the crowdsourcing-manifest-task
+  // const crowdsourcingManifestTask = await api.getTask(task.parent_task, { all: true });
+  //
+  // This will have a list of crowdsourcing-canvas-task, but we can query them directly I think.
+  const crowdsourcingTasks = await api.getTask(task.parent_task, {
+    all: true,
+    detail: true,
+    type: 'crowdsourcing-canvas-task',
+  });
+
+  // Also reject reviews.
+  if (task.state.reviewTask) {
+    await api.updateTask(task.state.reviewTask, { status: -1, status_text: 'rejected' }).catch(() => {
+      // Ignore.
+    });
+  }
+
+  for (const crowdsourcingCanvasTask of crowdsourcingTasks.subtasks || []) {
+    // Now the user may have created `crowdsourcing-task` instances.
+    // "assignee": {
+    //   "id": "urn:madoc:user:404",
+    //   "name": "nan lloyd williams",
+    //   "is_service": false
+    // },
+    if (crowdsourcingCanvasTask?.assignee?.id) {
+      const crowdsourcingCanvasTaskAssigneeId = crowdsourcingCanvasTask.assignee.id;
+      // Now we can compare
+      if (crowdsourcingCanvasTaskAssigneeId === assigneeId) {
+        // This is a task that the user was assigned to, but since they are rejecting the
+        // Manifest task they are also rejecting the canvas ones.
+        await api.updateTask(crowdsourcingCanvasTask.id, { status: -1, status_text: 'unassigned ' });
+
+        if (crowdsourcingCanvasTask.state.reviewTask) {
+          console.log('REJECTING CANVAS REVIEW TASK', crowdsourcingCanvasTask.state.reviewTask);
+          await api
+            .updateTask(crowdsourcingCanvasTask.state.reviewTask, { status: -1, status_text: 'rejected' })
+            .catch(() => {
+              // Ignore.
+            });
+        }
+      }
+    }
+  }
+}
+
 export function createTask({
   projectId,
   userId,
@@ -148,12 +208,23 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
           }
         }
         if (task.parent_task) {
-          const parent = await api.getTask(task.parent_task, { detail: true, type: 'crowdsourcing-task' });
+          const parent = await api.getTask(task.parent_task, { detail: true, all: true, type: 'crowdsourcing-task' });
           if (parent.type === 'crowdsourcing-manifest-task') {
             // We have just rejected a manifest task.
-            await syncManifestTaskStatus(parent as any, api);
+            await syncManifestTaskStatus(parent as any, api).catch(err => {
+              // Also ignore any errors with sycning.
+              console.log(err);
+            });
           }
         }
+
+        // Propogate the -1 to canvas tasks.
+        await propogateRejectedCrowdsourcingTask(task, api).catch(err => {
+          // We will ignore if this errors, since some of the data may be in an undefined
+          // state from previous fixes.
+          console.log(err);
+        });
+
         if (userId) {
           const user = parseUrn(userId);
           if (user && user.id) {
@@ -178,7 +249,6 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
       break;
     }
     case 'status.2': {
-      console.log('crowdsourcing-task.status.2');
       try {
         const task = await api.getTask<CrowdsourcingTask>(taskId);
 

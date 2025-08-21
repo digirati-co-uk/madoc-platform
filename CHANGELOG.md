@@ -10,12 +10,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Added button to exclude all manifests from preview collection
+- Added button to delete all contributions on a Manifest to hard-reset it (NS-67)
 
 ### Fixed
 
 - Fixed URL encoding of IIIF Collections and Manifests (NS-74)
+- Fixed logic when unassigning a user from a Manifest task to also mark associated tasks and reviews as unassigned (NS-67)
 
 <!--
+
 ### Added
 
 ### Changed
@@ -23,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Removed
+
 -->
 
 ## [v2.2.9](https://github.com/digirati-co-uk/madoc-platform/compare/v2.2.8...v2.2.9)
