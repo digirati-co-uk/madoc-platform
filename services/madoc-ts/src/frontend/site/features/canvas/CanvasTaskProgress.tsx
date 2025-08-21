@@ -34,7 +34,6 @@ export const CanvasTaskProgress: React.FC = () => {
   const { data: canvasModel, refetch: refetchModel } = useCanvasModel();
 
   const canvasTask = projectTasks?.canvasTask;
-  const userTasks = projectTasks?.userTasks;
   const isManifestComplete = projectTasks?.isManifestComplete;
   const canBeMarkedAsComplete = !canvasTask || canvasTask.status <= 1;
   const totalContributors = projectTasks?.totalContributors;

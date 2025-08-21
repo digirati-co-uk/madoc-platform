@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added button to exclude all manifests from preview collection
 - Added button to delete all contributions on a Manifest to hard-reset it (NS-67)
 
+### Changed
+
+- Reviews can now publish to the projects curated feed (NS-60)
+
 ### Fixed
 
 - Fixed URL encoding of IIIF Collections and Manifests (NS-74)

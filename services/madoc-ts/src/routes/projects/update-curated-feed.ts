@@ -21,7 +21,7 @@ export const updateCuratedFeed: RouteMiddleware<
   { id: string; feed: string },
   { manifestId: number }
 > = async context => {
-  const { id, siteId } = optionalUserWithScope(context, ['site.admin']);
+  const { id, siteId } = optionalUserWithScope(context, ['tasks.create']);
   const parsedId = context.params.id ? parseProjectId(context.params.id) : null;
   const project = parsedId ? await context.connection.one(getProject(parsedId, siteId)) : null;
   const primaryStream = (feedMap as any)[context.params.feed];
