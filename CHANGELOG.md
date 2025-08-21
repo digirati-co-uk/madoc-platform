@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Reviews can now publish to the projects curated feed (NS-60)
+- Admin pages now use enhanced pagination
 
 ### Fixed
 
