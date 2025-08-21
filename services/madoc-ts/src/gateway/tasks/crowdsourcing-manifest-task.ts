@@ -86,6 +86,8 @@ export function createTask({
 export const syncManifestTaskStatus = async (task: CrowdsourcingManifestTask, api: ApiClient) => {
   // We need to check if this is the maximum.
   const maximum = task.state.maxContributors ? Number(task.state.maxContributors) : undefined;
+
+  // To clarify, these are `crowdsourcing-tasks` that are targetting Manifests.
   const validTasks = task.subtasks?.filter(t => {
     return t.type === 'crowdsourcing-task' && t.status !== -1;
   });

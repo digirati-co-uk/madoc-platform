@@ -17,3 +17,4 @@ e2e/test-fixtures/postgres/default/default.sql
 .DS_Store
 services/madoc-next
 scripts
+notes

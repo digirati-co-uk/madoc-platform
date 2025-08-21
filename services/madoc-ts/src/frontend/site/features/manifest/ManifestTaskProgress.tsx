@@ -8,13 +8,14 @@ import { Input, InputContainer, InputLabel } from '../../../shared/form/Input';
 import { WhiteTickIcon } from '../../../shared/icons/TickIcon';
 import { ItemFilterContainer, ItemFilterPopupContainer } from '../../../shared/components/ItemFilter';
 import { useApi } from '../../../shared/hooks/use-api';
-import { useUser } from '../../../shared/hooks/use-site';
+import { useUserPermissions } from '../../../shared/hooks/use-site';
 import { InfoIcon } from '../../../shared/icons/InfoIcon';
 import { createLink } from '../../../shared/utility/create-link';
 import { HrefLink } from '../../../shared/utility/href-link';
 import { useActivityStreamConfig } from '../../hooks/use-activity-stream-config';
 import { useManifestTask } from '../../hooks/use-manifest-task';
 import { useRouteContext } from '../../hooks/use-route-context';
+import { ModalButton } from '../../../shared/components/Modal';
 
 export const ManifestTaskProgress: React.FC = () => {
   const { t } = useTranslation();
@@ -22,11 +23,8 @@ export const ManifestTaskProgress: React.FC = () => {
     disableFocusFirstItemOnClick: true,
   });
   const { projectId, manifestId } = useRouteContext();
+  const { canProgress, isAdmin } = useUserPermissions();
   const api = useApi();
-  const user = useUser();
-  const isAdmin =
-    user && user.scope && (user.scope.indexOf('site.admin') !== -1 || user.scope.indexOf('tasks.admin') !== -1);
-  const canProgress = user && user.scope && user.scope.indexOf('tasks.create') !== -1;
   const activityStreams = useActivityStreamConfig();
   const [isPublished, setIsPublished] = useState(false);
 
@@ -76,6 +74,13 @@ export const ManifestTaskProgress: React.FC = () => {
       await api.submitToCuratedFeed(projectId, manifestId);
       setIsPublished(true);
     }
+  });
+
+  const [deleteManifestTask, deleteManifestTaskStatus] = useMutation(async () => {
+    if (isAdmin && manifestTask?.type === 'crowdsourcing-manifest-task') {
+      await api.deleteTask(manifestTask.id!);
+    }
+    await refetch();
   });
 
   if (!projectId || (!isAdmin && !canProgress)) {
@@ -199,6 +204,32 @@ export const ManifestTaskProgress: React.FC = () => {
                 </Button>
               </ButtonRow>
             </div>
+          ) : null}
+
+          {isAdmin && manifestTask?.type === 'crowdsourcing-manifest-task' ? (
+            <ModalButton
+              title="Are you sure you want to reset this Manifest?"
+              render={() => {
+                return <div>{t('All of the contributions to this Manifest and Canvases within will be deleted')}</div>;
+              }}
+              renderFooter={({ close }) => {
+                return (
+                  <ButtonRow style={{ margin: '0 0 0 auto' }}>
+                    <Button
+                      $error
+                      onClick={() => deleteManifestTask().then(close)}
+                      disabled={deleteManifestTaskStatus.isLoading}
+                    >
+                      {t('Delete all contributions')}
+                    </Button>
+                  </ButtonRow>
+                );
+              }}
+            >
+              <ButtonRow>
+                <Button $error>{t('Delete all contributions')}</Button>
+              </ButtonRow>
+            </ModalButton>
           ) : null}
         </div>
       </ItemFilterPopupContainer>

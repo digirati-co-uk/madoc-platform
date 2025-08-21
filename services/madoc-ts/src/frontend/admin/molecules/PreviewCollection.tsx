@@ -25,6 +25,10 @@ export const PreviewCollection: React.FC<{
   const [excludedManifests, setExcludedManifests] = useState<string[]>([]);
   const [error, setError] = useState<string>('');
 
+  function excludeAll() {
+    setExcludedManifests(manifests.map(m => m.id));
+  }
+
   const excludeEnabled = true;
 
   useVaultEffect(
@@ -109,6 +113,10 @@ export const PreviewCollection: React.FC<{
           <PreviewManifest id={currentManifest} />
         </div>
       ) : null}
+
+      <div>
+        <Button onClick={excludeAll}>{t('Exclude all')}</Button>
+      </div>
 
       <TableContainer>
         {manifests.map(manifest => {
