@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.2.9...main)
 
+### Added
+
+- Added button to exclude all manifests from preview collection
+
 <!--
 ### Added
 
