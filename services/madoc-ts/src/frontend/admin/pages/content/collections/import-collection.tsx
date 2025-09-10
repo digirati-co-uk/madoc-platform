@@ -29,9 +29,11 @@ export const ImportCollection: React.FC = () => {
   const [isCreating, setIsCreating] = useState(false);
   const api = useApi();
   const navigate = useNavigate();
-  const query = useLocationQuery<{ collection?: string; manifest?: string }>();
+  const query = useLocationQuery<{ collection_encoded?: string; manifest_encoded?: string }>();
   const { data, refetch: refreshTasks } = usePaginatedData(ImportCollection);
-  const [importedCollectionId, setImportedCollectionId] = useState<string | undefined>(query.collection);
+  const [importedCollectionId, setImportedCollectionId] = useState<string | undefined>(() =>
+    query.collection_encoded ? atob(query.collection_encoded) : ''
+  );
   const [importCollection] = useMutation(
     async ({ collectionId, manifestIds }: { collectionId: string; manifestIds: string[] }) => {
       setIsCreating(true);
@@ -57,11 +59,11 @@ export const ImportCollection: React.FC = () => {
         title={t('Import collection')}
       />
       <WidePage>
-        {query.collection ? (
+        {query.collection_encoded ? (
           <VaultProvider>
             <PreviewCollection
-              id={query.collection}
-              manifestId={query.manifest}
+              id={atob(query.collection_encoded)}
+              manifestId={query.manifest_encoded ? atob(query.manifest_encoded) : ''}
               disabled={isCreating}
               onImport={(collectionId, manifestIds) => {
                 importCollection({ collectionId, manifestIds }).then(task => {
@@ -71,7 +73,12 @@ export const ImportCollection: React.FC = () => {
                 });
               }}
               onClick={manifestId => {
-                navigate(`/import/collection?collection=${importedCollectionId}&manifest=${manifestId}`);
+                if (!importedCollectionId || !manifestId) {
+                  return;
+                }
+                navigate(
+                  `/import/collection?collection_encoded=${btoa(importedCollectionId)}&manifest_encoded=${btoa(manifestId)}`
+                );
               }}
             />
           </VaultProvider>
@@ -95,7 +102,9 @@ export const ImportCollection: React.FC = () => {
                   $primary
                   disabled={isCreating || !importedCollectionId}
                   onClick={() => {
-                    navigate(`/import/collection?collection=${importedCollectionId}`);
+                    navigate(
+                      `/import/collection?collection_encoded=${importedCollectionId ? btoa(importedCollectionId) : ''}`
+                    );
                   }}
                 >
                   {t('Import collection')}
