@@ -79,7 +79,7 @@ export function CanvasViewer({
     // eslint-disable-next-line react-hooks/rules-of-hooks
     disableAnnotationPanel ? null : useAnnotationPanel(openPanel === 'annotations' && isOpen),
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    disableTranscriptionMenu ? null : useTranscriptionMenu(),
+    disableTranscriptionMenu ? null : useTranscriptionMenu(openPanel === 'transcription' && isOpen),
     // eslint-disable-next-line react-hooks/rules-of-hooks
     disableDocumentPanel ? null : useDocumentPanel(),
     // eslint-disable-next-line react-hooks/rules-of-hooks
