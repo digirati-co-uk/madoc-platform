@@ -13,11 +13,15 @@ export const getCanvasPlaintext: RouteMiddleware<{ id: string }> = async context
   const siteApi = api.asUser({ siteId });
 
   // Get all capture models.
-  const models = await siteApi.getAllCaptureModels({
-    target_id: `urn:madoc:canvas:${context.params.id}`,
-    target_type: 'Canvas',
-    all_derivatives: true,
-  });
+  const models = await context.captureModels.listCaptureModels(
+    {
+      all: true,
+      page: 1,
+      perPage: 20,
+      target: `urn:madoc:canvas:${context.params.id}`,
+    },
+    siteId
+  );
 
   const state: { found: boolean; transcription?: string; source?: string } = {
     found: false,
@@ -28,6 +32,14 @@ export const getCanvasPlaintext: RouteMiddleware<{ id: string }> = async context
   if (models.length) {
     for (const model of models) {
       if (state.found) break;
+      context.body = await context.captureModels.getCaptureModel(
+        model.id,
+        {
+          includeCanonical: true,
+          revisionStatus: 'accepted',
+        },
+        siteId
+      );
       const loadedModel = await siteApi.getCaptureModel(model.id, { published: true });
       traverseDocument(loadedModel.document, {
         visitField(field) {
