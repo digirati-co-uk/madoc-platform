@@ -5,7 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.2.9...main)
+## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.2.10...main)
+
+<!--
+
+### Added
+
+### Changed
+
+### Fixed
+
+### Removed
+
+-->
+
+## [v2.2.10](https://github.com/digirati-co-uk/madoc-platform/compare/v2.2.9...v2.2.10)
 
 ### Added
 
@@ -22,18 +36,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fixed URL encoding of IIIF Collections and Manifests (NS-74)
 - Fixed logic when unassigning a user from a Manifest task to also mark associated tasks and reviews as unassigned (NS-67)
-
-<!--
-
-### Added
-
-### Changed
-
-### Fixed
-
-### Removed
-
--->
 
 ## [v2.2.9](https://github.com/digirati-co-uk/madoc-platform/compare/v2.2.8...v2.2.9)
 
