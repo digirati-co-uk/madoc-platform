@@ -42,11 +42,11 @@ export class CaptureModelRepository extends BaseRepository<'capture_model_api_mi
       return sql<CaptureModelRow>`
           select model.*, cms.structure_data as structure_data, cmd.document_data as document_data
           from capture_model model
-          
+
           left join capture_model_structure cms on cms.id = model.structure_id and cms.site_id = ${site_id}
           left join capture_model_document cmd on model.document_id = cmd.id and cmd.site_id = ${site_id}
           left join iiif_project ip on model.id = ip.capture_model_id
-  
+
           where ${query}
             and model.site_id = ${site_id}
       `;
@@ -59,7 +59,7 @@ export class CaptureModelRepository extends BaseRepository<'capture_model_api_mi
     getCaptureModelById: (id: string, site_id: number) => sql<CaptureModelRow>`
         select model.*, cms.structure_data as structure_data, cmd.document_data as document_data
         from capture_model model
-        
+
         left join capture_model_structure cms on cms.id = model.structure_id and cms.site_id = ${site_id}
         left join capture_model_document cmd on model.document_id = cmd.id and cmd.site_id = ${site_id}
 
@@ -229,7 +229,7 @@ export class CaptureModelRepository extends BaseRepository<'capture_model_api_mi
         value: any;
         revision: string;
         revises: string;
-        target: CaptureModel['target'],
+        target: CaptureModel['target'];
       }>`
         with d as (with cmd as (select cm.id as model_id,
                                        cm.target as target,
@@ -325,9 +325,9 @@ export class CaptureModelRepository extends BaseRepository<'capture_model_api_mi
       return sql<CaptureModelDocumentRow>`
         update capture_model_document
           set
-            ${setSearchStrings}  
+            ${setSearchStrings}
             document_data = ${sql.json(doc as any)}
-          where site_id = ${site_id} and id = ${doc.id} 
+          where site_id = ${site_id} and id = ${doc.id}
           returning *;
       `;
     },
@@ -379,7 +379,7 @@ export class CaptureModelRepository extends BaseRepository<'capture_model_api_mi
         update capture_model_structure
           set structure_data = ${sql.json(structure as any)},
               structure_label = ${structure.label || ''}
-          where site_id = ${site_id} and id = ${structure.id} 
+          where site_id = ${site_id} and id = ${structure.id}
           returning *;
       `;
     },
@@ -440,7 +440,7 @@ export class CaptureModelRepository extends BaseRepository<'capture_model_api_mi
         update capture_model_revision
           set approved = ${approved},
               status = ${newStatus}
-          where site_id = ${site_id} and id = ${id} 
+          where site_id = ${site_id} and id = ${id}
           returning *;
       `;
     },
@@ -457,7 +457,7 @@ export class CaptureModelRepository extends BaseRepository<'capture_model_api_mi
       return sql<CaptureModelRevisionRow>`
         update capture_model_revision
           set deleted_fields = ${sql.json(deletedFields || [])}
-          where site_id = ${site_id} and id = ${id} 
+          where site_id = ${site_id} and id = ${id}
           returning *;
       `;
     },
@@ -777,6 +777,11 @@ export class CaptureModelRepository extends BaseRepository<'capture_model_api_mi
     return CaptureModelRepository.parseRevisionRow(
       await this.connection.one(CaptureModelRepository.queries.getRevisionById(id, siteId))
     );
+  }
+
+  async revisionExists(id: string, siteId: number) {
+    const found = await this.connection.maybeOne(CaptureModelRepository.queries.getRevisionById(id, siteId));
+    return !!found;
   }
 
   async getRevision(

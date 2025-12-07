@@ -54,7 +54,7 @@ export const CanvasLoader: UniversalComponent<CanvasLoaderType> = createUniversa
       return ['getSiteCanvas', [Number(params.canvasId)]];
     },
     getData: async (key, vars, api) => {
-      return api.getSiteCanvas(vars[0], { plaintext: true });
+      return api.getSiteCanvas(vars[0], { plaintext: false });
     },
   }
 );

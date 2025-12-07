@@ -31,8 +31,8 @@ export const Register: React.FC = () => {
     registerSuccess?: boolean;
     noEmail?: boolean;
   }>();
-
-  const didError = form?.emailError || form?.unknownError;
+  const didEmailError = form?.emailError;
+  const didUnknownError = form?.unknownError;
   const noEmail = form?.noEmail;
 
   useEffect(() => {
@@ -81,6 +81,19 @@ export const Register: React.FC = () => {
     </div>
   ) : null;
 
+  const captcha = (
+    <>
+      {/* @ts-expect-error custom component */}
+      <cap-widget
+        data-cap-api-endpoint={`/s/${site.slug}/madoc/api/captcha/`}
+        data-cap-i18n-verifying-label={t('captcha_verifying')}
+        data-cap-i18n-initial-state={t('captcha_initial_state')}
+        data-cap-i18n-solved-label={t('captcha_solved_label')}
+        data-cap-i18n-error-label={t('captcha_error')}
+      />
+    </>
+  );
+
   if (user && form?.invitation) {
     // @todo.
     return (
@@ -101,6 +114,7 @@ export const Register: React.FC = () => {
             </InputContainer>
           </LoginContainer>
           {acceptTerms}
+          {captcha}
           <input type="hidden" name="code" value={form.invitation.id} />
         </form>
       </div>
@@ -133,16 +147,18 @@ export const Register: React.FC = () => {
               <ArrowForwardIcon />
             </HrefLink>
           </LoginMessage>
+          {didUnknownError && <ErrorMessage $margin>Unknown error occurred</ErrorMessage>}
           <InputContainer>
             <InputLabel htmlFor="name">{t('Display name')}</InputLabel>
             <Input type="text" name="name" id="name" defaultValue={form?.name} />
           </InputContainer>
-          <InputContainer $error={didError}>
+          <InputContainer $error={didEmailError}>
             <InputLabel htmlFor="email">{t('Email')}</InputLabel>
             <Input type="text" name="email" id="email" defaultValue={form?.email} />
             {form?.emailError ? <ErrorMessage $small>{t('Email already in use')}</ErrorMessage> : null}
           </InputContainer>
           {acceptTerms}
+          {captcha}
           {systemConfig?.registerFooter ? (
             <div dangerouslySetInnerHTML={{ __html: systemConfig.registerFooter }} style={{ marginBottom: '1em' }} />
           ) : null}

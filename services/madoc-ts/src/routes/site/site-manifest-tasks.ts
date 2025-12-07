@@ -50,6 +50,8 @@ export const siteManifestTasks: RouteMiddleware<{
     progress: 0,
   };
 
+  const invalidTasks: string[] = [];
+  const modelIdExistsCache = new Map<string, boolean>();
   if (!config.claimGranularity || config.claimGranularity === 'canvas') {
     for (const task of canvasTasks.tasks) {
       if (
@@ -59,6 +61,29 @@ export const siteManifestTasks: RouteMiddleware<{
         task.assignee &&
         contributors.indexOf(task.assignee.id) === -1
       ) {
+        const revisionId = task.state?.revisionId;
+        const captureModelId = task.parameters?.[0];
+        if (captureModelId) {
+          let exists: boolean;
+          if (modelIdExistsCache.has(captureModelId)) {
+            exists = modelIdExistsCache.get(captureModelId)!;
+          } else {
+            exists = await context.captureModels.captureModelExists(captureModelId, site.id);
+            modelIdExistsCache.set(captureModelId, exists);
+          }
+
+          if (!exists) {
+            invalidTasks.push(task.id as string);
+            continue;
+          }
+        }
+        if (revisionId) {
+          const exists = await context.captureModels.revisionExists(revisionId, site.id);
+          if (!exists) {
+            invalidTasks.push(task.id as string);
+            continue;
+          }
+        }
         contributors.push(task.assignee.id);
       }
     }
@@ -93,6 +118,7 @@ export const siteManifestTasks: RouteMiddleware<{
   const userTasks = user
     ? (tasks.filter(
         task =>
+          !invalidTasks.includes(task.id!) &&
           task.type === 'crowdsourcing-task' &&
           task.status !== -1 &&
           task.assignee &&

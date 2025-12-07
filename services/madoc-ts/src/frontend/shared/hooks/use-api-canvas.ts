@@ -1,7 +1,7 @@
 import { useQuery } from 'react-query';
 import { useApi } from './use-api';
 
-export function useApiCanvas(canvasId?: string | number, site = true) {
+export function useApiCanvas(canvasId?: string | number, site = true, options: { plaintext?: boolean } = {}) {
   const api = useApi();
   return useQuery(
     ['api-canvas', { id: canvasId, site }],
@@ -11,7 +11,7 @@ export function useApiCanvas(canvasId?: string | number, site = true) {
       }
 
       if (site) {
-        return api.getSiteCanvas(Number(canvasId));
+        return api.getSiteCanvas(Number(canvasId), options);
       }
 
       return api.getCanvasById(Number(canvasId));

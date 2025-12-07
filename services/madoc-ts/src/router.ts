@@ -279,6 +279,9 @@ import { exportProjectTemplate } from './routes/projects/export-project-template
 import { generateApiKey } from './routes/admin/generate-api-key';
 import { authenticateApi } from './routes/global/api-authentication';
 import { siteListProjectAssigneeStats } from './routes/site/site-list-project-assignee-stats';
+import { deleteProjectCaptureModel } from './routes/projects/delete-project-capture-model';
+import { deleteInvalidUsers } from './routes/admin/delete-invalid-users';
+import { captchaChallenge, captchaRedeem } from './routes/site/site-captcha';
 
 export const router = new TypedRouter({
   // Normal route
@@ -295,6 +298,7 @@ export const router = new TypedRouter({
   'regenerate-keys': [TypedRouter.POST, '/api/madoc/system/key-regen', keyRegenerate],
   'generate-api-key': [TypedRouter.POST, '/api/madoc/system/api-keys', generateApiKey],
   'migrate-project-members': [TypedRouter.POST, '/api/madoc/system/migrate-project-members', migrateProjectMembers],
+  'migrate-invalid-users': [TypedRouter.POST, '/api/madoc/system/migrate-invalid-users', deleteInvalidUsers],
   'get-api-keys': [TypedRouter.GET, '/api/madoc/system/api-keys', listApiKeys],
   'delete-api-key': [TypedRouter.DELETE, '/api/madoc/system/api-keys/:client_id', deleteApiKey],
 
@@ -586,6 +590,11 @@ export const router = new TypedRouter({
     updateProjectNote,
   ],
   'get-project-deletion-summary': [TypedRouter.GET, '/api/madoc/projects/:id/deletion-summary', deleteProjectSummary],
+  'delete-project-capture-model': [
+    TypedRouter.DELETE,
+    '/api/madoc/projects/:id/capture-model/:modelId',
+    deleteProjectCaptureModel,
+  ],
   'delete-project': [TypedRouter.DELETE, '/api/madoc/projects/:id', deleteProjectEndpoint],
   'project-task-svg': [TypedRouter.GET, '/api/madoc/projects/:id/tasks/:taskId/preview-svg', svgFromCrowdsourcingTask],
   // Project updates
@@ -795,6 +804,10 @@ export const router = new TypedRouter({
   // Locale
   'get-locale': [TypedRouter.GET, '/s/:slug/madoc/api/locales/:lng/:ns', getLocale],
   'add-missing-locale': [TypedRouter.POST, '/s/:slug/madoc/api/locales/:lng/:ns', saveMissingLocale],
+
+  // Captcha
+  'captcha-challenge': [TypedRouter.POST, '/s/:slug/madoc/api/captcha/challenge', captchaChallenge],
+  'captcha-redeem': [TypedRouter.POST, '/s/:slug/madoc/api/captcha/redeem', captchaRedeem],
 
   // Frontend
   'admin-frontend': [TypedRouter.GET, '/s/:slug/admin(.*)', adminFrontend],

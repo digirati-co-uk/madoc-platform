@@ -38,6 +38,7 @@ import { SQL_COMMA, SQL_EMPTY } from '../utility/postgres-tags';
 import { sqlDate, upsert } from '../utility/slonik-helpers';
 import { verifySignedToken } from '../utility/verify-signed-token';
 import { BaseRepository } from './base-repository';
+import { validateEmail } from '../utility/validate-email';
 
 /**
  * Site + User repository.
@@ -1104,6 +1105,23 @@ export class SiteUserRepository extends BaseRepository {
 
   async removeUserRoleOnSite(siteId: number, userId: number) {
     await this.connection.query(SiteUserRepository.mutations.removeUserRoleOnSite(siteId, userId));
+  }
+
+  async adminCleanUsers() {
+    const allUsers = await this.connection.many(sql<{
+      id: number;
+      is_active: boolean;
+      automated: boolean;
+      email: string;
+    }>`select id, email, name, created, modified, role, is_active, automated, config
+      from "user"`);
+
+    for (const user of allUsers) {
+      if (!user.is_active && !user.automated && !validateEmail(user.email)) {
+        // Delete user.
+        await this.deleteUser(user.id);
+      }
+    }
   }
 
   async createUser(user: UserCreationRequest) {

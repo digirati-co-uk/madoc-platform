@@ -60,6 +60,12 @@ export const SystemStatus: UniversalComponent<SystemStatusType> = createUniversa
       });
     });
 
+    const [migrateInvalidUsers, migrateInvalidUsersStatus] = useMutation(async () => {
+      return api.request(`/api/madoc/system/migrate-invalid-users`, {
+        method: 'POST',
+      });
+    });
+
     const { memory, cpu } = data
       ? data.list.reduce(
           (state, next) => {
@@ -162,6 +168,9 @@ export const SystemStatus: UniversalComponent<SystemStatusType> = createUniversa
             </Button>
             <Button onClick={() => migrateProjectMembers()} disabled={migrateProjectMembersStatus.isLoading}>
               Migrate project members
+            </Button>
+            <Button onClick={() => migrateInvalidUsers()} disabled={migrateInvalidUsersStatus.isLoading}>
+              Migrate invalid users
             </Button>
           </ButtonRow>
 

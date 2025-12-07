@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { getBotType } from '../../../../automation/utils/get-bot-type';
 import { User } from '../../../../extensions/site-manager/types';
 import { TimeAgo } from '../../../shared/atoms/TimeAgo';
@@ -16,6 +16,8 @@ import { HrefLink } from '../../../shared/utility/href-link';
 import { AdminHeader } from '../../molecules/AdminHeader';
 import { Pagination } from '../../molecules/Pagination';
 import { Pagination as _Pagination } from '../../../../types/schemas/_pagination';
+import { validateEmail } from '../../../../utility/validate-email';
+import { ErrorMessage } from '../../../shared/callouts/ErrorMessage';
 
 export const ListUsers: React.FC = () => {
   const { data } = usePaginatedData<{ users: User[]; pagination: _Pagination }>(ListUsers);
@@ -35,6 +37,8 @@ export const ListUsers: React.FC = () => {
     return <Navigate to={'/'} />;
   }
 
+  const invalidUsers = data?.users?.filter(t => !t.automated && !validateEmail(t.email)) || [];
+
   return (
     <>
       <AdminHeader
@@ -45,6 +49,12 @@ export const ListUsers: React.FC = () => {
         ]}
       />
       {userDeleted ? <SuccessMessage>User deleted</SuccessMessage> : null}
+      {invalidUsers.length > 0 && (
+        <ErrorMessage>
+          Some users have registered with an invalid email, you can remove them from{' '}
+          <HrefLink href="/global/status">here</HrefLink>
+        </ErrorMessage>
+      )}
       <WidePage>
         <ButtonRow>
           <Button as={HrefLink} href={`/global/users/create`}>
@@ -90,7 +100,7 @@ export const ListUsers: React.FC = () => {
           </thead>
           <tbody>
             {data?.users.map(user => (
-              <SimpleTable.Row key={user.id} $interactive>
+              <SimpleTable.Row key={user.id} $interactive style={{ background: user.automated || validateEmail(user.email) ? '' : '#FDD6D6' }}>
                 <SimpleTable.Cell>{user.id}</SimpleTable.Cell>
                 <SimpleTable.Cell>
                   <HrefLink href={`/global/users/${user.id}`}>{user.name}</HrefLink>

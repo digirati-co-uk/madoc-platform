@@ -1,14 +1,14 @@
-import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { MetadataEmptyState } from '../../../shared/atoms/MetadataConfiguration';
-import { useData } from '../../../shared/hooks/use-data';
 import { TranscriptionIcon } from '../../../shared/icons/TranscriptionIcon';
 import { CanvasPlaintext } from '../../features/canvas/CanvasPlaintext';
-import { CanvasLoader } from '../../pages/loaders/canvas-loader';
 import { CanvasMenuHook } from './types';
+import { useApiCanvas } from '../../../shared/hooks/use-api-canvas';
+import { useRouteContext } from '../use-route-context';
 
-export function useTranscriptionMenu(): CanvasMenuHook {
-  const { data } = useData(CanvasLoader, []);
+export function useTranscriptionMenu(isOpen = false): CanvasMenuHook {
+  const { canvasId } = useRouteContext();
+  const { data } = useApiCanvas(isOpen ? canvasId : undefined, true, { plaintext: true });
   const { t } = useTranslation();
   const plaintext = data?.plaintext;
 
