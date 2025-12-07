@@ -1,5 +1,6 @@
 import { ImageService } from '@iiif/presentation-3';
-import React from 'react';
+import React, { useRef } from 'react';
+import { Runtime, Preset, PopmotionControllerConfig } from '@atlas-viewer/atlas';
 import { webglSupport } from '../../../../utility/webgl-support';
 import { AnnotationStyleProvider, useAnnotationStyles } from '../../../AnnotationStyleContext';
 import { getRevisionFieldFromPath } from '../../../helpers/get-revision-field-from-path';
@@ -15,7 +16,6 @@ import {
   VaultProvider,
   CanvasPanel,
 } from 'react-iiif-vault';
-import { Preset, PopmotionControllerConfig } from '@atlas-viewer/atlas';
 import { ImageServiceContext } from './Atlas.helpers';
 
 export type AtlasCustomOptions = {
@@ -46,10 +46,52 @@ const Canvas: React.FC<{
   onCreated?: (ctx: any) => void;
   unstable_webglRenderer?: boolean;
   controllerConfig?: PopmotionControllerConfig;
-}> = ({ isEditing, onDeselect, children, onCreated, unstable_webglRenderer, controllerConfig }) => {
+  containerRef?: React.RefObject<HTMLDivElement>;
+}> = ({ isEditing, onDeselect, children, onCreated, unstable_webglRenderer, controllerConfig, containerRef }) => {
   const canvas = useCanvas();
   const { data: service } = useImageService() as { data?: ImageService };
   const style = useAnnotationStyles();
+
+  // Handle small images - prevent stretching beyond original size
+  const handleCreated = (ctx: any) => {
+    if (onCreated) {
+      onCreated(ctx);
+    }
+
+    if (!canvas || !containerRef?.current) return;
+
+    const runtime: Runtime = ctx.runtime;
+    const container = containerRef.current;
+    const containerWidth = container.clientWidth;
+    const containerHeight = container.clientHeight;
+    const canvasWidth = canvas.width;
+    const canvasHeight = canvas.height;
+
+    // Check if the image is smaller than the viewport
+    if (canvasWidth < containerWidth && canvasHeight < containerHeight) {
+      // Use setTimeout to ensure the runtime is fully initialized
+      setTimeout(() => {
+        const aspectRatio = containerWidth / containerHeight;
+        const canvasAspectRatio = canvasWidth / canvasHeight;
+
+        let viewWidth: number;
+        let viewHeight: number;
+
+        if (aspectRatio > canvasAspectRatio) {
+          viewHeight = canvasHeight;
+          viewWidth = canvasHeight * aspectRatio;
+        } else {
+          viewWidth = canvasWidth;
+          viewHeight = canvasWidth / aspectRatio;
+        }
+
+        const x = (canvasWidth - viewWidth) / 2;
+        const y = (canvasHeight - viewHeight) / 2;
+
+        runtime.world.gotoRegion({ x, y, width: viewWidth, height: viewHeight });
+      }, 50);
+    }
+  };
 
   if (!service || !canvas) {
     return null;
@@ -58,7 +100,7 @@ const Canvas: React.FC<{
   return (
     <CanvasPanel.Viewer
       containerStyle={{ flex: '1 1 0px', height: '100%' }}
-      onCreated={onCreated}
+      onCreated={handleCreated}
       mode={isEditing ? 'sketch' : 'explore'}
       unstable_webglRenderer={webglSupport() && unstable_webglRenderer}
       renderPreset={defaultPreset}
@@ -90,6 +132,7 @@ const Canvas: React.FC<{
 };
 
 export const AtlasViewer: React.FC<AtlasViewerProps> = props => {
+  const containerRef = useRef<HTMLDivElement>(null);
   const { isLoaded } = useExternalManifest(props.state.manifestId);
   const currentSelector = useCurrentSelector('atlas', undefined);
   const selectorVisibility = {
@@ -110,6 +153,7 @@ export const AtlasViewer: React.FC<AtlasViewerProps> = props => {
 
   return (
     <div
+      ref={containerRef}
       style={{
         flex: '1 1 0px',
         minWidth: 0,
@@ -135,6 +179,7 @@ export const AtlasViewer: React.FC<AtlasViewerProps> = props => {
           controllerConfig={props.options?.custom?.controllerConfig}
           onCreated={props.options?.custom?.onCreateAtlas}
           isEditing={!!currentSelector}
+          containerRef={containerRef}
           // onDeselect={() => {
           //   if (currentSelector) {
           //     actions.clearSelector();

@@ -39,6 +39,7 @@ export const SimpleAtlasViewer = React.forwardRef<
   const canvas = useCanvas();
   const runtime = useRef<Runtime>();
   const osd = useRef<any>();
+  const containerRef = useRef<HTMLDivElement>(null);
   const { data: service } = useImageService();
   const {
     project: { atlasBackground },
@@ -50,8 +51,93 @@ export const SimpleAtlasViewer = React.forwardRef<
 
   const { enableRotation = false, hideViewerControls = false } = useModelPageConfiguration();
 
+  // Handle small images - prevent stretching beyond original size
+  const handleRuntimeCreated = (preset: { runtime: Runtime }) => {
+    runtime.current = preset.runtime;
+
+    if (!canvas || !containerRef.current) return;
+
+    // Get container dimensions
+    const container = containerRef.current;
+    const containerWidth = container.clientWidth;
+    const containerHeight = container.clientHeight;
+
+    // Get canvas (image) dimensions
+    const canvasWidth = canvas.width;
+    const canvasHeight = canvas.height;
+
+    // Check if the image is smaller than the viewport
+    if (canvasWidth < containerWidth && canvasHeight < containerHeight) {
+      // Image is smaller than viewport - display at original size, centered
+      // Use setTimeout to ensure the runtime is fully initialized
+      setTimeout(() => {
+        if (runtime.current) {
+          // Go to a region that shows the image at its original size, centered
+          // The region coordinates are in canvas space, so we need to account for the aspect ratio
+          const aspectRatio = containerWidth / containerHeight;
+          const canvasAspectRatio = canvasWidth / canvasHeight;
+
+          let viewWidth: number;
+          let viewHeight: number;
+
+          if (aspectRatio > canvasAspectRatio) {
+            // Container is wider - use container width to calculate view
+            viewHeight = canvasHeight;
+            viewWidth = canvasHeight * aspectRatio;
+          } else {
+            // Container is taller - use container height to calculate view
+            viewWidth = canvasWidth;
+            viewHeight = canvasWidth / aspectRatio;
+          }
+
+          // Center the view on the canvas
+          const x = (canvasWidth - viewWidth) / 2;
+          const y = (canvasHeight - viewHeight) / 2;
+
+          runtime.current.world.gotoRegion({
+            x,
+            y,
+            width: viewWidth,
+            height: viewHeight,
+          });
+        }
+      }, 50);
+    }
+  };
+
   const goHome = () => {
     if (runtime.current) {
+      // For small images, go to the constrained view instead of default home
+      if (canvas && containerRef.current) {
+        const container = containerRef.current;
+        const containerWidth = container.clientWidth;
+        const containerHeight = container.clientHeight;
+        const canvasWidth = canvas.width;
+        const canvasHeight = canvas.height;
+
+        if (canvasWidth < containerWidth && canvasHeight < containerHeight) {
+          // Small image - go to original size view
+          const aspectRatio = containerWidth / containerHeight;
+          const canvasAspectRatio = canvasWidth / canvasHeight;
+
+          let viewWidth: number;
+          let viewHeight: number;
+
+          if (aspectRatio > canvasAspectRatio) {
+            viewHeight = canvasHeight;
+            viewWidth = canvasHeight * aspectRatio;
+          } else {
+            viewWidth = canvasWidth;
+            viewHeight = canvasWidth / aspectRatio;
+          }
+
+          const x = (canvasWidth - viewWidth) / 2;
+          const y = (canvasHeight - viewHeight) / 2;
+
+          runtime.current.world.gotoRegion({ x, y, width: viewWidth, height: viewHeight });
+          return;
+        }
+      }
       runtime.current.world.goHome();
     }
     if (osd.current) {
@@ -112,9 +198,19 @@ export const SimpleAtlasViewer = React.forwardRef<
     return null;
   }
 
+  // Combine forwarded ref with containerRef
+  const setRefs = (element: HTMLDivElement | null) => {
+    (containerRef as React.MutableRefObject<HTMLDivElement | null>).current = element;
+    if (typeof ref === 'function') {
+      ref(element);
+    } else if (ref) {
+      (ref as React.MutableRefObject<HTMLDivElement | null>).current = element;
+    }
+  };
+
   return (
     <div
-      ref={ref}
+      ref={setRefs}
       style={{
         position: 'relative',
         flex: '1 1 0px',
@@ -155,7 +251,7 @@ export const SimpleAtlasViewer = React.forwardRef<
                 renderPreset={defaultPreset}
                 runtimeOptions={runtimeOptions}
                 key={canvas.id}
-                onCreated={preset => void (runtime.current = preset.runtime)}
+                onCreated={handleRuntimeCreated}
               >
                 <CanvasContext canvas={canvas.id}>
                   <CanvasPanel.RenderCanvas />
