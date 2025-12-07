@@ -1,5 +1,5 @@
 import { ImageService } from '@iiif/presentation-3';
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Runtime, Preset, PopmotionControllerConfig } from '@atlas-viewer/atlas';
 import { webglSupport } from '../../../../utility/webgl-support';
 import { AnnotationStyleProvider, useAnnotationStyles } from '../../../AnnotationStyleContext';
@@ -51,16 +51,13 @@ const Canvas: React.FC<{
   const canvas = useCanvas();
   const { data: service } = useImageService() as { data?: ImageService };
   const style = useAnnotationStyles();
+  const runtimeRef = useRef<Runtime>();
+  const [runtimeReady, setRuntimeReady] = useState(false);
 
-  // Handle small images - prevent stretching beyond original size
-  const handleCreated = (ctx: any) => {
-    if (onCreated) {
-      onCreated(ctx);
-    }
+  // Helper function to apply small image zoom
+  const applySmallImageZoom = () => {
+    if (!runtimeRef.current || !canvas || !containerRef?.current) return;
 
-    if (!canvas || !containerRef?.current) return;
-
-    const runtime: Runtime = ctx.runtime;
     const container = containerRef.current;
     const containerWidth = container.clientWidth;
     const containerHeight = container.clientHeight;
@@ -69,29 +66,45 @@ const Canvas: React.FC<{
 
     // Check if the image is smaller than the viewport
     if (canvasWidth < containerWidth && canvasHeight < containerHeight) {
-      // Use setTimeout to ensure the runtime is fully initialized
+      // Calculate the current "home" zoom (how much the canvas is scaled to fit the viewport)
+      const scaleX = containerWidth / canvasWidth;
+      const scaleY = containerHeight / canvasHeight;
+      const currentHomeScale = Math.min(scaleX, scaleY);
+
+      // To show at 1:1 (original size), we need to zoom out by this factor
+      const zoomFactor = 1 / currentHomeScale;
+
+      // First go home to ensure we're at the known starting point, then zoom out
+      runtimeRef.current.world.goHome();
+
       setTimeout(() => {
-        const aspectRatio = containerWidth / containerHeight;
-        const canvasAspectRatio = canvasWidth / canvasHeight;
-
-        let viewWidth: number;
-        let viewHeight: number;
-
-        if (aspectRatio > canvasAspectRatio) {
-          viewHeight = canvasHeight;
-          viewWidth = canvasHeight * aspectRatio;
-        } else {
-          viewWidth = canvasWidth;
-          viewHeight = canvasWidth / aspectRatio;
+        if (runtimeRef.current) {
+          runtimeRef.current.world.zoomBy(zoomFactor);
         }
-
-        const x = (canvasWidth - viewWidth) / 2;
-        const y = (canvasHeight - viewHeight) / 2;
-
-        runtime.world.gotoRegion({ x, y, width: viewWidth, height: viewHeight });
       }, 50);
     }
   };
+
+  // Handle runtime creation
+  const handleCreated = (ctx: any) => {
+    runtimeRef.current = ctx.runtime;
+    setRuntimeReady(true);
+    if (onCreated) {
+      onCreated(ctx);
+    }
+  };
+
+  // Apply small image zoom after runtime is ready
+  useEffect(() => {
+    if (runtimeReady && canvas && containerRef?.current) {
+      const frameId = requestAnimationFrame(() => {
+        setTimeout(() => {
+          applySmallImageZoom();
+        }, 100);
+      });
+      return () => cancelAnimationFrame(frameId);
+    }
+  }, [runtimeReady, canvas?.id]);
 
   if (!service || !canvas) {
     return null;

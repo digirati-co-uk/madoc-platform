@@ -45,100 +45,77 @@ export const SimpleAtlasViewer = React.forwardRef<
     project: { atlasBackground },
   } = useSiteConfiguration();
   const [isLoaded, setIsLoaded] = useState(false);
+  const [runtimeReady, setRuntimeReady] = useState(false);
   const controller = useSelectorController();
   const readOnlyAnnotations = useReadOnlyAnnotations(false);
   const [isOSD, setIsOSD] = useState(false);
 
   const { enableRotation = false, hideViewerControls = false } = useModelPageConfiguration();
 
-  // Handle small images - prevent stretching beyond original size
-  const handleRuntimeCreated = (preset: { runtime: Runtime }) => {
-    runtime.current = preset.runtime;
+  // Helper function to apply small image zoom
+  const applySmallImageZoom = () => {
+    if (!runtime.current || !canvas || !containerRef.current) return false;
 
-    if (!canvas || !containerRef.current) return;
-
-    // Get container dimensions
     const container = containerRef.current;
     const containerWidth = container.clientWidth;
     const containerHeight = container.clientHeight;
-
-    // Get canvas (image) dimensions
     const canvasWidth = canvas.width;
     const canvasHeight = canvas.height;
 
     // Check if the image is smaller than the viewport
     if (canvasWidth < containerWidth && canvasHeight < containerHeight) {
-      // Image is smaller than viewport - display at original size, centered
-      // Use setTimeout to ensure the runtime is fully initialized
+      // Calculate the current "home" zoom (how much the canvas is scaled to fit the viewport)
+      // Home zoom fits the canvas in the viewport, so we need to find the scale factor
+      const scaleX = containerWidth / canvasWidth;
+      const scaleY = containerHeight / canvasHeight;
+      // The viewer uses the smaller scale to fit the entire canvas
+      const currentHomeScale = Math.min(scaleX, scaleY);
+
+      // To show at 1:1 (original size), we need to zoom out by this factor
+      // zoomBy(factor) where factor < 1 zooms out
+      const zoomFactor = 1 / currentHomeScale;
+
+      // First go home to ensure we're at the known starting point, then zoom out
+      runtime.current.world.goHome();
+
+      // Apply the zoom factor after a short delay to ensure goHome completes
       setTimeout(() => {
         if (runtime.current) {
-          // Go to a region that shows the image at its original size, centered
-          // The region coordinates are in canvas space, so we need to account for the aspect ratio
-          const aspectRatio = containerWidth / containerHeight;
-          const canvasAspectRatio = canvasWidth / canvasHeight;
-
-          let viewWidth: number;
-          let viewHeight: number;
-
-          if (aspectRatio > canvasAspectRatio) {
-            // Container is wider - use container width to calculate view
-            viewHeight = canvasHeight;
-            viewWidth = canvasHeight * aspectRatio;
-          } else {
-            // Container is taller - use container height to calculate view
-            viewWidth = canvasWidth;
-            viewHeight = canvasWidth / aspectRatio;
-          }
-
-          // Center the view on the canvas
-          const x = (canvasWidth - viewWidth) / 2;
-          const y = (canvasHeight - viewHeight) / 2;
-
-          runtime.current.world.gotoRegion({
-            x,
-            y,
-            width: viewWidth,
-            height: viewHeight,
-          });
+          runtime.current.world.zoomBy(zoomFactor);
         }
       }, 50);
+
+      return true;
     }
+    return false;
   };
+
+  // Handle small images - prevent stretching beyond original size
+  const handleRuntimeCreated = (preset: { runtime: Runtime }) => {
+    runtime.current = preset.runtime;
+    setRuntimeReady(true);
+  };
+
+  // Apply small image zoom after runtime is ready and component is fully rendered
+  useEffect(() => {
+    if (runtimeReady && canvas && containerRef.current) {
+      // Use requestAnimationFrame to ensure DOM is fully rendered
+      const frameId = requestAnimationFrame(() => {
+        // Add a small delay to ensure atlas-viewer has completed its initial render
+        setTimeout(() => {
+          applySmallImageZoom();
+        }, 100);
+      });
+      return () => cancelAnimationFrame(frameId);
+    }
+  }, [runtimeReady, canvas?.id]);
 
   const goHome = () => {
     if (runtime.current) {
       // For small images, go to the constrained view instead of default home
-      if (canvas && containerRef.current) {
-        const container = containerRef.current;
-        const containerWidth = container.clientWidth;
-        const containerHeight = container.clientHeight;
-        const canvasWidth = canvas.width;
-        const canvasHeight = canvas.height;
-
-        if (canvasWidth < containerWidth && canvasHeight < containerHeight) {
-          // Small image - go to original size view
-          const aspectRatio = containerWidth / containerHeight;
-          const canvasAspectRatio = canvasWidth / canvasHeight;
-
-          let viewWidth: number;
-          let viewHeight: number;
-
-          if (aspectRatio > canvasAspectRatio) {
-            viewHeight = canvasHeight;
-            viewWidth = canvasHeight * aspectRatio;
-          } else {
-            viewWidth = canvasWidth;
-            viewHeight = canvasWidth / aspectRatio;
-          }
-
-          const x = (canvasWidth - viewWidth) / 2;
-          const y = (canvasHeight - viewHeight) / 2;
-
-          runtime.current.world.gotoRegion({ x, y, width: viewWidth, height: viewHeight });
-          return;
-        }
+      if (!applySmallImageZoom()) {
+        runtime.current.world.goHome();
       }
-      runtime.current.world.goHome();
     }
     if (osd.current) {
       osd.current.goHome();

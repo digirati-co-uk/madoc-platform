@@ -1,0 +1,163 @@
+#top #header_main > .container, #top #header_main > .container .main_menu .av-main-nav > li > a, #top #header_main #menu-item-shop .cart_dropdown_link {
+  /*   height: 30px;*/
+   /*  line-height: 30px;*/
+}
+
+.html_top_nav_header .av-logo-container {
+   /*  height: 30px;*/
+}
+
+.html_header_top.html_header_sticky #top #wrap_all #main {
+  /*  padding-top: 43px;*/
+}
+
+.draCwO {
+min-height: 200px;
+}
+
+a strong {
+color: #337ab7;
+}
+
+.xabs .breadcrumb { margin-bottom: 0px; }
+.iiifpdf{
+    position: relative;
+    top: 431px;
+    left: 52px;
+    display:none;
+}
+#iiif {
+display:block;}
+.bmJQXu a s{
+    cursor: pointer;
+    padding: 0.4em 1em;
+    font-size: 0.9em;
+    line-height: 1.18em;
+    border-radius: 3px;
+    background: rgb(255, 255, 255);
+    text-decoration: none;
+    display: inline-block;
+    letter-spacing: 0.25px;
+    vertical-align: top;
+    transition: color 0.1s ease 0s, background-color 0.1s ease 0s, border-color 0.1s ease 0s;
+    white-space: nowrap;
+    border: 1px solid rgb(66, 101, 233);
+    position: relative;
+    bottom: 40px;
+    left: 30px;
+    background: linear-gradient(rgb(250, 251, 252) 0%, rgb(239, 243, 246) 90%);
+    border: 1px solid rgba(27, 31, 35, 0.15);
+    color: rgb(51, 51, 51);
+    }
+    
+    .bmJQXu a s:hover {
+    	text-decoration: underline;
+}
+
+
+
+.bmJQXu strong a {
+    cursor: pointer;
+    padding: 0.4em 1em;
+    font-size: 0.9em;
+    line-height: 1.18em;
+    border-radius: 3px;
+    background: rgb(255, 255, 255);
+    text-decoration: none;
+    display: inline-block;
+    letter-spacing: 0.25px;
+    vertical-align: top;
+    transition: color 0.1s ease 0s, background-color 0.1s ease 0s, border-color 0.1s ease 0s;
+    white-space: nowrap;
+    border: 1px solid rgb(66, 101, 233);
+    position: relative;
+    bottom: 40px;
+    left: 30px;
+    font-weight: normal;
+    background: linear-gradient(rgb(250, 251, 252) 0%, rgb(239, 243, 246) 90%);
+    border: 1px solid rgba(27, 31, 35, 0.15);
+    color: rgb(51, 51, 51);
+    }
+    
+    .bmJQXu strong a:hover {
+    	text-decoration: underline;
+}
+.styled-editor img{width:100%;}
+.bmJQXu img{width:100%;}
+
+.bmJQXu img {
+	width:80px;
+}
+
+.dFrqCX .lheNyy .kSGIxu .hNEYAT .ctuFJh {
+    position: relative;
+    left: 120px; 
+ }
+ .lfUtzT .hNEYAT .ctuFJh  {
+    position: relative;
+    left: 0px;
+ }
+ 
+ .gHfzLf {
+ 	right: 9em;
+ }
+ .fpaWEQ{
+ overflow: visible;
+ }
+ 
+ .hvETdV {
+ right: 9em;
+ }
+ 
+.w-80 {
+    width: 34rem;
+}
+ 
+ .h-10 {
+    height: 3.5rem;
+}
+
+.eGKIOS {
+	padding: 8px;
+}
+
+a strong {
+color:#337ab7;
+}
+
+a>strong:hover {
+color:#337ab7;
+}
+
+/html/body/div/div:nth-child(4) main div:nth-child(2) div:nth-child(3) div p:nth-child(2) a strong {
+    color:#337ab7;
+} 
+
+#navbar.collapse {
+    visibility: visible;
+	}
+
+.py-32 {
+	
+	padding-top:0em;
+	padding-bottom:0em;
+}
+
+.crossasia-header.xabs {
+    display: block !important;
+    visibility: visible !important;
+    height: auto !important;
+}
+
+/* Hide logo on specific paths */
+html[data-path*="/s/dtab"] #LogoDFG,
+html[data-path*="/s/dllm"] #LogoDFG,
+html[data-path*="/s/lanna"] #LogoDFG,
+html[data-path*="/s/kashgar_documents"] #LogoDFG {
+    display: none !important;
+}
+
+/* Ensure visibility on /s/turfan */
+html[data-path*="/s/turfan"] #LogoDFG {
+    display: block !important;
+}

@@ -1,6 +1,18 @@
 version: "3.2"
 services:
   # Internal services
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        HTTP_PROXY: http://proxy-dev.spk-berlin.de:3128
+        HTTPS_PROXY: http://proxy-dev.spk-berlin.de:3128
+        NO_PROXY: localhost,127.0.0.1
+    environment:
+      - HTTP_PROXY=http://proxy-dev.spk-berlin.de:3128
+      - HTTPS_PROXY=http://proxy-dev.spk-berlin.de:3128
+      - NO_PROXY=localhost,127.0.0.1
 
   gateway:
     build:
@@ -9,8 +21,8 @@ services:
     volumes:
       - ./var/certs:/certs
     ports:
-      - "${PORTS_GATEWAY_HTTPS:-443}:443"
-      - "${PORTS_GATEWAY:-8888}:8080"
+      - "${PORTS_GATEWAY_HTTPS:-8443}:443"
+      - "${PORTS_GATEWAY:-8081}:8080"
     restart: unless-stopped
     depends_on:
       - tasks-api
@@ -20,56 +32,37 @@ services:
       - storage-api
       - okra
       - search
-    links:
-      - tasks-api
-      - model-api
-      - madoc-ts
-      - config-service
-      - storage-api
-      - okra
-      - search
-
-  madoc-ts-vite:
-    build:
-      context: services/madoc-ts
-      dockerfile: Dockerfile.vite
-    volumes:
-      - ./services/madoc-ts/package.json:/home/node/app/package.json:delegated
-      - ./services/madoc-ts/tailwind.config.js:/home/node/app/tailwind.config.js:delegated
-      - ./services/madoc-ts/yarn.lock:/home/node/app/yarn.lock:delegated
-      - ./services/madoc-ts/src:/home/node/app/src
-      - ./services/madoc-ts/vite:/home/node/app/vite
-      - ./var/.vite-cache:/home/node/app/node_modules/.vite
-      - ./var/certs:/certs
-    ports:
-      - "3088:3088"
-      - "3089:3089"
 
   madoc-ts:
     tty: true
+    image: ghcr.io/digirati-co-uk/madoc-api:${MADOC_VERSION-main}
     build:
       context: services/madoc-ts
       dockerfile: Dockerfile.dev
+      args:
+        HTTP_PROXY: http://proxy-dev.spk-berlin.de:3128
+        HTTPS_PROXY: http://proxy-dev.spk-berlin.de:3128
     volumes:
-      - ./services/madoc-ts/dist:/home/node/app/dist:delegated
+      #- ./services/madoc-ts/dist:/home/node/app/dist:delegated
       - ./services/madoc-ts/src:/home/node/app/src
-      - ./services/madoc-ts/package.json:/home/node/app/package.json:delegated
-      - ./services/madoc-ts/yarn.lock:/home/node/app/yarn.lock:delegated
+      - ./services/madoc-ts/config.json:/home/node/app/config.json:delegated
+      #- ./services/madoc-ts/package.json:/home/node/app/package.json:delegated
+      #- ./services/madoc-ts/yarn.lock:/home/node/app/yarn.lock:delegated
       - ./services/madoc-ts/migrations:/home/node/app/migrations:delegated
-      - ./services/madoc-ts/schemas:/home/node/app/schemas:delegated
-      - ./services/madoc-ts/ecosystem.config.cjs:/home/node/app/ecosystem.config.cjs
-      - ./services/madoc-ts/vite:/home/node/app/vite:delegated
-      - ./services/madoc-ts/entrypoint:/home/node/app/entrypoint:delegated
-      - ./services/madoc-ts/config.json:/home/node/app/config.json
-      - ./services/madoc-ts/service-jwts:/home/node/app/service-jwts
-      - ./services/madoc-ts/themes:/home/node/app/themes
-      - ./services/madoc-ts/translations:/home/node/app/translations
-      - ./services/madoc-ts/npm:/home/node/app/npm
-      - ./var/certs:/home/node/app/openssl-certs
+      #- ./services/madoc-ts/schemas:/home/node/app/schemas:delegated
+      #- ./services/madoc-ts/ecosystem.config.cjs:/home/node/app/ecosystem.config.cjs
+      #- ./services/madoc-ts/vite:/home/node/app/vite:delegated
+      #- ./services/madoc-ts/entrypoint:/home/node/app/entrypoint:delegated
+      #- ./services/madoc-ts/config.json:/home/node/app/config.json
+      #- ./services/madoc-ts/service-jwts:/home/node/app/service-jwts
+      #- ./services/madoc-ts/themes:/home/node/app/themes
+      #- ./services/madoc-ts/translations:/home/node/app/translations
+      #- ./services/madoc-ts/npm:/home/node/app/npm
+      - ./var/certs:/home/node/app/openssl-certs:cached
       - ./var/jwt:/home/node/app/service-jwt-responses
       - ./var/files:/home/node/app/files
     environment:
-      - DATABASE_HOST=shared-postgres
+      - DATABASE_HOST=${POSTGRES_HOST}
       - DATABASE_NAME=${POSTGRES_DB}
       - DATABASE_PORT=${POSTGRES_PORT}
       - DATABASE_USER=${POSTGRES_MADOC_TS_USER}
@@ -81,18 +74,21 @@ services:
       - STORAGE_FILE_DIRECTORY=/home/node/app/files
       - MADOC_INSTALLATION_CODE=${MADOC_INSTALLATION_CODE}
       - MIGRATE=true
-      - NODE_ENV=development
+      - NODE_ENV=production
       - SMTP_HOST=${SMTP_HOST}
       - SMTP_PORT=${SMTP_PORT}
       - SMTP_SECURITY=${SMTP_SECURITY}
       - SMTP_USER=${SMTP_USER}
       - SMTP_PASSWORD=${SMTP_PASSWORD}
       - MAIL_FROM_USER=${MAIL_FROM_USER}
+      - HTTP_PROXY=http://proxy-dev.spk-berlin.de:3128
+      - HTTPS_PROXY=http://proxy-dev.spk-berlin.de:3128
+      - NO_PROXY=localhost,127.0.0.1,gateway-redis,${POSTGRES_HOST}
     ports:
       - "127.0.0.1:${PORTS_MADOC_TS_DEBUGGER:-9230}:9230"
-    links:
-      - shared-postgres
-      - madoc-ts-vite
+      - "127.0.0.1:${PORTS_MADOC_TS_WEBPACK:-40493}:40493"
+      - "3088:3088"
+    user: "1000:1000"
 
   tasks-api:
     tty: true
@@ -100,7 +96,7 @@ services:
     platform: linux/amd64
     environment:
       - SERVER_PORT=3000
-      - DATABASE_HOST=shared-postgres
+      - DATABASE_HOST=${POSTGRES_HOST}
       - DATABASE_NAME=${POSTGRES_DB}
       - DATABASE_PORT=${POSTGRES_PORT}
       - DATABASE_USER=${POSTGRES_TASKS_API_USER}
@@ -108,8 +104,10 @@ services:
       - DATABASE_PASSWORD=${POSTGRES_TASKS_API_PASSWORD}
       - QUEUE_LIST=${TASKS_QUEUE_LIST}
       - REDIS_HOST=gateway-redis
-    links:
-      - shared-postgres
+      - HTTP_PROXY=http://proxy-dev.spk-berlin.de:3128
+      - HTTPS_PROXY=http://proxy-dev.spk-berlin.de:3128
+      - NO_PROXY=localhost,127.0.0.1,gateway-redis,${POSTGRES_HOST}
+    depends_on:
       - gateway-redis
 
   model-api:
@@ -118,42 +116,27 @@ services:
     platform: linux/amd64
     environment:
       - SERVER_PORT=3000
-      - DATABASE_HOST=shared-postgres
+      - DATABASE_HOST=${POSTGRES_HOST}
       - DATABASE_NAME=${POSTGRES_DB}
       - DATABASE_PORT=${POSTGRES_PORT}
       - DATABASE_USER=${POSTGRES_MODELS_API_USER}
       - DATABASE_SCHEMA=${POSTGRES_MODELS_API_SCHEMA}
       - DATABASE_PASSWORD=${POSTGRES_MODELS_API_PASSWORD}
-    links:
-      - shared-postgres
+      - HTTP_PROXY=http://proxy-dev.spk-berlin.de:3128
+      - HTTPS_PROXY=http://proxy-dev.spk-berlin.de:3128
+      - NO_PROXY=localhost,127.0.0.1,${POSTGRES_HOST}
 
-  shared-postgres:
-    build:
-      context: services/shared-postgres
-    environment:
-      - POSTGRES_DB=${POSTGRES_DB}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_MADOC_TS_USER=${POSTGRES_MADOC_TS_USER}
-      - POSTGRES_MADOC_TS_SCHEMA=${POSTGRES_MADOC_TS_SCHEMA}
-      - POSTGRES_MADOC_TS_PASSWORD=${POSTGRES_MADOC_TS_PASSWORD}
-      - POSTGRES_TASKS_API_USER=${POSTGRES_TASKS_API_USER}
-      - POSTGRES_TASKS_API_SCHEMA=${POSTGRES_TASKS_API_SCHEMA}
-      - POSTGRES_TASKS_API_PASSWORD=${POSTGRES_TASKS_API_PASSWORD}
-      - POSTGRES_MODELS_API_USER=${POSTGRES_MODELS_API_USER}
-      - POSTGRES_MODELS_API_SCHEMA=${POSTGRES_MODELS_API_SCHEMA}
-      - POSTGRES_MODELS_API_PASSWORD=${POSTGRES_MODELS_API_PASSWORD}
-      - POSTGRES_CONFIG_SERVICE_USER=${POSTGRES_CONFIG_SERVICE_USER}
-      - POSTGRES_CONFIG_SERVICE_SCHEMA=${POSTGRES_CONFIG_SERVICE_SCHEMA}
-      - POSTGRES_CONFIG_SERVICE_PASSWORD=${POSTGRES_CONFIG_SERVICE_PASSWORD}
-      - POSTGRES_SEARCH_API_USER=${POSTGRES_SEARCH_API_USER}
-      - POSTGRES_SEARCH_API_SCHEMA=${POSTGRES_SEARCH_API_SCHEMA}
-      - POSTGRES_SEARCH_API_PASSWORD=${POSTGRES_SEARCH_API_PASSWORD}
-
-    ports:
-      - "${PORTS_SHARED_POSTGRES:-5400}:5432"
-    volumes:
-      - ./var/shared-database:/var/lib/postgresql/data
+  # Comment out or remove shared-postgres since you're using external DB
+  # shared-postgres:
+  #   build:
+  #     context: services/shared-postgres
+  #   environment:
+  #     - POSTGRES_HOST=${POSTGRES_HOST}
+  #     # ... rest of config
+  #   ports:
+  #     - "${PORTS_SHARED_POSTGRES:-5400}:5432"
+  #   volumes:
+  #     - ./var/shared-database:/var/lib/postgresql/data
 
   gateway-redis:
     image: redis:5-alpine
@@ -168,15 +151,16 @@ services:
       - LOAD=False
       - DJANGO_DEBUG=False
       - WAITRESS=False
-      - POSTGRES_HOST=shared-postgres
+      - POSTGRES_HOST=${POSTGRES_HOST}
       - POSTGRES_PORT=${POSTGRES_PORT}
       - POSTGRES_USER=${POSTGRES_CONFIG_SERVICE_USER}
       - POSTGRES_PASSWORD=${POSTGRES_CONFIG_SERVICE_PASSWORD}
       - POSTGRES_SCHEMA=${POSTGRES_CONFIG_SERVICE_SCHEMA}
       - POSTGRES_DB=${POSTGRES_DB}
-      - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@shared-postgres:${POSTGRES_PORT}/${POSTGRES_DB}
-    links:
-      - shared-postgres
+      - DATABASE_URL=postgres://${POSTGRES_CONFIG_SERVICE_USER}:${POSTGRES_CONFIG_SERVICE_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
+      - HTTP_PROXY=http://proxy-dev.spk-berlin.de:3128
+      - HTTPS_PROXY=http://proxy-dev.spk-berlin.de:3128
+      - NO_PROXY=localhost,127.0.0.1,${POSTGRES_HOST}
     volumes:
       - ./configuration/schemas:/app/configurator/schemas
       - ./configuration/defaults:/app/configurator/default_config
@@ -187,17 +171,18 @@ services:
     platform: linux/amd64
     environment:
       - GATEWAY_HOST=${GATEWAY_HOST}
+      - HTTP_PROXY=http://proxy-dev.spk-berlin.de:3128
+      - HTTPS_PROXY=http://proxy-dev.spk-berlin.de:3128
+      - NO_PROXY=localhost,127.0.0.1
     volumes:
       - ./var/files/storage-api:/home/node/app/files
-    links:
-      - shared-postgres
 
   search:
-    image: ghcr.io/digirati-co-uk/madoc-search-service:247f854b1258e3971907e6912cef2374a1da8474
+    image: ghcr.io/digirati-co-uk/madoc-search-service:main 
+    #image: ghcr.io/digirati-co-uk/madoc-search-service:247f854b1258e3971907e6912cef2374a1da8474
     platform: linux/amd64
-    #    build:
-    #      context: services/search
-    #      dockerfile: Dockerfile
+    volumes:
+      - /opt/madoc-search-service/search_service/search:/app/search
     environment:
       - BROWSABLE=False
       - USE_DOCKER=yes
@@ -207,18 +192,21 @@ services:
       - DEBUG=True
       - DJANGO_DEBUG=True
       - WAITRESS=False
-      - POSTGRES_HOST=shared-postgres
+      - POSTGRES_HOST=${POSTGRES_HOST}
       - POSTGRES_PORT=${POSTGRES_PORT}
       - POSTGRES_USER=${POSTGRES_SEARCH_API_USER}
       - POSTGRES_PASSWORD=${POSTGRES_SEARCH_API_PASSWORD}
       - POSTGRES_SCHEMA=${POSTGRES_SEARCH_API_SCHEMA}
       - POSTGRES_DB=${POSTGRES_DB}
-      - DATABASE_URL=postgres://${POSTGRES_SEARCH_API_USER}:${POSTGRES_SEARCH_API_PASSWORD}@shared-postgres:${POSTGRES_PORT}/${POSTGRES_DB}
-    links:
-      - shared-postgres
-  #    volumes:
-  #      - ./services/search/search_service:/app
-
+      - DATABASE_URL=postgres://${POSTGRES_SEARCH_API_USER}:${POSTGRES_SEARCH_API_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
+      - HTTP_PROXY=http://proxy-dev.spk-berlin.de:3128
+      - HTTPS_PROXY=http://proxy-dev.spk-berlin.de:3128
+      - NO_PROXY=localhost,127.0.0.1,${POSTGRES_HOST}
+    
   okra:
     image: digirati/okra:latest
     platform: linux/amd64
+    environment:
+      - HTTP_PROXY=http://proxy-dev.spk-berlin.de:3128
+      - HTTPS_PROXY=http://proxy-dev.spk-berlin.de:3128
+      - NO_PROXY=localhost,127.0.0.1
