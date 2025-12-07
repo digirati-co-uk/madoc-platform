@@ -64,13 +64,27 @@ export const SimpleAtlasViewer = React.forwardRef<
 
     // Check if the image is smaller than the viewport
     if (canvasWidth < containerWidth && canvasHeight < containerHeight) {
-      // At 1:1 zoom, the visible region in canvas units equals the container size in pixels
-      const viewWidth = containerWidth;
-      const viewHeight = containerHeight;
-      const x = (canvasWidth - viewWidth) / 2;
-      const y = (canvasHeight - viewHeight) / 2;
+      // Calculate the current "home" zoom (how much the canvas is scaled to fit the viewport)
+      // Home zoom fits the canvas in the viewport, so we need to find the scale factor
+      const scaleX = containerWidth / canvasWidth;
+      const scaleY = containerHeight / canvasHeight;
+      // The viewer uses the smaller scale to fit the entire canvas
+      const currentHomeScale = Math.min(scaleX, scaleY);
 
-      runtime.current.world.gotoRegion({ x, y, width: viewWidth, height: viewHeight });
+      // To show at 1:1 (original size), we need to zoom out by this factor
+      // zoomBy(factor) where factor < 1 zooms out
+      const zoomFactor = 1 / currentHomeScale;
+
+      // First go home to ensure we're at the known starting point, then zoom out
+      runtime.current.world.goHome();
+
+      // Apply the zoom factor after a short delay to ensure goHome completes
+      setTimeout(() => {
+        if (runtime.current) {
+          runtime.current.world.zoomBy(zoomFactor);
+        }
+      }, 50);
+
       return true;
     }
     return false;

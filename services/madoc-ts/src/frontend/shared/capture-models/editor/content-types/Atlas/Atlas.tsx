@@ -66,13 +66,22 @@ const Canvas: React.FC<{
 
     // Check if the image is smaller than the viewport
     if (canvasWidth < containerWidth && canvasHeight < containerHeight) {
-      // At 1:1 zoom, the visible region in canvas units equals the container size in pixels
-      const viewWidth = containerWidth;
-      const viewHeight = containerHeight;
-      const x = (canvasWidth - viewWidth) / 2;
-      const y = (canvasHeight - viewHeight) / 2;
+      // Calculate the current "home" zoom (how much the canvas is scaled to fit the viewport)
+      const scaleX = containerWidth / canvasWidth;
+      const scaleY = containerHeight / canvasHeight;
+      const currentHomeScale = Math.min(scaleX, scaleY);
 
-      runtimeRef.current.world.gotoRegion({ x, y, width: viewWidth, height: viewHeight });
+      // To show at 1:1 (original size), we need to zoom out by this factor
+      const zoomFactor = 1 / currentHomeScale;
+
+      // First go home to ensure we're at the known starting point, then zoom out
+      runtimeRef.current.world.goHome();
+
+      setTimeout(() => {
+        if (runtimeRef.current) {
+          runtimeRef.current.world.zoomBy(zoomFactor);
+        }
+      }, 50);
     }
   };
 
