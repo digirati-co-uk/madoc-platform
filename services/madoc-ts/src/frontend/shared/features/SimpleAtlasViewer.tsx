@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { AnnotationPage } from '@iiif/presentation-3';
 import { RegionHighlight, Runtime } from '@atlas-viewer/atlas';
 import { ErrorBoundary } from 'react-error-boundary';
-import { useCanvas, useImageService, CanvasPanel, CanvasContext } from 'react-iiif-vault';
+import { useCanvas, useImageService, CanvasPanel, CanvasContext, useThumbnail } from 'react-iiif-vault';
 import { useTranslation } from 'react-i18next';
 import { CanvasViewerButton, CanvasViewerControls } from '../atoms/CanvasViewerGrid';
 import { useSiteConfiguration } from '../../site/features/SiteConfigurationContext';
@@ -45,77 +45,26 @@ export const SimpleAtlasViewer = React.forwardRef<
     project: { atlasBackground },
   } = useSiteConfiguration();
   const [isLoaded, setIsLoaded] = useState(false);
-  const [runtimeReady, setRuntimeReady] = useState(false);
   const controller = useSelectorController();
   const readOnlyAnnotations = useReadOnlyAnnotations(false);
   const [isOSD, setIsOSD] = useState(false);
 
   const { enableRotation = false, hideViewerControls = false } = useModelPageConfiguration();
 
-  // Helper function to apply small image zoom
-  const applySmallImageZoom = () => {
-    if (!runtime.current || !canvas || !containerRef.current) return false;
+  // Get thumbnail for small image display
+  const thumbnail = useThumbnail({ maxWidth: 500, maxHeight: 500 });
 
-    const container = containerRef.current;
-    const containerWidth = container.clientWidth;
-    const containerHeight = container.clientHeight;
-    const canvasWidth = canvas.width;
-    const canvasHeight = canvas.height;
-
-    // Check if the image is smaller than the viewport
-    if (canvasWidth < containerWidth && canvasHeight < containerHeight) {
-      // Calculate the current "home" zoom (how much the canvas is scaled to fit the viewport)
-      // Home zoom fits the canvas in the viewport, so we need to find the scale factor
-      const scaleX = containerWidth / canvasWidth;
-      const scaleY = containerHeight / canvasHeight;
-      // The viewer uses the smaller scale to fit the entire canvas
-      const currentHomeScale = Math.min(scaleX, scaleY);
-
-      // To show at 1:1 (original size), we need to zoom out by this factor
-      // zoomBy(factor) where factor < 1 zooms out
-      const zoomFactor = 1 / currentHomeScale;
-
-      // First go home to ensure we're at the known starting point, then zoom out
-      runtime.current.world.goHome();
-
-      // Apply the zoom factor after a short delay to ensure goHome completes
-      setTimeout(() => {
-        if (runtime.current) {
-          runtime.current.world.zoomBy(zoomFactor);
-        }
-      }, 50);
-
-      return true;
-    }
-    return false;
-  };
+  // Check if this is a small image (< 500x500)
+  const isSmallImage = canvas && canvas.width < 500 && canvas.height < 500;
 
   // Handle small images - prevent stretching beyond original size
   const handleRuntimeCreated = (preset: { runtime: Runtime }) => {
     runtime.current = preset.runtime;
-    setRuntimeReady(true);
   };
-
-  // Apply small image zoom after runtime is ready and component is fully rendered
-  useEffect(() => {
-    if (runtimeReady && canvas && containerRef.current) {
-      // Use requestAnimationFrame to ensure DOM is fully rendered
-      const frameId = requestAnimationFrame(() => {
-        // Add a small delay to ensure atlas-viewer has completed its initial render
-        setTimeout(() => {
-          applySmallImageZoom();
-        }, 100);
-      });
-      return () => cancelAnimationFrame(frameId);
-    }
-  }, [runtimeReady, canvas?.id]);
 
   const goHome = () => {
     if (runtime.current) {
-      // For small images, go to the constrained view instead of default home
-      if (!applySmallImageZoom()) {
-        runtime.current.world.goHome();
-      }
+      runtime.current.world.goHome();
     }
     if (osd.current) {
       osd.current.goHome();
@@ -209,7 +158,30 @@ export const SimpleAtlasViewer = React.forwardRef<
         </style>
         {isLoaded ? (
           <>
-            {isOSD ? (
+            {isSmallImage && thumbnail ? (
+              // Display small images at their original size, centered
+              <div
+                style={{
+                  flex: 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  background: style.backgroundColor || atlasBackground || '#E4E7F0',
+                }}
+              >
+                <img
+                  src={thumbnail.id}
+                  alt=""
+                  style={{
+                    maxWidth: '100%',
+                    maxHeight: '100%',
+                    width: canvas.width,
+                    height: canvas.height,
+                    objectFit: 'contain',
+                  }}
+                />
+              </div>
+            ) : isOSD ? (
               <>
                 <InfoMessage
                   style={{ lineHeight: '3.4em', position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10 }}
@@ -262,7 +234,8 @@ export const SimpleAtlasViewer = React.forwardRef<
               </CanvasPanel.Viewer>
             )}
 
-            {hideViewerControls && isModel ? null : (
+            {/* Hide controls for small images since they're displayed at original size */}
+            {isSmallImage ? null : hideViewerControls && isModel ? null : (
               <CanvasViewerControls>
                 {enableRotation && isModel ? (
                   <CanvasViewerButton onClick={rotate}>
