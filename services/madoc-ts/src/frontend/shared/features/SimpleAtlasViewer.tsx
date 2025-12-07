@@ -45,75 +45,63 @@ export const SimpleAtlasViewer = React.forwardRef<
     project: { atlasBackground },
   } = useSiteConfiguration();
   const [isLoaded, setIsLoaded] = useState(false);
+  const [runtimeReady, setRuntimeReady] = useState(false);
   const controller = useSelectorController();
   const readOnlyAnnotations = useReadOnlyAnnotations(false);
   const [isOSD, setIsOSD] = useState(false);
 
   const { enableRotation = false, hideViewerControls = false } = useModelPageConfiguration();
 
-  // Handle small images - prevent stretching beyond original size
-  const handleRuntimeCreated = (preset: { runtime: Runtime }) => {
-    runtime.current = preset.runtime;
+  // Helper function to apply small image zoom
+  const applySmallImageZoom = () => {
+    if (!runtime.current || !canvas || !containerRef.current) return false;
 
-    if (!canvas || !containerRef.current) return;
-
-    // Get container dimensions (screen pixels)
     const container = containerRef.current;
     const containerWidth = container.clientWidth;
     const containerHeight = container.clientHeight;
-
-    // Get canvas (image) dimensions
     const canvasWidth = canvas.width;
     const canvasHeight = canvas.height;
 
     // Check if the image is smaller than the viewport
     if (canvasWidth < containerWidth && canvasHeight < containerHeight) {
-      // Image is smaller than viewport - display at original size (1:1 zoom), centered
-      // Use setTimeout to ensure the runtime is fully initialized
-      setTimeout(() => {
-        if (runtime.current) {
-          // At 1:1 zoom, the visible region in canvas units equals the container size in pixels
-          // This shows the canvas at its original pixel size, centered with padding around it
-          const viewWidth = containerWidth;
-          const viewHeight = containerHeight;
+      // At 1:1 zoom, the visible region in canvas units equals the container size in pixels
+      const viewWidth = containerWidth;
+      const viewHeight = containerHeight;
+      const x = (canvasWidth - viewWidth) / 2;
+      const y = (canvasHeight - viewHeight) / 2;
 
-          // Center the canvas within the view
-          const x = (canvasWidth - viewWidth) / 2;
-          const y = (canvasHeight - viewHeight) / 2;
-
-          runtime.current.world.gotoRegion({
-            x,
-            y,
-            width: viewWidth,
-            height: viewHeight,
-          });
-        }
-      }, 50);
+      runtime.current.world.gotoRegion({ x, y, width: viewWidth, height: viewHeight });
+      return true;
     }
+    return false;
   };
+
+  // Handle small images - prevent stretching beyond original size
+  const handleRuntimeCreated = (preset: { runtime: Runtime }) => {
+    runtime.current = preset.runtime;
+    setRuntimeReady(true);
+  };
+
+  // Apply small image zoom after runtime is ready and component is fully rendered
+  useEffect(() => {
+    if (runtimeReady && canvas && containerRef.current) {
+      // Use requestAnimationFrame to ensure DOM is fully rendered
+      const frameId = requestAnimationFrame(() => {
+        // Add a small delay to ensure atlas-viewer has completed its initial render
+        setTimeout(() => {
+          applySmallImageZoom();
+        }, 100);
+      });
+      return () => cancelAnimationFrame(frameId);
+    }
+  }, [runtimeReady, canvas?.id]);
 
   const goHome = () => {
     if (runtime.current) {
       // For small images, go to the constrained view instead of default home
-      if (canvas && containerRef.current) {
-        const container = containerRef.current;
-        const containerWidth = container.clientWidth;
-        const containerHeight = container.clientHeight;
-        const canvasWidth = canvas.width;
-        const canvasHeight = canvas.height;
-
-        if (canvasWidth < containerWidth && canvasHeight < containerHeight) {
-          // Small image - go to original size view (1:1 zoom)
-          const viewWidth = containerWidth;
-          const viewHeight = containerHeight;
-          const x = (canvasWidth - viewWidth) / 2;
-          const y = (canvasHeight - viewHeight) / 2;
-
-          runtime.current.world.gotoRegion({ x, y, width: viewWidth, height: viewHeight });
-          return;
-        }
+      if (!applySmallImageZoom()) {
+        runtime.current.world.goHome();
       }
-      runtime.current.world.goHome();
     }
     if (osd.current) {
       osd.current.goHome();

@@ -1,5 +1,5 @@
 import { ImageService } from '@iiif/presentation-3';
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Runtime, Preset, PopmotionControllerConfig } from '@atlas-viewer/atlas';
 import { webglSupport } from '../../../../utility/webgl-support';
 import { AnnotationStyleProvider, useAnnotationStyles } from '../../../AnnotationStyleContext';
@@ -51,16 +51,13 @@ const Canvas: React.FC<{
   const canvas = useCanvas();
   const { data: service } = useImageService() as { data?: ImageService };
   const style = useAnnotationStyles();
+  const runtimeRef = useRef<Runtime>();
+  const [runtimeReady, setRuntimeReady] = useState(false);
 
-  // Handle small images - prevent stretching beyond original size
-  const handleCreated = (ctx: any) => {
-    if (onCreated) {
-      onCreated(ctx);
-    }
+  // Helper function to apply small image zoom
+  const applySmallImageZoom = () => {
+    if (!runtimeRef.current || !canvas || !containerRef?.current) return;
 
-    if (!canvas || !containerRef?.current) return;
-
-    const runtime: Runtime = ctx.runtime;
     const container = containerRef.current;
     const containerWidth = container.clientWidth;
     const containerHeight = container.clientHeight;
@@ -69,21 +66,36 @@ const Canvas: React.FC<{
 
     // Check if the image is smaller than the viewport
     if (canvasWidth < containerWidth && canvasHeight < containerHeight) {
-      // Use setTimeout to ensure the runtime is fully initialized
-      setTimeout(() => {
-        // At 1:1 zoom, the visible region in canvas units equals the container size in pixels
-        // This shows the canvas at its original pixel size, centered with padding around it
-        const viewWidth = containerWidth;
-        const viewHeight = containerHeight;
+      // At 1:1 zoom, the visible region in canvas units equals the container size in pixels
+      const viewWidth = containerWidth;
+      const viewHeight = containerHeight;
+      const x = (canvasWidth - viewWidth) / 2;
+      const y = (canvasHeight - viewHeight) / 2;
 
-        // Center the canvas within the view
-        const x = (canvasWidth - viewWidth) / 2;
-        const y = (canvasHeight - viewHeight) / 2;
-
-        runtime.world.gotoRegion({ x, y, width: viewWidth, height: viewHeight });
-      }, 50);
+      runtimeRef.current.world.gotoRegion({ x, y, width: viewWidth, height: viewHeight });
     }
   };
+
+  // Handle runtime creation
+  const handleCreated = (ctx: any) => {
+    runtimeRef.current = ctx.runtime;
+    setRuntimeReady(true);
+    if (onCreated) {
+      onCreated(ctx);
+    }
+  };
+
+  // Apply small image zoom after runtime is ready
+  useEffect(() => {
+    if (runtimeReady && canvas && containerRef?.current) {
+      const frameId = requestAnimationFrame(() => {
+        setTimeout(() => {
+          applySmallImageZoom();
+        }, 100);
+      });
+      return () => cancelAnimationFrame(frameId);
+    }
+  }, [runtimeReady, canvas?.id]);
 
   if (!service || !canvas) {
     return null;
