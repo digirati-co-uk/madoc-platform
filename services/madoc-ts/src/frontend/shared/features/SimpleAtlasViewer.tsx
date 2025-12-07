@@ -57,7 +57,7 @@ export const SimpleAtlasViewer = React.forwardRef<
 
     if (!canvas || !containerRef.current) return;
 
-    // Get container dimensions
+    // Get container dimensions (screen pixels)
     const container = containerRef.current;
     const containerWidth = container.clientWidth;
     const containerHeight = container.clientHeight;
@@ -68,29 +68,16 @@ export const SimpleAtlasViewer = React.forwardRef<
 
     // Check if the image is smaller than the viewport
     if (canvasWidth < containerWidth && canvasHeight < containerHeight) {
-      // Image is smaller than viewport - display at original size, centered
+      // Image is smaller than viewport - display at original size (1:1 zoom), centered
       // Use setTimeout to ensure the runtime is fully initialized
       setTimeout(() => {
         if (runtime.current) {
-          // Go to a region that shows the image at its original size, centered
-          // The region coordinates are in canvas space, so we need to account for the aspect ratio
-          const aspectRatio = containerWidth / containerHeight;
-          const canvasAspectRatio = canvasWidth / canvasHeight;
+          // At 1:1 zoom, the visible region in canvas units equals the container size in pixels
+          // This shows the canvas at its original pixel size, centered with padding around it
+          const viewWidth = containerWidth;
+          const viewHeight = containerHeight;
 
-          let viewWidth: number;
-          let viewHeight: number;
-
-          if (aspectRatio > canvasAspectRatio) {
-            // Container is wider - use container width to calculate view
-            viewHeight = canvasHeight;
-            viewWidth = canvasHeight * aspectRatio;
-          } else {
-            // Container is taller - use container height to calculate view
-            viewWidth = canvasWidth;
-            viewHeight = canvasWidth / aspectRatio;
-          }
-
-          // Center the view on the canvas
+          // Center the canvas within the view
           const x = (canvasWidth - viewWidth) / 2;
           const y = (canvasHeight - viewHeight) / 2;
 
@@ -116,21 +103,9 @@ export const SimpleAtlasViewer = React.forwardRef<
         const canvasHeight = canvas.height;
 
         if (canvasWidth < containerWidth && canvasHeight < containerHeight) {
-          // Small image - go to original size view
-          const aspectRatio = containerWidth / containerHeight;
-          const canvasAspectRatio = canvasWidth / canvasHeight;
-
-          let viewWidth: number;
-          let viewHeight: number;
-
-          if (aspectRatio > canvasAspectRatio) {
-            viewHeight = canvasHeight;
-            viewWidth = canvasHeight * aspectRatio;
-          } else {
-            viewWidth = canvasWidth;
-            viewHeight = canvasWidth / aspectRatio;
-          }
-
+          // Small image - go to original size view (1:1 zoom)
+          const viewWidth = containerWidth;
+          const viewHeight = containerHeight;
           const x = (canvasWidth - viewWidth) / 2;
           const y = (canvasHeight - viewHeight) / 2;
 
