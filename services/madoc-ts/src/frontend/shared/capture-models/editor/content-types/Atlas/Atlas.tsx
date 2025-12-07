@@ -1,6 +1,6 @@
 import { ImageService } from '@iiif/presentation-3';
 import React, { useRef } from 'react';
-import { Runtime, Preset, PopmotionControllerConfig } from '@atlas-viewer/atlas';
+import { Preset, PopmotionControllerConfig } from '@atlas-viewer/atlas';
 import { webglSupport } from '../../../../utility/webgl-support';
 import { AnnotationStyleProvider, useAnnotationStyles } from '../../../AnnotationStyleContext';
 import { getRevisionFieldFromPath } from '../../../helpers/get-revision-field-from-path';
@@ -15,6 +15,7 @@ import {
   useImageService,
   VaultProvider,
   CanvasPanel,
+  useThumbnail,
 } from 'react-iiif-vault';
 import { ImageServiceContext } from './Atlas.helpers';
 
@@ -47,60 +48,54 @@ const Canvas: React.FC<{
   unstable_webglRenderer?: boolean;
   controllerConfig?: PopmotionControllerConfig;
   containerRef?: React.RefObject<HTMLDivElement>;
-}> = ({ isEditing, onDeselect, children, onCreated, unstable_webglRenderer, controllerConfig, containerRef }) => {
+  backgroundColor?: string;
+}> = ({ isEditing, onDeselect, children, onCreated, unstable_webglRenderer, controllerConfig, containerRef, backgroundColor }) => {
   const canvas = useCanvas();
   const { data: service } = useImageService() as { data?: ImageService };
   const style = useAnnotationStyles();
 
-  // Handle small images - prevent stretching beyond original size
-  const handleCreated = (ctx: any) => {
-    if (onCreated) {
-      onCreated(ctx);
-    }
+  // Get thumbnail for small image display
+  const thumbnail = useThumbnail({ maxWidth: 500, maxHeight: 500 });
 
-    if (!canvas || !containerRef?.current) return;
-
-    const runtime: Runtime = ctx.runtime;
-    const container = containerRef.current;
-    const containerWidth = container.clientWidth;
-    const containerHeight = container.clientHeight;
-    const canvasWidth = canvas.width;
-    const canvasHeight = canvas.height;
-
-    // Check if the image is smaller than the viewport
-    if (canvasWidth < containerWidth && canvasHeight < containerHeight) {
-      // Use setTimeout to ensure the runtime is fully initialized
-      setTimeout(() => {
-        const aspectRatio = containerWidth / containerHeight;
-        const canvasAspectRatio = canvasWidth / canvasHeight;
-
-        let viewWidth: number;
-        let viewHeight: number;
-
-        if (aspectRatio > canvasAspectRatio) {
-          viewHeight = canvasHeight;
-          viewWidth = canvasHeight * aspectRatio;
-        } else {
-          viewWidth = canvasWidth;
-          viewHeight = canvasWidth / aspectRatio;
-        }
-
-        const x = (canvasWidth - viewWidth) / 2;
-        const y = (canvasHeight - viewHeight) / 2;
-
-        runtime.world.gotoRegion({ x, y, width: viewWidth, height: viewHeight });
-      }, 50);
-    }
-  };
+  // Check if this is a small image (< 500x500)
+  const isSmallImage = canvas && canvas.width < 500 && canvas.height < 500;
 
   if (!service || !canvas) {
     return null;
   }
 
+  // For small images, display as a simple centered image
+  if (isSmallImage && thumbnail) {
+    return (
+      <div
+        style={{
+          flex: 1,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: backgroundColor || '#E4E7F0',
+          height: '100%',
+        }}
+      >
+        <img
+          src={thumbnail.id}
+          alt=""
+          style={{
+            maxWidth: '100%',
+            maxHeight: '100%',
+            width: canvas.width,
+            height: canvas.height,
+            objectFit: 'contain',
+          }}
+        />
+      </div>
+    );
+  }
+
   return (
     <CanvasPanel.Viewer
       containerStyle={{ flex: '1 1 0px', height: '100%' }}
-      onCreated={handleCreated}
+      onCreated={onCreated}
       mode={isEditing ? 'sketch' : 'explore'}
       unstable_webglRenderer={webglSupport() && unstable_webglRenderer}
       renderPreset={defaultPreset}
@@ -180,6 +175,7 @@ export const AtlasViewer: React.FC<AtlasViewerProps> = props => {
           onCreated={props.options?.custom?.onCreateAtlas}
           isEditing={!!currentSelector}
           containerRef={containerRef}
+          backgroundColor={backgroundColor}
           // onDeselect={() => {
           //   if (currentSelector) {
           //     actions.clearSelector();

@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { AnnotationPage } from '@iiif/presentation-3';
 import { RegionHighlight, Runtime } from '@atlas-viewer/atlas';
 import { ErrorBoundary } from 'react-error-boundary';
-import { useCanvas, useImageService, CanvasPanel, CanvasContext } from 'react-iiif-vault';
+import { useCanvas, useImageService, CanvasPanel, CanvasContext, useThumbnail } from 'react-iiif-vault';
 import { useTranslation } from 'react-i18next';
 import { CanvasViewerButton, CanvasViewerControls } from '../atoms/CanvasViewerGrid';
 import { useSiteConfiguration } from '../../site/features/SiteConfigurationContext';
@@ -51,93 +51,19 @@ export const SimpleAtlasViewer = React.forwardRef<
 
   const { enableRotation = false, hideViewerControls = false } = useModelPageConfiguration();
 
+  // Get thumbnail for small image display
+  const thumbnail = useThumbnail({ maxWidth: 500, maxHeight: 500 });
+
+  // Check if this is a small image (< 500x500)
+  const isSmallImage = canvas && canvas.width < 500 && canvas.height < 500;
+
   // Handle small images - prevent stretching beyond original size
   const handleRuntimeCreated = (preset: { runtime: Runtime }) => {
     runtime.current = preset.runtime;
-
-    if (!canvas || !containerRef.current) return;
-
-    // Get container dimensions
-    const container = containerRef.current;
-    const containerWidth = container.clientWidth;
-    const containerHeight = container.clientHeight;
-
-    // Get canvas (image) dimensions
-    const canvasWidth = canvas.width;
-    const canvasHeight = canvas.height;
-
-    // Check if the image is smaller than the viewport
-    if (canvasWidth < containerWidth && canvasHeight < containerHeight) {
-      // Image is smaller than viewport - display at original size, centered
-      // Use setTimeout to ensure the runtime is fully initialized
-      setTimeout(() => {
-        if (runtime.current) {
-          // Go to a region that shows the image at its original size, centered
-          // The region coordinates are in canvas space, so we need to account for the aspect ratio
-          const aspectRatio = containerWidth / containerHeight;
-          const canvasAspectRatio = canvasWidth / canvasHeight;
-
-          let viewWidth: number;
-          let viewHeight: number;
-
-          if (aspectRatio > canvasAspectRatio) {
-            // Container is wider - use container width to calculate view
-            viewHeight = canvasHeight;
-            viewWidth = canvasHeight * aspectRatio;
-          } else {
-            // Container is taller - use container height to calculate view
-            viewWidth = canvasWidth;
-            viewHeight = canvasWidth / aspectRatio;
-          }
-
-          // Center the view on the canvas
-          const x = (canvasWidth - viewWidth) / 2;
-          const y = (canvasHeight - viewHeight) / 2;
-
-          runtime.current.world.gotoRegion({
-            x,
-            y,
-            width: viewWidth,
-            height: viewHeight,
-          });
-        }
-      }, 50);
-    }
   };
 
   const goHome = () => {
     if (runtime.current) {
-      // For small images, go to the constrained view instead of default home
-      if (canvas && containerRef.current) {
-        const container = containerRef.current;
-        const containerWidth = container.clientWidth;
-        const containerHeight = container.clientHeight;
-        const canvasWidth = canvas.width;
-        const canvasHeight = canvas.height;
-
-        if (canvasWidth < containerWidth && canvasHeight < containerHeight) {
-          // Small image - go to original size view
-          const aspectRatio = containerWidth / containerHeight;
-          const canvasAspectRatio = canvasWidth / canvasHeight;
-
-          let viewWidth: number;
-          let viewHeight: number;
-
-          if (aspectRatio > canvasAspectRatio) {
-            viewHeight = canvasHeight;
-            viewWidth = canvasHeight * aspectRatio;
-          } else {
-            viewWidth = canvasWidth;
-            viewHeight = canvasWidth / aspectRatio;
-          }
-
-          const x = (canvasWidth - viewWidth) / 2;
-          const y = (canvasHeight - viewHeight) / 2;
-
-          runtime.current.world.gotoRegion({ x, y, width: viewWidth, height: viewHeight });
-          return;
-        }
-      }
       runtime.current.world.goHome();
     }
     if (osd.current) {
@@ -232,7 +158,30 @@ export const SimpleAtlasViewer = React.forwardRef<
         </style>
         {isLoaded ? (
           <>
-            {isOSD ? (
+            {isSmallImage && thumbnail ? (
+              // Display small images at their original size, centered
+              <div
+                style={{
+                  flex: 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  background: style.backgroundColor || atlasBackground || '#E4E7F0',
+                }}
+              >
+                <img
+                  src={thumbnail.id}
+                  alt=""
+                  style={{
+                    maxWidth: '100%',
+                    maxHeight: '100%',
+                    width: canvas.width,
+                    height: canvas.height,
+                    objectFit: 'contain',
+                  }}
+                />
+              </div>
+            ) : isOSD ? (
               <>
                 <InfoMessage
                   style={{ lineHeight: '3.4em', position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10 }}
@@ -285,7 +234,8 @@ export const SimpleAtlasViewer = React.forwardRef<
               </CanvasPanel.Viewer>
             )}
 
-            {hideViewerControls && isModel ? null : (
+            {/* Hide controls for small images since they're displayed at original size */}
+            {isSmallImage ? null : hideViewerControls && isModel ? null : (
               <CanvasViewerControls>
                 {enableRotation && isModel ? (
                   <CanvasViewerButton onClick={rotate}>
