@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { AnnotationPage } from '@iiif/presentation-3';
 import { RegionHighlight, Runtime } from '@atlas-viewer/atlas';
 import { ErrorBoundary } from 'react-error-boundary';
-import { useCanvas, useImageService, CanvasPanel, CanvasContext, useThumbnail } from 'react-iiif-vault';
+import { useCanvas, useImageService, CanvasPanel, CanvasContext } from 'react-iiif-vault';
 import { useTranslation } from 'react-i18next';
 import { CanvasViewerButton, CanvasViewerControls } from '../atoms/CanvasViewerGrid';
 import { useSiteConfiguration } from '../../site/features/SiteConfigurationContext';
@@ -51,25 +51,11 @@ export const SimpleAtlasViewer = React.forwardRef<
 
   const { enableRotation = false, hideViewerControls = false } = useModelPageConfiguration();
 
-  // Get thumbnail for small image display
-  const thumbnail = useThumbnail({ maxWidth: 500, maxHeight: 500 });
-
   // Check if this is a small image (< 500x500) using image service dimensions
   // The image service contains the actual pixel dimensions, while canvas dimensions may differ
   const serviceWidth = (service as any)?.width;
   const serviceHeight = (service as any)?.height;
   const isSmallImage = serviceWidth && serviceHeight && serviceWidth < 500 && serviceHeight < 500;
-
-  // Debug: log service object to see its structure
-  console.log('DEBUG small image check:', {
-    service,
-    serviceWidth,
-    serviceHeight,
-    isSmallImage,
-    canvasWidth: canvas?.width,
-    canvasHeight: canvas?.height,
-    thumbnail,
-  });
 
   // Handle small images - prevent stretching beyond original size
   const handleRuntimeCreated = (preset: { runtime: Runtime }) => {
@@ -172,7 +158,7 @@ export const SimpleAtlasViewer = React.forwardRef<
         </style>
         {isLoaded ? (
           <>
-            {isSmallImage && thumbnail ? (
+            {isSmallImage && service ? (
               // Display small images at their original size, centered
               <div
                 style={{
@@ -184,7 +170,7 @@ export const SimpleAtlasViewer = React.forwardRef<
                 }}
               >
                 <img
-                  src={thumbnail.id}
+                  src={`${(service as any).id || (service as any)['@id']}/full/full/0/default.jpg`}
                   alt=""
                   style={{
                     maxWidth: '100%',
