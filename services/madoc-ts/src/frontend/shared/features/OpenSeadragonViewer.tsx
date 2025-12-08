@@ -1,7 +1,7 @@
 import React, { forwardRef, useImperativeHandle } from 'react';
 import { useCanvas, useRenderingStrategy } from 'react-iiif-vault';
 import { useOpenSeadragon } from 'use-open-seadragon';
-import { useSiteConfiguration } from '../../site/hooks/use-site-configuration';
+import { useSiteConfiguration } from '../../site/features/SiteConfigurationContext';
 
 export const OpenSeadragonViewer = forwardRef(function OpenSeadragonViewer(props, ref) {
   const canvas = useCanvas();
