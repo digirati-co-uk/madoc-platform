@@ -54,8 +54,11 @@ export const SimpleAtlasViewer = React.forwardRef<
   // Get thumbnail for small image display
   const thumbnail = useThumbnail({ maxWidth: 500, maxHeight: 500 });
 
-  // Check if this is a small image (< 500x500)
-  const isSmallImage = canvas && canvas.width < 500 && canvas.height < 500;
+  // Check if this is a small image (< 500x500) using image service dimensions
+  // The image service contains the actual pixel dimensions, while canvas dimensions may differ
+  const serviceWidth = (service as any)?.width;
+  const serviceHeight = (service as any)?.height;
+  const isSmallImage = serviceWidth && serviceHeight && serviceWidth < 500 && serviceHeight < 500;
 
   // Handle small images - prevent stretching beyond original size
   const handleRuntimeCreated = (preset: { runtime: Runtime }) => {
@@ -175,8 +178,8 @@ export const SimpleAtlasViewer = React.forwardRef<
                   style={{
                     maxWidth: '100%',
                     maxHeight: '100%',
-                    width: canvas.width,
-                    height: canvas.height,
+                    width: serviceWidth,
+                    height: serviceHeight,
                     objectFit: 'contain',
                   }}
                 />
