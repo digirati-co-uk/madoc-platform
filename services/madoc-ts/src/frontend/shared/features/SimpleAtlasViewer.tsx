@@ -60,6 +60,17 @@ export const SimpleAtlasViewer = React.forwardRef<
   const serviceHeight = (service as any)?.height;
   const isSmallImage = serviceWidth && serviceHeight && serviceWidth < 500 && serviceHeight < 500;
 
+  // Debug: log service object to see its structure
+  console.log('DEBUG small image check:', {
+    service,
+    serviceWidth,
+    serviceHeight,
+    isSmallImage,
+    canvasWidth: canvas?.width,
+    canvasHeight: canvas?.height,
+    thumbnail,
+  });
+
   // Handle small images - prevent stretching beyond original size
   const handleRuntimeCreated = (preset: { runtime: Runtime }) => {
     runtime.current = preset.runtime;
