@@ -15,7 +15,6 @@ import {
   useImageService,
   VaultProvider,
   CanvasPanel,
-  useThumbnail,
 } from 'react-iiif-vault';
 import { ImageServiceContext } from './Atlas.helpers';
 
@@ -54,9 +53,6 @@ const Canvas: React.FC<{
   const { data: service } = useImageService() as { data?: ImageService };
   const style = useAnnotationStyles();
 
-  // Get thumbnail for small image display
-  const thumbnail = useThumbnail({ maxWidth: 500, maxHeight: 500 });
-
   // Check if this is a small image (< 500x500) using image service dimensions
   // The image service contains the actual pixel dimensions, while canvas dimensions may differ
   const serviceWidth = (service as any)?.width;
@@ -68,7 +64,7 @@ const Canvas: React.FC<{
   }
 
   // For small images, display as a simple centered image
-  if (isSmallImage && thumbnail) {
+  if (isSmallImage) {
     return (
       <div
         style={{
@@ -81,7 +77,7 @@ const Canvas: React.FC<{
         }}
       >
         <img
-          src={thumbnail.id}
+          src={`${(service as any).id || (service as any)['@id']}/full/full/0/default.jpg`}
           alt=""
           style={{
             maxWidth: '100%',
