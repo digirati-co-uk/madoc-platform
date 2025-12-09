@@ -67,6 +67,7 @@ const Canvas: React.FC<{
   if (isSmallImage) {
     return (
       <div
+        key={canvas.id}
         style={{
           flex: 1,
           display: 'flex',

@@ -147,7 +147,7 @@ export const SimpleAtlasViewer = React.forwardRef<
         ...style,
       }}
     >
-      <ErrorBoundary resetKeys={[canvas.id]} fallbackRender={() => <GhostCanvas />}>
+      <ErrorBoundary key={canvas.id} resetKeys={[canvas.id]} fallbackRender={() => <GhostCanvas />}>
         <style>
           {`
         .atlas-container {
@@ -161,6 +161,7 @@ export const SimpleAtlasViewer = React.forwardRef<
             {isSmallImage && service ? (
               // Display small images at their original size, centered
               <div
+                key={canvas.id}
                 style={{
                   flex: 1,
                   display: 'flex',
