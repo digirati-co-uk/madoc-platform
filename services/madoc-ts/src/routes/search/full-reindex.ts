@@ -26,8 +26,8 @@ export const fullReindex: RouteMiddleware = async context => {
   });
 
   while (state.active) {
-    const responses = await context.connection.any(sql<{ id: number }>`
-        select id
+    const responses = await context.connection.any(sql<{ resource_id: number }>`
+        select resource_id
         from iiif_derived_resource idr
         where resource_type = 'manifest' and site_id = ${siteId}
         limit ${state.limit} offset ${state.offset}
@@ -41,7 +41,7 @@ export const fullReindex: RouteMiddleware = async context => {
       createSearchIndexTask(
         responses.map(r => {
           return {
-            id: r.id,
+            id: r.resource_id,
             type: 'manifest',
           };
         }),
@@ -55,7 +55,7 @@ export const fullReindex: RouteMiddleware = async context => {
     await userApi.addSubtasks(state.tasks, task.id);
 
     for (const response of responses) {
-      ids.push(response.id);
+      ids.push(response.resource_id);
     }
 
     state.offset += state.limit;
