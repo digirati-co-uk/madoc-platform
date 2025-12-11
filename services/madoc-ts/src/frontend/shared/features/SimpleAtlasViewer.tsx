@@ -235,10 +235,10 @@ export const SimpleAtlasViewer = React.forwardRef<
               </CanvasPanel.Viewer>
             )}
 
-            {/* Hide controls for small images since they're displayed at original size */}
-            {isSmallImage ? null : hideViewerControls && isModel ? null : (
+            {/* Show controls - for small images only home button is shown */}
+            {hideViewerControls && isModel ? null : (
               <CanvasViewerControls>
-                {enableRotation && isModel ? (
+                {enableRotation && isModel && !isSmallImage ? (
                   <CanvasViewerButton onClick={rotate}>
                     <RotateIcon title={t('atlas__rotate', { defaultValue: 'Rotate' })} />
                   </CanvasViewerButton>
@@ -246,12 +246,16 @@ export const SimpleAtlasViewer = React.forwardRef<
                 <CanvasViewerButton onClick={goHome}>
                   <HomeIcon title={t('atlas__zoom_home', { defaultValue: 'Home' })} />
                 </CanvasViewerButton>
-                <CanvasViewerButton onClick={zoomOut}>
-                  <MinusIcon title={t('atlas__zoom_out', { defaultValue: 'Zoom out' })} />
-                </CanvasViewerButton>
-                <CanvasViewerButton onClick={zoomIn}>
-                  <PlusIcon title={t('atlas__zoom_in', { defaultValue: 'Zoom in' })} />
-                </CanvasViewerButton>
+                {!isSmallImage ? (
+                  <>
+                    <CanvasViewerButton onClick={zoomOut}>
+                      <MinusIcon title={t('atlas__zoom_out', { defaultValue: 'Zoom out' })} />
+                    </CanvasViewerButton>
+                    <CanvasViewerButton onClick={zoomIn}>
+                      <PlusIcon title={t('atlas__zoom_in', { defaultValue: 'Zoom in' })} />
+                    </CanvasViewerButton>
+                  </>
+                ) : null}
               </CanvasViewerControls>
             )}
           </>
