@@ -136,6 +136,7 @@ export const SimpleAtlasViewer = React.forwardRef<
 
   return (
     <div
+      key={canvas.id}
       ref={setRefs}
       style={{
         position: 'relative',
@@ -235,10 +236,10 @@ export const SimpleAtlasViewer = React.forwardRef<
               </CanvasPanel.Viewer>
             )}
 
-            {/* Show controls - for small images only home button is shown */}
+            {/* Show controls - all buttons visible for both small and regular images */}
             {hideViewerControls && isModel ? null : (
               <CanvasViewerControls>
-                {enableRotation && isModel && !isSmallImage ? (
+                {enableRotation && isModel ? (
                   <CanvasViewerButton onClick={rotate}>
                     <RotateIcon title={t('atlas__rotate', { defaultValue: 'Rotate' })} />
                   </CanvasViewerButton>
@@ -246,16 +247,12 @@ export const SimpleAtlasViewer = React.forwardRef<
                 <CanvasViewerButton onClick={goHome}>
                   <HomeIcon title={t('atlas__zoom_home', { defaultValue: 'Home' })} />
                 </CanvasViewerButton>
-                {!isSmallImage ? (
-                  <>
-                    <CanvasViewerButton onClick={zoomOut}>
-                      <MinusIcon title={t('atlas__zoom_out', { defaultValue: 'Zoom out' })} />
-                    </CanvasViewerButton>
-                    <CanvasViewerButton onClick={zoomIn}>
-                      <PlusIcon title={t('atlas__zoom_in', { defaultValue: 'Zoom in' })} />
-                    </CanvasViewerButton>
-                  </>
-                ) : null}
+                <CanvasViewerButton onClick={zoomOut}>
+                  <MinusIcon title={t('atlas__zoom_out', { defaultValue: 'Zoom out' })} />
+                </CanvasViewerButton>
+                <CanvasViewerButton onClick={zoomIn}>
+                  <PlusIcon title={t('atlas__zoom_in', { defaultValue: 'Zoom in' })} />
+                </CanvasViewerButton>
               </CanvasViewerControls>
             )}
           </>
