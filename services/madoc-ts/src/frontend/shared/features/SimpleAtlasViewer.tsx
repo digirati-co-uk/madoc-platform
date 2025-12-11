@@ -51,11 +51,32 @@ export const SimpleAtlasViewer = React.forwardRef<
 
   const { enableRotation = false, hideViewerControls = false } = useModelPageConfiguration();
 
+  // Track when canvas changes to avoid showing stale service data
+  const [serviceReady, setServiceReady] = useState(true);
+  const prevCanvasId = useRef(canvas?.id);
+
+  useEffect(() => {
+    if (prevCanvasId.current !== canvas?.id) {
+      // Canvas changed - mark service as not ready until it updates
+      setServiceReady(false);
+      prevCanvasId.current = canvas?.id;
+    }
+  }, [canvas?.id]);
+
+  useEffect(() => {
+    // When service data updates, mark it as ready
+    if (service && !serviceReady) {
+      // Small delay to ensure service data is for the current canvas
+      const timer = setTimeout(() => setServiceReady(true), 50);
+      return () => clearTimeout(timer);
+    }
+  }, [service, serviceReady]);
+
   // Check if this is a small image (< 500x500) using image service dimensions
   // The image service contains the actual pixel dimensions, while canvas dimensions may differ
   const serviceWidth = (service as any)?.width;
   const serviceHeight = (service as any)?.height;
-  const isSmallImage = serviceWidth && serviceHeight && serviceWidth < 500 && serviceHeight < 500;
+  const isSmallImage = serviceReady && serviceWidth && serviceHeight && serviceWidth < 500 && serviceHeight < 500;
 
   // Handle small images - prevent stretching beyond original size
   const handleRuntimeCreated = (preset: { runtime: Runtime }) => {
