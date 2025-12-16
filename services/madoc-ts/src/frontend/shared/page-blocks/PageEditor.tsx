@@ -26,12 +26,13 @@ export const PageEditorActions = styled.div`
 `;
 
 export const PageEditorButton = styled.button`
-  background: #212f4f;
+  background: transparent;
   border-radius: 3px;
   padding: 0.5em 1em;
   color: #fff;
   font-size: 0.8em;
-  border: none;
+  border: 1px solid #fff;
+  margin: 0 0.5em;
 
   & ~ * {
     margin-left: 0.5em;
@@ -43,7 +44,6 @@ export const PageEditorButton = styled.button`
   text-decoration: none;
   display: inline-block;
   vertical-align: top;
-  border: 2px solid #212f4f;
 
   &:active {
     box-shadow: inset 0 2px 8px 0 rgba(33, 47, 79, 1);
@@ -53,25 +53,26 @@ export const PageEditorButton = styled.button`
     color: #fff;
   }
   &:hover {
-    background: #33456d;
-    border-color: #33456d;
+    background: white;
+    border-color: #4b67e1;
+    color: #4b67e1;
   }
   &:focus {
-    outline: none;
-    background: #33456d;
-    border-color: rgba(255, 255, 255, 0.6);
+    background: white;
+    border-color: #4b67e1;
+    color: #4b67e1;
   }
 
   &:focus:hover {
-    border-color: #33456d;
+    border-color: #4b67e1;
   }
 
   &:disabled {
     opacity: 0.7;
     cursor: not-allowed;
     &:hover {
-      background: #212f4f;
-      border-color: #212f4f;
+      background: #4b67e1;
+      border-color: #4b67e1;
     }
   }
 `;

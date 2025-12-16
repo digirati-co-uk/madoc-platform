@@ -69,10 +69,10 @@ const EditingBlock = styled.div<{ $vertical?: boolean }>`
 
 const EditingBlocksBar = styled.div`
   padding: 0.5em;
-  border-bottom: 1px solid #8a96a6;
   display: flex;
-  background: #fff;
+  background: #eeeeee;
   font-size: 0.9em;
+  border-radius: 4px;
 `;
 const EditingBlocksBarLeft = styled.div`
   align-self: flex-start;
