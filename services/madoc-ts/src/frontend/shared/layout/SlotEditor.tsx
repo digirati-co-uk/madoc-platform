@@ -2,20 +2,21 @@ import styled, { css } from 'styled-components';
 import { PageEditorButton } from '../page-blocks/PageEditor';
 
 export const SlotEditorContainer = styled.div<{ $small?: boolean }>`
-  background: #53658f;
+  background: #4b67e1;
   color: #fff;
-  padding: 0.2em;
+  padding: 0.5em;
   font-size: 0.85em;
   display: flex;
   align-items: center;
   border-radius: 3px 3px 0 0;
+  border: 2px solid #4b67e1;
   margin-top: 1em;
   font-family: -apple-system, 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Open Sans',
     'Helvetica Neue', 'Icons16', sans-serif;
 `;
 
 export const SlotEditorLabel = styled.div`
-  color: rgba(255, 255, 255, 0.8);
+  color: white;
   font-weight: bold;
   align-self: center;
   padding: 0 1em;
