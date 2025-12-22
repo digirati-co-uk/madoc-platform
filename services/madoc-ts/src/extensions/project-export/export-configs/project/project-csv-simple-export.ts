@@ -1,6 +1,6 @@
 import { parseModelTarget } from '../../../../utility/parse-model-target';
 import { ExportFile } from '../../server-export';
-import { ExportConfig, ExportDataOptions, ExportFileDefinition, SupportedExportResource } from '../../types';
+import type { ExportConfig, ExportDataOptions, ExportFileDefinition, SupportedExportResource } from '../../types';
 import { getValue } from '@iiif/helpers/i18n';
 
 const labelCache: {
@@ -208,12 +208,11 @@ export const projectCsvSimpleExport: ExportConfig = {
 
     function findBest(fields: any[]) {
       const revises = fields.map(r => r.revises);
-      console.log('FINDING BEST', fields);
       return fields.filter(r => !revises.includes(r.id)).pop() || fields[0];
     }
 
     const mappedList = Object.entries(rowRecord)
-      .map(([key, record]) => {
+      .map(([, record]) => {
         const newRecord: any = {
           model_id: record.model_id,
           doc_id: record.doc_id,
