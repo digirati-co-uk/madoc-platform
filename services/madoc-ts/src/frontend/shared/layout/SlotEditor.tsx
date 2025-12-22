@@ -33,6 +33,12 @@ export const SlotEditorLabelReadOnly = styled(SlotEditorLabel)`
 export const SlotEditorButton = styled(PageEditorButton)`
   padding: 0.4em 0.85em;
   font-size: 0.9em;
+
+  &[data-read-only='true'] {
+    color: #4b67e1;
+    background-color: white;
+  }
+
   & ~ & {
     margin-left: 0.2em;
   }
@@ -51,9 +57,11 @@ export const SlotEditorWhy = styled.div`
 
 export const SlotOutlineContainer = styled.div`
   position: relative;
-  outline: 1px solid rgba(33, 47, 79, 0.3);
-  outline-offset: -1px;
+  border: 2px solid #4b67e1;
+  border-top: 0;
+
+  padding: 0.5em;
   clear: both;
-  padding: 0.1px;
+
   margin-bottom: 1em;
 `;
