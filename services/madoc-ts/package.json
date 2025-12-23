@@ -81,6 +81,7 @@
     "@manifest-editor/iiif-browser-bundle": "https://pkg.csb.dev/digirati-co-uk/iiif-manifest-editor/commit/cc804fcf/@manifest-editor/iiif-browser-bundle",
     "@slonik/migrator": "^0.2.0",
     "@styled-icons/entypo": "^10.34.0",
+    "@tanstack/react-table": "^8.21.3",
     "adm-zip": "^0.5.10",
     "ajv": "^6.12.3",
     "bcrypt": "^5.0.1",
