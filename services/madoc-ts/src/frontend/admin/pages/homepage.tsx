@@ -22,17 +22,19 @@ const AdminSection = styled.div`
 
 const AdminSectionGrid = styled.div`
   display: flex;
+  gap: 2em;
 `;
 
 const MenuTitle = styled.h4`
-  margin-bottom: 1em;
+  margin-bottom: 0.5em;
+  font-size: 1.1em;
 `;
 
 const MenuList = styled.div`
   list-style: none;
   margin: 0;
   padding: 0;
-  font-size: 0.9em;
+  font-size: 1em;
   a {
     color: #4157bb;
     text-decoration: none;
@@ -41,7 +43,7 @@ const MenuList = styled.div`
     }
   }
   li {
-    margin-bottom: 0.3em;
+    margin-bottom: 0.8em;
   }
 `;
 
@@ -128,31 +130,46 @@ export const Homepage: UniversalComponent<HomepageType> = createUniversalCompone
               </MenuList>
             </AdminSection>
             <AdminSection>
-              <MenuTitle>{t('Configuration')}</MenuTitle>
+              <MenuTitle>{t('Site configuration')}</MenuTitle>
               <MenuList>
                 <li>
                   <Link to="/configure/site/details">{t('Site details')}</Link>
                 </li>
                 <li>
-                  <Link to="/configure/site/project">{t('Project configuration')}</Link>
+                  <Link to="/configure/site/system">{t('Site general configuration')}</Link>
                 </li>
                 <li>
-                  <Link to="/configure/site/metadata">{t('Metadata configuration')}</Link>
+                  <Link to="/configure/site/project">{t('Site default project configuration')}</Link>
                 </li>
                 <li>
-                  <Link to="/configure/site/system">{t('Site-wide configuration')}</Link>
+                  <Link to="/configure/site/metadata">{t('Site metadata display configuration')}</Link>
                 </li>
                 <li>
-                  <Link to="/enrichment/search-indexing">{t('Search indexing')}</Link>
+                  <Link to="/enrichment/search-indexing">{t('Site search indexing')}</Link>
+                </li>
+                <li>
+                  <Link to="/system/themes">{t('Themes')}</Link>
                 </li>
                 <li>
                   <Link to="/site/permissions">{t('Site permissions')}</Link>
                 </li>
                 <li>
+                  <Link to="/configure/site/terms-and-conditions">{t('Site terms and conditions')}</Link>
+                </li>
+                <li>
                   <Link to="/site/invitations">{t('User invitations')}</Link>
                 </li>
                 <li>
-                  <Link to="/system/webhooks">{t('Webhooks')}</Link>
+                  <Link to="/site/permissions">{t('Site permissions')}</Link>
+                </li>
+                <li>
+                  <Link to="/configure/site/terms">{t('External terms list')}</Link>
+                </li>
+                <li>
+                  <Link to="/site/annotation-styles">{t('annotation-styles')}</Link>
+                </li>
+                <li>
+                  <Link to="/system/plugins">{t('Plugins')}</Link>
                 </li>
               </MenuList>
             </AdminSection>
@@ -161,22 +178,22 @@ export const Homepage: UniversalComponent<HomepageType> = createUniversalCompone
                 <MenuTitle>{t('Global')}</MenuTitle>
                 <MenuList>
                   <li>
-                    <Link to="/global/status">{t('System status')}</Link>
-                  </li>
-                  <li>
-                    <Link to="/global/sites">{t('Sites')}</Link>
-                  </li>
-                  <li>
-                    <Link to="/system/themes">{t('Themes')}</Link>
-                  </li>
-                  <li>
-                    <Link to="/system/plugins">{t('Plugins')}</Link>
-                  </li>
-                  <li>
-                    <Link to="/global/users">{t('Users')}</Link>
-                  </li>
-                  <li>
                     <Link to="/global/config">{t('Global config')}</Link>
+                  </li>
+                  <li>
+                    <Link to="/global/sites">{t('All sites')}</Link>
+                  </li>
+                  <li>
+                    <Link to="/global/sites/create">{t('Create site')}</Link>
+                  </li>
+                  <li>
+                    <Link to="/global/users">{t('All users')}</Link>
+                  </li>
+                  <li>
+                    <Link to="/global/users/create">{t('Create user')}</Link>
+                  </li>
+                  <li>
+                    <Link to="/global/status">{t('System status')}</Link>
                   </li>
                   <li>
                     <Link to="/global/api-keys">{t('API keys')}</Link>
