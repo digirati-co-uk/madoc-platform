@@ -24,9 +24,9 @@ export function ViewManifest() {
   const { listing, firstModel } = useLocationQuery();
   const config = useSiteConfiguration();
 
-  if (!manifest?.published) {
-    return <NotFoundPage />;
-  }
+  // if (!manifest?.published) {
+  //   return <NotFoundPage />;
+  // }
 
   if (!listing && config.project.skipManifestListingPage) {
     if (!manifest) {
