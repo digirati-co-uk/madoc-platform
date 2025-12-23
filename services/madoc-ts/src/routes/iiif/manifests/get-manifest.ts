@@ -1,4 +1,4 @@
-import { optionalUserWithScope } from '../../../utility/user-with-scope';
+import { optionalUserWithScope, userWithScope } from '../../../utility/user-with-scope';
 import { RouteMiddleware } from '../../../types/route-middleware';
 import {
   getManifestSnippets,
@@ -8,11 +8,11 @@ import {
 import { ManifestFull } from '../../../types/schemas/manifest-full';
 import { getResourceCount } from '../../../database/queries/count-queries';
 import { NotFound } from '../../../utility/errors/not-found';
-import { madocNotFound } from '../../madoc-not-found';
-import invariant from 'tiny-invariant';
 
 export const getManifest: RouteMiddleware<{ id: string }> = async context => {
   const { siteId } = optionalUserWithScope(context, ['site.view']);
+  const admin = userWithScope(context, ['site.admin']);
+
   const manifestId = Number(context.params.id);
 
   const canvasesPerPage = 28;
@@ -27,8 +27,6 @@ export const getManifest: RouteMiddleware<{ id: string }> = async context => {
   const totalPages = Math.ceil(adjustedTotal / canvasesPerPage) || 1;
   const requestedPage = Number(context.query.page) || 1;
   const page = requestedPage < totalPages ? requestedPage : totalPages;
-
-  console.log('-------- GET MANIFEST');
 
   const rows = await context.connection.any(
     getManifestSnippets(
@@ -55,12 +53,10 @@ export const getManifest: RouteMiddleware<{ id: string }> = async context => {
     source: 'not-found',
   };
 
-  console.log('---- published', manifest.published);
-
   const canvasIds = table.manifest_to_canvas[`${manifestId}`] || [];
   manifest.items = canvasIds.map((id: number) => table.canvases[id]);
 
-  if (!manifest.published) {
+  if (!manifest.published && !admin) {
     throw new NotFound('Manifest not found');
   }
 
