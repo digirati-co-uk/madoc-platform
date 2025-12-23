@@ -26,6 +26,11 @@ export const PageEditorActions = styled.div`
 `;
 
 export const PageEditorButton = styled.button`
+  &[data-read-only='true'] {
+    color: #4b67e1;
+    background-color: white;
+  }
+
   background: transparent;
   border-radius: 3px;
   padding: 0.5em 1em;
