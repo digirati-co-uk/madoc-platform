@@ -364,7 +364,7 @@ export class CrowdsourcingApi implements BaseExtension {
     await this.api.updateRevisionTask(userTaskId, {
       // Mark the task as needing changes
       status: 4,
-      status_text: statusText || 'changed requested',
+      status_text: statusText || 'change requested',
       // Add the message to the task
       state: {
         changesRequested: message,
