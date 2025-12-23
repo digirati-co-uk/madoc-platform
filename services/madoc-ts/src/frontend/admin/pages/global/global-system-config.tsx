@@ -46,7 +46,7 @@ export const GlobalSystemConfig: React.FC = () => {
 
   return (
     <>
-      <AdminHeader title="Site configuration" breadcrumbs={[{ label: 'Site admin', link: '/' }]} />
+      <AdminHeader title="Gobal configuration" breadcrumbs={[{ label: 'Site admin', link: '/' }]} />
       <WidePage>
         <div style={{ maxWidth: 600 }}>
           {updateSystemConfigStatus.isSuccess ? <SuccessMessage>Config updated</SuccessMessage> : null}

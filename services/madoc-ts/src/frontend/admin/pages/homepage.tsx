@@ -22,12 +22,19 @@ const AdminSection = styled.div`
 
 const AdminSectionGrid = styled.div`
   display: flex;
-  gap: 2em;
 `;
 
 const MenuTitle = styled.h4`
-  margin-bottom: 0.5em;
-  font-size: 1.1em;
+  margin-bottom: 0em;
+  font-size: 1.2em;
+`;
+
+const MenuSubTitle = styled.p`
+  margin-bottom: 0.7em;
+  margin-top: 0.2em;
+  font-size: 0.8em;
+  color: #666;
+  font-weight: 500;
 `;
 
 const MenuList = styled.div`
@@ -91,15 +98,19 @@ export const Homepage: UniversalComponent<HomepageType> = createUniversalCompone
               />
             </StatisticContainer>
           ) : null}
-          <AdminSectionGrid style={{ maxWidth: 1000, margin: '0 auto' }}>
+          <AdminSectionGrid style={{ maxWidth: 1200, margin: '0 auto' }}>
             <AdminSection>
               <MenuTitle>{t('Content')}</MenuTitle>
+              <MenuSubTitle>{t('Create and manage site content')}</MenuSubTitle>
               <MenuList>
                 <li>
-                  <Link to="/manifests">{t('Manage manifests', { count: 2 })}</Link>
+                  <Link to="/manifests">{t('Manifests')}</Link>
                 </li>
                 <li>
-                  <Link to="/collections">{t('Manage collections', { count: 2 })}</Link>
+                  <Link to="/collections">{t('Collections')}</Link>
+                </li>
+                <li>
+                  <Link to="/media">{t('Media')}</Link>
                 </li>
                 <li>
                   <Link to="/page-blocks">{t('Site pages')}</Link>
@@ -107,19 +118,14 @@ export const Homepage: UniversalComponent<HomepageType> = createUniversalCompone
                 <li>
                   <Link to="/i18n">{t('Localisation')}</Link>
                 </li>
-                <li>
-                  <Link to="/media">{t('Media')}</Link>
-                </li>
               </MenuList>
             </AdminSection>
             <AdminSection>
               <MenuTitle>{t('Crowdsourcing')}</MenuTitle>
+              <MenuSubTitle>{t(' Public contribution and enrichment')}</MenuSubTitle>
               <MenuList>
                 <li>
-                  <Link to="/projects">{t('Manage projects', { count: 2 })}</Link>
-                </li>
-                <li>
-                  <Link to="/enrichment/search-indexing">{t('Search indexing')}</Link>
+                  <Link to="/projects">{t('Projects')}</Link>
                 </li>
                 <li>
                   <Link to={`/enrichment/ocr`}>{t('OCR')}</Link>
@@ -130,7 +136,8 @@ export const Homepage: UniversalComponent<HomepageType> = createUniversalCompone
               </MenuList>
             </AdminSection>
             <AdminSection>
-              <MenuTitle>{t('Site configuration')}</MenuTitle>
+              <MenuTitle>{t('Configuration')}</MenuTitle>
+              <MenuSubTitle>{t('Configure how this site works and appears')}</MenuSubTitle>
               <MenuList>
                 <li>
                   <Link to="/configure/site/details">{t('Site details')}</Link>
@@ -139,61 +146,35 @@ export const Homepage: UniversalComponent<HomepageType> = createUniversalCompone
                   <Link to="/configure/site/system">{t('Site general configuration')}</Link>
                 </li>
                 <li>
-                  <Link to="/configure/site/project">{t('Site default project configuration')}</Link>
-                </li>
-                <li>
-                  <Link to="/configure/site/metadata">{t('Site metadata display configuration')}</Link>
+                  <Link to="/configure/site/project">{t('Site Project configuration')}</Link>
                 </li>
                 <li>
                   <Link to="/enrichment/search-indexing">{t('Site search indexing')}</Link>
                 </li>
                 <li>
+                  <Link to="/site/permissions">{t('Site permissions')}</Link>
+                </li>
+                <li>
                   <Link to="/system/themes">{t('Themes')}</Link>
-                </li>
-                <li>
-                  <Link to="/site/permissions">{t('Site permissions')}</Link>
-                </li>
-                <li>
-                  <Link to="/configure/site/terms-and-conditions">{t('Site terms and conditions')}</Link>
-                </li>
-                <li>
-                  <Link to="/site/invitations">{t('User invitations')}</Link>
-                </li>
-                <li>
-                  <Link to="/site/permissions">{t('Site permissions')}</Link>
-                </li>
-                <li>
-                  <Link to="/configure/site/terms">{t('External terms list')}</Link>
-                </li>
-                <li>
-                  <Link to="/site/annotation-styles">{t('annotation-styles')}</Link>
-                </li>
-                <li>
-                  <Link to="/system/plugins">{t('Plugins')}</Link>
                 </li>
               </MenuList>
             </AdminSection>
             {isGlobal ? (
               <AdminSection>
                 <MenuTitle>{t('Global')}</MenuTitle>
+                <MenuSubTitle>{t('System-wide administration')}</MenuSubTitle>
                 <MenuList>
                   <li>
-                    <Link to="/global/config">{t('Global config')}</Link>
+                    <Link to="/global/sites">{t('All Sites')}</Link>
                   </li>
                   <li>
-                    <Link to="/global/sites">{t('All sites')}</Link>
-                  </li>
-                  <li>
-                    <Link to="/global/sites/create">{t('Create site')}</Link>
-                  </li>
-                  <li>
-                    <Link to="/global/users">{t('All users')}</Link>
-                  </li>
-                  <li>
-                    <Link to="/global/users/create">{t('Create user')}</Link>
+                    <Link to="/global/users">{t('Users')}</Link>
                   </li>
                   <li>
                     <Link to="/global/status">{t('System status')}</Link>
+                  </li>
+                  <li>
+                    <Link to="/global/config">{t('Global config')}</Link>
                   </li>
                   <li>
                     <Link to="/global/api-keys">{t('API keys')}</Link>

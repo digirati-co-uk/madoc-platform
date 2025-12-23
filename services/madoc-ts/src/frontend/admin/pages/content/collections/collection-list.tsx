@@ -45,6 +45,7 @@ export const CollectionList: UniversalComponent<CollectionListType> = createUniv
             { label: 'Collections', link: '/collections', active: true },
           ]}
           title={t('Collections', { count: pagination.totalResults })}
+          subtitle={t('Collections group related manifests into curated sets for display and navigation.')}
         />
         <WidePage>
           <ButtonRow>
@@ -71,10 +72,15 @@ export const CollectionList: UniversalComponent<CollectionListType> = createUniv
               </Heading3>
               <ButtonRow>
                 <Button as={Link} to={`/collections/${collection.id}/structure`}>
-                  {t('edit')}
+                  {t('Edit collection')}
                 </Button>
               </ButtonRow>
-              <Subheading3>{t('{{count}} items', { count: collection.itemCount })}</Subheading3>
+              {collection && collection.itemCount && collection.itemCount > 0 ? (
+                <Subheading3>{t('{{count}} items', { count: collection.itemCount })}</Subheading3>
+              ) : (
+                <Subheading3>{t('No items in this collection yet')}</Subheading3>
+              )}
+
               {collection.items.length === 0 ? null : (
                 <ImageStrip>
                   {collection.items.map((manifest, key) => (

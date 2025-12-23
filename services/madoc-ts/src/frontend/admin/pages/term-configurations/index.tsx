@@ -9,11 +9,11 @@ export function TermConfigurations() {
   return (
     <>
       <AdminHeader
-        title={t('Term configurations')}
+        title={t('External terms list')}
         breadcrumbs={[
           { label: t('Site admin'), link: '/' },
           { label: t('Configure site'), link: '/configure/site' },
-          { label: t('Term configurations'), link: '/configure/site/terms' },
+          { label: t('External terms list'), link: '/configure/site/terms' },
         ]}
         noMargin
       />

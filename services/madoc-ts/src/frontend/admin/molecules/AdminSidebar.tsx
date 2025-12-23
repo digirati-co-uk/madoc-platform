@@ -99,7 +99,7 @@ export const AdminSidebar: React.FC = () => {
               {t('Import manifest')}
             </AdminMenuSubItem>
             <AdminMenuSubItem as={HrefLink} href="/enrichment/ocr">
-              {t('View manifests with OCR')}
+              {t('View manifests with OCR text')}
             </AdminMenuSubItem>
           </AdminMenuSubItemContainer>
         </AdminMenuItemContainer>
