@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { getBotType } from '../../../../automation/utils/get-bot-type';
 import { User } from '../../../../extensions/site-manager/types';
 import { TimeAgo } from '../../../shared/atoms/TimeAgo';
@@ -18,6 +18,55 @@ import { Pagination } from '../../molecules/Pagination';
 import { Pagination as _Pagination } from '../../../../types/schemas/_pagination';
 import { validateEmail } from '../../../../utility/validate-email';
 import { ErrorMessage } from '../../../shared/callouts/ErrorMessage';
+import { ColumnDef, flexRender, getCoreRowModel, useReactTable, getSortedRowModel } from '@tanstack/react-table';
+
+export const columns: ColumnDef<User>[] = [
+  {
+    accessorKey: 'id',
+    header: 'ID',
+    cell: info => info.getValue(),
+  },
+  {
+    accessorKey: 'name',
+    header: 'Name',
+    enableSorting: true,
+    cell: info => <HrefLink href={`/global/users/${info.row.original.id}`}>{info.getValue() as string}</HrefLink>,
+  },
+  {
+    accessorKey: 'email',
+    enableSorting: true,
+    header: 'Email',
+  },
+  {
+    accessorKey: 'is_active',
+    header: 'Is active',
+    cell: info => (info.getValue() ? 'active' : 'inactive'),
+  },
+  {
+    accessorKey: 'created',
+    header: 'Created',
+    cell: info => <TimeAgo date={new Date(info.getValue() as string)} />,
+  },
+  {
+    accessorKey: 'modified',
+    header: 'Last modified',
+    enableSorting: true,
+    cell: info => (info.getValue() ? <TimeAgo date={new Date(info.getValue() as string)} /> : '-'),
+  },
+  {
+    accessorKey: 'role',
+    header: 'Global role',
+    cell: info => <Tag>{info.getValue() as string}</Tag>,
+  },
+  {
+    id: 'automated',
+    header: 'Automated',
+    cell: info => {
+      const user = info.row.original;
+      return user.automated ? <Tag>{getBotType(user.config?.bot?.type) || 'bot'}</Tag> : null;
+    },
+  },
+];
 
 export const ListUsers: React.FC = () => {
   const { data } = usePaginatedData<{ users: User[]; pagination: _Pagination }>(ListUsers);
@@ -25,6 +74,27 @@ export const ListUsers: React.FC = () => {
   const currentUser = useUser();
   const navigate = useNavigate();
   const [userDeleted, setUserDeleted] = useState(false);
+  const [sorting, setSorting] = useState([]);
+  const [roleFilter, setRoleFilter] = useState<string | null>(null);
+  const [activeFilter, setActiveFilter] = useState<'active' | 'inactive' | null>(null);
+
+  const filteredUsers = useMemo(() => {
+    if (!data?.users) return [];
+
+    return data.users.filter(user => {
+      if (roleFilter && user.role !== roleFilter) return false;
+      return !(activeFilter && (user.is_active ? 'active' : 'inactive') !== activeFilter);
+    });
+  }, [data?.users, roleFilter, activeFilter]);
+
+  const table = useReactTable({
+    data: filteredUsers,
+    columns,
+    state: { sorting },
+    onSortingChange: setSorting,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+  });
 
   useEffect(() => {
     if (query.user_deleted) {
@@ -69,56 +139,66 @@ export const ListUsers: React.FC = () => {
           totalPages={data ? data.pagination.totalPages : 1}
           stale={!data}
         />
+        <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
+          <select onChange={e => setRoleFilter(e.target.value || null)}>
+            <option value="">All roles</option>
+            <option value="global_admin">Global admin</option>
+            <option value="researcher">Researcher</option>
+            <option value="reviewer">Reviewer</option>
+            <option value="transcriber">Transcriber</option>
+          </select>
+
+          <select onChange={e => setActiveFilter((e.target.value as any) || null)}>
+            <option value="">All users</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+        </div>
         <SimpleTable.Table>
           <thead>
-            <SimpleTable.Row>
-              <SimpleTable.Header>
-                <strong>ID</strong>
-              </SimpleTable.Header>
-              <SimpleTable.Header>
-                <strong>Name</strong>
-              </SimpleTable.Header>
-              <SimpleTable.Header>
-                <strong>Email</strong>
-              </SimpleTable.Header>
-              <SimpleTable.Header>
-                <strong>Is active</strong>
-              </SimpleTable.Header>
-              <SimpleTable.Header>
-                <strong>Created</strong>
-              </SimpleTable.Header>
-              <SimpleTable.Header>
-                <strong>Last modified</strong>
-              </SimpleTable.Header>
-              <SimpleTable.Header>
-                <strong>Global role</strong>
-              </SimpleTable.Header>
-              <SimpleTable.Header>
-                <strong>Automated</strong>
-              </SimpleTable.Header>
-            </SimpleTable.Row>
-          </thead>
-          <tbody>
-            {data?.users.map(user => (
-              <SimpleTable.Row key={user.id} $interactive style={{ background: user.automated || validateEmail(user.email) ? '' : '#FDD6D6' }}>
-                <SimpleTable.Cell>{user.id}</SimpleTable.Cell>
-                <SimpleTable.Cell>
-                  <HrefLink href={`/global/users/${user.id}`}>{user.name}</HrefLink>
-                </SimpleTable.Cell>
-                <SimpleTable.Cell>{user.email}</SimpleTable.Cell>
-                <SimpleTable.Cell>{user.is_active ? 'active' : 'inactive'}</SimpleTable.Cell>
-                <SimpleTable.Cell>
-                  <TimeAgo date={new Date(user.created)} />
-                </SimpleTable.Cell>
-                <SimpleTable.Cell>{user.modified ? <TimeAgo date={new Date(user.modified)} /> : '-'}</SimpleTable.Cell>
-                <SimpleTable.Cell>
-                  <Tag>{user.role}</Tag>
-                </SimpleTable.Cell>
-                <SimpleTable.Cell>
-                  {user.automated ? <Tag>{getBotType(user.config?.bot?.type) || 'bot'}</Tag> : null}
-                </SimpleTable.Cell>
+            {table.getHeaderGroups().map(headerGroup => (
+              <SimpleTable.Row key={headerGroup.id}>
+                {headerGroup.headers.map(header => (
+                  <SimpleTable.Header
+                    key={headerGroup.id}
+                    onClick={header.column.getCanSort() ? header.column.getToggleSortingHandler() : undefined}
+                    style={{
+                      cursor: header.column.getCanSort() ? 'pointer' : 'default',
+                      userSelect: 'none',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {flexRender(header.column.columnDef.header, header.getContext())}
+
+                    {header.column.getCanSort() && (
+                      <span style={{ marginLeft: 6, opacity: header.column.getIsSorted() ? 1 : 0.35 }}>
+                        {{
+                          asc: '↑',
+                          desc: '↓',
+                        }[header.column.getIsSorted() as string] ?? '⇅'}
+                      </span>
+                    )}
+                  </SimpleTable.Header>
+                ))}
               </SimpleTable.Row>
             ))}
+          </thead>
+
+          <tbody>
+            {table.getRowModel().rows.map(row => {
+              const user = row.original;
+              const isInvalid = !user.automated && !validateEmail(user.email);
+
+              return (
+                <SimpleTable.Row key={row.id} $interactive style={{ background: isInvalid ? '#FDD6D6' : undefined }}>
+                  {row.getVisibleCells().map(cell => (
+                    <SimpleTable.Cell key={cell.id}>
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </SimpleTable.Cell>
+                  ))}
+                </SimpleTable.Row>
+              );
+            })}
           </tbody>
         </SimpleTable.Table>
         <Pagination
