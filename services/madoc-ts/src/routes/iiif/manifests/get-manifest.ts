@@ -7,7 +7,7 @@ import {
 } from '../../../database/queries/get-manifest-snippets';
 import { ManifestFull } from '../../../types/schemas/manifest-full';
 import { getResourceCount } from '../../../database/queries/count-queries';
-import { NotFound } from '../../../utility/errors/not-found';
+import { NotFoundPretty } from '../../../utility/errors/not-found';
 
 export const getManifest: RouteMiddleware<{ id: string }> = async context => {
   const { siteId } = optionalUserWithScope(context, ['site.view']);
@@ -57,7 +57,11 @@ export const getManifest: RouteMiddleware<{ id: string }> = async context => {
   manifest.items = canvasIds.map((id: number) => table.canvases[id]);
 
   if (!manifest.published && !admin) {
-    throw new NotFound('Manifest not found');
+    console.log('GET MANIFESTS - THROW NOT FOUND PRETTY');
+    const err = new NotFoundPretty('Manifest not found');
+    err.pretty = true;
+    err.status = 404;
+    throw err;
   }
 
   context.response.body = {

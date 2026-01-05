@@ -3,6 +3,7 @@ import { Button, ButtonRow } from '../navigation/Button';
 import { ErrorMessage } from '../callouts/ErrorMessage';
 import { WidePageWrapper } from '../layout/WidePage';
 import { mapStackTrace } from 'sourcemapped-stacktrace';
+import { NotFoundPretty } from '../../../utility/errors/not-found';
 
 export const NotFoundPage: React.FC<{ error?: any }> = () => {
   return <h1>Not found</h1>;
@@ -10,6 +11,8 @@ export const NotFoundPage: React.FC<{ error?: any }> = () => {
 
 export const ErrorPage: React.FC<{ error?: Error; resetError?: () => void }> = props => {
   const [trace, setTrace] = useState<string[]>([]);
+
+  console.log('NOT FOUND PAGE');
 
   useEffect(() => {
     if (props.error && props.error.stack) {
@@ -20,6 +23,10 @@ export const ErrorPage: React.FC<{ error?: Error; resetError?: () => void }> = p
       }
     }
   }, [props.error]);
+
+  if (props.error instanceof NotFoundPretty) {
+    return <h1>Not Found</h1>;
+  }
 
   return (
     <WidePageWrapper>

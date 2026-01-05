@@ -1,6 +1,6 @@
 import { Middleware } from 'koa';
 import { NotAuthorized } from '../utility/errors/not-authorized';
-import { NotFound } from '../utility/errors/not-found';
+import { NotFound, NotFoundPretty } from '../utility/errors/not-found';
 import { RequestError } from '../utility/errors/request-error';
 import { ServerError } from '../utility/errors/server-error';
 import { SlonikError } from 'slonik';
@@ -26,7 +26,14 @@ export const errorHandler: Middleware = async (context, next) => {
       return;
     } else if (err instanceof ServerError) {
       context.response.status = 500;
+    } else if (err instanceof NotFoundPretty) {
+      console.log('ERROR HANDLER - NOT FOUND PRETTY');
+      context.response.body = '<h1>Not Found</h1>';
+      console.log(err, context.response);
+      context.response.status = 404;
+      delete err.stack;
     } else if (err instanceof NotFound) {
+      console.log('ERROR HANDLER - NOT FOUND');
       if (err.message) {
         context.response.body = { error: err.message };
       }
