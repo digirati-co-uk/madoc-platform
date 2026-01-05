@@ -59,6 +59,7 @@ export const getManifest: RouteMiddleware<{ id: string }> = async context => {
   if (!manifest.published && !admin) {
     console.log('GET MANIFESTS - THROW NOT FOUND PRETTY');
     const err = new NotFoundPretty('Manifest not found');
+    err.message = 'Manifest not found';
     err.pretty = true;
     err.status = 404;
     throw err;

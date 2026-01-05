@@ -27,13 +27,10 @@ export const errorHandler: Middleware = async (context, next) => {
     } else if (err instanceof ServerError) {
       context.response.status = 500;
     } else if (err instanceof NotFoundPretty) {
-      console.log('ERROR HANDLER - NOT FOUND PRETTY');
-      context.response.body = '<h1>Not Found</h1>';
+      context.response.body = { error: err.message };
       console.log(err, context.response);
       context.response.status = 404;
-      delete err.stack;
     } else if (err instanceof NotFound) {
-      console.log('ERROR HANDLER - NOT FOUND');
       if (err.message) {
         context.response.body = { error: err.message };
       }
