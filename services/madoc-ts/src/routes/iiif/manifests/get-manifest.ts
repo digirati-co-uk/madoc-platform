@@ -1,4 +1,4 @@
-import { optionalUserWithScope } from '../../../utility/user-with-scope';
+import { optionalUserWithScope, userWithScope } from '../../../utility/user-with-scope';
 import { RouteMiddleware } from '../../../types/route-middleware';
 import {
   getManifestSnippets,
@@ -7,9 +7,12 @@ import {
 } from '../../../database/queries/get-manifest-snippets';
 import { ManifestFull } from '../../../types/schemas/manifest-full';
 import { getResourceCount } from '../../../database/queries/count-queries';
+import { NotFound } from '../../../utility/errors/not-found';
 
 export const getManifest: RouteMiddleware<{ id: string }> = async context => {
   const { siteId } = optionalUserWithScope(context, ['site.view']);
+  const admin = userWithScope(context, ['site.admin']);
+
   const manifestId = Number(context.params.id);
 
   const canvasesPerPage = 28;
@@ -44,13 +47,18 @@ export const getManifest: RouteMiddleware<{ id: string }> = async context => {
 
   const table = mapManifestSnippets(rows);
 
-  const manifest = table.manifests[`${manifestId}`] || {
+  const manifest: ManifestFull['manifest'] = table.manifests[`${manifestId}`] || {
     id: manifestId,
     label: { none: ['Manifest not found'] },
     source: 'not-found',
   };
+
   const canvasIds = table.manifest_to_canvas[`${manifestId}`] || [];
   manifest.items = canvasIds.map((id: number) => table.canvases[id]);
+
+  if (!manifest.published && !admin) {
+    throw new NotFound('Manifest not found');
+  }
 
   context.response.body = {
     manifest,

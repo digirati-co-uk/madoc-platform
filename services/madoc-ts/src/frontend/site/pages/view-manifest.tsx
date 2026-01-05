@@ -15,7 +15,6 @@ import { useSiteConfiguration } from '../features/SiteConfigurationContext';
 import { useManifest } from '../hooks/use-manifest';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 import { Navigate } from 'react-router-dom';
-import { NotFoundPage } from '../../shared/components/NotFoundPage';
 
 export function ViewManifest() {
   const { data } = useManifest();
@@ -23,10 +22,6 @@ export function ViewManifest() {
   const createLink = useRelativeLinks();
   const { listing, firstModel } = useLocationQuery();
   const config = useSiteConfiguration();
-
-  if (!manifest?.published) {
-    return <NotFoundPage />;
-  }
 
   if (!listing && config.project.skipManifestListingPage) {
     if (!manifest) {
