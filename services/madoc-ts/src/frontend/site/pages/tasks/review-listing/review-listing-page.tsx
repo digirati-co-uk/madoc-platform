@@ -14,7 +14,7 @@ import { serverRendererFor } from '../../../../shared/plugins/external/server-re
 import { HrefLink } from '../../../../shared/utility/href-link';
 import { useRelativeLinks } from '../../../hooks/use-relative-links';
 import { useTaskMetadata } from '../../../hooks/use-task-metadata';
-import { Button, ButtonIcon, ButtonRow, TextButton } from '../../../../shared/navigation/Button';
+import { Button, ButtonIcon, ButtonRow } from '../../../../shared/navigation/Button';
 import { Chevron } from '../../../../shared/icons/Chevron';
 import { useResizeLayout } from '../../../../shared/hooks/use-resize-layout';
 import { LayoutHandle } from '../../../../shared/layout/LayoutContainer';
@@ -25,6 +25,7 @@ import { EmptyState } from '../../../../shared/layout/EmptyState';
 import ListItemIcon from '../../../../shared/icons/ListItemIcon';
 import { useKeyboardListNavigation } from '../../../hooks/use-keyboard-list-navigation';
 import { useLocalStorage } from '../../../../shared/hooks/use-local-storage';
+import { ItemFilter } from '../../../../shared/components/ItemFilter';
 
 const TaskListContainer = styled.div`
   height: 80vh;
@@ -130,8 +131,16 @@ export function ReviewListingPage() {
   const params = useParams<{ taskId?: string; slug?: string }>();
   const projectId = params.slug;
   const createLink = useRelativeLinks();
+  const navigate = useNavigate();
   const { sort_by = '', status, assignee } = useLocationQuery();
   const [hideManifests, setHideManifests] = useLocalStorage('hide-manifest-reviews', false);
+
+  const REVIEW_STATUS_MAP: Record<string, number> = {
+    todo: 1,
+    in_review: 2,
+    approved: 3,
+    changes_requested: 4,
+  };
 
   const { widthB, refs } = useResizeLayout(`review-dashboard-resize`, {
     left: true,
@@ -196,15 +205,58 @@ export function ReviewListingPage() {
           >
             {t('Task view')}
           </Button>
-          {status || assignee ? (
-            <Button as={Link} to={createLink({ projectId: projectId, subRoute: 'reviews', query: {} })}>
-              {t('Reset filters')}
-            </Button>
-          ) : null}
 
           <Button onClick={() => setHideManifests(!hideManifests)}>
             {hideManifests ? t('Hide manifests') : t('Show manifests')}
           </Button>
+
+          {(status || assignee) && (
+            <Button as={Link} to={createLink({ projectId, subRoute: 'reviews', query: {} })}>
+              {t('Reset filters')}
+            </Button>
+          )}
+
+          {(() => {
+            const selectedStatusKey =
+              status && Object.entries(REVIEW_STATUS_MAP).find(([, v]) => String(v) === String(status))?.[0];
+            return (
+              <ItemFilter
+                label={
+                  status
+                    ? t(
+                        Object.entries(REVIEW_STATUS_MAP).find(([, v]) => String(v) === String(status))?.[0] ??
+                          'Filter by status'
+                      )
+                    : t('Filter by status')
+                }
+                closeOnChange
+                items={[
+                  { key: 'todo', label: t('To do') },
+                  { key: 'in_review', label: t('In review') },
+                  { key: 'approved', label: t('Approved') },
+                  { key: 'changes_requested', label: t('Changes requested') },
+                ].map(s => ({
+                  id: s.key,
+                  label: s.label,
+                  onChange: selected => {
+                    navigate(
+                      createLink({
+                        projectId,
+                        subRoute: 'reviews',
+                        taskId: undefined,
+                        query: {
+                          status: selected ? REVIEW_STATUS_MAP[s.key] : undefined,
+                          assignee,
+                          page: undefined,
+                        },
+                      })
+                    );
+                  },
+                }))}
+                selected={selectedStatusKey ? [selectedStatusKey] : []}
+              />
+            );
+          })()}
         </ButtonRow>
       </div>
 
