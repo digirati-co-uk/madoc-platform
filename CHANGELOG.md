@@ -37,6 +37,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added button to exclude all manifests from preview collection
 - Added button to delete all contributions on a Manifest to hard-reset it (NS-67)
+- Added filter by status option to review list table (MAD-1320)
+- Added column resizing on review list table (MAD-1321)
 
 ### Changed
 

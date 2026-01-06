@@ -89,7 +89,7 @@ const HeaderLink = styled.a`
     transition: background-color 0.2s, height 0.3s, transform 0.5s;
     transition-timing-function: ease-in-out;
     height: 2px;
-    width: 12px;
+    width: 16px;
     transform: rotatex(0deg);
     background-color: rgba(85, 85, 85, 1);
   }
@@ -126,6 +126,49 @@ const HeaderLink = styled.a`
   }
 `;
 
+const ResizeHandle = styled.div`
+  position: absolute;
+  right: 0;
+  top: -8px;
+  bottom: -8px;
+  width: 18px;
+  cursor: col-resize;
+  z-index: 10;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background-color: transparent;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.15);
+    svg {
+      fill: #555555;
+    }
+  }
+
+  svg {
+    pointer-events: none;
+    fill: transparent;
+  }
+`;
+
+const ResizableHeader = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+
+  &:hover ${ResizeHandle} {
+    background-color: #dddddd;
+
+    svg {
+      fill: #555555;
+    }
+  }
+`;
+
 export function ReviewListingPage() {
   const { t } = useTranslation();
   const params = useParams<{ taskId?: string; slug?: string }>();
@@ -134,6 +177,34 @@ export function ReviewListingPage() {
   const navigate = useNavigate();
   const { sort_by = '', status, assignee } = useLocationQuery();
   const [hideManifests, setHideManifests] = useLocalStorage('hide-manifest-reviews', false);
+
+  const [columnWidths, setColumnWidths] = React.useState<Record<string, number>>({
+    manifest: 320,
+    canvas: 220,
+    modified: 140,
+    status: 140,
+    assignee: 180,
+  });
+
+  const startResize = (column: string, startX: number) => {
+    const startWidth = columnWidths[column];
+
+    const onMouseMove = (e: MouseEvent) => {
+      const delta = e.clientX - startX;
+      setColumnWidths(w => ({
+        ...w,
+        [column]: Math.max(80, startWidth + delta),
+      }));
+    };
+
+    const onMouseUp = () => {
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+    };
+
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+  };
 
   const REVIEW_STATUS_MAP: Record<string, number> = {
     todo: 1,
@@ -266,59 +337,115 @@ export function ReviewListingPage() {
             <>Loading...</>
           ) : (
             <>
-              <SimpleTable.Table style={{ border: 'none' }}>
+              <SimpleTable.Table
+                style={{
+                  tableLayout: 'fixed',
+                  width: '100%',
+                }}
+              >
+                <colgroup>
+                  <col style={{ width: columnWidths.manifest }} />
+                  <col style={{ width: columnWidths.canvas }} />
+                  <col style={{ width: columnWidths.modified }} />
+                  <col style={{ width: columnWidths.status }} />
+                  <col style={{ width: columnWidths.assignee }} />
+                </colgroup>
                 <thead>
                   <SimpleTable.Row style={{ height: 47 }}>
-                    <SimpleTable.Header>
-                      <HeaderLink
-                        as={HrefLink}
-                        href={QuerySortToggle('subject')}
-                        data-is-active={sort_by && sort_by.includes('subject:')}
-                        data-is-desc={sort_by && sort_by.includes('desc')}
-                      >
-                        Manifest <Chevron />
-                      </HeaderLink>
+                    <SimpleTable.Header style={{ width: columnWidths.manifest, position: 'relative' }}>
+                      <ResizableHeader>
+                        <HeaderLink
+                          as={HrefLink}
+                          href={QuerySortToggle('subject')}
+                          data-is-active={sort_by && sort_by.includes('subject:')}
+                          data-is-desc={sort_by && sort_by.includes('desc')}
+                        >
+                          Manifest <Chevron />
+                        </HeaderLink>
+                        <ResizeHandle
+                          onMouseDown={e => startResize('manifest', e.clientX)}
+                          onClick={e => e.stopPropagation()}
+                        >
+                          <ResizeHandleIcon />
+                        </ResizeHandle>
+                      </ResizableHeader>
                     </SimpleTable.Header>
-                    <SimpleTable.Header>
-                      <HeaderLink
-                        as={HrefLink}
-                        href={QuerySortToggle('subject_parent')}
-                        data-is-active={sort_by && sort_by.includes('subject_parent')}
-                        data-is-desc={sort_by && sort_by.includes('desc')}
-                      >
-                        Canvas <Chevron />
-                      </HeaderLink>
+                    <SimpleTable.Header style={{ width: columnWidths.canvas, position: 'relative' }}>
+                      <ResizableHeader>
+                        <HeaderLink
+                          as={HrefLink}
+                          href={QuerySortToggle('subject_parent')}
+                          data-is-active={sort_by && sort_by.includes('subject_parent')}
+                          data-is-desc={sort_by && sort_by.includes('desc')}
+                        >
+                          Canvas <Chevron />
+                        </HeaderLink>
+                        <ResizeHandle
+                          className="resize-handle"
+                          onMouseDown={e => startResize('canvas', e.clientX)}
+                          onClick={e => e.stopPropagation()}
+                        >
+                          <ResizeHandleIcon />
+                        </ResizeHandle>
+                      </ResizableHeader>
                     </SimpleTable.Header>
-                    <SimpleTable.Header>
-                      <HeaderLink
-                        as={HrefLink}
-                        href={QuerySortToggle('modified_at')}
-                        data-is-active={sort_by && sort_by.includes('modified_at')}
-                        data-is-desc={sort_by && sort_by.includes('desc')}
-                        data-no-sort={!sort_by}
-                      >
-                        Modified <Chevron />
-                      </HeaderLink>
+                    <SimpleTable.Header style={{ width: columnWidths.modified, position: 'relative' }}>
+                      <ResizableHeader>
+                        <HeaderLink
+                          as={HrefLink}
+                          href={QuerySortToggle('modified_at')}
+                          data-is-active={sort_by && sort_by.includes('modified_at')}
+                          data-is-desc={sort_by && sort_by.includes('desc')}
+                          data-no-sort={!sort_by}
+                        >
+                          Modified <Chevron />
+                        </HeaderLink>
+                        <ResizeHandle
+                          className="resize-handle"
+                          onMouseDown={e => startResize('modified', e.clientX)}
+                          onClick={e => e.stopPropagation()}
+                        >
+                          <ResizeHandleIcon />
+                        </ResizeHandle>
+                      </ResizableHeader>
                     </SimpleTable.Header>
-                    <SimpleTable.Header>
-                      <HeaderLink
-                        as={HrefLink}
-                        href={QuerySortToggle('status')}
-                        data-is-active={sort_by && sort_by.includes('status')}
-                        data-is-desc={sort_by && sort_by.includes('desc')}
-                      >
-                        Status <Chevron />
-                      </HeaderLink>
+                    <SimpleTable.Header style={{ width: columnWidths.status, position: 'relative' }}>
+                      <ResizableHeader>
+                        <HeaderLink
+                          as={HrefLink}
+                          href={QuerySortToggle('status')}
+                          data-is-active={sort_by && sort_by.includes('status')}
+                          data-is-desc={sort_by && sort_by.includes('desc')}
+                        >
+                          Status <Chevron />
+                        </HeaderLink>
+                        <ResizeHandle
+                          className="resize-handle"
+                          onMouseDown={e => startResize('status', e.clientX)}
+                          onClick={e => e.stopPropagation()}
+                        >
+                          <ResizeHandleIcon />
+                        </ResizeHandle>
+                      </ResizableHeader>
                     </SimpleTable.Header>
-                    <SimpleTable.Header>
-                      <HeaderLink
-                        as={HrefLink}
-                        href={QuerySortToggle('user_identifier')}
-                        data-is-active={sort_by && sort_by.includes('user_identifier')}
-                        data-is-desc={sort_by && sort_by.includes('desc')}
-                      >
-                        Assignee <Chevron />
-                      </HeaderLink>
+                    <SimpleTable.Header style={{ width: columnWidths.assignee, position: 'relative' }}>
+                      <ResizableHeader>
+                        <HeaderLink
+                          as={HrefLink}
+                          href={QuerySortToggle('user_identifier')}
+                          data-is-active={sort_by && sort_by.includes('user_identifier')}
+                          data-is-desc={sort_by && sort_by.includes('desc')}
+                        >
+                          Assignee <Chevron />
+                        </HeaderLink>
+                        <ResizeHandle
+                          className="resize-handle"
+                          onMouseDown={e => startResize('assignee', e.clientX)}
+                          onClick={e => e.stopPropagation()}
+                        >
+                          <ResizeHandleIcon />
+                        </ResizeHandle>
+                      </ResizableHeader>
                     </SimpleTable.Header>
                   </SimpleTable.Row>
                 </thead>
@@ -334,6 +461,7 @@ export function ReviewListingPage() {
                             active={task.id === params.taskId}
                             page={data.pagination.page}
                             hideManifests={hideManifests}
+                            columnWidths={columnWidths}
                           />
                         );
                       })
@@ -378,12 +506,14 @@ function SingleReviewTableRow({
   page,
   index,
   hideManifests,
+  columnWidths,
 }: {
   task: CrowdsourcingTask;
   active?: boolean;
   page?: number;
   index: number;
   hideManifests?: boolean;
+  columnWidths: Record<string, number>;
 }) {
   const { ...query } = useLocationQuery();
   const createLink = useRelativeLinks({ subRoute: 'reviews' });
@@ -412,7 +542,7 @@ function SingleReviewTableRow({
       }}
     >
       {/* manifest */}
-      <SimpleTable.Cell style={{ maxWidth: 300 }}>
+      <SimpleTable.Cell style={{ width: columnWidths.manifest }}>
         {metadata.subject && metadata.subject.type === 'manifest' ? (
           <LocaleString style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis' }}>
             {metadata.subject.label}
@@ -426,17 +556,17 @@ function SingleReviewTableRow({
         )}
       </SimpleTable.Cell>
       {/* resource name */}
-      <SimpleTable.Cell style={{ maxWidth: '7em' }}>
+      <SimpleTable.Cell style={{ width: columnWidths.canvas }}>
         {metadata.subject && metadata.subject.type === 'manifest'
           ? ''
           : metadata.subject?.label && <LocaleString>{metadata.subject.label}</LocaleString>}
       </SimpleTable.Cell>
       {/* date modified*/}
-      <SimpleTable.Cell>
+      <SimpleTable.Cell style={{ width: columnWidths.modified }}>
         {task.modified_at ? <> {new Date(task.modified_at).toLocaleDateString()} </> : null}
       </SimpleTable.Cell>
       {/* status */}
-      <SimpleTable.Cell>
+      <SimpleTable.Cell style={{ width: columnWidths.status }}>
         <SimpleStatus
           onClick={e => {
             e.stopPropagation();
@@ -448,6 +578,7 @@ function SingleReviewTableRow({
       </SimpleTable.Cell>
       {/* assignee */}
       <SimpleTable.Cell
+        style={{ width: columnWidths.assignee }}
         onClick={e => {
           if (task.assignee) {
             e.stopPropagation();
