@@ -37,7 +37,7 @@ export const ListInvitations: React.FC = () => {
 
   return (
     <>
-      <AdminHeader title={t('Invitations')} breadcrumbs={[{ label: 'Site admin', link: '/' }]} noMargin />
+      <AdminHeader title={t('User invitations')} breadcrumbs={[{ label: 'Site admin', link: '/' }]} noMargin />
 
       <SystemBackground>
         <SystemListItem>

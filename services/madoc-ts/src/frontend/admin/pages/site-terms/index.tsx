@@ -9,11 +9,11 @@ export function SiteTerms() {
   return (
     <>
       <AdminHeader
-        title={t('Terms and conditions')}
+        title={t('Site terms and conditions')}
         breadcrumbs={[
           { label: t('Site admin'), link: '/' },
           { label: t('Configure site'), link: '/configure/site' },
-          { label: t('Terms and conditions'), link: '/configure/site/terms-and-conditions' },
+          { label: t('Site terms and conditions'), link: '/configure/site/terms-and-conditions' },
         ]}
         noMargin
         action={{
