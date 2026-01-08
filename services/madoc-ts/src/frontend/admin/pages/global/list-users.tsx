@@ -19,6 +19,7 @@ import { Pagination as _Pagination } from '../../../../types/schemas/_pagination
 import { validateEmail } from '../../../../utility/validate-email';
 import { ErrorMessage } from '../../../shared/callouts/ErrorMessage';
 import { ColumnDef, flexRender, getCoreRowModel, useReactTable, getSortedRowModel } from '@tanstack/react-table';
+import { ItemFilter } from '../../../shared/components/ItemFilter';
 
 export const columns: ColumnDef<User>[] = [
   {
@@ -78,6 +79,8 @@ export const ListUsers: React.FC = () => {
   const [roleFilter, setRoleFilter] = useState<string | null>(null);
   const [activeFilter, setActiveFilter] = useState<'active' | 'inactive' | null>(null);
 
+  console.log(data.users);
+
   const filteredUsers = useMemo(() => {
     if (!data?.users) return [];
 
@@ -134,25 +137,60 @@ export const ListUsers: React.FC = () => {
             Create bot
           </Button>
         </ButtonRow>
-        <Pagination
-          page={data ? data.pagination.page : 1}
-          totalPages={data ? data.pagination.totalPages : 1}
-          stale={!data}
-        />
+        {data?.pagination.totalPages > 1 && (
+          <Pagination
+            page={data ? data.pagination.page : 1}
+            totalPages={data ? data.pagination.totalPages : 1}
+            stale={!data}
+          />
+        )}
         <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
-          <select onChange={e => setRoleFilter(e.target.value || null)}>
-            <option value="">All roles</option>
-            <option value="global_admin">Global admin</option>
-            <option value="researcher">Researcher</option>
-            <option value="reviewer">Reviewer</option>
-            <option value="transcriber">Transcriber</option>
-          </select>
+          <ButtonRow>
+            <ItemFilter
+              label={roleFilter ?? 'Filter by role'}
+              closeOnChange
+              items={[
+                { id: 'global_admin', label: 'Global admin' },
+                { id: 'researcher', label: 'Researcher' },
+                { id: 'reviewer', label: 'Reviewer' },
+                { id: 'Transcriber', label: 'Transcriber' },
+              ].map(role => ({
+                id: role.id,
+                label: role.label,
+                onChange: selected => {
+                  setRoleFilter(selected ? role.id : null);
+                },
+              }))}
+              selected={roleFilter ? [roleFilter] : []}
+            />
 
-          <select onChange={e => setActiveFilter((e.target.value as any) || null)}>
-            <option value="">All users</option>
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
-          </select>
+            <ItemFilter
+              label={activeFilter ?? 'Filter by status'}
+              closeOnChange
+              items={[
+                { id: 'active', label: 'Active' },
+                { id: 'inactive', label: 'Inactive' },
+              ].map(s => ({
+                id: s.id,
+                label: s.label,
+                onChange: selected => {
+                  setActiveFilter(selected ? (s.id as any) : null);
+                },
+              }))}
+              selected={activeFilter ? [activeFilter] : []}
+            />
+
+            {(roleFilter || activeFilter) && (
+              <Button
+                onClick={() => {
+                  setRoleFilter(null);
+                  setActiveFilter(null);
+                }}
+              >
+                Reset filters
+              </Button>
+            )}
+          </ButtonRow>
         </div>
         <SimpleTable.Table>
           <thead>
@@ -201,11 +239,13 @@ export const ListUsers: React.FC = () => {
             })}
           </tbody>
         </SimpleTable.Table>
-        <Pagination
-          page={data ? data.pagination.page : 1}
-          totalPages={data ? data.pagination.totalPages : 1}
-          stale={!data}
-        />
+        {data?.pagination.totalPages > 1 && (
+          <Pagination
+            page={data ? data.pagination.page : 1}
+            totalPages={data ? data.pagination.totalPages : 1}
+            stale={!data}
+          />
+        )}
       </WidePage>
     </>
   );
