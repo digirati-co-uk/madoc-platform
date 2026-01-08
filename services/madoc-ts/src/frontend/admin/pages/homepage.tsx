@@ -22,6 +22,7 @@ const AdminSection = styled.div`
 
 const AdminSectionGrid = styled.div`
   display: flex;
+  gap: 0.5em;
 `;
 
 const MenuTitle = styled.h4`
@@ -98,7 +99,7 @@ export const Homepage: UniversalComponent<HomepageType> = createUniversalCompone
               />
             </StatisticContainer>
           ) : null}
-          <AdminSectionGrid style={{ maxWidth: 1200, margin: '0 auto' }}>
+          <AdminSectionGrid style={{ maxWidth: '70vw', margin: '0 auto' }}>
             <AdminSection>
               <MenuTitle>{t('Content')}</MenuTitle>
               <MenuSubTitle>{t('Create and manage site content')}</MenuSubTitle>
