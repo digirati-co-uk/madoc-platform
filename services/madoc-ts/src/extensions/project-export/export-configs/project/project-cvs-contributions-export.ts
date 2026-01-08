@@ -3,56 +3,32 @@ import { ExportFile } from '../../server-export';
 import { ExportConfig, ExportDataOptions, ExportFileDefinition, SupportedExportResource } from '../../types';
 import { getValue } from '@iiif/helpers/i18n';
 
-type CachedTarget = { label?: string; uri?: string; index?: number | null };
+type CachedTarget = { label?: string; uri?: string };
+type CachedManifest = { label?: string; uri?: string };
+
+function toModelTargetInput(target: unknown): any[] {
+  if (target == null) return [];
+  return Array.isArray(target) ? target : [target];
+}
+
+function safeParseModelTarget(target: unknown) {
+  try {
+    const input = toModelTargetInput(target);
+    // parseModelTarget expects an array.
+    return parseModelTarget(Array.isArray(input) ? input : [input]);
+  } catch (err) {
+    console.warn('CSV export: failed to parse model target', { err: String(err) });
+    return {} as any;
+  }
+}
 
 const cache: {
-  manifests: Record<string, CachedTarget>;
+  manifests: Record<string, CachedManifest>;
   canvases: Record<string, CachedTarget>;
 } = {
   manifests: {},
   canvases: {},
 };
-
-function extractXywh(target: unknown): string | null {
-  if (target == null) return null;
-
-  const toStringTarget = (t: unknown): string | null => {
-    if (t === null) return null;
-    if (typeof t === 'string') return t;
-
-    if (Array.isArray(t)) {
-      return toStringTarget(t[0]);
-    }
-
-    if (typeof t === 'object') {
-      const o: any = t;
-
-      if (typeof o.id === 'string') return o.id;
-      if (typeof o['@id'] === 'string') return o['@id'];
-
-      if (typeof o.selector?.value === 'string') return o.selector.value;
-
-      if (typeof o.target === 'string') return o.target;
-      if (Array.isArray(o.target)) return toStringTarget(o.target);
-
-      if (typeof o.source === 'string') return o.source;
-
-      try {
-        return JSON.stringify(o);
-      } catch {
-        return String(o);
-      }
-    }
-
-    return String(t);
-  };
-
-  const text = toStringTarget(target);
-  if (!text) return null;
-
-  const m = text.match(/(?:#?xywh[=:])(\d+,\d+,\d+,\d+)/);
-  return m?.[1] ?? null;
-}
 
 function extractOriginalUri(resource: any): string | undefined {
   if (!resource) return undefined;
@@ -107,6 +83,74 @@ function extractOriginalUri(resource: any): string | undefined {
   return scan(resource, 2);
 }
 
+function isBlankString(value: unknown): boolean {
+  return typeof value === 'string' && value.trim() === '';
+}
+
+function pickFirstDefined(obj: any, keys: string[]): any {
+  if (!obj) return undefined;
+  for (const key of keys) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      const v = obj[key];
+      if (v === undefined || v === null) continue;
+      if (isBlankString(v)) continue;
+      return v;
+    }
+  }
+  return undefined;
+}
+
+function getContributionStatus(item: any): string | null {
+  const direct = pickFirstDefined(item, [
+    'status',
+    'approval_status',
+    'approvalStatus',
+    'review_status',
+    'reviewStatus',
+    'submission_status',
+    'submissionStatus',
+    'workflow_state',
+    'workflowState',
+    'state',
+  ]);
+
+  if (typeof direct === 'string' && direct.trim()) return direct;
+
+  if (item?.approved === true) return 'approved';
+  if (item?.rejected === true) return 'rejected';
+  if (item?.in_review === true || item?.inReview === true) return 'review';
+
+  return null;
+}
+
+function getContributorId(item: any): string | number | null {
+  const direct = pickFirstDefined(item, [
+    'user_id',
+    'userId',
+    'user',
+    'creator_id',
+    'creatorId',
+    'creator',
+    'created_by',
+    'createdBy',
+    'created_by_id',
+    'createdById',
+  ]);
+
+  if (typeof direct === 'string' && direct.trim()) return direct;
+  if (typeof direct === 'number') return direct;
+  const nested =
+    pickFirstDefined(item?.user, ['id', '@id', 'user_id', 'userId']) ??
+    pickFirstDefined(item?.creator, ['id', '@id', 'user_id', 'userId']) ??
+    pickFirstDefined(item?.created_by, ['id', '@id', 'user_id', 'userId']) ??
+    pickFirstDefined(item?.createdBy, ['id', '@id', 'user_id', 'userId']);
+
+  if (typeof nested === 'string' && nested.trim()) return nested;
+  if (typeof nested === 'number') return nested;
+
+  return null;
+}
+
 async function fetchTargets(api: any, manifestIds: number[], canvasIds: number[]) {
   const uniqueManifestIds = Array.from(new Set(manifestIds.filter(id => id !== undefined)));
   const uniqueCanvasIds = Array.from(new Set(canvasIds.filter(id => id !== undefined)));
@@ -154,19 +198,9 @@ async function fetchTargets(api: any, manifestIds: number[], canvasIds: number[]
 
       const uri = extractOriginalUri(canvas) || extractOriginalUri(response);
 
-      const index =
-        typeof (canvas as any).index === 'number'
-          ? (canvas as any).index
-          : typeof (canvas as any).position === 'number'
-          ? (canvas as any).position
-          : typeof (canvas as any).order === 'number'
-          ? (canvas as any).order
-          : null;
-
       cache.canvases[id.toString()] = {
         label: getValue(canvas.label),
         uri,
-        index,
       };
     }
   }
@@ -183,7 +217,7 @@ export const projectCsvContributionsExport: ExportConfig = {
   },
   configuration: {
     defaultValues: {
-      entity: '',
+      entity: null,
     },
     editor: {
       entity: {},
@@ -214,30 +248,24 @@ export const projectCsvContributionsExport: ExportConfig = {
         },
       };
     }
+    return config;
   },
   async exportData(
     subject: SupportedExportResource,
     options: ExportDataOptions<any>
   ): Promise<ExportFileDefinition[] | undefined> {
+    const entity = isBlankString(options.config.entity) ? null : options.config.entity;
+    const statusFilter = options.config.reviews ? 'all' : 'approved';
     const allPublished = await options.api.getProjectFieldsRaw(subject.id, {
-      status: options.config.reviews ? 'all' : 'approved',
-      entity: options.config.entity,
+      status: statusFilter,
+      ...(entity ? { entity } : {}),
     });
 
     const manifestIds: number[] = [];
     const canvasIds: number[] = [];
 
     for (const item of allPublished) {
-      const targetStr =
-        typeof (item as any).target === 'string'
-          ? (item as any).target
-          : typeof (item as any).target?.id === 'string'
-          ? (item as any).target.id
-          : typeof (item as any).target?.['@id'] === 'string'
-          ? (item as any).target['@id']
-          : JSON.stringify((item as any).target);
-
-      const t = parseModelTarget(targetStr);
+      const t = safeParseModelTarget((item as any).target);
       if (typeof t.manifest?.id === 'number') manifestIds.push(t.manifest.id);
       if (typeof t.canvas?.id === 'number') canvasIds.push(t.canvas.id);
     }
@@ -245,15 +273,7 @@ export const projectCsvContributionsExport: ExportConfig = {
     const { manifests, canvases } = await fetchTargets(options.api, manifestIds, canvasIds);
 
     const rows = allPublished.map(item => {
-      const t = parseModelTarget(
-        typeof (item as any).target === 'string'
-          ? (item as any).target
-          : typeof (item as any).target?.id === 'string'
-          ? (item as any).target.id
-          : typeof (item as any).target?.['@id'] === 'string'
-          ? (item as any).target['@id']
-          : JSON.stringify((item as any).target)
-      );
+      const t = safeParseModelTarget((item as any).target);
 
       const manifestInternalId = t.manifest?.id;
       const canvasInternalId = t.canvas?.id;
@@ -261,25 +281,34 @@ export const projectCsvContributionsExport: ExportConfig = {
       const manifest = manifestInternalId !== undefined ? manifests[String(manifestInternalId)] : undefined;
       const canvas = canvasInternalId !== undefined ? canvases[String(canvasInternalId)] : undefined;
 
-      return {
-        original_manifest_id: manifest?.uri ?? null,
-        original_canvas_id: canvas?.uri ?? null,
-        canvas_index: canvas?.index ?? null,
+      const manifestUri = manifest?.uri ?? extractOriginalUri((t as any).manifest) ?? null;
+      const canvasUri =
+        canvas?.uri ?? extractOriginalUri((t as any).canvas) ?? extractOriginalUri((item as any).target) ?? null;
 
+      const row: any = {
+        original_manifest_id: manifestUri,
+        original_canvas_id: canvasUri,
         madoc_canvas_id: canvasInternalId ?? null,
         madoc_contribution_id: item.id ?? null,
 
-        contribution_data: typeof item.value === 'string' ? item.value : JSON.stringify(item.value),
+        contribution_data: (() => {
+          if (typeof (item as any).value === 'string') return (item as any).value;
+          try {
+            return JSON.stringify((item as any).value);
+          } catch {
+            return String((item as any).value);
+          }
+        })(),
         capture_model_number: item.model_id ?? null,
-        contribution_coords: extractXywh(item.target),
 
-        status: (item as any).status ?? null,
-        contributor_id: (item as any).user_id ?? (item as any).creator_id ?? null,
+        status: getContributionStatus(item) ?? (statusFilter !== 'all' ? statusFilter : null),
+        contributor_id: getContributorId(item) ?? item?.doc_id ?? null,
 
         doc_id: item.doc_id ?? null,
         field_key: item.key ?? null,
         revises: item.revises ?? null,
       };
+      return row;
     });
 
     return [await ExportFile.csv(rows, 'project-data/contributions.csv')];
