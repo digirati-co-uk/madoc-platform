@@ -181,6 +181,7 @@ export class SiteUserRepository extends BaseRepository {
           ORDER BY ${orderBy} ${direction === 'asc' ? sql`ASC` : sql`DESC`}
           limit ${perPage} offset ${(page - 1) * perPage}
       `;
+    },
 
     getUserById: (id: number) => sql<UserRowWithoutPassword>`
         select id, email, name, created, modified, role, is_active, automated, config
