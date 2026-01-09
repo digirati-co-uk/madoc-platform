@@ -1,4 +1,5 @@
 import { RouteMiddleware } from '../../types/route-middleware';
+import { RequestError } from '../../utility/errors/request-error';
 import { onlyGlobalAdmin } from '../../utility/user-with-scope';
 
 export const listAllUsers: RouteMiddleware = async context => {
@@ -10,8 +11,24 @@ export const listAllUsers: RouteMiddleware = async context => {
   const requestedPage = Number(context.query.page) || 1;
   const page = requestedPage < totalPages ? requestedPage : totalPages;
 
+  const validSorts = ['id', 'name', 'email', 'is_active', 'created', 'modified', 'role'];
+
+  const sort = context.query.sort_by;
+  const role = context.query.role;
+  const roles = (context.query.roles || '')
+    .split(',')
+    .map((r: string) => r.trim())
+    .filter(Boolean);
+  const status = context.query.status;
+  const automated = context.query.automated === 'true' ? true : context.query.automated === 'false' ? false : undefined;
+
+  const [sortName] = sort.split(':');
+  if (!validSorts.includes(sortName)) {
+    throw new RequestError('Invalid sort');
+  }
+
   context.response.body = {
-    users: await context.siteManager.getAllUsers(page, usersPerPage),
+    users: await context.siteManager.getAllUsers(page, usersPerPage, { status, role, roles, automated }, sort),
     pagination: {
       page,
       totalResults,

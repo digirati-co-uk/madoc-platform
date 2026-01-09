@@ -138,10 +138,49 @@ export class SiteUserRepository extends BaseRepository {
 
     countAllUsers: () => sql<{ total_users: number }>`select COUNT(*) as total_users from "user"`,
 
-    getAllUsers: (page: number, perPage: number) => sql<UserRowWithoutPassword>`
-      select id, email, name, created, modified, role, is_active, automated, config
-        from "user" limit ${perPage} offset ${(page - 1) * perPage};
-    `,
+    getAllUsers: (
+      page: number,
+      perPage: number,
+      filters: { role?: string; roles?: string[]; status?: string; automated?: boolean } = {},
+      _sort: string = 'id'
+    ) => {
+      const [sort, direction = 'desc'] = _sort.split(':');
+
+      // validate sort string
+      const validSorts = ['id', 'name', 'email', 'is_active', 'created', 'modified', 'role'];
+      if (!validSorts.includes(sort)) {
+        throw new Error(`Invalid sort field: ${sort}. Must be one of: ${validSorts.join(', ')}`);
+      }
+
+      // Build WHERE conditions
+      const conditions = [];
+      if (filters.roles?.length) {
+        conditions.push(sql`role = ANY (${sql.array(filters.roles, 'text')})`);
+      } else if (filters.role) {
+        conditions.push(sql`role = ${filters.role}`);
+      }
+      if (filters.status === 'active') {
+        conditions.push(sql`is_active = true`);
+      } else if (filters.status === 'inactive') {
+        conditions.push(sql`is_active = false`);
+      }
+
+      if (typeof filters.automated === 'boolean') {
+        conditions.push(sql`automated = ${filters.automated}`);
+      }
+
+      const whereClause = conditions.length > 0 ? sql`WHERE ${sql.join(conditions, sql` AND `)}` : SQL_EMPTY;
+
+      // Build ORDER BY clause
+      const orderBy = sql.identifier([sort]);
+
+      return sql<UserRowWithoutPassword>`
+        select id, email, name, created, modified, role, is_active, automated, config
+          from "user"
+          ${whereClause}
+          ORDER BY ${orderBy} ${direction === 'asc' ? sql`ASC` : sql`DESC`}
+          limit ${perPage} offset ${(page - 1) * perPage}
+      `;
 
     getUserById: (id: number) => sql<UserRowWithoutPassword>`
         select id, email, name, created, modified, role, is_active, automated, config
@@ -1052,8 +1091,13 @@ export class SiteUserRepository extends BaseRepository {
     return resp.total_users;
   }
 
-  async getAllUsers(page: number, perPage = 50) {
-    return (await this.connection.any(SiteUserRepository.query.getAllUsers(page || 1, perPage))).map(
+  async getAllUsers(
+    page: number,
+    perPage = 50,
+    filters: { role?: string; status?: string; roles?: string[]; automated?: boolean } = {},
+    sort: string = 'id'
+  ) {
+    return (await this.connection.any(SiteUserRepository.query.getAllUsers(page || 1, perPage, filters, sort))).map(
       SiteUserRepository.mapUser
     );
   }
