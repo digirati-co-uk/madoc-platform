@@ -20,6 +20,7 @@ import { validateEmail } from '../../../../utility/validate-email';
 import { ErrorMessage } from '../../../shared/callouts/ErrorMessage';
 import { ColumnDef, flexRender, getCoreRowModel, useReactTable, getSortedRowModel } from '@tanstack/react-table';
 import { ItemFilter } from '../../../shared/components/ItemFilter';
+import { useLocationState } from '../../../shared/hooks/use-location-state';
 
 export const columns: ColumnDef<User>[] = [
   {
@@ -71,13 +72,26 @@ export const columns: ColumnDef<User>[] = [
 
 export const ListUsers: React.FC = () => {
   const { data } = usePaginatedData<{ users: User[]; pagination: _Pagination }>(ListUsers);
-  const query = useLocationQuery();
+  const [query, setQuery] = useLocationState();
+
+  const [sortId, sortDir] = query.sort?.split(':') || ['id', 'asc'];
+
   const currentUser = useUser();
   const navigate = useNavigate();
   const [userDeleted, setUserDeleted] = useState(false);
   const [sorting, setSorting] = useState([]);
-  const [roleFilter, setRoleFilter] = useState<string | null>(null);
-  const [activeFilter, setActiveFilter] = useState<'active' | 'inactive' | null>(null);
+  // const [roleFilter, setRoleFilter] = useState<string | null>(null);
+  // const [activeFilter, setActiveFilter] = useState<'active' | 'inactive' | null>(null);
+
+  const activeFilter = query.active || null;
+  const setActiveFilter = (value: string) => {
+    setQuery({ ...query, status: value });
+  };
+
+  const roleFilter = query.role || null;
+  const setRoleFilter = (value: string | null) => {
+    setQuery({ ...query, role: value || undefined });
+  };
 
   const filteredUsers = useMemo(() => {
     if (!data?.users) return [];
@@ -91,8 +105,21 @@ export const ListUsers: React.FC = () => {
   const table = useReactTable({
     data: filteredUsers,
     columns,
-    state: { sorting },
-    onSortingChange: setSorting,
+    state: { sorting: [{ id: sortId, desc: sortDir === 'desc' }] },
+    onSortingChange: val => {
+      const newSort = (val as any)([
+        {
+          sortId: sortId,
+          desc: sortDir === 'desc',
+        },
+      ]);
+
+      if (newSort[0]) {
+        setQuery({ ...query, sort: `${newSort[0].id}:${newSort[0].desc ? 'desc' : 'asc'}` });
+      } else {
+        setQuery({ ...query, sort: undefined });
+      }
+    },
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
   });
@@ -148,10 +175,13 @@ export const ListUsers: React.FC = () => {
               label={roleFilter ?? 'Filter by role'}
               closeOnChange
               items={[
-                { id: 'global_admin', label: 'Global admin' },
-                { id: 'researcher', label: 'Researcher' },
-                { id: 'reviewer', label: 'Reviewer' },
-                { id: 'Transcriber', label: 'Transcriber' },
+                { label: 'Global admin', id: 'global_admin' },
+                { label: 'Site admin', id: 'site_admin' },
+                { label: 'Editor', id: 'editor' }, // @todo remove?
+                { label: 'Reviewer', id: 'reviewer' }, // @todo remove?
+                { label: 'Author', id: 'author' }, // @todo remove?
+                { label: 'Researcher', id: 'researcher' }, // @todo remove?
+                { label: 'Transcriber', id: 'Transcriber' }, // @todo lowercase.
               ].map(role => ({
                 id: role.id,
                 label: role.label,
@@ -181,8 +211,11 @@ export const ListUsers: React.FC = () => {
             {(roleFilter || activeFilter) && (
               <Button
                 onClick={() => {
-                  setRoleFilter(null);
-                  setActiveFilter(null);
+                  setQuery({
+                    role: undefined,
+                    status: undefined,
+                    sort: undefined,
+                  })
                 }}
               >
                 Reset filters
@@ -196,7 +229,7 @@ export const ListUsers: React.FC = () => {
               <SimpleTable.Row key={headerGroup.id}>
                 {headerGroup.headers.map(header => (
                   <SimpleTable.Header
-                    key={headerGroup.id}
+                    key={header.id}
                     onClick={header.column.getCanSort() ? header.column.getToggleSortingHandler() : undefined}
                     style={{
                       cursor: header.column.getCanSort() ? 'pointer' : 'default',
@@ -224,7 +257,6 @@ export const ListUsers: React.FC = () => {
             {table.getRowModel().rows.map(row => {
               const user = row.original;
               const isInvalid = !user.automated && !validateEmail(user.email);
-
               return (
                 <SimpleTable.Row key={row.id} $interactive style={{ background: isInvalid ? '#FDD6D6' : undefined }}>
                   {row.getVisibleCells().map(cell => (
@@ -250,6 +282,30 @@ export const ListUsers: React.FC = () => {
 };
 
 serverRendererFor(ListUsers, {
-  getKey: (params, query) => [`system-all-users`, { page: query.page ? Number(query.page) : 1 }],
-  getData: (key, vars, api) => api.siteManager.listAllUsers(vars.page),
+  getKey: (params, query) => [
+    `system-all-users`,
+    {
+      page: query.page ? Number(query.page) : 1,
+      roles: query.roles,
+      role: query.role,
+      status: query.status,
+      automated: query.automated === 'true' ? true : query.automated === 'false' ? false : undefined,
+      sort: query.sort || 'id',
+      asc: query.asc === 'true',
+    },
+  ],
+  getData: (key, vars, api) =>
+    api.siteManager.listAllUsers(
+      vars.page,
+      {
+        automated: vars.automated,
+        role: vars.role,
+        roles: vars.roles,
+        status: vars.status,
+      },
+      {
+        direction: vars.asc ? 'asc' : 'desc',
+        name: vars.sort || 'id',
+      }
+    ),
 });
