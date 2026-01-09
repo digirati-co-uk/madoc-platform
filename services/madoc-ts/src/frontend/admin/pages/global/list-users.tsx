@@ -72,18 +72,21 @@ export const columns: ColumnDef<User>[] = [
 
 export const ListUsers: React.FC = () => {
   const { data } = usePaginatedData<{ users: User[]; pagination: _Pagination }>(ListUsers);
-  const [query, setQuery] = useLocationState();
+  const [
+    query,
+    setQuery,
+    {
+      onSortingChange,
+      sortingState
+    }
+  ] = useLocationState();
 
-  const [sortId, sortDir] = query.sort?.split(':') || ['id', 'asc'];
 
   const currentUser = useUser();
   const navigate = useNavigate();
   const [userDeleted, setUserDeleted] = useState(false);
-  const [sorting, setSorting] = useState([]);
-  // const [roleFilter, setRoleFilter] = useState<string | null>(null);
-  // const [activeFilter, setActiveFilter] = useState<'active' | 'inactive' | null>(null);
 
-  const activeFilter = query.active || null;
+  const activeFilter = query.status;
   const setActiveFilter = (value: string) => {
     setQuery({ ...query, status: value });
   };
@@ -105,21 +108,8 @@ export const ListUsers: React.FC = () => {
   const table = useReactTable({
     data: filteredUsers,
     columns,
-    state: { sorting: [{ id: sortId, desc: sortDir === 'desc' }] },
-    onSortingChange: val => {
-      const newSort = (val as any)([
-        {
-          sortId: sortId,
-          desc: sortDir === 'desc',
-        },
-      ]);
-
-      if (newSort[0]) {
-        setQuery({ ...query, sort: `${newSort[0].id}:${newSort[0].desc ? 'desc' : 'asc'}` });
-      } else {
-        setQuery({ ...query, sort: undefined });
-      }
-    },
+    state: { sorting: sortingState },
+    onSortingChange,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
   });
@@ -161,6 +151,56 @@ export const ListUsers: React.FC = () => {
           <Button as={HrefLink} href={`/global/users/create-bot`}>
             Create bot
           </Button>
+          <ItemFilter
+            label={roleFilter ?? 'Filter by role'}
+            closeOnChange
+            items={[
+              { label: 'Global admin', id: 'global_admin' },
+              { label: 'Site admin', id: 'site_admin' },
+              { label: 'Editor', id: 'editor' }, // @todo remove?
+              { label: 'Reviewer', id: 'reviewer' }, // @todo remove?
+              { label: 'Author', id: 'author' }, // @todo remove?
+              { label: 'Researcher', id: 'researcher' }, // @todo remove?
+              { label: 'Transcriber', id: 'Transcriber' }, // @todo lowercase.
+            ].map(role => ({
+              id: role.id,
+              label: role.label,
+              onChange: selected => {
+                setRoleFilter(selected ? role.id : null);
+              },
+            }))}
+            selected={roleFilter ? [roleFilter] : []}
+          />
+
+          <ItemFilter
+            label={activeFilter ?? 'Filter by status'}
+            closeOnChange
+            items={[
+              { id: 'active', label: 'Active' },
+              { id: 'inactive', label: 'Inactive' },
+            ].map(s => ({
+              id: s.id,
+              label: s.label,
+              onChange: selected => {
+                setActiveFilter(selected ? (s.id as any) : null);
+              },
+            }))}
+            selected={activeFilter ? [activeFilter] : []}
+          />
+
+          {(roleFilter || activeFilter) && (
+            <Button
+              onClick={() => {
+                setQuery({
+                  role: undefined,
+                  status: undefined,
+                  sort: undefined,
+                })
+              }}
+            >
+              Reset filters
+            </Button>
+          )}
         </ButtonRow>
         {data?.pagination.totalPages > 1 && (
           <Pagination
@@ -169,60 +209,6 @@ export const ListUsers: React.FC = () => {
             stale={!data}
           />
         )}
-        <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
-          <ButtonRow>
-            <ItemFilter
-              label={roleFilter ?? 'Filter by role'}
-              closeOnChange
-              items={[
-                { label: 'Global admin', id: 'global_admin' },
-                { label: 'Site admin', id: 'site_admin' },
-                { label: 'Editor', id: 'editor' }, // @todo remove?
-                { label: 'Reviewer', id: 'reviewer' }, // @todo remove?
-                { label: 'Author', id: 'author' }, // @todo remove?
-                { label: 'Researcher', id: 'researcher' }, // @todo remove?
-                { label: 'Transcriber', id: 'Transcriber' }, // @todo lowercase.
-              ].map(role => ({
-                id: role.id,
-                label: role.label,
-                onChange: selected => {
-                  setRoleFilter(selected ? role.id : null);
-                },
-              }))}
-              selected={roleFilter ? [roleFilter] : []}
-            />
-
-            <ItemFilter
-              label={activeFilter ?? 'Filter by status'}
-              closeOnChange
-              items={[
-                { id: 'active', label: 'Active' },
-                { id: 'inactive', label: 'Inactive' },
-              ].map(s => ({
-                id: s.id,
-                label: s.label,
-                onChange: selected => {
-                  setActiveFilter(selected ? (s.id as any) : null);
-                },
-              }))}
-              selected={activeFilter ? [activeFilter] : []}
-            />
-
-            {(roleFilter || activeFilter) && (
-              <Button
-                onClick={() => {
-                  setQuery({
-                    role: undefined,
-                    status: undefined,
-                    sort: undefined,
-                  })
-                }}
-              >
-                Reset filters
-              </Button>
-            )}
-          </ButtonRow>
-        </div>
         <SimpleTable.Table>
           <thead>
             {table.getHeaderGroups().map(headerGroup => (
