@@ -432,8 +432,8 @@ export function ReviewListingPage() {
                       <ResizableHeader>
                         <HeaderLink
                           as={HrefLink}
-                          href={QuerySortToggle('user_identifier')}
-                          data-is-active={sort_by && sort_by.includes('user_identifier')}
+                          href={QuerySortToggle('assignee_id')}
+                          data-is-active={sort_by && sort_by.includes('assignee_id')}
                           data-is-desc={sort_by && sort_by.includes('desc')}
                         >
                           Assignee <Chevron />
