@@ -21,6 +21,8 @@ import { ErrorMessage } from '../../../shared/callouts/ErrorMessage';
 import { ColumnDef, flexRender, getCoreRowModel, useReactTable, getSortedRowModel } from '@tanstack/react-table';
 import { ItemFilter } from '../../../shared/components/ItemFilter';
 import { useLocationState } from '../../../shared/hooks/use-location-state';
+import { SortIcon } from '../../../shared/icons/SortIcon';
+import { SortableTableHeader } from '../../../shared/layout/SortableTableHeader';
 
 export const columns: ColumnDef<User>[] = [
   {
@@ -152,6 +154,7 @@ export const ListUsers: React.FC = () => {
             Create bot
           </Button>
           <ItemFilter
+            type="radio"
             label={roleFilter ?? 'Filter by role'}
             closeOnChange
             items={[
@@ -173,6 +176,7 @@ export const ListUsers: React.FC = () => {
           />
 
           <ItemFilter
+            type="radio"
             label={activeFilter ?? 'Filter by status'}
             closeOnChange
             items={[
@@ -202,7 +206,7 @@ export const ListUsers: React.FC = () => {
             </Button>
           )}
         </ButtonRow>
-        {data?.pagination.totalPages > 1 && (
+        {(data?.pagination.totalPages || 0) > 1 && (
           <Pagination
             page={data ? data.pagination.page : 1}
             totalPages={data ? data.pagination.totalPages : 1}
@@ -215,6 +219,8 @@ export const ListUsers: React.FC = () => {
               <SimpleTable.Row key={headerGroup.id}>
                 {headerGroup.headers.map(header => (
                   <SimpleTable.Header
+                    data-interactive={header.column.getCanSort()}
+                    data-pinned={header.column.getIsSorted() !== false}
                     key={header.id}
                     onClick={header.column.getCanSort() ? header.column.getToggleSortingHandler() : undefined}
                     style={{
@@ -223,16 +229,9 @@ export const ListUsers: React.FC = () => {
                       whiteSpace: 'nowrap',
                     }}
                   >
-                    {flexRender(header.column.columnDef.header, header.getContext())}
-
-                    {header.column.getCanSort() && (
-                      <span style={{ marginLeft: 6, opacity: header.column.getIsSorted() ? 1 : 0.35 }}>
-                        {{
-                          asc: '↑',
-                          desc: '↓',
-                        }[header.column.getIsSorted() as string] ?? '⇅'}
-                      </span>
-                    )}
+                    <SortableTableHeader header={header}>
+                      {flexRender(header.column.columnDef.header, header.getContext())}
+                    </SortableTableHeader>
                   </SimpleTable.Header>
                 ))}
               </SimpleTable.Row>
@@ -255,7 +254,7 @@ export const ListUsers: React.FC = () => {
             })}
           </tbody>
         </SimpleTable.Table>
-        {data?.pagination.totalPages > 1 && (
+        {(data?.pagination.totalPages || 0) > 1 && (
           <Pagination
             page={data ? data.pagination.page : 1}
             totalPages={data ? data.pagination.totalPages : 1}
