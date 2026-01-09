@@ -79,8 +79,6 @@ export const ListUsers: React.FC = () => {
   const [roleFilter, setRoleFilter] = useState<string | null>(null);
   const [activeFilter, setActiveFilter] = useState<'active' | 'inactive' | null>(null);
 
-  console.log(data.users);
-
   const filteredUsers = useMemo(() => {
     if (!data?.users) return [];
 
