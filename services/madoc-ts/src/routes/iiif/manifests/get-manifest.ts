@@ -8,10 +8,11 @@ import {
 import { ManifestFull } from '../../../types/schemas/manifest-full';
 import { getResourceCount } from '../../../database/queries/count-queries';
 import { NotFound } from '../../../utility/errors/not-found';
+import { isAdmin } from '../../../frontend/shared/utility/user-roles';
 
 export const getManifest: RouteMiddleware<{ id: string }> = async context => {
   const { siteId } = optionalUserWithScope(context, ['site.view']);
-  const admin = userWithScope(context, ['site.admin']);
+  const isAdmin = (context.state.jwt?.scope || []).includes('site.admin');
 
   const manifestId = Number(context.params.id);
 
@@ -56,7 +57,7 @@ export const getManifest: RouteMiddleware<{ id: string }> = async context => {
   const canvasIds = table.manifest_to_canvas[`${manifestId}`] || [];
   manifest.items = canvasIds.map((id: number) => table.canvases[id]);
 
-  if (!manifest.published && !admin) {
+  if (!manifest.published && !isAdmin) {
     throw new NotFound('Manifest not found');
   }
 
