@@ -167,6 +167,7 @@ export class SiteManagerExtension implements BaseExtension {
       roles?: string[];
       status?: string;
       automated?: boolean;
+      search?: string;
     } = {},
     sort?: {
       name: string;

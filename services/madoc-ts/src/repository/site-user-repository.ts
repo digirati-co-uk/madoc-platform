@@ -141,7 +141,7 @@ export class SiteUserRepository extends BaseRepository {
     getAllUsers: (
       page: number,
       perPage: number,
-      filters: { role?: string; roles?: string[]; status?: string; automated?: boolean } = {},
+      filters: { role?: string; roles?: string[]; status?: string; automated?: boolean; search?: string } = {},
       _sort: string = 'id'
     ) => {
       const [sort, direction = 'desc'] = _sort.split(':');
@@ -166,6 +166,15 @@ export class SiteUserRepository extends BaseRepository {
         conditions.push(sql`is_active = true`);
       } else if (filters.status === 'inactive') {
         conditions.push(sql`is_active = false`);
+      }
+      if (filters.search) {
+        // Search across name and email.
+        const searchTerms = filters.search.split(' ');
+        const searchConditions = searchTerms
+          // Max 5 terms
+          .slice(0, 5)
+          .map(term => sql`name ILIKE ${`%${term}%`} OR email ILIKE ${`%${term}%`}`);
+        conditions.push(sql`(${sql.join(searchConditions, sql` OR `)})`);
       }
 
       if (typeof filters.automated === 'boolean') {
@@ -1098,7 +1107,7 @@ export class SiteUserRepository extends BaseRepository {
   async getAllUsers(
     page: number,
     perPage = 50,
-    filters: { role?: string; status?: string; roles?: string[]; automated?: boolean } = {},
+    filters: { role?: string; status?: string; roles?: string[]; automated?: boolean; search?: string } = {},
     sort: string = 'id'
   ) {
     return (await this.connection.any(SiteUserRepository.query.getAllUsers(page || 1, perPage, filters, sort))).map(

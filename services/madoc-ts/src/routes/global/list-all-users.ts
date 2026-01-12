@@ -13,6 +13,7 @@ export const listAllUsers: RouteMiddleware = async context => {
 
   const validSorts = ['id', 'name', 'email', 'is_active', 'created', 'modified', 'role'];
 
+  const search = context.query.search || context.query.q || '';
   const sort = context.query.sort_by || '';
   const role = context.query.role;
   const roles = (context.query.roles || '')
@@ -28,7 +29,7 @@ export const listAllUsers: RouteMiddleware = async context => {
   }
 
   context.response.body = {
-    users: await context.siteManager.getAllUsers(page, usersPerPage, { status, role, roles, automated }, sort),
+    users: await context.siteManager.getAllUsers(page, usersPerPage, { status, role, roles, automated, search }, sort),
     pagination: {
       page,
       totalResults,

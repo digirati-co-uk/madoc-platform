@@ -21,6 +21,7 @@ import { ColumnDef, flexRender, getCoreRowModel, useReactTable, getSortedRowMode
 import { ItemFilter } from '../../../shared/components/ItemFilter';
 import { useLocationState } from '../../../shared/hooks/use-location-state';
 import { SortableTableHeader } from '../../../shared/layout/SortableTableHeader';
+import { Input } from '../../../shared/form/Input';
 
 export const columns: ColumnDef<User>[] = [
   {
@@ -190,6 +191,14 @@ export const ListUsers: React.FC = () => {
             selected={activeFilter ? [activeFilter] : []}
           />
 
+          <div className="px-3 w-full max-w-lg ml-auto">
+            <Input
+              value={query.search || ""}
+              onChange={e => setQuery({ search: e.target.value })}
+              placeholder="Search users..."
+            />
+          </div>
+
           {(roleFilter || activeFilter) && (
             <Button
               onClick={() => {
@@ -197,6 +206,7 @@ export const ListUsers: React.FC = () => {
                   role: undefined,
                   status: undefined,
                   sort: undefined,
+                  search: undefined,
                 })
               }}
             >
@@ -275,6 +285,7 @@ serverRendererFor(ListUsers, {
       automated: query.automated === 'true' ? true : query.automated === 'false' ? false : undefined,
       sort: query.sort || 'id',
       asc: query.asc === 'true',
+      search: query.search || '',
     },
   ],
   getData: (key, vars, api) =>
@@ -285,6 +296,7 @@ serverRendererFor(ListUsers, {
         role: vars.role,
         roles: vars.roles,
         status: vars.status,
+        search: vars.search,
       },
       {
         direction: vars.asc ? 'asc' : 'desc',
