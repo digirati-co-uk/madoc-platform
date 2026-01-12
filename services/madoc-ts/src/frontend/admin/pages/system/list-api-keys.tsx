@@ -9,6 +9,86 @@ import { Button, ButtonRow } from '../../../shared/navigation/Button';
 import { HrefLink } from '../../../shared/utility/href-link';
 import { AdminHeader } from '../../molecules/AdminHeader';
 import { WidePage } from '../../../shared/layout/WidePage';
+import { ColumnDef, flexRender, getCoreRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
+import { SortableTableHeader } from '../../../shared/layout/SortableTableHeader';
+import { useLocationState } from '../../../shared/hooks/use-location-state';
+
+export const columns: ColumnDef<any>[] = [
+  {
+    accessorKey: 'label',
+    header: 'Label',
+    enableSorting: false,
+  },
+  {
+    accessorKey: 'client_id',
+    header: 'Client ID',
+    enableSorting: false,
+    cell: info => <code>{info.getValue() as string}</code>,
+  },
+  {
+    accessorKey: 'client_secret',
+    header: 'Client secret',
+    enableSorting: false,
+    cell: () => <code>********</code>,
+  },
+  {
+    accessorKey: 'user_name',
+    header: 'User',
+    enableSorting: false,
+    cell: info => {
+      const row = info.row.original;
+      return `${row.user_name} (${row.user_id})`;
+    },
+  },
+  {
+    accessorKey: 'created_at',
+    header: 'Created',
+    enableSorting: true,
+    cell: info => <TimeAgo date={new Date(info.getValue() as string)} />,
+  },
+  {
+    accessorKey: 'last_used',
+    header: 'Last used',
+    enableSorting: false,
+    cell: info => (info.getValue() ? <TimeAgo date={new Date(info.getValue() as string)} /> : 'never'),
+  },
+  {
+    accessorKey: 'scope',
+    header: 'Scope',
+    enableSorting: false,
+    cell: info => <code>{(info.getValue() as string[]).join(' ')}</code>,
+  },
+  {
+    id: 'actions',
+    header: '',
+    cell: info => {
+      const key = info.row.original;
+      return (
+        <ModalButton
+          title={'Are you sure you want to delete this key'}
+          render={() => <p>You will no longer be able to use this API key</p>}
+          renderFooter={({ close }) => (
+            <ButtonRow $noMargin style={{ margin: '0 0 0 auto' }}>
+              <Button
+                $error
+                disabled={info.table.options.meta?.isDeleting}
+                onClick={() => {
+                  info.table.options.meta?.onDelete(key.client_id).then(close);
+                }}
+              >
+                Delete
+              </Button>
+            </ButtonRow>
+          )}
+        >
+          <Button $error disabled={info.table.options.meta?.isDeleting}>
+            Delete
+          </Button>
+        </ModalButton>
+      );
+    },
+  },
+];
 
 export const ListApiKeys: React.FC = () => {
   const { t } = useTranslation();
@@ -20,6 +100,21 @@ export const ListApiKeys: React.FC = () => {
   const [deleteKey, deleteKeyStatus] = useMutation(async (clientId: string) => {
     await api.deleteApiKey(clientId);
     await refetch();
+  });
+
+  const [query, setQuery, { onSortingChange, sortingState }] = useLocationState();
+
+  const table = useReactTable({
+    data: data ? data.keys : [],
+    columns,
+    state: { sorting: sortingState },
+    onSortingChange,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    meta: {
+      isDeleting: deleteKeyStatus.isLoading,
+      onDelete: deleteKey,
+    },
   });
 
   return (
@@ -39,79 +134,38 @@ export const ListApiKeys: React.FC = () => {
         </ButtonRow>
         <SimpleTable.Table>
           <thead>
-            <SimpleTable.Row>
-              <SimpleTable.Cell>
-                <strong>Label</strong>
-              </SimpleTable.Cell>
-              <SimpleTable.Cell>
-                <strong>Client ID</strong>
-              </SimpleTable.Cell>
-              <SimpleTable.Cell>
-                <strong>Client secret</strong>
-              </SimpleTable.Cell>
-              <SimpleTable.Cell>
-                <strong>User</strong>
-              </SimpleTable.Cell>
-              <SimpleTable.Cell>
-                <strong>Created</strong>
-              </SimpleTable.Cell>
-              <SimpleTable.Cell>
-                <strong>Last used</strong>
-              </SimpleTable.Cell>
-              <SimpleTable.Cell colSpan={2}>
-                <strong>Scope</strong>
-              </SimpleTable.Cell>
-            </SimpleTable.Row>
+            {table.getHeaderGroups().map(headerGroup => (
+              <SimpleTable.Row key={headerGroup.id}>
+                {headerGroup.headers.map(header => (
+                  <SimpleTable.Header
+                    data-interactive={header.column.getCanSort()}
+                    data-pinned={header.column.getIsSorted() !== false}
+                    key={header.id}
+                    onClick={header.column.getCanSort() ? header.column.getToggleSortingHandler() : undefined}
+                    style={{
+                      cursor: header.column.getCanSort() ? 'pointer' : 'default',
+                      userSelect: 'none',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    <SortableTableHeader header={header}>
+                      {flexRender(header.column.columnDef.header, header.getContext())}
+                    </SortableTableHeader>
+                  </SimpleTable.Header>
+                ))}
+              </SimpleTable.Row>
+            ))}
           </thead>
           <tbody>
-            {data
-              ? data.keys.map(key => (
-                  <SimpleTable.Row key={key.client_id}>
-                    <SimpleTable.Cell>{key.label}</SimpleTable.Cell>
-                    <SimpleTable.Cell>
-                      <code>{key.client_id}</code>
-                    </SimpleTable.Cell>
-                    <SimpleTable.Cell>
-                      <code>********</code>
-                    </SimpleTable.Cell>
-                    <SimpleTable.Cell>
-                      {key.user_name} ({key.user_id})
-                    </SimpleTable.Cell>
-                    <SimpleTable.Cell>
-                      <TimeAgo date={new Date(key.created_at)} />
-                    </SimpleTable.Cell>
-                    <SimpleTable.Cell>
-                      {key.last_used ? <TimeAgo date={new Date(key.last_used)} /> : 'never'}
-                    </SimpleTable.Cell>
-                    <SimpleTable.Cell>
-                      <code>{key.scope.join(' ')}</code>
-                    </SimpleTable.Cell>
-                    <SimpleTable.Cell>
-                      <ModalButton
-                        title={'Are you sure you want to delete this key'}
-                        render={() => <p>You will no longer be able to use this API key</p>}
-                        renderFooter={({ close }) => (
-                          <ButtonRow $noMargin style={{ margin: '0 0 0 auto' }}>
-                            <Button
-                              $error
-                              disabled={deleteKeyStatus.isLoading}
-                              onClick={() => {
-                                deleteKey(key.client_id).then(close);
-                              }}
-                            >
-                              Delete
-                            </Button>
-                          </ButtonRow>
-                        )}
-                      >
-                        <Button $error disabled={deleteKeyStatus.isLoading}>
-                          Delete
-                        </Button>
-                      </ModalButton>
-                    </SimpleTable.Cell>
-                  </SimpleTable.Row>
-                ))
-              : null}
+            {table.getRowModel().rows.map(row => (
+              <SimpleTable.Row key={row.id}>
+                {row.getVisibleCells().map(cell => (
+                  <SimpleTable.Cell key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </SimpleTable.Cell>
+                ))}
+              </SimpleTable.Row>
+            ))}
           </tbody>
         </SimpleTable.Table>
       </WidePage>
