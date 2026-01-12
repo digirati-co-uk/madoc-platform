@@ -369,6 +369,10 @@ export const siteConfigurationModel: {
         value: 'hideOpenInMirador',
       },
       {
+        label: 'Hide open in Theseus button',
+        value: 'hideOpenInTheseus',
+      },
+      {
         label: 'Hide search button',
         value: 'hideSearchButton',
       },
@@ -623,6 +627,10 @@ export const ProjectConfigInterface: {
       {
         label: 'Hide open in mirador button',
         value: 'hideOpenInMirador',
+      },
+      {
+        label: 'Hide open in Theseus button',
+        value: 'hideOpenInTheseus',
       },
       {
         label: 'Hide search button',
