@@ -14,7 +14,7 @@ export function SortableTableHeader(props: SortableTableHeaderProps) {
       {props.header.column.getCanSort() && (
         <SortIcon
           className="text-2xl"
-          title='Sort by'
+          title="Sort by"
           desc={props.header.column.getIsSorted() === 'desc'}
           enabled={props.header.column.getIsSorted() !== false}
         />

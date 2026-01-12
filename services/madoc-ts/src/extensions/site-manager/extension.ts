@@ -173,9 +173,13 @@ export class SiteManagerExtension implements BaseExtension {
       direction: 'asc' | 'desc';
     }
   ) {
-    return this.api.request<{ users: User[]; pagination: Pagination }>(
-      `/api/madoc/users?${stringify({ page, ...query, sort_by: sort ? `${sort.name}:${sort?.direction}` : undefined })}`
+    const queryString = stringify(
+      { page, ...query, sort_by: sort ? `${sort.name}:${sort?.direction}` : undefined },
+      {
+        arrayFormat: 'comma',
+      }
     );
+    return this.api.request<{ users: User[]; pagination: Pagination }>(`/api/madoc/users?${queryString}`);
   }
 
   async getUserById(userId: number) {

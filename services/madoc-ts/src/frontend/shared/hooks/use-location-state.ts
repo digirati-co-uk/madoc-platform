@@ -47,7 +47,7 @@ export function useLocationState<T = any>({ sortKey = 'sort' }: { sortKey?: stri
         setState({ ...state, sort: undefined });
       }
     },
-    [sortingState, setState]
+    [state, sortingState, setState]
   );
 
   return [

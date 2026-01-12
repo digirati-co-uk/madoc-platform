@@ -151,6 +151,9 @@ export class SiteUserRepository extends BaseRepository {
       if (!validSorts.includes(sort)) {
         throw new Error(`Invalid sort field: ${sort}. Must be one of: ${validSorts.join(', ')}`);
       }
+      if (direction !== 'asc' && direction !== 'desc') {
+        throw new Error(`Invalid sort direction: ${direction}. Must be one of: asc, desc`);
+      }
 
       // Build WHERE conditions
       const conditions = [];

@@ -9,7 +9,6 @@ import { SimpleTable } from '../../../shared/layout/SimpleTable';
 import { SuccessMessage } from '../../../shared/callouts/SuccessMessage';
 import { WidePage } from '../../../shared/layout/WidePage';
 import { usePaginatedData } from '../../../shared/hooks/use-data';
-import { useLocationQuery } from '../../../shared/hooks/use-location-query';
 import { useUser } from '../../../shared/hooks/use-site';
 import { serverRendererFor } from '../../../shared/plugins/external/server-renderer-for';
 import { HrefLink } from '../../../shared/utility/href-link';
@@ -21,7 +20,6 @@ import { ErrorMessage } from '../../../shared/callouts/ErrorMessage';
 import { ColumnDef, flexRender, getCoreRowModel, useReactTable, getSortedRowModel } from '@tanstack/react-table';
 import { ItemFilter } from '../../../shared/components/ItemFilter';
 import { useLocationState } from '../../../shared/hooks/use-location-state';
-import { SortIcon } from '../../../shared/icons/SortIcon';
 import { SortableTableHeader } from '../../../shared/layout/SortableTableHeader';
 
 export const columns: ColumnDef<User>[] = [

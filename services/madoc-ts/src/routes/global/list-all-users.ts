@@ -13,7 +13,7 @@ export const listAllUsers: RouteMiddleware = async context => {
 
   const validSorts = ['id', 'name', 'email', 'is_active', 'created', 'modified', 'role'];
 
-  const sort = context.query.sort_by;
+  const sort = context.query.sort_by || '';
   const role = context.query.role;
   const roles = (context.query.roles || '')
     .split(',')

@@ -8,7 +8,6 @@ import {
 import { ManifestFull } from '../../../types/schemas/manifest-full';
 import { getResourceCount } from '../../../database/queries/count-queries';
 import { NotFound } from '../../../utility/errors/not-found';
-import { isAdmin } from '../../../frontend/shared/utility/user-roles';
 
 export const getManifest: RouteMiddleware<{ id: string }> = async context => {
   const { siteId } = optionalUserWithScope(context, ['site.view']);
