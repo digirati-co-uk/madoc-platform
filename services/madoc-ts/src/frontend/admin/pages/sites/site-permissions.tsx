@@ -17,6 +17,74 @@ import { useUserDetails } from '../../../shared/hooks/use-user-details';
 import { serverRendererFor } from '../../../shared/plugins/external/server-renderer-for';
 import { AdminHeader } from '../../molecules/AdminHeader';
 import { SimpleTable } from '../../../shared/layout/SimpleTable';
+import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
+const columns: ColumnDef<SiteUser>[] = [
+  {
+    accessorKey: 'id',
+    header: 'ID',
+  },
+  {
+    accessorKey: 'name',
+    header: 'Name',
+  },
+  {
+    accessorKey: 'role',
+    header: 'Role',
+  },
+  {
+    accessorKey: 'site_role',
+    header: 'Site role',
+    cell: info => <Tag>{info.getValue() as string}</Tag>,
+  },
+  {
+    id: 'actions',
+    header: '',
+    cell: info => {
+      const user = info.row.original;
+
+      return (
+        <ButtonRow $noMargin>
+          <SmallButton
+            disabled={!info.table.options.meta?.isGlobalAdmin}
+            onClick={() => {
+              info.table.options.meta?.openEdit(user);
+            }}
+          >
+            Change role
+          </SmallButton>
+
+          <ModalButton
+            title="Remove user from site"
+            render={() => (
+              <p>
+                Are you sure you want to remove <strong>{user.name}</strong> ({user.email}) from this site?
+              </p>
+            )}
+            renderFooter={({ close }) => (
+              <ButtonRow $noMargin>
+                <Button onClick={() => close()}>Cancel</Button>
+                <Button
+                  $primary
+                  $error
+                  disabled={info.table.options.meta?.isRemoving}
+                  onClick={() => {
+                    info.table.options.meta?.removeUser(user.id).then(close);
+                  }}
+                >
+                  Remove from site
+                </Button>
+              </ButtonRow>
+            )}
+          >
+            <SmallButton disabled={!info.table.options.meta?.isGlobalAdmin} $error>
+              Remove from site
+            </SmallButton>
+          </ModalButton>
+        </ButtonRow>
+      );
+    },
+  },
+];
 import { useBots } from '../../../shared/hooks/use-bots';
 
 export const SitePermissions = () => {
@@ -47,6 +115,28 @@ export const SitePermissions = () => {
 
   const [unsetSiteRole, unsetSiteRoleStatus] = useMutation(async ({ userId }: { userId: number }) => {
     await api.siteManager.removeUserRole(userId);
+  });
+
+  console.log(data);
+  const table = useReactTable({
+    data: data?.users || [],
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    meta: {
+      isGlobalAdmin,
+      isRemoving: unsetSiteRoleStatus.isLoading,
+      removeUser: (userId: number) => unsetSiteRole({ userId }).then(() => refetch()),
+      openEdit: (user: SiteUser) => {
+        modal?.current.click();
+        setSelectedUser({
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+        });
+        setSelectedRole(user.site_role as string);
+      },
+    },
   });
 
   return (
@@ -144,75 +234,24 @@ export const SitePermissions = () => {
 
         <SimpleTable.Table>
           <thead>
-            <SimpleTable.Row>
-              <SimpleTable.Cell>
-                <strong>ID</strong>
-              </SimpleTable.Cell>
-              <SimpleTable.Cell>
-                <strong>Name</strong>
-              </SimpleTable.Cell>
-              <SimpleTable.Cell>
-                <strong>Email</strong>
-              </SimpleTable.Cell>
-              <SimpleTable.Cell>
-                <strong>Site role</strong>
-              </SimpleTable.Cell>
-            </SimpleTable.Row>
+            {table.getHeaderGroups().map(headerGroup => (
+              <SimpleTable.Row key={headerGroup.id}>
+                {headerGroup.headers.map(header => (
+                  <SimpleTable.Cell key={header.id}>
+                    <strong>{flexRender(header.column.columnDef.header, header.getContext())}</strong>
+                  </SimpleTable.Cell>
+                ))}
+              </SimpleTable.Row>
+            ))}
           </thead>
           <tbody>
-            {data?.users.map(user => (
-              <SimpleTable.Row key={user.id}>
-                <SimpleTable.Cell>{user.id}</SimpleTable.Cell>
-                <SimpleTable.Cell>{user.name}</SimpleTable.Cell>
-                <SimpleTable.Cell>{user.email}</SimpleTable.Cell>
-                <SimpleTable.Cell>
-                  <Tag>{user.site_role}</Tag>
-                </SimpleTable.Cell>
-                <SimpleTable.Cell>
-                  <ButtonRow $noMargin>
-                    <SmallButton
-                      disabled={!isGlobalAdmin}
-                      onClick={() => {
-                        modal?.current.click();
-                        setSelectedUser({ name: user.name, email: user.email, role: user.role, id: user.id });
-                        setSelectedRole(user.site_role as string);
-                      }}
-                    >
-                      Change role
-                    </SmallButton>
-                    <ModalButton
-                      title="Remove user from site"
-                      render={() => (
-                        <p>
-                          Are you sure you want to remove <strong>{user.name}</strong> ({user.email}) from this site?
-                        </p>
-                      )}
-                      renderFooter={({ close }) => {
-                        return (
-                          <ButtonRow $noMargin>
-                            <Button onClick={() => close()}>Cancel</Button>
-                            <Button
-                              $primary
-                              $error
-                              disabled={unsetSiteRoleStatus.isLoading}
-                              onClick={() => {
-                                unsetSiteRole({ userId: user.id })
-                                  .then(() => refetch())
-                                  .then(() => close());
-                              }}
-                            >
-                              Remove from site
-                            </Button>
-                          </ButtonRow>
-                        );
-                      }}
-                    >
-                      <SmallButton disabled={!isGlobalAdmin} $error>
-                        Remove from site
-                      </SmallButton>
-                    </ModalButton>
-                  </ButtonRow>
-                </SimpleTable.Cell>
+            {table.getRowModel().rows.map(row => (
+              <SimpleTable.Row key={row.id}>
+                {row.getVisibleCells().map(cell => (
+                  <SimpleTable.Cell key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </SimpleTable.Cell>
+                ))}
               </SimpleTable.Row>
             ))}
           </tbody>
