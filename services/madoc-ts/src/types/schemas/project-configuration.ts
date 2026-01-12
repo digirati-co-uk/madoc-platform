@@ -78,6 +78,7 @@ export type ProjectConfiguration = {
   manifestPageOptions?: {
     hideStartContributing?: boolean;
     hideOpenInMirador?: boolean;
+    hideOpenInTheseus?: boolean;
     hideSearchButton?: boolean;
     hideRandomCanvas?: boolean;
     generatePDF?: boolean;
@@ -151,6 +152,7 @@ export type ProjectConfigurationNEW = {
     hideManifestMetadataOnCanvas?: boolean; // Changed to sub-item
     hideStartContributing?: boolean;
     hideOpenInMirador?: boolean;
+    hideOpenInTheseus?: boolean;
     hideSearchButton?: boolean;
     hideRandomCanvas?: boolean;
     hideFilterImages?: boolean;

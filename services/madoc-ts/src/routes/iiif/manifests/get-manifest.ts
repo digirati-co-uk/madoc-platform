@@ -1,4 +1,4 @@
-import { optionalUserWithScope, userWithScope } from '../../../utility/user-with-scope';
+import { optionalUserWithScope } from '../../../utility/user-with-scope';
 import { RouteMiddleware } from '../../../types/route-middleware';
 import {
   getManifestSnippets,

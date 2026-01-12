@@ -65,6 +65,7 @@
     "manifestPageOptions": {
       "hideStartContributing": false,
       "hideOpenInMirador": false,
+      "hideOpenInTheseus": false,
       "hideSearchButton": false,
       "hideRandomCanvas": false,
       "hideFilterImages": false,

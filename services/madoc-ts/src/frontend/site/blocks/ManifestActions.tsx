@@ -22,6 +22,7 @@ import { ProjectListingDescription } from '../../shared/atoms/ProjectListing';
 import { useContinueSubmission } from '../hooks/use-continue-submission';
 import { useProject } from '../hooks/use-project';
 import { useManifestUserTasks } from '../hooks/use-manifest-user-tasks';
+import { OpenInTheseusButton } from '../../shared/components/OpenInTheseusButton';
 
 export type props = {
   alignment?: string;
@@ -131,6 +132,8 @@ export const ManifestActions: React.FC<props> = ({ alignment }) => {
             {t('Open in mirador')}
           </Button>
         ) : null}
+
+        {!options.hideOpenInTheseus ? <OpenInTheseusButton /> : null}
 
         {!options.hideSearchButton ? (
           <Button as={Link} to={createLink({ subRoute: 'search' })}>
