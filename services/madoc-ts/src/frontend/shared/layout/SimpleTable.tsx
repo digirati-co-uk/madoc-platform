@@ -34,6 +34,16 @@ const Header = styled.th`
   position: sticky;
   white-space: nowrap;
   min-width: 92px;
+
+  &[data-interactive="true"] {
+    cursor: pointer;
+    &:hover {
+      background: #eee;
+    }
+  }
+  &[data-pinned="true"] {
+    background: #eee;
+  }
 `;
 
 export const SimpleTable = {

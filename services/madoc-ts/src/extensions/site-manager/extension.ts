@@ -160,8 +160,27 @@ export class SiteManagerExtension implements BaseExtension {
     });
   }
 
-  async listAllUsers(page = 1) {
-    return this.api.request<{ users: User[]; pagination: Pagination }>(`/api/madoc/users?${stringify({ page })}`);
+  async listAllUsers(
+    page = 1,
+    query: {
+      role?: string;
+      roles?: string[];
+      status?: string;
+      automated?: boolean;
+      search?: string;
+    } = {},
+    sort?: {
+      name: string;
+      direction: 'asc' | 'desc';
+    }
+  ) {
+    const queryString = stringify(
+      { page, ...query, sort_by: sort ? `${sort.name}:${sort?.direction}` : undefined },
+      {
+        arrayFormat: 'comma',
+      }
+    );
+    return this.api.request<{ users: User[]; pagination: Pagination }>(`/api/madoc/users?${queryString}`);
   }
 
   async getUserById(userId: number) {

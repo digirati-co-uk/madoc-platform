@@ -9,7 +9,6 @@ import { SimpleTable } from '../../../shared/layout/SimpleTable';
 import { SuccessMessage } from '../../../shared/callouts/SuccessMessage';
 import { WidePage } from '../../../shared/layout/WidePage';
 import { usePaginatedData } from '../../../shared/hooks/use-data';
-import { useLocationQuery } from '../../../shared/hooks/use-location-query';
 import { useUser } from '../../../shared/hooks/use-site';
 import { serverRendererFor } from '../../../shared/plugins/external/server-renderer-for';
 import { HrefLink } from '../../../shared/utility/href-link';
@@ -20,6 +19,9 @@ import { validateEmail } from '../../../../utility/validate-email';
 import { ErrorMessage } from '../../../shared/callouts/ErrorMessage';
 import { ColumnDef, flexRender, getCoreRowModel, useReactTable, getSortedRowModel } from '@tanstack/react-table';
 import { ItemFilter } from '../../../shared/components/ItemFilter';
+import { useLocationState } from '../../../shared/hooks/use-location-state';
+import { SortableTableHeader } from '../../../shared/layout/SortableTableHeader';
+import { Input } from '../../../shared/form/Input';
 
 export const columns: ColumnDef<User>[] = [
   {
@@ -71,13 +73,29 @@ export const columns: ColumnDef<User>[] = [
 
 export const ListUsers: React.FC = () => {
   const { data } = usePaginatedData<{ users: User[]; pagination: _Pagination }>(ListUsers);
-  const query = useLocationQuery();
+  const [
+    query,
+    setQuery,
+    {
+      onSortingChange,
+      sortingState
+    }
+  ] = useLocationState();
+
+
   const currentUser = useUser();
   const navigate = useNavigate();
   const [userDeleted, setUserDeleted] = useState(false);
-  const [sorting, setSorting] = useState([]);
-  const [roleFilter, setRoleFilter] = useState<string | null>(null);
-  const [activeFilter, setActiveFilter] = useState<'active' | 'inactive' | null>(null);
+
+  const activeFilter = query.status;
+  const setActiveFilter = (value: string) => {
+    setQuery({ ...query, status: value });
+  };
+
+  const roleFilter = query.role || null;
+  const setRoleFilter = (value: string | null) => {
+    setQuery({ ...query, role: value || undefined });
+  };
 
   const filteredUsers = useMemo(() => {
     if (!data?.users) return [];
@@ -91,8 +109,8 @@ export const ListUsers: React.FC = () => {
   const table = useReactTable({
     data: filteredUsers,
     columns,
-    state: { sorting },
-    onSortingChange: setSorting,
+    state: { sorting: sortingState },
+    onSortingChange,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
   });
@@ -134,69 +152,84 @@ export const ListUsers: React.FC = () => {
           <Button as={HrefLink} href={`/global/users/create-bot`}>
             Create bot
           </Button>
+          <ItemFilter
+            type="radio"
+            label={roleFilter ?? 'Filter by role'}
+            closeOnChange
+            items={[
+              { label: 'Global admin', id: 'global_admin' },
+              { label: 'Site admin', id: 'site_admin' },
+              { label: 'Editor', id: 'editor' }, // @todo remove?
+              { label: 'Reviewer', id: 'reviewer' }, // @todo remove?
+              { label: 'Author', id: 'author' }, // @todo remove?
+              { label: 'Researcher', id: 'researcher' }, // @todo remove?
+              { label: 'Transcriber', id: 'Transcriber' }, // @todo lowercase.
+            ].map(role => ({
+              id: role.id,
+              label: role.label,
+              onChange: selected => {
+                setRoleFilter(selected ? role.id : null);
+              },
+            }))}
+            selected={roleFilter ? [roleFilter] : []}
+          />
+
+          <ItemFilter
+            type="radio"
+            label={activeFilter ?? 'Filter by status'}
+            closeOnChange
+            items={[
+              { id: 'active', label: 'Active' },
+              { id: 'inactive', label: 'Inactive' },
+            ].map(s => ({
+              id: s.id,
+              label: s.label,
+              onChange: selected => {
+                setActiveFilter(selected ? (s.id as any) : null);
+              },
+            }))}
+            selected={activeFilter ? [activeFilter] : []}
+          />
+
+          <div className="px-3 w-full max-w-lg ml-auto">
+            <Input
+              value={query.search || ""}
+              onChange={e => setQuery({ search: e.target.value })}
+              placeholder="Search users..."
+            />
+          </div>
+
+          {(roleFilter || activeFilter) && (
+            <Button
+              onClick={() => {
+                setQuery({
+                  role: undefined,
+                  status: undefined,
+                  sort: undefined,
+                  search: undefined,
+                })
+              }}
+            >
+              Reset filters
+            </Button>
+          )}
         </ButtonRow>
-        {data?.pagination.totalPages > 1 && (
+        {(data?.pagination.totalPages || 0) > 1 && (
           <Pagination
             page={data ? data.pagination.page : 1}
             totalPages={data ? data.pagination.totalPages : 1}
             stale={!data}
           />
         )}
-        <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
-          <ButtonRow>
-            <ItemFilter
-              label={roleFilter ?? 'Filter by role'}
-              closeOnChange
-              items={[
-                { id: 'global_admin', label: 'Global admin' },
-                { id: 'researcher', label: 'Researcher' },
-                { id: 'reviewer', label: 'Reviewer' },
-                { id: 'Transcriber', label: 'Transcriber' },
-              ].map(role => ({
-                id: role.id,
-                label: role.label,
-                onChange: selected => {
-                  setRoleFilter(selected ? role.id : null);
-                },
-              }))}
-              selected={roleFilter ? [roleFilter] : []}
-            />
-
-            <ItemFilter
-              label={activeFilter ?? 'Filter by status'}
-              closeOnChange
-              items={[
-                { id: 'active', label: 'Active' },
-                { id: 'inactive', label: 'Inactive' },
-              ].map(s => ({
-                id: s.id,
-                label: s.label,
-                onChange: selected => {
-                  setActiveFilter(selected ? (s.id as any) : null);
-                },
-              }))}
-              selected={activeFilter ? [activeFilter] : []}
-            />
-
-            {(roleFilter || activeFilter) && (
-              <Button
-                onClick={() => {
-                  setRoleFilter(null);
-                  setActiveFilter(null);
-                }}
-              >
-                Reset filters
-              </Button>
-            )}
-          </ButtonRow>
-        </div>
         <SimpleTable.Table>
           <thead>
             {table.getHeaderGroups().map(headerGroup => (
               <SimpleTable.Row key={headerGroup.id}>
                 {headerGroup.headers.map(header => (
                   <SimpleTable.Header
-                    key={headerGroup.id}
+                    data-interactive={header.column.getCanSort()}
+                    data-pinned={header.column.getIsSorted() !== false}
+                    key={header.id}
                     onClick={header.column.getCanSort() ? header.column.getToggleSortingHandler() : undefined}
                     style={{
                       cursor: header.column.getCanSort() ? 'pointer' : 'default',
@@ -204,16 +237,9 @@ export const ListUsers: React.FC = () => {
                       whiteSpace: 'nowrap',
                     }}
                   >
-                    {flexRender(header.column.columnDef.header, header.getContext())}
-
-                    {header.column.getCanSort() && (
-                      <span style={{ marginLeft: 6, opacity: header.column.getIsSorted() ? 1 : 0.35 }}>
-                        {{
-                          asc: '↑',
-                          desc: '↓',
-                        }[header.column.getIsSorted() as string] ?? '⇅'}
-                      </span>
-                    )}
+                    <SortableTableHeader header={header}>
+                      {flexRender(header.column.columnDef.header, header.getContext())}
+                    </SortableTableHeader>
                   </SimpleTable.Header>
                 ))}
               </SimpleTable.Row>
@@ -224,7 +250,6 @@ export const ListUsers: React.FC = () => {
             {table.getRowModel().rows.map(row => {
               const user = row.original;
               const isInvalid = !user.automated && !validateEmail(user.email);
-
               return (
                 <SimpleTable.Row key={row.id} $interactive style={{ background: isInvalid ? '#FDD6D6' : undefined }}>
                   {row.getVisibleCells().map(cell => (
@@ -237,7 +262,7 @@ export const ListUsers: React.FC = () => {
             })}
           </tbody>
         </SimpleTable.Table>
-        {data?.pagination.totalPages > 1 && (
+        {(data?.pagination.totalPages || 0) > 1 && (
           <Pagination
             page={data ? data.pagination.page : 1}
             totalPages={data ? data.pagination.totalPages : 1}
@@ -250,6 +275,32 @@ export const ListUsers: React.FC = () => {
 };
 
 serverRendererFor(ListUsers, {
-  getKey: (params, query) => [`system-all-users`, { page: query.page ? Number(query.page) : 1 }],
-  getData: (key, vars, api) => api.siteManager.listAllUsers(vars.page),
+  getKey: (params, query) => [
+    `system-all-users`,
+    {
+      page: query.page ? Number(query.page) : 1,
+      roles: query.roles,
+      role: query.role,
+      status: query.status,
+      automated: query.automated === 'true' ? true : query.automated === 'false' ? false : undefined,
+      sort: query.sort || 'id',
+      asc: query.asc === 'true',
+      search: query.search || '',
+    },
+  ],
+  getData: (key, vars, api) =>
+    api.siteManager.listAllUsers(
+      vars.page,
+      {
+        automated: vars.automated,
+        role: vars.role,
+        roles: vars.roles,
+        status: vars.status,
+        search: vars.search,
+      },
+      {
+        direction: vars.asc ? 'asc' : 'desc',
+        name: vars.sort || 'id',
+      }
+    ),
 });
