@@ -117,7 +117,6 @@ export const SitePermissions = () => {
     await api.siteManager.removeUserRole(userId);
   });
 
-  console.log(data);
   const table = useReactTable({
     data: data?.users || [],
     columns,
