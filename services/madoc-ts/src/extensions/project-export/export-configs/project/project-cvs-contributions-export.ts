@@ -173,7 +173,12 @@ async function fetchTargets(api: any, manifestIds: number[], canvasIds: number[]
       const manifest = response?.manifest;
       if (!manifest) continue;
 
-      const uri = extractOriginalUri(manifest);
+      // getManifestById() returns the original URI at response.manifest.source
+      const uri =
+        typeof response?.manifest?.source === 'string' && response.manifest.source.trim()
+          ? response.manifest.source
+          : extractOriginalUri(manifest) ?? extractOriginalUri(response);
+
       cache.manifests[id.toString()] = {
         label: getValue(manifest.label),
         uri,
@@ -196,7 +201,11 @@ async function fetchTargets(api: any, manifestIds: number[], canvasIds: number[]
       const canvas = response?.canvas;
       if (!canvas) continue;
 
-      const uri = extractOriginalUri(canvas) || extractOriginalUri(response);
+      // getCanvasById() returns the original URI at response.canvas.source_id
+      const uri =
+        typeof response?.canvas?.source_id === 'string' && response.canvas.source_id.trim()
+          ? response.canvas.source_id
+          : extractOriginalUri(canvas) || extractOriginalUri(response);
 
       cache.canvases[id.toString()] = {
         label: getValue(canvas.label),
@@ -302,7 +311,7 @@ export const projectCsvContributionsExport: ExportConfig = {
         capture_model_number: item.model_id ?? null,
 
         status: getContributionStatus(item) ?? (statusFilter !== 'all' ? statusFilter : null),
-        contributor_id: getContributorId(item) ?? item?.doc_id ?? null,
+        contributor_id: getContributorId(item) ?? null,
 
         doc_id: item.doc_id ?? null,
         field_key: item.key ?? null,
