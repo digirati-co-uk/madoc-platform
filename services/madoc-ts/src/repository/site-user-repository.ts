@@ -136,25 +136,9 @@ export class SiteUserRepository extends BaseRepository {
     // Users
     // ==============================
 
-    countAllUsers: () => sql<{ total_users: number }>`select COUNT(*) as total_users from "user"`,
-
-    getAllUsers: (
-      page: number,
-      perPage: number,
-      filters: { role?: string; roles?: string[]; status?: string; automated?: boolean; search?: string } = {},
-      _sort: string = 'id'
-    ) => {
-      const [sort, direction = 'desc'] = _sort.split(':');
-
-      // validate sort string
-      const validSorts = ['id', 'name', 'email', 'is_active', 'created', 'modified', 'role'];
-      if (!validSorts.includes(sort)) {
-        throw new Error(`Invalid sort field: ${sort}. Must be one of: ${validSorts.join(', ')}`);
-      }
-      if (direction !== 'asc' && direction !== 'desc') {
-        throw new Error(`Invalid sort direction: ${direction}. Must be one of: asc, desc`);
-      }
-
+    getUsersWhere(
+      filters: { role?: string; status?: string; roles?: string[]; automated?: boolean; search?: string } = {}
+    ) {
       // Build WHERE conditions
       const conditions = [];
       if (filters.roles?.length) {
@@ -181,7 +165,34 @@ export class SiteUserRepository extends BaseRepository {
         conditions.push(sql`automated = ${filters.automated}`);
       }
 
-      const whereClause = conditions.length > 0 ? sql`WHERE ${sql.join(conditions, sql` AND `)}` : SQL_EMPTY;
+      return conditions.length > 0 ? sql`WHERE ${sql.join(conditions, sql` AND `)}` : SQL_EMPTY;
+    },
+
+    countAllUsers(
+      filters: { role?: string; status?: string; roles?: string[]; automated?: boolean; search?: string } = {}
+    ) {
+      const whereClause = this.getUsersWhere(filters);
+      return sql<{ total_users: number }>`select COUNT(*) as total_users from "user" ${whereClause}`;
+    },
+
+    getAllUsers(
+      page: number,
+      perPage: number,
+      filters: { role?: string; roles?: string[]; status?: string; automated?: boolean; search?: string } = {},
+      _sort: string = 'id'
+    ) {
+      const [sort, direction = 'desc'] = _sort.split(':');
+
+      // validate sort string
+      const validSorts = ['id', 'name', 'email', 'is_active', 'created', 'modified', 'role'];
+      if (!validSorts.includes(sort)) {
+        throw new Error(`Invalid sort field: ${sort}. Must be one of: ${validSorts.join(', ')}`);
+      }
+      if (direction !== 'asc' && direction !== 'desc') {
+        throw new Error(`Invalid sort direction: ${direction}. Must be one of: asc, desc`);
+      }
+
+      const whereClause = this.getUsersWhere(filters);
 
       // Build ORDER BY clause
       const orderBy = sql.identifier([sort]);
@@ -1099,8 +1110,10 @@ export class SiteUserRepository extends BaseRepository {
     return { user, sites };
   }
 
-  async countAllUsers() {
-    const resp = await this.connection.one(SiteUserRepository.query.countAllUsers());
+  async countAllUsers(
+    filters: { role?: string; status?: string; roles?: string[]; automated?: boolean; search?: string } = {}
+  ) {
+    const resp = await this.connection.one(SiteUserRepository.query.countAllUsers(filters));
     return resp.total_users;
   }
 

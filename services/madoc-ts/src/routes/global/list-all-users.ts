@@ -5,12 +5,6 @@ import { onlyGlobalAdmin } from '../../utility/user-with-scope';
 export const listAllUsers: RouteMiddleware = async context => {
   await onlyGlobalAdmin(context);
 
-  const usersPerPage = 50;
-  const totalResults = await context.siteManager.countAllUsers();
-  const totalPages = Math.ceil(totalResults / usersPerPage) || 1;
-  const requestedPage = Number(context.query.page) || 1;
-  const page = requestedPage < totalPages ? requestedPage : totalPages;
-
   const validSorts = ['id', 'name', 'email', 'is_active', 'created', 'modified', 'role'];
 
   const search = context.query.search || context.query.q || '';
@@ -28,8 +22,16 @@ export const listAllUsers: RouteMiddleware = async context => {
     throw new RequestError('Invalid sort');
   }
 
+  const query = { status, role, roles, automated, search };
+
+  const usersPerPage = 50;
+  const totalResults = await context.siteManager.countAllUsers(query);
+  const totalPages = Math.ceil(totalResults / usersPerPage) || 1;
+  const requestedPage = Number(context.query.page) || 1;
+  const page = requestedPage < totalPages ? requestedPage : totalPages;
+
   context.response.body = {
-    users: await context.siteManager.getAllUsers(page, usersPerPage, { status, role, roles, automated, search }, sort),
+    users: await context.siteManager.getAllUsers(page, usersPerPage, query, sort),
     pagination: {
       page,
       totalResults,
