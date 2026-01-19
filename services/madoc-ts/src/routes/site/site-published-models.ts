@@ -123,6 +123,9 @@ export const sitePublishedModels: RouteMiddleware<{ slug: string; id: string }> 
     defaultOptions.canvas = `${gatewayHost}/s/${site.slug}/madoc/api/manifests/${manifestId}/export/${version}/c${resp.id}`;
   }
 
+  // Set cors.
+  context.set('Access-Control-Allow-Origin', '*');
+
   switch (format) {
     case 'capture-model':
     case 'capture-model-with-pages':

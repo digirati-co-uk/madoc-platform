@@ -1,33 +1,124 @@
 import { parseModelTarget } from '../../../../utility/parse-model-target';
 import { ExportFile } from '../../server-export';
-import { ExportConfig, ExportDataOptions, ExportFileDefinition, SupportedExportResource } from '../../types';
+import type { ExportConfig, ExportDataOptions, ExportFileDefinition, SupportedExportResource } from '../../types';
 import { getValue } from '@iiif/helpers/i18n';
 
-const labelCache: { manifestLabels: Record<string, string>; canvasLabels: Record<string, string> } = {
+const labelCache: {
+  manifestLabels: Record<string, { label?: string; uri?: string }>;
+  canvasLabels: Record<string, { label?: string; uri?: string }>;
+} = {
   manifestLabels: {},
   canvasLabels: {},
 };
 
+const missingUriLogged = {
+  manifest: new Set<string>(),
+  canvas: new Set<string>(),
+};
+
 async function fetchLabels(api: any, manifestIds: number[], canvasIds: number[]) {
-  const newManifestIds = manifestIds.filter(id => id !== undefined && !labelCache.manifestLabels[id.toString()]);
-  const newCanvasIds = canvasIds.filter(id => id !== undefined && !labelCache.canvasLabels[id.toString()]);
+  const uniqueManifestIds = Array.from(new Set(manifestIds.filter(id => id !== undefined)));
+  const uniqueCanvasIds = Array.from(new Set(canvasIds.filter(id => id !== undefined)));
+
+  const newManifestIds = uniqueManifestIds.filter(id => !labelCache.manifestLabels[id.toString()]);
+  const newCanvasIds = uniqueCanvasIds.filter(id => !labelCache.canvasLabels[id.toString()]);
+
+  function extractOriginalUri(resource: any): string | undefined {
+    if (!resource) return undefined;
+
+    const preferredKeys = [
+      'id',
+      '@id',
+      'source',
+      'originalId',
+      'original_id',
+      'iiifId',
+      'iiif_id',
+      'iiifUri',
+      'iiif_uri',
+      'uri',
+      'url',
+      'sourceId',
+      'source_id',
+    ];
+
+    const isLikelyUri = (v: any) =>
+      typeof v === 'string' &&
+      v.length > 3 &&
+      (v.startsWith('http://') || v.startsWith('https://') || v.startsWith('urn:'));
+
+    const visited = new Set<any>();
+
+    const scan = (obj: any, depth: number): string | undefined => {
+      if (!obj || depth < 0) return undefined;
+      if (typeof obj !== 'object') return undefined;
+      if (visited.has(obj)) return undefined;
+      visited.add(obj);
+
+      for (const key of preferredKeys) {
+        const value = (obj as any)[key];
+        if (isLikelyUri(value)) return value;
+      }
+      if (typeof (obj as any).id === 'string' && (obj as any).id.length > 3) {
+        return (obj as any).id;
+      }
+      if (typeof (obj as any)['@id'] === 'string' && (obj as any)['@id'].length > 3) {
+        return (obj as any)['@id'];
+      }
+
+      for (const value of Object.values(obj)) {
+        if (value && typeof value === 'object') {
+          const found = scan(value, depth - 1);
+          if (found) return found;
+        }
+      }
+
+      return undefined;
+    };
+
+    return scan(resource, 3);
+  }
 
   if (newManifestIds.length > 0) {
-    const manifests = await Promise.all(newManifestIds.map(id => api.getManifestById(id)));
-    manifests.forEach(response => {
+    const manifests = await Promise.all(
+      newManifestIds.map(async id => ({ id, response: await api.getManifestById(id) }))
+    );
+
+    manifests.forEach(({ id, response }) => {
       const manifest = response.manifest;
-      if (manifest && manifest.id !== undefined) {
-        labelCache.manifestLabels[manifest.id.toString()] = getValue(manifest.label);
+      if (manifest) {
+        const uri = extractOriginalUri(manifest);
+
+        labelCache.manifestLabels[id.toString()] = {
+          label: getValue(manifest.label),
+          uri,
+        };
+
+        if (!uri && !missingUriLogged.manifest.has(id.toString())) {
+          missingUriLogged.manifest.add(id.toString());
+          console.warn('CSV export: missing manifest URI', { id, keys: Object.keys(manifest) });
+        }
+      } else {
+        console.warn('CSV export: missing manifest (no response.manifest)', { id });
       }
     });
   }
 
   if (newCanvasIds.length > 0) {
-    const canvases = await Promise.all(newCanvasIds.map(id => api.getCanvasById(id)));
-    canvases.forEach(response => {
+    const canvases = await Promise.all(newCanvasIds.map(async id => ({ id, response: await api.getCanvasById(id) })));
+
+    canvases.forEach(({ id, response }) => {
       const canvas = response.canvas;
-      if (canvas && canvas.id !== undefined) {
-        labelCache.canvasLabels[canvas.id.toString()] = getValue(canvas.label);
+      if (canvas) {
+        const uri = extractOriginalUri(canvas) || extractOriginalUri(response);
+        labelCache.canvasLabels[id.toString()] = {
+          label: getValue(canvas.label),
+          uri,
+        };
+        if (!uri && !missingUriLogged.canvas.has(id.toString())) {
+          missingUriLogged.canvas.add(id.toString());
+          console.warn('CSV export: missing canvas URI', { id, keys: Object.keys(canvas) });
+        }
       }
     });
   }
@@ -117,12 +208,11 @@ export const projectCsvSimpleExport: ExportConfig = {
 
     function findBest(fields: any[]) {
       const revises = fields.map(r => r.revises);
-      console.log('FINDING BEST', fields);
       return fields.filter(r => !revises.includes(r.id)).pop() || fields[0];
     }
 
     const mappedList = Object.entries(rowRecord)
-      .map(([key, record]) => {
+      .map(([, record]) => {
         const newRecord: any = {
           model_id: record.model_id,
           doc_id: record.doc_id,
@@ -135,12 +225,16 @@ export const projectCsvSimpleExport: ExportConfig = {
 
           const target = parseModelTarget(record.target);
           if (target.manifest && target.manifest.id !== undefined) {
+            const manifest = manifestLabels[target.manifest.id.toString()];
             newRecord.manifest = target.manifest.id;
-            newRecord.manifest_label = manifestLabels[target.manifest.id.toString()];
+            newRecord.manifest_uri = manifest?.uri;
+            newRecord.manifest_label = manifest?.label;
           }
           if (target.canvas && target.canvas.id !== undefined) {
+            const canvas = canvasLabels[target.canvas.id.toString()];
             newRecord.canvas = target.canvas.id;
-            newRecord.canvas_label = canvasLabels[target.canvas.id.toString()];
+            newRecord.canvas_uri = canvas?.uri;
+            newRecord.canvas_label = canvas?.label;
           }
           return newRecord;
         }

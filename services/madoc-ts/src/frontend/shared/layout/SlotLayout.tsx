@@ -5,6 +5,7 @@ import { Surface, SurfaceProps } from './Surface';
 const StackSlotLayout = styled.div`
   display: flex;
   flex-direction: column;
+  padding: 0.5em;
 `;
 
 const FlexSlotLayout = styled.div`

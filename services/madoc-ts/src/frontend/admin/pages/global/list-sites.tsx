@@ -73,10 +73,10 @@ export const ListSites: React.FC = () => {
   return (
     <>
       <AdminHeader
-        title={t('Sites')}
+        title={t('All sites')}
         breadcrumbs={[
           { label: 'Site admin', link: '/' },
-          { label: 'Sites', link: '/global/sites', active: true },
+          { label: 'All sites', link: '/global/sites', active: true },
         ]}
         noMargin
       />

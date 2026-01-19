@@ -58,6 +58,7 @@ const BlockWrapper = styled.div`
   }
   display: inline-block;
   position: relative;
+  padding: 2em;
 `;
 
 export function modelToBlock(

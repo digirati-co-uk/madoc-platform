@@ -1,4 +1,5 @@
 import { RouteMiddleware } from '../../types/route-middleware';
+import { NotFound } from '../../utility/errors/not-found';
 import { parseUrn } from '../../utility/parse-urn';
 
 export type SiteManifestQuery = {
@@ -87,6 +88,7 @@ export const siteManifest: RouteMiddleware<{ slug: string; id: string }> = async
   const userId = context.state.jwt?.user.id;
   const projectId = context.query.project_id;
   const parentTaskId = context.query.parent_task;
+  const isSiteAdmin = context.state.jwt?.scope.includes('site_admin');
   const hideStatus: string[] | undefined = context.query.hide_status ? context.query.hide_status.split(',') : undefined;
 
   // @todo limit based on site configuration query.
@@ -127,6 +129,10 @@ export const siteManifest: RouteMiddleware<{ slug: string; id: string }> = async
       ).subjects;
 
       manifest.subjects = mapUserSubjects(userSubjects, taskSubjects, isPreparing);
+    }
+
+    if (!manifest.manifest.published && !isSiteAdmin) {
+      throw new NotFound('Manifest not found');
     }
 
     context.response.status = 200;
@@ -180,6 +186,10 @@ export const siteManifest: RouteMiddleware<{ slug: string; id: string }> = async
 
   // Finally we can make an optimum request to get a filtered collection set.
   const manifest = await siteApi.getManifestById(Number(id), page, filteredCanvases);
+
+  if (!manifest.manifest.published && !isSiteAdmin) {
+    throw new NotFound('Manifest not found');
+  }
 
   manifest.subjects = filteredSubjects;
 

@@ -19,12 +19,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -->
 
+## Unreleased
+
+### Changed
+
+- Improved edit mode slot & block styles (MAD-1055)
+- CSV exports to include original Manifest/Canvas URI (MAD-1530)
+- Replaced Global -> All Users table with Tanstack table and added sorting & filtering (MAD-955)
+- Admin interface: Content labelling and content readability improvements (MAD-1466)
+
+### Fixed
+
+- Typo in review dashboard 'changed' to 'change' (MAD-1472)
+- Fixed unpublished manifests can still be reached using Google/Bing/etc (MAD-1054)
+- Fixed CORS for annotation pages
+
+### Added
+
+- Added "Open in Theseus" link to Manifests
+
 ## [v2.2.10](https://github.com/digirati-co-uk/madoc-platform/compare/v2.2.9...v2.2.10)
 
 ### Added
 
 - Added button to exclude all manifests from preview collection
 - Added button to delete all contributions on a Manifest to hard-reset it (NS-67)
+- Added filter by status option to review list table (MAD-1320)
+- Added column resizing on review list table (MAD-1321)
 
 ### Changed
 

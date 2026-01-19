@@ -99,7 +99,7 @@ export const AdminSidebar: React.FC = () => {
               {t('Import manifest')}
             </AdminMenuSubItem>
             <AdminMenuSubItem as={HrefLink} href="/enrichment/ocr">
-              {t('View manifests with OCR')}
+              {t('View manifests with OCR text')}
             </AdminMenuSubItem>
           </AdminMenuSubItemContainer>
         </AdminMenuItemContainer>
@@ -170,14 +170,14 @@ export const AdminSidebar: React.FC = () => {
             <AdminMenuSubItem as={HrefLink} href="/site/details">
               {t('Site details')}
             </AdminMenuSubItem>
+            <AdminMenuSubItem as={HrefLink} href="/configure/site/system">
+              {t('Site general configuration')}
+            </AdminMenuSubItem>
             <AdminMenuSubItem as={HrefLink} href="/configure/site/project">
               {t('Site default project configuration')}
             </AdminMenuSubItem>
             <AdminMenuSubItem as={HrefLink} href="/configure/site/metadata">
               {t('Site metadata display configuration')}
-            </AdminMenuSubItem>
-            <AdminMenuSubItem as={HrefLink} href="/configure/site/system">
-              {t('Site general configuration')}
             </AdminMenuSubItem>
             <AdminMenuSubItem as={HrefLink} href="/enrichment/search-indexing">
               {t('Site search indexing')}
@@ -187,20 +187,20 @@ export const AdminSidebar: React.FC = () => {
                 {t('Themes')}
               </AdminMenuSubItem>
             ) : null}
-            <AdminMenuSubItem as={HrefLink} href="/site/annotation-styles">
-              {t('Annotation styles')}
+            <AdminMenuSubItem as={HrefLink} href="/configure/site/terms-and-conditions">
+              {t('Site terms and conditions')}
+            </AdminMenuSubItem>
+            <AdminMenuSubItem as={HrefLink} href="/site/invitations">
+              {t('User Invitations')}
             </AdminMenuSubItem>
             <AdminMenuSubItem as={HrefLink} href="/site/permissions">
               {t('Site permissions')}
             </AdminMenuSubItem>
-            <AdminMenuSubItem as={HrefLink} href="/configure/site/terms-and-conditions">
-              {t('Site terms and conditions')}
-            </AdminMenuSubItem>
             <AdminMenuSubItem as={HrefLink} href="/configure/site/terms">
               {t('External terms list')}
             </AdminMenuSubItem>
-            <AdminMenuSubItem as={HrefLink} href="/site/invitations">
-              {t('Invitations')}
+            <AdminMenuSubItem as={HrefLink} href="/site/annotation-styles">
+              {t('Annotation styles')}
             </AdminMenuSubItem>
             {isGlobalAdmin ? (
               <AdminMenuSubItem as={HrefLink} href="/system/plugins">
@@ -220,11 +220,14 @@ export const AdminSidebar: React.FC = () => {
             </AdminMenuItem>
 
             <AdminMenuSubItemContainer $open={isSiteGlobal}>
+              <AdminMenuSubItem as={HrefLink} href="/global/config">
+                {t('Global config')}
+              </AdminMenuSubItem>
               <AdminMenuSubItem as={HrefLink} href="/global/sites">
                 {t('All sites')}
               </AdminMenuSubItem>
               <AdminMenuSubItem as={HrefLink} href="/global/sites/create">
-                {t('Create  site')}
+                {t('Create site')}
               </AdminMenuSubItem>
               <AdminMenuSubItem as={HrefLink} href="/global/users">
                 {t('All users')}
@@ -232,14 +235,11 @@ export const AdminSidebar: React.FC = () => {
               <AdminMenuSubItem as={HrefLink} href="/global/users/create">
                 {t('Create user')}
               </AdminMenuSubItem>
-              <AdminMenuSubItem as={HrefLink} href="/global/api-keys">
-                {t('API keys')}
-              </AdminMenuSubItem>
               <AdminMenuSubItem as={HrefLink} href="/global/status">
                 {t('System status')}
               </AdminMenuSubItem>
-              <AdminMenuSubItem as={HrefLink} href="/global/config">
-                {t('Global config')}
+              <AdminMenuSubItem as={HrefLink} href="/global/api-keys">
+                {t('API keys')}
               </AdminMenuSubItem>
             </AdminMenuSubItemContainer>
           </AdminMenuItemContainer>

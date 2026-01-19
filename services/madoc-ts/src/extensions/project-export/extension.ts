@@ -8,6 +8,7 @@ import { canvasPlaintextExport } from './export-configs/canvas/canvas-plaintext-
 import { manifestApiExport } from './export-configs/manifest/manifest-api-export';
 import { projectApiExport } from './export-configs/project/project-api-export';
 import { projectCsvSimpleExport } from './export-configs/project/project-csv-simple-export';
+import { projectCsvContributionsExport } from './export-configs/project/project-cvs-contributions-export';
 import { ExportConfig } from './types';
 
 export class ProjectExportExtension extends RegistryExtension<ExportConfig> implements BaseExtension {
@@ -28,6 +29,7 @@ export class ProjectExportExtension extends RegistryExtension<ExportConfig> impl
     ProjectExportExtension.register(manifestApiExport);
     ProjectExportExtension.register(projectApiExport);
     ProjectExportExtension.register(projectCsvSimpleExport);
+    ProjectExportExtension.register(projectCsvContributionsExport);
   }
 
   dispose() {

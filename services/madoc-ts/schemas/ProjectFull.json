@@ -437,6 +437,9 @@
             "hideOpenInMirador": {
               "type": "boolean"
             },
+            "hideOpenInTheseus": {
+              "type": "boolean"
+            },
             "hideSearchButton": {
               "type": "boolean"
             },

@@ -136,12 +136,75 @@ export class SiteUserRepository extends BaseRepository {
     // Users
     // ==============================
 
-    countAllUsers: () => sql<{ total_users: number }>`select COUNT(*) as total_users from "user"`,
+    getUsersWhere(
+      filters: { role?: string; status?: string; roles?: string[]; automated?: boolean; search?: string } = {}
+    ) {
+      // Build WHERE conditions
+      const conditions = [];
+      if (filters.roles?.length) {
+        conditions.push(sql`role = ANY (${sql.array(filters.roles, 'text')})`);
+      } else if (filters.role) {
+        conditions.push(sql`role = ${filters.role}`);
+      }
+      if (filters.status === 'active') {
+        conditions.push(sql`is_active = true`);
+      } else if (filters.status === 'inactive') {
+        conditions.push(sql`is_active = false`);
+      }
+      if (filters.search) {
+        // Search across name and email.
+        const searchTerms = filters.search.split(' ');
+        const searchConditions = searchTerms
+          // Max 5 terms
+          .slice(0, 5)
+          .map(term => sql`name ILIKE ${`%${term}%`} OR email ILIKE ${`%${term}%`}`);
+        conditions.push(sql`(${sql.join(searchConditions, sql` OR `)})`);
+      }
 
-    getAllUsers: (page: number, perPage: number) => sql<UserRowWithoutPassword>`
-      select id, email, name, created, modified, role, is_active, automated, config
-        from "user" limit ${perPage} offset ${(page - 1) * perPage};
-    `,
+      if (typeof filters.automated === 'boolean') {
+        conditions.push(sql`automated = ${filters.automated}`);
+      }
+
+      return conditions.length > 0 ? sql`WHERE ${sql.join(conditions, sql` AND `)}` : SQL_EMPTY;
+    },
+
+    countAllUsers(
+      filters: { role?: string; status?: string; roles?: string[]; automated?: boolean; search?: string } = {}
+    ) {
+      const whereClause = this.getUsersWhere(filters);
+      return sql<{ total_users: number }>`select COUNT(*) as total_users from "user" ${whereClause}`;
+    },
+
+    getAllUsers(
+      page: number,
+      perPage: number,
+      filters: { role?: string; roles?: string[]; status?: string; automated?: boolean; search?: string } = {},
+      _sort: string = 'id'
+    ) {
+      const [sort, direction = 'desc'] = _sort.split(':');
+
+      // validate sort string
+      const validSorts = ['id', 'name', 'email', 'is_active', 'created', 'modified', 'role'];
+      if (!validSorts.includes(sort)) {
+        throw new Error(`Invalid sort field: ${sort}. Must be one of: ${validSorts.join(', ')}`);
+      }
+      if (direction !== 'asc' && direction !== 'desc') {
+        throw new Error(`Invalid sort direction: ${direction}. Must be one of: asc, desc`);
+      }
+
+      const whereClause = this.getUsersWhere(filters);
+
+      // Build ORDER BY clause
+      const orderBy = sql.identifier([sort]);
+
+      return sql<UserRowWithoutPassword>`
+        select id, email, name, created, modified, role, is_active, automated, config
+          from "user"
+          ${whereClause}
+          ORDER BY ${orderBy} ${direction === 'asc' ? sql`ASC` : sql`DESC`}
+          limit ${perPage} offset ${(page - 1) * perPage}
+      `;
+    },
 
     getUserById: (id: number) => sql<UserRowWithoutPassword>`
         select id, email, name, created, modified, role, is_active, automated, config
@@ -1047,13 +1110,20 @@ export class SiteUserRepository extends BaseRepository {
     return { user, sites };
   }
 
-  async countAllUsers() {
-    const resp = await this.connection.one(SiteUserRepository.query.countAllUsers());
+  async countAllUsers(
+    filters: { role?: string; status?: string; roles?: string[]; automated?: boolean; search?: string } = {}
+  ) {
+    const resp = await this.connection.one(SiteUserRepository.query.countAllUsers(filters));
     return resp.total_users;
   }
 
-  async getAllUsers(page: number, perPage = 50) {
-    return (await this.connection.any(SiteUserRepository.query.getAllUsers(page || 1, perPage))).map(
+  async getAllUsers(
+    page: number,
+    perPage = 50,
+    filters: { role?: string; status?: string; roles?: string[]; automated?: boolean; search?: string } = {},
+    sort: string = 'id'
+  ) {
+    return (await this.connection.any(SiteUserRepository.query.getAllUsers(page || 1, perPage, filters, sort))).map(
       SiteUserRepository.mapUser
     );
   }

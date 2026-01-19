@@ -101,7 +101,9 @@ export const BlankSlotDropdown: React.FC<{
 
   return (
     <ContextualPositionWrapper>
-      <SlotEditorButton {...buttonProps}>{children}</SlotEditorButton>
+      <SlotEditorButton data-read-only={'true'} {...buttonProps}>
+        {children}
+      </SlotEditorButton>
       <ContextualMenuWrapper $padding $isOpen={isOpen}>
         <ContextualMenuList>
           {actions.map((action, n) => (
@@ -240,7 +242,9 @@ export const RenderBlankSlot: React.FC<{
           <EmptySlotLabel>Empty slot</EmptySlotLabel>
           <EmptySlotActions>
             {isPage ? (
-              <PageEditorButton onClick={() => createSlot()}>Customise</PageEditorButton>
+              <PageEditorButton data-read-only={'true'} onClick={() => createSlot()}>
+                Customise
+              </PageEditorButton>
             ) : (
               <BlankSlotDropdown
                 actions={[
@@ -263,7 +267,9 @@ export const RenderBlankSlot: React.FC<{
         <SlotEditorLabelReadOnly>{slotId}</SlotEditorLabelReadOnly>
         {isPage || source?.type === 'global' ? (
           <>
-            <SlotEditorButton onClick={() => createSlot()}>Customise</SlotEditorButton>
+            <SlotEditorButton data-read-only={'true'} onClick={() => createSlot()}>
+              Customise
+            </SlotEditorButton>
           </>
         ) : (
           <>

@@ -18,3 +18,4 @@ e2e/test-fixtures/postgres/default/default.sql
 services/madoc-next
 scripts
 notes
+.vscode/*
