@@ -23,6 +23,7 @@ import {
 import { acceptTerms, createTerms, deleteTerms, getLatestTerms, getTermsById, listTerms } from './routes/admin/terms';
 import { getProjectAnnotationStyle } from './routes/annotation-styles/get-project-annotation-style';
 import { annotationStyles } from './routes/annotation-styles/index';
+import { annotationRoutes } from './routes/iiif/annotations';
 import { searchAllUsers } from './routes/global/search-all-users';
 import { systemCheck } from './routes/global/system-check';
 import { updateCanvasDetails } from './routes/iiif/canvases/update-canvas-details';
@@ -32,6 +33,7 @@ import { createProjectExport } from './routes/projects/create-project-export';
 import { getProjectFromTask } from './routes/projects/get-project-from-task';
 import { getProjectRawData } from './routes/projects/get-project-raw-data';
 import { listProjectEmails } from './routes/projects/list-project-emails';
+import { updateCanvasAnnotationsApi } from './routes/iiif/canvases/update-canvas-annotations';
 import { listProjectModelEntityAutocomplete } from './routes/projects/list-project-model-entity-autocomplete';
 import { addProjectFeedback, listProjectFeedback, removeProjectFeedback } from './routes/projects/project-feedback';
 import {
@@ -517,6 +519,7 @@ export const router = new TypedRouter({
     deleteCanvasSummary,
   ],
   'delete-canvas': [TypedRouter.DELETE, '/api/madoc/iiif/canvases/:id', deleteCanvasEndpoint],
+  'update-canvas-annotations': [TypedRouter.PUT, '/api/madoc/iiif/canvases/:id/annotations', updateCanvasAnnotationsApi],
 
   // Import API
   'import-manifest': [TypedRouter.POST, '/api/madoc/iiif/import/manifest', importManifest],
@@ -789,6 +792,7 @@ export const router = new TypedRouter({
   // Other routes.
   ...activityStreamRoutes,
   ...annotationStyles,
+  ...annotationRoutes,
   ...captureModelRoutes,
   ...webhookRoutes,
   ...getAuthRoutes(),

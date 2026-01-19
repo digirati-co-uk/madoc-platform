@@ -27,7 +27,7 @@ import { useSearchQuery } from '../hooks/use-search-query';
 import { ButtonRow, TinyButton } from '../../shared/navigation/Button';
 
 export const Search: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [{ resolvedData: searchResponse, latestData }, displayFacets, isLoading] = useSearch();
   const { rawQuery, page, fulltext, appliedFacets } = useSearchQuery();
   const {
@@ -44,6 +44,64 @@ export const Search: React.FC = () => {
     clearAllFacets,
     setFullTextQuery,
   } = useSearchFacets();
+
+  // Helper function to get label in current language only
+  const getLocalizedLabel = (label: any) => {
+    if (!label) {
+      return label;
+    }
+
+    // If it's already a string, return it as-is
+    if (typeof label === 'string') {
+      return label;
+    }
+
+    // Handle InternationalString objects
+    if (typeof label === 'object') {
+      const availableLanguages = Object.keys(label);
+
+      // Priority 1: Exact match for current language
+      if (label[i18n.language] && Array.isArray(label[i18n.language])) {
+        return { [i18n.language]: label[i18n.language] };
+      }
+
+      // Priority 2: Short language code (e.g., 'en' from 'en-US')
+      const currentLangShort = i18n.language.split('-')[0];
+      if (label[currentLangShort] && Array.isArray(label[currentLangShort])) {
+        return { [currentLangShort]: label[currentLangShort] };
+      }
+
+      // Priority 3: If we have multiple languages and one is 'none', try to find a real language
+      if (availableLanguages.length > 1 && availableLanguages.includes('none')) {
+        // Look for English first as a fallback
+        if (label['en'] && Array.isArray(label['en'])) {
+          return { en: label['en'] };
+        }
+
+        // Then look for any non-'none' language
+        const realLang = availableLanguages.find(lang => lang !== 'none' && lang !== '@none');
+        if (realLang && label[realLang] && Array.isArray(label[realLang])) {
+          return { [realLang]: label[realLang] };
+        }
+      }
+
+      // Priority 4: Handle 'none' language values - just pass through
+      // The script-based filtering is now done in use-search.ts
+      if (label['none'] && Array.isArray(label['none'])) {
+        return label;
+      }
+
+      // Priority 5: Fallback to first available language
+      if (availableLanguages.length > 0) {
+        const firstLang = availableLanguages[0];
+        if (label[firstLang] && Array.isArray(label[firstLang])) {
+          return { [firstLang]: label[firstLang] };
+        }
+      }
+    }
+
+    return label;
+  };
 
   return (
     <>
@@ -67,7 +125,7 @@ export const Search: React.FC = () => {
             return (
               <SearchFilterSection key={facet.id}>
                 <SearchFilterSectionTitle>
-                  <LocaleString>{facet.label}</LocaleString>
+                  <LocaleString>{getLocalizedLabel(facet.label)}</LocaleString>
                 </SearchFilterSectionTitle>
                 <SearchFilterItemList>
                   {facet.items.map(item => {
@@ -88,7 +146,7 @@ export const Search: React.FC = () => {
                           />
                         </SearchFilterCheckbox>
                         <SearchFilterLabel htmlFor={itemHash}>
-                          <LocaleString>{item.label}</LocaleString>
+                          <LocaleString>{getLocalizedLabel(item.label)}</LocaleString>
                         </SearchFilterLabel>
                         {showSearchFacetCount ? (
                           <SearchFilterItemCount>

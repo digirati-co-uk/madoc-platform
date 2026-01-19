@@ -25,6 +25,114 @@ import { PolygonSelectorProps } from '../capture-models/editor/selector-types/Po
 const runtimeOptions = { maxOverZoom: 5 };
 const defaultPreset = ['default-preset', { runtimeOptions }] as any;
 
+// Inner component that handles image service - keyed by canvas.id for fresh data on navigation
+const ImageViewer: React.FC<{
+  canvas: any;
+  highlightedRegions?: Array<[number, number, number, number]>;
+  style?: React.CSSProperties;
+  atlasBackground?: string;
+  runtime: React.MutableRefObject<Runtime | undefined>;
+  readOnlyAnnotations: any[];
+  isOSD: boolean;
+  setIsOSD: (value: boolean) => void;
+  osd: React.MutableRefObject<any>;
+  t: any;
+}> = ({ canvas, highlightedRegions, style, atlasBackground, runtime, readOnlyAnnotations, isOSD, setIsOSD, osd, t }) => {
+  const { data: service } = useImageService();
+
+  // Check if this is a small image (< 500x500) using image service dimensions
+  const serviceWidth = (service as any)?.width;
+  const serviceHeight = (service as any)?.height;
+  const isSmallImage = serviceWidth && serviceHeight && serviceWidth < 500 && serviceHeight < 500;
+
+  const handleRuntimeCreated = (preset: { runtime: Runtime }) => {
+    runtime.current = preset.runtime;
+  };
+
+  if (isSmallImage && service) {
+    // Display small images at their original size, centered
+    return (
+      <div
+        style={{
+          flex: 1,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: style?.backgroundColor || atlasBackground || '#E4E7F0',
+        }}
+      >
+        <img
+          src={`${(service as any).id || (service as any)['@id']}/full/full/0/default.jpg`}
+          alt=""
+          style={{
+            maxWidth: '100%',
+            maxHeight: '100%',
+            width: serviceWidth,
+            height: serviceHeight,
+            objectFit: 'contain',
+          }}
+        />
+      </div>
+    );
+  }
+
+  if (isOSD) {
+    return (
+      <>
+        <InfoMessage
+          style={{ lineHeight: '3.4em', position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10 }}
+        >
+          {t('You cannot edit annotations if you are rotating')}
+          <Button style={{ margin: '0.8em' }} onClick={() => setIsOSD(false)}>
+            Reset
+          </Button>
+        </InfoMessage>
+        <BrowserComponent fallback={null}>
+          <OpenSeadragonViewer ref={osd} />
+        </BrowserComponent>
+      </>
+    );
+  }
+
+  return (
+    <CanvasPanel.Viewer
+      renderPreset={defaultPreset}
+      runtimeOptions={runtimeOptions}
+      onCreated={handleRuntimeCreated}
+    >
+      <CanvasContext canvas={canvas.id}>
+        <CanvasPanel.RenderCanvas />
+        <worldObject height={canvas.height} width={canvas.width}>
+          {highlightedRegions
+            ? highlightedRegions.map(([x, y, width, height], key) => {
+                return (
+                  <React.Fragment key={key}>
+                    <RegionHighlight
+                      region={{ id: key, x, y, width, height }}
+                      isEditing={false}
+                      style={{
+                        background: 'rgba(2,219,255, .5)',
+                      }}
+                      onSave={() => {
+                        // no-op
+                      }}
+                      onClick={() => {
+                        // no-op
+                      }}
+                    />
+                  </React.Fragment>
+                );
+              })
+            : null}
+          {readOnlyAnnotations.map(anno => (
+            <ViewReadOnlyAnnotation key={anno.id} {...anno} />
+          ))}
+        </worldObject>
+      </CanvasContext>
+    </CanvasPanel.Viewer>
+  );
+};
+
 export const SimpleAtlasViewer = React.forwardRef<
   any,
   {
@@ -39,7 +147,7 @@ export const SimpleAtlasViewer = React.forwardRef<
   const canvas = useCanvas();
   const runtime = useRef<Runtime>();
   const osd = useRef<any>();
-  const { data: service } = useImageService();
+  const containerRef = useRef<HTMLDivElement>(null);
   const {
     project: { atlasBackground },
   } = useSiteConfiguration();
@@ -112,9 +220,19 @@ export const SimpleAtlasViewer = React.forwardRef<
     return null;
   }
 
+  // Combine forwarded ref with containerRef
+  const setRefs = (element: HTMLDivElement | null) => {
+    (containerRef as React.MutableRefObject<HTMLDivElement | null>).current = element;
+    if (typeof ref === 'function') {
+      ref(element);
+    } else if (ref) {
+      (ref as React.MutableRefObject<HTMLDivElement | null>).current = element;
+    }
+  };
+
   return (
     <div
-      ref={ref}
+      ref={setRefs}
       style={{
         position: 'relative',
         flex: '1 1 0px',
@@ -136,59 +254,22 @@ export const SimpleAtlasViewer = React.forwardRef<
         </style>
         {isLoaded ? (
           <>
-            {isOSD ? (
-              <>
-                <InfoMessage
-                  style={{ lineHeight: '3.4em', position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10 }}
-                >
-                  {t('You cannot edit annotations if you are rotating')}
-                  <Button style={{ margin: '0.8em' }} onClick={() => setIsOSD(false)}>
-                    Reset
-                  </Button>
-                </InfoMessage>
-                <BrowserComponent fallback={null}>
-                  <OpenSeadragonViewer ref={osd} />
-                </BrowserComponent>
-              </>
-            ) : (
-              <CanvasPanel.Viewer
-                renderPreset={defaultPreset}
-                runtimeOptions={runtimeOptions}
-                key={canvas.id}
-                onCreated={preset => void (runtime.current = preset.runtime)}
-              >
-                <CanvasContext canvas={canvas.id}>
-                  <CanvasPanel.RenderCanvas />
-                  <worldObject key={`${canvas.id}/world`} height={canvas.height} width={canvas.width}>
-                    {highlightedRegions
-                      ? highlightedRegions.map(([x, y, width, height], key) => {
-                          return (
-                            <React.Fragment key={key}>
-                              <RegionHighlight
-                                region={{ id: key, x, y, width, height }}
-                                isEditing={false}
-                                style={{
-                                  background: 'rgba(2,219,255, .5)',
-                                }}
-                                onSave={() => {
-                                  // no-op
-                                }}
-                                onClick={() => {
-                                  // no-op
-                                }}
-                              />
-                            </React.Fragment>
-                          );
-                        })
-                      : null}
-                    {readOnlyAnnotations.map(anno => (
-                      <ViewReadOnlyAnnotation key={anno.id} {...anno} />
-                    ))}
-                  </worldObject>
-                </CanvasContext>
-              </CanvasPanel.Viewer>
-            )}
+            {/* Key the ImageViewer by canvas.id to force remount and fresh useImageService data */}
+            <ImageViewer
+              key={canvas.id}
+              canvas={canvas}
+              highlightedRegions={highlightedRegions}
+              style={style}
+              atlasBackground={atlasBackground}
+              runtime={runtime}
+              readOnlyAnnotations={readOnlyAnnotations}
+              isOSD={isOSD}
+              setIsOSD={setIsOSD}
+              osd={osd}
+              t={t}
+            />
 
+            {/* Show controls - all buttons visible for both small and regular images */}
             {hideViewerControls && isModel ? null : (
               <CanvasViewerControls>
                 {enableRotation && isModel ? (

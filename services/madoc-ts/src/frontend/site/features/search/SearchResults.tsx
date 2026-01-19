@@ -84,7 +84,11 @@ const SearchItem: React.FC<{ result: SearchResult; size?: 'large' | 'small'; sea
     ? routeContext.collectionId
     : things.find(thing => thing?.type.toLowerCase() === 'collection')?.id;
   const manifestId = things.find(thing => thing?.type.toLowerCase() === 'manifest')?.id;
-  const canvasId = things.find(thing => thing?.type.toLowerCase() === 'canvas')?.id;
+  // If the result is a canvas, get canvas ID from resource_id; otherwise look in contexts
+  const canvasId =
+    result.resource_type === 'Canvas'
+      ? parseUrn(result.resource_id)?.id
+      : things.find(thing => thing?.type.toLowerCase() === 'canvas')?.id;
   const searchText = result.hits && result.hits[0] && result.hits[0].bounding_boxes ? search : undefined;
   const snippet = result.hits && result.hits[0] && result.hits[0].snippet ? result.hits[0].snippet : undefined;
   const isManifest = result.resource_type === 'Manifest';

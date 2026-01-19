@@ -1,5 +1,6 @@
 import { ImageService } from '@iiif/presentation-3';
-import React from 'react';
+import React, { useRef } from 'react';
+import { Preset, PopmotionControllerConfig } from '@atlas-viewer/atlas';
 import { webglSupport } from '../../../../utility/webgl-support';
 import { AnnotationStyleProvider, useAnnotationStyles } from '../../../AnnotationStyleContext';
 import { getRevisionFieldFromPath } from '../../../helpers/get-revision-field-from-path';
@@ -15,7 +16,6 @@ import {
   VaultProvider,
   CanvasPanel,
 } from 'react-iiif-vault';
-import { Preset, PopmotionControllerConfig } from '@atlas-viewer/atlas';
 import { ImageServiceContext } from './Atlas.helpers';
 
 export type AtlasCustomOptions = {
@@ -46,13 +46,50 @@ const Canvas: React.FC<{
   onCreated?: (ctx: any) => void;
   unstable_webglRenderer?: boolean;
   controllerConfig?: PopmotionControllerConfig;
-}> = ({ isEditing, onDeselect, children, onCreated, unstable_webglRenderer, controllerConfig }) => {
+  containerRef?: React.RefObject<HTMLDivElement>;
+  backgroundColor?: string;
+}> = ({ isEditing, onDeselect, children, onCreated, unstable_webglRenderer, controllerConfig, containerRef, backgroundColor }) => {
   const canvas = useCanvas();
   const { data: service } = useImageService() as { data?: ImageService };
   const style = useAnnotationStyles();
 
+  // Check if this is a small image (< 500x500) using image service dimensions
+  // The image service contains the actual pixel dimensions, while canvas dimensions may differ
+  const serviceWidth = (service as any)?.width;
+  const serviceHeight = (service as any)?.height;
+  const isSmallImage = serviceWidth && serviceHeight && serviceWidth < 500 && serviceHeight < 500;
+
   if (!service || !canvas) {
     return null;
+  }
+
+  // For small images, display as a simple centered image
+  if (isSmallImage) {
+    return (
+      <div
+        key={canvas.id}
+        style={{
+          flex: 1,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: backgroundColor || '#E4E7F0',
+          height: '100%',
+        }}
+      >
+        <img
+          src={`${(service as any).id || (service as any)['@id']}/full/full/0/default.jpg`}
+          alt=""
+          style={{
+            maxWidth: '100%',
+            maxHeight: '100%',
+            width: serviceWidth,
+            height: serviceHeight,
+            objectFit: 'contain',
+          }}
+        />
+      </div>
+    );
   }
 
   return (
@@ -90,6 +127,7 @@ const Canvas: React.FC<{
 };
 
 export const AtlasViewer: React.FC<AtlasViewerProps> = props => {
+  const containerRef = useRef<HTMLDivElement>(null);
   const { isLoaded } = useExternalManifest(props.state.manifestId);
   const currentSelector = useCurrentSelector('atlas', undefined);
   const selectorVisibility = {
@@ -110,6 +148,7 @@ export const AtlasViewer: React.FC<AtlasViewerProps> = props => {
 
   return (
     <div
+      ref={containerRef}
       style={{
         flex: '1 1 0px',
         minWidth: 0,
@@ -135,6 +174,8 @@ export const AtlasViewer: React.FC<AtlasViewerProps> = props => {
           controllerConfig={props.options?.custom?.controllerConfig}
           onCreated={props.options?.custom?.onCreateAtlas}
           isEditing={!!currentSelector}
+          containerRef={containerRef}
+          backgroundColor={backgroundColor}
           // onDeselect={() => {
           //   if (currentSelector) {
           //     actions.clearSelector();

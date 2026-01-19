@@ -678,8 +678,8 @@ export const ProjectConfigInterface: {
   atlasBackground: {
     label: 'Atlas background',
     type: 'color-field',
-    description: 'Change the background of the deep zoom viewer (default: #f9f9f9)',
-    defaultValue: '#f9f9f9',
+    description: 'Change the background of the deep zoom viewer (default: black)',
+    defaultValue: 'black',
   },
   canvasPageOptions: {
     label: 'Canvas page options',
