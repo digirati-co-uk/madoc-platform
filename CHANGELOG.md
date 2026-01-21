@@ -19,7 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -->
 
-## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.2.10...v2.2.11)
+## [v2.2.11](https://github.com/digirati-co-uk/madoc-platform/compare/v2.2.10...v2.2.11)
 
 <!--
 
