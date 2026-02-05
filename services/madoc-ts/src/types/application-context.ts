@@ -1,6 +1,6 @@
 import { i18n } from 'i18next';
 import { CompletionsExtension } from '../extensions/completions/extension';
-import { PluginManager } from '../frontend/shared/plugins/plugin-manager';
+import type { PluginManager } from '../frontend/shared/plugins/plugin-manager';
 import { ChangeDiscoveryRepository } from '../activity-streams/change-discovery-repository';
 import { ApiClient } from '../gateway/api';
 import { AnnotationStylesRepository } from '../repository/annotation-styles-repository';

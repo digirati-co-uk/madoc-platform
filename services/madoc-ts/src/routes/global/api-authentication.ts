@@ -21,7 +21,7 @@ export const authenticateApi: RouteMiddleware<{ slug: string }, ApiAuthenticatio
   }
 
   const site = await context.siteManager.getSiteById(stored.site_id);
-  const token = createSignedToken({
+  const token = await createSignedToken({
     site: { id: site.id, name: site.title },
     user: { id: stored.user_id, name: stored.user_name },
     scope: stored.scope,

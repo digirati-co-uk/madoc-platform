@@ -1,4 +1,4 @@
-import { CompletionItem } from '../../frontend/shared/capture-models/editor/input-types/AutocompleteField/AutocompleteField';
+import type { CompletionItem } from '../../frontend/shared/capture-models/editor/input-types/AutocompleteField/AutocompleteField';
 import { ApiClientWithoutExtensions } from '../../gateway/api';
 
 export interface CompletionSource {

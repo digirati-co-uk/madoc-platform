@@ -5,16 +5,22 @@ export default defineConfig({
   clearScreen: false,
   resolve: {
     alias: {
-      'react-iiif-vault': 'react-iiif-vault/react17',
-      'react-dom/client': 'react-dom',
+      // React 19-compatible defaults.
     },
-  },
-  optimizeDeps: {
-    exclude: ['react-dom/client'],
   },
   base: '/s/default/madoc/',
   build: {
     rollupOptions: {
+      onwarn(warning, warn) {
+        if (
+          warning.code === 'MODULE_LEVEL_DIRECTIVE' &&
+          typeof warning.message === 'string' &&
+          warning.message.includes('"use client"')
+        ) {
+          return;
+        }
+        warn(warning);
+      },
       input: {
         site: 'src/site.html',
         admin: 'src/admin.html',

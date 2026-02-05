@@ -36,7 +36,7 @@ export async function getJwtCookies(
     }
 
     const domain = `/s/${site.slug}`;
-    const token = createSignedToken({
+    const token = await createSignedToken({
       site: { id: site.id, name: site.title },
       user,
       scope: scopesForJWT.map(s => s.scope),

@@ -1,5 +1,5 @@
 import Router from '@koa/router';
-import koaBody from 'koa-body';
+import koaBody, { type KoaBodyMiddlewareOptions } from 'koa-body';
 import { requestBody } from '../middleware/request-body';
 import { parseJwt } from '../middleware/parse-jwt';
 import { RouteMiddleware } from '../types/route-middleware';
@@ -39,7 +39,7 @@ export class TypedRouter<
       const { schemaName, isPublic } = options;
 
       const funcArray = Array.isArray(func) ? func : [func];
-      const bodyOpts: koaBody.IKoaBodyOptions = {
+      const bodyOpts: Partial<KoaBodyMiddlewareOptions> = {
         jsonLimit: '10mb',
       };
 

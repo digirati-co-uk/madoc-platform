@@ -1,5 +1,5 @@
 import React from 'react';
-import { Select } from 'react-functional-select';
+import { Select } from './FunctionalSelect';
 import { useTranslation } from 'react-i18next';
 
 type TemporaryReactFunctionalSelectProps = {

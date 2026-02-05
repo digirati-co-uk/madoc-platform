@@ -11,23 +11,28 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Setup node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 22
 
-      - name: Get yarn cache
-        id: yarn-cache
-        run: echo "::set-output name=dir::$(yarn cache dir)"
+      - name: Setup pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@9.15.9 --activate
+
+      - name: Get pnpm store
+        id: pnpm-cache
+        run: echo "dir=$(pnpm store path)" >> $GITHUB_OUTPUT
 
       - uses: actions/cache@v4
         with:
-          path: ${{ steps.yarn-cache.outputs.dir }}
-          key: ${{ runner.os }}-yarn-madoc-ts-${{ hashFiles('services/madoc-ts/yarn.lock') }}
+          path: ${{ steps.pnpm-cache.outputs.dir }}
+          key: ${{ runner.os }}-pnpm-madoc-ts-${{ hashFiles('services/madoc-ts/package.json') }}
           restore-keys: |
-            ${{ runner.os }}-yarn-madoc-ts-
+            ${{ runner.os }}-pnpm-madoc-ts-
 
       - working-directory: services/madoc-ts
-        run: yarn install --frozen-lockfile --non-interactive
+        run: pnpm install --no-lockfile
 
       - uses: actions/cache@v4
         with:
@@ -42,11 +47,11 @@ jobs:
 
       - name: Build Storybook
         working-directory: services/madoc-ts
-        run: yarn build-storybook --quiet
+        run: pnpm run build-storybook --quiet
 
       - name: Serve Storybook and run tests
         working-directory: services/madoc-ts
         run: |
           npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \
             "npx http-server storybook-static --port 6500 --silent" \
-            "npx wait-on tcp:6006 && yarn test-storybook --ci"
+            "npx wait-on tcp:6006 && pnpm run test-storybook --ci"

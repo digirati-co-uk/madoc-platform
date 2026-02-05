@@ -1,19 +1,27 @@
-FROM node:18-bullseye as build
+# syntax=docker/dockerfile:1.6
+ARG NODE_VERSION=22
+FROM node:${NODE_VERSION}-bullseye as base
+
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+
+RUN corepack enable
+
+FROM base as build
 
 WORKDIR /home/node/app
 
 ADD ./package.json /home/node/app/package.json
-ADD ./yarn.lock /home/node/app/yarn.lock
+COPY ./pnpm-lock.yaml /home/node/app/pnpm-lock.yaml
 COPY ./npm /home/node/app/npm
 
-RUN yarn install
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 
-FROM node:18-bullseye
+FROM base
 
 WORKDIR /home/node/app
 
 COPY --from=build /home/node/app/package.json /home/node/app/package.json
-COPY --from=build /home/node/app/yarn.lock /home/node/app/yarn.lock
 COPY --from=build /home/node/app/node_modules /home/node/app/node_modules
 COPY ./schemas /home/node/app/schemas
 COPY ./vite.config.js /home/node/app/vite.config.js
@@ -28,4 +36,4 @@ COPY ./src /home/node/app/src
 EXPOSE 3089
 EXPOSE 3088
 
-CMD ["yarn", "dev:vite"]
+CMD ["pnpm", "dev:vite"]

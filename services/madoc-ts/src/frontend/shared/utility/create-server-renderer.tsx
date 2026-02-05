@@ -19,14 +19,14 @@ import { PluginManager } from '../plugins/plugin-manager';
 import { queryConfig } from './query-config';
 import { renderToString } from 'react-dom/server';
 import { I18nextProvider } from 'react-i18next';
-import { matchRoutes, RouteObject } from 'react-router-dom';
-import { StaticRouter } from 'react-router-dom/server';
+import { matchRoutes, RouteObject, StaticRouter } from 'react-router';
 import React from 'react';
 import { CreateRouteType } from '../../types';
 import { Helmet } from 'react-helmet';
 import localeCodes from 'locale-codes';
 import '../required-modules';
 import { RootLoader } from '../../site/pages/loaders/root-loader';
+import { Spinner } from '../icons/Spinner';
 
 function makeRoutes(routeComponents: any) {
   return [
@@ -289,21 +289,23 @@ export function createServerRenderer(
                 <I18nextProvider i18n={i18next}>
                   <StaticRouter basename={basename} location={url}>
                     <ThemeProvider theme={defaultTheme}>
-                      <RootApplication
-                        api={api}
-                        routes={routes}
-                        theme={theme}
-                        site={site as any}
-                        user={user}
-                        defaultLocale={siteLocales.defaultLanguage || 'en'}
-                        contentLanguages={contentLanguages}
-                        displayLanguages={displayLanguages}
-                        supportedLocales={supportedLocales}
-                        themeOverrides={themeOverrides}
-                        navigationOptions={navigationOptions}
-                        formResponse={reactFormResponse}
-                        systemConfig={resolvedSystemConfig}
-                      />
+                      <React.Suspense fallback={<Spinner />}>
+                        <RootApplication
+                          api={api}
+                          routes={routes}
+                          theme={theme}
+                          site={site as any}
+                          user={user}
+                          defaultLocale={siteLocales.defaultLanguage || 'en'}
+                          contentLanguages={contentLanguages}
+                          displayLanguages={displayLanguages}
+                          supportedLocales={supportedLocales}
+                          themeOverrides={themeOverrides}
+                          navigationOptions={navigationOptions}
+                          formResponse={reactFormResponse}
+                          systemConfig={resolvedSystemConfig}
+                        />
+                      </React.Suspense>
                     </ThemeProvider>
                   </StaticRouter>
                 </I18nextProvider>

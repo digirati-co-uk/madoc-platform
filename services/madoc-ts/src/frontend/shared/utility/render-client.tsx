@@ -1,14 +1,12 @@
 import cookies from 'browser-cookies';
 import { DndProvider } from 'react-dnd';
-// @ts-ignore
-import MultiBackend from 'react-dnd-multi-backend';
-// @ts-ignore
-import HTML5toTouch from 'react-dnd-multi-backend/dist/cjs/HTML5toTouch';
+import { MultiBackend } from 'react-dnd-multi-backend';
+import { HTML5toTouch } from 'rdndmb-html5-to-touch';
 import { ReactQueryCacheProvider, ReactQueryConfig, ReactQueryConfigProvider } from 'react-query';
 import { Hydrate } from 'react-query/hydration';
 import { ThemeProvider } from 'styled-components';
 import { createBackend } from '../../../middleware/i18n/i18next.client';
-import { render } from 'react-dom';
+import { createRoot, hydrateRoot } from 'react-dom/client';
 import { I18nextProvider } from 'react-i18next';
 import { BrowserRouter, RouteObject } from 'react-router-dom';
 import { api } from '../../../gateway/api.browser';
@@ -111,7 +109,7 @@ export async function renderClient(
       const propScript = document.getElementById('react-data');
       const { basename }: any = propScript ? JSON.parse(propScript.innerText) : {};
 
-      render(
+      const app = (
         <ReactQueryConfigProvider
           config={{
             ...queryConfig,
@@ -157,9 +155,15 @@ export async function renderClient(
               </I18nextProvider>
             </Hydrate>
           </ReactQueryCacheProvider>
-        </ReactQueryConfigProvider>,
-        component
+        </ReactQueryConfigProvider>
       );
+
+      if (component.hasChildNodes()) {
+        hydrateRoot(component, app);
+      } else {
+        const root = createRoot(component);
+        root.render(app);
+      }
 
       component.classList.add('react-loaded');
     });

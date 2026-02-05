@@ -52,12 +52,18 @@ const TO_BUNDLE = [
   'node-fetch',
   'react-accessible-dropdown-menu-hook',
   'react/jsx-runtime',
+  'react-functional-select',
   'rich-markdown-editor',
   'react-iiif-vault',
   'react-dnd',
 ];
 
 const DEDUPE = ['react', 'react-dom', 'styled-components', 'react-dnd', 'react-dnd-multi-backend'];
+const SERVER_ALIASES = {
+  // Avoid evaluating browser-only react-functional-select in server/worker bundles.
+  'react-functional-select': '/src/frontend/shared/shims/react-functional-select.server.tsx',
+  'react-functional-select/dist/Select': '/src/frontend/shared/shims/react-functional-select.server.tsx',
+};
 
 export function createConfig(name, entry) {
   return ({ command, mode }) => ({
@@ -66,8 +72,7 @@ export function createConfig(name, entry) {
     resolve: {
       dedupe: DEDUPE,
       alias: {
-        'react-iiif-vault': 'react-iiif-vault/react17',
-        'react-dom/client': 'react-dom',
+        ...SERVER_ALIASES,
       },
     },
     build: {
@@ -83,6 +88,16 @@ export function createConfig(name, entry) {
       minify: false,
       sourcemap: true,
       rollupOptions: {
+        onwarn(warning, warn) {
+          if (
+            warning.code === 'MODULE_LEVEL_DIRECTIVE' &&
+            typeof warning.message === 'string' &&
+            warning.message.includes('"use client"')
+          ) {
+            return;
+          }
+          warn(warning);
+        },
         external: [
           // Node + missing deps.
           'pm2',

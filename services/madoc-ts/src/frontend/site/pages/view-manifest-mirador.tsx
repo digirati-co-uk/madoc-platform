@@ -1,6 +1,4 @@
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
-import { BrowserComponent } from '../../shared/utility/browser-component';
-import { Mirador } from '../../shared/viewers/mirador.lazy';
 import { useApi } from '../../shared/hooks/use-api';
 import React, { useMemo } from 'react';
 import { DisplayBreadcrumbs } from '../blocks/Breadcrumbs';
@@ -8,49 +6,18 @@ import { useRouteContext } from '../hooks/use-route-context';
 import { ErrorBoundary } from '../../shared/utility/error-boundary';
 
 export const ViewManifestMirador: React.FC<{
-  canvasUrl?: string;
   hideNavigation?: boolean;
   hideBreadcrumbs?: boolean;
-  onChangeCanvas?: (manifest: string, canvas: string) => void;
-  onChangeManifest?: (manifest: string) => void;
-}> = ({ canvasUrl, hideNavigation, hideBreadcrumbs, onChangeCanvas, onChangeManifest }) => {
+}> = ({ hideNavigation, hideBreadcrumbs }) => {
   const { manifestId } = useRouteContext();
 
   const api = useApi();
   const slug = api.getSiteSlug();
 
-  const config = useMemo(() => {
-    return {
-      id: 'demo',
-      windows: [
-        {
-          id: 'window-1',
-          imageToolsEnabled: true,
-          imageToolsOpen: false,
-          allowClose: false,
-          allowMaximize: false,
-          sideBarOpenByDefault: true,
-          manifestId: `/s/${slug}/madoc/api/manifests/${manifestId}/export/source`,
-          canvasId: canvasUrl,
-        },
-      ],
-      workspaceControlPanel: {
-        enabled: false,
-      },
-      theme: {
-        palette: {
-          primary: {
-            main: '#333',
-          },
-          shades: {
-            dark: '#ffffff',
-            main: '#ffffff',
-            light: '#fffff',
-          },
-        },
-      },
-    };
-  }, [canvasUrl, manifestId, slug]);
+  const embedUrl = useMemo(() => {
+    const manifestUrl = `/s/${slug}/madoc/api/manifests/${manifestId}/export/source`;
+    return `https://projectmirador.org/embed/?iiif-content=${encodeURIComponent(manifestUrl)}`;
+  }, [manifestId, slug]);
 
   if (api.getIsServer() || !manifestId) {
     return null;
@@ -61,15 +28,12 @@ export const ViewManifestMirador: React.FC<{
       {hideBreadcrumbs ? null : <DisplayBreadcrumbs />}
       <div style={{ position: 'relative', height: '80vh' }}>
         {hideNavigation ? <style>{`.mirador-osd-navigation { display: none }`}</style> : null}
-        <BrowserComponent fallback={<div>loading...</div>}>
-          <Mirador
-            canvasId={canvasUrl}
-            onChangeCanvas={onChangeCanvas}
-            onChangeManifest={onChangeManifest}
-            config={config}
-            viewerConfig={{}}
-          />
-        </BrowserComponent>
+        <iframe
+          title="Mirador viewer"
+          src={embedUrl}
+          style={{ border: 0, width: '100%', height: '100%' }}
+          allowFullScreen
+        />
       </div>
     </ErrorBoundary>
   );

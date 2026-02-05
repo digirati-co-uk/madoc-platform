@@ -18,7 +18,7 @@ import { ExplainSlot } from './explain-slot';
 import { PageEditorButton } from './PageEditor';
 import { ErrorMessage } from '../callouts/ErrorMessage';
 import { RenderBlock } from './render-block';
-import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 import {
   SlotEditorContainer,
   SlotEditorButton,

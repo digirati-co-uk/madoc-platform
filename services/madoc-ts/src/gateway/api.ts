@@ -8,9 +8,9 @@ import {
 import { UpdateResourceDetailsRequest } from '../database/queries/update-resource-details';
 import { CrowdsourcingApi } from '../extensions/capture-models/crowdsourcing-api';
 import { ConfigInjectionExtension } from '../extensions/capture-models/ConfigInjection/ConfigInjection.extension';
-import { ConfigInjectionSettings } from '../extensions/capture-models/ConfigInjection/types';
+import type { ConfigInjectionSettings } from '../extensions/capture-models/ConfigInjection/types';
+import type { CaptureModelExtension } from '../extensions/capture-models/extension';
 import { DynamicDataSourcesExtension } from '../extensions/capture-models/DynamicDataSources/DynamicDataSources.extension';
-import { CaptureModelExtension } from '../extensions/capture-models/extension';
 import { Paragraphs } from '../extensions/capture-models/Paragraphs/Paragraphs.extension';
 import { plainTextSource } from '../extensions/capture-models/DynamicDataSources/sources/Plaintext.source';
 import { ExtensionManager } from '../extensions/extension-manager';
@@ -25,14 +25,14 @@ import { SiteManagerExtension } from '../extensions/site-manager/extension';
 import { SystemExtension } from '../extensions/system/extension';
 import { TaskExtension } from '../extensions/tasks/extension';
 import { ThemeExtension } from '../extensions/themes/extension';
-import { CompletionItem } from '../frontend/shared/capture-models/editor/input-types/AutocompleteField/AutocompleteField';
-import { CaptureModel } from '../frontend/shared/capture-models/types/capture-model';
-import { BaseField } from '../frontend/shared/capture-models/types/field-types';
-import { RevisionRequest } from '../frontend/shared/capture-models/types/revision-request';
-import { FacetConfig } from '../frontend/shared/features/MetadataFacetEditor';
-import { GetLocalisationResponse, ListLocalisationsResponse } from '../routes/admin/localisation';
+import type { CompletionItem } from '../frontend/shared/capture-models/editor/input-types/AutocompleteField/AutocompleteField';
+import type { CaptureModel } from '../frontend/shared/capture-models/types/capture-model';
+import type { BaseField } from '../frontend/shared/capture-models/types/field-types';
+import type { RevisionRequest } from '../frontend/shared/capture-models/types/revision-request';
+import type { FacetConfig } from '../frontend/shared/features/MetadataFacetEditor';
+import type { GetLocalisationResponse, ListLocalisationsResponse } from '../routes/admin/localisation';
 import { UpdateManifestDetailsRequest } from '../routes/iiif/manifests/update-manifest-details';
-import { AnnotationStyles } from '../types/annotation-styles';
+import type { AnnotationStyles } from '../types/annotation-styles';
 import {
   CanvasDeletionSummary,
   ManifestDeletionSummary,

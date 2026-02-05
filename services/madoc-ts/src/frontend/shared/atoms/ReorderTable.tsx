@@ -1,5 +1,5 @@
 import React from 'react';
-import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 import styled from 'styled-components';
 import { TableHandleIcon } from '../icons/TableHandleIcon';
 import { TableActions, TableContainer, TableRow, TableRowLabel } from '../layout/Table';

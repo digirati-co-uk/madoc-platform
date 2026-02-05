@@ -23,7 +23,7 @@ export async function syncJwtRequests() {
       const exists = existsSync(dest);
       const contents = exists ? await getContents(dest) : undefined;
       const oldToken = contents ? contents.token : undefined;
-      const isValidToken = oldToken ? verifySignedToken(oldToken) : undefined;
+      const isValidToken = oldToken ? await verifySignedToken(oldToken) : undefined;
 
       if (!isValidToken) {
         const request = (await readFile(path.join(JWT_REQUEST_PATH, file))).toString('utf-8');

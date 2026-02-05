@@ -1,9 +1,9 @@
-import React from 'react';
-import { RouteObject } from 'react-router-dom';
-import { ExportConfig } from '../extensions/project-export/types';
-import { ProjectTemplate } from '../extensions/projects/types';
-import { RouteComponents } from '../frontend/site/routes';
-import { BaseTheme } from './schemas/madoc-theme';
+import type React from 'react';
+import type { RouteObject } from 'react-router-dom';
+import type { ExportConfig } from '../extensions/project-export/types';
+import type { ProjectTemplate } from '../extensions/projects/types';
+import type { RouteComponents } from '../frontend/site/routes';
+import type { BaseTheme } from './schemas/madoc-theme';
 
 export type PluginRow = {
   plugin_id: string;

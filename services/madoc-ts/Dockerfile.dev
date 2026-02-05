@@ -1,14 +1,20 @@
-FROM node:18-bullseye
+# syntax=docker/dockerfile:1.6
+ARG NODE_VERSION=22
+FROM node:${NODE_VERSION}-bullseye
+
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
 
 WORKDIR /home/node/app
 
 RUN npm install -g pm2@5.2.2 ts-node
 
 COPY ./package.json /home/node/app/package.json
-COPY ./yarn.lock /home/node/app/yarn.lock
+COPY ./pnpm-lock.yaml /home/node/app/pnpm-lock.yaml
 COPY ./npm /home/node/app/npm
 
-RUN yarn install --no-dev --no-interactive --frozen-lockfile
+RUN corepack enable
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 
 COPY ./schemas /home/node/app/schemas
 COPY ./src /home/node/app/src
@@ -36,11 +42,10 @@ ENV DATABASE_PASSWORD=postgres
 ENV NODE_ENV=development
 ENV API_GATEWAY_HOST=http://gateway
 
-RUN yarn build:vite
+RUN pnpm run build:vite
 
 EXPOSE 3000
 EXPOSE 3001
 EXPOSE 9230
 
-CMD ["yarn", "dev"]
-
+CMD ["pnpm", "dev"]

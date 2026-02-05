@@ -17,12 +17,8 @@ export default defineConfig({
   resolve: {
     dedupe: ['react', 'react-dom'],
     alias: {
-      'react-iiif-vault': 'react-iiif-vault/react17',
-      'react-dom/client': 'react-dom',
+      // React 19-compatible defaults.
     },
-  },
-  optimizeDeps: {
-    exclude: ['react-dom/client'],
   },
   build: {
     manifest: true,
@@ -37,13 +33,19 @@ export default defineConfig({
           cert: fs.readFileSync('/certs/local-cert.pem'),
         }
       : false,
+    cors: {
+      origin: [/^https?:\/\/madoc\.local(?::\d+)?$/],
+      credentials: true,
+    },
     open: false,
     port: 3088,
     strictPort: true,
     force: true,
     hmr: {
+      host: 'madoc.local',
       protocol: https ? 'wss' : 'ws',
       port: 3089,
+      clientPort: 3089,
     },
   },
   envPrefix: ['VITE_'],
