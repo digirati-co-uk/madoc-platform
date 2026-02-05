@@ -1,0 +1,4 @@
+interface:
+  display_name: "Madoc TS Bootstrapping"
+  short_description: "Startup flow, routing, and SSR wiring"
+  default_prompt: "Use $architecture-bootstrapping to trace Madoc TS startup and routing composition."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Madoc TS Auth Core"
+  short_description: "Auth server and provider strategies"
+  default_prompt: "Use $auth-core to add providers or change auth server behavior."

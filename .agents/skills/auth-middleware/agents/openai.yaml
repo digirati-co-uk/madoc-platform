@@ -1,0 +1,4 @@
+interface:
+  display_name: "Madoc TS Auth Middleware"
+  short_description: "JWT parsing and auth guards"
+  default_prompt: "Use $auth-middleware to update JWT cookies, parsing, or auth error handling."

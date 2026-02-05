@@ -1,0 +1,4 @@
+interface:
+  display_name: "Madoc TS Page Blocks"
+  short_description: "Page block registry and rendering"
+  default_prompt: "Use $extensions-page-blocks to add or update page block definitions."

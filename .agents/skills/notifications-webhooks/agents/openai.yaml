@@ -1,0 +1,4 @@
+interface:
+  display_name: "Madoc TS Notifications & Webhooks"
+  short_description: "Webhook routes and execution"
+  default_prompt: "Use -webhooks to work on webhook routes or execution in services/madoc-ts."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Madoc TS Repositories"
+  short_description: "Repository data access patterns"
+  default_prompt: "Use $repository-patterns to add or refactor repository methods."

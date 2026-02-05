@@ -1,0 +1,4 @@
+interface:
+  display_name: "Madoc TS Media & Assets"
+  short_description: "Media upload, storage, and thumbnails"
+  default_prompt: "Use -assets to work on media storage and thumbnails in services/madoc-ts."

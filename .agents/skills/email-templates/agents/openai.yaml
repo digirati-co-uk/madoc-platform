@@ -1,0 +1,4 @@
+interface:
+  display_name: "Madoc TS Email Templates"
+  short_description: "MJML templates and render helpers"
+  default_prompt: "Use -templates to edit MJML email templates in services/madoc-ts."

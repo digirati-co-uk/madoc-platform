@@ -1,0 +1,4 @@
+interface:
+  display_name: "Madoc TS Theme Extensions"
+  short_description: "Theme registry and API flows"
+  default_prompt: "Use $extensions-themes to add theme definitions or update theme APIs."

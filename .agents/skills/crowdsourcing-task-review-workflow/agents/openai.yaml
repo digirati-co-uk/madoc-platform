@@ -1,0 +1,4 @@
+interface:
+  display_name: "Madoc TS Crowdsourcing Workflow"
+  short_description: "Contribution and review pipeline"
+  default_prompt: "Use $crowdsourcing-task-review-workflow to trace or change crowdsourcing task and review behavior."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Madoc TS Site SSR"
+  short_description: "Site server-side rendering"
+  default_prompt: "Use $ssr-site to update site SSR behavior or templates."
