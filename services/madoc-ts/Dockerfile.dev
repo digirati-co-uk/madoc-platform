@@ -7,7 +7,7 @@ ENV PATH="$PNPM_HOME:$PATH"
 
 WORKDIR /home/node/app
 
-RUN npm install -g pm2@5.2.2 ts-node
+RUN npm install -g pm2@5.4.3 ts-node
 
 COPY ./package.json /home/node/app/package.json
 COPY ./pnpm-lock.yaml /home/node/app/pnpm-lock.yaml

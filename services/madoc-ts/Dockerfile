@@ -58,7 +58,7 @@ ARG BUILD_REVISION='unknown'
 
 WORKDIR /home/node/app
 
-RUN npm install -g pm2@5
+RUN npm install -g pm2@5.4
 
 COPY --from=build /home/node/app/package.json /home/node/app/package.json
 COPY --from=modules /home/node/app/node_modules /home/node/app/node_modules

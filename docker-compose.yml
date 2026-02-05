@@ -88,8 +88,6 @@ services:
       - SMTP_USER=${SMTP_USER}
       - SMTP_PASSWORD=${SMTP_PASSWORD}
       - MAIL_FROM_USER=${MAIL_FROM_USER}
-    ports:
-      - "127.0.0.1:${PORTS_MADOC_TS_DEBUGGER:-9230}:9230"
     links:
       - shared-postgres
       - madoc-ts-vite
