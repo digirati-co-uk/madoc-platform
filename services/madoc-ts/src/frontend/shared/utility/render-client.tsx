@@ -1,4 +1,5 @@
 import cookies from 'browser-cookies';
+import './react-dom-legacy-shim';
 import { DndProvider } from 'react-dnd';
 import { MultiBackend } from 'react-dnd-multi-backend';
 import { HTML5toTouch } from 'rdndmb-html5-to-touch';
