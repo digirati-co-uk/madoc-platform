@@ -44,6 +44,7 @@ import { ProjectManifestTasks } from '../types/manifest-tasks';
 import { NoteListResponse } from '../types/personal-notes';
 import { Pm2Status } from '../types/pm2';
 import { ProjectFeedback, ProjectMember, ProjectUpdate } from '../types/projects';
+import { BullMqSnapshot } from '../types/bullmq-status';
 import { ResourceLinkResponse } from '../types/schemas/linking';
 import { ProjectConfiguration } from '../types/schemas/project-configuration';
 import { SearchIngestRequest, SearchResponse, SearchQuery } from '../types/search';
@@ -566,6 +567,14 @@ export class ApiClient {
 
   async pm2Restart(service: 'auth' | 'queue' | 'madoc' | 'scheduler') {
     return this.request<{ success: true }>(`/api/madoc/pm2/restart/${service}`, { method: 'POST' });
+  }
+
+  async getQueueStatus(options: { limit?: number; includeCompleted?: boolean } = {}) {
+    const query = stringify({
+      limit: options.limit,
+      include_completed: options.includeCompleted,
+    });
+    return this.request<BullMqSnapshot>(`/api/madoc/queue/status${query ? `?${query}` : ''}`);
   }
 
   async getMetadataKeys() {

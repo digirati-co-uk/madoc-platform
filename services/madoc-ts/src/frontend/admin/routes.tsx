@@ -80,6 +80,7 @@ import { ActivityStreams } from './pages/sites/activity-streams';
 import { ViewExternalPlugin } from './pages/system/external-plugin';
 import { KeyRegen } from './pages/system/key-regen';
 import { ListApiKeys } from './pages/system/list-api-keys';
+import { QueueStatus } from './pages/system/queue-status';
 import { SystemStatus } from './pages/system/system-status';
 import { ListThemes } from './pages/system/themes/list-themes';
 import { CreateWebhook } from './pages/system/webhooks/create-webhook';
@@ -572,6 +573,10 @@ export const routes: RouteObject[] = [
   {
     path: '/global/status',
     element: <SystemStatus />,
+  },
+  {
+    path: '/global/queue',
+    element: <QueueStatus />,
   },
   {
     path: '/global/config',

@@ -78,6 +78,7 @@ import { deleteUserSiteRole } from './routes/manage-site/delete-user-site-role';
 import { getInvitation } from './routes/manage-site/get-invitation';
 import { getSiteUsers } from './routes/manage-site/get-site-users';
 import { listJobs, runJob } from './routes/admin/list-jobs';
+import { queueStatus } from './routes/admin/queue-status';
 import {
   extractLocalesFromContent,
   getLocalisation,
@@ -291,6 +292,7 @@ export const router = new TypedRouter({
   'pm2-restart-queue': [TypedRouter.POST, '/api/madoc/pm2/restart/queue', pm2RestartQueue],
   'pm2-restart-madoc': [TypedRouter.POST, '/api/madoc/pm2/restart/madoc', pm2RestartMadoc],
   'pm2-restart-scheduler': [TypedRouter.POST, '/api/madoc/pm2/restart/scheduler', pm2RestartScheduler],
+  'queue-status': [TypedRouter.GET, '/api/madoc/queue/status', queueStatus],
   'cron-jobs': [TypedRouter.GET, '/api/madoc/cron/jobs', listJobs],
   'run-cron-jobs': [TypedRouter.POST, '/api/madoc/cron/jobs/:jobId/run', runJob],
   'regenerate-keys': [TypedRouter.POST, '/api/madoc/system/key-regen', keyRegenerate],

@@ -13,6 +13,7 @@
   "Accepted contributions": "Accepted contributions",
   "Access & behaviour": "Access & behaviour",
   "Account": "Account",
+  "Active": "Active",
   "Active projects": "Active projects",
   "Activity": "Activity",
   "Activity stream": "Activity stream",
@@ -477,6 +478,7 @@
   "Hide manifest thumbnail navigation on canvas page": "Hide manifest thumbnail navigation on canvas page",
   "Hide manifests": "Hide manifests",
   "Hide manifests on project": "Hide manifests on project",
+  "Hide open in Theseus button": "Hide open in Theseus button",
   "Hide open in mirador button": "Hide open in mirador button",
   "Hide random canvas": "Hide random canvas",
   "Hide random manifest": "Hide random manifest",
@@ -773,6 +775,7 @@
   "Publish to curated stream": "Publish to curated stream",
   "Publish to site": "Publish to site",
   "Published!": "Published!",
+  "Queue inspector": "Queue inspector",
   "Randomly assign a reviewer": "Randomly assign a reviewer",
   "Randomly assign canvas to a user": "Randomly assign canvas to a user",
   "Randomly assign canvas to user": "Randomly assign canvas to user",
@@ -1277,4 +1280,5 @@
   "{{feature}} is an experimental feature": "{{feature}} is an experimental feature",
   "{{page}} of {{count}}": "{{page}} of {{count}}",
   "{{page}} of {{count}}_plural": "{{page}} of {{count}}"
+}{{count}}"
 }
