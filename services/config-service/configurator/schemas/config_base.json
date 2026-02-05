@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "description": "Generic configuration schema for all config objects POSTed to the service.",
+  "title": "Config server base schema",
+  "type": "object",
+  "properties": {
+    "config_context": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "config_data": {
+      "type": "object"
+    },
+    "service": {
+      "type": "string"
+    }
+  },
+  "required": ["service", "config_data", "config_context"]
+}

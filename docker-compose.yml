@@ -159,22 +159,17 @@ services:
     image: redis:5-alpine
 
   config-service:
-    image: digirati/madoc_config_service_django:175410fc5b7dbef4cc259686564fbedeb60c8789
-    platform: linux/amd64
+    build:
+      context: services/config-service
+      dockerfile: Dockerfile
     environment:
-      - USE_DOCKER=yes
-      - IPYTHONDIR=/app/.ipython
       - MIGRATE=True
-      - LOAD=False
-      - DJANGO_DEBUG=False
-      - WAITRESS=False
       - POSTGRES_HOST=shared-postgres
       - POSTGRES_PORT=${POSTGRES_PORT}
       - POSTGRES_USER=${POSTGRES_CONFIG_SERVICE_USER}
       - POSTGRES_PASSWORD=${POSTGRES_CONFIG_SERVICE_PASSWORD}
       - POSTGRES_SCHEMA=${POSTGRES_CONFIG_SERVICE_SCHEMA}
       - POSTGRES_DB=${POSTGRES_DB}
-      - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@shared-postgres:${POSTGRES_PORT}/${POSTGRES_DB}
     links:
       - shared-postgres
     volumes:
