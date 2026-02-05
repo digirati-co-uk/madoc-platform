@@ -11,14 +11,10 @@ export type DragMode =
 export type NetConfig = {
   rows: number;
   cols: number;
-
-  // Net bounding box in % (relative to coordinate space = rendered canvas area)
   top: number;
   left: number;
   width: number;
   height: number;
-
-  // Divider positions in % inside the net box (0..100, length = rows-1 / cols-1)
   rowPositions: number[];
   colPositions: number[];
 };
@@ -30,4 +26,52 @@ export interface HeaderCell {
   role: HeaderRole;
 }
 
-export type HeaderCellGrid = HeaderCell[][];
+// Capture-model field plugin id, e.g. "text-field", "dropdown-field".
+export type TabularFieldType = string;
+
+export type TabularColumn = {
+  id: string;
+  label: string;
+  type?: TabularFieldType;
+  fieldType?: TabularFieldType;
+  helpText?: string;
+  saved?: boolean;
+};
+
+export type TabularCaptureModelField = {
+  type: string;
+  label: string;
+  description?: string;
+};
+
+export type TabularCaptureModelFields = Record<string, TabularCaptureModelField>;
+
+export type TabularCaptureModelTemplate = {
+  __entity__?: { label: string };
+  [term: string]: TabularCaptureModelField | { label: string } | undefined;
+};
+
+export type TabularModelPayload = {
+  columns: TabularColumn[];
+  captureModelFields: TabularCaptureModelFields;
+  captureModelTemplate: TabularCaptureModelTemplate;
+};
+
+export type TabularValidationIssue = {
+  type:
+    | 'empty-heading'
+    | 'duplicate-heading'
+    | 'invalid-heading-length'
+    | 'invalid-column-count'
+    | 'duplicate-column-id'
+    | 'empty-column-id'
+    | 'missing-field-type';
+  message: string;
+  columnIndex?: number;
+};
+
+export type TabularColumnMeta = {
+  fieldTypes?: (TabularFieldType | undefined)[];
+  helpText?: (string | undefined)[];
+  saved?: (boolean | undefined)[];
+};

@@ -1,23 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { VaultProvider } from 'react-iiif-vault';
+import { CanvasPanel, SimpleViewerProvider, useCanvas, VaultProvider } from 'react-iiif-vault';
+
 import { CastANetCanvas } from '../../../src/frontend/admin/components/tabular/cast-a-net/CastANetCanvas';
-import { CastANet } from '../../../src/frontend/admin/components/tabular/cast-a-net/CastANet';
+import { CastANetOverlayAtlas } from '../../../src/frontend/admin/components/tabular/cast-a-net/CastANetOverlayAtlas';
 import { TabularHeadingsTable } from '../../../src/frontend/admin/components/tabular/cast-a-net/TabularHeadingsTable';
-import { makeEvenPositions } from '../../../src/frontend/admin/components/tabular/cast-a-net/utils';
+import { clamp, makeEvenPositions } from '../../../src/frontend/admin/components/tabular/cast-a-net/utils';
+import type { NetConfig } from '../../../src/frontend/admin/components/tabular/cast-a-net/types';
 
 // IIIF test manifest/canvas for stories.
 const MANIFEST = 'https://iiif.ghentcdh.ugent.be/iiif/manifests/test:primitief_kadaster_leggers:GENT_B_0001-0172';
 const CANVAS =
   'https://iiif.ghentcdh.ugent.be/iiif/manifests/test:primitief_kadaster_leggers:GENT_B_0001-0172/canvas/GENT_02_44802_44802_B_0001-0172_pages_11_12';
-import type { NetConfig } from '../../../src/frontend/admin/components/tabular/cast-a-net/types';
 
-const meta: Meta<typeof CastANet> = {
+const meta: Meta<typeof CastANetCanvas> = {
   title: 'Admin/Tabular/Cast a Net',
-  component: CastANet,
-  parameters: {
-    layout: 'fullscreen',
-  },
+  component: CastANetCanvas,
+  parameters: { layout: 'fullscreen' },
 };
 
 export default meta;
@@ -60,6 +59,7 @@ export const TableOnly: Story = {
   render: () => {
     const [cols, setCols] = useState(6);
     const [headings, setHeadings] = useState<string[]>(() => Array.from({ length: cols }, () => ''));
+    const [activeColumn, setActiveColumn] = useState(0);
 
     useEffect(() => {
       setHeadings(prev => Array.from({ length: cols }, (_, i) => prev[i] ?? ''));
@@ -72,9 +72,17 @@ export const TableOnly: Story = {
           headings={headings}
           onChangeHeadings={setHeadings}
           visibleRows={5}
-          onAddColumn={() => setCols(c => c + 1)}
-          onRemoveColumn={() => setCols(c => Math.max(1, c - 1))}
+          activeColumn={activeColumn}
+          onActiveColumnChange={setActiveColumn}
         />
+        <div style={{ display: 'flex', gap: 10, padding: '10px 0' }}>
+          <button type="button" onClick={() => setCols(c => c + 1)}>
+            Add column
+          </button>
+          <button type="button" onClick={() => setCols(c => Math.max(1, c - 1))}>
+            Remove column
+          </button>
+        </div>
       </div>
     );
   },
@@ -109,31 +117,121 @@ export const Combined: Story = {
       setHeadings(prev => prev.slice(0, cols));
     };
 
+    // Avoid TS friction if `canvas` isn't typed on SimpleViewerProvider in this repo.
+    const AnySimpleViewerProvider = SimpleViewerProvider as unknown as React.FC<any>;
+
     return (
-      <VaultProvider>
-        <div style={{ padding: 12, display: 'grid', gap: 14 }}>
-          <CastANetCanvas
-            manifestId={MANIFEST}
-            canvasId={CANVAS}
-            value={net}
-            onChange={setNet}
-            dimOpacity={dim}
-            onChangeDimOpacity={setDim}
-            activeCell={activeCell}
-          />
+      <div style={{ padding: 12, display: 'grid', gap: 14 }}>
+        <AnySimpleViewerProvider manifest={MANIFEST} canvas={CANVAS}>
+          <div
+            style={{
+              border: '1px solid #ddd',
+              height: 520,
+              position: 'relative',
+              background: '#fff',
+              overflow: 'hidden',
+            }}
+          >
+            {/* Viewer layer */}
+            <div style={{ position: 'absolute', inset: 0, zIndex: 1 }}>
+              <CanvasPanel.Viewer runtimeOptions={{ visibilityRatio: 1, maxUnderZoom: 1 }}>
+                <CanvasPanel.RenderCanvas>
+                  <CastANetOverlayAtlas value={net} onChange={setNet} activeCell={activeCell} dimOpacity={dim} />
+                </CanvasPanel.RenderCanvas>
+              </CanvasPanel.Viewer>
+            </div>
+
+            {/* Opacity control layer */}
+            <div
+              style={{
+                position: 'absolute',
+                top: 12,
+                left: 12,
+                zIndex: 50,
+                background: 'rgba(255,255,255,0.85)',
+                border: '1px solid #ddd',
+                borderRadius: 8,
+                padding: '10px 12px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 10,
+                pointerEvents: 'auto',
+              }}
+            >
+              <label style={{ fontSize: 12, opacity: 0.9 }}>Canvas opacity</label>
+              <input
+                type="range"
+                min={0}
+                max={0.85}
+                step={0.05}
+                value={dim}
+                onChange={e => setDim(Number(e.target.value))}
+                style={{ width: 140 }}
+              />
+            </div>
+          </div>
 
           <TabularHeadingsTable
             columns={net.cols}
             headings={headings}
             onChangeHeadings={setHeadings}
             visibleRows={5}
-            onAddColumn={addColumn}
-            onRemoveColumn={removeColumn}
-            onHeadingFocus={({ col }) => setActiveCell({ row: 0, col })}
+            activeColumn={activeCell?.col ?? 0}
+            onActiveColumnChange={col => setActiveCell({ row: 0, col })}
           />
-        </div>
-      </VaultProvider>
+          <div style={{ display: 'flex', gap: 10, padding: '10px 0' }}>
+            <button type="button" onClick={addColumn}>
+              Add column
+            </button>
+            <button type="button" onClick={removeColumn}>
+              Remove column
+            </button>
+          </div>
+
+          {/* Debug output INSIDE viewer context so useCanvas() works */}
+          <DebugWithDim net={net} headings={headings} dim={dim} />
+        </AnySimpleViewerProvider>
+      </div>
     );
   },
 };
+
+function DebugWithDim({ net, headings, dim }: { net: NetConfig; headings: string[]; dim: number }) {
+  const canvas = useCanvas();
+  if (!canvas) return null;
+
+  const px = {
+    left: (net.left / 100) * canvas.width,
+    top: (net.top / 100) * canvas.height,
+    width: (net.width / 100) * canvas.width,
+    height: (net.height / 100) * canvas.height,
+  };
+
+  return (
+    <pre
+      style={{
+        marginTop: 12,
+        padding: 12,
+        background: '#111',
+        color: '#eee',
+        borderRadius: 8,
+        overflow: 'auto',
+        maxWidth: 1100,
+      }}
+    >
+      {JSON.stringify(
+        {
+          canvas: { id: canvas.id, width: canvas.width, height: canvas.height },
+          dimOpacity: clamp(dim, 0, 0.85),
+          netPercent: net,
+          netPixels: px,
+          headings,
+        },
+        null,
+        2
+      )}
+    </pre>
+  );
+}
+
 export const Interactive: Story = Combined;

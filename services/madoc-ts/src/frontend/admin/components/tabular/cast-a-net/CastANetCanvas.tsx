@@ -1,8 +1,7 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import type { NetConfig } from './types';
-import { CanvasPanel } from 'react-iiif-vault';
-import { CastANetOverlay } from './CastANetOverlay';
-import { clamp, findCanvasPanelContentElement } from './utils';
+import { CanvasPanel, SimpleViewerProvider } from 'react-iiif-vault';
+import { CastANetOverlayAtlas } from './CastANetOverlayAtlas';
 
 type CastANetCanvasProps = {
   manifestId: string;
@@ -25,38 +24,8 @@ export const CastANetCanvas: React.FC<CastANetCanvasProps> = ({
   onChangeDimOpacity,
   activeCell,
 }) => {
-  const viewerHostRef = useRef<HTMLDivElement | null>(null);
-  const coordinateSpaceRef = useRef<HTMLElement | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-    let attempts = 0;
-
-    const tick = () => {
-      if (cancelled) return;
-      attempts++;
-
-      const host = viewerHostRef.current;
-      if (!host) return;
-
-      const canvasPanelEl =
-        (host.querySelector('canvas-panel') as HTMLElement | null) ||
-        (host.querySelector('[data-canvas-panel]') as HTMLElement | null);
-
-      const contentEl = findCanvasPanelContentElement(canvasPanelEl || host);
-      if (contentEl) {
-        coordinateSpaceRef.current = contentEl;
-        return;
-      }
-
-      if (attempts < 30) requestAnimationFrame(tick);
-    };
-
-    requestAnimationFrame(tick);
-    return () => {
-      cancelled = true;
-    };
-  }, [manifestId, canvasId]);
+  // Avoid TS friction if `canvas` isn't typed on SimpleViewerProvider in this repo.
+  const AnySimpleViewerProvider = SimpleViewerProvider as unknown as React.FC<any>;
 
   return (
     <div style={{ border: '1px solid #ddd', height: 520, position: 'relative', background: '#fff' }}>
@@ -65,7 +34,7 @@ export const CastANetCanvas: React.FC<CastANetCanvasProps> = ({
           position: 'absolute',
           top: 12,
           left: 12,
-          zIndex: 5,
+          zIndex: 10,
           background: 'rgba(255,255,255,0.85)',
           border: '1px solid #ddd',
           borderRadius: 8,
@@ -87,31 +56,19 @@ export const CastANetCanvas: React.FC<CastANetCanvasProps> = ({
         />
       </div>
 
-      <div ref={viewerHostRef} style={{ width: '100%', height: '100%' }}>
-        <CastANetOverlay
-          value={value}
-          onChange={onChange}
-          disabled={disabled}
-          activeCell={activeCell}
-          coordinateSpaceRef={coordinateSpaceRef as unknown as React.RefObject<HTMLElement>}
-          background={
-            <div
-              style={{
-                width: '100%',
-                height: '100%',
-                position: 'relative',
-                opacity: 1 - clamp(dimOpacity, 0, 0.85),
-              }}
-            >
-              <CanvasPanel
-                key={`${manifestId}:${canvasId ?? ''}`}
-                {...({ manifest: manifestId, canvas: canvasId } as any)}
-                style={{ width: '100%', height: '100%', display: 'block' }}
-              />
-            </div>
-          }
-        />
-      </div>
+      <AnySimpleViewerProvider manifest={manifestId} canvas={canvasId}>
+        <CanvasPanel.Viewer runtimeOptions={{ visibilityRatio: 1, maxUnderZoom: 1 }}>
+          <CanvasPanel.RenderCanvas>
+            <CastANetOverlayAtlas
+              value={value}
+              onChange={onChange}
+              disabled={disabled}
+              activeCell={activeCell}
+              dimOpacity={dimOpacity}
+            />
+          </CanvasPanel.RenderCanvas>
+        </CanvasPanel.Viewer>
+      </AnySimpleViewerProvider>
     </div>
   );
 };

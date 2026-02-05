@@ -16,3 +16,4 @@ export const CastANet: React.FC<CastANetProps> = props => {
 
 export { CastANetCanvas } from './CastANetCanvas';
 export { TabularHeadingsTable } from './TabularHeadingsTable';
+export { CastANetOverlayAtlas } from './CastANetOverlayAtlas';
