@@ -8,16 +8,9 @@ import type {
   TabularModelPayload,
   TabularValidationIssue,
 } from './types';
+import { slugifyColumnId } from './utils';
 
-export function slugifyColumnId(label: string) {
-  return label
-    .trim()
-    .toLowerCase()
-    .replace(/['’]/g, '')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-    .replace(/-+/g, '-');
-}
+export { slugifyColumnId };
 
 export function buildTabularModelPayload(headings: string[], meta?: TabularColumnMeta): TabularModelPayload {
   const used = new Set<string>();

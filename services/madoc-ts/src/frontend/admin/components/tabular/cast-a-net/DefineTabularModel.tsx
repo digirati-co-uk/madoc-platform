@@ -1,21 +1,12 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { CanvasPanel, SimpleViewerProvider } from 'react-iiif-vault';
-import type { TabularFieldType, TabularModelPayload, TabularValidationIssue } from './types';
+import type { DefineTabularModelValue, TabularFieldType, TabularModelChange, TabularValidationIssue } from './types';
 import { buildTabularModelPayload, validateTabularModel } from './TabularModel';
 import { TabularHeadingsTable } from './TabularHeadingsTable';
 import { TabularColumnEditor } from './TabularColumnEditor';
 import { HomeIcon } from '../../../../shared/icons/HomeIcon';
 import { MinusIcon } from '../../../../shared/icons/MinusIcon';
 import { PlusIcon } from '../../../../shared/icons/PlusIcon';
-
-export type DefineTabularModelValue = {
-  columns: number;
-  previewRows: number;
-  headings: string[];
-  fieldTypes?: (TabularFieldType | undefined)[];
-  helpText?: (string | undefined)[];
-  saved?: (boolean | undefined)[];
-};
 
 const viewerButtonStyle: React.CSSProperties = {
   height: 34,
@@ -83,7 +74,7 @@ function ReferenceImagePanel(props: { manifestId: string; canvasId?: string; ima
 export function DefineTabularModel(props: {
   value: DefineTabularModelValue;
   onChange: (next: DefineTabularModelValue) => void;
-  onModelChange?: (res: { isValid: boolean; issues: TabularValidationIssue[]; payload: TabularModelPayload }) => void;
+  onModelChange?: (res: TabularModelChange) => void;
   manifestId?: string;
   canvasId?: string;
   minColumns?: number;
@@ -135,9 +126,11 @@ export function DefineTabularModel(props: {
   );
 
   const safeSaved = useMemo(
-    () => Array.from({ length: safeColumns }, (_, i) => value.saved?.[i]),
+    () => Array.from({ length: safeColumns }, (_, i) => value.saved?.[i] ?? false),
     [safeColumns, value.saved]
   );
+
+  const buildSavedFlags = (length: number, saved: boolean) => Array.from({ length }, () => saved);
 
   useEffect(() => {
     if (activeColumn > safeColumns - 1) {
@@ -151,11 +144,14 @@ export function DefineTabularModel(props: {
         minColumns,
         maxColumns,
         maxHeadingLength,
-        saved: safeSaved,
+        saved: buildSavedFlags(safeColumns, true),
         fieldTypes: safeFieldTypes,
       }),
-    [safeHeadings, safeSaved, safeFieldTypes, minColumns, maxColumns, maxHeadingLength]
+    [safeHeadings, safeColumns, safeFieldTypes, minColumns, maxColumns, maxHeadingLength]
   );
+
+  const canSaveModel = issues.length === 0;
+  const isModelSaved = canSaveModel && safeSaved.length > 0 && safeSaved.every(Boolean);
 
   const payload = useMemo(
     () =>
@@ -192,7 +188,7 @@ export function DefineTabularModel(props: {
       headings: Array.from({ length: n }, (_, i) => safeHeadings[i] ?? ''),
       fieldTypes: Array.from({ length: n }, (_, i) => safeFieldTypes[i]),
       helpText: Array.from({ length: n }, (_, i) => safeHelpText[i]),
-      saved: Array.from({ length: n }, (_, i) => safeSaved[i]),
+      saved: buildSavedFlags(n, false),
     });
   };
 
@@ -205,30 +201,35 @@ export function DefineTabularModel(props: {
       headings: safeHeadings,
       fieldTypes: safeFieldTypes,
       helpText: safeHelpText,
-      saved: safeSaved,
+      saved: buildSavedFlags(safeColumns, false),
     });
   };
 
-  const updateColumn = (
-    index: number,
-    next: { heading: string; fieldType?: TabularFieldType; helpText?: string; saved?: boolean }
-  ) => {
+  const updateColumn = (index: number, next: { heading: string; fieldType?: TabularFieldType; helpText?: string }) => {
     const headings = safeHeadings.slice();
     const fieldTypes = safeFieldTypes.slice();
     const helpText = safeHelpText.slice();
-    const saved = safeSaved.slice();
 
     headings[index] = next.heading;
     fieldTypes[index] = next.fieldType;
     helpText[index] = next.helpText;
-    saved[index] = next.saved;
 
-    onChange({ ...value, columns: safeColumns, previewRows: safePreviewRows, headings, fieldTypes, helpText, saved });
+    onChange({
+      ...value,
+      columns: safeColumns,
+      previewRows: safePreviewRows,
+      headings,
+      fieldTypes,
+      helpText,
+      saved: buildSavedFlags(safeColumns, false),
+    });
   };
 
-  const saveColumn = (index: number) => {
-    const saved = safeSaved.slice();
-    saved[index] = true;
+  const saveModel = () => {
+    if (!canSaveModel) {
+      return;
+    }
+
     onChange({
       ...value,
       columns: safeColumns,
@@ -236,7 +237,7 @@ export function DefineTabularModel(props: {
       headings: safeHeadings,
       fieldTypes: safeFieldTypes,
       helpText: safeHelpText,
-      saved,
+      saved: buildSavedFlags(safeColumns, true),
     });
   };
 
@@ -244,12 +245,10 @@ export function DefineTabularModel(props: {
     const headings = safeHeadings.slice();
     const fieldTypes = safeFieldTypes.slice();
     const helpText = safeHelpText.slice();
-    const saved = safeSaved.slice();
 
     headings.splice(index, 1);
     fieldTypes.splice(index, 1);
     helpText.splice(index, 1);
-    saved.splice(index, 1);
 
     const nextCols = Math.max(minColumns, headings.length);
 
@@ -260,7 +259,7 @@ export function DefineTabularModel(props: {
       headings,
       fieldTypes,
       helpText,
-      saved,
+      saved: buildSavedFlags(nextCols, false),
     });
 
     setActiveColumn(Math.max(0, Math.min(index, nextCols - 1)));
@@ -365,7 +364,7 @@ export function DefineTabularModel(props: {
                 headings: next,
                 fieldTypes: safeFieldTypes,
                 helpText: safeHelpText,
-                saved: safeSaved,
+                saved: buildSavedFlags(safeColumns, false),
               })
             }
             activeColumn={activeColumn}
@@ -380,6 +379,14 @@ export function DefineTabularModel(props: {
             <button type="button" onClick={removeLastColumn} disabled={disabled || safeColumns <= minColumns}>
               Remove column
             </button>
+            <button
+              type="button"
+              onClick={saveModel}
+              disabled={disabled || !canSaveModel}
+              style={{ marginLeft: 'auto' }}
+            >
+              {isModelSaved ? 'Model saved' : canSaveModel ? 'Save model' : 'Fix issues to save'}
+            </button>
           </div>
         </div>
 
@@ -390,12 +397,10 @@ export function DefineTabularModel(props: {
               heading: safeHeadings[activeColumn] ?? '',
               fieldType: safeFieldTypes[activeColumn],
               helpText: safeHelpText[activeColumn] ?? '',
-              saved: Boolean(safeSaved[activeColumn]),
             }}
             disabled={disabled}
             error={activeError}
             onChange={next => updateColumn(activeColumn, next)}
-            onSave={() => saveColumn(activeColumn)}
             onRemove={safeColumns > minColumns ? () => removeColumn(activeColumn) : undefined}
           />
         </div>

@@ -1,11 +1,31 @@
 export type PxRect = { left: number; top: number; width: number; height: number };
 
+export const NET_MIN_SIZE_PCT = 1;
+export const NET_OVERLAY_MIN_SIZE_PCT = 5;
+export const NET_LINE_MIN_GAP_PCT = 2;
+export const NET_MAX_DIM_OPACITY = 0.85;
+export const NET_DIM_STEP = 0.05;
+
 export const clamp = (v: number, min: number, max: number) => Math.max(min, Math.min(max, v));
+export const clampDimOpacity = (v: number) => clamp(v, 0, NET_MAX_DIM_OPACITY);
+export const dimOpacityToPercent = (v: number) => Math.round((clampDimOpacity(v) / NET_MAX_DIM_OPACITY) * 100);
 
 export const makeEvenPositions = (count: number): number[] => {
   if (count <= 1) return [];
   const step = 100 / count;
   return Array.from({ length: count - 1 }, (_, i) => step * (i + 1));
+};
+
+export const sanitizeIndexList = (indexes: number[] | undefined, maxExclusive: number): number[] => {
+  if (!indexes?.length || maxExclusive <= 0) return [];
+  const uniq = new Set<number>();
+  for (const index of indexes) {
+    const n = Math.floor(index);
+    if (n >= 0 && n < maxExclusive) {
+      uniq.add(n);
+    }
+  }
+  return Array.from(uniq.values()).sort((a, b) => a - b);
 };
 
 export const normalisePositions = (positions: number[], count: number) => {
@@ -23,31 +43,12 @@ export const getStops = (count: number, positions: number[]) => {
   return [0, ...inner, 100];
 };
 
-export const getRelativeRect = (container: HTMLElement, target: HTMLElement): PxRect => {
-  const c = container.getBoundingClientRect();
-  const t = target.getBoundingClientRect();
-  return { left: t.left - c.left, top: t.top - c.top, width: t.width, height: t.height };
-};
-
-export const findCanvasPanelContentElement = (host: Element | null): HTMLElement | null => {
-  if (!host) return null;
-
-  const anyHost = host as any;
-  const shadow: ShadowRoot | null | undefined = anyHost.shadowRoot;
-
-  const selectors = ['canvas', 'img', 'video', '[data-canvas]', '[data-viewport]', '.viewport', '.canvas', '.content'];
-
-  if (shadow) {
-    for (const sel of selectors) {
-      const el = shadow.querySelector(sel);
-      if (el instanceof HTMLElement) return el;
-    }
-  }
-
-  for (const sel of selectors) {
-    const el = host.querySelector?.(sel);
-    if (el instanceof HTMLElement) return el;
-  }
-
-  return host instanceof HTMLElement ? host : null;
-};
+export function slugifyColumnId(label: string) {
+  return label
+    .trim()
+    .toLowerCase()
+    .replace(/['’]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .replace(/-+/g, '-');
+}

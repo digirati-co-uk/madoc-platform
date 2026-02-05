@@ -1,12 +1,12 @@
-import React, { useCallback, useMemo, useRef } from 'react';
-import type { DragMode, NetConfig } from './types';
-import { clamp, normalisePositions, getStops } from './utils';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import type { DragMode, NetConfig, TabularCellRef } from './types';
+import { NET_LINE_MIN_GAP_PCT, NET_OVERLAY_MIN_SIZE_PCT, clamp, getStops, normalisePositions } from './utils';
 
 type CastANetOverlayProps = {
   value: NetConfig;
   onChange: (next: NetConfig) => void;
   disabled?: boolean;
-  activeCell?: { row: number; col: number } | null;
+  activeCell?: TabularCellRef | null;
 };
 
 export const CastANetOverlay: React.FC<CastANetOverlayProps> = ({ value, onChange, disabled = false, activeCell }) => {
@@ -23,7 +23,7 @@ export const CastANetOverlay: React.FC<CastANetOverlayProps> = ({ value, onChang
 
   const emitChange = useCallback(
     (next: NetConfig) => {
-      const minSize = 5;
+      const minSize = NET_OVERLAY_MIN_SIZE_PCT;
       const top = clamp(next.top, 0, 100 - minSize);
       const left = clamp(next.left, 0, 100 - minSize);
       const width = clamp(next.width, minSize, 100 - left);
@@ -59,6 +59,17 @@ export const CastANetOverlay: React.FC<CastANetOverlayProps> = ({ value, onChang
       window.removeEventListener('mouseup', windowUpHandlerRef.current);
       windowUpHandlerRef.current = null;
     }
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (windowMoveHandlerRef.current) {
+        window.removeEventListener('mousemove', windowMoveHandlerRef.current);
+      }
+      if (windowUpHandlerRef.current) {
+        window.removeEventListener('mouseup', windowUpHandlerRef.current);
+      }
+    };
   }, []);
 
   const startDrag = (mode: DragMode) => (e: React.MouseEvent) => {
@@ -131,7 +142,7 @@ export const CastANetOverlay: React.FC<CastANetOverlayProps> = ({ value, onChang
 
       if (modeNow && typeof modeNow === 'object' && modeNow.type === 'row') {
         const idx = modeNow.index;
-        const minGap = 2;
+        const minGap = NET_LINE_MIN_GAP_PCT;
         const pointerInNet = clamp(((currentY - start.top) / start.height) * 100, 0, 100);
 
         if (!dragStartRef.current.shiftKey) {
@@ -154,7 +165,7 @@ export const CastANetOverlay: React.FC<CastANetOverlayProps> = ({ value, onChang
 
       if (modeNow && typeof modeNow === 'object' && modeNow.type === 'col') {
         const idx = modeNow.index;
-        const minGap = 2;
+        const minGap = NET_LINE_MIN_GAP_PCT;
         const pointerInNet = clamp(((currentX - start.left) / start.width) * 100, 0, 100);
 
         if (!dragStartRef.current.shiftKey) {

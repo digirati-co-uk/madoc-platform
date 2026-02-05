@@ -1,5 +1,5 @@
 import React, { useContext, useMemo } from 'react';
-import type { TabularFieldType } from './types';
+import type { TabularColumnEditorValue, TabularFieldPlugin, TabularFieldType } from './types';
 import { PluginContext } from '../../../../shared/capture-models/plugin-api/context';
 import { Segment } from '../../../../shared/capture-models/editor/atoms/Segment';
 import { Dropdown } from '../../../../shared/capture-models/editor/atoms/Dropdown';
@@ -10,32 +10,19 @@ import {
 } from '../../../../shared/capture-models/editor/atoms/StyledForm';
 import { Button } from '../../../../shared/capture-models/editor/atoms/Button';
 
-export type TabularColumnEditorValue = {
-  heading: string;
-  fieldType?: TabularFieldType;
-  helpText?: string;
-  saved?: boolean;
-};
-
 export function TabularColumnEditor(props: {
   index: number;
   value: TabularColumnEditorValue;
   disabled?: boolean;
   error?: string;
   onChange: (next: TabularColumnEditorValue) => void;
-  onSave?: () => void;
   onRemove?: () => void;
 }) {
-  const { index, value, disabled, error, onChange, onSave, onRemove } = props;
+  const { index, value, disabled, error, onChange, onRemove } = props;
   const { fields } = useContext(PluginContext);
 
   const availableFieldTypes = useMemo(
-    () =>
-      Object.values(fields).filter(Boolean) as Array<{
-        type: string;
-        label: string;
-        description: string;
-      }>,
+    () => Object.values(fields).filter(Boolean) as Array<TabularFieldPlugin>,
     [fields]
   );
 
@@ -67,14 +54,7 @@ export function TabularColumnEditor(props: {
 
   return (
     <Segment style={{ borderTopColor: 'lightcoral' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10, alignItems: 'baseline' }}>
-        <div style={{ fontWeight: 700, fontSize: 14 }}>Column {index + 1}</div>
-        {value.saved ? (
-          <span style={{ fontSize: 12, opacity: 0.8 }}>Saved</span>
-        ) : (
-          <span style={{ fontSize: 12, opacity: 0.6 }}>Not saved</span>
-        )}
-      </div>
+      <div style={{ fontWeight: 700, fontSize: 14 }}>Column {index + 1}</div>
 
       <div style={{ height: 10 }} />
 
@@ -134,17 +114,6 @@ export function TabularColumnEditor(props: {
         <div style={{ display: 'grid', gap: 6 }}>
           <StyledFormLabel />
           <div style={{ display: 'flex', gap: 10 }}>
-            {onSave ? (
-              <Button
-                type="button"
-                onClick={onSave}
-                disabled={disabled}
-                style={{ background: value.saved ? 'rgba(16,185,129,0.12)' : undefined }}
-              >
-                {value.saved ? 'Saved' : 'Save column'}
-              </Button>
-            ) : null}
-
             {onRemove ? (
               <Button
                 type="button"

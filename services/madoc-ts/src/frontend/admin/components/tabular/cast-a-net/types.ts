@@ -19,6 +19,64 @@ export type NetConfig = {
   colPositions: number[];
 };
 
+export type CastANetPoint = { x: number; y: number };
+export type TabularCellRef = { row: number; col: number };
+
+export type CastANetMargins = {
+  top: number;
+  right: number;
+  bottom: number;
+  left: number;
+};
+
+export type CastANetColumnStructure = {
+  index: number;
+  leftPctOfTable: number;
+  leftPctOfPage: number;
+  widthPctOfTable: number;
+  widthPctOfPage: number;
+  isBlank: boolean;
+};
+
+export type CastANetRowStructure = {
+  index: number;
+  topPctOfTable: number;
+  topPctOfPage: number;
+  heightPctOfTable: number;
+  heightPctOfPage: number;
+};
+
+export type CastANetStructure = {
+  topLeft: CastANetPoint;
+  topRight: CastANetPoint;
+  marginsPct: CastANetMargins;
+  tableBoxPct: {
+    top: number;
+    left: number;
+    right: number;
+    bottom: number;
+    width: number;
+    height: number;
+  };
+  columnCount: number;
+  rowCount: number;
+  columnWidthsPctOfPage: number[];
+  rowHeightsPctOfPage: number[];
+  blankColumnIndexes: number[];
+  columns: CastANetColumnStructure[];
+  rows: CastANetRowStructure[];
+};
+
+export type CastANetPayload = {
+  topLeft: CastANetPoint;
+  topRight: CastANetPoint;
+  marginsPct: CastANetMargins;
+  columnCount: number;
+  columnWidthsPctOfPage: number[];
+  rowHeightsPctOfPage: number[];
+  blankColumnIndexes: number[];
+};
+
 export type HeaderRole = 'none' | 'header';
 
 export interface HeaderCell {
@@ -26,7 +84,6 @@ export interface HeaderCell {
   role: HeaderRole;
 }
 
-// Capture-model field plugin id, e.g. "text-field", "dropdown-field".
 export type TabularFieldType = string;
 
 export type TabularColumn = {
@@ -57,6 +114,11 @@ export type TabularModelPayload = {
   captureModelTemplate: TabularCaptureModelTemplate;
 };
 
+export type TabularProjectSetupPayload = {
+  structure: CastANetPayload;
+  model: TabularModelPayload;
+};
+
 export type TabularValidationIssue = {
   type:
     | 'empty-heading'
@@ -74,4 +136,31 @@ export type TabularColumnMeta = {
   fieldTypes?: (TabularFieldType | undefined)[];
   helpText?: (string | undefined)[];
   saved?: (boolean | undefined)[];
+};
+
+export type TabularModelChange = {
+  isValid: boolean;
+  issues: TabularValidationIssue[];
+  payload: TabularModelPayload;
+};
+
+export type DefineTabularModelValue = {
+  columns: number;
+  previewRows: number;
+  headings: string[];
+  fieldTypes?: (TabularFieldType | undefined)[];
+  helpText?: (string | undefined)[];
+  saved?: (boolean | undefined)[];
+};
+
+export type TabularColumnEditorValue = {
+  heading: string;
+  fieldType?: TabularFieldType;
+  helpText?: string;
+};
+
+export type TabularFieldPlugin = {
+  type: string;
+  label: string;
+  description: string;
 };
