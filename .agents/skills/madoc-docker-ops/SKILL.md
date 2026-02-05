@@ -33,15 +33,17 @@ Also check `docker-compose.test.yml` when dealing with test-only services or ove
 2. Verify health: `docker compose ps` and `docker compose logs -f madoc-ts`.
 3. If only a subset is needed, bring up specific services: `docker compose up -d madoc-ts madoc-ts-vite shared-postgres gateway`.
 
-## Build & Rebuild Images
+## Build & Rebuild Images (Volume-Mounted)
 
+- Rebuild development frontend bundle: `pnpm build:vite-server` run outside of docker since its a volume
 - Rebuild selected services: `docker compose build madoc-ts madoc-ts-vite`.
 - Force a clean rebuild: `docker compose build --no-cache madoc-ts`.
 - Rebuild and restart in one step: `docker compose up -d --build madoc-ts`.
 
-## Frontend Rebuild (Volume-Mounted)
+## Frontend Rebuild
 
-The frontend assets are bind-mounted, so rebuilds must be triggered even when containers are already running.
+The frontend assets are bind-mounted, so rebuilds must be triggered even when containers are already running. However there is a vite server
+so during development frontend ONLY fixes should be fine.
 
 - Rebuild production frontend bundle: `docker compose exec madoc-ts pnpm run build:frontend`.
 - Rebuild server-side bundles: `docker compose exec madoc-ts pnpm run build:vite`.

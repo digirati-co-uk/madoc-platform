@@ -44,8 +44,7 @@ export default defineConfig({
     hmr: {
       host: 'madoc.local',
       protocol: https ? 'wss' : 'ws',
-      port: 3089,
-      clientPort: 3089,
+      clientPort: 3088,
     },
   },
   envPrefix: ['VITE_'],

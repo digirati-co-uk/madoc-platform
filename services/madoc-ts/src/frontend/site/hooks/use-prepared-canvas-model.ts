@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useCanvasModel } from './use-canvas-model';
 import { useClaimManifest } from './use-claim-manifest';
 import { useManifestTask } from './use-manifest-task';
@@ -15,7 +15,10 @@ export function usePreparedCanvasModel() {
   const [hasPrepared, setHasPrepared] = useState(false);
   const [hasPreparedManifest, setHasPreparedManifest] = useState(false);
   const [hasExpired, setHasExpired] = useState(false);
+  const hasMounted = useRef(true);
+  const isPreparingModel = useRef(false);
   const modelResponse = useCanvasModel();
+  const { refetch } = modelResponse;
   const { isManifestComplete, isFetched: manifestTaskFetched } = useManifestTask();
   const [prepare, { isLoading }] = usePrepareContribution();
   const projectStatus = useProjectStatus();
@@ -27,8 +30,13 @@ export function usePreparedCanvasModel() {
   const preparationFailed = hasPrepared && !model;
   const isPreparing = isLoading;
   const shouldAutoPrepare = projectStatus.isPreparing || (!isManifestComplete && !manifestClaim.isClaimRequired); // @todo config.
-  const canClaim = projectStatus.isActive && manifestClaim.shouldAutoClaim && !hasPreparedManifest && !hasExpired;
-  const shouldPrepare = shouldAutoPrepare && !model && isFetched && !hasPrepared && !isLoading;
+  const canClaim =
+    projectStatus.isActive &&
+    manifestClaim.shouldAutoClaim &&
+    !hasPreparedManifest &&
+    !hasExpired &&
+    !manifestClaim.didError;
+  const shouldPrepare = shouldAutoPrepare && !model && isFetched && !hasPrepared && !isLoading && !hasExpired;
 
   useEffect(() => {
     if (canClaim) {
@@ -46,25 +54,47 @@ export function usePreparedCanvasModel() {
   }, [canClaim, manifestClaim]);
 
   useEffect(() => {
+    return () => {
+      hasMounted.current = false;
+    };
+  }, []);
+
+  useEffect(() => {
     if (canvasId) {
       setHasPrepared(false);
       setHasPreparedManifest(false);
+      setHasExpired(false);
     }
-  }, [canvasId, modelResponse.data]);
+  }, [canvasId]);
 
   useEffect(() => {
-    if (shouldPrepare) {
-      prepare().then(async () => {
-        await modelResponse.refetch();
-        setHasPrepared(true);
-      });
+    if (!shouldPrepare || isPreparingModel.current) {
+      return;
     }
-  }, [modelResponse, prepare, shouldPrepare]);
+
+    isPreparingModel.current = true;
+    prepare()
+      .then(async () => {
+        await refetch();
+        if (hasMounted.current) {
+          setHasPrepared(true);
+        }
+      })
+      .catch(() => {
+        if (hasMounted.current) {
+          // Stop retry loops on repeated prepare failures.
+          setHasExpired(true);
+        }
+      })
+      .finally(() => {
+        isPreparingModel.current = false;
+      });
+  }, [refetch, prepare, shouldPrepare]);
 
   return {
     ...modelResponse,
     preparationFailed,
-    hasExpired: manifestClaim.didError,
+    hasExpired: hasExpired || manifestClaim.didError,
     hasPrepared,
     isPreparing,
   };

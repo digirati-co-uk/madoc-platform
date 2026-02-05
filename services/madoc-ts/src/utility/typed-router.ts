@@ -29,6 +29,7 @@ export class TypedRouter<
   static PATCH = 'patch';
   static PUT = 'put';
   static DELETE = 'delete';
+  static OPTIONS = 'options';
 
   private router = new Router();
 
@@ -67,6 +68,9 @@ export class TypedRouter<
         }
         case TypedRouter.DELETE:
           (this.router as any).delete(route, path, parseJwt, ...funcArray);
+          break;
+        case TypedRouter.OPTIONS:
+          (this.router as any).options(route, path, ...funcArray);
           break;
       }
     }

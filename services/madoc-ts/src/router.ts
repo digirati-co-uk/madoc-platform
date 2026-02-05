@@ -129,7 +129,7 @@ import { getAllProjectNotes } from './routes/projects/get-all-project-notes';
 import { siteCompletions } from './routes/site/site-completions';
 import { siteDetails } from './routes/site/site-details';
 import { deleteManifestSummary } from './routes/iiif/manifests/delete-manifest-summary';
-import { siteManifestBuild } from './routes/site/site-manifest-build';
+import { siteManifestBuild, siteManifestBuildOptions } from './routes/site/site-manifest-build';
 import { createMedia } from './routes/media/create-media';
 import { deleteMedia } from './routes/media/delete-media';
 import { generateThumbnails } from './routes/media/generate-thumbnails';
@@ -774,8 +774,26 @@ export const router = new TypedRouter({
   // To be worked into API calling methods
   'manifest-search': [TypedRouter.GET, '/s/:slug/madoc/api/manifests/:id/search/1.0', searchManifest],
   // 'manifest-export': [TypedRouter.GET, '/s/:slug/madoc/api/manifests/:id/export/source', exportManifest],
+  'manifest-build-options': [
+    TypedRouter.OPTIONS,
+    '/s/:slug/madoc/api/manifests/:id/export/:version',
+    siteManifestBuildOptions,
+    { isPublic: true },
+  ],
   'manifest-build': [TypedRouter.GET, '/s/:slug/madoc/api/manifests/:id/export/:version', siteManifestBuild],
+  'collection-build-options': [
+    TypedRouter.OPTIONS,
+    '/s/:slug/madoc/api/collections/:id/export/:version',
+    siteManifestBuildOptions,
+    { isPublic: true },
+  ],
   'collection-build': [TypedRouter.GET, '/s/:slug/madoc/api/collections/:id/export/:version', siteManifestBuild],
+  'manifest-project-build-options': [
+    TypedRouter.OPTIONS,
+    '/s/:slug/madoc/api/projects/:projectSlug/export/manifest/:id/:version',
+    siteManifestBuildOptions,
+    { isPublic: true },
+  ],
   'manifest-project-build': [
     TypedRouter.GET,
     '/s/:slug/madoc/api/projects/:projectSlug/export/manifest/:id/:version',

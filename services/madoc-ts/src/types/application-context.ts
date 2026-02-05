@@ -23,6 +23,7 @@ import { DatabasePoolConnectionType } from 'slonik';
 import { Ajv } from 'ajv';
 import { ApiKeyRepository } from '../repository/api-key-repository';
 import { CaptchaRepository } from '../repository/captcha-repository';
+import type { StaticPageResponse } from './static-page';
 
 type AllRoutes = typeof router;
 
@@ -53,7 +54,10 @@ declare module 'koa' {
     completions: CompletionsExtension;
     webhookExtension: WebhookServerExtension;
     ajv: Ajv;
-    staticPage?: string | ((token: string) => Promise<string | undefined>) | ((token: string) => undefined | string);
+    staticPage?:
+      | StaticPageResponse
+      | ((token: string) => Promise<StaticPageResponse | undefined>)
+      | ((token: string) => StaticPageResponse | undefined);
     disposableApis: ApiClient[];
 
     // New frontend

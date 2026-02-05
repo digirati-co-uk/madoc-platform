@@ -14,14 +14,14 @@ export const ViewManifestMirador: React.FC<{
   const api = useApi();
   const slug = api.getSiteSlug();
 
-  const embedUrl = useMemo(() => {
-    const manifestUrl = `/s/${slug}/madoc/api/manifests/${manifestId}/export/source`;
-    return `https://projectmirador.org/embed/?iiif-content=${encodeURIComponent(manifestUrl)}`;
-  }, [manifestId, slug]);
-
   if (api.getIsServer() || !manifestId) {
     return null;
   }
+
+  const embedUrl = useMemo(() => {
+    const manifestUrl = `${window.location.origin}/s/${slug}/madoc/api/manifests/${manifestId}/export/source`;
+    return `https://projectmirador.org/embed/?iiif-content=${encodeURIComponent(manifestUrl)}`;
+  }, [manifestId, slug]);
 
   return (
     <ErrorBoundary>

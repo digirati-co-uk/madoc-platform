@@ -17,7 +17,7 @@ import { PageLoader } from '../../site/pages/loaders/page-loader';
 import { defaultTheme } from '../capture-models/editor/themes';
 import { PluginManager } from '../plugins/plugin-manager';
 import { queryConfig } from './query-config';
-import { renderToString } from 'react-dom/server';
+import { renderToPipeableStream } from 'react-dom/server.node';
 import { I18nextProvider } from 'react-i18next';
 import { matchRoutes, RouteObject, StaticRouter } from 'react-router';
 import React from 'react';
@@ -25,8 +25,8 @@ import { CreateRouteType } from '../../types';
 import { Helmet } from 'react-helmet';
 import localeCodes from 'locale-codes';
 import '../required-modules';
-import { RootLoader } from '../../site/pages/loaders/root-loader';
 import { Spinner } from '../icons/Spinner';
+import { PassThrough } from 'stream';
 
 function makeRoutes(routeComponents: any) {
   return [
@@ -174,7 +174,7 @@ export function createServerRenderer(
                       }
                       projectApplied = true;
                     }
-                  } catch (e) {
+                  } catch {
                     // no-op.
                   }
                 });
@@ -271,49 +271,77 @@ export function createServerRenderer(
       } as const;
     }
 
-    const state = {
-      markup: '',
-    };
-
     const resolvedSystemConfig = {
       ...(systemConfig || {}),
       ...(site?.config || {}),
     };
 
+    const application = sheet.collectStyles(
+      <ReactQueryConfigProvider config={{ ...extraConfig, ...queryConfig }}>
+        <ReactQueryCacheProvider>
+          <Hydrate state={dehydratedState}>
+            <I18nextProvider i18n={i18next}>
+              <StaticRouter basename={basename} location={url}>
+                <ThemeProvider theme={defaultTheme}>
+                  <React.Suspense fallback={<Spinner />}>
+                    <RootApplication
+                      api={api}
+                      routes={routes}
+                      theme={theme}
+                      site={site as any}
+                      user={user}
+                      defaultLocale={siteLocales.defaultLanguage || 'en'}
+                      contentLanguages={contentLanguages}
+                      displayLanguages={displayLanguages}
+                      supportedLocales={supportedLocales}
+                      themeOverrides={themeOverrides}
+                      navigationOptions={navigationOptions}
+                      formResponse={reactFormResponse}
+                      systemConfig={resolvedSystemConfig}
+                    />
+                  </React.Suspense>
+                </ThemeProvider>
+              </StaticRouter>
+            </I18nextProvider>
+          </Hydrate>
+        </ReactQueryCacheProvider>
+      </ReactQueryConfigProvider>
+    );
+
+    let markupStream: NodeJS.ReadableStream;
+
     try {
-      state.markup = renderToString(
-        sheet.collectStyles(
-          <ReactQueryConfigProvider config={{ ...extraConfig, ...queryConfig }}>
-            <ReactQueryCacheProvider>
-              <Hydrate state={dehydratedState}>
-                <I18nextProvider i18n={i18next}>
-                  <StaticRouter basename={basename} location={url}>
-                    <ThemeProvider theme={defaultTheme}>
-                      <React.Suspense fallback={<Spinner />}>
-                        <RootApplication
-                          api={api}
-                          routes={routes}
-                          theme={theme}
-                          site={site as any}
-                          user={user}
-                          defaultLocale={siteLocales.defaultLanguage || 'en'}
-                          contentLanguages={contentLanguages}
-                          displayLanguages={displayLanguages}
-                          supportedLocales={supportedLocales}
-                          themeOverrides={themeOverrides}
-                          navigationOptions={navigationOptions}
-                          formResponse={reactFormResponse}
-                          systemConfig={resolvedSystemConfig}
-                        />
-                      </React.Suspense>
-                    </ThemeProvider>
-                  </StaticRouter>
-                </I18nextProvider>
-              </Hydrate>
-            </ReactQueryCacheProvider>
-          </ReactQueryConfigProvider>
-        )
-      );
+      markupStream = await new Promise<NodeJS.ReadableStream>((resolve, reject) => {
+        let hasResolved = false;
+        const stream = new PassThrough();
+        const fail = (error: Error) => {
+          if (hasResolved) {
+            return;
+          }
+          hasResolved = true;
+          stream.destroy(error);
+          reject(new ReactServerError(error));
+        };
+
+        const { pipe } = renderToPipeableStream(application, {
+          onAllReady() {
+            if (hasResolved) {
+              return;
+            }
+            hasResolved = true;
+            pipe(stream);
+            resolve(stream);
+          },
+          onShellError(error) {
+            fail(error as Error);
+          },
+          onError(error) {
+            if (process.env.NODE_ENV !== 'production') {
+              console.error(error);
+            }
+          },
+        });
+      });
     } catch (e) {
       throw new ReactServerError(e as any);
     }
@@ -401,8 +429,9 @@ export function createServerRenderer(
           <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
           ${styles}
         `,
-      body: `
-          <div id="react-component">${state.markup}</div>
+      bodyPrefix: `<div id="react-component">`,
+      bodyStream: markupStream,
+      bodySuffix: `</div>
           <script type="application/json" id="react-data">${JSON.stringify({ basename })}</script>
           ${routeData}
           ${devLoadingScript}
