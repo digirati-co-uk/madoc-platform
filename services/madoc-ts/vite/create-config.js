@@ -52,18 +52,12 @@ const TO_BUNDLE = [
   'node-fetch',
   'react-accessible-dropdown-menu-hook',
   'react/jsx-runtime',
-  'react-functional-select',
   'rich-markdown-editor',
   'react-iiif-vault',
   'react-dnd',
 ];
 
 const DEDUPE = ['react', 'react-dom', 'styled-components', 'react-dnd', 'react-dnd-multi-backend'];
-const SERVER_ALIASES = {
-  // Avoid evaluating browser-only react-functional-select in server/worker bundles.
-  'react-functional-select': '/src/frontend/shared/shims/react-functional-select.server.tsx',
-  'react-functional-select/dist/Select': '/src/frontend/shared/shims/react-functional-select.server.tsx',
-};
 
 export function createConfig(name, entry) {
   return ({ command, mode }) => ({
@@ -71,9 +65,7 @@ export function createConfig(name, entry) {
     clearScreen: false,
     resolve: {
       dedupe: DEDUPE,
-      alias: {
-        ...SERVER_ALIASES,
-      },
+      alias: {},
     },
     build: {
       dedupe: DEDUPE,
