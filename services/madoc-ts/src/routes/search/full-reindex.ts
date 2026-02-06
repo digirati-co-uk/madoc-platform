@@ -27,7 +27,7 @@ export const fullReindex: RouteMiddleware = async context => {
 
   while (state.active) {
     const responses = await context.connection.any(sql<{ id: number }>`
-        select id
+        select resource_id as id
         from iiif_derived_resource idr
         where resource_type = 'manifest' and site_id = ${siteId}
         limit ${state.limit} offset ${state.offset}

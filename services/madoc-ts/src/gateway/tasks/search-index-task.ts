@@ -1,6 +1,5 @@
 import { ApiClient } from '../api';
 import { BaseTask } from './base-task';
-import { castBool } from '../../utility/cast-bool';
 
 export const type = 'search-index-task';
 
@@ -58,8 +57,6 @@ export function createTask(
 }
 
 export const jobHandler = async (name: string, taskId: string, api: ApiClient) => {
-  const useTypesenseManifestIndexing = castBool(process.env.SEARCH_USE_TYPESENSE, false);
-
   switch (name) {
     case 'created': {
       try {
@@ -92,9 +89,9 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
           case 'manifest': {
             try {
               //   - Ingest manifest.
-              await api.indexManifest(resource.id);
+              const manifestIndexResult = (await api.indexManifest(resource.id)) as any;
 
-              if (useTypesenseManifestIndexing) {
+              if (manifestIndexResult?.noSearch) {
                 await api.updateTask(taskId, { status: 3 });
                 break;
               }

@@ -18,8 +18,32 @@ type TypesenseCollectionSchema = {
   default_sorting_field: string;
 };
 
+export type TypesenseAvailability = {
+  available: boolean;
+  reason?: string;
+};
+
+type TypesenseAvailabilityCache = TypesenseAvailability & {
+  checkedAt: number;
+};
+
+let availabilityCache: TypesenseAvailabilityCache | undefined;
+
 export function isTypesenseSearchEnabled() {
   return castBool(process.env.SEARCH_USE_TYPESENSE, false);
+}
+
+export function isTypesenseConfigured() {
+  if (!isTypesenseSearchEnabled()) {
+    return false;
+  }
+
+  return !!process.env.TYPESENSE_API_KEY;
+}
+
+function getAvailabilityTtlMs() {
+  const parsed = Number(process.env.TYPESENSE_AVAILABILITY_TTL_MS || 5000);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : 5000;
 }
 
 function getCollectionPrefix() {
@@ -33,6 +57,65 @@ export function getTypesenseSiteCollectionName(siteId: number) {
 
 export function getTypesenseIndexablesCollectionName(siteId: number) {
   return `${getCollectionPrefix()}indexables_site_${siteId}`;
+}
+
+export function resolveTypesenseSearchCollection({
+  siteId,
+}: {
+  siteId: number;
+  projectId?: number | string;
+  entityId?: string;
+}) {
+  // Future extension point: swap this resolver to support project/entity-level collections.
+  return getTypesenseSiteCollectionName(siteId);
+}
+
+export function clearTypesenseAvailabilityCache() {
+  availabilityCache = undefined;
+}
+
+export async function isTypesenseAvailable({ force = false }: { force?: boolean } = {}): Promise<TypesenseAvailability> {
+  if (!isTypesenseSearchEnabled()) {
+    return {
+      available: false,
+      reason: 'Typesense search is disabled',
+    };
+  }
+
+  if (!isTypesenseConfigured()) {
+    return {
+      available: false,
+      reason: 'Typesense search is not configured',
+    };
+  }
+
+  if (!force && availabilityCache && Date.now() - availabilityCache.checkedAt < getAvailabilityTtlMs()) {
+    return {
+      available: availabilityCache.available,
+      reason: availabilityCache.reason,
+    };
+  }
+
+  const typesense = new TypesenseClient();
+
+  try {
+    await typesense.health();
+    availabilityCache = {
+      available: true,
+      checkedAt: Date.now(),
+    };
+  } catch (err) {
+    availabilityCache = {
+      available: false,
+      reason: err instanceof Error ? err.message : 'Typesense health check failed',
+      checkedAt: Date.now(),
+    };
+  }
+
+  return {
+    available: availabilityCache.available,
+    reason: availabilityCache.reason,
+  };
 }
 
 function getTypesenseBaseUrl() {
@@ -55,7 +138,7 @@ export class TypesenseClient {
   private async request<T = any>(
     path: string,
     options: {
-      method?: 'GET' | 'POST' | 'DELETE' | 'PUT';
+      method?: 'GET' | 'POST' | 'DELETE' | 'PUT' | 'PATCH';
       body?: string;
       contentType?: string;
       expectText?: boolean;
@@ -106,12 +189,37 @@ export class TypesenseClient {
         { name: 'search_text', type: 'string[]' },
         { name: 'metadata_keys', type: 'string[]', facet: true, optional: true },
         { name: 'metadata_pairs', type: 'string[]', facet: true, optional: true },
+        { name: 'metadata_.*', type: 'string[]', facet: true, optional: true },
+        { name: 'capture_model_.*', type: 'string[]', optional: true },
         { name: 'languages', type: 'string[]', facet: true, optional: true },
         { name: 'nav_date', type: 'int64', optional: true },
         { name: 'item_index', type: 'int32', optional: true },
         { name: 'sort_index', type: 'int32' },
       ],
     };
+  }
+
+  private async ensureSearchCollectionSchemaCompatibility(name: string, existing: any) {
+    const existingFields = Array.isArray(existing?.fields) ? existing.fields : [];
+    const requiredDynamicFields: Array<TypesenseCollectionField> = [
+      { name: 'metadata_.*', type: 'string[]', facet: true, optional: true },
+      { name: 'capture_model_.*', type: 'string[]', optional: true },
+    ];
+    const missingFields = requiredDynamicFields.filter(
+      requiredField => !existingFields.some((field: any) => field?.name === requiredField.name)
+    );
+
+    if (!missingFields.length) {
+      return;
+    }
+
+    await this.request(`/collections/${encodeURIComponent(name)}`, {
+      method: 'PATCH',
+      contentType: 'application/json',
+      body: JSON.stringify({
+        fields: missingFields,
+      }),
+    });
   }
 
   private getIndexablesCollectionSchema(name: string): TypesenseCollectionSchema {
@@ -145,6 +253,7 @@ export class TypesenseClient {
     const existing = await this.request(`/collections/${encodeURIComponent(name)}`, { allow404: true });
 
     if (existing) {
+      await this.ensureSearchCollectionSchemaCompatibility(name, existing);
       return;
     }
 
@@ -227,35 +336,36 @@ export class TypesenseClient {
       highlight_full_fields?: string;
     }
   ) {
+    return this.searchRaw(collectionName, params);
+  }
+
+  async searchRaw(collectionName: string, params: Record<string, any>) {
     const searchParams = new URLSearchParams();
-    searchParams.set('q', params.q);
-    searchParams.set('query_by', params.query_by);
 
-    if (typeof params.page !== 'undefined') {
-      searchParams.set('page', `${params.page}`);
-    }
-    if (typeof params.per_page !== 'undefined') {
-      searchParams.set('per_page', `${params.per_page}`);
-    }
-    if (typeof params.filter_by !== 'undefined' && params.filter_by !== '') {
-      searchParams.set('filter_by', params.filter_by);
-    }
-    if (typeof params.facet_by !== 'undefined' && params.facet_by !== '') {
-      searchParams.set('facet_by', params.facet_by);
-    }
-    if (typeof params.max_facet_values !== 'undefined') {
-      searchParams.set('max_facet_values', `${params.max_facet_values}`);
-    }
-    if (typeof params.highlight_fields !== 'undefined') {
-      searchParams.set('highlight_fields', params.highlight_fields);
-    }
-    if (typeof params.highlight_full_fields !== 'undefined') {
-      searchParams.set('highlight_full_fields', params.highlight_full_fields);
+    for (const [key, value] of Object.entries(params)) {
+      if (typeof value === 'undefined' || value === null || value === '') {
+        continue;
+      }
+      if (Array.isArray(value)) {
+        searchParams.set(key, value.join(','));
+        continue;
+      }
+      searchParams.set(key, `${value}`);
     }
 
-    return this.request(
-      `/collections/${encodeURIComponent(collectionName)}/documents/search?${searchParams.toString()}`
-    );
+    return this.request(`/collections/${encodeURIComponent(collectionName)}/documents/search?${searchParams.toString()}`);
+  }
+
+  async multiSearch(payload: Record<string, any>) {
+    return this.request('/multi_search', {
+      method: 'POST',
+      contentType: 'application/json',
+      body: JSON.stringify(payload),
+    });
+  }
+
+  async health() {
+    return this.request('/health');
   }
 
   async getDocument(collectionName: string, id: string, { allow404 = false }: { allow404?: boolean } = {}) {

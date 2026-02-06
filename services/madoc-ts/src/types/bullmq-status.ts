@@ -38,6 +38,7 @@ export type BullMqSnapshot = {
     fetchedAt: string;
     limitPerState: number;
     includeCompleted: boolean;
+    isPaused: boolean;
     redis: {
       db: number;
       hostConfigured: boolean;
@@ -49,4 +50,23 @@ export type BullMqSnapshot = {
     sampledTotal: number;
     byType: BullMqTaskTypeSample[];
   };
+};
+
+export type BullMqCancelSearchIndexResult = {
+  queueWasPaused: boolean;
+  queuePausedByAction: boolean;
+  queueResumedByAction: boolean;
+  sampledJobs: number;
+  matchedSearchJobs: number;
+  removedJobs: number;
+  lockedOrUnremovableJobs: number;
+  markedTaskCancels: number;
+  markedRootCancels: number;
+  warnings: string[];
+};
+
+export type BullMqResumeQueueResult = {
+  queueWasPaused: boolean;
+  queueResumed: boolean;
+  warnings: string[];
 };

@@ -16,6 +16,26 @@ function toStringValue(value: unknown): string {
   return '';
 }
 
+function toWildcardFieldName(prefix: string, key: string): string | null {
+  const normalized = key
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLocaleLowerCase()
+    .replace(/[^a-z0-9]+/g, '_')
+    .replace(/_+/g, '_')
+    .replace(/^_+|_+$/g, '');
+
+  if (!normalized) {
+    return null;
+  }
+
+  return `${prefix}_${normalized}`;
+}
+
+function toMetadataFacetFieldName(key: string): string | null {
+  return toWildcardFieldName('metadata', key);
+}
+
 function fromInternationalString(value: any): string[] {
   if (!value) {
     return [];
@@ -49,11 +69,27 @@ function parseMetadata(payload: SearchIngestRequest['resource']) {
   const metadataPairs: string[] = [];
   const metadataValues: string[] = [];
   const languages: string[] = [];
+  const metadataFacetValues: Record<string, string[]> = {};
+  const labelsByMetadataIndex: Record<string, string[]> = {};
+  const valuesByMetadataIndex: Record<string, string[]> = {};
 
   for (const item of metadata) {
     const labels = fromInternationalString(item?.label);
     const values = fromInternationalString(item?.value);
     const key = labels[0] ? labels[0].toLowerCase() : '';
+
+    const metadataLabelMatch = key.match(/^metadata\.(\d+)\.label$/i);
+    if (metadataLabelMatch) {
+      labelsByMetadataIndex[metadataLabelMatch[1]] = uniq([...(labelsByMetadataIndex[metadataLabelMatch[1]] || []), ...values]);
+      continue;
+    }
+
+    const metadataValueMatch = key.match(/^metadata\.(\d+)\.value$/i);
+    if (metadataValueMatch) {
+      valuesByMetadataIndex[metadataValueMatch[1]] = uniq([...(valuesByMetadataIndex[metadataValueMatch[1]] || []), ...values]);
+      metadataValues.push(...values);
+      continue;
+    }
 
     if (key) {
       metadataKeys.push(key);
@@ -63,6 +99,32 @@ function parseMetadata(payload: SearchIngestRequest['resource']) {
       metadataValues.push(value);
       if (key) {
         metadataPairs.push(`${key}:${value}`);
+      }
+    }
+
+    const facetFieldName = key ? toMetadataFacetFieldName(key) : null;
+    if (facetFieldName && values.length) {
+      metadataFacetValues[facetFieldName] = uniq([...(metadataFacetValues[facetFieldName] || []), ...values]);
+    }
+  }
+
+  for (const [metadataIndex, values] of Object.entries(valuesByMetadataIndex)) {
+    const labels = labelsByMetadataIndex[metadataIndex] || [];
+    for (const label of labels) {
+      const normalizedKey = label.toLowerCase();
+      if (normalizedKey) {
+        metadataKeys.push(normalizedKey);
+      }
+
+      for (const value of values) {
+        if (normalizedKey) {
+          metadataPairs.push(`${normalizedKey}:${value}`);
+        }
+      }
+
+      const facetFieldName = toMetadataFacetFieldName(label);
+      if (facetFieldName) {
+        metadataFacetValues[facetFieldName] = uniq([...(metadataFacetValues[facetFieldName] || []), ...values]);
       }
     }
   }
@@ -75,15 +137,20 @@ function parseMetadata(payload: SearchIngestRequest['resource']) {
     metadataKeys: uniq(metadataKeys),
     metadataPairs: uniq(metadataPairs),
     languages: uniq(languages),
+    metadataFacetValues,
   };
 }
 
 export function buildTypesenseDocumentFromIngest({
   siteId,
   request,
+  captureModelValues = {},
+  additionalSearchText = [],
 }: {
   siteId: number;
   request: SearchIngestRequest;
+  captureModelValues?: Record<string, string[]>;
+  additionalSearchText?: string[];
 }) {
   const parsed = parseMetadata(request.resource);
   const contexts = (request.contexts || []).map(context => context.id).filter(Boolean);
@@ -109,9 +176,18 @@ export function buildTypesenseDocumentFromIngest({
     site_id: siteId,
     project_ids: projectIds,
     contexts: uniq(contexts),
-    search_text: parsed.searchText.length ? parsed.searchText : [parsed.label],
+    search_text: uniq([
+      ...(parsed.searchText.length ? parsed.searchText : [parsed.label]),
+      ...additionalSearchText,
+    ]),
     metadata_keys: parsed.metadataKeys,
     metadata_pairs: parsed.metadataPairs,
+    ...parsed.metadataFacetValues,
+    ...Object.fromEntries(
+      Object.entries(captureModelValues)
+        .filter(([fieldName, values]) => fieldName.startsWith('capture_model_') && Array.isArray(values) && values.length)
+        .map(([fieldName, values]) => [fieldName, uniq(values)])
+    ),
     languages: parsed.languages,
     nav_date: navDate ? Math.floor(navDate.getTime() / 1000) : null,
     item_index: null,

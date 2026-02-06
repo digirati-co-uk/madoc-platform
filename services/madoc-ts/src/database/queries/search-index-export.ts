@@ -9,12 +9,14 @@ export interface SearchExportMetadataField {
 }
 
 export interface ManifestSearchExportRow {
+  manifest_id: number;
   resource_id: number;
   resource_type: 'Manifest' | 'Canvas';
   item_index: number | null;
   source: string | null;
   rights: string | null;
   nav_date: Date | null;
+  thumbnail: string | null;
   default_thumbnail: string | null;
   placeholder_image: string | null;
   metadata: SearchExportMetadataField[];
@@ -30,16 +32,17 @@ export function getManifestResourcesForSearchExport(manifestId: number, siteId: 
         and dr.resource_id = ${manifestId}
     ),
     manifest_resources as (
-      select m.resource_id as resource_id, 'Manifest'::text as resource_type, null::int as item_index
+      select m.resource_id as manifest_id, m.resource_id as resource_id, 'Manifest'::text as resource_type, null::int as item_index
       from manifest m
       union all
-      select dri.item_id as resource_id, 'Canvas'::text as resource_type, dri.item_index
+      select m.resource_id as manifest_id, dri.item_id as resource_id, 'Canvas'::text as resource_type, dri.item_index
       from iiif_derived_resource_items dri
       inner join manifest m on m.resource_id = dri.resource_id
       where dri.site_id = ${siteId}
     ),
     resource_base as (
       select
+        mr.manifest_id,
         mr.resource_id,
         mr.resource_type,
         mr.item_index,
@@ -52,12 +55,17 @@ export function getManifestResourcesForSearchExport(manifestId: number, siteId: 
       inner join iiif_resource r on r.id = mr.resource_id
     )
     select
+      rb.manifest_id,
       rb.resource_id,
       rb.resource_type,
       rb.item_index,
       rb.source,
       rb.rights,
       rb.nav_date,
+      case
+        when rb.resource_type = 'Manifest' then manifest_thumbnail(${siteId}, rb.resource_id)
+        else coalesce(rb.default_thumbnail, rb.placeholder_image, manifest_thumbnail(${siteId}, rb.manifest_id))
+      end as thumbnail,
       rb.default_thumbnail,
       rb.placeholder_image,
       coalesce(
@@ -75,12 +83,17 @@ export function getManifestResourcesForSearchExport(manifestId: number, siteId: 
     from resource_base rb
       left join iiif_metadata m on m.resource_id = rb.resource_id and m.site_id = ${siteId}
     group by
+      rb.manifest_id,
       rb.resource_id,
       rb.resource_type,
       rb.item_index,
       rb.source,
       rb.rights,
       rb.nav_date,
+      case
+        when rb.resource_type = 'Manifest' then manifest_thumbnail(${siteId}, rb.resource_id)
+        else coalesce(rb.default_thumbnail, rb.placeholder_image, manifest_thumbnail(${siteId}, rb.manifest_id))
+      end,
       rb.default_thumbnail,
       rb.placeholder_image
     order by

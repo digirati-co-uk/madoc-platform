@@ -86,6 +86,18 @@
 - Add pin/promote rules for curated results.
 - Add search analytics dashboard (queries, zero-results, latency) to guide relevance tuning.
 
+## Current implementation status (dual-run)
+- Legacy search remains active on `/api/search/*` and is still the default for existing app search flows.
+- Typesense is available in parallel under `/api/madoc/typesense` with a scoped proxy model.
+- Admin-only validation UI is available at `/enrichment/typesense-playground` to test near-raw Typesense responses.
+- Manifest and canvas indexing are dual-write when Typesense is available, while preserving legacy indexing behavior.
+
+## Deferred (user-driven collections)
+- Per-project and per-entity Typesense collection creation is intentionally deferred.
+- Planned UX direction: in a project context, site admins can choose "Create Typesense collection" from a top-level model or specific nested entity.
+- Those user-defined collections will later drive project/site browsing pages without changing the current default site-level collection behavior.
+- Current resolver remains site-collection-only by design, with extension hooks ready for project/entity routing.
+
 ## Capture model indexing (research + proposal)
 - **Storage shape** (Postgres):
   - `capture_model_document` holds the full document tree in `document_data` (JSONB) and `search_strings` text (currently always empty). `target` is JSONB array of `{id,type}` URNs; indexed via ad-hoc jsonb path queries.
