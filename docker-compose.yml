@@ -50,6 +50,8 @@ services:
     build:
       context: services/madoc-ts
       dockerfile: Dockerfile.dev
+    security_opt:
+      - seccomp=unconfined
     volumes:
       - ./services/madoc-ts/dist:/home/node/app/dist:delegated
       - ./services/madoc-ts/src:/home/node/app/src
