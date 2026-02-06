@@ -1105,10 +1105,20 @@ export class ApiClient {
     });
   }
 
-  async getCollectionById(id: number, page = 0, type?: 'manifest' | 'collection', excluded?: number[]) {
+  async getCollectionById(
+    id: number,
+    page = 0,
+    type?: 'manifest' | 'collection',
+    excluded?: number[],
+    onlyPublished?: boolean
+  ) {
     if (excluded && excluded.length) {
       return this.request<CollectionFull>(
-        `/api/madoc/iiif/collections-bulk/${id}${page || type ? `?${stringify({ type, page })}` : ''}`,
+        `/api/madoc/iiif/collections-bulk/${id}${
+          page || type || typeof onlyPublished !== 'undefined'
+            ? `?${stringify({ type, page, published: onlyPublished })}`
+            : ''
+        }`,
         {
           body: {
             excluded,
@@ -1119,7 +1129,11 @@ export class ApiClient {
     }
 
     return this.request<CollectionFull>(
-      `/api/madoc/iiif/collections/${id}${page || type || excluded ? `?${stringify({ type, page, excluded })}` : ''}`
+      `/api/madoc/iiif/collections/${id}${
+        page || type || excluded || typeof onlyPublished !== 'undefined'
+          ? `?${stringify({ type, page, excluded, published: onlyPublished })}`
+          : ''
+      }`
     );
   }
 
