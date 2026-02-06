@@ -3,13 +3,13 @@ import React from 'react';
 import styled from 'styled-components';
 
 export type SnippetLargeProps = {
-  label: string | JSX.Element;
+  label: string | React.ReactNode;
   portrait?: boolean;
-  subtitle?: string | JSX.Element;
-  summary?: string | JSX.Element;
+  subtitle?: string | React.ReactNode;
+  summary?: string | React.ReactNode;
   thumbnail?: string | null;
   link: string;
-  buttonText: string | JSX.Element;
+  buttonText: string | React.ReactNode;
   linkAs?: any;
   lightBackground?: boolean;
   size?: 'lg' | 'md' | 'sm';
@@ -20,7 +20,7 @@ export type SnippetLargeProps = {
   smallLabel?: boolean;
   interactive?: boolean;
   query?: any;
-  placeholderIcon?: JSX.Element;
+  placeholderIcon?: React.ReactNode;
 };
 
 const sizeMap = {
@@ -123,11 +123,11 @@ export const SnippetThumbnailContainer = styled.div<{
   width: 6em;
   margin-right: 1rem;
   min-width: 6em;
- 
+
   img {
     z-index: 3;
   }
-  
+
   &[data-is-stacked='true'] {
     position: relative;
     padding: 0.4em;
@@ -135,7 +135,7 @@ export const SnippetThumbnailContainer = styled.div<{
     max-height: 6em;
     max-width: 6em;
     margin-right: 1rem;
-    
+
     img {
       border: 2px solid #fff;
       box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.2);
@@ -170,7 +170,7 @@ export const SnippetThumbnailContainer = styled.div<{
       transform: rotate(-3deg);
       z-index: 2;
     }
-    
+
     &[data-is-portrait='true'] {
       margin-bottom: 1rem;
       max-height: 11em;

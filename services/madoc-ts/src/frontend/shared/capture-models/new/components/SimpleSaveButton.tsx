@@ -27,7 +27,7 @@ export const SimpleSaveButton: EditorRenderingConfig['SubmitButton'] = ({ afterS
   const unsavedIds = Revisions.useStoreState(s => s.unsavedRevisionIds);
   const isUnsaved = currentRevision && unsavedIds.indexOf(currentRevision.revision.id) !== -1;
   const [isUpToDate, setIsUpToDate] = useState(true);
-  const latestRevision = useRef<any>();
+  const latestRevision = useRef<any>(undefined);
   const isUnMounting = useRef(false);
 
   useEffect(() => {

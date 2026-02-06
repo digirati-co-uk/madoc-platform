@@ -33,6 +33,7 @@ export const RevisionProviderWithFeatures: React.FC<{
     editor?: Partial<EditorConfig>;
     components?: Partial<EditorRenderingConfig>;
   };
+  children?: React.ReactNode;
   captureModel?: CaptureModel | undefined;
   initialRevision?: string | undefined;
   revision?: string | undefined;

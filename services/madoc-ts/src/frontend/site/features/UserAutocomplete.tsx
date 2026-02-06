@@ -40,7 +40,7 @@ export const UserAutocomplete: React.FC<UserAutoCompleteProps> = props => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const api = useApi();
-  const ref = useRef<any>();
+  const ref = useRef<any>(undefined);
 
   useEffect(() => {
     if (props.initialQuery) {

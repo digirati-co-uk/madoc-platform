@@ -60,8 +60,8 @@ const PreviewCrowdsourcingTask: React.FC<{
   const { data: taskData } = useApiTask<CrowdsourcingTask>(props.task.id);
   const { captureModel, canvas, project, modelStatus } = useCrowdsourcingTaskDetails(props.task);
   const { t } = useTranslation();
-  const gridRef = useRef<any>();
-  const runtime = useRef<Runtime>();
+  const gridRef = useRef<any>(undefined);
+  const runtime = useRef<Runtime>(undefined);
   const config = useReviewConfiguration();
   const [height, setHeight] = useState(600);
   const isLocked = props.lockedTasks && props.lockedTasks.indexOf(props.task.id) !== -1;

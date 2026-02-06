@@ -7,7 +7,7 @@ import { AdminHeader } from '../../molecules/AdminHeader';
 
 export const ExportSite: React.FC = () => {
   const api = useApi();
-  const downloadLink = useRef<string>();
+  const downloadLink = useRef<string>('');
 
   const [downloadSite, { isLoading: isDownloading, isSuccess }] = useMutation(async () => {
     const exportedJson = await api.request(`/api/madoc/site/1/export`, {

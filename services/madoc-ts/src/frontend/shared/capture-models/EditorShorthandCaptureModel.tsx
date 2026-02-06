@@ -60,7 +60,7 @@ export const EditShorthandCaptureModel = forwardRef(
     ref: React.Ref<EditorShorthandCaptureModelRef>
   ) => {
     const [search, setSearch] = useState('');
-    const revisionRef = useRef<{ store: Store<RevisionsModel> }>();
+    const revisionRef = useRef<{ store: Store<RevisionsModel> }>(undefined);
     useImperativeHandle(ref, () => ({
       getData() {
         const store = revisionRef.current?.store;

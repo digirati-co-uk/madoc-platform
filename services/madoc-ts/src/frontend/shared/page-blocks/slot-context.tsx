@@ -45,6 +45,7 @@ export const useSlots = () => {
 };
 
 type SlotProviderProps = {
+  children: React.ReactNode;
   pagePath?: string;
   slug?: string;
   context?: EditorialContext;
@@ -58,7 +59,7 @@ type SlotProviderProps = {
   beforeCreateSlot?: (slotReq: CreateSlotRequest) => void | Promise<void>;
 };
 
-export const CustomRouteContext: React.FC<{ ctx: Partial<EditorialContext> }> = ({ ctx, children }) => {
+export const CustomRouteContext: React.FC<{ ctx: Partial<EditorialContext>; children: React.ReactNode }> = ({ ctx, children }) => {
   const slots = useSlots();
 
   const newContext = useMemo(() => {

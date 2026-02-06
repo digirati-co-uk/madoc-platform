@@ -15,6 +15,7 @@ import styled, { css } from 'styled-components';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 
 type BreadcrumbContextType = {
+  children?: React.ReactNode;
   project?: { name: InternationalString; id: number | string };
   collection?: { name: InternationalString; id: number };
   manifest?: { name: InternationalString; id: number };

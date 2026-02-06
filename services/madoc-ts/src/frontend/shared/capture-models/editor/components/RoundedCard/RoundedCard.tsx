@@ -15,6 +15,7 @@ export type RoundedCardProps = {
   onClick?: any;
   onRemove?: () => void;
   removeMessage?: string;
+  children?: React.ReactNode;
 };
 
 const CardLabel = styled.label`

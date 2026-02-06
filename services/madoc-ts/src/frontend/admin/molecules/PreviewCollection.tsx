@@ -34,7 +34,7 @@ export const PreviewCollection: React.FC<{
   useVaultEffect(
     vault => {
       if (props.id) {
-        vault.loadCollection(props.id).then(col => {
+        vault.loadCollection(props.id).then((col: any) => {
           if (col?.type !== 'Collection') {
             setError('Invalid collection');
             return;
@@ -58,7 +58,7 @@ export const PreviewCollection: React.FC<{
         const mans: ManifestNormalized[] = [];
         await Promise.all(
           props.manifestIds.map(async id => {
-            await vault.loadManifest(id).then(man => {
+            await vault.loadManifest(id).then((man: any) => {
               if (man?.type !== 'Manifest') {
                 setError('Invalid manifest');
               } else {

@@ -15,6 +15,7 @@ export interface SlotProps {
   noSurface?: boolean;
   small?: boolean;
   source?: { type: string; id: string };
+  children?: React.ReactNode;
 }
 
 export const Slot: React.FC<SlotProps> = props => {

@@ -54,7 +54,7 @@ export function useHighlightedRegions() {
   return useContext(HighlightedRegions);
 }
 
-export const HighlightedRegionProvider: React.FC = ({ children }) => {
+export function HighlightedRegionProvider({ children }: { children?: React.ReactNode; }) {
   const [isActive, setIsActive] = useState(false);
   const [currentCollection, setCurrentCollection] = useState<HighlightedRegionContext['currentCollection']>();
   const [regionCollections, setRegionCollections] = useState<HighlightedRegionContext['regionCollections']>([]);

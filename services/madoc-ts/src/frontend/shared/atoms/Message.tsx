@@ -50,7 +50,7 @@ export const MessageContainer = styled.div`
   }
 `;
 
-export const Message: React.FC<{ id?: string; header?: string }> = ({ id, header, children }) => {
+export const Message: React.FC<{ id?: string; header?: string; children?: React.ReactNode }> = ({ id, header, children }) => {
   const [isOpen, setIsOpen] = useLocalStorage(`message-collapse-${id || 'default'}`, true);
 
   return (

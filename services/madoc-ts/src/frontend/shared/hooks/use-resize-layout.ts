@@ -31,10 +31,10 @@ export function useResizeLayout(
     onDragEnd?: () => void;
   } = {}
 ) {
-  const container = useRef<HTMLDivElement | undefined>();
-  const resizableDiv = useRef<HTMLDivElement | undefined>();
-  const otherDiv = useRef<HTMLDivElement | undefined>();
-  const resizer = useRef<HTMLDivElement | undefined>();
+  const container = useRef<HTMLDivElement | undefined>(undefined);
+  const resizableDiv = useRef<HTMLDivElement | undefined>(undefined);
+  const otherDiv = useRef<HTMLDivElement | undefined>(undefined);
+  const resizer = useRef<HTMLDivElement | undefined>(undefined);
   const newPct = useRef(0.5);
   const [isDragging, setIsDragging] = useState(false);
   const isEventDragging = useRef(false);

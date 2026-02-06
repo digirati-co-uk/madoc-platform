@@ -26,7 +26,7 @@ const BlockCreatorForm: React.FC<{
   context?: EditorialContext;
   onSave: (block: SiteBlock) => void | Promise<void>;
 }> = props => {
-  const latestPreview = useRef<SiteBlock | SiteBlockRequest | undefined>();
+  const latestPreview = useRef<SiteBlock | SiteBlockRequest | undefined>(undefined);
   const { saveChanges, editor, preview, canSubmit } = useBlockEditor(
     props.block,
     newBlock => (latestPreview.current = newBlock)

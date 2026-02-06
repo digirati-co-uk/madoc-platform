@@ -64,7 +64,7 @@ export const AutocompleteField: FieldComponent<AutocompleteFieldProps> = props =
   const [hasFetched, setHasFetched] = useState(false);
   const [error, setError] = useState('');
   const api = useOptionalApi();
-  const pendingFetch = useRef<AbortController>();
+  const pendingFetch = useRef<AbortController>(undefined);
   const onOptionChange = (option: CompletionItem | undefined) => {
     if (!option) {
       props.updateValue(undefined);

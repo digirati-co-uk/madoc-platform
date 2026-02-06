@@ -7,7 +7,7 @@ import { specification as canvasExplorer } from '../../../extensions/capture-mod
 import { PluginStore } from '../capture-models/types/plugin-store';
 import { PluginContext } from '../capture-models/plugin-api/context';
 
-export const CustomEditorTypes: React.FC = ({ children }) => {
+export const CustomEditorTypes: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
   const customStore: PluginStore = useMemo(() => {
     return {
       ...pluginStore,

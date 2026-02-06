@@ -37,8 +37,8 @@ export const SimpleAtlasViewer = React.forwardRef<
 >(function SimpleAtlasViewer({ style = { height: 600 }, highlightedRegions, unstable_webglRenderer, isModel }, ref) {
   const { t } = useTranslation();
   const canvas = useCanvas();
-  const runtime = useRef<Runtime>();
-  const osd = useRef<any>();
+  const runtime = useRef<Runtime>(undefined);
+  const osd = useRef<any>(undefined);
   const { data: service } = useImageService();
   const {
     project: { atlasBackground },

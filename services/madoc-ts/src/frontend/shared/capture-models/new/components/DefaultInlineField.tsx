@@ -68,7 +68,7 @@ export const InlineInteractiveValue: React.FC<{
   }, 100);
 
   const updateValue = useCallback(
-    newValue => {
+    (newValue: any) => {
       setValue(newValue);
       updateValueProps(newValue);
     },

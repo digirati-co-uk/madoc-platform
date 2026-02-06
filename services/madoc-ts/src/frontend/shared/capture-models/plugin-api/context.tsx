@@ -7,7 +7,7 @@ export const PluginContext = React.createContext<PluginStore>(pluginStore);
 
 PluginContext.displayName = 'Plugins';
 
-export const PluginProvider: React.FC = ({ children }) => {
+export const PluginProvider: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
   return <PluginContext.Provider value={pluginStore}>{children}</PluginContext.Provider>;
 };
 

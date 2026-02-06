@@ -379,6 +379,7 @@ export const Select = React.forwardRef<SelectRef, SelectProps>(function SafeFunc
       allowsCustomValue={true}
       allowsEmptyCollection
       isDisabled={isDisabled}
+      // @ts-ignore
       isOpen={isOpen}
       selectedKey={isMulti ? null : selectedKey}
       inputValue={inputValue}

@@ -26,6 +26,7 @@ export type EditorContentVariations = {
   height?: number;
   onCreated?: (preset: Preset) => void;
   onPanInSketchMode?: () => void;
+  children?: React.ReactNode;
 };
 
 export const EditorContentViewer: React.FC<EditorContentVariations> = ({

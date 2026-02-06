@@ -53,7 +53,7 @@ export const FieldWrapper: React.FC<Props> = ({
   const { t } = useTranslation();
   const [value, setValue] = useState(field.value);
   const updateValue = useCallback(
-    newValue => {
+    (newValue: any) => {
       setValue(newValue);
       onUpdateValue(newValue);
     },

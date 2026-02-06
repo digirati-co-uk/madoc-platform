@@ -46,14 +46,12 @@ type ButtonDropdownItem = {
 };
 
 export function ButtonDropdown<
-  Comp extends keyof JSX.IntrinsicElements | JSXElementConstructor<any>,
-  ExtraProps extends ComponentProps<Comp>
->({
+  Comp extends keyof JSX.IntrinsicElements | JSXElementConstructor<any>>({
   as: Component,
   items,
   children,
   ...props
-}: PropsWithChildren<{ as: Comp; items: Array<ButtonDropdownItem> } & ExtraProps>) {
+}: PropsWithChildren<{ as: Comp; items: Array<ButtonDropdownItem> } & any>) {
   const { buttonProps, itemProps, isOpen, setIsOpen } = useDropdownMenu(items.length, {
     disableFocusFirstItemOnClick: items.length === 0,
   });
