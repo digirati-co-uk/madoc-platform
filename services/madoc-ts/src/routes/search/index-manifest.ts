@@ -4,7 +4,14 @@ import {
   getSingleManifest,
   mapManifestSnippets,
 } from '../../database/queries/get-manifest-snippets';
+import { getManifestResourcesForSearchExport } from '../../database/queries/search-index-export';
 import { api } from '../../gateway/api.server';
+import { buildManifestTypesenseDocuments } from '../../search/typesense/build-manifest-documents';
+import {
+  getTypesenseSiteCollectionName,
+  isTypesenseSearchEnabled,
+  TypesenseClient,
+} from '../../search/typesense/typesense-client';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { optionalUserWithScope } from '../../utility/user-with-scope';
 
@@ -18,6 +25,49 @@ export const indexManifest: RouteMiddleware<{ id: string }> = async context => {
   if (site.config.disableSearchIndexing && !forceIndex) {
     console.log('Search: indexing skipped, Manifest(%d) Site(%d)', manifestId, siteId);
     context.response.body = { noSearch: true };
+    return;
+  }
+
+  if (isTypesenseSearchEnabled()) {
+    const [resources, collectionsWithin, projectsWithin] = await Promise.all([
+      context.connection.any(getManifestResourcesForSearchExport(manifestId, Number(siteId))),
+      context.connection.any<{ resource_id: number }>(
+        sql`select cols.resource_id from iiif_derived_resource_items cols
+            left join iiif_derived_resource ir on ir.resource_id = cols.resource_id
+            where item_id = ${manifestId} and cols.site_id = ${Number(siteId)} and ir.flat = false`
+      ),
+      context.connection.any<{ id: number }>(
+        sql`select ip.id from iiif_derived_resource_items cols
+            left join iiif_derived_resource ir on ir.resource_id = cols.resource_id
+            left join iiif_project ip on ip.collection_id = ir.resource_id
+            where item_id = ${manifestId} and cols.site_id = ${Number(siteId)} and ir.flat = true`
+      ),
+    ]);
+
+    if (!resources.length) {
+      context.response.body = { noSearch: true };
+      return;
+    }
+
+    const documents = buildManifestTypesenseDocuments(resources, {
+      siteId: Number(siteId),
+      siteUrn,
+      manifestId,
+      collectionIds: collectionsWithin.map(({ resource_id }) => resource_id),
+      projectIds: projectsWithin.map(({ id }) => id),
+    });
+
+    const collectionName = getTypesenseSiteCollectionName(Number(siteId));
+    const typesense = new TypesenseClient();
+    await typesense.ensureSearchCollection(collectionName);
+    const importResult = await typesense.upsertDocuments(collectionName, documents);
+
+    context.response.body = {
+      indexed: documents.length,
+      backend: 'typesense',
+      collection: collectionName,
+      importResult,
+    };
     return;
   }
 
