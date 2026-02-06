@@ -10,7 +10,6 @@ export const siteSearch: RouteMiddleware<
   SearchQuery & { projectId?: string | number; collectionId?: number; manifestId?: number }
 > = async context => {
   const { page, madoc_id } = context.query;
-
   const id = context.state.jwt?.user.id;
   const name = context.state.jwt?.user.name;
   const site = await context.siteManager.getSiteBySlug(context.params.slug);
@@ -52,5 +51,5 @@ export const siteSearch: RouteMiddleware<
     delete searchQuery.iiif_type;
   }
 
-  context.response.body = await siteApi.searchQuery(searchQuery, page, madoc_id);
+  context.response.body = await siteApi.searchQuery(searchQuery, Number(page) || 1, madoc_id);
 };
