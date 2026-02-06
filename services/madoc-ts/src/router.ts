@@ -141,6 +141,17 @@ import { getProjectNote } from './routes/projects/get-project-note';
 import { updateCuratedFeed } from './routes/projects/update-curated-feed';
 import { updateProjectNote } from './routes/projects/update-project-note';
 import { fullReindex } from './routes/search/full-reindex';
+import { typesenseGetContext, typesenseListContexts } from './routes/search/typesense-contexts';
+import {
+  typesenseGetIndexable,
+  typesenseGetModel,
+  typesenseIndexRawIndexable,
+  typesenseIngestModelIndexables,
+  typesenseListIndexables,
+  typesenseListModels,
+} from './routes/search/typesense-indexables';
+import { typesenseDeleteIIIF, typesenseGetIIIF, typesenseIngestIIIF, typesenseListIIIF } from './routes/search/typesense-iiif';
+import { typesenseQuery } from './routes/search/typesense-query';
 import { siteCanvasSource } from './routes/site/site-canvas-reference';
 import { siteManifestModels } from './routes/site/site-manifest-models';
 import { siteMetadata } from './routes/site/site-metadata';
@@ -370,6 +381,21 @@ export const router = new TypedRouter({
     '/api/madoc/configuration/search-facets',
     updateFacetConfiguration,
   ],
+  'madoc-search-query': [TypedRouter.POST, '/api/madoc/search', typesenseQuery],
+  'madoc-search-query-get': [TypedRouter.GET, '/api/madoc/search', typesenseQuery],
+  'search-index-iiif': [TypedRouter.POST, '/api/search/iiif', typesenseIngestIIIF],
+  'search-reindex-iiif': [TypedRouter.PUT, '/api/search/iiif/:id', typesenseIngestIIIF],
+  'search-list-iiif': [TypedRouter.GET, '/api/search/iiif', typesenseListIIIF],
+  'search-get-iiif': [TypedRouter.GET, '/api/search/iiif/:id', typesenseGetIIIF],
+  'search-delete-iiif': [TypedRouter.DELETE, '/api/search/iiif/:id', typesenseDeleteIIIF],
+  'search-index-model': [TypedRouter.POST, '/api/search/model', typesenseIngestModelIndexables],
+  'search-list-model': [TypedRouter.GET, '/api/search/model', typesenseListModels],
+  'search-get-model': [TypedRouter.GET, '/api/search/model/:id', typesenseGetModel],
+  'search-index-indexable': [TypedRouter.POST, '/api/search/indexables', typesenseIndexRawIndexable],
+  'search-list-indexable': [TypedRouter.GET, '/api/search/indexables', typesenseListIndexables],
+  'search-get-indexable': [TypedRouter.GET, '/api/search/indexables/:id', typesenseGetIndexable],
+  'search-list-contexts': [TypedRouter.GET, '/api/search/contexts', typesenseListContexts],
+  'search-get-context': [TypedRouter.GET, '/api/search/contexts/:id', typesenseGetContext],
   'update-metadata-configuration': [TypedRouter.POST, '/api/madoc/configuration/metadata', updateMetadataConfiguration],
   'site-details': [TypedRouter.GET, '/api/madoc/site/:siteId/details', getSiteDetails],
 

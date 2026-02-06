@@ -19,7 +19,6 @@ services:
       - config-service
       - storage-api
       - okra
-      - search
     links:
       - tasks-api
       - model-api
@@ -27,7 +26,6 @@ services:
       - config-service
       - storage-api
       - okra
-      - search
 
   madoc-ts-vite:
     build:
@@ -91,9 +89,16 @@ services:
       - MADOC_INTERNAL_SUBREQUESTS=${MADOC_INTERNAL_SUBREQUESTS:-false}
       - MADOC_INTERNAL_SUBREQUESTS_MAX_DEPTH=${MADOC_INTERNAL_SUBREQUESTS_MAX_DEPTH:-5}
       - MADOC_INTERNAL_SUBREQUESTS_DEBUG=${MADOC_INTERNAL_SUBREQUESTS_DEBUG:-false}
+      - SEARCH_USE_TYPESENSE=${SEARCH_USE_TYPESENSE:-true}
+      - TYPESENSE_PROTOCOL=${TYPESENSE_PROTOCOL:-http}
+      - TYPESENSE_HOST=${TYPESENSE_HOST:-typesense}
+      - TYPESENSE_PORT=${TYPESENSE_PORT:-8108}
+      - TYPESENSE_API_KEY=${TYPESENSE_API_KEY:-xyz}
+      - TYPESENSE_COLLECTION_PREFIX=${TYPESENSE_COLLECTION_PREFIX:-madoc}
     links:
       - shared-postgres
       - madoc-ts-vite
+      - typesense
 
   tasks-api:
     tty: true
@@ -187,6 +192,14 @@ services:
       - ./var/files/storage-api:/home/node/app/files
     links:
       - shared-postgres
+
+  typesense:
+    image: typesense/typesense:0.25.2
+    command: "--data-dir /data --api-key=${TYPESENSE_API_KEY:-xyz} --enable-cors"
+    ports:
+      - "${PORTS_TYPESENSE:-8108}:8108"
+    volumes:
+      - ./var/typesense:/data
 
   search:
     image: ghcr.io/digirati-co-uk/madoc-search-service:247f854b1258e3971907e6912cef2374a1da8474

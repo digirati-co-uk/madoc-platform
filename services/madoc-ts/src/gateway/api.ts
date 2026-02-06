@@ -105,6 +105,19 @@ export type ApiClientWithoutExtensions = Omit<
   | 'cloneCaptureModel'
 >;
 
+function isTypesenseSearchEnabledForApi() {
+  const raw = process.env.SEARCH_USE_TYPESENSE;
+  if (!raw) {
+    return false;
+  }
+  const normalized = `${raw}`.toLowerCase();
+  return normalized === '1' || normalized === 'true' || normalized === 'yes' || normalized === 'on';
+}
+
+function getSearchQueryEndpoint() {
+  return isTypesenseSearchEnabledForApi() ? '/api/madoc/search' : '/api/search/search';
+}
+
 export class ApiClient {
   private readonly gateway: string;
   private readonly isServer: boolean;
@@ -988,7 +1001,7 @@ export class ApiClient {
         facets: [],
       };
     return await this.request<SearchResponse>(
-      `/api/search/search?${stringify({ fulltext: searchTerm, page: pageQuery, facetType, facetValue })}`
+      `${getSearchQueryEndpoint()}?${stringify({ fulltext: searchTerm, page: pageQuery, facetType, facetValue })}`
     );
   }
 
@@ -2114,7 +2127,7 @@ export class ApiClient {
 
   // Search API
   async searchQuery(query: SearchQuery, page = 1, madoc_id?: string) {
-    return this.request<SearchResponse>(`/api/search/search?${stringify({ page, madoc_id })}`, {
+    return this.request<SearchResponse>(`${getSearchQueryEndpoint()}?${stringify({ page, madoc_id })}`, {
       method: 'POST',
       body: query,
     });
@@ -2203,7 +2216,7 @@ export class ApiClient {
   }
 
   async getIndexedManifestById(madoc_id: string) {
-    return this.request<SearchResponse>(`/api/search/search?${stringify({ madoc_id })}`, {
+    return this.request<SearchResponse>(`${getSearchQueryEndpoint()}?${stringify({ madoc_id })}`, {
       method: 'GET',
     });
   }
@@ -2273,7 +2286,7 @@ export class ApiClient {
   }
 
   async getIndexedCanvasById(madoc_id: string) {
-    return this.request<SearchResponse>(`/api/search/search?${stringify({ madoc_id })}`, {
+    return this.request<SearchResponse>(`${getSearchQueryEndpoint()}?${stringify({ madoc_id })}`, {
       method: 'GET',
     });
   }

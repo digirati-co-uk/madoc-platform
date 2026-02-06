@@ -1,5 +1,6 @@
 import { ApiClient } from '../api';
 import { BaseTask } from './base-task';
+import { castBool } from '../../utility/cast-bool';
 
 export const type = 'search-index-task';
 
@@ -57,6 +58,8 @@ export function createTask(
 }
 
 export const jobHandler = async (name: string, taskId: string, api: ApiClient) => {
+  const useTypesenseManifestIndexing = castBool(process.env.SEARCH_USE_TYPESENSE, false);
+
   switch (name) {
     case 'created': {
       try {
@@ -90,6 +93,11 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
             try {
               //   - Ingest manifest.
               await api.indexManifest(resource.id);
+
+              if (useTypesenseManifestIndexing) {
+                await api.updateTask(taskId, { status: 3 });
+                break;
+              }
 
               //   - Create task for each canvas as sub tasks.
               const manifestStructure = await siteApi.getManifestStructure(resource.id);
