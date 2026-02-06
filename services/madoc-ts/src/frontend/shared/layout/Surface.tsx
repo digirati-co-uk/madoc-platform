@@ -77,6 +77,7 @@ export type SurfaceProps = {
   marginBottom?: 'none' | 'sm' | 'md' | 'lg';
   fontSize?: 'sm' | 'md' | 'lg';
   fontWeight?: '400' | '500' | '700' | '300';
+  children?: React.ReactNode;
 };
 
 export const Surface: React.FC<SurfaceProps> = ({

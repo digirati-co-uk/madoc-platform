@@ -1,0 +1,57 @@
+name: Config Service CI
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/config-service.yaml"
+      - "services/config-service/**"
+      - "docker-compose.yml"
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/config-service.yaml"
+      - "services/config-service/**"
+      - "docker-compose.yml"
+
+jobs:
+  config-service:
+    runs-on: ubuntu-latest
+    name: Build, Test, Docker
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Setup pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@9.15.9 --activate
+
+      - name: Get pnpm store
+        id: pnpm-cache
+        run: echo "dir=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v4
+        with:
+          path: ${{ steps.pnpm-cache.outputs.dir }}
+          key: ${{ runner.os }}-pnpm-config-service-${{ hashFiles('services/config-service/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-config-service-
+
+      - name: Install dependencies
+        working-directory: services/config-service
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        working-directory: services/config-service
+        run: pnpm run build
+
+      - name: Test
+        working-directory: services/config-service
+        run: pnpm run test
+
+      - name: Build Docker image
+        run: docker build -f services/config-service/Dockerfile services/config-service

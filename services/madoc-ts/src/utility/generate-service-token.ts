@@ -1,5 +1,5 @@
-import { JWK, JWT } from 'jose';
-import { getPem } from './get-pem';
+import { SignJWT } from 'jose';
+import { getPrivateKey } from './jose-keys';
 
 export type ServiceTokenRequest = {
   scope: string[];
@@ -9,25 +9,20 @@ export type ServiceTokenRequest = {
   };
 };
 
-export function generateServiceToken(req: ServiceTokenRequest) {
+export async function generateServiceToken(req: ServiceTokenRequest) {
   try {
-    return JWT.sign(
-      {
-        scope: req.scope ? req.scope.join(' ') : undefined,
-        iss_name: 'Madoc Platform Gateway',
-        name: req.service.name,
-        service: true,
-      },
-      JWK.asKey(getPem()),
-      {
-        subject: `urn:madoc:service:${req.service.id}`,
-        issuer: `urn:madoc:gateway`,
-        header: {
-          typ: 'JWT',
-          alg: 'RS256',
-        },
-      }
-    );
+    const key = await getPrivateKey();
+    return await new SignJWT({
+      scope: req.scope ? req.scope.join(' ') : undefined,
+      iss_name: 'Madoc Platform Gateway',
+      name: req.service.name,
+      service: true,
+    })
+      .setProtectedHeader({ typ: 'JWT', alg: 'RS256' })
+      .setSubject(`urn:madoc:service:${req.service.id}`)
+      .setIssuer(`urn:madoc:gateway`)
+      .setIssuedAt()
+      .sign(key);
   } catch (err) {
     console.log(err);
     return undefined;

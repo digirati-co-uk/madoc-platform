@@ -1,5 +1,5 @@
 import { stringify } from 'query-string';
-import { CompletionItem } from '../../../frontend/shared/capture-models/editor/input-types/AutocompleteField/AutocompleteField';
+import type { CompletionItem } from '../../../frontend/shared/capture-models/editor/input-types/AutocompleteField/AutocompleteField';
 import { RequestError } from '../../../utility/errors/request-error';
 import { CompletionSource } from '../types';
 

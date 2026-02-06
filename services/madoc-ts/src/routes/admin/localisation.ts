@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import { sql } from 'slonik';
 import { Headers } from 'node-fetch';
 import invariant from 'tiny-invariant';
-import { TextFieldProps } from '../../frontend/shared/capture-models/editor/input-types/TextField/TextField';
+import type { TextFieldProps } from '../../frontend/shared/capture-models/editor/input-types/TextField/TextField';
 import { traverseDocument } from '../../frontend/shared/capture-models/helpers/traverse-document';
 import { calculateTranslationProgress } from '../../frontend/shared/utility/calculate-translation-progress';
 import { ApiClientWithoutExtensions } from '../../gateway/api';
@@ -14,7 +14,7 @@ import { castBool } from '../../utility/cast-bool';
 import { parseEtag } from '../../utility/parse-etag';
 import { traverseStructure } from '../../utility/traverse-structure';
 import { optionalUserWithScope, userWithScope } from '../../utility/user-with-scope';
-import { CheckboxFieldProps } from '../../frontend/shared/capture-models/editor/input-types/CheckboxField/CheckboxField';
+import type { CheckboxFieldProps } from '../../frontend/shared/capture-models/editor/input-types/CheckboxField/CheckboxField';
 
 export type LocalisationSiteConfig = {
   defaultLanguage: string;

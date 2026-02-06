@@ -1,0 +1,4 @@
+interface:
+  display_name: "Madoc TS Automation Bots"
+  short_description: "Bot definitions and task automation"
+  default_prompt: "Use $automation-bots to add or update automation bots."

@@ -27,7 +27,7 @@ export function useSiteConfiguration() {
   return useContext(Context);
 }
 
-export const ConfigProvider: React.FC<{ project?: Partial<ProjectConfiguration>; navigation?: SitePage[] }> = props => {
+export const ConfigProvider: React.FC<{ children?: React.ReactNode; project?: Partial<ProjectConfiguration>; navigation?: SitePage[] }> = props => {
   const ctx = useSiteConfiguration();
   const [editMode, setEditMode] = useState(false);
 

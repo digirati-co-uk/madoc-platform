@@ -4,7 +4,7 @@ import mitt from 'mitt';
 const lsEmitter = mitt();
 
 export function useLocalStorage<T>(key: string, initialValue?: T) {
-  const lastStoredValue = useRef<string>();
+  const lastStoredValue = useRef<string>('');
 
   // State to store our value
   // Pass initial state function to useState so logic is only executed once

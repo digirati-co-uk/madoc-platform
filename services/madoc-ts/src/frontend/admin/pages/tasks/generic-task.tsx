@@ -12,7 +12,7 @@ import { HrefLink } from '../../../shared/utility/href-link';
 import { useTaskMetadata } from '../../../site/hooks/use-task-metadata';
 import { SortedTaskList } from '../../molecules/SortedTaskList';
 
-export const GenericTask: React.FC<{ task: BaseTask; statusBar?: JSX.Element; snippet?: JSX.Element }> = ({
+export const GenericTask: React.FC<{ task: BaseTask; statusBar?: React.ReactNode; snippet?: React.ReactNode }> = ({
   task,
   statusBar,
   snippet,

@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components';
 import { extractBlockDefinitions } from '../../../extensions/page-blocks/block-editor-react';
 import { EditorialContext, SiteBlock, SiteSlot } from '../../../types/schemas/site-page';
 import { CloseIcon } from '../icons/CloseIcon';
-import { Button, ButtonRow, TinyButton } from '../navigation/Button';
+import { Button, ButtonRow } from '../navigation/Button';
 import { SurfaceProps } from '../layout/Surface';
 import { ModalButton } from '../components/Modal';
 import { useApi } from '../hooks/use-api';
@@ -15,10 +15,9 @@ import { BlockEditorForm } from './block-editor';
 import { BlockLabel } from './block-label';
 import { BlockLanguageEditor } from './block-language-editor';
 import { ExplainSlot } from './explain-slot';
-import { PageEditorButton } from './PageEditor';
 import { ErrorMessage } from '../callouts/ErrorMessage';
 import { RenderBlock } from './render-block';
-import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 import {
   SlotEditorContainer,
   SlotEditorButton,
@@ -29,6 +28,7 @@ import {
 import { SlotLayout } from '../layout/SlotLayout';
 import { SurfaceEditor } from './surface-editor';
 import { CustomEditorTypes } from './custom-editor-types';
+import { getValue } from '@iiif/helpers';
 
 type SlotEditorProps = {
   slot: SiteSlot;
@@ -199,7 +199,7 @@ export const SlotEditor: React.FC<SlotEditorProps> = props => {
     return (
       <div>
         <SlotEditorContainer>
-          <SlotEditorLabel>{props.slot.label || props.slot.slotId}</SlotEditorLabel>
+          <SlotEditorLabel>{getValue(props.slot.label) || props.slot.slotId}</SlotEditorLabel>
 
           <SlotEditorButton onClick={() => setIsResetting(false)}>Cancel</SlotEditorButton>
           <SlotEditorButton onClick={() => removeSlot()}>Confirm reset</SlotEditorButton>
@@ -218,7 +218,7 @@ export const SlotEditor: React.FC<SlotEditorProps> = props => {
   return (
     <CustomEditorTypes>
       <SlotEditorContainer>
-        {props.small ? null : <SlotEditorLabel>{props.slot.label || props.slot.slotId}</SlotEditorLabel>}
+        {props.small ? null : <SlotEditorLabel>{getValue(props.slot.label) || props.slot.slotId}</SlotEditorLabel>}
         <SlotEditorButton
           onClick={() => {
             setIsEditing(e => !e);

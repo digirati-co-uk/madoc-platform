@@ -38,7 +38,7 @@ export const TranslationInput: React.FC<{ id: string; label: any; value: string;
   value,
   onChange,
 }) => {
-  const ref = useRef<HTMLInputElement>();
+  const ref = useRef<HTMLInputElement>(undefined);
   const [isFocus, setFocus] = useState(false);
 
   useBrowserLayoutEffect(() => {

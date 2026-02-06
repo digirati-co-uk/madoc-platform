@@ -1,0 +1,4 @@
+interface:
+  display_name: "Madoc TS Extensions Framework"
+  short_description: "Extension lifecycle and registry"
+  default_prompt: "Use -framework to add or inspect Madoc TS extensions."

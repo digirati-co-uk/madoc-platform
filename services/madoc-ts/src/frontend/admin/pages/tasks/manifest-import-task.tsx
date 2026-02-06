@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { ManifestSnippet } from '../../../shared/features/ManifestSnippet';
 import { GenericTask } from './generic-task';
 
-export const ManifestImportTask: React.FC<{ task: ImportManifestTask; statusBar?: JSX.Element }> = ({
+export const ManifestImportTask: React.FC<{ task: ImportManifestTask; statusBar?: React.ReactNode }> = ({
   task,
   statusBar,
 }) => {

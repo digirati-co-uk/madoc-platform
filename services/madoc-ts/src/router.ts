@@ -78,6 +78,7 @@ import { deleteUserSiteRole } from './routes/manage-site/delete-user-site-role';
 import { getInvitation } from './routes/manage-site/get-invitation';
 import { getSiteUsers } from './routes/manage-site/get-site-users';
 import { listJobs, runJob } from './routes/admin/list-jobs';
+import { queueStatus } from './routes/admin/queue-status';
 import {
   extractLocalesFromContent,
   getLocalisation,
@@ -129,7 +130,7 @@ import { getAllProjectNotes } from './routes/projects/get-all-project-notes';
 import { siteCompletions } from './routes/site/site-completions';
 import { siteDetails } from './routes/site/site-details';
 import { deleteManifestSummary } from './routes/iiif/manifests/delete-manifest-summary';
-import { siteManifestBuild } from './routes/site/site-manifest-build';
+import { siteManifestBuild, siteManifestBuildOptions } from './routes/site/site-manifest-build';
 import { createMedia } from './routes/media/create-media';
 import { deleteMedia } from './routes/media/delete-media';
 import { generateThumbnails } from './routes/media/generate-thumbnails';
@@ -291,6 +292,7 @@ export const router = new TypedRouter({
   'pm2-restart-queue': [TypedRouter.POST, '/api/madoc/pm2/restart/queue', pm2RestartQueue],
   'pm2-restart-madoc': [TypedRouter.POST, '/api/madoc/pm2/restart/madoc', pm2RestartMadoc],
   'pm2-restart-scheduler': [TypedRouter.POST, '/api/madoc/pm2/restart/scheduler', pm2RestartScheduler],
+  'queue-status': [TypedRouter.GET, '/api/madoc/queue/status', queueStatus],
   'cron-jobs': [TypedRouter.GET, '/api/madoc/cron/jobs', listJobs],
   'run-cron-jobs': [TypedRouter.POST, '/api/madoc/cron/jobs/:jobId/run', runJob],
   'regenerate-keys': [TypedRouter.POST, '/api/madoc/system/key-regen', keyRegenerate],
@@ -631,9 +633,9 @@ export const router = new TypedRouter({
 
   // Pages
   'create-page': [TypedRouter.POST, '/api/madoc/pages', createPage],
-  'get-page': [TypedRouter.GET, '/api/madoc/pages/root/:paths*', getPage],
-  'delete-page': [TypedRouter.DELETE, '/api/madoc/pages/root/:paths*', deletePage],
-  'update-page': [TypedRouter.PUT, '/api/madoc/pages/root/:paths*', updatePage],
+  'get-page': [TypedRouter.GET, '/api/madoc/pages/root{/*paths}', getPage],
+  'delete-page': [TypedRouter.DELETE, '/api/madoc/pages/root{/*paths}', deletePage],
+  'update-page': [TypedRouter.PUT, '/api/madoc/pages/root{/*paths}', updatePage],
   'get-all-pages': [TypedRouter.GET, '/api/madoc/pages', getAllPages],
   'get-link-autocomplete': [TypedRouter.GET, '/api/madoc/links/autocomplete', linkAutocomplete],
 
@@ -714,8 +716,8 @@ export const router = new TypedRouter({
     '/s/:slug/madoc/api/projects/:projectSlug/manifest-tasks/:manifestId',
     siteManifestTasks,
   ],
-  'site-page': [TypedRouter.GET, '/s/:slug/madoc/api/page/root/:paths*', sitePages],
-  'site-static-page': [TypedRouter.GET, '/s/:slug/madoc/api/page/static/root/:paths*', getStaticPage],
+  'site-page': [TypedRouter.GET, '/s/:slug/madoc/api/page/root{/*paths}', sitePages],
+  'site-static-page': [TypedRouter.GET, '/s/:slug/madoc/api/page/static/root{/*paths}', getStaticPage],
   'site-resolve-slot': [TypedRouter.GET, '/s/:slug/madoc/api/slots', resolveSlots],
   'site-project': [TypedRouter.GET, '/s/:slug/madoc/api/projects/:projectSlug', siteProject],
   'site-project-updates': [TypedRouter.GET, '/s/:slug/madoc/api/projects/:projectSlug/updates', siteProjectUpdates],
@@ -753,7 +755,7 @@ export const router = new TypedRouter({
   'site-configuration': [TypedRouter.GET, '/s/:slug/madoc/api/configuration', siteConfiguration],
   'site-completion': [TypedRouter.GET, '/s/:slug/madoc/api/completions/:type', siteCompletions],
   'site-model-configuration': [TypedRouter.GET, '/s/:slug/madoc/api/configuration/model', siteModelConfiguration],
-  'site-page-navigation': [TypedRouter.GET, '/s/:slug/madoc/api/pages/navigation/:paths*', sitePageNavigation],
+  'site-page-navigation': [TypedRouter.GET, '/s/:slug/madoc/api/pages/navigation{/*paths}', sitePageNavigation],
   'site-facet-configuration': [
     TypedRouter.GET,
     '/s/:slug/madoc/api/configuration/search-facets',
@@ -774,8 +776,26 @@ export const router = new TypedRouter({
   // To be worked into API calling methods
   'manifest-search': [TypedRouter.GET, '/s/:slug/madoc/api/manifests/:id/search/1.0', searchManifest],
   // 'manifest-export': [TypedRouter.GET, '/s/:slug/madoc/api/manifests/:id/export/source', exportManifest],
+  'manifest-build-options': [
+    TypedRouter.OPTIONS,
+    '/s/:slug/madoc/api/manifests/:id/export/:version',
+    siteManifestBuildOptions,
+    { isPublic: true },
+  ],
   'manifest-build': [TypedRouter.GET, '/s/:slug/madoc/api/manifests/:id/export/:version', siteManifestBuild],
+  'collection-build-options': [
+    TypedRouter.OPTIONS,
+    '/s/:slug/madoc/api/collections/:id/export/:version',
+    siteManifestBuildOptions,
+    { isPublic: true },
+  ],
   'collection-build': [TypedRouter.GET, '/s/:slug/madoc/api/collections/:id/export/:version', siteManifestBuild],
+  'manifest-project-build-options': [
+    TypedRouter.OPTIONS,
+    '/s/:slug/madoc/api/projects/:projectSlug/export/manifest/:id/:version',
+    siteManifestBuildOptions,
+    { isPublic: true },
+  ],
   'manifest-project-build': [
     TypedRouter.GET,
     '/s/:slug/madoc/api/projects/:projectSlug/export/manifest/:id/:version',
@@ -806,9 +826,9 @@ export const router = new TypedRouter({
   'captcha-redeem': [TypedRouter.POST, '/s/:slug/madoc/api/captcha/redeem', captchaRedeem],
 
   // Frontend
-  'admin-frontend': [TypedRouter.GET, '/s/:slug/admin(.*)', adminFrontend],
+  'admin-frontend': [TypedRouter.GET, '/s/:slug/admin{/*path}', adminFrontend],
   'site-frontend-root': [TypedRouter.GET, '/s/:slug', siteFrontend],
-  'site-frontend': [TypedRouter.GET, '/s/:slug/(.*)', siteFrontend],
+  'site-frontend': [TypedRouter.GET, '/s/:slug{/*path}', siteFrontend],
 
   // Make sure this is last.
   'site-root': [TypedRouter.GET, '/', siteRoot],

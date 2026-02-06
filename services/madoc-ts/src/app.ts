@@ -12,6 +12,8 @@ import { CompletionsExtension } from './extensions/completions/extension';
 import { createPluginManager } from './middleware/create-plugin-manager';
 import { disposeApis } from './middleware/dispose-apis';
 import { errorHandler } from './middleware/error-handler';
+import { createKoaInternalRequestRunner, setInternalRequestRunner } from './gateway/internal-request';
+import { internalSubrequestContext } from './middleware/internal-subrequest-context';
 import { HTML_ADMIN_PATH, HTML_SITE_PATH, SCHEMAS_PATH } from './paths';
 import { EnvConfig } from './types/env-config';
 import { createAwaiter } from './utility/awaiter';
@@ -40,6 +42,7 @@ const { readFile, readdir } = promises;
 
 export async function createApp(config: ExternalConfig, env: EnvConfig) {
   const app = new Koa();
+  setInternalRequestRunner(createKoaInternalRequestRunner(app));
   const pool = createPostgresPool(env.postgres);
   const i18nextPromise = createBackend();
   const { awaitProperty, awaiter } = createAwaiter();
@@ -111,6 +114,7 @@ export async function createApp(config: ExternalConfig, env: EnvConfig) {
 
   app.use(k2c(cookieParser(app.keys)));
   app.use(postgresConnection(pool, config.pooledDatabase, env));
+  app.use(internalSubrequestContext);
   app.use(json({ pretty: process.env.NODE_ENV !== 'production' }));
   app.use(logger());
   // Disabled for now, causing issues logging in.

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Madoc TS Frontend Core"
+  short_description: "Site/admin UI, routing, and SSR entrypoints"
+  default_prompt: "Use -core to navigate Madoc TS frontend structure."

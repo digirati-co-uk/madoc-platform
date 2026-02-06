@@ -5,7 +5,7 @@ import { useRouteContext } from '../../site/hooks/use-route-context';
 import { CanvasLoader } from '../../site/pages/loaders/canvas-loader';
 import { useData } from '../hooks/use-data';
 
-export const CanvasVaultContext: React.FC = ({ children }) => {
+export const CanvasVaultContext: React.FC = ({ children }: { children?: React.ReactNode; }) => {
   const vault = useVault();
   const { canvasId } = useRouteContext();
   const [canvasRef, setCanvasRef] = useState<CanvasNormalized>();
@@ -18,7 +18,7 @@ export const CanvasVaultContext: React.FC = ({ children }) => {
 
         clonedCanvas.id = clonedCanvas.source_id || clonedCanvas.id;
 
-        vault.load({ id: clonedCanvas.id } as any, clonedCanvas).then(c => {
+        vault.load({ id: clonedCanvas.id } as any, clonedCanvas).then((c: any) => {
           setCanvasRef(c as any);
         });
       } catch (e) {

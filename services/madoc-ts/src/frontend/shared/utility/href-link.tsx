@@ -1,7 +1,11 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, type LinkProps } from 'react-router-dom';
 
-export const HrefLink: React.FC<any> = React.forwardRef(({ href, ...props }, ref) => {
+type HrefLinkProps = Omit<LinkProps, 'to'> & {
+  href: LinkProps['to'];
+};
+
+export const HrefLink = React.forwardRef<HTMLAnchorElement, HrefLinkProps>(({ href, ...props }, ref) => {
   return <Link ref={ref} to={href} {...props} />;
 });
 

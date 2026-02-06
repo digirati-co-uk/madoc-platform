@@ -1,5 +1,5 @@
 import React from 'react';
-import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 import styled from 'styled-components';
 import { TableHandleIcon } from '../icons/TableHandleIcon';
 import { TableActions, TableContainer, TableRow, TableRowLabel } from '../layout/Table';
@@ -13,7 +13,8 @@ export const ReorderTableRow: React.FC<{
   id: string;
   idx: number;
   addition?: boolean;
-  label: string | JSX.Element;
+  label: string | React.ReactNode;
+  children?: React.ReactNode;
 }> = ({ id, idx, label, addition, children }) => (
   <Draggable draggableId={id} index={idx}>
     {provided => (
@@ -26,7 +27,7 @@ export const ReorderTableRow: React.FC<{
   </Draggable>
 );
 
-export const ReorderTable: React.FC<{ reorder?: (source: number, dest: number) => void }> = ({ reorder, children }) => {
+export const ReorderTable: React.FC<{ reorder?: (source: number, dest: number) => void; children?: React.ReactNode; }> = ({ reorder, children }) => {
   const onDragEnd = (result: DropResult) => {
     // dropped outside the list
     if (!result.destination) {

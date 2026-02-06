@@ -8,6 +8,7 @@ export const ViewExternalContent: React.FC<{
   height?: number;
   onCreated?: (runtime: Preset) => void;
   onPanInSketchMode?: () => void;
+  children?: React.ReactNode;
 }> = ({ target, children, onCreated, onPanInSketchMode, height = 600 }) => {
   const {
     project: { atlasBackground },

@@ -5,7 +5,7 @@ import { BrowserComponent } from '../utility/browser-component';
 import { madocLazy } from '../utility/madoc-lazy';
 import { InputContainer, InputLabel, inputStyles } from './Input';
 
-const Textarea = madocLazy(() => /* webpackChunkName: "browser" */ import('react-textarea-autosize'));
+const Textarea = madocLazy(() => /* webpackChunkName: "browser" */ import('react-textarea-autosize'), 'textarea' as any);
 
 export const IntlInputContainer = styled.div<{ focused?: boolean; $margin?: boolean }>`
   background: #fff;

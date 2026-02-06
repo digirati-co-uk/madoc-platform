@@ -1,0 +1,4 @@
+interface:
+  display_name: "Madoc TS Site Routes"
+  short_description: "Site HTTP route handlers"
+  default_prompt: "Use $routes-site to add or modify site HTTP endpoints."

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { SelectRef } from 'react-functional-select/dist/Select';
+import type { SelectRef } from '../../../../shared/form/FunctionalSelect';
 import { useMutation } from 'react-query';
 import { GetUser, User } from '../../../../../extensions/site-manager/types';
 import { globalRoles } from '../../../../config';

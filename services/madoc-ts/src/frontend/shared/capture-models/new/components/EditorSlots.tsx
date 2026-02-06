@@ -21,27 +21,28 @@ import { DefaultSingleEntity } from './DefaultSingleEntity';
 import { DefaultSingleField } from './DefaultSingleField';
 import { DefaultSubmitButton } from './DefaultSubmitButton';
 import { DefaultTopLevelEditor } from './DefaultTopLevelEditor';
-import invariant from 'tiny-invariant';
+
+
+type ReactFC<Props = {}> = React.FC<Props & { children?: React.ReactNode }>;
 
 // Driven by context.
-
 export type EditorRenderingConfig = {
   configuration: EditorConfig;
   // Driven by hooks
-  TopLevelEditor: React.FC;
-  Breadcrumbs: React.FC;
-  SingleEntity: React.FC<{ showTitle?: boolean }>;
-  SingleField: React.FC;
-  AdjacentNavigation: React.FC;
-  ManagePropertyList: React.FC<{ property: string; type: 'field' | 'entity' }>; // Fallbacks passed in
-  EditorWrapper: React.FC;
-  FieldInstance: React.FC<{
+  TopLevelEditor: ReactFC;
+  Breadcrumbs: ReactFC;
+  SingleEntity: ReactFC<{ showTitle?: boolean }>;
+  SingleField: ReactFC;
+  AdjacentNavigation: ReactFC;
+  ManagePropertyList: ReactFC<{ property: string; type: 'field' | 'entity' }>; // Fallbacks passed in
+  EditorWrapper: ReactFC;
+  FieldInstance: ReactFC<{
     field: BaseField;
     property: string;
     path: Array<[string, string]>;
     hideHeader?: boolean;
   }>;
-  InlineProperties: React.FC<{
+  InlineProperties: ReactFC<{
     type: 'field' | 'entity';
     property: string;
     hasSelector: boolean;
@@ -50,7 +51,7 @@ export type EditorRenderingConfig = {
     description?: string;
     disableRemoving?: boolean;
   }>;
-  InlineField: React.FC<{
+  InlineField: ReactFC<{
     property: string;
     field: BaseField;
     path: [string, string, boolean?][];
@@ -59,7 +60,7 @@ export type EditorRenderingConfig = {
     readonly: boolean;
     onRemove?: () => void;
   }>; // Fallbacks passed in
-  InlineEntity: React.FC<{
+  InlineEntity: ReactFC<{
     property: string;
     entity: CaptureModel['document'];
     chooseEntity: () => void;
@@ -67,15 +68,15 @@ export type EditorRenderingConfig = {
     onRemove: () => void;
   }>; // Fallbacks passed in
   InlineSelector: any; // Fallbacks passed in
-  Choice: React.FC;
-  SubmitButton: React.FC<{
+  Choice: ReactFC;
+  SubmitButton: ReactFC<{
     afterSave?: (req: { revisionRequest: RevisionRequest; context: RouteContext }) => void | Promise<void>;
     saveOnNavigate?: boolean;
     captureModel?: CaptureModel;
     canSubmit?: boolean;
   }>;
-  PreviewSubmission: React.FC;
-  PostSubmission: React.FC<{
+  PreviewSubmission: ReactFC;
+  PostSubmission: ReactFC<{
     stacked?: boolean;
     messageOnly?: boolean;
     onContinue?: () => void;
@@ -135,7 +136,7 @@ export function getDefaultContextValue(): EditorRenderingConfig {
       EditorWrapper: DefaultEditorWrapper,
     };
   }
-  return globalDefaultContextRef.state;
+  return globalDefaultContextRef.state!;
 }
 
 const Context = React.createContext<EditorRenderingConfig | null>(null);
@@ -164,7 +165,7 @@ export const useProfile = () => {
   return useContext(ProfileContext);
 };
 
-export function useProfileOverride(slotName: keyof ProfileConfig): React.FC | undefined {
+export function useProfileOverride(slotName: keyof ProfileConfig): ReactFC | undefined {
   const configuration = useSlotConfiguration();
   const profile = useProfile();
 
@@ -181,13 +182,13 @@ export function useProfileOverride(slotName: keyof ProfileConfig): React.FC | un
   return profileConfig[slotName];
 }
 
-export const ProfileProvider: React.FC<{ profile?: string }> = props => {
+export const ProfileProvider: ReactFC<{ profile?: string }> = props => {
   const profile = useProfile();
 
   return <ProfileContext.Provider value={props.profile || profile}>{props.children}</ProfileContext.Provider>;
 };
 
-const Provider: React.FC<{ config?: Partial<EditorConfig>; components?: Partial<EditorRenderingConfig> }> = ({
+const Provider: ReactFC<{ config?: Partial<EditorConfig>; components?: Partial<EditorRenderingConfig> }> = ({
   components = {},
   children,
   config = {},

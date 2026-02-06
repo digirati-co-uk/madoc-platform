@@ -36,6 +36,7 @@ export function getSingleCollection({
   page = 1,
   perPage = 24,
   type,
+  onlyPublished,
   excludeManifests,
 }: {
   collectionId: number;
@@ -43,6 +44,7 @@ export function getSingleCollection({
   page?: number;
   perPage?: number;
   type?: 'manifest' | 'collection';
+  onlyPublished?: boolean;
   excludeManifests?: number[];
 }) {
   if (page < 1) {
@@ -79,8 +81,12 @@ export function getSingleCollection({
                         on  manifest_links.site_id = ${siteId}
                         and manifest_links.resource_id = single_collection.resource_id
                         ${manifestExclusion}
-                left join iiif_resource resource
+               left join iiif_resource resource
                         on resource.id = manifest_links.item_id
+               left join iiif_derived_resource derived_manifest
+                         on derived_manifest.resource_id = manifest_links.item_id
+                         and derived_manifest.site_id = ${siteId}
+                         and derived_manifest.resource_type = resource.type
                left join iiif_derived_resource_item_counts canvas_count
                          on canvas_count.resource_id = manifest_links.item_id and canvas_count.site_id = ${siteId}
                left join iiif_derived_resource_item_counts manifest_count
@@ -89,6 +95,7 @@ export function getSingleCollection({
       where single_collection.site_id = ${siteId}
         and single_collection.resource_id = ${collectionId}
         and single_collection.resource_type = 'collection'
+      ${onlyPublished ? sql`and derived_manifest.published = true` : SQL_EMPTY}
       ${
         type
           ? type === 'collection'
@@ -99,6 +106,50 @@ export function getSingleCollection({
       order by manifest_links.item_index
       limit ${perPage}
       offset ${offset}
+  `;
+}
+
+export function getSingleCollectionCount({
+  collectionId,
+  siteId,
+  type,
+  onlyPublished,
+  excludeManifests,
+}: {
+  collectionId: number;
+  siteId: number;
+  type?: 'manifest' | 'collection';
+  onlyPublished?: boolean;
+  excludeManifests?: number[];
+}) {
+  const manifestExclusion = excludeManifests
+    ? sql`and manifest_links.item_id = any(${sql.array(excludeManifests, SQL_INT_ARRAY)}) is false`
+    : SQL_EMPTY;
+
+  return sql<{ total: number }>`
+      select count(*) as total
+      from iiif_derived_resource single_collection
+               left join iiif_derived_resource_items manifest_links
+                         on manifest_links.site_id = ${siteId}
+                         and manifest_links.resource_id = single_collection.resource_id
+                         ${manifestExclusion}
+               left join iiif_resource resource
+                         on resource.id = manifest_links.item_id
+               left join iiif_derived_resource derived_manifest
+                         on derived_manifest.resource_id = manifest_links.item_id
+                         and derived_manifest.site_id = ${siteId}
+                         and derived_manifest.resource_type = resource.type
+      where single_collection.site_id = ${siteId}
+        and single_collection.resource_id = ${collectionId}
+        and single_collection.resource_type = 'collection'
+      ${onlyPublished ? sql`and derived_manifest.published = true` : SQL_EMPTY}
+      ${
+        type
+          ? type === 'collection'
+            ? sql`and resource.type = 'collection'`
+            : sql`and resource.type = 'manifest'`
+          : sql``
+      }
   `;
 }
 

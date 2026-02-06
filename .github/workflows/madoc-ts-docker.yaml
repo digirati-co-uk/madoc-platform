@@ -14,7 +14,6 @@ on:
       - "services/madoc-ts/schemas/**"
       - "services/madoc-ts/themes/**"
       - "services/madoc-ts/package.json"
-      - "services/madoc-ts/yarn.lock"
       - "services/madoc-ts/Dockerfile"
       - "services/madoc-ts/ecosystem.config.js"
       - "services/madoc-ts/webpack.config.js"

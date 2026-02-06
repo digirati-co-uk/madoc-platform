@@ -54,9 +54,9 @@ export const AnimatedDashboardTabs: React.FC<React.DetailedHTMLProps<
   React.HTMLAttributes<HTMLUListElement>,
   HTMLUListElement
 > & { $isLoading?: boolean }> = props => {
-  const ref = useRef<HTMLElement>();
+  const ref = useRef<HTMLElement>(undefined);
   const width = useRef(0);
-  const animRef = useRef<number>();
+  const animRef = useRef<number>(undefined);
 
   useBrowserLayoutEffect(() => {
     if (ref.current) {

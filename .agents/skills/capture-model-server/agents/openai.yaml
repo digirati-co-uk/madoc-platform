@@ -1,0 +1,4 @@
+interface:
+  display_name: "Madoc TS Capture Model Server"
+  short_description: "Capture model APIs and repository"
+  default_prompt: "Use $capture-model-server to update capture model server routes or queries."

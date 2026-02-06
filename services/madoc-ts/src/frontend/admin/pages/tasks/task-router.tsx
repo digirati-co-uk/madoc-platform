@@ -26,7 +26,7 @@ type TaskRouterType = {
   variables: { id: string; page: number };
 };
 
-function renderTask({ task }: TaskRouterType['data'], statusBar?: JSX.Element) {
+function renderTask({ task }: TaskRouterType['data'], statusBar?: React.ReactNode) {
   switch (task.type) {
     case 'export-resource-task':
       return <ExportResourceTask task={task as any} statusBar={statusBar} />;

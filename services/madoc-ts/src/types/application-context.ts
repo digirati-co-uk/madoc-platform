@@ -1,6 +1,6 @@
 import { i18n } from 'i18next';
 import { CompletionsExtension } from '../extensions/completions/extension';
-import { PluginManager } from '../frontend/shared/plugins/plugin-manager';
+import type { PluginManager } from '../frontend/shared/plugins/plugin-manager';
 import { ChangeDiscoveryRepository } from '../activity-streams/change-discovery-repository';
 import { ApiClient } from '../gateway/api';
 import { AnnotationStylesRepository } from '../repository/annotation-styles-repository';
@@ -23,6 +23,7 @@ import { DatabasePoolConnectionType } from 'slonik';
 import { Ajv } from 'ajv';
 import { ApiKeyRepository } from '../repository/api-key-repository';
 import { CaptchaRepository } from '../repository/captcha-repository';
+import type { StaticPageResponse } from './static-page';
 
 type AllRoutes = typeof router;
 
@@ -53,7 +54,10 @@ declare module 'koa' {
     completions: CompletionsExtension;
     webhookExtension: WebhookServerExtension;
     ajv: Ajv;
-    staticPage?: string | ((token: string) => Promise<string | undefined>) | ((token: string) => undefined | string);
+    staticPage?:
+      | StaticPageResponse
+      | ((token: string) => Promise<StaticPageResponse | undefined>)
+      | ((token: string) => StaticPageResponse | undefined);
     disposableApis: ApiClient[];
 
     // New frontend

@@ -211,8 +211,8 @@ function ViewSingleReview({
     disableFocusFirstItemOnClick: true,
   });
   const { t } = useTranslation();
-  const gridRef = useRef<any>();
-  const runtime = useRef<Runtime>();
+  const gridRef = useRef<any>(undefined);
+  const runtime = useRef<Runtime>(undefined);
   const annotationTheme = useProjectAnnotationStyles();
   const api = useApi();
   const [unassignUser] = useMutation(

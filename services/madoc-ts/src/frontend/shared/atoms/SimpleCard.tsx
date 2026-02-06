@@ -8,6 +8,7 @@ export type SimpleCardProps = {
   image?: string;
   interactive?: boolean;
   onClick?: any;
+  children?: React.ReactNode;
 };
 
 const CardLabel = styled.label`

@@ -18,7 +18,7 @@ export interface PolygonSelectorProps extends BaseSelector {
 
 export function PolygonSelectorAtlas(props: SelectorTypeProps<PolygonSelectorProps>) {
   const canvas = useCanvas();
-  const { readOnly, clearSelector, id, bucket } = props;
+  const { readOnly, id, bucket } = props;
   const { onClick, isHighlighted } = useSelectorEvents(props.id);
   const styles = useAnnotationStyles();
   const style =
@@ -63,7 +63,6 @@ export function PolygonSelectorAtlas(props: SelectorTypeProps<PolygonSelectorPro
       image={image}
       shape={props.state?.shape || { id: props.id, open: true, points: [] }}
       updateShape={updateShape}
-      deselect={clearSelector}
     />
   );
 }

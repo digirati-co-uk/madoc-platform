@@ -1,7 +1,8 @@
 import { CaptureModel } from '../../frontend/shared/capture-models/types/capture-model';
 import { InternationalString } from '@iiif/presentation-3';
 import React, { JSXElementConstructor } from 'react';
-import ReactDOM from 'react-dom';
+import { flushSync } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { ApiClient } from '../../gateway/api';
 import { BlockHook } from '../../types/block-hook';
 import {
@@ -28,7 +29,7 @@ export type PageBlockDefinition<
   Data extends any,
   Type extends string,
   Return,
-  RequiredContext extends keyof EditorialContext = never
+  RequiredContext extends keyof EditorialContext = never,
 > = {
   label: string;
   type: string;
@@ -49,8 +50,8 @@ export type PageBlockDefinition<
 
 export type ReactPageBlockDefinition<
   Data,
-  RequiredContext extends keyof EditorialContext = never
-> = PageBlockDefinition<Data, 'react', JSX.Element | null, RequiredContext>;
+  RequiredContext extends keyof EditorialContext = never,
+> = PageBlockDefinition<Data, 'react', React.ReactNode | null, RequiredContext>;
 export type HTMLPageBlockDefinition<Data, RequiredContext extends keyof EditorialContext = never> = PageBlockDefinition<
   Data,
   'html',
@@ -58,8 +59,10 @@ export type HTMLPageBlockDefinition<Data, RequiredContext extends keyof Editoria
   RequiredContext
 >;
 
-export class PageBlockExtension extends RegistryExtension<PageBlockDefinition<any, any, any, any>>
-  implements BaseExtension {
+export class PageBlockExtension
+  extends RegistryExtension<PageBlockDefinition<any, any, any, any>>
+  implements BaseExtension
+{
   api: ApiClient;
 
   static register(definition: PageBlockDefinition<any, any, any>) {
@@ -163,7 +166,7 @@ export class PageBlockExtension extends RegistryExtension<PageBlockDefinition<an
     block: SiteBlock | SiteBlockRequest,
     siteId: number,
     context: EditorialContext
-  ): JSX.Element | null {
+  ): React.ReactNode | null {
     // @todo check required context.
     const definition = this.getDefinition(block.type, siteId);
     if (!definition) {
@@ -177,7 +180,7 @@ export class PageBlockExtension extends RegistryExtension<PageBlockDefinition<an
     }
 
     if (definition.renderType === 'react') {
-      return definition.render(block.static_data, context, this.api) as JSX.Element;
+      return definition.render(block.static_data, context, this.api) as React.ReactNode;
     }
 
     return null;
@@ -199,8 +202,13 @@ export class PageBlockExtension extends RegistryExtension<PageBlockDefinition<an
         return reactDomServer.renderToString(definition.render(block.static_data, context, this.api));
       } else {
         const tempElement = document.createElement('div');
-        ReactDOM.render(definition.render(block.static_data, context, this.api), tempElement);
-        return tempElement.innerHTML;
+        const root = createRoot(tempElement);
+        flushSync(() => {
+          root.render(definition.render(block.static_data, context, this.api));
+        });
+        const html = tempElement.innerHTML;
+        root.unmount();
+        return html;
       }
     }
 

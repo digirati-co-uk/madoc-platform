@@ -44,13 +44,13 @@ export const parseJwt: RouteMiddleware<{ slug?: string }> = async (context, next
 
     if (cookie) {
       try {
-        const token = verifySignedToken(cookie);
+        const token = await verifySignedToken(cookie);
         const parsedToken = token ? parseJWT(token) : undefined;
         if (parsedToken && parsedToken.scope.length) {
           // Set the internal state to the JWT.
           context.state.jwt = parsedToken;
         } else {
-          const expiredToken = verifySignedToken(cookie, true);
+          const expiredToken = await verifySignedToken(cookie, true);
           if (expiredToken) {
             const { canRefresh, hasExpired, siteId, details } = await context.siteManager.refreshExpiredToken(
               expiredToken.token,
@@ -67,7 +67,7 @@ export const parseJwt: RouteMiddleware<{ slug?: string }> = async (context, next
                 context.cookies.set(newCookie.name, newCookie.value, newCookie.options);
               }
               if (lastToken) {
-                const refreshedToken = verifySignedToken(lastToken);
+                const refreshedToken = await verifySignedToken(lastToken);
                 context.state.jwt = refreshedToken ? parseJWT(refreshedToken) : undefined;
               }
               return next();
@@ -95,7 +95,7 @@ export const parseJwt: RouteMiddleware<{ slug?: string }> = async (context, next
     // it anyway.
     const jwt = getToken(context);
     if (jwt) {
-      const token = verifySignedToken(jwt);
+      const token = await verifySignedToken(jwt);
       if (token) {
         context.state.jwt = parseJWT(token, asUser);
         context.state.user = context.state.jwt?.user;

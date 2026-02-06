@@ -22,7 +22,14 @@ const Container = styled.div`
   border: 1px solid #eee;
   border-radius: 5px;
   overflow: auto;
-  font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+  font-family:
+    ui-monospace,
+    SFMono-Regular,
+    SF Mono,
+    Menlo,
+    Consolas,
+    Liberation Mono,
+    monospace;
   font-size: 0.875em;
   white-space: pre;
   max-height: 600px;
@@ -147,7 +154,7 @@ export function FilePreview(props: FilePreviewProps) {
           <DownloadButton
             onClick={() =>
               createDownload(
-                data || props.children,
+                (data || props.children)?.value || '',
                 props.fileName.split('/').pop() || 'unknown.json',
                 props.contentType as any
               )

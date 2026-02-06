@@ -1,0 +1,4 @@
+interface:
+  display_name: "Madoc TS Auth & Authorization"
+  short_description: "JWT parsing, login, and route guards"
+  default_prompt: "Use -authorization to trace or change auth flows in services/madoc-ts."

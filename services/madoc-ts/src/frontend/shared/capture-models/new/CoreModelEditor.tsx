@@ -141,9 +141,9 @@ export function CoreModelEditor({
   children,
 }: CoreModelEditorProps) {
   const { t } = useTranslation();
-  const runtime = useRef<Runtime>();
-  const osd = useRef<any>();
-  const gridRef = useRef<any>();
+  const runtime = useRef<Runtime>(undefined);
+  const osd = useRef<any>(undefined);
+  const gridRef = useRef<any>(undefined);
   const [showPanWarning, setShowPanWarning] = useLocalStorage('pan-warning', false);
   const [postSubmission, setPostSubmission] = useState(false);
   const [postSubmissionMessage, setPostSubmissionMessage] = useState(false);

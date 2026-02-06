@@ -1,4 +1,4 @@
-import { CaptureModel } from '../frontend/shared/capture-models/types/capture-model';
+import type { CaptureModel } from '../frontend/shared/capture-models/types/capture-model';
 
 export interface CaptureModelSnippetRow {
   id: string;

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Madoc TS Completions"
+  short_description: "Autocomplete sources"
+  default_prompt: "Use $extensions-completions to add or update completion sources."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Madoc Docker Ops"
+  short_description: "Docker compose, images, and pm2 logs"
+  default_prompt: "Use $madoc-docker-ops to build/run Madoc Docker images, manage containers, and inspect pm2."

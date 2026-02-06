@@ -11,6 +11,7 @@ export const ViewContent: React.FC<{
   height?: number;
   onCreated?: (runtime: Preset) => void;
   onPanInSketchMode?: () => void;
+  children?: React.ReactNode;
 }> = ({ target, canvas, height = 600, onCreated, onPanInSketchMode, children }) => {
   return useContentType(
     useMemo(() => {

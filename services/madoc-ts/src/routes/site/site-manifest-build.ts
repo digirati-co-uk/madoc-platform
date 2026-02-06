@@ -1,6 +1,7 @@
 import { AnnotationPage } from '@iiif/presentation-3';
 import { Vault } from '@iiif/helpers/vault';
 import { sql } from 'slonik';
+import type { Context } from 'koa';
 import { deprecationGetItemsJson } from '../../deprecations/01-local-source-canvas';
 import { gatewayHost } from '../../gateway/api.server';
 import { RouteMiddleware } from '../../types/route-middleware';
@@ -71,6 +72,48 @@ type IIIFExportRow = {
       }
   );
 
+const defaultCorsAllowHeaders = 'Accept, Content-Type, Authorization, Cache-Control, Pragma, X-Requested-With';
+
+function setManifestCorsHeaders(context: Context) {
+  const requestOrigin = context.get('Origin') || '';
+  const allowOrigin = requestOrigin || '*';
+  const requestedHeaders = context.get('Access-Control-Request-Headers');
+  const requestedPrivateNetwork = context.get('Access-Control-Request-Private-Network');
+  const identitySeed = `${process.env.MADOC_INSTALLATION_CODE || 'madoc'}:${context.hostname}`.toLowerCase();
+  const identityHex = Buffer.from(identitySeed, 'utf8').toString('hex').padEnd(12, '0').slice(0, 12);
+  const privateNetworkAccessId = identityHex.match(/.{1,2}/g)?.join(':') || '00:00:00:00:00:00';
+  const privateNetworkAccessName = identitySeed.replace(/[^a-z0-9_.-]/g, '-').slice(0, 248) || 'madoc-local';
+
+  context.set('Access-Control-Allow-Origin', allowOrigin);
+  context.set('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  context.set('Access-Control-Allow-Headers', requestedHeaders || defaultCorsAllowHeaders);
+  context.set('Access-Control-Max-Age', '86400');
+  context.set('Cross-Origin-Resource-Policy', 'cross-origin');
+  context.set('Private-Network-Access-ID', privateNetworkAccessId);
+  context.set('Private-Network-Access-Name', privateNetworkAccessName);
+  context.vary('Origin');
+  context.vary('Access-Control-Request-Headers');
+  context.vary('Access-Control-Request-Private-Network');
+
+  if (requestOrigin) {
+    context.set('Access-Control-Allow-Credentials', 'true');
+  }
+
+  if (requestedPrivateNetwork === 'true' || !!requestOrigin) {
+    context.set('Access-Control-Allow-Private-Network', 'true');
+  }
+}
+
+export const siteManifestBuildOptions: RouteMiddleware<{
+  slug: string;
+  id: string;
+  version: string;
+  projectSlug?: string;
+}> = async context => {
+  setManifestCorsHeaders(context as unknown as Context);
+  context.status = 204;
+};
+
 export const siteManifestBuild: RouteMiddleware<{
   slug: string;
   id: string;
@@ -79,10 +122,11 @@ export const siteManifestBuild: RouteMiddleware<{
 }> = async context => {
   const cacheKey = `build-manifest-${context.params.slug}-${context.params.id}-${context.params.version}-${context.params.projectSlug}`;
   const cached = cache.get(cacheKey);
-  const noCacheHeader = context.get('Cache-Control');
+  const noCacheHeader = (context.get('Cache-Control') || '').toLowerCase();
+
+  setManifestCorsHeaders(context as unknown as Context);
+
   if (cached && !noCacheHeader.includes('no-cache')) {
-    // Cache control.
-    context.set('Access-Control-Allow-Origin', '*');
     context.set('Cache-Control', 'public, max-age=3600');
     context.set('X-Cache', 'HIT');
     context.response.body = cached;
@@ -105,7 +149,7 @@ export const siteManifestBuild: RouteMiddleware<{
   const baseUrl = `${gatewayHost}/s/${siteSlug}`;
 
   const rows = await context.connection.any(sql<IIIFExportRow>`
-      select 
+      select
         -- Derived.
         derived_manifest.resource_id as derived__id,
         -- IIIF
@@ -141,7 +185,7 @@ export const siteManifestBuild: RouteMiddleware<{
         linking.motivation as linking__motivation,
         linking.format as linking__format,
         linking.properties as linking__properties
-         
+
       from iiif_derived_resource derived_manifest
       -- get the list of canvases
       left join iiif_derived_resource_items manifest_items on derived_manifest.resource_id = manifest_items.resource_id and manifest_items.site_id = ${site.id}
@@ -151,7 +195,7 @@ export const siteManifestBuild: RouteMiddleware<{
       left join iiif_metadata metadata on iiif.id = metadata.resource_id and metadata.site_id = ${site.id}
       -- get linking
       left join iiif_linking linking on iiif.id = linking.resource_id and linking.site_id = ${site.id}
-      
+
       where derived_manifest.resource_id = ${manifestId}
         and derived_manifest.site_id = ${site.id}
   `);
@@ -386,7 +430,6 @@ export const siteManifestBuild: RouteMiddleware<{
         break;
       case '3.0':
       case 'source': {
-        context.set('Access-Control-Allow-Origin', '*');
         context.response.status = 200;
         const collectionJson: any = builder.toPresentation3({ id: newCollection.id, type: 'Manifest' });
         collectionJson['@context'] = 'http://iiif.io/api/presentation/3/context.json';
@@ -395,7 +438,6 @@ export const siteManifestBuild: RouteMiddleware<{
         return;
       }
       case '2.1': {
-        context.set('Access-Control-Allow-Origin', '*');
         context.response.status = 200;
         const collectionJson: any = builder.toPresentation2({ id: newCollection.id, type: 'Manifest' });
         collectionJson['@context'] = 'http://iiif.io/api/presentation/2/context.json';
@@ -662,7 +704,6 @@ export const siteManifestBuild: RouteMiddleware<{
       break;
     case '3.0':
     case 'source': {
-      context.set('Access-Control-Allow-Origin', '*');
       context.response.status = 200;
       const manifestJson: any = builder.toPresentation3({ id: newManifest.id, type: 'Manifest' });
       manifestJson['@context'] = 'http://iiif.io/api/presentation/3/context.json';
@@ -671,7 +712,6 @@ export const siteManifestBuild: RouteMiddleware<{
       return;
     }
     case '2.1': {
-      context.set('Access-Control-Allow-Origin', '*');
       context.response.status = 200;
       const manifestJson: any = builder.toPresentation2({ id: newManifest.id, type: 'Manifest' });
       manifestJson['@context'] = 'http://iiif.io/api/presentation/2/context.json';

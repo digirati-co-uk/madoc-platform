@@ -1,0 +1,4 @@
+interface:
+  display_name: "Madoc TS Admin Frontend"
+  short_description: "Admin UI routes, SSR, and loaders"
+  default_prompt: "Use $frontend-admin to work on admin screens, routes, and SSR wiring."

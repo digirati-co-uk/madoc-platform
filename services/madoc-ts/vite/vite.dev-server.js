@@ -1,6 +1,45 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import fs from 'fs';
+import path from 'path';
+
+const PROSEMIRROR_PACKAGES = [
+  ['prosemirror-model', 'dist/index.js'],
+  ['prosemirror-state', 'dist/index.js'],
+  ['prosemirror-view', 'dist/index.js'],
+  ['prosemirror-transform', 'dist/index.js'],
+];
+
+function resolvePnpmModule(pkg, entry) {
+  const pnpmPath = path.resolve(process.cwd(), 'node_modules/.pnpm');
+
+  if (!fs.existsSync(pnpmPath)) {
+    return null;
+  }
+
+  const matches = fs
+    .readdirSync(pnpmPath)
+    .filter(dir => dir === pkg || dir.startsWith(`${pkg}@`))
+    .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+
+  if (!matches.length) {
+    return null;
+  }
+
+  return path.join(pnpmPath, matches[matches.length - 1], 'node_modules', pkg, entry);
+}
+
+const prosemirrorAliases = PROSEMIRROR_PACKAGES.map(([pkg, entry]) => {
+  const replacement = resolvePnpmModule(pkg, entry);
+  if (!replacement) {
+    return null;
+  }
+
+  return {
+    find: new RegExp(`^${pkg}$`),
+    replacement,
+  };
+}).filter(Boolean);
 
 const https = fs.existsSync('/certs/local-key.pem') && fs.existsSync('/certs/local-cert.pem');
 
@@ -15,14 +54,11 @@ export default defineConfig({
   },
   clearScreen: false,
   resolve: {
-    dedupe: ['react', 'react-dom'],
-    alias: {
-      'react-iiif-vault': 'react-iiif-vault/react17',
-      'react-dom/client': 'react-dom',
-    },
-  },
-  optimizeDeps: {
-    exclude: ['react-dom/client'],
+    dedupe: ['react', 'react-dom', ...PROSEMIRROR_PACKAGES.map(([pkg]) => pkg)],
+    alias: [
+      ...prosemirrorAliases,
+      // React 19-compatible defaults.
+    ],
   },
   build: {
     manifest: true,
@@ -37,13 +73,18 @@ export default defineConfig({
           cert: fs.readFileSync('/certs/local-cert.pem'),
         }
       : false,
+    cors: {
+      origin: [/^https?:\/\/madoc\.local(?::\d+)?$/],
+      credentials: true,
+    },
     open: false,
     port: 3088,
     strictPort: true,
     force: true,
     hmr: {
+      host: 'madoc.local',
       protocol: https ? 'wss' : 'ws',
-      port: 3089,
+      clientPort: 3088,
     },
   },
   envPrefix: ['VITE_'],

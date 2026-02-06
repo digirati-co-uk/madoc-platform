@@ -1,5 +1,4 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
 import { extractBlockDefinitions } from '../../../extensions/page-blocks/block-editor-react';
 import { CreateSlotRequest, EditorialContext } from '../../../types/schemas/site-page';
@@ -94,6 +93,7 @@ export const BlankSlotDropdown: React.FC<{
     onClick: () => void;
   }>;
   layout?: string;
+  children?: React.ReactNode;
 }> = ({ actions, layout, children }) => {
   const { buttonProps, itemProps, isOpen } = useDropdownMenu(actions.length, {
     disableFocusFirstItemOnClick: actions.length === 0,
@@ -179,6 +179,7 @@ export const RenderBlankSlot: React.FC<{
   id?: string;
   name: string;
   source?: { type: string; id: string };
+  children?: React.ReactNode;
   layout?: string;
 }> = ({ id, name: slotId, source, layout, children }) => {
   const { context, editable, isPage, beforeCreateSlot, onCreateSlot } = useSlots();

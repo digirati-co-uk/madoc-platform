@@ -3,9 +3,9 @@ import invariant from 'tiny-invariant';
 import { RegistryExtension } from '../extensions/registry-extension';
 import { generateId } from '../frontend/shared/capture-models/helpers/generate-id';
 import { apiGateway, gatewayHost } from '../gateway/api.server';
-import { getPem, getPublicPem } from '../utility/get-pem';
+import { getPrivateKey, getPublicKey } from '../utility/jose-keys';
 import { IncomingWebhook, OutgoingWebhook } from './webhook-types';
-import { JWK, JWS } from 'jose';
+import { CompactSign, compactVerify } from 'jose';
 
 export class WebhookServerExtension extends RegistryExtension<IncomingWebhook | OutgoingWebhook> {
   constructor() {
@@ -63,23 +63,24 @@ export class WebhookServerExtension extends RegistryExtension<IncomingWebhook | 
     invariant(expires);
 
     const code = generateId();
-    const key = JWK.asKey(getPem());
-    const sig = JWS.sign.flattened(
-      {
-        eventId,
-        expires,
-        siteId,
-        code,
-        created: Date.now(),
-      },
-      key
-    );
+    const key = await getPrivateKey();
+    const payload = JSON.stringify({
+      eventId,
+      expires,
+      siteId,
+      code,
+      created: Date.now(),
+    });
 
-    return `${sig.protected}.${sig.payload}.${sig.signature}`;
+    return await new CompactSign(new TextEncoder().encode(payload))
+      .setProtectedHeader({ alg: 'RS256' })
+      .sign(key);
   }
 
   async validate(eventId: string, siteId: number, jws: string) {
-    const payload = (await JWS.verify(jws, getPublicPem())) as {
+    const key = await getPublicKey();
+    const { payload } = await compactVerify(jws, key, { algorithms: ['RS256'] });
+    const decodedPayload = JSON.parse(new TextDecoder().decode(payload)) as {
       eventId: string;
       expires: number;
       created: number;
@@ -89,12 +90,12 @@ export class WebhookServerExtension extends RegistryExtension<IncomingWebhook | 
 
     const time = Date.now();
 
-    invariant(typeof payload !== 'string');
-    invariant(payload.created, 'Invalid webhook');
-    invariant(payload.expires, 'Invalid webhook');
-    invariant(siteId === payload.siteId);
-    invariant(eventId === payload.eventId, 'Invalid webhook');
-    invariant(payload.created + payload.expires < time, 'Webhook has expired');
+    invariant(typeof decodedPayload !== 'string');
+    invariant(decodedPayload.created, 'Invalid webhook');
+    invariant(decodedPayload.expires, 'Invalid webhook');
+    invariant(siteId === decodedPayload.siteId);
+    invariant(eventId === decodedPayload.eventId, 'Invalid webhook');
+    invariant(decodedPayload.created + decodedPayload.expires < time, 'Webhook has expired');
 
     return true;
   }

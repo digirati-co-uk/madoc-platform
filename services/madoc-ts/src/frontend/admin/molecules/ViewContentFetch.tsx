@@ -10,6 +10,7 @@ export const ViewContentFetch: React.FC<{
   height?: number;
   onCreated?: (rt: Preset) => void;
   onPanInSketchMode?: () => void;
+  children?: React.ReactNode;
 }> = ({ id, height, children, onCreated, onPanInSketchMode }) => {
   const { data } = useApiCanvas(id);
 

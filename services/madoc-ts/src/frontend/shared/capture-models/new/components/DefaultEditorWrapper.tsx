@@ -4,7 +4,7 @@ import { useNavigation } from '../../editor/hooks/useNavigation';
 import { useModelTranslation } from '../../hooks/use-model-translation';
 import { useTranslation } from 'react-i18next';
 
-export const DefaultEditorWrapper: React.FC = ({ children }) => {
+export function DefaultEditorWrapper({ children }: { children?: React.ReactNode }) {
   const [currentView] = useNavigation();
   const { t: tModel } = useModelTranslation();
   const { t } = useTranslation();

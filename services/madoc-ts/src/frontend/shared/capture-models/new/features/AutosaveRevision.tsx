@@ -12,7 +12,7 @@ export const AutosaveRevision: React.FC = () => {
   const currentRevisionId = Revisions.useStoreState(s => s.currentRevisionId);
   const currentRevision = Revisions.useStoreState(s => s.currentRevision);
   const currentDoc = currentRevision?.document.properties;
-  const currentDocRef = useRef<any>();
+  const currentDocRef = useRef<any>(undefined);
   const importRevision = Revisions.useStoreActions(a => a.importRevision);
   const selectRevision = Revisions.useStoreActions(a => a.selectRevision);
   const deselectRevision = Revisions.useStoreActions(a => a.deselectRevision);

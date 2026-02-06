@@ -8,9 +8,9 @@ import {
 import { UpdateResourceDetailsRequest } from '../database/queries/update-resource-details';
 import { CrowdsourcingApi } from '../extensions/capture-models/crowdsourcing-api';
 import { ConfigInjectionExtension } from '../extensions/capture-models/ConfigInjection/ConfigInjection.extension';
-import { ConfigInjectionSettings } from '../extensions/capture-models/ConfigInjection/types';
+import type { ConfigInjectionSettings } from '../extensions/capture-models/ConfigInjection/types';
+import type { CaptureModelExtension } from '../extensions/capture-models/extension';
 import { DynamicDataSourcesExtension } from '../extensions/capture-models/DynamicDataSources/DynamicDataSources.extension';
-import { CaptureModelExtension } from '../extensions/capture-models/extension';
 import { Paragraphs } from '../extensions/capture-models/Paragraphs/Paragraphs.extension';
 import { plainTextSource } from '../extensions/capture-models/DynamicDataSources/sources/Plaintext.source';
 import { ExtensionManager } from '../extensions/extension-manager';
@@ -25,14 +25,14 @@ import { SiteManagerExtension } from '../extensions/site-manager/extension';
 import { SystemExtension } from '../extensions/system/extension';
 import { TaskExtension } from '../extensions/tasks/extension';
 import { ThemeExtension } from '../extensions/themes/extension';
-import { CompletionItem } from '../frontend/shared/capture-models/editor/input-types/AutocompleteField/AutocompleteField';
-import { CaptureModel } from '../frontend/shared/capture-models/types/capture-model';
-import { BaseField } from '../frontend/shared/capture-models/types/field-types';
-import { RevisionRequest } from '../frontend/shared/capture-models/types/revision-request';
-import { FacetConfig } from '../frontend/shared/features/MetadataFacetEditor';
-import { GetLocalisationResponse, ListLocalisationsResponse } from '../routes/admin/localisation';
+import type { CompletionItem } from '../frontend/shared/capture-models/editor/input-types/AutocompleteField/AutocompleteField';
+import type { CaptureModel } from '../frontend/shared/capture-models/types/capture-model';
+import type { BaseField } from '../frontend/shared/capture-models/types/field-types';
+import type { RevisionRequest } from '../frontend/shared/capture-models/types/revision-request';
+import type { FacetConfig } from '../frontend/shared/features/MetadataFacetEditor';
+import type { GetLocalisationResponse, ListLocalisationsResponse } from '../routes/admin/localisation';
 import { UpdateManifestDetailsRequest } from '../routes/iiif/manifests/update-manifest-details';
-import { AnnotationStyles } from '../types/annotation-styles';
+import type { AnnotationStyles } from '../types/annotation-styles';
 import {
   CanvasDeletionSummary,
   ManifestDeletionSummary,
@@ -44,6 +44,7 @@ import { ProjectManifestTasks } from '../types/manifest-tasks';
 import { NoteListResponse } from '../types/personal-notes';
 import { Pm2Status } from '../types/pm2';
 import { ProjectFeedback, ProjectMember, ProjectUpdate } from '../types/projects';
+import { BullMqSnapshot } from '../types/bullmq-status';
 import { ResourceLinkResponse } from '../types/schemas/linking';
 import { ProjectConfiguration } from '../types/schemas/project-configuration';
 import { SearchIngestRequest, SearchResponse, SearchQuery } from '../types/search';
@@ -566,6 +567,14 @@ export class ApiClient {
 
   async pm2Restart(service: 'auth' | 'queue' | 'madoc' | 'scheduler') {
     return this.request<{ success: true }>(`/api/madoc/pm2/restart/${service}`, { method: 'POST' });
+  }
+
+  async getQueueStatus(options: { limit?: number; includeCompleted?: boolean } = {}) {
+    const query = stringify({
+      limit: options.limit,
+      include_completed: options.includeCompleted,
+    });
+    return this.request<BullMqSnapshot>(`/api/madoc/queue/status${query ? `?${query}` : ''}`);
   }
 
   async getMetadataKeys() {
@@ -1096,10 +1105,20 @@ export class ApiClient {
     });
   }
 
-  async getCollectionById(id: number, page = 0, type?: 'manifest' | 'collection', excluded?: number[]) {
+  async getCollectionById(
+    id: number,
+    page = 0,
+    type?: 'manifest' | 'collection',
+    excluded?: number[],
+    onlyPublished?: boolean
+  ) {
     if (excluded && excluded.length) {
       return this.request<CollectionFull>(
-        `/api/madoc/iiif/collections-bulk/${id}${page || type ? `?${stringify({ type, page })}` : ''}`,
+        `/api/madoc/iiif/collections-bulk/${id}${
+          page || type || typeof onlyPublished !== 'undefined'
+            ? `?${stringify({ type, page, published: onlyPublished })}`
+            : ''
+        }`,
         {
           body: {
             excluded,
@@ -1110,7 +1129,11 @@ export class ApiClient {
     }
 
     return this.request<CollectionFull>(
-      `/api/madoc/iiif/collections/${id}${page || type || excluded ? `?${stringify({ type, page, excluded })}` : ''}`
+      `/api/madoc/iiif/collections/${id}${
+        page || type || excluded || typeof onlyPublished !== 'undefined'
+          ? `?${stringify({ type, page, excluded, published: onlyPublished })}`
+          : ''
+      }`
     );
   }
 

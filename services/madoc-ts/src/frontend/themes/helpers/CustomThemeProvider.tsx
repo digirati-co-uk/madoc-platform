@@ -51,6 +51,7 @@ export const CustomThemeProvider: React.FC<{
   theme: any;
   themeOverrides: any;
   isTopLevel?: boolean;
+  children?: React.ReactNode;
 }> = ({ theme, themeOverrides: initialThemeOverrides, children }) => {
   const [themeOverrides, setThemeOverrides] = useState<any>(initialThemeOverrides || {});
 

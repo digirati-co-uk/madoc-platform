@@ -1,7 +1,7 @@
 import { BaseRepository } from './base-repository';
 import { sql } from 'slonik';
 import { NotAuthorized } from '../utility/errors/not-authorized';
-import { compare } from 'bcrypt';
+import bcrypt from 'bcryptjs';
 
 export type ApiKeyRequest = {
   label: string;
@@ -127,7 +127,7 @@ export class ApiKeyRepository extends BaseRepository {
       throw new NotAuthorized();
     }
 
-    const secretMatches = await compare(authenticationRequest.client_secret, stored.client_secret);
+    const secretMatches = await bcrypt.compare(authenticationRequest.client_secret, stored.client_secret);
     if (!secretMatches) {
       await this.connection.query(
         ApiKeyRepository.updates.setPasswordAttempts(stored.id, stored.password_attempts + 1)

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Madoc TS Project Extensions"
+  short_description: "Project template registration"
+  default_prompt: "Use $extensions-projects to add or update project templates."
