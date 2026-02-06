@@ -2,7 +2,9 @@ import { InternationalString } from '@iiif/presentation-3';
 import produce from 'immer';
 import React, { useEffect, useMemo, useReducer, useState } from 'react';
 import { DragDropContext, Draggable, Droppable, DropResult } from '@hello-pangea/dnd';
+import { DndContext, DragOverlay, useDndContext, useDndMonitor, useDraggable, useDroppable } from '@dnd-kit/core';
 import { useTranslation } from 'react-i18next';
+import { createPortal } from 'react-dom';
 import styled from 'styled-components';
 import { MetadataEditor } from '../../admin/molecules/MetadataEditor';
 import { generateId } from '../capture-models/helpers/generate-id';
@@ -35,27 +37,65 @@ import {
 } from '../atoms/MetadataConfiguration';
 import { useApi } from '../hooks/use-api';
 import { apiHooks } from '../hooks/use-api-query';
-import { useDrag, useDrop } from 'react-dnd';
 import { useDefaultLocale, useSupportedLocales } from '../hooks/use-site';
 import { Spinner } from '../icons/Spinner';
 import { LocaleString } from '../components/LocaleString';
 
-const MetadataSingleValue: React.FC<{ parentLabel: string; value: string; total_items: number; language?: string }> = ({
-  parentLabel,
-  value,
-  language,
-  total_items,
-}) => {
-  const [, drag, preview] = useDrag({
-    item: { type: 'facet-value', parentLabel, value, language },
-    collect: monitor => ({
-      isDragging: monitor.isDragging(),
-    }),
+const FACET_DROPZONE_ID = 'metadata-facet-editor:facet-dropzone';
+const FACET_FIELDS_DROPZONE_ID = (facetId: string) => `metadata-facet-editor:facet:${facetId}:fields`;
+const FACET_VALUES_DROPZONE_ID = (facetId: string) => `metadata-facet-editor:facet:${facetId}:values`;
+const FACET_VALUE_DROPZONE_ID = (facetId: string, valueId: string) =>
+  `metadata-facet-editor:facet:${facetId}:value:${valueId}`;
+
+type MetadataDragItem =
+  | {
+      kind: 'facet';
+      label: string;
+      language?: string;
+    }
+  | {
+      kind: 'facet-value';
+      parentLabel: string;
+      value: string;
+      language?: string;
+    };
+
+const getDragItem = (input: unknown): MetadataDragItem | undefined => {
+  if (!input || typeof input !== 'object') {
+    return undefined;
+  }
+
+  const maybeDragItem = input as Partial<MetadataDragItem>;
+  if (maybeDragItem.kind === 'facet' && typeof maybeDragItem.label === 'string') {
+    return maybeDragItem as MetadataDragItem;
+  }
+  if (
+    maybeDragItem.kind === 'facet-value' &&
+    typeof maybeDragItem.parentLabel === 'string' &&
+    typeof maybeDragItem.value === 'string'
+  ) {
+    return maybeDragItem as MetadataDragItem;
+  }
+
+  return undefined;
+};
+
+const MetadataSingleValue: React.FC<{
+  dragId: string;
+  parentLabel: string;
+  value: string;
+  total_items: number;
+  language?: string;
+}> = ({ dragId, parentLabel, value, language, total_items }) => {
+  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
+    id: dragId,
+    data: { kind: 'facet-value', parentLabel, value, language } as MetadataDragItem,
   });
+  const style = isDragging ? { opacity: 0.35 } : undefined;
 
   return (
-    <MetadataListItemContainer ref={preview}>
-      <MetadataListItemIcon ref={drag}>
+    <MetadataListItemContainer ref={setNodeRef} style={style}>
+      <MetadataListItemIcon {...listeners} {...attributes} style={{ touchAction: 'none' }}>
         <TableHandleIcon />
       </MetadataListItemIcon>
       <MetadataListItemLabel>{value}</MetadataListItemLabel>
@@ -65,26 +105,26 @@ const MetadataSingleValue: React.FC<{ parentLabel: string; value: string; total_
 };
 
 const MetadataSingleFacet: React.FC<{
+  dragId: string;
   label: string;
   total_items: number;
   language?: string;
   expandable?: boolean;
-}> = ({ label, language, expandable = true }) => {
+}> = ({ dragId, label, language, expandable = true }) => {
   const [isOpen, setIsOpen] = useState(false);
   const childElements = apiHooks.getMetadataValues(() => [label], {
     enabled: isOpen,
   });
-  const [, drag, preview] = useDrag({
-    item: { type: 'facet', label, language },
-    collect: monitor => ({
-      isDragging: monitor.isDragging(),
-    }),
+  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
+    id: dragId,
+    data: { kind: 'facet', label, language } as MetadataDragItem,
   });
+  const style = isDragging ? { opacity: 0.35 } : undefined;
 
   return (
     <>
-      <MetadataListItemContainer ref={preview}>
-        <MetadataListItemIcon ref={drag}>
+      <MetadataListItemContainer ref={setNodeRef} style={style}>
+        <MetadataListItemIcon {...listeners} {...attributes} style={{ touchAction: 'none' }}>
           <TableHandleIcon />
         </MetadataListItemIcon>
         <MetadataListItemLabel>{label}</MetadataListItemLabel>
@@ -97,7 +137,14 @@ const MetadataSingleFacet: React.FC<{
       {childElements.data && isOpen ? (
         <MetadataListItemChildren>
           {childElements.data.values.map((value, idx) => {
-            return <MetadataSingleValue key={idx} parentLabel={label} {...value} />;
+            return (
+              <MetadataSingleValue
+                key={`${label}-${idx}`}
+                dragId={`metadata-facet-value:${dragId}:${idx}`}
+                parentLabel={label}
+                {...value}
+              />
+            );
           })}
         </MetadataListItemChildren>
       ) : null}
@@ -118,6 +165,17 @@ const MetadataColumn = styled.div`
 const EditorColumn = styled.div`
   flex: 1 1 0px;
   margin-right: 1em;
+`;
+
+const DragOverlayItem = styled.div`
+  border: 1px solid #ddd;
+  background: #fff;
+  padding: 0.5em 0.75em;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  border-radius: 2px;
+  font-size: 0.85em;
+  font-weight: bold;
+  pointer-events: none;
 `;
 
 type FacetConfigValue = {
@@ -319,33 +377,46 @@ const useFacetConfigState = (initialState: FacetConfig[]) => {
 };
 
 const EditSingleValue: React.FC<{
+  facetId: string;
   index: number;
   keys: string[];
   value: FacetConfigValue;
   editFacetValue: (value: FacetConfigValue) => void;
   removeFacetValue: (value: FacetConfigValue) => void;
-}> = ({ index, keys, value, removeFacetValue, editFacetValue }) => {
+}> = ({ facetId, index, keys, value, removeFacetValue, editFacetValue }) => {
   const { t } = useTranslation();
   const defaultLocale = useDefaultLocale();
   const availableLanguages = useSupportedLocales();
   const [isOpen, setIsOpen] = useState(false);
   const { id, label, values } = value;
+  const dropId = FACET_VALUE_DROPZONE_ID(facetId, id);
+  const { active } = useDndContext();
+  const activeItem = getDragItem(active?.data.current);
+  const canDropValue =
+    activeItem?.kind === 'facet-value' &&
+    keys.indexOf(`metadata.${activeItem.parentLabel}`) !== -1 &&
+    values.indexOf(activeItem.value) === -1;
+  const { setNodeRef: setDropValueRef } = useDroppable({
+    id: dropId,
+  });
 
-  const [dropValueState, dropValue] = useDrop({
-    accept: 'facet-value',
-    canDrop: item => {
-      return keys.indexOf(`metadata.${item.parentLabel}`) !== -1 && values.indexOf(item.value) === -1;
-    },
-    drop: (item: any) => {
+  useDndMonitor({
+    onDragEnd: event => {
+      if (event.over?.id !== dropId) {
+        return;
+      }
+      const item = getDragItem(event.active.data.current);
+      if (!item || item.kind !== 'facet-value') {
+        return;
+      }
+      if (keys.indexOf(`metadata.${item.parentLabel}`) === -1 || values.indexOf(item.value) !== -1) {
+        return;
+      }
       editFacetValue({
         ...value,
         values: [...values, item.value],
       });
     },
-    collect: monitor => ({
-      isOver: monitor.isOver(),
-      canDrop: monitor.canDrop(),
-    }),
   });
 
   if (isOpen) {
@@ -386,7 +457,7 @@ const EditSingleValue: React.FC<{
                 defaultValue: 'When searching for this, search the above fields with all of these values',
               })}
             </MetadataInputLabel>
-            <MetadataEmbeddedList id="included-fields" ref={dropValue} canDrop={dropValueState.canDrop}>
+            <MetadataEmbeddedList id="included-fields" ref={setDropValueRef} canDrop={canDropValue}>
               {(values || []).map(key => {
                 return (
                   <MetadataCardItem key={key}>
@@ -470,6 +541,8 @@ const EditSingleFacet: React.FC<{
   const { t } = useTranslation();
   const defaultLocale = useDefaultLocale();
   const availableLanguages = useSupportedLocales();
+  const { active } = useDndContext();
+  const activeItem = getDragItem(active?.data.current);
 
   const onDragEnd = (result: DropResult) => {
     if (!result.destination) {
@@ -479,40 +552,44 @@ const EditSingleFacet: React.FC<{
     reorderFacetValues(facet.id, result.source.index, result.destination.index);
   };
 
-  const [dropFieldsState, dropFields] = useDrop({
-    accept: 'facet',
-    canDrop: item => {
-      return facet.keys.indexOf(`metadata.${item.label}`) === -1;
-    },
-    drop: (item: any) => {
-      onSaveFacet({
-        ...facet,
-        keys: [...facet.keys, `metadata.${item.label}`],
-      });
-    },
-    collect: monitor => ({
-      isOver: monitor.isOver(),
-      canDrop: monitor.canDrop(),
-    }),
+  const fieldsDropId = FACET_FIELDS_DROPZONE_ID(facet.id);
+  const valuesDropId = FACET_VALUES_DROPZONE_ID(facet.id);
+  const canDropFields = activeItem?.kind === 'facet' && facet.keys.indexOf(`metadata.${activeItem.label}`) === -1;
+  const canDropValues =
+    activeItem?.kind === 'facet-value' && facet.keys.indexOf(`metadata.${activeItem.parentLabel}`) !== -1;
+  const { setNodeRef: setDropFieldsRef } = useDroppable({
+    id: fieldsDropId,
+  });
+  const { setNodeRef: setDropValueRef } = useDroppable({
+    id: valuesDropId,
   });
 
-  const [dropValueState, dropValue] = useDrop({
-    accept: 'facet-value',
-    canDrop: item => {
-      return facet.keys.indexOf(`metadata.${(item as any).parentLabel}`) !== -1;
-    },
-    drop: (item: any, monitor) => {
-      if (monitor.isOver({ shallow: true })) {
-        addFacetValue(
-          facet.id,
-          createNewFacetValueObject(item.value, [item.value], item.language, `metadata.${item.parentLabel}`)
-        );
+  useDndMonitor({
+    onDragEnd: event => {
+      const item = getDragItem(event.active.data.current);
+      if (!item) {
+        return;
+      }
+
+      if (event.over?.id === fieldsDropId && item.kind === 'facet') {
+        if (facet.keys.indexOf(`metadata.${item.label}`) === -1) {
+          onSaveFacet({
+            ...facet,
+            keys: [...facet.keys, `metadata.${item.label}`],
+          });
+        }
+        return;
+      }
+
+      if (event.over?.id === valuesDropId && item.kind === 'facet-value') {
+        if (facet.keys.indexOf(`metadata.${item.parentLabel}`) !== -1) {
+          addFacetValue(
+            facet.id,
+            createNewFacetValueObject(item.value, [item.value], item.language || 'en', `metadata.${item.parentLabel}`)
+          );
+        }
       }
     },
-    collect: monitor => ({
-      isOver: monitor.isOver({ shallow: true }),
-      canDrop: monitor.canDrop(),
-    }),
   });
 
   return (
@@ -542,7 +619,7 @@ const EditSingleFacet: React.FC<{
       <MetadataInputLabel htmlFor="included-fields">
         {t('help__metadata_facet_editor__combine', { defaultValue: 'This will combine the following fields' })}
       </MetadataInputLabel>
-      <MetadataEmbeddedList id="included-fields" ref={dropFields} canDrop={dropFieldsState.canDrop}>
+      <MetadataEmbeddedList id="included-fields" ref={setDropFieldsRef} canDrop={canDropFields}>
         {facet.keys.map(key => {
           const visualKey = key.startsWith('metadata.') ? key.slice('metadata.'.length) : key;
           return (
@@ -578,11 +655,12 @@ const EditSingleFacet: React.FC<{
             <Droppable droppableId="droppable">
               {provided => (
                 <div {...provided.droppableProps} ref={provided.innerRef}>
-                  <MetadataEmbeddedList id="included-values" ref={dropValue} canDrop={dropValueState.canDrop}>
+                  <MetadataEmbeddedList id="included-values" ref={setDropValueRef} canDrop={canDropValues}>
                     {(facet.values || []).map((value, idx) => {
                       return (
                         <EditSingleValue
                           key={value.id}
+                          facetId={facet.id}
                           index={idx}
                           keys={facet.keys}
                           removeFacetValue={(v: FacetConfigValue) => removeFacetValue(facet.id, v)}
@@ -659,17 +737,23 @@ const MetadataConfigEditor: React.FC<{
 
     reorderFacets(result.source.index, result.destination.index);
   };
-
-  const [{ isOver, canDrop }, drop] = useDrop({
-    accept: 'facet',
-    canDrop: () => true,
-    drop: (item: any) => {
+  const { active } = useDndContext();
+  const activeItem = getDragItem(active?.data.current);
+  const canDrop = activeItem?.kind === 'facet';
+  const { isOver, setNodeRef: setDropRef } = useDroppable({
+    id: FACET_DROPZONE_ID,
+  });
+  useDndMonitor({
+    onDragEnd: event => {
+      if (event.over?.id !== FACET_DROPZONE_ID) {
+        return;
+      }
+      const item = getDragItem(event.active.data.current);
+      if (!item || item.kind !== 'facet') {
+        return;
+      }
       addFacet(createNewFacetObject(item.label, [`metadata.${item.label}`], item.language));
     },
-    collect: monitor => ({
-      isOver: monitor.isOver(),
-      canDrop: monitor.canDrop(),
-    }),
   });
 
   const [selectedItemId, setSelectedItemId] = useState<string | undefined>();
@@ -727,8 +811,14 @@ const MetadataConfigEditor: React.FC<{
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="droppable">
           {provided => (
-            <div {...provided.droppableProps} ref={provided.innerRef}>
-              <MetadataCardListContainer ref={drop} isOver={isOver} canDrop={canDrop}>
+            <div
+              {...provided.droppableProps}
+              ref={node => {
+                provided.innerRef(node);
+                setDropRef(node);
+              }}
+            >
+              <MetadataCardListContainer isOver={isOver} canDrop={canDrop}>
                 {facets.map((facet, idx) => (
                   <Draggable key={facet.id} draggableId={facet.id} index={idx}>
                     {providedInner => (
@@ -776,25 +866,53 @@ export const MetadataFacetEditor: React.FC<{
 }> = ({ facets, onSave, allowSavingValues = true }) => {
   const api = useApi();
   const keys = apiHooks.getMetadataKeys(() => []);
+  const [activeDragItem, setActiveDragItem] = useState<MetadataDragItem | null>(null);
 
   if (api.getIsServer()) {
     return null;
   }
 
   return (
-    <Container>
-      <EditorColumn>
-        <MetadataConfigEditor facets={facets} onSave={onSave} allowSavingValues={allowSavingValues} />
-      </EditorColumn>
-      <MetadataColumn>
-        <MetadataListContainer>
-          {keys.data
-            ? keys.data.metadata.map((metadata, idx) => (
-                <MetadataSingleFacet key={idx} expandable={allowSavingValues} {...metadata} />
-              ))
-            : null}
-        </MetadataListContainer>
-      </MetadataColumn>
-    </Container>
+    <DndContext
+      onDragStart={event => {
+        setActiveDragItem(getDragItem(event.active.data.current) || null);
+      }}
+      onDragEnd={() => {
+        setActiveDragItem(null);
+      }}
+      onDragCancel={() => {
+        setActiveDragItem(null);
+      }}
+    >
+      <Container>
+        <EditorColumn>
+          <MetadataConfigEditor facets={facets} onSave={onSave} allowSavingValues={allowSavingValues} />
+        </EditorColumn>
+        <MetadataColumn>
+          <MetadataListContainer>
+            {keys.data
+              ? keys.data.metadata.map((metadata, idx) => (
+                  <MetadataSingleFacet
+                    key={idx}
+                    dragId={`metadata-facet:${idx}`}
+                    expandable={allowSavingValues}
+                    {...metadata}
+                  />
+                ))
+              : null}
+          </MetadataListContainer>
+        </MetadataColumn>
+      </Container>
+      {createPortal(
+        <DragOverlay dropAnimation={null}>
+          {activeDragItem ? (
+            <DragOverlayItem>
+              {activeDragItem.kind === 'facet' ? activeDragItem.label : activeDragItem.value}
+            </DragOverlayItem>
+          ) : null}
+        </DragOverlay>,
+        document.body
+      )}
+    </DndContext>
   );
 };
