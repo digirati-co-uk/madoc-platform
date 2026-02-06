@@ -1,0 +1,4 @@
+interface:
+  display_name: "Madoc TS Project Export"
+  short_description: "Export configs and output helpers"
+  default_prompt: "Use $extensions-project-export to add or modify export configs."

@@ -3,7 +3,7 @@ import React, { forwardRef, useState } from 'react';
 import { BrowserComponent } from '../../../utility/browser-component';
 import { madocLazy } from '../../../utility/madoc-lazy';
 
-const Textarea = madocLazy(() => /* webpackChunkName: "browser" */ import('react-textarea-autosize'));
+const Textarea = madocLazy(() => /* webpackChunkName: "browser" */ import('react-textarea-autosize'), 'textarea' as any);
 
 export const StyledForm = styled.form`
   margin-bottom: 1rem;

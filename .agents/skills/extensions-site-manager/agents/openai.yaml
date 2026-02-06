@@ -1,0 +1,4 @@
+interface:
+  display_name: "Madoc TS Site Manager"
+  short_description: "Site/user management APIs"
+  default_prompt: "Use $extensions-site-manager to update site manager APIs."

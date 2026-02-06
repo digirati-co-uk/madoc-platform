@@ -1,4 +1,4 @@
-import { CompletionItem } from '../../frontend/shared/capture-models/editor/input-types/AutocompleteField/AutocompleteField';
+import type { CompletionItem } from '../../frontend/shared/capture-models/editor/input-types/AutocompleteField/AutocompleteField';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { ProjectList } from '../../types/schemas/project-list';
 

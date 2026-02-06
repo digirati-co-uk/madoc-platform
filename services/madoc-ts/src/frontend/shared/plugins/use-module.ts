@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import * as publicApi from './public-api';
 import * as ReactQuery from 'react-query';
 import * as ReactRouterDom from 'react-router-dom';
+import * as HelloPangeaDnd from '@hello-pangea/dnd';
 
 export const _ALLOWED_MODULES = [
   '@madoc.io/types',
@@ -17,7 +18,7 @@ export const _ALLOWED_MODULES = [
   'immer',
   'react',
   'react-accessible-dropdown-menu-hook',
-  'react-beautiful-dnd',
+  '@hello-pangea/dnd',
   'react-dnd',
   'react-dnd-html5-backend',
   'react-dnd-multi-backend',
@@ -71,8 +72,8 @@ export function useModule(name: AvailableModules) {
     //   return require('react');
     // case 'react-accessible-dropdown-menu-hook':
     //   return require('react-accessible-dropdown-menu-hook');
-    // case 'react-beautiful-dnd':
-    //   return require('react-beautiful-dnd');
+    // case '@hello-pangea/dnd':
+    //   return require('@hello-pangea/dnd');
     // case 'react-dnd':
     //   return require('react-dnd');
     // case 'react-dnd-html5-backend':
@@ -111,6 +112,8 @@ export function useModule(name: AvailableModules) {
       return React;
     case 'styled-components':
       return styled;
+    case '@hello-pangea/dnd':
+      return HelloPangeaDnd;
     default:
       return undefined;
   }

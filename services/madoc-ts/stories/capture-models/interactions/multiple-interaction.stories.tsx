@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { expect } from '@storybook/jest';
+import { expect } from '@storybook/test';
 import { CaptureModelTestHarness } from './CaptureModelTestHarness';
-import { within, userEvent } from '@storybook/testing-library';
+import { within, userEvent } from '@storybook/test';
 // @ts-ignore
 import fixture from '../../../fixtures/04-selectors/02-multiple-selectors.json';
 export default { title: 'Capture model interactions / multiple region', component: CaptureModelTestHarness };

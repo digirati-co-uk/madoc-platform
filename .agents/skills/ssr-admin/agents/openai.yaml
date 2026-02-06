@@ -1,0 +1,4 @@
+interface:
+  display_name: "Madoc TS Admin SSR"
+  short_description: "Admin server-side rendering"
+  default_prompt: "Use $ssr-admin to update admin SSR behavior or templates."

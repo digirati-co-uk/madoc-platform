@@ -1,7 +1,8 @@
 import { CaptureModel } from '../../frontend/shared/capture-models/types/capture-model';
 import { InternationalString } from '@iiif/presentation-3';
 import React, { JSXElementConstructor } from 'react';
-import ReactDOM from 'react-dom';
+import { flushSync } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { ApiClient } from '../../gateway/api';
 import { BlockHook } from '../../types/block-hook';
 import {
@@ -199,8 +200,13 @@ export class PageBlockExtension extends RegistryExtension<PageBlockDefinition<an
         return reactDomServer.renderToString(definition.render(block.static_data, context, this.api));
       } else {
         const tempElement = document.createElement('div');
-        ReactDOM.render(definition.render(block.static_data, context, this.api), tempElement);
-        return tempElement.innerHTML;
+        const root = createRoot(tempElement);
+        flushSync(() => {
+          root.render(definition.render(block.static_data, context, this.api));
+        });
+        const html = tempElement.innerHTML;
+        root.unmount();
+        return html;
       }
     }
 

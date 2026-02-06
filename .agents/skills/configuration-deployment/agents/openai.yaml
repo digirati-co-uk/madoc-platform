@@ -1,0 +1,4 @@
+interface:
+  display_name: "Madoc TS Configuration & Deployment"
+  short_description: "Runtime config, paths, and Docker"
+  default_prompt: "Use -deployment to work on Madoc TS runtime config or Docker setup."

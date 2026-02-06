@@ -1,0 +1,4 @@
+interface:
+  display_name: "Madoc TS I18n"
+  short_description: "i18next configuration"
+  default_prompt: "Use $i18n to update locale loading or detection behavior."

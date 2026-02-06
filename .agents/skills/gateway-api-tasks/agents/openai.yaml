@@ -1,0 +1,4 @@
+interface:
+  display_name: "Madoc TS Gateway API"
+  short_description: "ApiClient and task types"
+  default_prompt: "Use $gateway-api-tasks to update ApiClient wiring or task definitions."

@@ -1,6 +1,6 @@
 import '../../../src/frontend/shared/capture-models/editor/bundle';
 import { ReactRenderer, StoryObj } from '@storybook/react';
-import { userEvent, within } from '@storybook/testing-library';
+import { userEvent, within } from '@storybook/test';
 import { PlayFunctionContext } from '@storybook/types';
 // @ts-ignore
 import React, { useMemo, useState } from 'react';

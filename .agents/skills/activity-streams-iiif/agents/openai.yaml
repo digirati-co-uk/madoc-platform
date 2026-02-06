@@ -1,0 +1,4 @@
+interface:
+  display_name: "Madoc TS Activity Streams & IIIF"
+  short_description: "Activity stream endpoints and IIIF data"
+  default_prompt: "Use -streams-iiif to work on activity stream or IIIF routes in services/madoc-ts."

@@ -1,6 +1,6 @@
 import { InternationalString } from '@iiif/presentation-3';
 import React, { useEffect, useState, useCallback, useRef } from 'react';
-import { Select } from 'react-functional-select';
+import { Select } from '../../../../form/FunctionalSelect';
 import { LocaleString } from '../../../../components/LocaleString';
 import { useOptionalApi } from '../../../../hooks/use-api';
 import { BaseField, FieldComponent } from '../../../types/field-types';

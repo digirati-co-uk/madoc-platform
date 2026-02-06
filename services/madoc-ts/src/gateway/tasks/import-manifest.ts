@@ -12,7 +12,7 @@ import fetch from 'node-fetch';
 import { ImportCanvasTask } from './import-canvas';
 import { iiifGetLabel } from '../../utility/iiif-get-label';
 import { ApiClient } from '../api';
-import del from 'del';
+import { deleteAsync } from 'del';
 import { trimInternationalString } from '../helpers/trim-international-string';
 export const type = 'madoc-manifest-import';
 
@@ -228,7 +228,7 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
               console.log('Unable to delete manifest file');
             } else {
               console.log('Deleted manifest cache', task.state.diskCacheLocation);
-              await del(dirname(task.state.diskCacheLocation));
+              await deleteAsync(dirname(task.state.diskCacheLocation));
             }
           }
         } catch (e) {

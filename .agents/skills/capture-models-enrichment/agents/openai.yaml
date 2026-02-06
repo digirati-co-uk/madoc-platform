@@ -1,0 +1,4 @@
+interface:
+  display_name: "Madoc TS Capture Models"
+  short_description: "Capture model server and enrichment wiring"
+  default_prompt: "Use $capture-models-enrichment to update capture model flows and enrichment integration."

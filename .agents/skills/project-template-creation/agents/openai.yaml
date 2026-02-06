@@ -1,0 +1,4 @@
+interface:
+  display_name: "Madoc TS Project Template Creation"
+  short_description: "Create new project templates"
+  default_prompt: "Use $project-template-creation to add a new project template type."

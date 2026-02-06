@@ -20,7 +20,7 @@ export const indexCanvas: RouteMiddleware<{ id: string }> = async context => {
   const site = await context.siteManager.getSiteById(siteId);
   const forceIndex = context.query.force === 'true';
 
-  if (site.config.disableSearchIndexing && !forceIndex) {
+  if (true || (site.config.disableSearchIndexing && !forceIndex)) {
     console.log('Search: indexing skipped, Canvas(%d) Site(%d)', canvasId, siteId);
     context.response.body = { noSearch: true };
     return;

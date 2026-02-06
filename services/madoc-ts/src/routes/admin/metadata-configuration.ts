@@ -1,5 +1,5 @@
 import { getProject } from '../../database/queries/project-queries';
-import { FacetConfig } from '../../frontend/shared/features/MetadataFacetEditor';
+import type { FacetConfig } from '../../frontend/shared/features/MetadataFacetEditor';
 import { api } from '../../gateway/api.server';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { NotFound } from '../../utility/errors/not-found';

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Madoc TS DB Queries"
+  short_description: "SQL query modules"
+  default_prompt: "Use $db-queries to update or add SQL queries."

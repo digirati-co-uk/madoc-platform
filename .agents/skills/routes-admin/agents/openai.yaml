@@ -1,0 +1,4 @@
+interface:
+  display_name: "Madoc TS Admin Routes"
+  short_description: "Admin HTTP route handlers"
+  default_prompt: "Use $routes-admin to add or modify admin HTTP endpoints."

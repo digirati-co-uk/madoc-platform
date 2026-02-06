@@ -29,6 +29,7 @@ export interface ImportCollectionTask extends BaseTask {
   status: -1 | 0 | 1 | 2 | 3 | 4;
   state: {
     resourceId?: number;
+    manifestIds?: string[];
     errorMessage?: string;
     isDuplicate?: boolean;
   };
@@ -60,6 +61,78 @@ export function changeStatus(newStatus: string, data: { state?: any; name?: stri
   return tasks.changeStatus(status, newStatus, data);
 }
 
+function getImportTargets(iiifCollection: any, allowedManifestIds?: string[]) {
+  const targetManifestIds: string[] = [];
+  const targetCollectionIds: string[] = [];
+  const includeManifest =
+    allowedManifestIds && allowedManifestIds.length ? new Set(allowedManifestIds.map(id => encodeURI(id))) : null;
+
+  for (const item of iiifCollection.items || []) {
+    if (!item || !item.id || !item.type) {
+      continue;
+    }
+    const id = encodeURI(item.id);
+    if (item.type === 'Manifest') {
+      if (includeManifest && !includeManifest.has(id)) {
+        continue;
+      }
+      targetManifestIds.push(id);
+      continue;
+    }
+    if (item.type === 'Collection') {
+      targetCollectionIds.push(id);
+    }
+  }
+
+  return {
+    targetManifestIds,
+    targetCollectionIds,
+  };
+}
+
+async function queueNextManifest(
+  api: ApiClient,
+  task: ImportCollectionTask,
+  userId: number,
+  siteId: number | undefined,
+  manifestIds: string[]
+) {
+  const subtasks = (task.subtasks || []).filter(subtask => subtask.type === importManifest.type);
+  const subtaskMap = new Map<string, (typeof subtasks)[number]>();
+  for (const subtask of subtasks) {
+    if (!subtaskMap.has(subtask.subject)) {
+      subtaskMap.set(subtask.subject, subtask);
+    }
+  }
+
+  for (const manifestId of manifestIds) {
+    const existingManifestTask = subtaskMap.get(manifestId);
+    if (existingManifestTask && existingManifestTask.status === tasks.STATUS.DONE) {
+      continue;
+    }
+
+    if (existingManifestTask) {
+      if (
+        existingManifestTask.status === tasks.STATUS.ACCEPTED ||
+        existingManifestTask.status === tasks.STATUS.IN_PROGRESS ||
+        existingManifestTask.status > tasks.STATUS.DONE
+      ) {
+        return true;
+      }
+
+      await api.updateTask(existingManifestTask.id, importManifest.changeStatus('pending'));
+      return true;
+    }
+
+    if (task.id) {
+      await api.addSubtasks<ImportManifestTask>([importManifest.createTask(manifestId, userId, siteId)], task.id);
+      return true;
+    }
+  }
+
+  return false;
+}
+
 export const jobHandler = async (name: string, taskId: string, api: ApiClient) => {
   switch (name) {
     case 'created': {
@@ -75,6 +148,8 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
         throw new Error(`Error importing collection ${task.subject}`);
       }
 
+      const { targetManifestIds, targetCollectionIds } = getImportTargets(iiifCollection, manifestIds);
+
       // 2. Post request to /api/madoc/iiif/collection (type CreateCollection)
       const response = await api.asUser({ userId, siteId }).createCollection(
         {
@@ -85,56 +160,50 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
         task.id
       );
 
-      const subtasks: Array<ImportManifestTask | ImportCollectionTask> = [];
       const originalSubtasks = task.subtasks || [];
-      const subtasksToReTrigger = [];
-      const subjectsToSkip = [];
+      const collectionsToCreate: ImportCollectionTask[] = [];
+      const collectionsToReTrigger: string[] = [];
+      const originalSubtasksMap = new Map<string, (typeof originalSubtasks)[number]>();
 
-      if (originalSubtasks.length) {
-        for (const subtask of originalSubtasks) {
-          if (subtask.type === importManifest.type || subtask.type === type) {
-            if (subtask.status !== 3) {
-              subtasksToReTrigger.push(subtask.id);
-            }
-            subjectsToSkip.push(subtask.subject);
+      for (const subtask of originalSubtasks) {
+        if (subtask.type === importManifest.type || subtask.type === type) {
+          if (!originalSubtasksMap.has(subtask.subject)) {
+            originalSubtasksMap.set(subtask.subject, subtask);
           }
         }
       }
-      for (const manifestRef of iiifCollection.items) {
-        if (manifestIds && manifestIds.length) {
-          if (manifestIds?.indexOf(manifestRef.id) === -1) {
-            continue;
-          }
-        }
-        if (subjectsToSkip.indexOf(manifestRef.id) !== -1) {
+
+      for (const collectionRef of targetCollectionIds) {
+        const originalSubtask = originalSubtasksMap.get(collectionRef);
+        if (!originalSubtask) {
+          collectionsToCreate.push(createTask(collectionRef, userId, siteId));
           continue;
         }
-        if (manifestRef.type === 'Manifest') {
-          subtasks.push(importManifest.createTask(manifestRef.id, userId, siteId));
-        }
-        if (manifestRef.type === 'Collection') {
-          subtasks.push(createTask(manifestRef.id, userId, siteId));
+        if (originalSubtask.status !== tasks.STATUS.DONE) {
+          collectionsToReTrigger.push(originalSubtask.id);
         }
       }
 
       console.log(
-        `Adding ${subtasks.length} canvases, re-triggering ${
-          subtasksToReTrigger.length
-        }, skipping ${subjectsToSkip.length - subtasksToReTrigger.length}`
+        `Adding ${collectionsToCreate.length} child collections, re-triggering ${
+          collectionsToReTrigger.length
+        }, manifests queued: ${targetManifestIds.length}`
       );
 
-      if (subtasks.length && task.id) {
-        await api.addSubtasks<ImportManifestTask | ImportCollectionTask>(subtasks, task.id);
+      if (collectionsToCreate.length && task.id) {
+        await api.addSubtasks<ImportCollectionTask>(collectionsToCreate, task.id);
       }
 
-      if (subtasksToReTrigger.length) {
-        for (const subtask of subtasksToReTrigger) {
+      if (collectionsToReTrigger.length) {
+        for (const subtask of collectionsToReTrigger) {
           await api.updateTask(subtask, changeStatus('pending'));
         }
       }
 
+      const waitingOnManifest = await queueNextManifest(api, task, userId, siteId, targetManifestIds);
+
       // 4. If no manifests, then mark as done
-      if (subtasks.length === 0 && subtasksToReTrigger.length === 0) {
+      if (!waitingOnManifest && collectionsToCreate.length === 0 && collectionsToReTrigger.length === 0) {
         await api.updateTask(task.id, changeStatus('done'));
         return;
       }
@@ -146,6 +215,7 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
           name: iiifGetLabel(iiifCollection.label),
           state: {
             resourceId: response.id,
+            manifestIds: targetManifestIds,
           },
         })
       );
@@ -153,25 +223,32 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
     }
     case `subtask_type_status.${importManifest.type}.${tasks.STATUS.DONE}`: {
       // 1. Update with manifest ids from sub tasks
-      const vault = new Vault();
       const task = await api.getTaskById<ImportCollectionTask>(taskId);
       const subtasks = task.subtasks || [];
-      const [userId, siteId] = task.parameters;
+      const [userId, siteId, requestedManifestIds] = task.parameters;
 
       if (!task.state.resourceId) {
         return;
       }
 
-      // 2. Fetch collection
-      const json = await fetch(task.subject).then(r => r.json());
-      const iiifCollection = await vault.loadCollection(task.subject, json);
+      let manifestIds = task.state.manifestIds || [];
+      if (!manifestIds.length) {
+        const vault = new Vault();
+        const json = await fetch(task.subject).then(r => r.json());
+        const iiifCollection = await vault.loadCollection(task.subject, json);
 
-      if (!iiifCollection) {
-        throw new Error(`Error loading IIIF collection ${task.subject}`);
+        if (!iiifCollection) {
+          throw new Error(`Error loading IIIF collection ${task.subject}`);
+        }
+
+        manifestIds = getImportTargets(iiifCollection, requestedManifestIds).targetManifestIds;
       }
 
-      // 3. Get the manifests in order.
-      const manifestIds = iiifCollection.items.map(r => r.id);
+      const waitingOnManifest = await queueNextManifest(api, task, userId, siteId, manifestIds);
+      if (waitingOnManifest) {
+        return;
+      }
+
       const idMap: { [id: string]: number } = {};
       for (const subtask of subtasks) {
         if (subtask.type === importManifest.type) {

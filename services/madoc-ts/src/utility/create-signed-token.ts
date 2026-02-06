@@ -1,5 +1,5 @@
-import { JWK, JWT } from 'jose';
-import { getPem } from './get-pem';
+import { SignJWT } from 'jose';
+import { getPrivateKey } from './jose-keys';
 
 export type TokenRequest = {
   scope?: string[];
@@ -14,7 +14,7 @@ export type TokenRequest = {
   expiresIn: number;
 };
 
-export function createLimitedSignedToken(req: {
+export async function createLimitedSignedToken(req: {
   identifier: string;
   name: string;
   site: {
@@ -26,49 +26,39 @@ export function createLimitedSignedToken(req: {
   data?: any;
 }) {
   try {
-    return JWT.sign(
-      {
-        scope: req.scope ? req.scope.join(' ') : undefined,
-        iss_name: req.site ? req.site.name : undefined,
-        name: req.name,
-        ...(req.data || {}),
-      },
-      JWK.asKey(getPem()),
-      {
-        subject: req.identifier,
-        issuer: req.site ? `urn:madoc:site:${req.site.id}` : `urn:madoc:site:admin`,
-        header: {
-          typ: 'JWT',
-          alg: 'RS256',
-        },
-        expiresIn: `${req.expiresIn}s`,
-      }
-    );
+    const key = await getPrivateKey();
+    return await new SignJWT({
+      scope: req.scope ? req.scope.join(' ') : undefined,
+      iss_name: req.site ? req.site.name : undefined,
+      name: req.name,
+      ...(req.data || {}),
+    })
+      .setProtectedHeader({ typ: 'JWT', alg: 'RS256' })
+      .setSubject(req.identifier)
+      .setIssuer(req.site ? `urn:madoc:site:${req.site.id}` : `urn:madoc:site:admin`)
+      .setIssuedAt()
+      .setExpirationTime(`${req.expiresIn}s`)
+      .sign(key);
   } catch (err) {
     console.log(err);
     return undefined;
   }
 }
 
-export function createSignedToken(req: TokenRequest) {
+export async function createSignedToken(req: TokenRequest) {
   try {
-    return JWT.sign(
-      {
-        scope: req.scope ? req.scope.join(' ') : undefined,
-        iss_name: req.site ? req.site.name : undefined,
-        name: req.user.name,
-      },
-      JWK.asKey(getPem()),
-      {
-        subject: `urn:madoc:user:${req.user.id}`,
-        issuer: req.site ? `urn:madoc:site:${req.site.id}` : `urn:madoc:site:admin`,
-        header: {
-          typ: 'JWT',
-          alg: 'RS256',
-        },
-        expiresIn: `${req.expiresIn}s`,
-      }
-    );
+    const key = await getPrivateKey();
+    return await new SignJWT({
+      scope: req.scope ? req.scope.join(' ') : undefined,
+      iss_name: req.site ? req.site.name : undefined,
+      name: req.user.name,
+    })
+      .setProtectedHeader({ typ: 'JWT', alg: 'RS256' })
+      .setSubject(`urn:madoc:user:${req.user.id}`)
+      .setIssuer(req.site ? `urn:madoc:site:${req.site.id}` : `urn:madoc:site:admin`)
+      .setIssuedAt()
+      .setExpirationTime(`${req.expiresIn}s`)
+      .sign(key);
   } catch (err) {
     console.log(err);
     return undefined;

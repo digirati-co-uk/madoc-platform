@@ -1,0 +1,4 @@
+interface:
+  display_name: "Madoc TS Cron Jobs"
+  short_description: "Scheduled maintenance tasks"
+  default_prompt: "Use $cron-jobs to add or update cron tasks."

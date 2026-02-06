@@ -8,6 +8,7 @@ import { RouteMiddleware } from '../../types/route-middleware';
 import { EditorialContext } from '../../types/schemas/site-page';
 import { NotFound } from '../../utility/errors/not-found';
 import { parseProjectId } from '../../utility/parse-project-id';
+import { renderStaticDocument } from './render-static-document';
 
 export const siteFrontend: RouteMiddleware = async (context, next) => {
   const lng = context.cookies.get('i18next');
@@ -92,13 +93,14 @@ export const siteFrontend: RouteMiddleware = async (context, next) => {
           : 'http';
       const hostname = context.request.hostname;
 
-      return `
+      const template = `
         <!doctype html>
-        <html ${result.htmlAttributes}>
+        <html>
         <head>
           <meta charset="UTF-8">
           <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
           <meta http-equiv="X-UA-Compatible" content="ie=edge">
+          <!--ssr-head-->
           <script type="module">
             import RefreshRuntime from '${viteProtocol}://${hostname}:3088/@react-refresh'
             RefreshRuntime.injectIntoGlobalHook(window)
@@ -109,20 +111,17 @@ export const siteFrontend: RouteMiddleware = async (context, next) => {
           </script>
           <script type="module" src="${viteProtocol}://${hostname}:3088/src/frontend/site/client.ts"></script>
           <link rel="stylesheet" href="${viteProtocol}://${hostname}:3088/src/frontend/site/index.css" />
-          ${result.head}
         </head>
-        <body ${result.bodyAttributes}>
-          ${result.body}
+        <body>
+          <!--ssr-outlet-->
         </body>
         </html>
       `;
+
+      return renderStaticDocument(template, result);
     }
 
-    return context.siteTemplate
-      .replace('<!--ssr-outlet-->', result.body)
-      .replace('<!--ssr-head-->', result.head)
-      .replace('<html>', `<html ${result.htmlAttributes}>`)
-      .replace('<body>', `<body ${result.bodyAttributes}>`);
+    return renderStaticDocument(context.siteTemplate, result);
   };
 
   await next();

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Madoc TS Auth JWT"
+  short_description: "JWT verification and claim parsing"
+  default_prompt: "Use $auth-jwt to update JWT parsing or verification logic."

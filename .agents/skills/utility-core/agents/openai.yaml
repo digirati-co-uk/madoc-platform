@@ -1,0 +1,4 @@
+interface:
+  display_name: "Madoc TS Utility Core"
+  short_description: "Shared utility helpers"
+  default_prompt: "Use $utility-core to update shared utilities."

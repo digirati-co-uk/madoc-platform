@@ -1,0 +1,4 @@
+interface:
+  display_name: "Madoc TS Plugin System"
+  short_description: "Plugin loading and registration"
+  default_prompt: "Use $plugin-system to update plugin loading or registration."

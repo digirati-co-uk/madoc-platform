@@ -4,6 +4,7 @@ import { createBackend } from '../../middleware/i18n/i18next.server';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { NotFound } from '../../utility/errors/not-found';
 import { userWithScope } from '../../utility/user-with-scope';
+import { renderStaticDocument } from './render-static-document';
 
 export const adminFrontend: RouteMiddleware = async context => {
   try {
@@ -57,13 +58,14 @@ export const adminFrontend: RouteMiddleware = async context => {
           : 'http';
       const hostname = context.request.hostname;
 
-      return `
+      const template = `
         <!doctype html>
-        <html ${result.htmlAttributes}>
+        <html>
         <head>
           <meta charset="UTF-8">
           <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
           <meta http-equiv="X-UA-Compatible" content="ie=edge">
+          <!--ssr-head-->
           <script type="module">
             import RefreshRuntime from '${viteProtocol}://${hostname}:3088/@react-refresh'
             RefreshRuntime.injectIntoGlobalHook(window)
@@ -73,19 +75,16 @@ export const adminFrontend: RouteMiddleware = async context => {
             window.__HMR_PROTOCOL__ = '${viteProtocol === 'https' ? 'wss' : 'ws'}';
           </script>
           <script type="module" src="${viteProtocol}://${hostname}:3088/src/frontend/admin/client.tsx"></script>
-          ${result.head}
         </head>
-        <body ${result.bodyAttributes}>
-          ${result.body}
+        <body>
+          <!--ssr-outlet-->
         </body>
         </html>
       `;
+
+      return renderStaticDocument(template, result);
     }
 
-    return context.adminTemplate
-      .replace('<!--ssr-outlet-->', result.body)
-      .replace('<!--ssr-head-->', result.head)
-      .replace('<html>', `<html ${result.htmlAttributes}>`)
-      .replace('<body>', `<body ${result.bodyAttributes}>`);
+    return renderStaticDocument(context.adminTemplate, result);
   };
 };

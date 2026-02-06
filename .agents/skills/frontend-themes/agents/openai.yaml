@@ -1,0 +1,4 @@
+interface:
+  display_name: "Madoc TS Themes"
+  short_description: "Theme packaging and integration"
+  default_prompt: "Use $frontend-themes to update theme assets or theme extension wiring."
