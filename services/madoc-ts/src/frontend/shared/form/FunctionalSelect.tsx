@@ -1,13 +1,5 @@
-import React, { useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
-import {
-  Button as AriaButton,
-  ComboBox,
-  Input,
-  ListBox,
-  ListBoxItem,
-  Popover,
-  type Key,
-} from 'react-aria-components';
+import React, { useCallback, useDeferredValue, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
+import { Button as AriaButton, ComboBox, Input, ListBox, ListBoxItem, Popover, type Key } from 'react-aria-components';
 
 export type SelectRef = {
   setValue?: (value: unknown) => void;
@@ -58,8 +50,7 @@ type NormalizedOption = {
 };
 
 const DEFAULT_PRIMARY = '#005cc5';
-const DEFAULT_BORDER = '#c8ced6';
-const DEFAULT_ERROR = '#d63031';
+const SEARCH_DEBOUNCE_MS = 200;
 
 function valueToText(value: any): string {
   if (typeof value === 'string' || typeof value === 'number') {
@@ -101,6 +92,47 @@ function normalizeValueKey(key: Key | null | undefined): string | null {
   return String(key);
 }
 
+function getBorderRadiusClass(radius?: string): string {
+  switch (radius) {
+    case '0':
+    case '0px':
+      return 'rounded-none';
+    case '2px':
+      return 'rounded-sm';
+    case '3px':
+      return 'rounded-[3px]';
+    case '6px':
+      return 'rounded-md';
+    case '8px':
+      return 'rounded-lg';
+    case '9999px':
+      return 'rounded-full';
+    default:
+      return 'rounded';
+  }
+}
+
+function getColorClass(color?: string): string {
+  switch (color) {
+    case '#d63031':
+      return 'text-[#d63031]';
+    case '#005cc5':
+    default:
+      return 'text-[#005cc5]';
+  }
+}
+
+function getMenuItemSizeClass(menuItemSize?: number): string {
+  switch (menuItemSize) {
+    case 55:
+      return 'min-h-[55px]';
+    case 44:
+      return 'min-h-11';
+    default:
+      return 'min-h-9';
+  }
+}
+
 export const Select = React.forwardRef<SelectRef, SelectProps>(function SafeFunctionalSelect(
   {
     inputId,
@@ -127,13 +159,19 @@ export const Select = React.forwardRef<SelectRef, SelectProps>(function SafeFunc
 ) {
   const primaryColor = themeConfig?.color?.primary || DEFAULT_PRIMARY;
   const focusedBorderColor = themeConfig?.control?.focusedBorderColor || primaryColor;
-  const backgroundColor = themeConfig?.control?.backgroundColor || '#fff';
   const borderRadius = themeConfig?.control?.borderRadius || '4px';
   const searchable = isSearchable || !!onSearchChange || !!onInputChange;
   const inputRef = useRef<HTMLInputElement>(null);
+  const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set());
   const [inputValue, setInputValue] = useState('');
+  const [isOpen, setIsOpen] = useState(false);
+  const deferredInputValue = useDeferredValue(inputValue);
+  const borderRadiusClass = getBorderRadiusClass(borderRadius);
+  const accentColorClass = getColorClass(focusedBorderColor);
+  const selectedMarkColorClass = getColorClass(primaryColor);
+  const menuItemSizeClass = getMenuItemSizeClass(menuItemSize);
 
   const getResolvedOptionValue = useCallback(
     (option: any, index: number): Key => {
@@ -171,12 +209,12 @@ export const Select = React.forwardRef<SelectRef, SelectProps>(function SafeFunc
   }, [getOptionLabel, getResolvedOptionValue, options, renderOptionLabel]);
 
   const filteredOptions = useMemo(() => {
-    if (!searchable || onSearchChange || !inputValue.trim()) {
+    if (!searchable || onSearchChange || !deferredInputValue.trim()) {
       return normalizedOptions;
     }
-    const query = inputValue.toLowerCase();
+    const query = deferredInputValue.toLowerCase();
     return normalizedOptions.filter(item => item.textValue.toLowerCase().includes(query));
-  }, [inputValue, normalizedOptions, onSearchChange, searchable]);
+  }, [deferredInputValue, normalizedOptions, onSearchChange, searchable]);
 
   const optionMap = useMemo(() => {
     const map = new Map<string, NormalizedOption>();
@@ -198,6 +236,18 @@ export const Select = React.forwardRef<SelectRef, SelectProps>(function SafeFunc
       .filter(Boolean)
       .join(', ');
   }, [getOptionLabel, selectedOptionsForMulti]);
+
+  const clearPendingSearch = useCallback(() => {
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+      searchTimeoutRef.current = null;
+    }
+  }, []);
+
+  const openMenu = useCallback(() => {
+    setIsOpen(true);
+    inputRef.current?.focus();
+  }, []);
 
   const getKeyFromValue = useCallback(
     (value: unknown): string | null => {
@@ -229,6 +279,7 @@ export const Select = React.forwardRef<SelectRef, SelectProps>(function SafeFunc
   );
 
   const clearValue = useCallback(() => {
+    clearPendingSearch();
     if (isMulti) {
       setSelectedKeys(new Set());
       setInputValue('');
@@ -238,7 +289,7 @@ export const Select = React.forwardRef<SelectRef, SelectProps>(function SafeFunc
     setSelectedKey(null);
     setInputValue('');
     onOptionChange?.(undefined);
-  }, [isMulti, onOptionChange]);
+  }, [clearPendingSearch, isMulti, onOptionChange]);
 
   const setValue = useCallback(
     (value: unknown) => {
@@ -275,7 +326,9 @@ export const Select = React.forwardRef<SelectRef, SelectProps>(function SafeFunc
       return;
     }
     setValue(initialValue);
-  }, [initialValue, isMulti, options, setValue]);
+    // Sync only when the provided initial value changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialValue, isMulti]);
 
   useImperativeHandle(
     ref,
@@ -286,37 +339,54 @@ export const Select = React.forwardRef<SelectRef, SelectProps>(function SafeFunc
       clearValue,
       toggleMenu: menuOpen => {
         if (menuOpen === false) {
+          setIsOpen(false);
           inputRef.current?.blur();
           return;
         }
-        inputRef.current?.focus();
-        inputRef.current?.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
+        openMenu();
       },
     }),
-    [clearValue, setValue]
+    [clearValue, openMenu, setValue]
   );
 
   const onInputUpdate = useCallback(
     (value: string) => {
       setInputValue(value);
       onInputChange?.(value);
-      onSearchChange?.(value);
+      if (!onSearchChange) {
+        return;
+      }
+
+      clearPendingSearch();
+
+      searchTimeoutRef.current = setTimeout(() => {
+        onSearchChange(value);
+        searchTimeoutRef.current = null;
+      }, SEARCH_DEBOUNCE_MS);
     },
-    [onInputChange, onSearchChange]
+    [clearPendingSearch, onInputChange, onSearchChange]
   );
 
-  const borderColor = isInvalid ? DEFAULT_ERROR : DEFAULT_BORDER;
+  useEffect(() => {
+    return () => {
+      clearPendingSearch();
+    };
+  }, [clearPendingSearch]);
 
   return (
     <ComboBox
       id={inputId}
       allowsCustomValue={true}
+      allowsEmptyCollection
       isDisabled={isDisabled}
+      isOpen={isOpen}
       selectedKey={isMulti ? null : selectedKey}
       inputValue={inputValue}
       onInputChange={onInputUpdate}
+      onOpenChange={setIsOpen}
       menuTrigger={searchable ? 'input' : 'focus'}
       onSelectionChange={selected => {
+        clearPendingSearch();
         const key = normalizeValueKey(selected);
         if (!key || !optionMap.has(key)) {
           if (!isMulti) {
@@ -352,53 +422,32 @@ export const Select = React.forwardRef<SelectRef, SelectProps>(function SafeFunc
         setInputValue(valueToText(getOptionLabel ? getOptionLabel(option) : option));
         onOptionChange?.(option);
       }}
-      style={{ width: '100%' }}
+      className="w-full"
     >
       <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          minHeight: 38,
-          width: '100%',
-          border: `1px solid ${borderColor}`,
-          borderRadius,
-          backgroundColor,
-          boxSizing: 'border-box',
-          boxShadow: '0 0 0 0',
-          outline: 'none',
-        }}
+        className={`flex min-h-[38px] w-full items-center border bg-white shadow-none outline-none ${borderRadiusClass} ${
+          isInvalid ? 'border-[#d63031]' : 'border-[#c8ced6]'
+        }`}
       >
         <Input
           ref={inputRef}
           id={inputId}
           aria-label={placeholder || 'Select option'}
           readOnly={!searchable}
-          placeholder={isMulti ? selectedMultiLabel || placeholder : placeholder}
-          style={{
-            flex: 1,
-            minWidth: 0,
-            border: 'none',
-            outline: 'none',
-            background: 'transparent',
-            padding: '8px 10px',
-            fontSize: '0.9em',
-            color: '#222',
+          onClick={() => {
+            if (!searchable) {
+              openMenu();
+            }
           }}
+          placeholder={isMulti ? selectedMultiLabel || placeholder : placeholder}
+          className="flex-1 min-w-0 border-0 bg-transparent px-2.5 py-2 text-[0.9em] text-[#222] outline-none"
         />
         {isClearable && (isMulti ? selectedKeys.size > 0 : !!selectedKey) ? (
           <AriaButton
             type="button"
             aria-label="Clear value"
             onPress={() => clearValue()}
-            style={{
-              border: 'none',
-              background: 'transparent',
-              cursor: 'pointer',
-              padding: '0 8px',
-              color: '#5c6370',
-              fontSize: '18px',
-              lineHeight: 1,
-            }}
+            className="cursor-pointer border-0 bg-transparent px-2 text-[18px] leading-none text-[#5c6370]"
           >
             ×
           </AriaButton>
@@ -406,71 +455,49 @@ export const Select = React.forwardRef<SelectRef, SelectProps>(function SafeFunc
         <AriaButton
           type="button"
           aria-label="Toggle options"
-          onPress={() => {
-            inputRef.current?.focus();
-            inputRef.current?.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
-          }}
-          style={{
-            border: 'none',
-            background: 'transparent',
-            cursor: 'pointer',
-            padding: '0 10px',
-            color: focusedBorderColor,
-            fontSize: '12px',
-            lineHeight: 1,
-          }}
+          onPress={() => openMenu()}
+          className={`cursor-pointer border-0 bg-transparent px-2.5 text-xs leading-none ${accentColorClass}`}
         >
           ▾
         </AriaButton>
       </div>
       <Popover
         offset={4}
-        style={{
-          maxHeight: 320,
-          overflow: 'auto',
-          width: 'var(--trigger-width)',
-          border: '1px solid #d0d7de',
-          background: '#fff',
-          borderRadius: 6,
-          boxShadow: '0 4px 15px 0 rgba(0, 0, 0, 0.18), 0 0px 0px 1px rgba(0, 0, 0, 0.15)',
-          zIndex: 40,
-        }}
+        className="z-40 my-1 max-h-80 w-[var(--trigger-width)] overflow-auto rounded-md border border-[#d0d7de] bg-white drop-shadow-lg"
       >
         {isLoading ? (
-          <div style={{ padding: '12px 10px', fontSize: '0.85em', color: '#5c6370' }}>Loading...</div>
+          <div className="px-2.5 py-3 text-[0.85em] text-[#5c6370]">Loading...</div>
         ) : filteredOptions.length ? (
-          <ListBox items={filteredOptions} aria-label={placeholder || 'Select option'}>
+          <ListBox
+            items={filteredOptions}
+            aria-label={placeholder || 'Select option'}
+            className="max-h-80 overflow-y-auto"
+          >
             {item => (
               <ListBoxItem
                 id={item.key}
                 textValue={item.textValue || valueToText(item.option)}
-                style={({ isFocused }) => ({
-                  display: 'flex',
-                  alignItems: 'center',
-                  minHeight: menuItemSize || 36,
-                  padding: '8px 10px',
-                  cursor: 'pointer',
-                  boxSizing: 'border-box',
-                  background: isFocused ? 'rgba(0, 92, 197, 0.08)' : '#fff',
-                  color: '#161b22',
-                  borderTop: '1px solid rgba(0, 0, 0, 0.03)',
-                })}
+                className={({ isFocused }) =>
+                  `flex box-border cursor-pointer items-start border-t border-t-black/[0.03] px-2.5 py-2 text-[#161b22] ${menuItemSizeClass} ${
+                    isFocused ? 'bg-[#005cc5]/[0.08]' : 'bg-white'
+                  }`
+                }
               >
-                <span style={{ width: '100%' }}>
-                  {item.renderLabel}
+                <div className="flex w-full items-start gap-2">
+                  <span className="block min-w-0 flex-1 whitespace-normal [overflow-wrap:anywhere]">
+                    {item.renderLabel}
+                  </span>
                   {isMulti && selectedKeys.has(item.key) ? (
-                    <span style={{ float: 'right', color: primaryColor, fontWeight: 700 }} aria-hidden>
+                    <span className={`text-[1.3em] font-bold leading-none ${selectedMarkColorClass}`} aria-hidden>
                       ✓
                     </span>
                   ) : null}
-                </span>
+                </div>
               </ListBoxItem>
             )}
           </ListBox>
         ) : (
-          <div style={{ padding: '12px 10px', fontSize: '0.85em', color: '#5c6370' }}>
-            {noOptionsMsg || 'No options'}
-          </div>
+          <div className="px-2.5 py-3 text-[0.85em] text-[#5c6370]">{noOptionsMsg || 'No options'}</div>
         )}
       </Popover>
     </ComboBox>

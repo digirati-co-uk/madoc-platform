@@ -33,14 +33,24 @@ export type CompletionItem = {
 
 function renderOptionLabel(option: CompletionItem) {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '25px' }}>
-      <div>
-        <LocaleString as="strong" style={{ lineHeight: '1.8em', verticalAlign: 'middle' }}>
-          {option.label as any}
+    <div className="grid grid-cols-[1fr_auto] gap-1 width-full items-start">
+      <LocaleString className="text-md font-semibold" style={{ overflowWrap: 'anywhere' }}>
+        {option.label as any}
+      </LocaleString>
+      {option.resource_class ? (
+        <Tag style={{ margin: 0, whiteSpace: 'nowrap', alignSelf: 'start' }}>{option.resource_class}</Tag>
+      ) : null}
+      {option.description ? (
+        <LocaleString
+          style={{
+            gridColumn: '1 / -1',
+            color: '#4b5563',
+            overflowWrap: 'anywhere',
+          }}
+        >
+          {option.description as any}
         </LocaleString>
-        {option.resource_class ? <Tag style={{ float: 'right', marginLeft: 10 }}>{option.resource_class}</Tag> : null}
-      </div>
-      {option.description && <LocaleString>{option.description as any}</LocaleString>}
+      ) : null}
     </div>
   );
 }
@@ -54,7 +64,6 @@ export const AutocompleteField: FieldComponent<AutocompleteFieldProps> = props =
   const [hasFetched, setHasFetched] = useState(false);
   const [error, setError] = useState('');
   const api = useOptionalApi();
-  const boxHeight = hasFetched && options.length && options[0].description ? 55 : undefined;
   const pendingFetch = useRef<AbortController>();
   const onOptionChange = (option: CompletionItem | undefined) => {
     if (!option) {
@@ -152,7 +161,7 @@ export const AutocompleteField: FieldComponent<AutocompleteFieldProps> = props =
         isDisabled={props.disabled}
         isInvalid={!!error}
         inputId={props.id}
-        initialValue={options ? options[0] : ''}
+        initialValue={props.value}
         placeholder={props.placeholder ? t(props.placeholder) : t('Select option...')}
         options={options}
         isLoading={isLoading}
@@ -165,7 +174,6 @@ export const AutocompleteField: FieldComponent<AutocompleteFieldProps> = props =
         getOptionValue={(option: any) => option.uri}
         getOptionLabel={(option: any) => option.label}
         renderOptionLabel={renderOptionLabel}
-        menuItemSize={boxHeight}
       />
       {error ? <ErrorMessage>{error}</ErrorMessage> : null}
     </>

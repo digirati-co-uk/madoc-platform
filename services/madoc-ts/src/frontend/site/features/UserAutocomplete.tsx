@@ -94,7 +94,7 @@ export const UserAutocomplete: React.FC<UserAutoCompleteProps> = props => {
         setOptions(items.users);
         setIsLoading(false);
         setError('');
-      } catch (err) {
+      } catch {
         setError(t('Unable to fetch users'));
       }
     }
@@ -106,7 +106,7 @@ export const UserAutocomplete: React.FC<UserAutoCompleteProps> = props => {
         ref={ref}
         isInvalid={!!error}
         inputId={props.id}
-        initialValue={options[0]}
+        initialValue={props.value}
         placeholder={props.placeholder ? t(props.placeholder) : t('Select option...')}
         options={options}
         isLoading={isLoading}
