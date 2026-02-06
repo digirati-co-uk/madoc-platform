@@ -1,72 +1,74 @@
 import { HTMLPortal, useAtlas } from '@atlas-viewer/atlas';
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { useTranslation } from 'react-i18next';
-import { CanvasViewerButton, CanvasViewerButtonMenu } from '../../../../../atoms/CanvasViewerGrid';
-import { useLocalStorage } from '../../../../../hooks/use-local-storage';
+import {
+  useAtlasStore,
+  useCurrentAnnotationRequest,
+  useEvent,
+  useRequestAnnotation,
+  useSvgEditor,
+} from 'react-iiif-vault';
+import { CanvasViewerButton } from '../../../../../atoms/CanvasViewerGrid';
 import { DeleteForeverIcon } from '../../../../../icons/DeleteForeverIcon';
 import { DrawIcon } from '../../../../../icons/DrawIcon';
 import { HexagonIcon } from '../../../../../icons/HexagonIcon';
-import { PolygonIcon } from '../../../../../icons/PolgonIcon';
-import { ShapesIcon } from '../../../../../icons/ShapesIcon';
-import { SquareIcon } from '../../../../../icons/SquareIcon';
-import { ThemeIcon } from '../../../../../icons/ThemeIcon';
-import { TriangleIcon } from '../../../../../icons/TriangleIcon';
-import { useSvgEditor } from '../helpers/use-svg-editor';
-import { ShapeToolProps } from '../PolygonSelector.types';
-import { BugIcon } from '../../../../../icons/BugIcon';
-import { circle40 } from '../helpers/shapes';
 import { LineBoxIcon } from '../../../../../icons/LineBoxIcon';
-import { CircleIcon } from '../../../../../icons/CircleIcon';
 import { LineIcon } from '../../../../../icons/LineIcon';
+import { PolygonIcon } from '../../../../../icons/PolgonIcon';
+import { CircleIcon } from '../../../../../icons/CircleIcon';
+import { TriangleIcon } from '../../../../../icons/TriangleIcon';
+import { InputShape } from 'polygon-editor';
+import { useStore } from 'zustand';
+import { PanIcon } from '../../../../../icons/PanIcon';
+import { CusorIcon } from '../../../../../icons/CursorIcon';
 
-const themes = [
-  {
-    name: 'Default',
-    outer: { borderWidth: 4, borderColor: 'rgba(255, 255, 255, .4)' },
-    inner: { borderWidth: 2, borderColor: '#000' },
-  },
-  {
-    name: 'High contrast',
-    outer: { borderWidth: 3, borderColor: '#fff' },
-    inner: { borderWidth: 1, borderColor: '#000' },
-  },
-  {
-    name: 'Lightsaber',
-    outer: { borderWidth: '4', borderColor: 'rgba(56,68,255,0.64)' },
-    inner: { borderWidth: '2', borderColor: '#fff' },
-  },
-  {
-    name: 'Bright',
-    outer: { borderWidth: '6', borderColor: '#25d527' },
-    inner: { borderWidth: '3', borderColor: '#a916ff' },
-  },
-  {
-    name: 'pink',
-    outer: { borderWidth: '4', borderColor: '#ff00ff' },
-    inner: { borderWidth: '2', borderColor: '#ffffff' },
-  },
-  {
-    name: 'fine (dark)',
-    outer: { borderWidth: '1', borderColor: '#000000' },
-    inner: {},
-  },
-  {
-    name: 'fine (light)',
-    outer: { borderWidth: '1', borderColor: '#FFF' },
-    inner: {},
-  },
-];
+const PROXIMITY_MULTIPLIER = 1.35;
 
-export function CreateCustomShape(props: ShapeToolProps) {
-  const { t } = useTranslation();
-  const [themeKey, setThemeKey] = useLocalStorage('poly-theme', 0);
-  const cycleTheme = () => {
-    setThemeKey((themeKey + 1) % themes.length);
-  };
-  const theme = themes[themeKey] || themes[0];
+export interface CreateCustomShapeProps {
+  image: { width: number; height: number };
+  shape?: InputShape;
+  updateShape: (shape: InputShape) => void;
+}
+
+export function CreateCustomShape(props: CreateCustomShapeProps) {
   const atlas = useAtlas();
   const { image } = props;
+  const selectorId = props.shape?.id;
+  const selectorIdRef = useRef(selectorId);
+  const initialShapeRef = useRef<InputShape>(props.shape || { points: [], open: true });
+  const requestedForIdRef = useRef<string | null>(null);
+  const store = useAtlasStore();
+  const mode = useStore(store, state => state.mode);
+  const tool = useStore(store, state => state.tool);
+  const switchTool = useStore(store, state => state.switchTool);
+  const polygon = useStore(store, state => state.polygon);
+  const runtime = useStore(store, state => state.runtime);
+  const currentRequest = useCurrentAnnotationRequest();
+  const { requestId, requestAnnotation, cancelRequest } = useRequestAnnotation();
+  const requestAnnotationRef = useRef(requestAnnotation);
+  const cancelRequestRef = useRef(cancelRequest);
+  const debugLog = useCallback((message: string, payload?: any) => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+    if (window.localStorage.getItem('madoc:polygon-debug') !== '1') {
+      return;
+    }
+    console.debug(`[madoc:polygon] ${message}`, payload);
+  }, []);
+
+  useEffect(() => {
+    selectorIdRef.current = selectorId;
+  }, [selectorId]);
+
+  useEffect(() => {
+    requestAnnotationRef.current = requestAnnotation;
+  }, [requestAnnotation]);
+
+  useEffect(() => {
+    cancelRequestRef.current = cancelRequest;
+  }, [cancelRequest]);
+
   const {
     helper,
     defs,
@@ -77,20 +79,201 @@ export function CreateCustomShape(props: ShapeToolProps) {
     transitionRotate,
     isHoveringPoint,
     isAddingPoint,
-    isStamping,
-  } = useSvgEditor(
-    {
-      currentShape: props.shape || null,
-      onChange: props.updateShape,
-      image: props.image,
-      hideShapeLines: true,
+    currentTool,
+    currentShape,
+  } = useSvgEditor({
+    onChange: props.updateShape,
+    image: props.image,
+    hideShapeLines: true,
+  });
+
+  useEvent<any, any>(
+    'atlas.annotation-request' as any,
+    data => {
+      debugLog('event atlas.annotation-request', data);
     },
-    []
+    [debugLog]
   );
 
-  const mouseMove = (e: any) => {
-    helper.pointer([[~~e.atlas.x, ~~e.atlas.y]]);
-  };
+  useEvent<any, any>(
+    'atlas.polygon-update' as any,
+    data => {
+      if (requestId && data.id && data.id !== requestId) {
+        return;
+      }
+      const nextShape: InputShape = {
+        id: selectorId || requestId || data.id,
+        open: data.open,
+        points: data.points || [],
+      };
+      props.updateShape(nextShape);
+      debugLog('event atlas.polygon-update', data);
+    },
+    [debugLog, props.updateShape, requestId, selectorId]
+  );
+
+  useEvent<any, any>(
+    'atlas.annotation-completed' as any,
+    data => {
+      debugLog('event atlas.annotation-completed', data);
+    },
+    [debugLog]
+  );
+
+  useEvent<any, any>(
+    'atlas.request-cancelled' as any,
+    data => {
+      debugLog('event atlas.request-cancelled', data);
+    },
+    [debugLog]
+  );
+
+  useEffect(() => {
+    if (!requestedForIdRef.current) {
+      initialShapeRef.current = props.shape || { points: [], open: true };
+    }
+  }, [props.shape]);
+
+  useEffect(() => {
+    if (!requestId || requestedForIdRef.current === requestId) {
+      return;
+    }
+    requestedForIdRef.current = requestId;
+
+    const initialShape = initialShapeRef.current;
+    const request = {
+      type: 'polygon' as const,
+      points: initialShape.points || [],
+      open: initialShape.open ?? true,
+    };
+    debugLog('requestAnnotation init', {
+      selectorId: selectorIdRef.current,
+      requestId,
+      points: request.points.length,
+      open: request.open,
+      toolId: 'pen',
+    });
+
+    void requestAnnotationRef.current(request, { toolId: 'pen' }).then(response => {
+      debugLog('requestAnnotation resolved', {
+        selectorId: selectorIdRef.current,
+        requestId,
+        hasResponse: !!response,
+        cancelled: response ? (response as any).cancelled : undefined,
+      });
+    });
+
+    return () => {
+      debugLog('requestAnnotation cleanup', { selectorId: selectorIdRef.current, requestId });
+      cancelRequestRef.current();
+    };
+  }, [debugLog, requestId]);
+
+  useEffect(() => {
+    const setScaledProximity = () => {
+      const rawScale = (runtime as any)?._lastGoodScale;
+      if (!rawScale || Number.isNaN(rawScale)) {
+        return;
+      }
+      const targetScale = (1 / rawScale) * PROXIMITY_MULTIPLIER;
+      if (typeof (helper as any).setScale === 'function') {
+        (helper as any).setScale(targetScale);
+        debugLog('proximity scale applied', { rawScale, targetScale, multiplier: PROXIMITY_MULTIPLIER });
+      }
+    };
+
+    if (!runtime?.world) {
+      return;
+    }
+
+    setScaledProximity();
+    const removeLayoutSubscription = runtime.world.addLayoutSubscriber((event: string) => {
+      if (event === 'event-activation' || event === 'zoom-to' || event === 'go-home') {
+        setScaledProximity();
+      }
+    });
+
+    return () => {
+      if (typeof removeLayoutSubscription === 'function') {
+        removeLayoutSubscription();
+      }
+    };
+  }, [debugLog, helper, runtime]);
+
+  useEffect(() => {
+    debugLog('render state', {
+      selectorId,
+      requestId,
+      mode,
+      tool,
+      request: currentRequest
+        ? {
+            type: currentRequest.type,
+            points: (currentRequest as any).points?.length,
+            open: (currentRequest as any).open,
+          }
+        : null,
+      polygon: polygon
+        ? {
+            id: polygon.id,
+            points: polygon.points.length,
+            open: polygon.open,
+          }
+        : null,
+      currentShape: currentShape
+        ? {
+            id: currentShape.id,
+            points: currentShape.points.length,
+            open: currentShape.open,
+          }
+        : null,
+      editorVisible: !!editor,
+      actionIntentType: state.actionIntentType,
+      transitionIntentType: state.transitionIntentType,
+    });
+  }, [
+    currentRequest,
+    currentShape,
+    debugLog,
+    editor,
+    mode,
+    polygon,
+    requestId,
+    selectorId,
+    state.actionIntentType,
+    state.transitionIntentType,
+    tool,
+  ]);
+
+  const mouseMove = useCallback(
+    (e: any) => {
+      if (e.button === 2) {
+        return;
+      }
+      helper.pointer([[~~e.atlas.x, ~~e.atlas.y]]);
+    },
+    [helper]
+  );
+
+  const mouseDown = useCallback(
+    (e: any) => {
+      if (e.button === 2) {
+        return;
+      }
+      helper.pointerDown();
+    },
+    [helper]
+  );
+
+  const mouseUp = useCallback(
+    (e: any) => {
+      if (e.button === 2) {
+        return;
+      }
+      helper.pointerUp();
+    },
+    [helper]
+  );
 
   useEffect(() => {
     const handler = (e: any) => {
@@ -101,9 +284,21 @@ export function CreateCustomShape(props: ShapeToolProps) {
     return () => {
       document.removeEventListener('keyup', handler);
     };
-  }, []);
+  }, [helper]);
+
   useEffect(() => {
     const handler = (e: any) => {
+      const target = e.target as HTMLElement | null;
+      if (
+        (target && ['INPUT', 'TEXTAREA'].includes(target.tagName)) ||
+        target?.isContentEditable ||
+        (document.activeElement &&
+          (document.activeElement instanceof HTMLInputElement ||
+            document.activeElement instanceof HTMLTextAreaElement ||
+            document.activeElement.isContentEditable))
+      ) {
+        return;
+      }
       helper.key.down(e.key);
     };
 
@@ -111,30 +306,30 @@ export function CreateCustomShape(props: ShapeToolProps) {
     return () => {
       document.removeEventListener('keydown', handler);
     };
-  }, []);
+  }, [helper]);
 
   useEffect(() => {
-    const wrapperClasses: string[] = [];
+    const wrapperClasses: Array<`atlas-cursor-${string}`> = [];
     if (transitionDirection) {
-      wrapperClasses.push(transitionDirection);
+      wrapperClasses.push(`atlas-cursor-${transitionDirection}`);
     }
     if (state.actionIntentType === 'cut-line' && state.modifiers?.Shift) {
-      wrapperClasses.push('cursor-cut');
+      wrapperClasses.push('atlas-cursor-cut');
     }
     if (isHoveringPoint || state.transitionIntentType === 'move-shape' || state.transitionIntentType === 'move-point') {
-      wrapperClasses.push('move');
+      wrapperClasses.push('atlas-cursor-move');
     }
     if (isAddingPoint) {
-      wrapperClasses.push('crosshair');
+      wrapperClasses.push('atlas-cursor-crosshair');
     }
     if (isSplitting) {
-      wrapperClasses.push('copy');
+      wrapperClasses.push('atlas-cursor-copy');
     }
     if (transitionRotate) {
-      wrapperClasses.push('rotate');
+      wrapperClasses.push('atlas-cursor-rotate');
     }
     if (state.transitionIntentType === 'draw-shape') {
-      wrapperClasses.push('draw');
+      wrapperClasses.push('atlas-cursor-draw');
     }
 
     if (atlas?.canvas) {
@@ -157,151 +352,78 @@ export function CreateCustomShape(props: ShapeToolProps) {
     transitionRotate,
   ]);
 
-  const showShapes = props.shape && props.shape?.points.length === 0;
+  const controls = document.getElementById('atlas-controls');
+  const showShapes = (currentShape?.points.length || 0) === 0;
 
   const controlsComponent = (
     <>
-      {/* @todo pan mode */}
-      {/*<CanvasViewerButton>*/}
-      {/*  <HomeIcon title={t('polygons__pan', { defaultValue: 'Pan' })} />*/}
-      {/*</CanvasViewerButton>*/}
-      <CanvasViewerButton onClick={cycleTheme}>
-        <ThemeIcon />
+      <CanvasViewerButton onClick={switchTool.pointer} data-active={currentTool === 'pointer'}>
+        <CusorIcon />
+      </CanvasViewerButton>
+      <CanvasViewerButton onClick={switchTool.hand} data-active={currentTool === 'hand'}>
+        <PanIcon />
       </CanvasViewerButton>
       {showShapes ? (
         <>
-          <CanvasViewerButton
-            onClick={() => {
-              helper.stamps.clear();
-              helper.draw.enable();
-            }}
-            data-active={!state.lineMode && !state.selectedStamp && showShapes && state.drawMode}
-          >
-            <DrawIcon />
-          </CanvasViewerButton>
-          <CanvasViewerButton
-            data-active={!state.lineMode && !state.selectedStamp && showShapes && !state.drawMode}
-            onClick={() => {
-              helper.stamps.clear();
-              helper.draw.disable();
-              helper.modes.disableLineBoxMode();
-              helper.modes.disableLineMode();
-            }}
-          >
+          <CanvasViewerButton onClick={switchTool.pen} data-active={currentTool === 'pen' && !state.selectedStamp}>
             <PolygonIcon />
           </CanvasViewerButton>
-          <CanvasViewerButton
-            data-active={state.lineMode && !state.lineBoxMode}
-            onClick={() => {
-              helper.modes.enableLineMode();
-            }}
-          >
+          <CanvasViewerButton onClick={switchTool.draw} data-active={currentTool === 'pencil'}>
+            <DrawIcon />
+          </CanvasViewerButton>
+          <CanvasViewerButton onClick={switchTool.line} data-active={currentTool === 'line'}>
             <LineIcon />
           </CanvasViewerButton>
-          <CanvasViewerButton
-            data-active={state.lineBoxMode}
-            onClick={() => {
-              helper.modes.enableLineBoxMode();
-            }}
-          >
+          <CanvasViewerButton onClick={switchTool.lineBox} data-active={currentTool === 'lineBox'}>
             <LineBoxIcon />
           </CanvasViewerButton>
-          <CanvasViewerButtonMenu
-            label={'Select shape'}
-            items={[
-              {
-                icon: <SquareIcon />,
-                onClick: () => {
-                  helper.stamps.square();
-                },
-                disabled: false,
-                label: 'Square',
-                selected: state.selectedStamp?.id === 'square',
-              },
-              {
-                icon: <TriangleIcon />,
-                onClick: () => {
-                  helper.stamps.triangle();
-                },
-                disabled: false,
-                label: 'Triangle',
-                selected: state.selectedStamp?.id === 'triangle',
-              },
-              {
-                label: 'Hexagon',
-                icon: <HexagonIcon />,
-                onClick: () => {
-                  helper.stamps.hexagon();
-                },
-                selected: state.selectedStamp?.id === 'hexagon',
-                disabled: false,
-              },
-              {
-                label: 'Circle',
-                icon: <CircleIcon />,
-                onClick: () => {
-                  helper.stamps.set(circle40);
-                },
-                selected: state.selectedStamp?.id === circle40.id,
-                disabled: false,
-              },
-            ]}
+          <CanvasViewerButton
+            onClick={switchTool.triangle}
+            data-active={currentTool === 'stamp' && state.selectedStamp?.id === 'triangle'}
           >
-            <ShapesIcon />
-          </CanvasViewerButtonMenu>
+            <TriangleIcon />
+          </CanvasViewerButton>
+          <CanvasViewerButton
+            onClick={switchTool.hexagon}
+            data-active={currentTool === 'stamp' && state.selectedStamp?.id === 'hexagon'}
+          >
+            <HexagonIcon />
+          </CanvasViewerButton>
+          <CanvasViewerButton
+            onClick={switchTool.circle}
+            data-active={currentTool === 'stamp' && state.selectedStamp?.id === 'circle'}
+          >
+            <CircleIcon />
+          </CanvasViewerButton>
         </>
       ) : null}
-      {/* @todo single-line mode when its available */}
-      {/*<CanvasViewerButton>*/}
-      {/*  <HomeIcon title={t('polygons__line', { defaultValue: 'Line' })} />*/}
-      {/*</CanvasViewerButton>*/}
       {state.showBoundingBox ? (
-        <CanvasViewerButton onClick={() => helper.key.down('Backspace')}>
+        <CanvasViewerButton onClick={switchTool.remove}>
           <DeleteForeverIcon style={{ color: 'red' }} />
         </CanvasViewerButton>
       ) : null}
     </>
   );
 
-  const controls = document.getElementById('atlas-controls');
-  const Shape = 'shape' as any;
-
   return (
-    <>
-      <world-object
-        height={image.height}
-        width={image.width}
-        onMouseMove={mouseMove}
-        onMouseDown={helper.pointerDown}
-        onMouseUp={helper.pointerUp}
-        onMouseLeave={helper.blur}
-      >
-        {props.shape ? (
-          <>
-            <Shape
-              open={props.shape.open}
-              points={props.shape.points as any}
-              relativeStyle={true}
-              style={isStamping ? {} : (theme.outer as any)}
-            />
-            <Shape
-              open={props.shape.open}
-              points={props.shape.points as any}
-              relativeStyle={true}
-              style={isStamping ? {} : (theme.inner as any)}
-            />
-          </>
-        ) : null}
-        <HTMLPortal relative={true} interactive={false}>
-          <div style={{ position: 'absolute', top: 0, right: 0, left: 0, bottom: 0 }}>
-            <svg width="100%" height="100%" viewBox={`0 0 ${image.width} ${image.height}`} tabIndex={-1}>
-              <defs>{defs}</defs>
-              {editor}
-            </svg>
-          </div>
-          {controls ? createPortal(controlsComponent, controls, 'controls') : null}
-        </HTMLPortal>
-      </world-object>
-    </>
+    <world-object
+      height={image.height}
+      width={image.width}
+      onMouseMove={mouseMove}
+      onMouseDown={mouseDown}
+      onMouseUp={mouseUp}
+      onMouseLeave={helper.blur}
+    >
+      <HTMLPortal relative={true} interactive={false}>
+        <div style={{ position: 'absolute', top: 0, right: 0, left: 0, bottom: 0 }}>
+          <svg width="100%" height="100%" viewBox={`0 0 ${image.width} ${image.height}`} tabIndex={-1}>
+            <title>Annotation Editor</title>
+            <defs>{defs}</defs>
+            {editor}
+          </svg>
+        </div>
+        {controls ? createPortal(controlsComponent, controls) : null}
+      </HTMLPortal>
+    </world-object>
   );
 }
