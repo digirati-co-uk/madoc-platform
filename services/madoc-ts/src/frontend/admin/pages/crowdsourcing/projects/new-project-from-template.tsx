@@ -2,8 +2,9 @@ import { InternationalString } from '@iiif/presentation-3';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
-import { useLocation, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import slugify from 'slugify';
+import type { ProjectTemplate } from '../../../../../extensions/projects/types';
 import { CreateProject } from '../../../../../types/schemas/create-project';
 import { ErrorMessage } from '../../../../shared/callouts/ErrorMessage';
 import { SuccessMessage } from '../../../../shared/callouts/SuccessMessage';
@@ -13,7 +14,7 @@ import { Stepper, StepperContainer } from '../../../../shared/components/Stepper
 import { Input, InputContainer, InputLabel } from '../../../../shared/form/Input';
 import { useApi } from '../../../../shared/hooks/use-api';
 import { useLocationQuery } from '../../../../shared/hooks/use-location-query';
-import { useProjectTemplate, useRemoteProjectTemplate } from '../../../../shared/hooks/use-project-template';
+import { useRemoteProjectTemplate } from '../../../../shared/hooks/use-project-template';
 import { useDefaultLocale, useSupportedLocales } from '../../../../shared/hooks/use-site';
 import { WidePage } from '../../../../shared/layout/WidePage';
 import { Button, ButtonRow } from '../../../../shared/navigation/Button';
@@ -26,12 +27,33 @@ const ADDITIONAL_SETTINGS = 1;
 const COMPLETE = 2;
 const CUSTOM_CONFIG = 3;
 
+function getSingleQueryValue(value: string | string[] | undefined): string {
+  if (Array.isArray(value)) {
+    return value[0] || '';
+  }
+  return value || '';
+}
+
+function isValidUploadedProjectTemplate(value: any): value is ProjectTemplate {
+  return Boolean(
+    value &&
+    typeof value === 'object' &&
+    typeof value.type === 'string' &&
+    value.metadata &&
+    typeof value.metadata.label === 'string' &&
+    typeof value.metadata.description === 'string'
+  );
+}
+
 export const NewProjectFromTemplate: React.FC = () => {
   const api = useApi();
   const { t } = useTranslation();
-  const location = useLocation();
-  const chosenTemplateType = location.pathname.split('/create/')[1];
-  const query = useLocationQuery<{ template: string }>();
+  const { template: routeTemplate } = useParams<{ template: string }>();
+  const chosenTemplateType = routeTemplate || '';
+  const isRemoteTemplateType = chosenTemplateType === 'remote';
+  const query = useLocationQuery<{ template?: string | string[]; source?: string | string[] }>();
+  const initialTemplate = getSingleQueryValue(query.template);
+  const initialSource = getSingleQueryValue(query.source) === 'upload' ? 'upload' : 'url';
 
   const [label, setLabel] = useState<InternationalString>({ en: [''] });
   const [summary, setSummary] = useState<InternationalString>({ en: [''] });
@@ -40,12 +62,34 @@ export const NewProjectFromTemplate: React.FC = () => {
   const defaultLocale = useDefaultLocale();
   const availableLanguages = useSupportedLocales();
   const [isSelected, setIsSelected] = useState(
-    Boolean(query.template && query.template.startsWith('urn:madoc:project:'))
+    Boolean(initialTemplate && initialTemplate.startsWith('urn:madoc:project:'))
   );
-  const [template, isRemote, templateStatus] = useRemoteProjectTemplate(
-    chosenTemplateType === 'remote' ? query.template : chosenTemplateType,
-    isSelected
+  const [source, setSource] = useState<'url' | 'upload'>(initialSource);
+  const [remoteTemplateInput, setRemoteTemplateInput] = useState(initialTemplate);
+  const [remoteTemplateReference, setRemoteTemplateReference] = useState(initialTemplate);
+  const [uploadedTemplate, setUploadedTemplate] = useState<ProjectTemplate | undefined>(undefined);
+  const [uploadedTemplateName, setUploadedTemplateName] = useState('');
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [fetchedTemplate, isRemote, templateStatus] = useRemoteProjectTemplate(
+    isRemoteTemplateType ? remoteTemplateReference || 'remote' : chosenTemplateType,
+    isRemoteTemplateType ? isSelected : true
   );
+  const template = isRemoteTemplateType && source === 'upload' ? uploadedTemplate : fetchedTemplate;
+
+  useEffect(() => {
+    if (!isRemoteTemplateType) {
+      return;
+    }
+    const nextTemplate = getSingleQueryValue(query.template);
+    const nextSource = getSingleQueryValue(query.source) === 'upload' ? 'upload' : 'url';
+    setSource(nextSource);
+    setRemoteTemplateInput(nextTemplate);
+    setRemoteTemplateReference(nextTemplate);
+    setIsSelected(Boolean(nextTemplate && nextTemplate.startsWith('urn:madoc:project:')));
+    setUploadError(null);
+    setUploadedTemplate(undefined);
+    setUploadedTemplateName('');
+  }, [isRemoteTemplateType, query.source, query.template]);
 
   const [saveProject, { status, data, isSuccess, reset }] = useMutation(async (config: CreateProject) => {
     try {
@@ -74,11 +118,11 @@ export const NewProjectFromTemplate: React.FC = () => {
   const customConfig = template?.customConfig;
   const hasCustomConfig = !!(customConfig && !customConfig.replacesProjectConfig);
 
-  if ((!template && !isRemote) || templateStatus === 'error') {
+  if (!isRemoteTemplateType && ((!template && !isRemote) || templateStatus === 'error')) {
     return <div>Template not found</div>;
   }
 
-  if (templateStatus === 'loading') {
+  if (source !== 'upload' && templateStatus === 'loading') {
     return <div>Loading...</div>;
   }
 
@@ -88,39 +132,183 @@ export const NewProjectFromTemplate: React.FC = () => {
         { label: t('Site admin'), link: '/' },
         { label: t('Projects'), link: '/projects' },
         { label: t('Create project'), link: '/projects/create' },
-        template
+        template || isRemoteTemplateType
           ? {
-              label: template.metadata.actionLabel || template.metadata.label,
-              link: `/projects/create/${template.type}`,
+              label: template?.metadata.actionLabel || template?.metadata.label || t('Import template'),
+              link: `/projects/create/${chosenTemplateType}`,
               active: true,
             }
           : null,
       ]}
-      title={template?.metadata.label}
-      subtitle={template?.metadata.description}
+      title={template?.metadata.label || (isRemoteTemplateType ? t('Import project template') : undefined)}
+      subtitle={
+        template?.metadata.description ||
+        (isRemoteTemplateType ? t('Use a URL/URN or upload a project template JSON file.') : undefined)
+      }
     />
   );
 
-  if (isRemote && !isSelected) {
+  const openUrlSource = () => {
+    setSource('url');
+    setUploadError(null);
+    setUploadedTemplate(undefined);
+    setUploadedTemplateName('');
+  };
+
+  const openUploadSource = () => {
+    setSource('upload');
+    setUploadError(null);
+    setIsSelected(false);
+    setRemoteTemplateReference('');
+  };
+
+  const loadTemplateFromReference = () => {
+    const trimmed = remoteTemplateInput.trim();
+    if (!trimmed) {
+      return;
+    }
+
+    if (!trimmed.startsWith('http') && !trimmed.startsWith('urn:madoc:project:')) {
+      setUploadError(t('Enter a URL or a Madoc project URN.'));
+      return;
+    }
+
+    setUploadError(null);
+    setRemoteTemplateReference(trimmed);
+    setIsSelected(trimmed.startsWith('urn:madoc:project:'));
+  };
+
+  const onTemplateFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.currentTarget.files && event.currentTarget.files[0];
+    if (!file) {
+      return;
+    }
+
+    setUploadError(null);
+
+    try {
+      const fileContents = await file.text();
+      const parsed = JSON.parse(fileContents);
+      if (!isValidUploadedProjectTemplate(parsed)) {
+        throw new Error('Invalid project template file');
+      }
+      setUploadedTemplate(parsed);
+      setUploadedTemplateName(file.name);
+    } catch (error) {
+      setUploadedTemplate(undefined);
+      setUploadedTemplateName('');
+      setUploadError((error as Error).message || 'Unable to parse template file');
+    }
+  };
+
+  if (
+    isRemoteTemplateType &&
+    source === 'url' &&
+    (!remoteTemplateReference || !isSelected || templateStatus === 'error')
+  ) {
     return (
       <>
         {header}
         <WidePage>
-          <SuccessMessage>
-            <p>Are you sure you want to load this remote template</p>
-            <p>
-              <a href={query.template}>{query.template}</a>
-            </p>
+          <StepperContainer>
+            <Stepper status={'progress'} title={t('Template source')} description={''} open>
+              <InputContainer wide>
+                <InputLabel>{t('Choose source')}</InputLabel>
+                <ButtonRow>
+                  <Button $primary onClick={openUrlSource}>
+                    {t('Remote URL or URN')}
+                  </Button>
+                  <Button onClick={openUploadSource}>{t('Upload JSON file')}</Button>
+                </ButtonRow>
+              </InputContainer>
 
-            <ButtonRow>
-              <Button $primary onClick={() => setIsSelected(true)}>
-                Import
-              </Button>
-            </ButtonRow>
-          </SuccessMessage>
+              <InputContainer wide>
+                <InputLabel htmlFor="templateReference">{t('Template URL or URN')}</InputLabel>
+                <Input
+                  id="templateReference"
+                  type="text"
+                  placeholder="https://example.com/template.json or urn:madoc:project:123"
+                  value={remoteTemplateInput}
+                  onChange={event => setRemoteTemplateInput(event.currentTarget.value)}
+                />
+              </InputContainer>
+
+              <ButtonRow>
+                <Button $primary disabled={!remoteTemplateInput.trim()} onClick={loadTemplateFromReference}>
+                  {t('Load template')}
+                </Button>
+              </ButtonRow>
+
+              {templateStatus === 'error' ? (
+                <ErrorMessage $banner>{t('Unable to load template from this URL/URN')}</ErrorMessage>
+              ) : null}
+
+              {uploadError ? <ErrorMessage $banner>{uploadError}</ErrorMessage> : null}
+
+              {remoteTemplateReference && isRemote && !isSelected ? (
+                <SuccessMessage>
+                  <p>{t('Are you sure you want to load this remote template?')}</p>
+                  <p>
+                    <a href={remoteTemplateReference}>{remoteTemplateReference}</a>
+                  </p>
+
+                  <ButtonRow>
+                    <Button $primary onClick={() => setIsSelected(true)}>
+                      {t('Import')}
+                    </Button>
+                  </ButtonRow>
+                </SuccessMessage>
+              ) : null}
+            </Stepper>
+          </StepperContainer>
         </WidePage>
       </>
     );
+  }
+
+  if (isRemoteTemplateType && source === 'upload' && !template) {
+    return (
+      <>
+        {header}
+        <WidePage>
+          <StepperContainer>
+            <Stepper status={'progress'} title={t('Template source')} description={''} open>
+              <InputContainer wide>
+                <InputLabel>{t('Choose source')}</InputLabel>
+                <ButtonRow>
+                  <Button onClick={openUrlSource}>{t('Remote URL or URN')}</Button>
+                  <Button $primary onClick={openUploadSource}>
+                    {t('Upload JSON file')}
+                  </Button>
+                </ButtonRow>
+              </InputContainer>
+
+              <InputContainer wide>
+                <InputLabel htmlFor="uploadTemplateFile">{t('Project template JSON')}</InputLabel>
+                <Input
+                  id="uploadTemplateFile"
+                  type="file"
+                  accept=".json,application/json"
+                  onChange={onTemplateFileUpload}
+                />
+              </InputContainer>
+
+              {uploadedTemplateName ? (
+                <SuccessMessage $banner>
+                  {t('Loaded template file')}: {uploadedTemplateName}
+                </SuccessMessage>
+              ) : null}
+
+              {uploadError ? <ErrorMessage $banner>{uploadError}</ErrorMessage> : null}
+            </Stepper>
+          </StepperContainer>
+        </WidePage>
+      </>
+    );
+  }
+
+  if (!template) {
+    return <div>Template not found</div>;
   }
 
   return (
@@ -280,7 +468,7 @@ export const NewProjectFromTemplate: React.FC = () => {
                       template_options: customOptions,
                       template_config: customConfigValues,
 
-                      remote_template: isRemote ? template : null,
+                      remote_template: isRemoteTemplateType ? template : null,
                     })
                   }
                 >

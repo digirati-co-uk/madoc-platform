@@ -14,6 +14,8 @@ import { Button, ButtonRow } from '../../../../shared/navigation/Button';
 import { HrefLink } from '../../../../shared/utility/href-link';
 import { AdminHeader } from '../../../molecules/AdminHeader';
 import { useTranslation } from 'react-i18next';
+import { PlusIcon } from '../../../../shared/icons/PlusIcon';
+import { GlobeIcon } from '../../../components/AdminMenu';
 
 export const NewProjectPage: React.FC = () => {
   const { t } = useTranslation();
@@ -34,6 +36,28 @@ export const NewProjectPage: React.FC = () => {
       />
       <SystemBackground>
         <SystemListingContainer>
+          <SystemListingItem>
+            <SystemListingThumbnail>
+              <div className="flex items-center justify-center h-full">
+                <GlobeIcon className="w-16 h-16 text-blue-700" />
+              </div>
+            </SystemListingThumbnail>
+            <SystemListingMetadata>
+              <SystemListingLabel>{t('Remote project template')}</SystemListingLabel>
+              <SystemListingDescription>
+                {t('Load a project template from a URL, internal Madoc project URN or an uploaded file.')}
+              </SystemListingDescription>
+              <ButtonRow>
+                <Button $primary as={HrefLink} href={'/projects/create/remote?source=url'}>
+                  {t('Load remote template')}
+                </Button>
+                <Button as={HrefLink} href={'/projects/create/remote?source=upload'}>
+                  {t('Upload template file')}
+                </Button>
+              </ButtonRow>
+            </SystemListingMetadata>
+          </SystemListingItem>
+
           {availableTemplates.map(template => {
             return (
               <SystemListingItem key={template.type}>
