@@ -2,7 +2,6 @@
 .run
 theme.zip
 node_modules
-pnpm-lock.yaml
 var/*
 key.pub
 .terraform
