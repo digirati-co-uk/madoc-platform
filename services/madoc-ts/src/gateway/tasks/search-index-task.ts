@@ -29,7 +29,7 @@ export function createTask(
   resources: Array<{ id: number; type: string }>,
   siteId: number,
   {
-    recursive = true,
+    recursive = false,
     indexAllResources,
     resourceStack,
   }: { indexAllResources?: boolean; recursive?: boolean; resourceStack?: number[] } = {}
@@ -62,7 +62,6 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
       try {
         const task = await api.acceptTask<SearchIndexTask>(taskId);
         const [resources, options = {}, siteId] = task.parameters;
-        const { indexAllResources = false, recursive = true, resourceStack = [] } = options;
         const siteApi = api.asUser({ siteId });
 
         if (resources.length === 0) {
@@ -96,22 +95,7 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
                 break;
               }
 
-              //   - Create task for each canvas as sub tasks.
-              const manifestStructure = await siteApi.getManifestStructure(resource.id);
-
-              if (recursive) {
-                const subtasks: SearchIndexTask[] = [];
-                for (const item of manifestStructure.items) {
-                  subtasks.push(createTask([{ id: item.id, type: 'canvas' }], siteId, options));
-                }
-
-                if (subtasks.length) {
-                  await api.addSubtasks(subtasks, taskId);
-                  break;
-                }
-              }
-
-              // Mark as done if no subtasks.
+              // Manifest indexing now performs combined manifest + canvas indexing for Typesense.
               await api.updateTask(taskId, { status: 3 });
             } catch (e) {
               // ignore error.

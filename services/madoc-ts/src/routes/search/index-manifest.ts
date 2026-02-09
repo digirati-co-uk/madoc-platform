@@ -1,12 +1,10 @@
 import { sql } from 'slonik';
 import {
-  getManifestSnippets,
-  getSingleManifest,
-  mapManifestSnippets,
-} from '../../database/queries/get-manifest-snippets';
-import { getManifestResourcesForSearchExport } from '../../database/queries/search-index-export';
-import { api } from '../../gateway/api.server';
-import { buildManifestTypesenseDocuments } from '../../search/typesense/build-manifest-documents';
+  getCaptureModelDataForSearchExport,
+  getManifestResourcesForSearchExport,
+} from '../../database/queries/search-index-export';
+import { streamManifestTypesenseDocuments } from '../../search/typesense/build-manifest-documents';
+import { flattenCaptureModelFieldsByResource } from '../../search/typesense/flatten-capture-model-fields';
 import {
   isTypesenseAvailable,
   isTypesenseSearchEnabled,
@@ -23,14 +21,20 @@ function getErrorMessage(err: unknown) {
   return 'Unknown error';
 }
 
-function getManifestResourceUrns(manifestId: number, canvasIds: number[]) {
-  const targets = [`urn:madoc:manifest:${manifestId}`, ...canvasIds.map(canvasId => `urn:madoc:canvas:${canvasId}`)];
-  return [...new Set(targets)];
+function uniq(values: string[]) {
+  return [...new Set(values.map(value => value.trim()).filter(Boolean))];
+}
+
+function getResourceUrn(resourceType: 'Manifest' | 'Canvas', resourceId: number) {
+  if (resourceType === 'Manifest') {
+    return `urn:madoc:manifest:${resourceId}`;
+  }
+
+  return `urn:madoc:canvas:${resourceId}`;
 }
 
 export const indexManifest: RouteMiddleware<{ id: string }> = async context => {
   const { siteId, siteUrn } = optionalUserWithScope(context, []);
-  const userApi = api.asUser({ siteId });
   const siteIdAsNumber = Number(siteId);
   const manifestId = Number(context.params.id);
   const site = await context.siteManager.getSiteById(siteId);
@@ -56,30 +60,24 @@ export const indexManifest: RouteMiddleware<{ id: string }> = async context => {
     return;
   }
 
+  const legacyResult = {
+    skipped: true,
+    reason: 'Legacy search indexing has been removed. Typesense-only indexing is active.',
+  };
+
   if (!manifestRecord.published) {
     const warnings: string[] = [];
-    let targetUrns = getManifestResourceUrns(manifestId, []);
-    try {
-      const manifestStructure = await userApi.getManifestStructure(manifestId);
-      targetUrns = getManifestResourceUrns(
-        manifestId,
-        Array.isArray(manifestStructure?.items) ? manifestStructure.items.map(item => item.id) : []
-      );
-    } catch (err) {
-      warnings.push(`Unable to resolve canvas list for cleanup: ${getErrorMessage(err)}`);
-    }
+    const canvasIds = await context.connection.any<{ id: number }>(sql`
+      select item_id as id
+      from iiif_derived_resource_items
+      where site_id = ${siteIdAsNumber}
+        and resource_id = ${manifestId}
+    `);
 
-    let legacyCleanup: any = null;
-    try {
-      for (const targetUrn of targetUrns) {
-        await userApi.searchDeleteIIIF(targetUrn);
-      }
-      legacyCleanup = {
-        deleted: targetUrns.length,
-      };
-    } catch (err) {
-      warnings.push(`Legacy cleanup failed: ${getErrorMessage(err)}`);
-    }
+    const targetUrns = uniq([
+      `urn:madoc:manifest:${manifestId}`,
+      ...canvasIds.map(({ id }) => `urn:madoc:canvas:${id}`),
+    ]);
 
     let typesenseCleanup: any = null;
     if (isTypesenseSearchEnabled()) {
@@ -109,116 +107,73 @@ export const indexManifest: RouteMiddleware<{ id: string }> = async context => {
       noSearch: true,
       reason: 'Manifest is not published',
       cleanup: {
-        legacy: legacyCleanup,
+        legacy: legacyResult,
         typesense: typesenseCleanup,
       },
+      legacy: legacyResult,
       warnings,
     };
     return;
   }
 
-  const rows = await context.connection.any(
-    getManifestSnippets(
-      getSingleManifest({
-        manifestId,
-        siteId: siteIdAsNumber,
-        perPage: 1,
-        page: 1,
-        excludeCanvases: [],
-      }),
-      {
-        siteId: siteIdAsNumber,
-        fields: ['label'],
-        allManifestFields: true,
-      }
-    )
-  );
-
-  const table = mapManifestSnippets(rows);
-
-  if (!table.manifests[`${manifestId}`]) {
-    context.response.body = { noSearch: true };
-    return;
-  }
-
-  const collectionsWithin = await context.connection.any<{ resource_id: number }>(
-    sql`select cols.resource_id from iiif_derived_resource_items cols
-        left join iiif_derived_resource ir on ir.resource_id = cols.resource_id
-        where item_id = ${manifestId} and cols.site_id = ${siteIdAsNumber} and ir.flat = false`
-  );
-
-  const projectsWithin = await context.connection.any<{ id: number }>(
-    sql`select ip.id from iiif_derived_resource_items cols
-        left join iiif_derived_resource ir on ir.resource_id = cols.resource_id
-        left join iiif_project ip on ip.collection_id = ir.resource_id
-        where item_id = ${manifestId} and cols.site_id = ${siteIdAsNumber} and ir.flat = true`
-  );
-
-  const manifest = table.manifests[`${manifestId}`];
-
-  const searchPayload = {
-    id: `urn:madoc:manifest:${manifestId}`,
-    type: 'Manifest',
-    cascade: false,
-    cascade_canvases: false,
-    resource: {
-      ...manifest,
-      id: `http://madoc.dev/urn:madoc:manifest:${manifestId}`,
-      type: 'Manifest',
-    },
-    thumbnail: manifest.thumbnail,
-    contexts: [
-      { id: siteUrn, type: 'Site' },
-      ...projectsWithin.map(({ id }) => {
-        return { id: `urn:madoc:project:${id}`, type: 'Project' };
-      }),
-      ...collectionsWithin.map(({ resource_id }) => {
-        return { id: `urn:madoc:collection:${resource_id}`, type: 'Collection' };
-      }),
-      {
-        id: `urn:madoc:manifest:${manifestId}`,
-        type: 'Manifest',
-      },
-    ],
-  };
-
-  const legacyIndexingDisabled = isTypesenseSearchEnabled();
-  let legacyResult: any = {
-    skipped: true,
-    reason: 'Legacy search indexing is disabled while Typesense indexing is enabled',
-  };
-
-  if (!legacyIndexingDisabled) {
-    try {
-      await api.searchGetIIIF(`urn:madoc:manifest:${manifestId}`);
-      legacyResult = await userApi.searchReIngest(searchPayload);
-    } catch (err) {
-      legacyResult = await userApi.searchIngest(searchPayload);
-    }
-  }
-
   const warnings: string[] = [];
   let typesenseResult: any = null;
   const availability = await isTypesenseAvailable();
+
   if (availability.available) {
     try {
+      const sqlStart = Date.now();
       const resources = await context.connection.any(getManifestResourcesForSearchExport(manifestId, siteIdAsNumber));
-      const documents = buildManifestTypesenseDocuments(resources, {
-        siteId: siteIdAsNumber,
-        siteUrn,
-        manifestId,
-        collectionIds: collectionsWithin.map(({ resource_id }) => resource_id),
-        projectIds: projectsWithin.map(({ id }) => id),
-      });
+
+      if (!resources.length) {
+        context.response.body = {
+          noSearch: true,
+          legacy: legacyResult,
+          typesense: null,
+          warnings,
+        };
+        return;
+      }
+
+      const targetUrns = resources.map(row => getResourceUrn(row.resource_type, row.resource_id));
+      const captureModelRows = targetUrns.length
+        ? await context.connection.any(getCaptureModelDataForSearchExport(siteIdAsNumber, targetUrns))
+        : [];
+      const sqlMs = Date.now() - sqlStart;
+
+      const flattenStart = Date.now();
+      const captureModelByResource = flattenCaptureModelFieldsByResource(captureModelRows);
+      const captureModelMs = Date.now() - flattenStart;
+
       const collectionName = resolveTypesenseSearchCollection({
         siteId: siteIdAsNumber,
       });
       const typesense = new TypesenseClient();
       await typesense.ensureSearchCollection(collectionName);
-      const importResult = await typesense.upsertDocuments(collectionName, documents);
+
+      const importStart = Date.now();
+      const importResult = await typesense.upsertDocumentsStream(
+        collectionName,
+        streamManifestTypesenseDocuments(resources, {
+          siteId: siteIdAsNumber,
+          siteUrn,
+          captureModelByResource,
+        })
+      );
+      const importMs = Date.now() - importStart;
+
+      console.log(
+        'Search: manifest index metrics Manifest(%d) Site(%d) docs=%d sqlMs=%d captureModelMs=%d importMs=%d',
+        manifestId,
+        siteIdAsNumber,
+        importResult.total,
+        sqlMs,
+        captureModelMs,
+        importMs
+      );
 
       typesenseResult = {
-        indexed: documents.length,
+        indexed: importResult.total,
         collection: collectionName,
         importResult,
       };

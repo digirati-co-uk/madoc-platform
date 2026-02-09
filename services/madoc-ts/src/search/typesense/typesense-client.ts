@@ -1,3 +1,4 @@
+import { Readable } from 'stream';
 import { castBool } from '../../utility/cast-bool';
 
 type TypesenseImportLine = {
@@ -139,10 +140,11 @@ export class TypesenseClient {
     path: string,
     options: {
       method?: 'GET' | 'POST' | 'DELETE' | 'PUT' | 'PATCH';
-      body?: string;
+      body?: any;
       contentType?: string;
       expectText?: boolean;
       allow404?: boolean;
+      duplex?: 'half';
     } = {}
   ): Promise<T | null> {
     const response = await fetch(`${this.baseUrl}${path}`, {
@@ -152,6 +154,7 @@ export class TypesenseClient {
         ...(options.contentType ? { 'Content-Type': options.contentType } : {}),
       },
       body: options.body,
+      ...(options.duplex ? { duplex: options.duplex } : {}),
     });
 
     if (response.status === 404 && options.allow404) {
@@ -178,6 +181,7 @@ export class TypesenseClient {
         { name: 'id', type: 'string' },
         { name: 'resource_id', type: 'string' },
         { name: 'manifest_id', type: 'string', facet: true },
+        { name: 'manifest_ids', type: 'string[]', facet: true, optional: true },
         { name: 'resource_type', type: 'string', facet: true },
         { name: 'resource_label', type: 'string', optional: true },
         { name: 'sort_label', type: 'string', optional: true },
@@ -185,6 +189,7 @@ export class TypesenseClient {
         { name: 'rights', type: 'string', optional: true, facet: true },
         { name: 'site_id', type: 'int32', facet: true },
         { name: 'project_ids', type: 'string[]', facet: true, optional: true },
+        { name: 'collection_ids', type: 'string[]', facet: true, optional: true },
         { name: 'contexts', type: 'string[]', facet: true },
         { name: 'search_text', type: 'string[]' },
         { name: 'metadata_keys', type: 'string[]', facet: true, optional: true },
@@ -201,11 +206,13 @@ export class TypesenseClient {
 
   private async ensureSearchCollectionSchemaCompatibility(name: string, existing: any) {
     const existingFields = Array.isArray(existing?.fields) ? existing.fields : [];
-    const requiredDynamicFields: Array<TypesenseCollectionField> = [
+    const requiredFields: Array<TypesenseCollectionField> = [
+      { name: 'manifest_ids', type: 'string[]', facet: true, optional: true },
+      { name: 'collection_ids', type: 'string[]', facet: true, optional: true },
       { name: 'metadata_.*', type: 'string[]', facet: true, optional: true },
       { name: 'capture_model_.*', type: 'string[]', optional: true },
     ];
-    const missingFields = requiredDynamicFields.filter(
+    const missingFields = requiredFields.filter(
       requiredField => !existingFields.some((field: any) => field?.name === requiredField.name)
     );
 
@@ -284,6 +291,26 @@ export class TypesenseClient {
     });
   }
 
+  private parseImportResponse(result: string) {
+    const lines = (result || '')
+      .split('\n')
+      .map(line => line.trim())
+      .filter(Boolean)
+      .map(line => JSON.parse(line) as TypesenseImportLine);
+    const failed = lines.filter(line => !line.success);
+
+    if (failed.length) {
+      throw new Error(
+        `Typesense import failed for ${failed.length}/${lines.length} documents${failed[0].error ? `: ${failed[0].error}` : ''}`
+      );
+    }
+
+    return {
+      total: lines.length,
+      failed: 0,
+    };
+  }
+
   async upsertDocuments(collectionName: string, documents: Array<Record<string, any>>) {
     if (!documents.length) {
       return {
@@ -303,23 +330,28 @@ export class TypesenseClient {
       }
     );
 
-    const lines = (result || '')
-      .split('\n')
-      .map(line => line.trim())
-      .filter(Boolean)
-      .map(line => JSON.parse(line) as TypesenseImportLine);
-    const failed = lines.filter(line => !line.success);
+    return this.parseImportResponse(result || '');
+  }
 
-    if (failed.length) {
-      throw new Error(
-        `Typesense import failed for ${failed.length}/${lines.length} documents${failed[0].error ? `: ${failed[0].error}` : ''}`
-      );
-    }
-
-    return {
-      total: lines.length,
-      failed: 0,
+  async upsertDocumentsStream(collectionName: string, documents: Iterable<Record<string, any>> | AsyncIterable<Record<string, any>>) {
+    const toNdjson = async function* () {
+      for await (const document of documents as AsyncIterable<Record<string, any>>) {
+        yield `${JSON.stringify(document)}\n`;
+      }
     };
+
+    const result = await this.request<string>(
+      `/collections/${encodeURIComponent(collectionName)}/documents/import?action=upsert`,
+      {
+        method: 'POST',
+        body: Readable.from(toNdjson()),
+        contentType: 'text/plain',
+        expectText: true,
+        duplex: 'half',
+      }
+    );
+
+    return this.parseImportResponse(result || '');
   }
 
   async search(
