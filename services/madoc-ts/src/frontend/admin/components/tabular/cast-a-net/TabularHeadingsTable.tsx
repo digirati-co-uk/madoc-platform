@@ -29,7 +29,7 @@ function HeaderInput(props: {
   onFocus?: () => void;
   onChange: (next: string) => void;
 }) {
-  const { value, disabled, hasError, isActive, title, onFocus, onChange } = props;
+  const { value, disabled, hasError, title, onFocus, onChange } = props;
 
   return (
     <input
@@ -43,16 +43,12 @@ function HeaderInput(props: {
       style={{
         width: '100%',
         border: 'none',
-        padding: '10px 10px',
+        padding: '10px 8px',
         fontSize: 13,
         outline: 'none',
         background: 'transparent',
         borderRadius: 6,
-        boxShadow: hasError
-          ? 'inset 0 0 0 2px rgba(220, 38, 38, 0.55)'
-          : isActive
-          ? 'inset 0 0 0 2px rgba(59,130,246,0.55)'
-          : undefined,
+        boxShadow: hasError ? 'inset 0 0 0 2px rgba(220, 38, 38, 0.55)' : undefined,
       }}
     />
   );
@@ -95,7 +91,7 @@ export const TabularHeadingsTable: React.FC<TabularHeadingsTableProps> = props =
       const issueTitle = cellIssues[0]?.message;
       const tooltipTitle = (safeTooltips[c] ?? '').trim();
       const title =
-        issueTitle && tooltipTitle ? `${issueTitle}\n${tooltipTitle}` : issueTitle ?? (tooltipTitle || undefined);
+        issueTitle && tooltipTitle ? `${issueTitle}\n${tooltipTitle}` : (issueTitle ?? (tooltipTitle || undefined));
 
       return {
         key: `c-${c}`,
@@ -113,9 +109,8 @@ export const TabularHeadingsTable: React.FC<TabularHeadingsTableProps> = props =
             }}
             style={{
               height: '100%',
-              padding: 6,
+              padding: 0,
               background: c === activeColumn ? '#eef6ff' : '#f3f6ff',
-              borderBottom: '1px solid rgba(0,0,0,0.06)',
               cursor: 'pointer',
             }}
           >
@@ -134,7 +129,15 @@ export const TabularHeadingsTable: React.FC<TabularHeadingsTableProps> = props =
             />
           </div>
         ),
-        renderCell: () => <div aria-disabled="true" style={{ height: '100%', background: '#fafafa' }} />,
+        renderCell: () => (
+          <div
+            aria-disabled="true"
+            style={{
+              height: '100%',
+              background: '#fafafa',
+            }}
+          />
+        ),
       } satisfies Column<Row>;
     });
   }, [
@@ -151,17 +154,37 @@ export const TabularHeadingsTable: React.FC<TabularHeadingsTableProps> = props =
   const headerRowHeight = 54;
   const rowHeight = 42;
   const gridHeight = headerRowHeight + rowHeight * rows.length + 2;
+  const minGridWidth = columns * 220 + 2;
 
   return (
-    <DataGrid
-      className="rdg-light"
-      columns={gridColumns}
-      rows={rows}
-      rowKeyGetter={r => r.id}
-      enableVirtualization={false}
-      headerRowHeight={headerRowHeight}
-      rowHeight={rowHeight}
-      style={{ height: gridHeight }}
-    />
+    <>
+      <style>
+        {`
+          .tabular-rdg .rdg-cell[aria-selected="true"] {
+            outline: none !important;
+          }
+          .tabular-rdg .rdg-cell {
+            border-inline-end: 1px solid #d4d8df !important;
+            border-block-end: 1px solid #d4d8df !important;
+          }
+        `}
+      </style>
+      <DataGrid
+        className="rdg-light tabular-rdg"
+        columns={gridColumns}
+        rows={rows}
+        rowKeyGetter={r => r.id}
+        enableVirtualization={false}
+        headerRowHeight={headerRowHeight}
+        rowHeight={rowHeight}
+        style={{
+          height: gridHeight,
+          minWidth: minGridWidth,
+          border: '1px solid #d4d8df',
+          ['--rdg-selection-width' as string]: '0px',
+          ['--rdg-border-color' as string]: '#d4d8df',
+        }}
+      />
+    </>
   );
 };

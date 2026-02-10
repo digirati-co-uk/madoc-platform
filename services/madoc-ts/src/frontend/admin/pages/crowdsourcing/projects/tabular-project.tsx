@@ -11,7 +11,6 @@ import { AdminHeader } from '../../../molecules/AdminHeader';
 import { Input, InputContainer, InputLabel } from '../../../../shared/form/Input';
 import { Button, ButtonRow, TinyButton } from '../../../../shared/navigation/Button';
 import { ErrorMessage } from '../../../../shared/callouts/ErrorMessage';
-import { SuccessMessage } from '../../../../shared/callouts/SuccessMessage';
 import { MetadataEditor } from '../../../molecules/MetadataEditor';
 import { buildTabularProjectSetupPayload } from '../../../components/tabular/cast-a-net/CastANetStructure';
 import type {
@@ -27,6 +26,7 @@ import { VaultProvider } from 'react-iiif-vault';
 import { BrowserComponent } from '../../../../shared/utility/browser-component';
 import type { Root } from 'react-dom/client';
 import { ModalButton } from '../../../../shared/components/Modal';
+import { SuccessMessage } from '../../../../shared/callouts/SuccessMessage';
 
 const DefineTabularModelLazy = madocLazy(async () => {
   const imported = await import('../../../components/tabular/cast-a-net/DefineTabularModel');
@@ -342,7 +342,7 @@ export const TabularProjectWizard: React.FC = () => {
               color: isDone ? '#fff' : isActive ? '#273668' : '#273668',
               border: isActive && !isDone ? '2px solid #8DA0FF' : '2px solid transparent',
               fontSize: 12,
-              fontWeight: 700,
+              fontWeight: 600,
               flex: '0 0 auto',
               opacity: isDisabled ? 0.5 : 1,
             };
@@ -372,7 +372,7 @@ export const TabularProjectWizard: React.FC = () => {
                 >
                   <span style={circleStyle}>{isDone ? '✓' : ''}</span>
                   <span style={{ display: 'grid', gap: 2 }}>
-                    <span style={{ fontSize: 16, fontWeight: isActive ? 700 : 600 }}>{item.label}</span>
+                    <span style={{ fontSize: 16, fontWeight: isActive ? 600 : 500 }}>{item.label}</span>
                     {isDone && !isDisabled ? (
                       <span style={{ fontSize: 12, textDecoration: 'underline', opacity: 0.9 }}>
                         {t('Click to edit')}
@@ -444,11 +444,9 @@ export const TabularProjectWizard: React.FC = () => {
 
         {step === STEP_SETTINGS ? (
           <>
-            <div style={{ fontSize: 18, fontWeight: 600, marginBottom: 12 }}>{t('Additional settings')}</div>
-            <div style={{ marginBottom: 16 }}>
-              <div style={{ fontWeight: 600, marginBottom: 6 }}>
-                {t('Select to enable the zoom tracking option for your tabular model')}
-              </div>
+            <div style={{ fontSize: 18, fontWeight: 600, marginBottom: 20 }}>{t('Additional settings')}</div>
+            <div style={{ marginBottom: 20 }}>
+              <div>{t('Select to enable the zoom tracking option for your tabular model')}</div>
               <div style={{ fontSize: 12, opacity: 0.75, marginBottom: 10, maxWidth: 600 }}>
                 {t(
                   'Zoom tracking enables the application to support contributor users as they  navigate through the tabular data structure. The zoom tracking will  attempt to move the image focus to reflect the user’s current location  in the table structure. To provide this option to the user, casting a  grid on a reference image is necessary..'
@@ -465,8 +463,8 @@ export const TabularProjectWizard: React.FC = () => {
               </label>
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', rowGap: 12 }}>
-              <div style={{ fontWeight: 600 }}>{t('Reference image (optional)')}</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <div>{t('Reference image (optional)')}</div>
               <div style={{ fontSize: 12, opacity: 0.75 }}>
                 {t(
                   'Select an image to guide configuration. This is required when zoom tracking is on; optional when zoom tracking is off.'
@@ -560,7 +558,7 @@ export const TabularProjectWizard: React.FC = () => {
         ) : null}
 
         {step === STEP_MODEL ? (
-          <>
+          <div style={{ paddingBottom: 16 }}>
             <div style={{ fontSize: 18, fontWeight: 600, marginBottom: 12 }}>{t('Define tabular model')}</div>
             <BrowserComponent fallback={<div>{t('Loading...')}</div>}>
               <DefineTabularModelLazy
@@ -579,12 +577,12 @@ export const TabularProjectWizard: React.FC = () => {
               <div style={{ marginTop: 12, fontSize: 12, opacity: 0.7 }}>{t('Save the model to continue.')}</div>
             ) : null}
 
-            <ButtonRow>
+            <ButtonRow style={{ marginTop: 16 }}>
               <Button $primary disabled={!isModelValid || !modelSaved} onClick={moveNextFromModel}>
                 {t('Save')}
               </Button>
             </ButtonRow>
-          </>
+          </div>
         ) : null}
 
         {step === STEP_NET ? (

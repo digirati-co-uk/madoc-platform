@@ -1,12 +1,15 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { CanvasPanel, SimpleViewerProvider } from 'react-iiif-vault';
 import type { DefineTabularModelValue, TabularFieldType, TabularModelChange, TabularValidationIssue } from './types';
 import { buildTabularModelPayload, validateTabularModel } from './TabularModel';
 import { TabularHeadingsTable } from './TabularHeadingsTable';
 import { TabularColumnEditor } from './TabularColumnEditor';
+import { Button } from '../../../../shared/navigation/Button';
 import { HomeIcon } from '../../../../shared/icons/HomeIcon';
 import { MinusIcon } from '../../../../shared/icons/MinusIcon';
 import { PlusIcon } from '../../../../shared/icons/PlusIcon';
+import { AddIcon } from '../../../../shared/icons/AddIcon';
 
 const viewerButtonStyle: React.CSSProperties = {
   height: 34,
@@ -98,17 +101,23 @@ export function DefineTabularModel(props: {
     minPreviewRows = 1,
     maxPreviewRows = 50,
     defaultColumns = 6,
-    defaultPreviewRows = 5,
+    defaultPreviewRows = 4,
     disabled = false,
   } = props;
+  const { t } = useTranslation();
 
   const requestedColumns = value.columns > 0 ? value.columns : defaultColumns;
   const requestedPreviewRows = value.previewRows > 0 ? value.previewRows : defaultPreviewRows;
+  const defaultFieldType = 'text-field' as TabularFieldType;
 
   const safeColumns = Math.max(minColumns, Math.min(maxColumns, Math.floor(requestedColumns || 0)));
   const safePreviewRows = Math.max(minPreviewRows, Math.min(maxPreviewRows, Math.floor(requestedPreviewRows || 0)));
   const [activeColumn, setActiveColumn] = useState(0);
-  const [imageHeight, setImageHeight] = useState(360);
+  const [imageHeight, setImageHeight] = useState(300);
+  const [attemptedSave, setAttemptedSave] = useState(false);
+  const [isResizeHandleHover, setIsResizeHandleHover] = useState(false);
+  const tableVisibleRows = 4;
+  const tableHeight = 54 + 42 * tableVisibleRows + 2;
 
   const safeHeadings = useMemo(
     () => Array.from({ length: safeColumns }, (_, i) => value.headings?.[i] ?? ''),
@@ -116,8 +125,8 @@ export function DefineTabularModel(props: {
   );
 
   const safeFieldTypes = useMemo(
-    () => Array.from({ length: safeColumns }, (_, i) => value.fieldTypes?.[i]),
-    [safeColumns, value.fieldTypes]
+    () => Array.from({ length: safeColumns }, (_, i) => value.fieldTypes?.[i] ?? defaultFieldType),
+    [safeColumns, value.fieldTypes, defaultFieldType]
   );
 
   const safeHelpText = useMemo(
@@ -177,7 +186,6 @@ export function DefineTabularModel(props: {
   }, [issues]);
 
   const activeError = issuesByColumn.get(activeColumn)?.[0]?.message;
-  const usingDefaults = value.columns <= 0 || value.previewRows <= 0;
 
   const setColumns = (nextCols: number) => {
     const n = Math.max(minColumns, Math.min(maxColumns, Math.floor(nextCols)));
@@ -186,22 +194,9 @@ export function DefineTabularModel(props: {
       columns: n,
       previewRows: safePreviewRows,
       headings: Array.from({ length: n }, (_, i) => safeHeadings[i] ?? ''),
-      fieldTypes: Array.from({ length: n }, (_, i) => safeFieldTypes[i]),
+      fieldTypes: Array.from({ length: n }, (_, i) => safeFieldTypes[i] ?? defaultFieldType),
       helpText: Array.from({ length: n }, (_, i) => safeHelpText[i]),
       saved: buildSavedFlags(n, false),
-    });
-  };
-
-  const setPreviewRows = (nextRows: number) => {
-    const n = Math.max(minPreviewRows, Math.min(maxPreviewRows, Math.floor(nextRows)));
-    onChange({
-      ...value,
-      columns: safeColumns,
-      previewRows: n,
-      headings: safeHeadings,
-      fieldTypes: safeFieldTypes,
-      helpText: safeHelpText,
-      saved: buildSavedFlags(safeColumns, false),
     });
   };
 
@@ -211,13 +206,13 @@ export function DefineTabularModel(props: {
     const helpText = safeHelpText.slice();
 
     headings[index] = next.heading;
-    fieldTypes[index] = next.fieldType;
+    fieldTypes[index] = next.fieldType ?? defaultFieldType;
     helpText[index] = next.helpText;
 
     onChange({
       ...value,
       columns: safeColumns,
-      previewRows: safePreviewRows,
+      previewRows: 4,
       headings,
       fieldTypes,
       helpText,
@@ -226,11 +221,12 @@ export function DefineTabularModel(props: {
   };
 
   const saveModel = () => {
+    setAttemptedSave(true);
     if (!canSaveModel) {
       return;
     }
 
-    onChange({
+    const nextValue = {
       ...value,
       columns: safeColumns,
       previewRows: safePreviewRows,
@@ -238,171 +234,183 @@ export function DefineTabularModel(props: {
       fieldTypes: safeFieldTypes,
       helpText: safeHelpText,
       saved: buildSavedFlags(safeColumns, true),
-    });
-  };
+    };
 
-  const removeColumn = (index: number) => {
-    const headings = safeHeadings.slice();
-    const fieldTypes = safeFieldTypes.slice();
-    const helpText = safeHelpText.slice();
-
-    headings.splice(index, 1);
-    fieldTypes.splice(index, 1);
-    helpText.splice(index, 1);
-
-    const nextCols = Math.max(minColumns, headings.length);
-
-    onChange({
-      ...value,
-      columns: nextCols,
-      previewRows: safePreviewRows,
-      headings,
-      fieldTypes,
-      helpText,
-      saved: buildSavedFlags(nextCols, false),
+    // Debug: inspect what is being saved from the Define tabular model step.
+    // eslint-disable-next-line no-console
+    console.log('[TabularProjectWizard] Save model payload', {
+      modelValue: nextValue,
+      modelPayload: payload,
+      isValid: canSaveModel,
+      issues,
     });
 
-    setActiveColumn(Math.max(0, Math.min(index, nextCols - 1)));
+    onChange(nextValue);
   };
 
   const addColumn = () => setColumns(safeColumns + 1);
   const removeLastColumn = () => setColumns(safeColumns - 1);
+  const startResize = (event: React.MouseEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    const startY = event.clientY;
+    const startHeight = imageHeight;
+    const minHeight = 220;
+    const maxHeight = 520;
+
+    const onMove = (moveEvent: MouseEvent) => {
+      const delta = moveEvent.clientY - startY;
+      const nextHeight = Math.max(minHeight, Math.min(maxHeight, startHeight + delta));
+      setImageHeight(nextHeight);
+    };
+
+    const onUp = () => {
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseup', onUp);
+    };
+
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
+  };
 
   return (
-    <div style={{ display: 'grid', gap: 12, width: '100%' }}>
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: manifestId ? '1fr 1fr 1fr' : '1fr 1fr',
-          gap: 10,
-          padding: '10px 12px',
-          border: '1px solid #e5e5e5',
-          borderRadius: 8,
-          background: '#fff',
-        }}
-      >
-        <label style={{ display: 'grid', gap: 6 }}>
-          <div style={{ fontSize: 12, opacity: 0.9 }}>Columns</div>
-          <input
-            type="number"
-            min={minColumns}
-            max={maxColumns}
-            value={safeColumns}
-            disabled={disabled}
-            onChange={e => setColumns(Number(e.target.value))}
-            style={{ height: 36, border: '1px solid #d4d4d4', borderRadius: 8, padding: '0 10px', fontSize: 13 }}
-          />
-        </label>
-
-        <label style={{ display: 'grid', gap: 6 }}>
-          <div style={{ fontSize: 12, opacity: 0.9 }}>Preview rows</div>
-          <input
-            type="number"
-            min={minPreviewRows}
-            max={maxPreviewRows}
-            value={safePreviewRows}
-            disabled={disabled}
-            onChange={e => setPreviewRows(Number(e.target.value))}
-            style={{ height: 36, border: '1px solid #d4d4d4', borderRadius: 8, padding: '0 10px', fontSize: 13 }}
-          />
-        </label>
-
-        {manifestId ? (
-          <label style={{ display: 'grid', gap: 6 }}>
-            <div style={{ fontSize: 12, opacity: 0.9 }}>Image height</div>
-            <input
-              type="range"
-              min={240}
-              max={720}
-              step={20}
-              value={imageHeight}
-              onChange={e => setImageHeight(Number(e.target.value))}
-              style={{ height: 36 }}
-            />
-          </label>
-        ) : null}
-      </div>
-
-      {usingDefaults ? (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12, width: '100%' }}>
+      {attemptedSave && issues.length ? (
         <div
           style={{
-            padding: '8px 10px',
-            border: '1px solid #e5e5e5',
+            padding: '10px 12px',
+            border: '1px solid #fecaca',
             borderRadius: 8,
-            background: '#fff',
-            fontSize: 12,
-            opacity: 0.85,
+            background: '#fff1f2',
+            color: '#9f1239',
+            fontSize: 13,
           }}
         >
-          First-time setup loaded with defaults: {safeColumns} columns and {safePreviewRows} rows.
+          {issues[0]?.message}
         </div>
       ) : null}
 
-      {manifestId ? (
-        <ReferenceImagePanel manifestId={manifestId} canvasId={canvasId} imageHeight={imageHeight} />
-      ) : null}
-
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'minmax(0, 1fr) 360px',
-          gap: 12,
-          alignItems: 'start',
-        }}
-      >
-        <div style={{ border: '1px solid #ddd', background: '#fff', overflow: 'hidden' }}>
-          <TabularHeadingsTable
-            columns={safeColumns}
-            visibleRows={safePreviewRows}
-            headings={safeHeadings}
-            tooltips={safeHelpText}
-            onChangeHeadings={next =>
-              onChange({
-                ...value,
-                columns: safeColumns,
-                previewRows: safePreviewRows,
-                headings: next,
-                fieldTypes: safeFieldTypes,
-                helpText: safeHelpText,
-                saved: buildSavedFlags(safeColumns, false),
-              })
-            }
-            activeColumn={activeColumn}
-            onActiveColumnChange={setActiveColumn}
-            issues={issues}
-            disabled={disabled}
-          />
-          <div style={{ display: 'flex', gap: 10, padding: 10, borderTop: '1px solid #eee' }}>
-            <button type="button" onClick={addColumn} disabled={disabled || safeColumns >= maxColumns}>
-              Add column
-            </button>
-            <button type="button" onClick={removeLastColumn} disabled={disabled || safeColumns <= minColumns}>
-              Remove column
-            </button>
-            <button
-              type="button"
-              onClick={saveModel}
-              disabled={disabled || !canSaveModel}
-              style={{ marginLeft: 'auto' }}
+      <div style={{ display: 'grid', gridTemplateColumns: '280px minmax(0, 1fr)', gap: 16, alignItems: 'stretch' }}>
+        <div style={{ border: '1px solid #d6d6d6', borderRadius: 4, background: '#f4f4f4', padding: 12 }}>
+          <div style={{ fontWeight: 700, fontSize: 18, lineHeight: 1, marginBottom: 14 }}>{t('Tabular document')}</div>
+          <div style={{ borderTop: '1px solid #d7d7d7', marginTop: 10, paddingTop: 18 }}>
+            <div
+              style={{
+                padding: 12,
+                background: '#dfe5ff',
+                borderRadius: 4,
+                color: '#1f2d5a',
+                fontSize: 14,
+                lineHeight: 1.35,
+              }}
             >
-              {isModelSaved ? 'Model saved' : canSaveModel ? 'Save model' : 'Fix issues to save'}
-            </button>
+              Click a cell to add a heading. Any cell with text will be treated as a header cell in your capture model.
+            </div>
+          </div>
+
+          <div style={{ marginTop: 12 }}>
+            <TabularColumnEditor
+              index={activeColumn}
+              value={{
+                heading: safeHeadings[activeColumn] ?? '',
+                fieldType: safeFieldTypes[activeColumn],
+                helpText: safeHelpText[activeColumn] ?? '',
+              }}
+              disabled={disabled}
+              error={attemptedSave ? activeError : undefined}
+              onChange={next => updateColumn(activeColumn, next)}
+            />
+          </div>
+
+          <div style={{ marginTop: 12, display: 'flex', justifyContent: 'flex-start' }}>
+            <Button $primary type="button" onClick={saveModel} disabled={disabled}>
+              {isModelSaved ? 'Model saved' : 'Save model'}
+            </Button>
           </div>
         </div>
 
-        <div>
-          <TabularColumnEditor
-            index={activeColumn}
-            value={{
-              heading: safeHeadings[activeColumn] ?? '',
-              fieldType: safeFieldTypes[activeColumn],
-              helpText: safeHelpText[activeColumn] ?? '',
-            }}
-            disabled={disabled}
-            error={activeError}
-            onChange={next => updateColumn(activeColumn, next)}
-            onRemove={safeColumns > minColumns ? () => removeColumn(activeColumn) : undefined}
-          />
+        <div style={{ display: 'grid', gap: 12 }}>
+          {manifestId ? (
+            <ReferenceImagePanel manifestId={manifestId} canvasId={canvasId} imageHeight={imageHeight} />
+          ) : null}
+
+          {manifestId && (
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: -4 }}>
+              <div
+                role="separator"
+                aria-orientation="horizontal"
+                aria-label={t('Resize image and table')}
+                onMouseDown={startResize}
+                onMouseEnter={() => setIsResizeHandleHover(true)}
+                onMouseLeave={() => setIsResizeHandleHover(false)}
+                style={{
+                  height: 18,
+                  minWidth: 28,
+                  border: '1px solid #c8c8c8',
+                  borderRadius: 4,
+                  background: isResizeHandleHover ? '#e5e7eb' : '#fff',
+                  fontWeight: 700,
+                  lineHeight: '14px',
+                  textAlign: 'center',
+                  cursor: 'row-resize',
+                  userSelect: 'none',
+                }}
+              >
+                =
+              </div>
+            </div>
+          )}
+
+          <div style={{ border: '1px solid #d6d6d6', background: '#fff', overflow: 'hidden' }}>
+            <div style={{ display: 'flex', height: tableHeight }}>
+              <div style={{ flex: 1, minWidth: 0, overflow: 'auto', padding: 0 }}>
+                <TabularHeadingsTable
+                  columns={safeColumns}
+                  visibleRows={tableVisibleRows}
+                  headings={safeHeadings}
+                  tooltips={safeHelpText}
+                  onChangeHeadings={next =>
+                    onChange({
+                      ...value,
+                      columns: safeColumns,
+                      previewRows: tableVisibleRows,
+                      headings: next,
+                      fieldTypes: safeFieldTypes,
+                      helpText: safeHelpText,
+                      saved: buildSavedFlags(safeColumns, false),
+                    })
+                  }
+                  activeColumn={activeColumn}
+                  onActiveColumnChange={setActiveColumn}
+                  issues={attemptedSave ? issues : []}
+                  disabled={disabled}
+                />
+              </div>
+              <div
+                style={{
+                  width: 56,
+                  borderLeft: '1px solid #eee',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  padding: '56px 8px 24px',
+                  background: '#f3f3f5',
+                }}
+              >
+                <button
+                  type="button"
+                  className={'bg-neutral-800'}
+                  onClick={addColumn}
+                  disabled={disabled || safeColumns >= maxColumns}
+                >
+                  <AddIcon />
+                </button>
+                <button type="button" onClick={removeLastColumn} disabled={disabled || safeColumns <= minColumns}>
+                  <MinusIcon />
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

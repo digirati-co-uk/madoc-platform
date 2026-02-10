@@ -45,19 +45,15 @@ export function TabularColumnEditor(props: {
   const dropdownOptions = hasSelectedType
     ? [{ text: 'Select field type', value: '' }, ...typeOptions]
     : value.fieldType
-    ? [
-        { text: 'Select field type', value: '' },
-        { text: value.fieldType, value: value.fieldType, label: value.fieldType },
-        ...typeOptions,
-      ]
-    : [{ text: 'Select field type', value: '' }, ...typeOptions];
+      ? [
+          { text: 'Select field type', value: '' },
+          { text: value.fieldType, value: value.fieldType, label: value.fieldType },
+          ...typeOptions,
+        ]
+      : [{ text: 'Select field type', value: '' }, ...typeOptions];
 
   return (
     <Segment style={{ borderTopColor: 'lightcoral' }}>
-      <div style={{ fontWeight: 700, fontSize: 14 }}>Column {index + 1}</div>
-
-      <div style={{ height: 10 }} />
-
       <StyledForm
         onSubmit={e => {
           e.preventDefault();
