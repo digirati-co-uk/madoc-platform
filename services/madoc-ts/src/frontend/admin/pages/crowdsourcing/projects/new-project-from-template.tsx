@@ -2,7 +2,7 @@ import { InternationalString } from '@iiif/presentation-3';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import slugify from 'slugify';
 import { CreateProject } from '../../../../../types/schemas/create-project';
 import { ErrorMessage } from '../../../../shared/callouts/ErrorMessage';
@@ -13,13 +13,14 @@ import { Stepper, StepperContainer } from '../../../../shared/components/Stepper
 import { Input, InputContainer, InputLabel } from '../../../../shared/form/Input';
 import { useApi } from '../../../../shared/hooks/use-api';
 import { useLocationQuery } from '../../../../shared/hooks/use-location-query';
-import { useProjectTemplate, useRemoteProjectTemplate } from '../../../../shared/hooks/use-project-template';
+import { useRemoteProjectTemplate } from '../../../../shared/hooks/use-project-template';
 import { useDefaultLocale, useSupportedLocales } from '../../../../shared/hooks/use-site';
 import { WidePage } from '../../../../shared/layout/WidePage';
 import { Button, ButtonRow } from '../../../../shared/navigation/Button';
 import { ErrorBoundary } from '../../../../shared/utility/error-boundary';
 import { AdminHeader } from '../../../molecules/AdminHeader';
 import { MetadataEditor } from '../../../molecules/MetadataEditor';
+import { TabularProjectWizard } from './tabular-project';
 
 const PROJECT_DETAILS = 0;
 const ADDITIONAL_SETTINGS = 1;
@@ -121,6 +122,10 @@ export const NewProjectFromTemplate: React.FC = () => {
         </WidePage>
       </>
     );
+  }
+
+  if (chosenTemplateType === 'tabular-project') {
+    return <TabularProjectWizard />;
   }
 
   return (

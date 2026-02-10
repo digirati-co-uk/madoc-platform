@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import DataGrid, { type Column } from 'react-data-grid';
+import { DataGrid, type Column } from 'react-data-grid';
 import 'react-data-grid/lib/styles.css';
 import type { TabularValidationIssue } from './types';
 
