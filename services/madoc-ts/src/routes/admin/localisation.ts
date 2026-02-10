@@ -221,7 +221,17 @@ export const getLocalisation: RouteMiddleware<{ code: string; namespace?: string
   // Load from disk if exists.
   const location = path.resolve(TRANSLATIONS_PATH, languageCode, `${namespace}.json`);
   const isStatic = fs.existsSync(location);
-  const staticOverride = isStatic ? JSON.parse(fs.readFileSync(location).toString()) : {};
+
+  const safeJsonParse = (jsonString: string) => {
+    try {
+      return JSON.parse(jsonString);
+    } catch (error) {
+      console.error(`Error parsing JSON: ${error}`);
+      return {};
+    }
+  };
+
+  const staticOverride = isStatic ? safeJsonParse(fs.readFileSync(location).toString()) : {};
 
   // Load from config if exists.
   const configResponse = await userApi.getConfiguration<LocalisationSiteConfig>(`${namespace}-i18n`, [
