@@ -7,6 +7,7 @@ type CastANetProps = {
   canvasId?: string;
   value: NetConfig;
   onChange: (next: NetConfig) => void;
+  height?: number;
   onStructureChange?: (next: CastANetStructure) => void;
   blankColumnIndexes?: number[];
   disabled?: boolean;

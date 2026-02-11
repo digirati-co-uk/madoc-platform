@@ -27,6 +27,7 @@ import { BrowserComponent } from '../../../../shared/utility/browser-component';
 import type { Root } from 'react-dom/client';
 import { ModalButton } from '../../../../shared/components/Modal';
 import { SuccessMessage } from '../../../../shared/callouts/SuccessMessage';
+import { TabularHeadingsTable } from '../../../components/tabular/cast-a-net/TabularHeadingsTable';
 
 const DefineTabularModelLazy = madocLazy(async () => {
   const imported = await import('../../../components/tabular/cast-a-net/DefineTabularModel');
@@ -84,6 +85,7 @@ const STEP_MODEL = 2;
 const STEP_NET = 3;
 const STEP_PREVIEW = 4;
 const STEP_COMPLETE = 5;
+const CAST_A_NET_ROWS = 5;
 
 const hasIntlValue = (value?: InternationalString) => {
   if (!value) return false;
@@ -117,7 +119,7 @@ export const TabularProjectWizard: React.FC = () => {
   const [isModelValid, setIsModelValid] = useState(false);
 
   const [netConfig, setNetConfig] = useState<NetConfig>({
-    rows: 5,
+    rows: CAST_A_NET_ROWS,
     cols: 5,
     top: 10,
     left: 10,
@@ -126,6 +128,8 @@ export const TabularProjectWizard: React.FC = () => {
     rowPositions: [],
     colPositions: [],
   });
+  const [castANetHeight, setCastANetHeight] = useState(520);
+  const [isCastANetDividerHover, setIsCastANetDividerHover] = useState(false);
 
   const [saveProject, { status, data, isSuccess, reset }] = useMutation(async (config: CreateProject) => {
     try {
@@ -149,20 +153,46 @@ export const TabularProjectWizard: React.FC = () => {
   }, [autoSlug, label]);
 
   useEffect(() => {
-    const cols = Math.max(1, Math.floor(tabularModel.columns || 0));
-    const rows = Math.max(1, Math.floor(tabularModel.previewRows || 0)) || 5;
+    if (!modelSaved) {
+      return;
+    }
+
+    const colsFromSavedModel = Math.max(1, Math.floor(tabularModel.columns || tabularPayload?.columns?.length || 0));
+
     setNetConfig(prev => ({
       ...prev,
-      cols,
-      rows,
+      cols: colsFromSavedModel,
+      rows: CAST_A_NET_ROWS,
     }));
-  }, [tabularModel.columns, tabularModel.previewRows]);
+  }, [modelSaved, tabularModel.columns, tabularPayload]);
 
   const clearImageSelection = () => {
     setManifestId(undefined);
     setCanvasId(undefined);
     setIiifError(null);
     setIiifBrowserSelection(null);
+  };
+
+  const startCastANetResize = (event: React.MouseEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    const startY = event.clientY;
+    const startHeight = castANetHeight;
+    const minHeight = 360;
+    const maxHeight = 760;
+
+    const onMove = (moveEvent: MouseEvent) => {
+      const delta = moveEvent.clientY - startY;
+      const nextHeight = Math.max(minHeight, Math.min(maxHeight, startHeight + delta));
+      setCastANetHeight(nextHeight);
+    };
+
+    const onUp = () => {
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseup', onUp);
+    };
+
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
   };
 
   const setupPayload = useMemo(() => {
@@ -390,7 +420,7 @@ export const TabularProjectWizard: React.FC = () => {
       <WidePage>
         {step === STEP_DETAILS ? (
           <>
-            <div style={{ fontSize: 18, fontWeight: 600, marginBottom: 12 }}>{t('Project details')}</div>
+            <div style={{ fontSize: 16, fontWeight: 500, marginBottom: 12 }}>{t('Project details')}</div>
             <InputContainer wide>
               <InputLabel htmlFor="label">{t('Label')}</InputLabel>
               <MetadataEditor
@@ -444,7 +474,7 @@ export const TabularProjectWizard: React.FC = () => {
 
         {step === STEP_SETTINGS ? (
           <>
-            <div style={{ fontSize: 18, fontWeight: 600, marginBottom: 20 }}>{t('Additional settings')}</div>
+            <div style={{ fontSize: 16, fontWeight: 500, marginBottom: 20 }}>{t('Additional settings')}</div>
             <div style={{ marginBottom: 20 }}>
               <div>{t('Select to enable the zoom tracking option for your tabular model')}</div>
               <div style={{ fontSize: 12, opacity: 0.75, marginBottom: 10, maxWidth: 600 }}>
@@ -559,7 +589,6 @@ export const TabularProjectWizard: React.FC = () => {
 
         {step === STEP_MODEL ? (
           <div style={{ paddingBottom: 16 }}>
-            <div style={{ fontSize: 18, fontWeight: 600, marginBottom: 12 }}>{t('Define tabular model')}</div>
             <BrowserComponent fallback={<div>{t('Loading...')}</div>}>
               <DefineTabularModelLazy
                 value={tabularModel}
@@ -587,32 +616,114 @@ export const TabularProjectWizard: React.FC = () => {
 
         {step === STEP_NET ? (
           <>
-            <div style={{ fontSize: 18, fontWeight: 600, marginBottom: 12 }}>{t('Cast a net')}</div>
+            <div style={{ fontSize: 16, fontWeight: 500, marginBottom: 12 }}>{t('Cast a net')}</div>
             {requiresNetStep ? (
-              <BrowserComponent fallback={<div>{t('Loading...')}</div>}>
-                <CastANetLazy manifestId={manifestId} canvasId={canvasId} value={netConfig} onChange={setNetConfig} />
-              </BrowserComponent>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '280px minmax(0, 1fr)',
+                  gap: 16,
+                  alignItems: 'stretch',
+                  paddingBottom: 16,
+                }}
+              >
+                <div style={{ border: '1px solid #d6d6d6', borderRadius: 4, background: '#f4f4f4', padding: 12 }}>
+                  <div
+                    style={{
+                      padding: 12,
+                      background: '#dfe5ff',
+                      borderRadius: 4,
+                      color: '#1f2d5a',
+                      fontSize: 14,
+                      lineHeight: 1.35,
+                      marginBottom: 14,
+                    }}
+                  >
+                    {t(
+                      'Adjust the grid so it matches the table in the example image. Align the pink band with the headings defined earlier.'
+                    )}
+                    <br />
+                    <br />
+                    {t('Use the non-editable table below as reference for your row and column layout.')}
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10, alignItems: 'flex-start' }}>
+                    <TinyButton onClick={clearImageSelection}>{t('Select a different image')}</TinyButton>
+                    <Button
+                      $primary
+                      onClick={() => {
+                        reset();
+                        setStep(STEP_PREVIEW);
+                      }}
+                    >
+                      {t('Save')}
+                    </Button>
+                  </div>
+                </div>
+
+                <div style={{ display: 'grid', gap: 12 }}>
+                  <BrowserComponent fallback={<div>{t('Loading...')}</div>}>
+                    <CastANetLazy
+                      manifestId={manifestId}
+                      canvasId={canvasId}
+                      value={netConfig}
+                      onChange={setNetConfig}
+                      height={castANetHeight}
+                    />
+                  </BrowserComponent>
+
+                  <div style={{ display: 'flex', justifyContent: 'center', marginTop: -4 }}>
+                    <div
+                      role="separator"
+                      aria-orientation="horizontal"
+                      aria-label={t('Resize cast-a-net and table')}
+                      onMouseDown={startCastANetResize}
+                      onMouseEnter={() => setIsCastANetDividerHover(true)}
+                      onMouseLeave={() => setIsCastANetDividerHover(false)}
+                      style={{
+                        height: 18,
+                        minWidth: 28,
+                        border: '1px solid #c8c8c8',
+                        borderRadius: 4,
+                        background: isCastANetDividerHover ? '#e5e7eb' : '#fff',
+                        fontWeight: 700,
+                        lineHeight: '14px',
+                        textAlign: 'center',
+                        cursor: 'row-resize',
+                        userSelect: 'none',
+                      }}
+                    >
+                      =
+                    </div>
+                  </div>
+
+                  <div style={{ border: '1px solid #d6d6d6', background: '#fff', overflow: 'auto' }}>
+                    <TabularHeadingsTable
+                      columns={Math.max(1, netConfig.cols)}
+                      visibleRows={CAST_A_NET_ROWS}
+                      headings={Array.from(
+                        { length: Math.max(1, netConfig.cols) },
+                        (_, i) => tabularModel.headings?.[i] ?? ''
+                      )}
+                      tooltips={Array.from(
+                        { length: Math.max(1, netConfig.cols) },
+                        (_, i) => tabularModel.helpText?.[i] ?? ''
+                      )}
+                      onChangeHeadings={() => {
+                        // Intentionally read-only in Cast a net step.
+                      }}
+                      activeColumn={-1}
+                      issues={[]}
+                      disabled
+                    />
+                  </div>
+                </div>
+              </div>
             ) : (
               <div style={{ padding: 12, fontSize: 13 }}>
                 {t('Enable zoom tracking and select a reference canvas to use Cast a net.')}
               </div>
             )}
-
-            <div style={{ marginTop: 12 }}>
-              <TinyButton onClick={clearImageSelection}>{t('Select a different image')}</TinyButton>
-            </div>
-
-            <ButtonRow>
-              <Button
-                $primary
-                onClick={() => {
-                  reset();
-                  setStep(STEP_PREVIEW);
-                }}
-              >
-                {t('Save')}
-              </Button>
-            </ButtonRow>
           </>
         ) : null}
 

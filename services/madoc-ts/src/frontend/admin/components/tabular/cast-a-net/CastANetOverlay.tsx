@@ -1,6 +1,13 @@
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import type { DragMode, NetConfig, TabularCellRef } from './types';
-import { NET_LINE_MIN_GAP_PCT, NET_OVERLAY_MIN_SIZE_PCT, clamp, getStops, normalisePositions } from './utils';
+import {
+  NET_LINE_MIN_GAP_PCT,
+  NET_OVERLAY_MIN_SIZE_PCT,
+  clamp,
+  getStops,
+  makeEvenPositions,
+  normalisePositions,
+} from './utils';
 
 type CastANetOverlayProps = {
   value: NetConfig;
@@ -10,6 +17,9 @@ type CastANetOverlayProps = {
 };
 
 export const CastANetOverlay: React.FC<CastANetOverlayProps> = ({ value, onChange, disabled = false, activeCell }) => {
+  const OUTER_BORDER_THICKNESS = 4;
+  const GRID_LINE_THICKNESS = 4;
+  const GRID_HIT_THICKNESS = 20;
   const overlayRef = useRef<HTMLDivElement | null>(null);
   const dragModeRef = useRef<DragMode>(null);
   const dragStartRef = useRef<{
@@ -46,6 +56,22 @@ export const CastANetOverlay: React.FC<CastANetOverlayProps> = ({ value, onChang
     },
     [onChange]
   );
+
+  const effectiveRowPositions = useMemo(() => {
+    const expectedLen = Math.max(0, value.rows - 1);
+    if (value.rowPositions.length === expectedLen) {
+      return normalisePositions(value.rowPositions, value.rows);
+    }
+    return normalisePositions(makeEvenPositions(value.rows), value.rows);
+  }, [value.rows, value.rowPositions]);
+
+  const effectiveColPositions = useMemo(() => {
+    const expectedLen = Math.max(0, value.cols - 1);
+    if (value.colPositions.length === expectedLen) {
+      return normalisePositions(value.colPositions, value.cols);
+    }
+    return normalisePositions(makeEvenPositions(value.cols), value.cols);
+  }, [value.cols, value.colPositions]);
 
   const endDrag = useCallback(() => {
     dragModeRef.current = null;
@@ -84,7 +110,16 @@ export const CastANetOverlay: React.FC<CastANetOverlayProps> = ({ value, onChang
     const y = ((e.clientY - rect.top) / rect.height) * 100;
 
     dragModeRef.current = mode;
-    dragStartRef.current = { x, y, config: value, shiftKey: e.shiftKey };
+    dragStartRef.current = {
+      x,
+      y,
+      config: {
+        ...value,
+        rowPositions: effectiveRowPositions,
+        colPositions: effectiveColPositions,
+      },
+      shiftKey: e.shiftKey,
+    };
 
     const onWindowMove = (ev: MouseEvent) => {
       if (disabled) return;
@@ -199,8 +234,8 @@ export const CastANetOverlay: React.FC<CastANetOverlayProps> = ({ value, onChang
     window.addEventListener('mouseup', onWindowUp);
   };
 
-  const rowStops = useMemo(() => getStops(value.rows, value.rowPositions), [value.rows, value.rowPositions]);
-  const colStops = useMemo(() => getStops(value.cols, value.colPositions), [value.cols, value.colPositions]);
+  const rowStops = useMemo(() => getStops(value.rows, effectiveRowPositions), [value.rows, effectiveRowPositions]);
+  const colStops = useMemo(() => getStops(value.cols, effectiveColPositions), [value.cols, effectiveColPositions]);
 
   return (
     <div
@@ -220,7 +255,7 @@ export const CastANetOverlay: React.FC<CastANetOverlayProps> = ({ value, onChang
           left: `${value.left}%`,
           width: `${value.width}%`,
           height: `${value.height}%`,
-          border: '7px solid #4A64E1',
+          border: `${OUTER_BORDER_THICKNESS}px solid #4A64E1`,
           boxSizing: 'border-box',
           cursor: disabled ? 'not-allowed' : 'move',
           userSelect: 'none',
@@ -290,7 +325,7 @@ export const CastANetOverlay: React.FC<CastANetOverlayProps> = ({ value, onChang
           })()}
 
         {/* Row lines */}
-        {value.rowPositions.map((pos, index) => (
+        {effectiveRowPositions.map((pos, index) => (
           <div
             key={`row-${index}`}
             onMouseDown={e => {
@@ -299,18 +334,31 @@ export const CastANetOverlay: React.FC<CastANetOverlayProps> = ({ value, onChang
             }}
             style={{
               position: 'absolute',
-              top: `${pos}%`,
+              top: `calc(${pos}% - ${GRID_HIT_THICKNESS / 2}px)`,
               left: 0,
               right: 0,
-              height: 6,
-              background: '#4A64E1',
+              height: GRID_HIT_THICKNESS,
               cursor: disabled ? 'not-allowed' : 'row-resize',
+              background: 'transparent',
             }}
-          />
+          >
+            <div
+              style={{
+                position: 'absolute',
+                top: '50%',
+                left: 0,
+                right: 0,
+                height: GRID_LINE_THICKNESS,
+                transform: 'translateY(-50%)',
+                background: '#4A64E1',
+                pointerEvents: 'none',
+              }}
+            />
+          </div>
         ))}
 
         {/* Column lines */}
-        {value.colPositions.map((pos, index) => (
+        {effectiveColPositions.map((pos, index) => (
           <div
             key={`col-${index}`}
             onMouseDown={e => {
@@ -319,14 +367,27 @@ export const CastANetOverlay: React.FC<CastANetOverlayProps> = ({ value, onChang
             }}
             style={{
               position: 'absolute',
-              left: `${pos}%`,
+              left: `calc(${pos}% - ${GRID_HIT_THICKNESS / 2}px)`,
               top: 0,
               bottom: 0,
-              width: 6,
-              background: '#4A64E1',
+              width: GRID_HIT_THICKNESS,
               cursor: disabled ? 'not-allowed' : 'col-resize',
+              background: 'transparent',
             }}
-          />
+          >
+            <div
+              style={{
+                position: 'absolute',
+                left: '50%',
+                top: 0,
+                bottom: 0,
+                width: GRID_LINE_THICKNESS,
+                transform: 'translateX(-50%)',
+                background: '#4A64E1',
+                pointerEvents: 'none',
+              }}
+            />
+          </div>
         ))}
 
         {/* Resize handles */}

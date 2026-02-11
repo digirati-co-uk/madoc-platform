@@ -160,6 +160,7 @@ const CombinedStory: React.FC = () => {
   const zoomOut = () => runtime?.world?.zoomOut?.();
   const safeDim = clampDimOpacity(dim);
   const dimPercent = dimOpacityToPercent(dim);
+  const dimStepPercent = Math.round(NET_DIM_STEP * 100);
 
   // Avoid TS friction if `canvas` isn't typed on SimpleViewerProvider in this repo.
   const AnySimpleViewerProvider = SimpleViewerProvider as unknown as React.FC<any>;
@@ -267,7 +268,7 @@ const CombinedStory: React.FC = () => {
                   cursor: 'pointer',
                 }}
               >
-                -5%
+                -{dimStepPercent}%
               </button>
               <button
                 type="button"
@@ -281,7 +282,7 @@ const CombinedStory: React.FC = () => {
                   cursor: 'pointer',
                 }}
               >
-                +5%
+                +{dimStepPercent}%
               </button>
             </div>
           </div>

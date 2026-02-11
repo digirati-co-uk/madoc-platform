@@ -44,7 +44,6 @@ function ReferenceImagePanel(props: { manifestId: string; canvasId?: string; ima
           borderBottom: '1px solid #eee',
         }}
       >
-        <div style={{ fontSize: 13, fontWeight: 600 }}>Reference image</div>
         <div style={{ display: 'flex', gap: 8 }}>
           <button type="button" title="Home" onClick={goHome} style={viewerButtonStyle}>
             <HomeIcon />
@@ -59,7 +58,7 @@ function ReferenceImagePanel(props: { manifestId: string; canvasId?: string; ima
       </div>
 
       <div style={{ height: imageHeight, background: '#e5e7eb' }}>
-        <AnySimpleViewerProvider manifest={manifestId} canvas={canvasId}>
+        <AnySimpleViewerProvider manifest={manifestId} startCanvas={canvasId}>
           <CanvasPanel.Viewer
             runtimeOptions={{ maxOverZoom: 5, visibilityRatio: 1, maxUnderZoom: 1 }}
             onCreated={(preset: any) => {
@@ -236,15 +235,6 @@ export function DefineTabularModel(props: {
       saved: buildSavedFlags(safeColumns, true),
     };
 
-    // Debug: inspect what is being saved from the Define tabular model step.
-    // eslint-disable-next-line no-console
-    console.log('[TabularProjectWizard] Save model payload', {
-      modelValue: nextValue,
-      modelPayload: payload,
-      isValid: canSaveModel,
-      issues,
-    });
-
     onChange(nextValue);
   };
 
@@ -291,7 +281,7 @@ export function DefineTabularModel(props: {
 
       <div style={{ display: 'grid', gridTemplateColumns: '280px minmax(0, 1fr)', gap: 16, alignItems: 'stretch' }}>
         <div style={{ border: '1px solid #d6d6d6', borderRadius: 4, background: '#f4f4f4', padding: 12 }}>
-          <div style={{ fontWeight: 700, fontSize: 18, lineHeight: 1, marginBottom: 14 }}>{t('Tabular document')}</div>
+          <div style={{ fontWeight: 500, fontSize: 16, lineHeight: 1, marginBottom: 14 }}>{t('Tabular document')}</div>
           <div style={{ borderTop: '1px solid #d7d7d7', marginTop: 10, paddingTop: 18 }}>
             <div
               style={{

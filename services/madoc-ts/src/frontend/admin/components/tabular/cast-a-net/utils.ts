@@ -3,12 +3,12 @@ export type PxRect = { left: number; top: number; width: number; height: number 
 export const NET_MIN_SIZE_PCT = 1;
 export const NET_OVERLAY_MIN_SIZE_PCT = 5;
 export const NET_LINE_MIN_GAP_PCT = 2;
-export const NET_MAX_DIM_OPACITY = 0.85;
-export const NET_DIM_STEP = 0.05;
+export const NET_MAX_DIM_OPACITY = 1;
+export const NET_DIM_STEP = 0.01;
 
 export const clamp = (v: number, min: number, max: number) => Math.max(min, Math.min(max, v));
 export const clampDimOpacity = (v: number) => clamp(v, 0, NET_MAX_DIM_OPACITY);
-export const dimOpacityToPercent = (v: number) => Math.round((clampDimOpacity(v) / NET_MAX_DIM_OPACITY) * 100);
+export const dimOpacityToPercent = (v: number) => Math.round(clampDimOpacity(v) * 100);
 
 export const makeEvenPositions = (count: number): number[] => {
   if (count <= 1) return [];

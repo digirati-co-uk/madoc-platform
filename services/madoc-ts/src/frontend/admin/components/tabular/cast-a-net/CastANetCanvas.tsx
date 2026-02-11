@@ -6,14 +6,17 @@ import { buildCastANetStructure } from './CastANetStructure';
 import { CanvasViewerButton, CanvasViewerControls } from '../../../../shared/atoms/CanvasViewerGrid';
 import { HomeIcon } from '../../../../shared/icons/HomeIcon';
 import { MinusIcon } from '../../../../shared/icons/MinusIcon';
+import { OpacityIcon } from '../../../../shared/icons/OpacityIcon';
 import { PlusIcon } from '../../../../shared/icons/PlusIcon';
 import { NET_DIM_STEP, NET_MAX_DIM_OPACITY, clampDimOpacity, dimOpacityToPercent } from './utils';
+import './CastANetCanvas.css';
 
 type CastANetCanvasProps = {
   manifestId: string;
   canvasId?: string;
   value: NetConfig;
   onChange: (next: NetConfig) => void;
+  height?: number;
   onStructureChange?: (next: CastANetStructure) => void;
   blankColumnIndexes?: number[];
   disabled?: boolean;
@@ -27,6 +30,7 @@ export const CastANetCanvas: React.FC<CastANetCanvasProps> = ({
   canvasId,
   value,
   onChange,
+  height = 520,
   onStructureChange,
   blankColumnIndexes,
   disabled,
@@ -59,6 +63,11 @@ export const CastANetCanvas: React.FC<CastANetCanvasProps> = ({
   const resolvedDimOpacity = typeof dimOpacity === 'number' ? dimOpacity : internalDimOpacity;
   const safeDim = clampDimOpacity(resolvedDimOpacity);
   const dimPercent = dimOpacityToPercent(safeDim);
+  const sliderPositionValue = NET_MAX_DIM_OPACITY - safeDim;
+  const sliderPositionPercent = Math.round((sliderPositionValue / NET_MAX_DIM_OPACITY) * 100);
+  const sliderStyle = {
+    '--cast-a-net-opacity-progress': `${sliderPositionPercent}%`,
+  } as React.CSSProperties;
 
   const setDim = (next: number) => {
     const clamped = clampDimOpacity(next);
@@ -67,93 +76,25 @@ export const CastANetCanvas: React.FC<CastANetCanvasProps> = ({
   };
 
   return (
-    <div style={{ border: '1px solid #ddd', height: 520, position: 'relative', background: '#fff' }}>
-      <div
-        style={{
-          position: 'absolute',
-          top: 12,
-          left: 12,
-          zIndex: 50,
-          background: 'rgba(255,255,255,0.95)',
-          border: '1px solid #ddd',
-          borderRadius: 8,
-          padding: '10px 12px',
-          display: 'grid',
-          gap: 8,
-          minWidth: 220,
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
-          <label style={{ fontSize: 12, fontWeight: 600, opacity: 0.95 }}>Canvas opacity</label>
-          <span
-            style={{
-              fontSize: 11,
-              border: '1px solid #d4d4d8',
-              borderRadius: 999,
-              padding: '2px 8px',
-              background: '#fff',
-            }}
-          >
-            {dimPercent}%
-          </span>
-        </div>
+    <div style={{ border: '1px solid #ddd', height, position: 'relative', background: '#fff' }}>
+      <div className="cast-a-net-opacity-control" role="group" aria-label="Canvas opacity">
+        <OpacityIcon className="cast-a-net-opacity-icon" aria-hidden="true" />
         <input
           type="range"
+          aria-label="Canvas opacity"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={dimPercent}
+          aria-valuetext={`${dimPercent}%`}
           min={0}
           max={NET_MAX_DIM_OPACITY}
           step={NET_DIM_STEP}
-          value={safeDim}
+          value={sliderPositionValue}
           disabled={disabled}
-          onChange={e => setDim(Number(e.target.value))}
-          style={{ width: '100%', accentColor: '#4A64E1' }}
+          onChange={e => setDim(NET_MAX_DIM_OPACITY - Number(e.target.value))}
+          className="cast-a-net-opacity-slider"
+          style={sliderStyle}
         />
-        <div style={{ display: 'flex', gap: 8 }}>
-          <button
-            type="button"
-            onClick={() => setDim(0)}
-            disabled={disabled}
-            style={{
-              border: '1px solid #d4d4d8',
-              background: '#fff',
-              borderRadius: 6,
-              padding: '4px 8px',
-              fontSize: 12,
-              cursor: disabled ? 'not-allowed' : 'pointer',
-            }}
-          >
-            Reset
-          </button>
-          <button
-            type="button"
-            onClick={() => setDim(safeDim - NET_DIM_STEP)}
-            disabled={disabled}
-            style={{
-              border: '1px solid #d4d4d8',
-              background: '#fff',
-              borderRadius: 6,
-              padding: '4px 8px',
-              fontSize: 12,
-              cursor: disabled ? 'not-allowed' : 'pointer',
-            }}
-          >
-            -5%
-          </button>
-          <button
-            type="button"
-            onClick={() => setDim(safeDim + NET_DIM_STEP)}
-            disabled={disabled}
-            style={{
-              border: '1px solid #d4d4d8',
-              background: '#fff',
-              borderRadius: 6,
-              padding: '4px 8px',
-              fontSize: 12,
-              cursor: disabled ? 'not-allowed' : 'pointer',
-            }}
-          >
-            +5%
-          </button>
-        </div>
       </div>
 
       <CanvasViewerControls style={{ top: 12, right: 12, zIndex: 50 }}>
@@ -168,7 +109,7 @@ export const CastANetCanvas: React.FC<CastANetCanvasProps> = ({
         </CanvasViewerButton>
       </CanvasViewerControls>
 
-      <AnySimpleViewerProvider manifest={manifestId} canvas={canvasId}>
+      <AnySimpleViewerProvider manifest={manifestId} startCanvas={canvasId}>
         <CanvasPanel.Viewer
           runtimeOptions={{ maxOverZoom: 5, visibilityRatio: 1, maxUnderZoom: 1 }}
           onCreated={(preset: any) => {
