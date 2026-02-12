@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { InternationalString } from '@iiif/presentation-3';
 import { CreateProject } from '../../../../../types/schemas/create-project';
 import { useApi } from '../../../../shared/hooks/use-api';
-import { useDefaultLocale, useSupportedLocales } from '../../../../shared/hooks/use-site';
+import { useDefaultLocale, useSite, useSupportedLocales } from '../../../../shared/hooks/use-site';
 import { WidePage } from '../../../../shared/layout/WidePage';
 import { AdminHeader } from '../../../molecules/AdminHeader';
 import { Input, InputContainer, InputLabel } from '../../../../shared/form/Input';
@@ -122,24 +122,6 @@ const hasIntlValue = (value?: InternationalString) => {
   return Boolean(first && first.join('').trim());
 };
 
-<<<<<<< ours
-=======
-const normaliseIiifResourceType = (value?: string | null) => {
-  return (value || '').toLowerCase() === 'manifest' ? 'Manifest' : 'Collection';
-};
-
-const getIiifExportUrl = (origin: string, siteSlug: string, type: 'Manifest' | 'Collection', id: number | string) => {
-  if (type === 'Manifest') {
-    return `${origin}/s/${siteSlug}/madoc/api/manifests/${id}/export/3.0`;
-  }
-
-  return `${origin}/s/${siteSlug}/madoc/api/collections/${id}/export/3.0`;
-};
-
-<<<<<<< ours
->>>>>>> theirs
-=======
->>>>>>> theirs
 type TabularOutlineSharePayload = {
   label?: InternationalString;
   summary?: InternationalString;
@@ -254,6 +236,7 @@ export const TabularProjectWizard: React.FC = () => {
   const { t } = useTranslation();
   const defaultLocale = useDefaultLocale();
   const availableLanguages = useSupportedLocales();
+  const site = useSite();
   const [step, setStep] = useState(STEP_DETAILS);
   const [label, setLabel] = useState<InternationalString>({ [defaultLocale]: [''] });
   const [summary, setSummary] = useState<InternationalString>({ [defaultLocale]: [''] });
@@ -265,11 +248,8 @@ export const TabularProjectWizard: React.FC = () => {
   const [canvasId, setCanvasId] = useState<string | undefined>();
   const [iiifError, setIiifError] = useState<string | null>(null);
   const [iiifBrowserSelection, setIiifBrowserSelection] = useState<string | null>(null);
-<<<<<<< ours
-=======
   const [iiifPickerMode, setIiifPickerMode] = useState<IiifPickerMode>('external');
   const [isResolvingMadocSelection, setIsResolvingMadocSelection] = useState(false);
->>>>>>> theirs
 
   const [tabularModel, setTabularModel] = useState<DefineTabularModelValue>({
     columns: 0,
@@ -452,75 +432,6 @@ export const TabularProjectWizard: React.FC = () => {
     }
   }, [didLoadSharedOutline, t]);
 
-<<<<<<< ours
-=======
-  useEffect(() => {
-    if (!site?.slug) {
-      return;
-    }
-
-    let cancelled = false;
-
-    const loadIiifBrowserHome = async () => {
-      setIsLoadingIiifBrowserHome(true);
-      setIiifBrowserHomeError(null);
-
-      try {
-        const allCollections: Array<{ id: number; label: InternationalString; type: 'Manifest' | 'Collection' }> = [];
-        let page = 1;
-        let totalPages = 1;
-
-        do {
-          const response = await api.getCollections(page);
-          allCollections.push(
-            ...response.collections.map(collection => ({
-              id: collection.id,
-              label: collection.label,
-              type: normaliseIiifResourceType((collection as any).type),
-            }))
-          );
-          totalPages = Math.max(1, response.pagination?.totalPages || 1);
-          page += 1;
-        } while (page <= totalPages);
-
-        const origin = typeof window === 'undefined' ? '' : window.location.origin;
-        const homeId = `${origin}/s/${site.slug}/madoc/api/iiif-browser/home`;
-
-        const homeCollection: Collection = {
-          id: homeId,
-          type: 'Collection',
-          label: { none: [t('Madoc collections')] },
-          items: allCollections.map(collection => ({
-            id: getIiifExportUrl(origin, site.slug, collection.type, collection.id),
-            type: collection.type,
-            label:
-              collection.label && Object.keys(collection.label).length ? collection.label : { none: [t('Untitled')] },
-          })),
-        };
-
-        if (!cancelled) {
-          setIiifBrowserHomeSeed(homeCollection);
-        }
-      } catch (error) {
-        if (!cancelled) {
-          setIiifBrowserHomeSeed(null);
-          setIiifBrowserHomeError((error as any)?.message || t('Unable to load Madoc collections.'));
-        }
-      } finally {
-        if (!cancelled) {
-          setIsLoadingIiifBrowserHome(false);
-        }
-      }
-    };
-
-    void loadIiifBrowserHome();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [api, site?.slug, t]);
-
->>>>>>> theirs
   const clearImageSelection = () => {
     setManifestId(undefined);
     setCanvasId(undefined);
@@ -725,43 +636,20 @@ export const TabularProjectWizard: React.FC = () => {
     (result: any) => {
       const first = Array.isArray(result) ? result[0] : result;
       const resource = first?.resource || first;
-<<<<<<< ours
-=======
-      const resourceType = (resource?.type || '').toLowerCase();
->>>>>>> theirs
       const parent = first?.parent || null;
-      const parentType = (parent?.type || '').toLowerCase();
 
-<<<<<<< ours
       if (!resource?.id || resource?.type !== 'Canvas') {
-=======
-      if (!resource?.id || resourceType !== 'canvas') {
->>>>>>> theirs
         setIiifError(t('Select a canvas from the IIIF browser.'));
         return;
       }
 
-<<<<<<< ours
       if (!parent?.id || parent?.type !== 'Manifest') {
-=======
-      const manifestFromParent = parent?.id && parentType === 'manifest' ? parent.id : undefined;
-      const manifestFromPartOf = Array.isArray(resource?.partOf)
-        ? resource.partOf.find((part: any) => (part?.type || '').toLowerCase() === 'manifest')?.id
-        : undefined;
-      const resolvedManifestId = manifestFromParent || manifestFromPartOf;
-
-      if (!resolvedManifestId) {
->>>>>>> theirs
         setIiifError(t('Select a canvas from within a manifest.'));
         return;
       }
 
       setCanvasId(resource.id);
-<<<<<<< ours
       setManifestId(parent.id);
-=======
-      setManifestId(resolvedManifestId);
->>>>>>> theirs
       setIiifError(null);
       setIiifBrowserSelection(`${resource.id}`);
     },
@@ -823,21 +711,6 @@ export const TabularProjectWizard: React.FC = () => {
   }, []);
 
   const historyOptions: IIIFBrowserProps['history'] = useMemo(() => {
-<<<<<<< ours
-=======
-    const defaultHistory = {
-      saveToLocalStorage: false,
-      restoreFromLocalStorage: false,
-      localStorageKey: 'iiif-browser-tabular-project',
-    };
-
-    if (!iiifBrowserHomeSeed) {
-      return defaultHistory;
-    }
-
-    const homeId = iiifBrowserHomeSeed.id;
-
->>>>>>> theirs
     return {
       saveToLocalStorage: true,
       restoreFromLocalStorage: true,
@@ -865,26 +738,9 @@ export const TabularProjectWizard: React.FC = () => {
         format: {
           type: 'custom',
           format(resource, parent, vault) {
-<<<<<<< ours
             return {
               resource: vault.get(resource),
               parent,
-=======
-            const fromVault = (value: any) => {
-              try {
-                return vault.get(value);
-              } catch {
-                return null;
-              }
-            };
-
-            const resolvedResource = fromVault(resource) || resource;
-            const resolvedParent = fromVault(parent) || parent;
-
-            return {
-              resource: resolvedResource,
-              parent: resolvedParent,
->>>>>>> theirs
             };
           },
         },
@@ -918,17 +774,6 @@ export const TabularProjectWizard: React.FC = () => {
           }
         `}
       </style>
-<<<<<<< ours
-      <BrowserComponent fallback={<div>{t('Loading IIIF browser...')}</div>}>
-        <IsolatedIIIFBrowser
-          className="h-[56vh] min-h-[420px] w-full min-w-0 flex-2 border-none"
-          navigation={navigationOptions}
-          history={historyOptions}
-          output={outputOptions}
-          ui={uiOptions}
-        />
-      </BrowserComponent>
-=======
       <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
         <Button type="button" $primary={iiifPickerMode === 'external'} onClick={() => setIiifPickerMode('external')}>
           {t('Paste IIIF URL')}
@@ -978,7 +823,6 @@ export const TabularProjectWizard: React.FC = () => {
           />
         </div>
       )}
->>>>>>> theirs
     </div>
   );
 
