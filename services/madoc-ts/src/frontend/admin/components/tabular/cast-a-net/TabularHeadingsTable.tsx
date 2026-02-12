@@ -103,6 +103,7 @@ export const TabularHeadingsTable: React.FC<TabularHeadingsTableProps> = props =
           <div
             role="button"
             tabIndex={0}
+            title={title}
             onMouseDown={() => onActiveColumnChange?.(c)}
             onKeyDown={e => {
               if (e.key === 'Enter' || e.key === ' ') onActiveColumnChange?.(c);

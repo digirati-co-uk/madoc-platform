@@ -14,6 +14,7 @@ type CastANetProps = {
   dimOpacity?: number;
   onChangeDimOpacity?: (next: number) => void;
   activeCell?: TabularCellRef | null;
+  previewOverlayOnly?: boolean;
 };
 
 export const CastANet: React.FC<CastANetProps> = props => {

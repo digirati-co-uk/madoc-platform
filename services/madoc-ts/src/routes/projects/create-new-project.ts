@@ -28,6 +28,8 @@ export const createNewProject: RouteMiddleware<unknown, CreateProject> = async c
       : api.projectTemplates.getDefinition(template, siteId)
     : null;
   const setupFunctions = chosenTemplate?.setup;
+  const resolvedTemplateConfig =
+    template === 'tabular-project' ? template_config || template_options || null : template_config || null;
 
   if (template && !chosenTemplate) {
     throw new RequestError(`Invalid template ${template}.`);
@@ -109,7 +111,7 @@ export const createNewProject: RouteMiddleware<unknown, CreateProject> = async c
           ${siteId}, 
           ${captureModel.id}, 
           ${template || null}, 
-          ${template_config ? sql.json(template_config) : null},
+          ${resolvedTemplateConfig ? sql.json(resolvedTemplateConfig) : null},
           ${defaultStatus}
         )
         returning *

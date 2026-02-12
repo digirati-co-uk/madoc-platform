@@ -387,12 +387,7 @@ export function DefineTabularModel(props: {
                   background: '#f3f3f5',
                 }}
               >
-                <button
-                  type="button"
-                  className={'bg-neutral-800'}
-                  onClick={addColumn}
-                  disabled={disabled || safeColumns >= maxColumns}
-                >
+                <button type="button" onClick={addColumn} disabled={disabled || safeColumns >= maxColumns}>
                   <AddIcon />
                 </button>
                 <button type="button" onClick={removeLastColumn} disabled={disabled || safeColumns <= minColumns}>

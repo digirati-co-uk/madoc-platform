@@ -14,12 +14,20 @@ type CastANetOverlayProps = {
   onChange: (next: NetConfig) => void;
   disabled?: boolean;
   activeCell?: TabularCellRef | null;
+  previewOverlayOnly?: boolean;
 };
 
-export const CastANetOverlay: React.FC<CastANetOverlayProps> = ({ value, onChange, disabled = false, activeCell }) => {
-  const OUTER_BORDER_THICKNESS = 4;
-  const GRID_LINE_THICKNESS = 4;
+export const CastANetOverlay: React.FC<CastANetOverlayProps> = ({
+  value,
+  onChange,
+  disabled = false,
+  activeCell,
+  previewOverlayOnly = false,
+}) => {
+  const OUTER_BORDER_THICKNESS = 5;
+  const GRID_LINE_THICKNESS = 5;
   const GRID_HIT_THICKNESS = 20;
+  const HANDLE_SIZE = 30;
   const overlayRef = useRef<HTMLDivElement | null>(null);
   const dragModeRef = useRef<DragMode>(null);
   const dragStartRef = useRef<{
@@ -133,10 +141,8 @@ export const CastANetOverlay: React.FC<CastANetOverlayProps> = ({ value, onChang
 
       const modeNow = dragModeRef.current;
       const start = dragStartRef.current.config;
-
       const dx = currentX - dragStartRef.current.x;
       const dy = currentY - dragStartRef.current.y;
-
       const next: NetConfig = { ...start };
 
       if (modeNow === 'move') {
@@ -187,15 +193,15 @@ export const CastANetOverlay: React.FC<CastANetOverlayProps> = ({ value, onChang
           next.rowPositions[idx] = clamp(pointerInNet, prev + minGap, nextPos - minGap);
           emitChange(next);
           return;
-        } else {
-          const k = idx + 1;
-          let step = pointerInNet / k;
-          const maxStep = (100 - minGap) / (value.rows - 1);
-          step = clamp(step, minGap, maxStep);
-          next.rowPositions = Array.from({ length: value.rows - 1 }, (_, i) => step * (i + 1));
-          emitChange(next);
-          return;
         }
+
+        const k = idx + 1;
+        let step = pointerInNet / k;
+        const maxStep = (100 - minGap) / (value.rows - 1);
+        step = clamp(step, minGap, maxStep);
+        next.rowPositions = Array.from({ length: value.rows - 1 }, (_, i) => step * (i + 1));
+        emitChange(next);
+        return;
       }
 
       if (modeNow && typeof modeNow === 'object' && modeNow.type === 'col') {
@@ -210,15 +216,14 @@ export const CastANetOverlay: React.FC<CastANetOverlayProps> = ({ value, onChang
           next.colPositions[idx] = clamp(pointerInNet, prev + minGap, nextPos - minGap);
           emitChange(next);
           return;
-        } else {
-          const k = idx + 1;
-          let step = pointerInNet / k;
-          const maxStep = (100 - minGap) / (value.cols - 1);
-          step = clamp(step, minGap, maxStep);
-          next.colPositions = Array.from({ length: value.cols - 1 }, (_, i) => step * (i + 1));
-          emitChange(next);
-          return;
         }
+
+        const k = idx + 1;
+        let step = pointerInNet / k;
+        const maxStep = (100 - minGap) / (value.cols - 1);
+        step = clamp(step, minGap, maxStep);
+        next.colPositions = Array.from({ length: value.cols - 1 }, (_, i) => step * (i + 1));
+        emitChange(next);
       }
     };
 
@@ -236,6 +241,222 @@ export const CastANetOverlay: React.FC<CastANetOverlayProps> = ({ value, onChang
 
   const rowStops = useMemo(() => getStops(value.rows, effectiveRowPositions), [value.rows, effectiveRowPositions]);
   const colStops = useMemo(() => getStops(value.cols, effectiveColPositions), [value.cols, effectiveColPositions]);
+  const showInteractiveNet = !previewOverlayOnly;
+  const netLeft = value.left;
+  const netTop = value.top;
+  const netRight = value.left + value.width;
+  const netBottom = value.top + value.height;
+
+  const toCanvasX = useCallback(
+    (positionInNet: number) => {
+      return netLeft + (positionInNet / 100) * value.width;
+    },
+    [netLeft, value.width]
+  );
+  const toCanvasY = useCallback(
+    (positionInNet: number) => {
+      return netTop + (positionInNet / 100) * value.height;
+    },
+    [netTop, value.height]
+  );
+
+  const projectedBodyRowHeight = useMemo(() => {
+    if (rowStops.length < 2) {
+      return 0;
+    }
+
+    const rowHeights = Array.from({ length: value.rows }, (_, index) => {
+      const start = rowStops[index];
+      const end = rowStops[index + 1];
+      if (start == null || end == null) {
+        return 0;
+      }
+      return Math.max(0, end - start);
+    }).filter(height => height > 0);
+
+    if (!rowHeights.length) {
+      return 0;
+    }
+
+    // Row 0 is the heading row in the tabular flow; use data row sizes for extrapolation.
+    const bodyRows = rowHeights.slice(1);
+    const target = bodyRows.length ? bodyRows : rowHeights;
+    const total = target.reduce((sum, height) => sum + height, 0);
+    return total / target.length;
+  }, [rowStops, value.rows]);
+
+  const getProjectedRowBounds = useCallback(
+    (rowIndex: number) => {
+      if (rowIndex < 0) {
+        return null;
+      }
+
+      const directStart = rowStops[rowIndex];
+      const directEnd = rowStops[rowIndex + 1];
+      if (directStart != null && directEnd != null) {
+        return {
+          top: directStart,
+          bottom: directEnd,
+        };
+      }
+
+      if (projectedBodyRowHeight <= 0) {
+        return null;
+      }
+
+      const beyond = rowIndex - value.rows;
+      if (beyond < 0) {
+        return null;
+      }
+
+      const start = 100 + beyond * projectedBodyRowHeight;
+      const end = start + projectedBodyRowHeight;
+      return {
+        top: start,
+        bottom: end,
+      };
+    },
+    [projectedBodyRowHeight, rowStops, value.rows]
+  );
+
+  const handleDefinitions = useMemo(
+    () =>
+      [
+        { key: 'nw', x: netLeft, y: netTop, mode: 'resize-nw', cursor: 'nwse-resize' },
+        { key: 'ne', x: netRight, y: netTop, mode: 'resize-ne', cursor: 'nesw-resize' },
+        { key: 'sw', x: netLeft, y: netBottom, mode: 'resize-sw', cursor: 'nesw-resize' },
+        { key: 'se', x: netRight, y: netBottom, mode: 'resize-se', cursor: 'nwse-resize' },
+      ] as const,
+    [netBottom, netLeft, netRight, netTop]
+  );
+
+  const headerStart = rowStops[0];
+  const headerEnd = rowStops[1];
+
+  const header = useMemo(() => {
+    if (headerStart == null || headerEnd == null) {
+      return null;
+    }
+
+    const top = toCanvasY(headerStart);
+    const bottom = toCanvasY(headerEnd);
+    const height = bottom - top;
+    if (height <= 0) {
+      return null;
+    }
+
+    return (
+      <>
+        <rect
+          x={netLeft}
+          y={top}
+          width={value.width}
+          height={height}
+          fill="rgba(255, 105, 180, 0.25)"
+          pointerEvents="none"
+        />
+        <line
+          x1={netLeft}
+          y1={bottom}
+          x2={netRight}
+          y2={bottom}
+          stroke="rgba(255, 105, 180, 0.55)"
+          strokeWidth={2}
+          vectorEffect="non-scaling-stroke"
+          pointerEvents="none"
+        />
+
+        {showInteractiveNet
+          ? colStops.slice(1, -1).map((position, index) => {
+              const x = toCanvasX(position);
+              return (
+                <line
+                  key={`head-col-${index}`}
+                  x1={x}
+                  y1={top}
+                  x2={x}
+                  y2={bottom}
+                  stroke="rgba(74, 100, 225, 0.9)"
+                  strokeWidth={2}
+                  vectorEffect="non-scaling-stroke"
+                  pointerEvents="none"
+                />
+              );
+            })
+          : null}
+      </>
+    );
+  }, [colStops, headerEnd, headerStart, netLeft, netRight, showInteractiveNet, toCanvasX, toCanvasY, value.width]);
+
+  const activeCellHighlight = useMemo(() => {
+    if (!activeCell) {
+      return null;
+    }
+
+    const rowBounds = getProjectedRowBounds(activeCell.row);
+    const rowStart = rowBounds?.top;
+    const rowEnd = rowBounds?.bottom;
+    const colStart = colStops[activeCell.col];
+    const colEnd = colStops[activeCell.col + 1];
+    if (rowStart == null || rowEnd == null || colStart == null || colEnd == null) {
+      return null;
+    }
+
+    const rowTop = toCanvasY(rowStart);
+    const rowBottom = toCanvasY(rowEnd);
+    const rowHeight = rowBottom - rowTop;
+    const cellLeft = toCanvasX(colStart);
+    const cellRight = toCanvasX(colEnd);
+    const cellWidth = cellRight - cellLeft;
+
+    if (rowHeight <= 0 || cellWidth <= 0) {
+      return null;
+    }
+
+    return (
+      <>
+        <rect
+          x={netLeft}
+          y={rowTop}
+          width={value.width}
+          height={rowHeight}
+          fill="rgba(54, 179, 126, 0.24)"
+          pointerEvents="none"
+        />
+        <line
+          x1={netLeft}
+          y1={rowTop}
+          x2={netRight}
+          y2={rowTop}
+          stroke="rgba(22, 140, 83, 0.65)"
+          strokeWidth={2}
+          vectorEffect="non-scaling-stroke"
+          pointerEvents="none"
+        />
+        <line
+          x1={netLeft}
+          y1={rowBottom}
+          x2={netRight}
+          y2={rowBottom}
+          stroke="rgba(22, 140, 83, 0.65)"
+          strokeWidth={2}
+          vectorEffect="non-scaling-stroke"
+          pointerEvents="none"
+        />
+        <rect
+          x={cellLeft}
+          y={rowTop}
+          width={cellWidth}
+          height={rowHeight}
+          fill="rgba(54, 179, 126, 0.16)"
+          stroke="rgba(22, 140, 83, 0.8)"
+          strokeWidth={2}
+          vectorEffect="non-scaling-stroke"
+          pointerEvents="none"
+        />
+      </>
+    );
+  }, [activeCell, colStops, getProjectedRowBounds, netLeft, netRight, toCanvasX, toCanvasY, value.width]);
 
   return (
     <div
@@ -245,185 +466,137 @@ export const CastANetOverlay: React.FC<CastANetOverlayProps> = ({ value, onChang
         inset: 0,
         zIndex: 2,
         pointerEvents: 'none',
+        userSelect: 'none',
       }}
     >
-      <div
-        onMouseDown={startDrag('move')}
+      <svg
+        width="100%"
+        height="100%"
+        viewBox="0 0 100 100"
+        preserveAspectRatio="none"
         style={{
           position: 'absolute',
-          top: `${value.top}%`,
-          left: `${value.left}%`,
-          width: `${value.width}%`,
-          height: `${value.height}%`,
-          border: `${OUTER_BORDER_THICKNESS}px solid #4A64E1`,
-          boxSizing: 'border-box',
-          cursor: disabled ? 'not-allowed' : 'move',
-          userSelect: 'none',
-          pointerEvents: 'auto',
+          inset: 0,
+          overflow: 'visible',
+          pointerEvents: 'none',
         }}
       >
-        {/* Pink header bar */}
-        {(() => {
-          const r0 = rowStops[0];
-          const r1 = rowStops[1];
-          if (r0 == null || r1 == null) return null;
-          const h = r1 - r0;
+        {header}
+        {activeCellHighlight}
 
-          return (
-            <div
-              style={{
-                position: 'absolute',
-                top: `${r0}%`,
-                left: 0,
-                right: 0,
-                height: `${h}%`,
-                background: 'rgba(255, 105, 180, 0.25)',
-                borderBottom: '2px solid rgba(255, 105, 180, 0.55)',
-                pointerEvents: 'none',
-              }}
-            >
-              {colStops.slice(1, -1).map((pos, i) => (
-                <div
-                  key={`head-col-${i}`}
-                  style={{
-                    position: 'absolute',
-                    left: `${pos}%`,
-                    top: 0,
-                    bottom: 0,
-                    width: 2,
-                    background: 'rgba(74, 100, 225, 0.9)',
-                  }}
-                />
-              ))}
-            </div>
-          );
-        })()}
+        {showInteractiveNet ? (
+          <>
+            <rect
+              x={netLeft}
+              y={netTop}
+              width={value.width}
+              height={value.height}
+              fill="none"
+              stroke="#4A64E1"
+              strokeWidth={OUTER_BORDER_THICKNESS}
+              vectorEffect="non-scaling-stroke"
+              pointerEvents="none"
+            />
 
-        {/* Active cell highlight */}
-        {activeCell &&
-          (() => {
-            const r0 = rowStops[activeCell.row];
-            const r1 = rowStops[activeCell.row + 1];
-            const c0 = colStops[activeCell.col];
-            const c1 = colStops[activeCell.col + 1];
-            if (r0 == null || r1 == null || c0 == null || c1 == null) return null;
+            <rect
+              x={netLeft}
+              y={netTop}
+              width={value.width}
+              height={value.height}
+              fill="rgba(0,0,0,0.001)"
+              pointerEvents="all"
+              onMouseDown={startDrag('move')}
+              style={{ cursor: disabled ? 'not-allowed' : 'move' }}
+            />
 
-            return (
-              <div
-                style={{
-                  position: 'absolute',
-                  top: `${r0}%`,
-                  left: `${c0}%`,
-                  width: `${c1 - c0}%`,
-                  height: `${r1 - r0}%`,
-                  background: 'rgba(74, 100, 225, 0.15)',
-                  outline: '2px solid rgba(74, 100, 225, 0.6)',
-                  pointerEvents: 'none',
+            {effectiveRowPositions.map((position, index) => {
+              const y = toCanvasY(position);
+              return (
+                <g key={`row-${index}`}>
+                  <line
+                    x1={netLeft}
+                    y1={y}
+                    x2={netRight}
+                    y2={y}
+                    stroke="rgba(0, 0, 0, 0.001)"
+                    strokeWidth={GRID_HIT_THICKNESS}
+                    vectorEffect="non-scaling-stroke"
+                    pointerEvents="stroke"
+                    onMouseDown={e => {
+                      e.stopPropagation();
+                      startDrag({ type: 'row', index })(e);
+                    }}
+                    style={{ cursor: disabled ? 'not-allowed' : 'row-resize' }}
+                  />
+                  <line
+                    x1={netLeft}
+                    y1={y}
+                    x2={netRight}
+                    y2={y}
+                    stroke="#4A64E1"
+                    strokeWidth={GRID_LINE_THICKNESS}
+                    vectorEffect="non-scaling-stroke"
+                    pointerEvents="none"
+                  />
+                </g>
+              );
+            })}
+
+            {effectiveColPositions.map((position, index) => {
+              const x = toCanvasX(position);
+              return (
+                <g key={`col-${index}`}>
+                  <line
+                    x1={x}
+                    y1={netTop}
+                    x2={x}
+                    y2={netBottom}
+                    stroke="rgba(0, 0, 0, 0.001)"
+                    strokeWidth={GRID_HIT_THICKNESS}
+                    vectorEffect="non-scaling-stroke"
+                    pointerEvents="stroke"
+                    onMouseDown={e => {
+                      e.stopPropagation();
+                      startDrag({ type: 'col', index })(e);
+                    }}
+                    style={{ cursor: disabled ? 'not-allowed' : 'col-resize' }}
+                  />
+                  <line
+                    x1={x}
+                    y1={netTop}
+                    x2={x}
+                    y2={netBottom}
+                    stroke="#4A64E1"
+                    strokeWidth={GRID_LINE_THICKNESS}
+                    vectorEffect="non-scaling-stroke"
+                    pointerEvents="none"
+                  />
+                </g>
+              );
+            })}
+
+            {handleDefinitions.map(handle => (
+              <line
+                key={handle.key}
+                x1={handle.x}
+                y1={handle.y}
+                x2={handle.x}
+                y2={handle.y}
+                stroke="#4A64E1"
+                strokeWidth={HANDLE_SIZE}
+                strokeLinecap="square"
+                vectorEffect="non-scaling-stroke"
+                pointerEvents="stroke"
+                onMouseDown={e => {
+                  e.stopPropagation();
+                  startDrag(handle.mode)(e);
                 }}
+                style={{ cursor: disabled ? 'not-allowed' : handle.cursor }}
               />
-            );
-          })()}
-
-        {/* Row lines */}
-        {effectiveRowPositions.map((pos, index) => (
-          <div
-            key={`row-${index}`}
-            onMouseDown={e => {
-              e.stopPropagation();
-              startDrag({ type: 'row', index })(e);
-            }}
-            style={{
-              position: 'absolute',
-              top: `calc(${pos}% - ${GRID_HIT_THICKNESS / 2}px)`,
-              left: 0,
-              right: 0,
-              height: GRID_HIT_THICKNESS,
-              cursor: disabled ? 'not-allowed' : 'row-resize',
-              background: 'transparent',
-            }}
-          >
-            <div
-              style={{
-                position: 'absolute',
-                top: '50%',
-                left: 0,
-                right: 0,
-                height: GRID_LINE_THICKNESS,
-                transform: 'translateY(-50%)',
-                background: '#4A64E1',
-                pointerEvents: 'none',
-              }}
-            />
-          </div>
-        ))}
-
-        {/* Column lines */}
-        {effectiveColPositions.map((pos, index) => (
-          <div
-            key={`col-${index}`}
-            onMouseDown={e => {
-              e.stopPropagation();
-              startDrag({ type: 'col', index })(e);
-            }}
-            style={{
-              position: 'absolute',
-              left: `calc(${pos}% - ${GRID_HIT_THICKNESS / 2}px)`,
-              top: 0,
-              bottom: 0,
-              width: GRID_HIT_THICKNESS,
-              cursor: disabled ? 'not-allowed' : 'col-resize',
-              background: 'transparent',
-            }}
-          >
-            <div
-              style={{
-                position: 'absolute',
-                left: '50%',
-                top: 0,
-                bottom: 0,
-                width: GRID_LINE_THICKNESS,
-                transform: 'translateX(-50%)',
-                background: '#4A64E1',
-                pointerEvents: 'none',
-              }}
-            />
-          </div>
-        ))}
-
-        {/* Resize handles */}
-        {(['nw', 'ne', 'sw', 'se'] as const).map(corner => {
-          const styleByCorner: Record<typeof corner, React.CSSProperties> = {
-            nw: { top: -6, left: -6, cursor: 'nwse-resize' },
-            ne: { top: -6, right: -6, cursor: 'nesw-resize' },
-            sw: { bottom: -6, left: -6, cursor: 'nesw-resize' },
-            se: { bottom: -6, right: -6, cursor: 'nwse-resize' },
-          };
-          const mode: Record<typeof corner, DragMode> = {
-            nw: 'resize-nw',
-            ne: 'resize-ne',
-            sw: 'resize-sw',
-            se: 'resize-se',
-          };
-
-          return (
-            <div
-              key={corner}
-              onMouseDown={e => {
-                e.stopPropagation();
-                startDrag(mode[corner])(e);
-              }}
-              style={{
-                position: 'absolute',
-                width: 24,
-                height: 24,
-                background: '#4A64E1',
-                borderRadius: 2,
-                ...styleByCorner[corner],
-              }}
-            />
-          );
-        })}
-      </div>
+            ))}
+          </>
+        ) : null}
+      </svg>
     </div>
   );
 };

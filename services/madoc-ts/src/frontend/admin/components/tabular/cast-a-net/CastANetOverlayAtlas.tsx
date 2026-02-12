@@ -11,6 +11,7 @@ type CastANetOverlayAtlasProps = {
   disabled?: boolean;
   activeCell?: TabularCellRef | null;
   dimOpacity?: number;
+  previewOverlayOnly?: boolean;
 };
 
 export function CastANetOverlayAtlas({
@@ -19,6 +20,7 @@ export function CastANetOverlayAtlas({
   disabled,
   activeCell,
   dimOpacity = 0,
+  previewOverlayOnly,
 }: CastANetOverlayAtlasProps) {
   const canvas = useCanvas();
   if (!canvas) return null;
@@ -42,7 +44,13 @@ export function CastANetOverlayAtlas({
         ) : null}
 
         {/* Net overlay */}
-        <CastANetOverlay value={value} onChange={onChange} disabled={disabled} activeCell={activeCell} />
+        <CastANetOverlay
+          value={value}
+          onChange={onChange}
+          disabled={disabled}
+          activeCell={activeCell}
+          previewOverlayOnly={previewOverlayOnly}
+        />
       </div>
     </HTMLPortal>
   );
