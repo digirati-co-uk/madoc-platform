@@ -96,7 +96,6 @@ const SHARE_COPY_TIMEOUT = 1800;
 const PREVIEW_NUDGE_STEP = 0.25;
 const NUDGE_BUTTON_SIZE = 54;
 const PREVIEW_CANVAS_HEIGHT = 420;
-const PREVIEW_TABLE_HEIGHT = 340;
 const PREVIEW_SPLIT_TOTAL_HEIGHT = 760;
 const PREVIEW_SPLIT_GAP = 12;
 const PREVIEW_SPLIT_DIVIDER_HEIGHT = 18;
@@ -120,6 +119,17 @@ const hasIntlValue = (value?: InternationalString) => {
   if (!value) return false;
   const first = Object.values(value)[0];
   return Boolean(first && first.join('').trim());
+};
+
+type IiifSelectionResource = {
+  id?: string;
+  type?: string;
+  partOf?: Array<{ id?: string; type?: string }>;
+};
+
+type IiifSelectionPayload = IiifSelectionResource & {
+  resource?: IiifSelectionResource;
+  parent?: IiifSelectionResource | null;
 };
 
 type TabularOutlineSharePayload = {
@@ -163,6 +173,51 @@ const stringifyForDisplay = (value: unknown) => {
   } catch {
     return '{}';
   }
+};
+
+const getErrorMessage = (error: unknown, fallback: string) => {
+  if (typeof error === 'object' && error && 'message' in error) {
+    const message = (error as { message?: unknown }).message;
+    if (typeof message === 'string' && message.trim()) {
+      return message;
+    }
+  }
+
+  return fallback;
+};
+
+const payloadCardStyle: React.CSSProperties = {
+  border: '1px solid #d6d6d6',
+  borderRadius: 4,
+  background: '#fff',
+  overflow: 'hidden',
+};
+
+const payloadCardHeaderStyle: React.CSSProperties = {
+  padding: '8px 10px',
+  borderBottom: '1px solid #e5e7eb',
+  background: '#f8fafc',
+  fontSize: 12,
+  fontWeight: 600,
+};
+
+const payloadCardBodyStyle: React.CSSProperties = {
+  margin: 0,
+  padding: 10,
+  fontSize: 12,
+  lineHeight: 1.45,
+  maxHeight: 320,
+  overflow: 'auto',
+  background: '#fff',
+};
+
+const PayloadCard: React.FC<{ title: string; value: unknown }> = ({ title, value }) => {
+  return (
+    <div style={payloadCardStyle}>
+      <div style={payloadCardHeaderStyle}>{title}</div>
+      <pre style={payloadCardBodyStyle}>{stringifyForDisplay(value)}</pre>
+    </div>
+  );
 };
 
 const toRelativePositions = (parts: number[], total: number, count: number) => {
@@ -283,8 +338,8 @@ export const TabularProjectWizard: React.FC = () => {
   const [saveProject, { status, data, isSuccess, reset }] = useMutation(async (config: CreateProject) => {
     try {
       return await api.createProject(config);
-    } catch (e) {
-      return { error: (e as any).message };
+    } catch (error) {
+      return { error: getErrorMessage(error, 'Unable to create project.') };
     }
   });
 
@@ -302,6 +357,9 @@ export const TabularProjectWizard: React.FC = () => {
     PREVIEW_TABLE_MIN_HEIGHT,
     PREVIEW_SPLIT_TOTAL_HEIGHT - previewCanvasHeight - PREVIEW_SPLIT_DIVIDER_HEIGHT - PREVIEW_SPLIT_GAP * 2
   );
+  const modelColumnCount = Math.max(1, tabularModel.columns || 1);
+  const netColumnCount = Math.max(1, netConfig.cols);
+  const configuredColumnCount = Math.max(1, tabularPayload?.columns?.length || modelColumnCount);
   const primaryLabel = Object.values(label)[0]?.join('').trim() || '';
   const primarySummary = Object.values(summary)[0]?.join('').trim() || '';
 
@@ -330,21 +388,15 @@ export const TabularProjectWizard: React.FC = () => {
     () =>
       tabularPayload?.columns?.length
         ? tabularPayload.columns.map(column => column.label || '')
-        : Array.from(
-            { length: Math.max(1, tabularModel.columns || 1) },
-            (_, index) => tabularModel.headings?.[index] ?? ''
-          ),
-    [tabularPayload, tabularModel.columns, tabularModel.headings]
+        : Array.from({ length: modelColumnCount }, (_, index) => tabularModel.headings?.[index] ?? ''),
+    [tabularPayload, modelColumnCount, tabularModel.headings]
   );
   const previewTooltips = useMemo(
     () =>
       tabularPayload?.columns?.length
         ? tabularPayload.columns.map(column => column.helpText || '')
-        : Array.from(
-            { length: Math.max(1, tabularModel.columns || 1) },
-            (_, index) => tabularModel.helpText?.[index] ?? ''
-          ),
-    [tabularPayload, tabularModel.columns, tabularModel.helpText]
+        : Array.from({ length: modelColumnCount }, (_, index) => tabularModel.helpText?.[index] ?? ''),
+    [tabularPayload, modelColumnCount, tabularModel.helpText]
   );
 
   useEffect(() => {
@@ -633,23 +685,31 @@ export const TabularProjectWizard: React.FC = () => {
   };
 
   const onAddCanvas = useCallback(
-    (result: any) => {
+    (result: IiifSelectionPayload | IiifSelectionPayload[]) => {
       const first = Array.isArray(result) ? result[0] : result;
       const resource = first?.resource || first;
+      const resourceType = (resource?.type || '').toLowerCase();
       const parent = first?.parent || null;
+      const parentType = (parent?.type || '').toLowerCase();
 
-      if (!resource?.id || resource?.type !== 'Canvas') {
+      if (!resource?.id || resourceType !== 'canvas') {
         setIiifError(t('Select a canvas from the IIIF browser.'));
         return;
       }
 
-      if (!parent?.id || parent?.type !== 'Manifest') {
+      const manifestFromParent = parent?.id && parentType === 'manifest' ? parent.id : undefined;
+      const manifestFromPartOf = Array.isArray(resource?.partOf)
+        ? resource.partOf.find(part => (part?.type || '').toLowerCase() === 'manifest')?.id
+        : undefined;
+      const resolvedManifestId = manifestFromParent || manifestFromPartOf;
+
+      if (!resolvedManifestId) {
         setIiifError(t('Select a canvas from within a manifest.'));
         return;
       }
 
       setCanvasId(resource.id);
-      setManifestId(parent.id);
+      setManifestId(resolvedManifestId);
       setIiifError(null);
       setIiifBrowserSelection(`${resource.id}`);
     },
@@ -684,7 +744,7 @@ export const TabularProjectWizard: React.FC = () => {
         setIiifError(null);
         setIiifBrowserSelection(selectedCanvasUrl);
       } catch (error) {
-        setIiifError((error as any)?.message || t('Unable to load canvas from Madoc.'));
+        setIiifError(getErrorMessage(error, t('Unable to load canvas from Madoc.')));
       } finally {
         setIsResolvingMadocSelection(false);
       }
@@ -714,7 +774,7 @@ export const TabularProjectWizard: React.FC = () => {
     return {
       saveToLocalStorage: true,
       restoreFromLocalStorage: true,
-      localStorageKey: 'iiif-browser-generic',
+      localStorageKey: 'iiif-browser-tabular-project',
     };
   }, []);
 
@@ -738,9 +798,17 @@ export const TabularProjectWizard: React.FC = () => {
         format: {
           type: 'custom',
           format(resource, parent, vault) {
+            const fromVault = (value: unknown) => {
+              try {
+                return vault.get(value as Parameters<typeof vault.get>[0]);
+              } catch {
+                return null;
+              }
+            };
+
             return {
-              resource: vault.get(resource),
-              parent,
+              resource: fromVault(resource) || resource,
+              parent: fromVault(parent) || parent,
             };
           },
         },
@@ -1160,16 +1228,10 @@ export const TabularProjectWizard: React.FC = () => {
 
                   <div style={{ border: '1px solid #d6d6d6', background: '#fff', overflow: 'auto' }}>
                     <TabularHeadingsTable
-                      columns={Math.max(1, netConfig.cols)}
+                      columns={netColumnCount}
                       visibleRows={CAST_A_NET_ROWS}
-                      headings={Array.from(
-                        { length: Math.max(1, netConfig.cols) },
-                        (_, i) => tabularModel.headings?.[i] ?? ''
-                      )}
-                      tooltips={Array.from(
-                        { length: Math.max(1, netConfig.cols) },
-                        (_, i) => tabularModel.helpText?.[i] ?? ''
-                      )}
+                      headings={Array.from({ length: netColumnCount }, (_, i) => tabularModel.headings?.[i] ?? '')}
+                      tooltips={Array.from({ length: netColumnCount }, (_, i) => tabularModel.helpText?.[i] ?? '')}
                       onChangeHeadings={() => {
                         // Intentionally read-only in Cast a net step.
                       }}
@@ -1458,8 +1520,7 @@ export const TabularProjectWizard: React.FC = () => {
                     <strong>{t('Reference image')}:</strong> {hasImage ? t('Selected') : t('Not selected')}
                   </div>
                   <div>
-                    <strong>{t('Columns')}:</strong>{' '}
-                    {Math.max(1, tabularPayload?.columns?.length || tabularModel.columns || 1)}
+                    <strong>{t('Columns')}:</strong> {configuredColumnCount}
                   </div>
                 </div>
 
@@ -1471,113 +1532,10 @@ export const TabularProjectWizard: React.FC = () => {
                     marginBottom: 16,
                   }}
                 >
-                  <div style={{ border: '1px solid #d6d6d6', borderRadius: 4, background: '#fff', overflow: 'hidden' }}>
-                    <div
-                      style={{
-                        padding: '8px 10px',
-                        borderBottom: '1px solid #e5e7eb',
-                        background: '#f8fafc',
-                        fontSize: 12,
-                        fontWeight: 600,
-                      }}
-                    >
-                      {t('Project details payload')}
-                    </div>
-                    <pre
-                      style={{
-                        margin: 0,
-                        padding: 10,
-                        fontSize: 12,
-                        lineHeight: 1.45,
-                        maxHeight: 320,
-                        overflow: 'auto',
-                        background: '#fff',
-                      }}
-                    >
-                      {stringifyForDisplay(projectDetailsForConfirmation)}
-                    </pre>
-                  </div>
-
-                  <div style={{ border: '1px solid #d6d6d6', borderRadius: 4, background: '#fff', overflow: 'hidden' }}>
-                    <div
-                      style={{
-                        padding: '8px 10px',
-                        borderBottom: '1px solid #e5e7eb',
-                        background: '#f8fafc',
-                        fontSize: 12,
-                        fontWeight: 600,
-                      }}
-                    >
-                      {t('Capture model payload')}
-                    </div>
-                    <pre
-                      style={{
-                        margin: 0,
-                        padding: 10,
-                        fontSize: 12,
-                        lineHeight: 1.45,
-                        maxHeight: 320,
-                        overflow: 'auto',
-                        background: '#fff',
-                      }}
-                    >
-                      {stringifyForDisplay(setupPayload?.model ?? tabularPayload)}
-                    </pre>
-                  </div>
-
-                  <div style={{ border: '1px solid #d6d6d6', borderRadius: 4, background: '#fff', overflow: 'hidden' }}>
-                    <div
-                      style={{
-                        padding: '8px 10px',
-                        borderBottom: '1px solid #e5e7eb',
-                        background: '#f8fafc',
-                        fontSize: 12,
-                        fontWeight: 600,
-                      }}
-                    >
-                      {t('Cast a net payload')}
-                    </div>
-                    <pre
-                      style={{
-                        margin: 0,
-                        padding: 10,
-                        fontSize: 12,
-                        lineHeight: 1.45,
-                        maxHeight: 320,
-                        overflow: 'auto',
-                        background: '#fff',
-                      }}
-                    >
-                      {stringifyForDisplay(setupPayload?.structure)}
-                    </pre>
-                  </div>
-
-                  <div style={{ border: '1px solid #d6d6d6', borderRadius: 4, background: '#fff', overflow: 'hidden' }}>
-                    <div
-                      style={{
-                        padding: '8px 10px',
-                        borderBottom: '1px solid #e5e7eb',
-                        background: '#f8fafc',
-                        fontSize: 12,
-                        fontWeight: 600,
-                      }}
-                    >
-                      {t('Create project request payload')}
-                    </div>
-                    <pre
-                      style={{
-                        margin: 0,
-                        padding: 10,
-                        fontSize: 12,
-                        lineHeight: 1.45,
-                        maxHeight: 320,
-                        overflow: 'auto',
-                        background: '#fff',
-                      }}
-                    >
-                      {stringifyForDisplay(createProjectPayload)}
-                    </pre>
-                  </div>
+                  <PayloadCard title={t('Project details payload')} value={projectDetailsForConfirmation} />
+                  <PayloadCard title={t('Capture model payload')} value={setupPayload?.model ?? tabularPayload} />
+                  <PayloadCard title={t('Cast a net payload')} value={setupPayload?.structure} />
+                  <PayloadCard title={t('Create project request payload')} value={createProjectPayload} />
                 </div>
 
                 {isError ? <ErrorMessage $banner>{data.error || 'Unknown error'}</ErrorMessage> : null}
