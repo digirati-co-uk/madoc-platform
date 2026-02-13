@@ -17,3 +17,8 @@ export function getPublicKey() {
   }
   return publicKeyPromise;
 }
+
+export function clearJoseKeyCache() {
+  privateKeyPromise = null;
+  publicKeyPromise = null;
+}

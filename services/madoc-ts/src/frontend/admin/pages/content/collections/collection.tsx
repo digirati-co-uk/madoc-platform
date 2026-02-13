@@ -9,6 +9,7 @@ import { AdminHeader } from '../../../molecules/AdminHeader';
 import { WidePage } from '../../../../shared/layout/WidePage';
 import { usePaginatedData } from '../../../../shared/hooks/use-data';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
+import { ErrorPage } from '../../../../shared/components/NotFoundPage';
 
 type CollectionViewType = {
   data: CollectionFull;
@@ -25,7 +26,7 @@ export const CollectionView: UniversalComponent<CollectionViewType> = createUniv
     const { resolvedData, status } = usePaginatedData(CollectionView);
 
     if (status === 'error') {
-      return <div>Something went wrong</div>;
+      return <ErrorPage />;
     }
 
     const { collection, pagination } = resolvedData || {

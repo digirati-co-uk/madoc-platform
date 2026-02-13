@@ -14,6 +14,7 @@ export { AllTasks } from './pages/all-tasks';
 export { ViewTask } from './pages/view-task';
 export { TaskLoader } from './pages/loaders/task-loader';
 export { Search } from './pages/search';
+export { TypesenseSearch } from './pages/typesense-search';
 export { AllManifests } from './pages/all-manifests';
 export { ManifestListLoader } from './pages/loaders/manifest-list-loader';
 export { UserHomepage } from './pages/user-homepage';

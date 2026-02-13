@@ -105,6 +105,7 @@ function createEmptySnapshot(limitPerState: number, includeCompleted: boolean): 
       fetchedAt: new Date().toISOString(),
       limitPerState,
       includeCompleted,
+      isPaused: false,
       redis: {
         db: REDIS_DB,
         hostConfigured: !!process.env.REDIS_HOST,
@@ -155,7 +156,7 @@ export const queueStatus: RouteMiddleware = async context => {
       },
     });
 
-    const [jobCounts, jobMap] = await Promise.all([
+    const [jobCounts, jobMap, isPaused] = await Promise.all([
       queue.getJobCounts(...COUNT_STATES),
       Promise.all(
         statesToSample.map(async state => {
@@ -163,6 +164,7 @@ export const queueStatus: RouteMiddleware = async context => {
           return [state, jobs] as const;
         })
       ),
+      queue.isPaused(),
     ]);
 
     const jobs: Partial<Record<BullMqState, BullMqJobSummary[]>> = {};
@@ -185,6 +187,10 @@ export const queueStatus: RouteMiddleware = async context => {
     context.response.body = {
       ...snapshot,
       available: true,
+      queue: {
+        ...snapshot.queue,
+        isPaused,
+      },
       counts: getCounts(jobCounts),
       jobs,
       taskTypes: {

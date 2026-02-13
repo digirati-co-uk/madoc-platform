@@ -1,14 +1,21 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useQuery } from 'react-query';
+import { useMutation, useQuery } from 'react-query';
 import { Navigate } from 'react-router-dom';
-import { BullMqJobSummary, BullMqSnapshot, BullMqState } from '../../../../types/bullmq-status';
+import {
+  BullMqCancelSearchIndexResult,
+  BullMqJobSummary,
+  BullMqResumeQueueResult,
+  BullMqSnapshot,
+  BullMqState,
+} from '../../../../types/bullmq-status';
 import { Pm2Status } from '../../../../types/pm2';
 import { Statistic, StatisticContainer, StatisticLabel, StatisticNumber } from '../../../shared/atoms/Statistics';
 import { useApi } from '../../../shared/hooks/use-api';
 import { useData } from '../../../shared/hooks/use-data';
 import { useUser } from '../../../shared/hooks/use-site';
 import { WidePage } from '../../../shared/layout/WidePage';
+import { Button } from '../../../shared/navigation/Button';
 import { HrefLink } from '../../../shared/utility/href-link';
 import { createUniversalComponent } from '../../../shared/utility/create-universal-component';
 import { UniversalComponent } from '../../../types';
@@ -145,10 +152,20 @@ export const QueueStatus: UniversalComponent<QueueStatusType> = createUniversalC
     const api = useApi();
     const isGlobalAdmin = user?.role === 'global_admin';
 
-    const { data } = useData(QueueStatus, undefined, {
+    const { data, refetch } = useData(QueueStatus, undefined, {
       enabled: isGlobalAdmin,
       refetchInterval: 5000,
       refetchIntervalInBackground: true,
+    });
+    const [cancelSearchIndexQueue, cancelStatus] = useMutation<BullMqCancelSearchIndexResult>(async () => {
+      const response = await api.cancelSearchIndexQueue();
+      await refetch();
+      return response;
+    });
+    const [resumeQueue, resumeStatus] = useMutation<BullMqResumeQueueResult>(async () => {
+      const response = await api.resumeQueue();
+      await refetch();
+      return response;
     });
     const { data: pm2Data } = useQuery(['queue-status-pm2'], () => api.getPm2Status(), {
       enabled: isGlobalAdmin,
@@ -216,7 +233,75 @@ export const QueueStatus: UniversalComponent<QueueStatusType> = createUniversalC
             <p>
               Refreshing every 5 seconds. Showing up to {data.queue.limitPerState} jobs per state.
               {data.queue.includeCompleted ? ' Completed jobs are included in this snapshot.' : ''}
+              {data.queue.isPaused ? ' Queue is currently paused.' : ''}
             </p>
+          ) : null}
+
+          <div style={{ marginBottom: 20 }}>
+            <Button
+              $primary
+              disabled={resumeStatus.isLoading || !data?.available || !data?.queue.isPaused}
+              onClick={() => resumeQueue()}
+              style={{ marginRight: 8 }}
+            >
+              {resumeStatus.isLoading ? 'Resuming queue...' : 'Resume queue'}
+            </Button>
+            <Button
+              $error
+              disabled={cancelStatus.isLoading || resumeStatus.isLoading || !data?.available}
+              onClick={() => {
+                if (
+                  window.confirm(
+                    'Cancel all search-index queue jobs? This will try to remove queued jobs without pausing the queue.'
+                  )
+                ) {
+                  cancelSearchIndexQueue();
+                }
+              }}
+            >
+              {cancelStatus.isLoading ? 'Cancelling search index jobs...' : 'Cancel search index jobs'}
+            </Button>
+          </div>
+
+          {resumeStatus.data ? (
+            <div style={{ border: '1px solid #ddd', borderRadius: 4, padding: 12, marginBottom: 20 }}>
+              <strong>Queue resume summary</strong>
+              <div>Queue was paused: {resumeStatus.data.queueWasPaused ? 'yes' : 'no'}</div>
+              <div>Queue resumed: {resumeStatus.data.queueResumed ? 'yes' : 'no'}</div>
+              {resumeStatus.data.warnings.length ? (
+                <div style={{ marginTop: 8 }}>
+                  <strong>Warnings</strong>
+                  <ul>
+                    {resumeStatus.data.warnings.map((warning, index) => (
+                      <li key={`${warning}-${index}`}>{warning}</li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
+            </div>
+          ) : null}
+
+          {cancelStatus.data ? (
+            <div style={{ border: '1px solid #ddd', borderRadius: 4, padding: 12, marginBottom: 20 }}>
+              <strong>Search index cancellation summary</strong>
+              <div>Matched search jobs: {cancelStatus.data.matchedSearchJobs}</div>
+              <div>Removed queue jobs: {cancelStatus.data.removedJobs}</div>
+              <div>Locked or unremovable jobs: {cancelStatus.data.lockedOrUnremovableJobs}</div>
+              <div>Task cancel markers set: {cancelStatus.data.markedTaskCancels}</div>
+              <div>Root cancel markers set: {cancelStatus.data.markedRootCancels}</div>
+              <div>Queue was paused: {cancelStatus.data.queueWasPaused ? 'yes' : 'no'}</div>
+              <div>Queue resumed by action: {cancelStatus.data.queueResumedByAction ? 'yes' : 'no'}</div>
+              {cancelStatus.data.warnings.length ? (
+                <div style={{ marginTop: 8 }}>
+                  <strong>Warnings</strong>
+                  <ul>
+                    {cancelStatus.data.warnings.map((warning, index) => (
+                      <li key={`${warning}-${index}`}>{warning}</li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
+            </div>
           ) : null}
 
           {data?.available === false ? (
