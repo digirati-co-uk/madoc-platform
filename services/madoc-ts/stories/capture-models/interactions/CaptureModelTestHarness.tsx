@@ -1,6 +1,6 @@
 import '../../../src/frontend/shared/capture-models/editor/bundle';
 import { ReactRenderer, StoryObj } from '@storybook/react';
-import { userEvent, within } from '@storybook/test';
+import { userEvent, within } from 'storybook/test';
 import { PlayFunctionContext } from '@storybook/types';
 // @ts-ignore
 import React, { useMemo, useState } from 'react';
@@ -24,7 +24,7 @@ import { EditorContentVariations } from '../../../src/frontend/shared/capture-mo
 import { PluginProvider } from '../../../src/frontend/shared/capture-models/plugin-api/context';
 import { CaptureModel } from '../../../src/frontend/shared/capture-models/types/capture-model';
 import { RevisionRequest } from '../../../src/frontend/shared/capture-models/types/revision-request';
-import { RevisionList } from '../../../src/frontend/shared/capture-models/RevisionList';
+import { RevisionList } from '../../../src/frontend/site/features/tasks/RevisionList';
 import { TaskTabBackground, TaskTabItem, TaskTabRow } from '../../../src/frontend/shared/components/TaskTabs';
 import { ViewerSavingContext } from '../../../src/frontend/shared/hooks/use-viewer-saving';
 import { AnnotationStyles } from '../../../src/types/annotation-styles';
@@ -197,6 +197,8 @@ export function CaptureModelTestHarness(props: CaptureModelTestHarnessProps) {
                       disableTranscriptionMenu: true,
                       disableDocumentPanel: true,
                       disableRevisionPanel: true,
+                      // Split view panel depends on useApi/useProject; keep it disabled in Storybook harness.
+                      disableBrowserPanel: true,
                     }}
                     {...(props.coreProps || {})}
                     components={{

@@ -40,19 +40,13 @@ const AutocompleteFieldEditor: React.FC<Props> = props => {
       </StyledFormField>
       <StyledFormField>
         <StyledFormLabel>
-          <Field as={StyledCheckbox} type="checkbox" name="clearable" value={props.clearable} required={false} />
+          <Field as={StyledCheckbox} type="checkbox" name="clearable" required={false} />
           {t('Allow clearing of selection')}
         </StyledFormLabel>
       </StyledFormField>
       <StyledFormField>
         <StyledFormLabel>
-          <Field
-            as={StyledCheckbox}
-            type="checkbox"
-            name="requestInitial"
-            value={props.requestInitial}
-            required={false}
-          />
+          <Field as={StyledCheckbox} type="checkbox" name="requestInitial" required={false} />
           {t('Make initial search')}
         </StyledFormLabel>
       </StyledFormField>

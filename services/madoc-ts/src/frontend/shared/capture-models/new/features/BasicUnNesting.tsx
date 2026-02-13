@@ -2,12 +2,20 @@ import React, { useEffect } from 'react';
 import { Revisions } from '../../editor/stores/revisions/index';
 import { isEntity } from '../../helpers/is-entity';
 import { CaptureModel } from '../../types/capture-model';
+import { isTwoLevelInlineEntityModel } from '../utility/get-max-entity-depth';
 
 export const BasicUnNesting: React.FC = () => {
   const push = Revisions.useStoreActions(a => a.revisionPushSubtree);
-  const revisionSubtree = Revisions.useStoreState(s => s.revisionSubtree);
+  const { revisionSubtree, currentRevision } = Revisions.useStoreState(s => ({
+    revisionSubtree: s.revisionSubtree,
+    currentRevision: s.currentRevision,
+  }));
 
   useEffect(() => {
+    if (isTwoLevelInlineEntityModel(currentRevision?.document)) {
+      return;
+    }
+
     if (revisionSubtree && revisionSubtree.type === 'entity') {
       const entity = revisionSubtree;
       if (isEntity(entity)) {
@@ -25,7 +33,7 @@ export const BasicUnNesting: React.FC = () => {
         }
       }
     }
-  }, [revisionSubtree, push]);
+  }, [currentRevision?.document, revisionSubtree, push]);
 
   return null;
 };

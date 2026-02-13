@@ -1,5 +1,6 @@
 import React, { useCallback, useDeferredValue, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { Button as AriaButton, ComboBox, Input, ListBox, ListBoxItem, Popover, type Key } from 'react-aria-components';
+import { ArrowDownIcon } from '../icons/ArrowDownIcon';
 
 export type SelectRef = {
   setValue?: (value: unknown) => void;
@@ -207,6 +208,7 @@ export const Select = React.forwardRef<SelectRef, SelectProps>(function SafeFunc
       };
     });
   }, [getOptionLabel, getResolvedOptionValue, options, renderOptionLabel]);
+  const menuTriggerMode = !searchable || normalizedOptions.length > 0 ? 'focus' : 'input';
 
   const filteredOptions = useMemo(() => {
     if (!searchable || onSearchChange || !deferredInputValue.trim()) {
@@ -385,7 +387,7 @@ export const Select = React.forwardRef<SelectRef, SelectProps>(function SafeFunc
       inputValue={inputValue}
       onInputChange={onInputUpdate}
       onOpenChange={setIsOpen}
-      menuTrigger={searchable ? 'input' : 'focus'}
+      menuTrigger={menuTriggerMode}
       onSelectionChange={selected => {
         clearPendingSearch();
         const key = normalizeValueKey(selected);
@@ -426,7 +428,7 @@ export const Select = React.forwardRef<SelectRef, SelectProps>(function SafeFunc
       className="w-full"
     >
       <div
-        className={`flex min-h-[38px] w-full items-center border bg-white shadow-none outline-none ${borderRadiusClass} ${
+        className={`flex min-h-[38px] w-full items-stretch border bg-white shadow-none outline-none ${borderRadiusClass} ${
           isInvalid ? 'border-[#d63031]' : 'border-[#c8ced6]'
         }`}
       >
@@ -457,9 +459,9 @@ export const Select = React.forwardRef<SelectRef, SelectProps>(function SafeFunc
           type="button"
           aria-label="Toggle options"
           onPress={() => openMenu()}
-          className={`cursor-pointer border-0 bg-transparent px-2.5 text-xs leading-none ${accentColorClass}`}
+          className={`cursor-pointer border-0 bg-transparent hover:bg-[#f5f5f5] h-auto block content-stretch px-2.5 ${accentColorClass}`}
         >
-          ▾
+          <ArrowDownIcon aria-hidden className="fill-current text-xl" />
         </AriaButton>
       </div>
       <Popover

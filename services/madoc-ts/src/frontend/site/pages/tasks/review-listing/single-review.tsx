@@ -15,6 +15,8 @@ import {
 } from '../../../../shared/atoms/CanvasViewerGrid';
 import { useApi } from '../../../../shared/hooks/use-api';
 import { useData } from '../../../../shared/hooks/use-data';
+import { useProjectTemplate } from '../../../../shared/hooks/use-project-template';
+import { useSite } from '../../../../shared/hooks/use-site';
 import { CloseIcon } from '../../../../shared/icons/CloseIcon';
 import { PreviewIcon } from '../../../../shared/icons/PreviewIcon';
 import { EmptyState } from '../../../../shared/layout/EmptyState';
@@ -54,6 +56,13 @@ import { useCurrentUser } from '../../../../shared/hooks/use-current-user';
 import { ManifestSnippet } from '../../../../shared/features/ManifestSnippet';
 import { ReviewNavigation } from './ReviewNagivation';
 import { ErrorMessage } from '../../../../shared/callouts/ErrorMessage';
+import { Revisions } from '../../../../shared/capture-models/editor/stores/revisions';
+import { ReviewRendererContextProvider } from '../review-renderers/review-renderer-context';
+import {
+  CustomReviewRendererProps,
+  getReviewRendererMode,
+  ReviewDefaultControlsComponent,
+} from '../review-renderers/types';
 
 const ReviewContainer = styled.div`
   position: relative;
@@ -215,6 +224,8 @@ function ViewSingleReview({
   const runtime = useRef<Runtime>(undefined);
   const annotationTheme = useProjectAnnotationStyles();
   const api = useApi();
+  const template = useProjectTemplate(project?.template);
+  const CustomReviewRenderer = template?.components?.customReviewRenderer as React.FC<CustomReviewRendererProps> | undefined;
   const [unassignUser] = useMutation(
     async () => {
       if (task) {
@@ -281,6 +292,46 @@ function ViewSingleReview({
     if (runtime.current) {
       runtime.current.world.zoomOut();
     }
+  };
+
+  const DefaultReviewControls: ReviewDefaultControlsComponent = () => {
+    return review && !wasRejected && canReview ? (
+      <ReviewActions>
+        <RejectSubmission
+          userTaskId={task.id}
+          onReject={() => {
+            refetch();
+          }}
+        />
+
+        <EditorToolbarButton onClick={() => setIsEditing(r => !r)} disabled={isDone}>
+          <EditorToolbarIcon>
+            <EditIcon />
+          </EditorToolbarIcon>
+          <EditorToolbarLabel>{isEditing ? t('Exit Correction') : t('Make Correction')}</EditorToolbarLabel>
+        </EditorToolbarButton>
+
+        <RequestChanges
+          userTaskId={task.id}
+          changesRequested={task.state?.changesRequested}
+          onRequest={() => {
+            refetch();
+          }}
+        />
+
+        <ApproveSubmission
+          project={project}
+          userTaskId={task.id}
+          onApprove={async () => {
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            await refetch();
+          }}
+          reviewTaskId={review.id}
+        />
+      </ReviewActions>
+    ) : !isDone || !wasRejected ? (
+      <ReviewActionMessage>{t('You do not have the correct permissions to review this task')}</ReviewActionMessage>
+    ) : null;
   };
 
   if (!review) {
@@ -372,6 +423,174 @@ function ViewSingleReview({
     );
   }
 
+  const subjectType = metadata.subject?.type === 'manifest' ? 'manifest' : 'canvas';
+  const viewerNode = (
+    <div style={{ flex: 1, minWidth: 200, display: 'flex', flexDirection: 'column' }}>
+      <ReviewDropdownContainer>
+        <Button $link {...buttonProps}>
+          {t('View options')}
+        </Button>
+        <ReviewDropdownPopup $visible={isDropdownOpen} role="menu">
+          <>
+            <EditorToolbarButton onClick={toggle} style={{ width: '100%' }}>
+              <EditorToolbarIcon>{isOpen ? <FullScreenExitIcon /> : <FullScreenEnterIcon />}</EditorToolbarIcon>
+              <EditorToolbarLabel> {isOpen ? 'List mode' : 'Focus mode'} </EditorToolbarLabel>
+            </EditorToolbarButton>
+            {canvasLink ? (
+              <EditorToolbarButton as={HrefLink} href={canvasLink}>
+                <EditorToolbarIcon>
+                  <PreviewIcon />
+                </EditorToolbarIcon>
+                <EditorToolbarLabel>{t('View resource')}</EditorToolbarLabel>
+              </EditorToolbarButton>
+            ) : null}
+            {manifestLink ? (
+              <EditorToolbarButton as={HrefLink} href={manifestLink}>
+                <EditorToolbarIcon>
+                  <PreviewIcon />
+                </EditorToolbarIcon>
+                <EditorToolbarLabel>{t('View manifest')}</EditorToolbarLabel>
+              </EditorToolbarButton>
+            ) : null}
+          </>
+        </ReviewDropdownPopup>
+      </ReviewDropdownContainer>
+
+      {canvas ? (
+        <CanvasViewerGrid ref={gridRef}>
+          <EditorContentViewer
+            height={'100%' as any}
+            canvasId={canvas.id}
+            onCreated={rt => {
+              return ((runtime as any).current = rt.runtime);
+            }}
+          />
+          {isOpen && (
+            <CanvasViewerControls>
+              <CanvasViewerButton onClick={goHome}>
+                <HomeIcon title={t('atlas__zoom_home', { defaultValue: 'Home' })} />
+              </CanvasViewerButton>
+              <CanvasViewerButton onClick={zoomOut}>
+                <MinusIcon title={t('atlas__zoom_out', { defaultValue: 'Zoom out' })} />
+              </CanvasViewerButton>
+              <CanvasViewerButton onClick={zoomIn}>
+                <PlusIcon title={t('atlas__zoom_in', { defaultValue: 'Zoom in' })} />
+              </CanvasViewerButton>
+            </CanvasViewerControls>
+          )}
+        </CanvasViewerGrid>
+      ) : (
+        metadata.subject?.id &&
+        metadata.subject.type === 'manifest' && (
+          <ManifestSnippet
+            id={metadata.subject?.id}
+            data-is-stacked={true}
+            data-is-flatd={true}
+            data-is-portrait={true}
+            hideButton
+          />
+        )
+      )}
+    </div>
+  );
+
+  const reviewContextBase = {
+    task,
+    review,
+    project,
+    mode: getReviewRendererMode(isEditing),
+    isEditing,
+    setIsEditing,
+    isDone,
+    isLocked: false,
+    canReview: !!canReview,
+    wasRejected,
+    subjectType,
+    assigneeName: task.assignee?.name,
+    reviewAssigneeName: review?.assignee?.name,
+  } as const;
+
+  const ReviewContextWithActions: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const site = useSite();
+    const { currentRevision } = Revisions.useStoreState(state => {
+      return {
+        currentRevision: state.currentRevision,
+      };
+    });
+    const deselectRevision = Revisions.useStoreActions(a => a.deselectRevision);
+
+    return (
+      <ReviewRendererContextProvider
+        value={{
+          ...reviewContextBase,
+          actions: {
+            reject: async () => {
+              if (!currentRevision || !canReview || isDone) {
+                return;
+              }
+              await api.reviewRejectSubmission({
+                revisionRequest: currentRevision,
+                userTaskId: task.id,
+                message: '',
+              });
+              deselectRevision({ revisionId: currentRevision.revision.id });
+              await refetch();
+            },
+            requestChanges: async () => {
+              if (!currentRevision || !canReview || isDone) {
+                return;
+              }
+              await api.reviewRequestChanges({
+                revisionRequest: currentRevision,
+                userTaskId: task.id,
+                message: task.state?.changesRequested || '',
+              });
+              deselectRevision({ revisionId: currentRevision.revision.id });
+              await refetch();
+            },
+            approve: async () => {
+              if (!currentRevision || !canReview || !review || isDone) {
+                return;
+              }
+              const definition =
+                project && project.template ? api.projectTemplates.getDefinition(project.template, site.id) : null;
+              await api.crowdsourcing.reviewApproveSubmission({
+                revisionRequest: currentRevision,
+                userTaskId: task.id,
+                projectTemplate:
+                  definition && project
+                    ? {
+                        template: definition,
+                        config: project.template_config,
+                      }
+                    : undefined,
+              });
+              await new Promise(resolve => setTimeout(resolve, 1000));
+              await refetch();
+            },
+            toggleEditing: () => setIsEditing(r => !r),
+          },
+        }}
+      >
+        {children}
+      </ReviewRendererContextProvider>
+    );
+  };
+
+  const reviewHeaderActions = (
+    <ReviewActionBar>
+      <div style={{ display: 'flex' }}>
+        <SimpleStatus status={task.status} status_text={task.status_text || ''} />
+        {task.assignee && (
+          <Assignee>
+            {t('assigned to')}: <HrefLink href={`/users/${extractIdFromUrn(task.assignee.id)}`}>{task.assignee.name}</HrefLink>
+          </Assignee>
+        )}
+      </div>
+      <DefaultReviewControls />
+    </ReviewActionBar>
+  );
+
   return (
     <RevisionProviderWithFeatures
       revision={revisionId}
@@ -388,157 +607,49 @@ function ViewSingleReview({
       }}
       annotationTheme={annotationTheme}
     >
-      <ReviewContainer id={'review-container'} data-is-max-window={isOpen}>
-        <ReviewHeader>
-          <Label>
-            {metadata && metadata.subject ? <LocaleString>{metadata.subject.label}</LocaleString> : task.name}
-          </Label>
+      <ReviewContextWithActions>
+        <ReviewContainer id={'review-container'} data-is-max-window={isOpen}>
+          <ReviewHeader>
+            <Label>
+              {metadata && metadata.subject ? <LocaleString>{metadata.subject.label}</LocaleString> : task.name}
+            </Label>
 
-          <SubLabel>
-            {metadata.subject && metadata.subject.parent && (
-              <LocaleString style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                {metadata.subject.parent.label}
-              </LocaleString>
-            )}
-          </SubLabel>
+            <SubLabel>
+              {metadata.subject && metadata.subject.parent && (
+                <LocaleString style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {metadata.subject.parent.label}
+                </LocaleString>
+              )}
+            </SubLabel>
 
-          <ReviewNavigation taskId={taskId} />
-        </ReviewHeader>
-        <ReviewActionBar>
-          <div style={{ display: 'flex' }}>
-            <SimpleStatus status={task.status} status_text={task.status_text || ''} />
-            {task.assignee && (
-              <Assignee>
-                {t('assigned to')}:{' '}
-                <HrefLink href={`/users/${extractIdFromUrn(task.assignee.id)}`}>{task.assignee.name}</HrefLink>
-              </Assignee>
-            )}
-          </div>
-          {review && !wasRejected && canReview ? (
-            <ReviewActions>
-              <RejectSubmission
-                userTaskId={task.id}
-                onReject={() => {
-                  refetch();
-                }}
-              />
+            <ReviewNavigation taskId={taskId} />
+          </ReviewHeader>
 
-              <EditorToolbarButton onClick={() => setIsEditing(r => !r)} disabled={isDone}>
-                <EditorToolbarIcon>
-                  <EditIcon />
-                </EditorToolbarIcon>
-                <EditorToolbarLabel>{isEditing ? t('Exit Correction') : t('Make Correction')}</EditorToolbarLabel>
-              </EditorToolbarButton>
-
-              <RequestChanges
-                userTaskId={task.id}
-                changesRequested={task.state?.changesRequested}
-                onRequest={() => {
-                  refetch();
-                }}
-              />
-
-              {/*<StartMerge*/}
-              {/*  allTasks={props.allTasks as any}*/}
-              {/*  reviewTaskId={data.review.id}*/}
-              {/*  userTask={task}*/}
-              {/*  // onStartMerge={(revId: string) => props.goBack({ refresh: true, revisionId: revId })}*/}
-              {/*/>*/}
-
-              <ApproveSubmission
-                project={project}
-                userTaskId={task.id}
-                onApprove={async () => {
-                  await new Promise(resolve => setTimeout(resolve, 1000));
-                  await refetch();
-                }}
-                reviewTaskId={review.id}
-              />
-            </ReviewActions>
-          ) : !isDone || !wasRejected ? (
-            <ReviewActionMessage>
-              {t('You do not have the correct permissions to review this task')}
-            </ReviewActionMessage>
-          ) : null}
-        </ReviewActionBar>
-        <ReviewPreview>
-          <div style={{ flexGrow: 1, maxWidth: 300, overflowX: 'scroll' }}>
-            <CanvasViewerEditorStyleReset>
-              <EditorSlots.TopLevelEditor />
-            </CanvasViewerEditorStyleReset>
-            <EditorSlots.SubmitButton captureModel={captureModel} />
-          </div>
-          <div style={{ flex: 1, minWidth: 200, display: 'flex', flexDirection: 'column' }}>
-            <ReviewDropdownContainer>
-              <Button $link {...buttonProps}>
-                {t('View options')}
-              </Button>
-              <ReviewDropdownPopup $visible={isDropdownOpen} role="menu">
-                <>
-                  <EditorToolbarButton onClick={toggle} style={{ width: '100%' }}>
-                    <EditorToolbarIcon>{isOpen ? <FullScreenExitIcon /> : <FullScreenEnterIcon />}</EditorToolbarIcon>
-                    <EditorToolbarLabel> {isOpen ? 'List mode' : 'Focus mode'} </EditorToolbarLabel>
-                  </EditorToolbarButton>
-                  {canvasLink ? (
-                    <EditorToolbarButton as={HrefLink} href={canvasLink}>
-                      <EditorToolbarIcon>
-                        <PreviewIcon />
-                      </EditorToolbarIcon>
-                      <EditorToolbarLabel>{t('View resource')}</EditorToolbarLabel>
-                    </EditorToolbarButton>
-                  ) : null}
-                  {manifestLink ? (
-                    <EditorToolbarButton as={HrefLink} href={manifestLink}>
-                      <EditorToolbarIcon>
-                        <PreviewIcon />
-                      </EditorToolbarIcon>
-                      <EditorToolbarLabel>{t('View manifest')}</EditorToolbarLabel>
-                    </EditorToolbarButton>
-                  ) : null}
-                </>
-              </ReviewDropdownPopup>
-            </ReviewDropdownContainer>
-
-            {canvas ? (
-              <CanvasViewerGrid ref={gridRef}>
-                <EditorContentViewer
-                  height={'100%' as any}
-                  canvasId={canvas.id}
-                  onCreated={rt => {
-                    return ((runtime as any).current = rt.runtime);
-                  }}
-                />
-                {isOpen && (
-                  <CanvasViewerControls>
-                    <CanvasViewerButton onClick={goHome}>
-                      <HomeIcon title={t('atlas__zoom_home', { defaultValue: 'Home' })} />
-                    </CanvasViewerButton>
-                    <CanvasViewerButton onClick={zoomOut}>
-                      <MinusIcon title={t('atlas__zoom_out', { defaultValue: 'Zoom out' })} />
-                    </CanvasViewerButton>
-                    <CanvasViewerButton onClick={zoomIn}>
-                      <PlusIcon title={t('atlas__zoom_in', { defaultValue: 'Zoom in' })} />
-                    </CanvasViewerButton>
-                  </CanvasViewerControls>
-                )}
-              </CanvasViewerGrid>
-            ) : (
-              metadata.subject?.id &&
-              metadata.subject.type === 'manifest' && (
-                <>
-                  <ManifestSnippet
-                    id={metadata.subject?.id}
-                    data-is-stacked={true}
-                    data-is-flatd={true}
-                    data-is-portrait={true}
-                    hideButton
-                  />
-                </>
-              )
-            )}
-          </div>
-        </ReviewPreview>
-      </ReviewContainer>
+          {CustomReviewRenderer ? (
+            <CustomReviewRenderer
+              mode={getReviewRendererMode(isEditing)}
+              subjectType={subjectType}
+              viewer={viewerNode}
+              saveControl={<EditorSlots.SubmitButton captureModel={captureModel} />}
+              controls={reviewHeaderActions}
+              DefaultControls={DefaultReviewControls}
+            />
+          ) : (
+            <>
+              {reviewHeaderActions}
+              <ReviewPreview>
+                <div style={{ flexGrow: 1, maxWidth: 300, overflowX: 'scroll' }}>
+                  <CanvasViewerEditorStyleReset>
+                    <EditorSlots.TopLevelEditor />
+                  </CanvasViewerEditorStyleReset>
+                  <EditorSlots.SubmitButton captureModel={captureModel} />
+                </div>
+                {viewerNode}
+              </ReviewPreview>
+            </>
+          )}
+        </ReviewContainer>
+      </ReviewContextWithActions>
     </RevisionProviderWithFeatures>
   );
 }

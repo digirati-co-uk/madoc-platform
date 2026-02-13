@@ -31,7 +31,11 @@ export const Simple: React.FC = () => {
 };
 
 export const SimpleWithInitial: React.FC = () => {
-  const [value, setValue] = React.useState<CompletionItem | undefined>();
+  const [value, setValue] = React.useState<CompletionItem | undefined>({
+    uri: 'http://id.worldcat.org/fast/fst00969633',
+    label: 'Indians of North America',
+    resource_class: 'Topic',
+  });
   return (
     <form>
       <AutocompleteField
