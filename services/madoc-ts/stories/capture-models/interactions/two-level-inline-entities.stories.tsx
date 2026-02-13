@@ -109,6 +109,12 @@ TwoLevelInlineNoNavigation.play = async args => {
   const canvas = within(args.canvasElement);
   await CaptureModelTestHarness.waitForViewer(args);
 
+  expect(canvas.queryByText(/^Prev /)).toBeNull();
+  expect(canvas.queryByText(/^Next /)).toBeNull();
+
+  const emptyAdd = await canvas.findByRole('button', { name: /\+ Add Illustration/i });
+  await userEvent.click(emptyAdd);
+
   await canvas.findByLabelText(
     'Name',
     {
@@ -117,24 +123,51 @@ TwoLevelInlineNoNavigation.play = async args => {
     },
     { timeout: 3000 }
   );
-
-  expect(canvas.queryByText(/^Prev /)).toBeNull();
-  expect(canvas.queryByText(/^Next /)).toBeNull();
-
+  await canvas.findByRole('button', { name: /Add another Illustration/i });
   await canvas.findByText(/Define region/i);
+
+  const initialRemoveButton = await canvas.findByRole('button', { name: /Remove Illustration/i });
+  expect(initialRemoveButton.innerHTML).toMatch(/M6 19c0 1\.1/);
 
   const collapseButtons = await canvas.findAllByRole('button', { name: /Collapse/i });
   await userEvent.click(collapseButtons[0]);
 
+  let collapsedHeader = await canvas.findByTestId('compact-inline-header');
+  expect(collapsedHeader.getAttribute('data-has-divider')).toEqual('false');
   expect(canvas.queryByLabelText('Name', { selector: 'input', exact: true })).toBeNull();
 
   const collapsedCard = await canvas.findByText(/No value \(click to edit\)/i);
   await userEvent.click(collapsedCard);
 
-  await canvas.findByLabelText('Name', {
-    selector: 'input',
-    exact: true,
-  });
+  await canvas.findByLabelText(
+    'Name',
+    {
+      selector: 'input',
+      exact: true,
+    },
+    { timeout: 3000 }
+  );
+  collapsedHeader = await canvas.findByTestId('compact-inline-header');
+  expect(collapsedHeader.getAttribute('data-has-divider')).toEqual('true');
+
+  const originalConfirm = window.confirm;
+  try {
+    let confirmCalls = 0;
+    (window as any).confirm = () => {
+      confirmCalls++;
+      return false;
+    };
+
+    const removeButton = await canvas.findByRole('button', { name: /Remove Illustration/i });
+    await userEvent.click(removeButton);
+    expect(confirmCalls).toEqual(1);
+    await canvas.findByLabelText('Name', {
+      selector: 'input',
+      exact: true,
+    });
+  } finally {
+    window.confirm = originalConfirm;
+  }
 };
 
 export const DeeperModelsKeepNavigationBehaviour = {
