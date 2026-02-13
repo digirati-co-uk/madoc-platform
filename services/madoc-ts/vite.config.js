@@ -6,14 +6,18 @@ import react from '@vitejs/plugin-react';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const pnpmStorePath = path.resolve(__dirname, 'node_modules/.pnpm');
-const orderedMapPackageDir = fs
-  .readdirSync(pnpmStorePath)
-  .filter(name => name.startsWith('orderedmap@'))
-  .sort()
-  .pop();
-const orderedMapCjsPath = orderedMapPackageDir
-  ? path.resolve(pnpmStorePath, orderedMapPackageDir, 'node_modules/orderedmap/dist/index.cjs')
-  : 'orderedmap';
+const orderedMapCjsCandidates = [path.resolve(__dirname, 'node_modules/orderedmap/dist/index.cjs')];
+if (fs.existsSync(pnpmStorePath)) {
+  const orderedMapPackageDir = fs
+    .readdirSync(pnpmStorePath)
+    .filter(name => name.startsWith('orderedmap@'))
+    .sort()
+    .pop();
+  if (orderedMapPackageDir) {
+    orderedMapCjsCandidates.push(path.resolve(pnpmStorePath, orderedMapPackageDir, 'node_modules/orderedmap/dist/index.cjs'));
+  }
+}
+const orderedMapCjsPath = orderedMapCjsCandidates.find(candidate => fs.existsSync(candidate)) ?? 'orderedmap';
 
 // This is the top level one for testing.
 export default defineConfig({
