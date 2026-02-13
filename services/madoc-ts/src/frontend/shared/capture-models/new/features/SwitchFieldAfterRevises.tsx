@@ -3,7 +3,7 @@ import { Revisions } from '../../editor/stores/revisions/index';
 import { isEntity } from '../../helpers/is-entity';
 
 export const SwitchFieldAfterRevises: React.FC = () => {
-  const lastRevisionSubtreeField = useRef<any>();
+  const lastRevisionSubtreeField = useRef<any>(undefined);
   const revisionSelectField = Revisions.useStoreActions(a => a.revisionSelectField);
   const {
     revisionSubtreeField,

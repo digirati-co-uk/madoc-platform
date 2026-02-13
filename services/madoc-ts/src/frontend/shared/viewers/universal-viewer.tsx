@@ -10,7 +10,7 @@ export type UniversalViewerProps = {
 
 const UniversalViewer: React.FC<UniversalViewerProps> = React.memo(({ manifestId, canvasIndex, onChangeCanvas }) => {
   const ref = useRef<HTMLDivElement>(null);
-  const lastIndex = useRef<number>();
+  const lastIndex = useRef<number>(undefined);
   const options = useMemo(
     () => ({
       manifest: manifestId,

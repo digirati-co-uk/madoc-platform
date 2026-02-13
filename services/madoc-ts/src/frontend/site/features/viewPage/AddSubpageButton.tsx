@@ -17,7 +17,7 @@ export const AddSubpageButton: React.FC<{ onCreate?: (page: SitePage) => void }>
   const api = useApi();
   const { data } = useStaticData(PageLoader);
   const page = data?.page;
-  const subpage = useRef<CreateNormalPageRequest>();
+  const subpage = useRef<CreateNormalPageRequest>(undefined);
   const navigate = useNavigate();
 
   const [addSubpage] = useMutation(async () => {

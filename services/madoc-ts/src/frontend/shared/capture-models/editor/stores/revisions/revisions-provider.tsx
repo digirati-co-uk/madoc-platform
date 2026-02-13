@@ -18,6 +18,7 @@ type RevisionProviderProps = {
   initialRevision?: string;
   revision?: string;
   excludeStructures?: boolean;
+  children?: React.ReactNode;
 };
 
 const InternalRevisionProvider: React.FC<RevisionProviderProps> = ({
@@ -27,8 +28,8 @@ const InternalRevisionProvider: React.FC<RevisionProviderProps> = ({
   revision,
   excludeStructures,
 }) => {
-  const lastModel = useRef<string>();
-  const lastRevision = useRef<string>();
+  const lastModel = useRef<string | undefined>(undefined);
+  const lastRevision = useRef<string | undefined>(undefined);
   const { setCaptureModel, selectRevision } = useStoreActions(a => ({
     selectRevision: a.selectRevision,
     setCaptureModel: a.setCaptureModel,

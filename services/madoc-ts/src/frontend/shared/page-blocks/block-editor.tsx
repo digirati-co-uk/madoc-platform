@@ -227,8 +227,8 @@ export const useBlockEditor = (
   const api = useApi();
   // @todo hook up advanced fields for languages.
   const [advanced, setAdvanced] = useState(false);
-  const latestRevision = useRef<CaptureModel['document'] | undefined>();
-  const latestPreview = useRef<CaptureModel['document'] | undefined>();
+  const latestRevision = useRef<CaptureModel['document'] | undefined>(undefined);
+  const latestPreview = useRef<CaptureModel['document'] | undefined>(undefined);
   const [preview, setPreview] = useState<SiteBlock | SiteBlockRequest | undefined>();
 
   const canSubmit = isRequiredDocIncomplete(latestRevision.current);
@@ -337,6 +337,7 @@ export const BlockEditorForm: React.FC<{
         <div style={{ paddingBottom: '10em' }}>
           {preview ? (
             <BlockCreatorPreview>
+              {/* @ts-ignore */}
               <RenderBlock block={preview} context={context} />
             </BlockCreatorPreview>
           ) : null}
@@ -416,6 +417,7 @@ function CustomEditorWrapper({
 export const BlockEditor: React.FC<{
   block: SiteBlock;
   context?: EditorialContext;
+  children?: React.ReactNode;
   onUpdateBlock?: (id: number) => void;
 }> = ({ block, context, children, onUpdateBlock }) => {
   const { CustomEditor } = useBlockDetails(block);

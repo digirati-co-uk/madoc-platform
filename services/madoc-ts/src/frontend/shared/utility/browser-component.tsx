@@ -1,7 +1,6 @@
-import React, { ComponentType, PropsWithChildren, Suspense, useEffect, useMemo } from 'react';
-import { useApi } from '../hooks/use-api';
+import React, { ComponentType, PropsWithChildren, Suspense, useMemo } from 'react';
 
-export const BrowserComponent: React.FC<{ fallback: any }> = ({ fallback, children }) => {
+export const BrowserComponent: React.FC<{ fallback: any; children?: React.ReactNode }> = ({ fallback, children }) => {
   const isServer = !(globalThis as any).window;
 
   if (isServer) {

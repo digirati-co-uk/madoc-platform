@@ -3,7 +3,7 @@ import { ImportManifestTask } from '../../../../gateway/tasks/import-manifest';
 import { ProjectExportSnippet } from '../../components/ProjectExportSnippet/ProjectExportSnippet';
 import { GenericTask } from './generic-task';
 
-export function ExportResourceTask({ task, statusBar }: { task: ImportManifestTask; statusBar?: JSX.Element }) {
+export function ExportResourceTask({ task, statusBar }: { task: ImportManifestTask; statusBar?: React.ReactNode }) {
   return (
     <GenericTask
       task={task}

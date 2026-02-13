@@ -1,8 +1,10 @@
-import { FC } from 'react';
+import { FC as OriginalFC } from 'react';
 import { BaseProperty } from './base-property';
 import { CaptureModel } from './capture-model';
 import { FieldTypeMap } from './custom';
 import { MapValues } from './utility';
+
+type FC<Props = {}> = OriginalFC<Props & { children?: React.ReactNode }>;
 
 export interface BaseField extends BaseProperty {
   id: string;

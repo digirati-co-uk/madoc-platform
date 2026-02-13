@@ -21,8 +21,8 @@ export const ModalButton: React.FC<{
   button?: boolean;
   as?: any;
   onClose?: () => void;
-  render: (opts: { close: () => void }) => JSX.Element | null;
-  renderFooter?: (opts: { close: () => void }) => JSX.Element;
+  render: (opts: { close: () => void }) => React.ReactNode | null;
+  renderFooter?: (opts: { close: () => void }) => React.ReactNode;
   className?: string;
   autoHeight?: boolean;
   footerAlignRight?: boolean;
@@ -30,6 +30,7 @@ export const ModalButton: React.FC<{
   disabled?: boolean;
   openByDefault?: boolean;
   style?: any;
+  children?: React.ReactNode;
 
   onKeyDown?: (e: React.KeyboardEvent<HTMLAnchorElement>) => void;
   tabIndex?: number;
@@ -57,10 +58,10 @@ export const ModalButton: React.FC<{
   },
   ref
 ) {
-  const portalEl = useRef<HTMLElement>();
+  const portalEl = useRef<HTMLElement>(undefined);
   const [ready, setIsReady] = useState(false);
   const [expanded, setIsExpanded] = useState(false);
-  const containerRef = useRef<any>();
+  const containerRef = useRef<any>(undefined);
 
   useBrowserLayoutEffect(() => {
     const element = document.createElement('div');

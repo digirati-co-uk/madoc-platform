@@ -1,7 +1,7 @@
 import { parseModelTarget } from '../../../../utility/parse-model-target';
 import { ExportFile } from '../../server-export';
 import { ExportConfig, ExportDataOptions, ExportFileDefinition, SupportedExportResource } from '../../types';
-import { getValue } from '@iiif/helpers/i18n';
+import { getValue } from '@iiif/helpers';
 
 type CachedTarget = { label?: string; uri?: string };
 type CachedManifest = { label?: string; uri?: string };
@@ -177,7 +177,7 @@ async function fetchTargets(api: any, manifestIds: number[], canvasIds: number[]
       const uri =
         typeof response?.manifest?.source === 'string' && response.manifest.source.trim()
           ? response.manifest.source
-          : extractOriginalUri(manifest) ?? extractOriginalUri(response);
+          : (extractOriginalUri(manifest) ?? extractOriginalUri(response));
 
       cache.manifests[id.toString()] = {
         label: getValue(manifest.label),

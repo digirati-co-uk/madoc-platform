@@ -98,7 +98,7 @@ export const URLContextExplorer: React.FC<{
               // @todo error?
               setIsLoading(false);
             })
-            .catch(err => {
+            .catch((err: any) => {
               console.log(err);
               setIsLoading(false);
             });

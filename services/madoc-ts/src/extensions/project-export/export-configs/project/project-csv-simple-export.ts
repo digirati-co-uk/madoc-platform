@@ -1,7 +1,7 @@
 import { parseModelTarget } from '../../../../utility/parse-model-target';
 import { ExportFile } from '../../server-export';
 import type { ExportConfig, ExportDataOptions, ExportFileDefinition, SupportedExportResource } from '../../types';
-import { getValue } from '@iiif/helpers/i18n';
+import { getValue } from '@iiif/helpers';
 
 const labelCache: {
   manifestLabels: Record<string, { label?: string; uri?: string }>;

@@ -5,10 +5,10 @@ import { TaskItemTag, TaskItemTagSuccess } from '../../shared/atoms/TaskList';
 
 export function OCRTaskTags(props: { links?: Array<ResourceLinkResponse> }) {
   const components: {
-    alto: JSX.Element | null;
-    plaintext: JSX.Element | null;
-    importedOCR: JSX.Element | null;
-    otherTags: Array<JSX.Element>;
+    alto: React.ReactNode | null;
+    plaintext: React.ReactNode | null;
+    importedOCR: React.ReactNode | null;
+    otherTags: Array<React.ReactNode>;
   } = {
     alto: null,
     plaintext: null,

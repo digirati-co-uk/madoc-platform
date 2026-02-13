@@ -19,6 +19,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -->
 
+### Added
+
+- Added a new `config-service` Node service with scoped configuration APIs, schema validation, Docker support, and tests.
+- Added a new admin "Queue status" page for BullMQ queue visibility.
+- Added uploads to project pages.
+- Added back the SVG site theme.
+- Added internal agent skill docs and technical debt planning documents.
+
+### Changed
+
+- Upgraded core frontend and tooling dependencies across `madoc-ts` (including React 19, React Router 7, TypeScript/ESLint/Storybook updates, and related package migrations).
+- Replaced deprecated drag/drop and select dependencies with maintained alternatives.
+- Updated Docker and CI workflows to support dependency/tooling changes and the new config service build.
+- Updated internal request routing/subrequest handling.
+- Updated page block behavior and renderer/PM2 runtime configuration.
+
+### Fixed
+
+- Fixed site collections showing unpublished manifests.
+- Fixed metadata facet editor behavior.
+- Fixed autocomplete integration issues.
+- Fixed project page download behavior.
+- Fixed box and polygon selector behavior.
+- Fixed dependency compatibility regressions from the upgrade work (including `react-is` and lockfile issues).
+
 ## [v2.2.11](https://github.com/digirati-co-uk/madoc-platform/compare/v2.2.10...v2.2.11)
 
 <!--

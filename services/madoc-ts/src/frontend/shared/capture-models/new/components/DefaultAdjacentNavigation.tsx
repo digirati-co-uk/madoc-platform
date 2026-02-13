@@ -14,7 +14,7 @@ const NoOverflowCardButton = styled(CardButton)`
   box-shadow: none;
 `;
 
-export const DefaultAdjacentNavigation: React.FC = ({ children }) => {
+export function DefaultAdjacentNavigation({ children }: { children?: React.ReactNode }) {
   const { t } = useTranslation();
   const { t: tModel } = useModelTranslation();
   const [entity] = useCurrentEntity();
