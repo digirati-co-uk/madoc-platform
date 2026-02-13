@@ -15,7 +15,7 @@ export default defineConfig({
       { find: /^react-dom$/, replacement: path.resolve(__dirname, 'node_modules/react-dom') },
       {
         find: /^orderedmap$/,
-        replacement: path.resolve(__dirname, 'node_modules/orderedmap/dist/index.cjs'),
+        replacement: 'orderedmap/dist/index.cjs',
       },
     ],
   },
