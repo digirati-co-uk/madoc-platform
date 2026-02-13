@@ -19,7 +19,7 @@
     "build:vite-auth": "vite build --config vite/vite.auth.js .",
     "build:vite-server": "NODE_OPTIONS=--max-old-space-size=4096 vite build --config vite/vite.server.js .",
     "build:vite-scheduler": "vite build --config vite/vite.scheduler.js .",
-    "build-storybook": "NODE_OPTIONS=--max-old-space-size=8096 node ./node_modules/.bin/storybook build",
+    "build-storybook": "storybook build",
     "watch:vite": "pnpm run build:vite-producer && pnpm run build:vite-auth && pnpm run build:vite-server && pnpm run build:vite-scheduler --watch",
     "watch:vite-producer": "vite build --config vite/vite.producer.js . --watch",
     "watch:vite-auth": "vite build --config vite/vite.auth.js . --watch",
