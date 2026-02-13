@@ -3,6 +3,7 @@ import { registerField } from '../../../plugin-api/global-store';
 import { FieldSpecification } from '../../../types/field-types';
 import { HTMLFieldProps } from './HTMLField';
 import { HTMLFieldPreview } from './HTMLField.preview';
+import { HTML_FIELD_DEFAULT_ALLOWED_TAGS } from './html-field-tags';
 
 declare module '../../../types/field-types' {
   export interface FieldTypeMap {
@@ -14,7 +15,9 @@ const specification: FieldSpecification<HTMLFieldProps> = {
   defaultValue: '',
   type: 'html-field',
   label: 'HTML Field',
-  defaultProps: {},
+  defaultProps: {
+    allowedTags: [...HTML_FIELD_DEFAULT_ALLOWED_TAGS],
+  },
   allowMultiple: true,
   maxMultiple: 99,
   required: false,
