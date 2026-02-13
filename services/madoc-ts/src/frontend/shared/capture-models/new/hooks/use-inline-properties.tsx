@@ -4,12 +4,14 @@ import { CaptureModel } from '../../types/capture-model';
 import { BaseField } from '../../types/field-types';
 import { ProfileProvider, useSlotContext } from '../components/EditorSlots';
 import { useCurrentEntity } from './use-current-entity';
+import { useTwoLevelInlineMode } from './use-two-level-inline-mode';
 
 export function useInlineProperties(
   property: string,
   { canInlineField, disableRemoving }: { canInlineField?: boolean; disableRemoving?: boolean } = {}
 ) {
   const Slots = useSlotContext();
+  const twoLevelInlineMode = useTwoLevelInlineMode();
   const [entity, { setSelectedField, setFocusedField, path }] = useCurrentEntity();
   const propertyList = useMemo(() => {
     const instance: any[] = entity.properties[property] || [];
@@ -29,12 +31,16 @@ export function useInlineProperties(
         <Slots.InlineEntity
           entity={doc}
           property={property}
+          path={path as any}
+          inlineMode={twoLevelInlineMode ? 'two-level' : 'default'}
           canRemove={canRemove}
           onRemove={() => {
             // @todo remove instance from list.
           }}
           chooseEntity={() => {
-            setSelectedField({ property: property, id: doc.id });
+            if (!twoLevelInlineMode) {
+              setSelectedField({ property: property, id: doc.id });
+            }
           }}
         />
       </ProfileProvider>
@@ -81,7 +87,14 @@ export function useInlineProperties(
     ));
   };
 
-  const render = type === 'entity' ? renderEntityList : canInlineField ? renderInlineFields : renderFieldList;
+  const render =
+    type === 'entity'
+      ? renderEntityList
+      : twoLevelInlineMode
+        ? renderInlineFields
+        : canInlineField
+          ? renderInlineFields
+          : renderFieldList;
 
   return [
     render,

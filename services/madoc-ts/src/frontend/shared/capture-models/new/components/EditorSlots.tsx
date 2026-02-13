@@ -63,6 +63,8 @@ export type EditorRenderingConfig = {
   InlineEntity: ReactFC<{
     property: string;
     entity: CaptureModel['document'];
+    path: [string, string, boolean?][];
+    inlineMode?: 'default' | 'two-level';
     chooseEntity: () => void;
     canRemove: boolean;
     onRemove: () => void;
