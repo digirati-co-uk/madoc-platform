@@ -1,6 +1,7 @@
 import * as React from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { AddIcon } from '@/frontend/shared/icons/AddIcon';
+import { AddImageIcon } from '@/frontend/shared/icons/AddImageIcon';
 import { AnnotationsIcon } from '@/frontend/shared/icons/AnnotationsIcon';
 import { ArrowBackIcon } from '@/frontend/shared/icons/ArrowBackIcon';
 import { ArrowDownIcon } from '@/frontend/shared/icons/ArrowDownIcon';
@@ -13,6 +14,7 @@ import CheckCircleIcon from '@/frontend/shared/icons/CheckCircleIcon';
 import { ChevronDown, ChevronFirst, ChevronLast, ChevronLeft, ChevronRight } from '@/frontend/shared/icons/ChevronIcon';
 import { CircleIcon } from '@/frontend/shared/icons/CircleIcon';
 import { CloseIcon } from '@/frontend/shared/icons/CloseIcon';
+import { CodeIcon } from '@/frontend/shared/icons/CodeIcon';
 import CollectionIcon from '@/frontend/shared/icons/CollectionIcon';
 import { CompareIcon } from '@/frontend/shared/icons/CompareIcon';
 import { ContributionIcon } from '@/frontend/shared/icons/ContributionIcon';
@@ -45,6 +47,7 @@ import { ModelDocumentIcon } from '@/frontend/shared/icons/ModelDocumentIcon';
 import NoEntryIcon from '@/frontend/shared/icons/NoEntryIcon';
 import { NotificationIcon } from '@/frontend/shared/icons/NotificationIcon';
 import { NotStartedIcon } from '@/frontend/shared/icons/NotStartedIcon';
+import { NumberedListIcon } from '@/frontend/shared/icons/NumberedListIcon';
 import { OpacityIcon } from '@/frontend/shared/icons/OpacityIcon';
 import { PanIcon } from '@/frontend/shared/icons/PanIcon';
 import PendingIcon from '@/frontend/shared/icons/PendingIcon';
@@ -53,6 +56,7 @@ import { PlusIcon } from '@/frontend/shared/icons/PlusIcon';
 import { PolygonIcon } from '@/frontend/shared/icons/PolgonIcon';
 import { PreviewIcon } from '@/frontend/shared/icons/PreviewIcon';
 import { ProgressIcon } from '@/frontend/shared/icons/ProgressIcon';
+import { QuoteIcon } from '@/frontend/shared/icons/QuoteIcon';
 import { RequestChangesIcon } from '@/frontend/shared/icons/RequestChangesIcon';
 import ResizeHandleIcon from '@/frontend/shared/icons/ResizeHandleIcon';
 import { ReviewIcon } from '@/frontend/shared/icons/ReviewIcon';
@@ -69,12 +73,18 @@ import { TickIcon, WhiteTickIcon } from '@/frontend/shared/icons/TickIcon';
 import { TranscriptionIcon } from '@/frontend/shared/icons/TranscriptionIcon';
 import { TriangleIcon } from '@/frontend/shared/icons/TriangleIcon';
 import UnlockSmileyIcon from '@/frontend/shared/icons/UnlockSmileyIcon';
+import { UnorderedListIcon } from '@/frontend/shared/icons/UnorderedListIcon';
 
 const icons = [
   {
     name: 'AddIcon',
     component: AddIcon,
     importLine: 'import { AddIcon } from \'@/frontend/shared/icons/AddIcon\';',
+  },
+  {
+    name: 'AddImageIcon',
+    component: AddImageIcon,
+    importLine: 'import { AddImageIcon } from \'@/frontend/shared/icons/AddImageIcon\';',
   },
   {
     name: 'AnnotationsIcon',
@@ -155,6 +165,11 @@ const icons = [
     name: 'CloseIcon',
     component: CloseIcon,
     importLine: 'import { CloseIcon } from \'@/frontend/shared/icons/CloseIcon\';',
+  },
+  {
+    name: 'CodeIcon',
+    component: CodeIcon,
+    importLine: 'import { CodeIcon } from \'@/frontend/shared/icons/CodeIcon\';',
   },
   {
     name: 'CollectionIcon',
@@ -317,6 +332,11 @@ const icons = [
     importLine: 'import { NotStartedIcon } from \'@/frontend/shared/icons/NotStartedIcon\';',
   },
   {
+    name: 'NumberedListIcon',
+    component: NumberedListIcon,
+    importLine: 'import { NumberedListIcon } from \'@/frontend/shared/icons/NumberedListIcon\';',
+  },
+  {
     name: 'OpacityIcon',
     component: OpacityIcon,
     importLine: 'import { OpacityIcon } from \'@/frontend/shared/icons/OpacityIcon\';',
@@ -355,6 +375,11 @@ const icons = [
     name: 'ProgressIcon',
     component: ProgressIcon,
     importLine: 'import { ProgressIcon } from \'@/frontend/shared/icons/ProgressIcon\';',
+  },
+  {
+    name: 'QuoteIcon',
+    component: QuoteIcon,
+    importLine: 'import { QuoteIcon } from \'@/frontend/shared/icons/QuoteIcon\';',
   },
   {
     name: 'RequestChangesIcon',
@@ -435,6 +460,11 @@ const icons = [
     name: 'UnlockSmileyIcon',
     component: UnlockSmileyIcon,
     importLine: 'import UnlockSmileyIcon from \'@/frontend/shared/icons/UnlockSmileyIcon\';',
+  },
+  {
+    name: 'UnorderedListIcon',
+    component: UnorderedListIcon,
+    importLine: 'import { UnorderedListIcon } from \'@/frontend/shared/icons/UnorderedListIcon\';',
   },
   {
     name: 'WhiteTickIcon',
