@@ -1,7 +1,10 @@
 {
   "compilerOptions": {
     "experimentalDecorators": true,
-//    "baseUrl": "src",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
     "lib": ["dom", "es2020"],
     "typeRoots": ["../../node_modules/@types", "node_modules/@types"],
     "target": "esnext",

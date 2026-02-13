@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import _RichTextEditor, { EditorValue } from 'react-rte';
+import * as ReactDOM from 'react-dom';
 import styled from 'styled-components';
 import { useDebouncedCallback } from 'use-debounce';
 import { BaseField, FieldComponent } from '../../../types/field-types';
@@ -48,6 +49,78 @@ const defaultEditorToolbarConfig: any = {
 const RichTextEditor: typeof _RichTextEditor = (_RichTextEditor as any).default
   ? (_RichTextEditor as any).default
   : (_RichTextEditor as any);
+
+const patchLegacyRefsForReact19 = () => {
+  const richTextEditor = RichTextEditor as any;
+
+  if (parseInt(React.version.split('.')[0], 10) < 19 || richTextEditor.__madocReact19Patched) {
+    return;
+  }
+
+  const patchLegacyEditorRef = (node: any, owner: any): any => {
+    if (!React.isValidElement(node)) {
+      return node;
+    }
+
+    const reactElement = node as React.ReactElement & { ref?: unknown; props?: { children?: React.ReactNode; ref?: unknown } };
+    const children = reactElement.props?.children;
+    const patchedChildren =
+      children === undefined ? undefined : React.Children.map(children, child => patchLegacyEditorRef(child, owner));
+    const hasLegacyRef = reactElement.props?.ref === 'editor' || reactElement.ref === 'editor';
+
+    if (!hasLegacyRef && patchedChildren === children) {
+      return node;
+    }
+
+    const nextProps: { ref?: (instance: any) => void; children?: any } = {};
+    if (patchedChildren !== children) {
+      nextProps.children = patchedChildren;
+    }
+
+    if (hasLegacyRef) {
+      nextProps.ref = (instance: any) => {
+        owner._editorRef = instance;
+      };
+    }
+
+    return React.cloneElement(reactElement, nextProps);
+  };
+
+  const originalRender = richTextEditor.prototype.render;
+  richTextEditor.prototype.render = function patchedRender(this: any, ...args: any[]) {
+    return patchLegacyEditorRef(originalRender.apply(this, args), this);
+  };
+
+  richTextEditor.prototype._focus = function patchedFocus(this: any) {
+    if (this._editorRef && typeof this._editorRef.focus === 'function') {
+      this._editorRef.focus();
+    }
+  };
+
+  richTextEditor.__madocReact19Patched = true;
+};
+
+const patchFindDomNodeForReact19 = () => {
+  const reactDOM = ReactDOM as any;
+
+  if (parseInt(React.version.split('.')[0], 10) < 19 || reactDOM.__madocFindDomNodePatched) {
+    return;
+  }
+
+  if (typeof reactDOM.findDOMNode !== 'function') {
+    reactDOM.findDOMNode = (instance: any) => {
+      if (instance?._inputRef?.parentElement?.parentElement) {
+        return instance._inputRef.parentElement.parentElement;
+      }
+      return null;
+    };
+  }
+
+  reactDOM.__madocFindDomNodePatched = true;
+};
+
+patchLegacyRefsForReact19();
+patchFindDomNodeForReact19();
 
 const StyledRichTextEditor = styled(RichTextEditor)`
   border-color: rgba(5, 42, 68, 0.2);

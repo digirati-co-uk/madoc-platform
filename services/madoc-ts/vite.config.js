@@ -9,10 +9,11 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export default defineConfig({
   resolve: {
     dedupe: ['react', 'react-dom'],
-    alias: {
-      react: path.resolve(__dirname, 'node_modules/react'),
-      'react-dom': path.resolve(__dirname, 'node_modules/react-dom'),
-    },
+    alias: [
+      { find: /^@\//, replacement: `${path.resolve(__dirname, 'src')}/` },
+      { find: /^react$/, replacement: path.resolve(__dirname, 'node_modules/react') },
+      { find: /^react-dom$/, replacement: path.resolve(__dirname, 'node_modules/react-dom') },
+    ],
   },
   optimizeDeps: {
     include: ['@manifest-editor/iiif-browser-bundle'],

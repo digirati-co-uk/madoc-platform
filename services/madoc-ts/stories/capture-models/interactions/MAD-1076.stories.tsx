@@ -2,9 +2,10 @@ import { CaptureModelTestHarness } from './CaptureModelTestHarness';
 // @ts-ignore
 import mad1076fixture from '../../../fixtures/96-jira/MAD-1076.json';
 
-export default { title: 'Capture model interactions / MAD-1076 OCR saving' };
+export default { title: 'Capture model interactions / MAD-1076 OCR saving', component: CaptureModelTestHarness };
 
-export const InvalidBaseRevisionError = CaptureModelTestHarness.story({
+export const InvalidBaseRevisionError = {
+  args: {
   // The problem here is something went wrong during saving and there is NO canonical value.
   // What we need to do is to take one of the revised values, nuke it, and then re-add it.
   captureModel: mad1076fixture,
@@ -16,4 +17,5 @@ export const InvalidBaseRevisionError = CaptureModelTestHarness.story({
     manifestUri: 'https://digirati-co-uk.github.io/wunder.json',
     canvasUri: 'https://digirati-co-uk.github.io/wunder/canvases/27',
   },
-});
+  },
+};
