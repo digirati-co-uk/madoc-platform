@@ -1,9 +1,19 @@
 import { defineConfig } from 'vite';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 import react from '@vitejs/plugin-react';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const pnpmStorePath = path.resolve(__dirname, 'node_modules/.pnpm');
+const orderedMapPackageDir = fs
+  .readdirSync(pnpmStorePath)
+  .filter(name => name.startsWith('orderedmap@'))
+  .sort()
+  .pop();
+const orderedMapCjsPath = orderedMapPackageDir
+  ? path.resolve(pnpmStorePath, orderedMapPackageDir, 'node_modules/orderedmap/dist/index.cjs')
+  : 'orderedmap';
 
 // This is the top level one for testing.
 export default defineConfig({
@@ -15,7 +25,7 @@ export default defineConfig({
       { find: /^react-dom$/, replacement: path.resolve(__dirname, 'node_modules/react-dom') },
       {
         find: /^orderedmap$/,
-        replacement: 'orderedmap/dist/index.cjs',
+        replacement: orderedMapCjsPath,
       },
     ],
   },
