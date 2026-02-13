@@ -13,6 +13,10 @@ export default defineConfig({
       { find: /^@\//, replacement: `${path.resolve(__dirname, 'src')}/` },
       { find: /^react$/, replacement: path.resolve(__dirname, 'node_modules/react') },
       { find: /^react-dom$/, replacement: path.resolve(__dirname, 'node_modules/react-dom') },
+      {
+        find: /^orderedmap$/,
+        replacement: path.resolve(__dirname, 'node_modules/orderedmap/dist/index.cjs'),
+      },
     ],
   },
   optimizeDeps: {
