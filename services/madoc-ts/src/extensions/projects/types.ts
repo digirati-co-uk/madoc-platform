@@ -166,6 +166,8 @@ export type ProjectTemplate<
   }>;
   components?: {
     customEditor?: React.FC<any>;
+    customReviewRenderer?: React.FC<any>;
+    customAdminPreviewRenderer?: React.FC<any>;
   };
   source?: { type: string; id?: string; name: string };
 };
