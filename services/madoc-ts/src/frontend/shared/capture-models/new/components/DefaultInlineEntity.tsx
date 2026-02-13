@@ -384,6 +384,38 @@ export const DefaultInlineEntity: EditorRenderingConfig['InlineEntity'] = props 
   );
 
   if (inlineMode === 'two-level') {
+    const twoLevelBody = (
+      <>
+        {selector ? <VerboseSelector selector={selector} readOnly={!configuration.allowEditing} isTopLevel={false} /> : null}
+        <FieldSet disabled={disableForm} data-entity-id={entity.id}>
+          {mapProperties(entity, ({ type, property: propertyName, instances, label, description }) => {
+            if (type !== 'field') {
+              return null;
+            }
+
+            return (
+              <TwoLevelInlineFieldProperty
+                property={propertyName}
+                label={label}
+                description={description}
+                entityPath={entityPath}
+                instances={instances as BaseField[]}
+              />
+            );
+          })}
+        </FieldSet>
+      </>
+    );
+
+    // Keep non-multiple entities inline editable, but skip compact list-card UI.
+    if (!entity.allowMultiple) {
+      return (
+        <RoundedCard size="small" key={entity.id} interactive={false}>
+          {twoLevelBody}
+        </RoundedCard>
+      );
+    }
+
     const emptyLabel = (
       <span style={{ color: '#999' }}>No value {configuration.allowEditing ? '(click to edit)' : null}</span>
     );
@@ -449,28 +481,7 @@ export const DefaultInlineEntity: EditorRenderingConfig['InlineEntity'] = props 
             ) : null}
           </CompactHeaderActions>
         </CompactHeader>
-        {isCollapsed ? null : (
-          <>
-            {selector ? <VerboseSelector selector={selector} readOnly={!configuration.allowEditing} isTopLevel={false} /> : null}
-            <FieldSet disabled={disableForm} data-entity-id={entity.id}>
-              {mapProperties(entity, ({ type, property: propertyName, instances, label, description }) => {
-                if (type !== 'field') {
-                  return null;
-                }
-
-                return (
-                  <TwoLevelInlineFieldProperty
-                    property={propertyName}
-                    label={label}
-                    description={description}
-                    entityPath={entityPath}
-                    instances={instances as BaseField[]}
-                  />
-                );
-              })}
-            </FieldSet>
-          </>
-        )}
+        {isCollapsed ? null : twoLevelBody}
       </RoundedCard>
     );
   }
