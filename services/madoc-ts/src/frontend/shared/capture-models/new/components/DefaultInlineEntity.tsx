@@ -31,7 +31,7 @@ const CompactHeader = styled.div<{ $collapsed: boolean }>`
   justify-content: space-between;
   gap: 0.5em;
   margin-bottom: ${props => (props.$collapsed ? '0.2em' : '0.5em')};
-  padding-top: 0.35rem;
+  padding-top: ${props => (props.$collapsed ? '0px' : '0.5em')};
   padding-bottom: ${props => (props.$collapsed ? '0' : '0.4em')};
   background: #fff;
   border-bottom: ${props => (props.$collapsed ? 'none' : '1px solid #edf1fb')};
@@ -75,12 +75,11 @@ const CollapsedSummaryRow = styled.div`
 `;
 
 const CollapsedPreviewThumb = styled.div`
-  width: 2.25rem;
-  height: 2.25rem;
-  flex: 0 0 2.25rem;
-  border-radius: 8px;
+  width: 3rem;
+  height: 3rem;
+  flex: 0 0 3rem;
+  border-radius: 4px;
   overflow: hidden;
-  border: 1px solid #d8deec;
   background: #f3f6ff;
 
   img {
@@ -409,11 +408,7 @@ export const DefaultInlineEntity: EditorRenderingConfig['InlineEntity'] = props 
 
     // Keep non-multiple entities inline editable, but skip compact list-card UI.
     if (!entity.allowMultiple) {
-      return (
-        <RoundedCard size="small" key={entity.id} interactive={false}>
-          {twoLevelBody}
-        </RoundedCard>
-      );
+      return twoLevelBody;
     }
 
     const emptyLabel = (
@@ -469,10 +464,10 @@ export const DefaultInlineEntity: EditorRenderingConfig['InlineEntity'] = props 
                 $danger
                 aria-label={t('Remove {{label}}', { label: tModel(entity.label) })}
                 onClick={event => {
-                  event.stopPropagation();
-                  if (!window.confirm(t('Remove {{label}}?', { label: tModel(entity.label) }))) {
-                    return;
-                  }
+                  // event.stopPropagation();
+                  // if (!window.confirm(t('Remove {{label}}?', { label: tModel(entity.label) }))) {
+                  //   return;
+                  // }
                   onRemove();
                 }}
               >
