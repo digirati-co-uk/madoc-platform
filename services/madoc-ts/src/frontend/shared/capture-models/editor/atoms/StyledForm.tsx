@@ -38,7 +38,6 @@ export const inputCss = css`
   font-family: inherit;
   -webkit-appearance: none;
   border-radius: 3px;
-  tap-highlight-color: rgba(255, 255, 255, 0);
   padding: 0.4rem 0.8rem;
   font-size: ${textSize};
   line-height: ${lineHeight};
@@ -55,10 +54,6 @@ export const inputCss = css`
     background: #f0f0f0;
     cursor: not-allowed;
   }
-
-  //&:not(:valid)&:not(:focus) {
-  //  border: 1px solid #de1010;
-  //}
 `;
 
 const _StyledCheckbox = styled.input`
@@ -131,10 +126,9 @@ export const StyledFormMultilineInputElement = styled(Textarea)`
   ${inputCss}
 `;
 
-export const StyledFormInput: React.FC<React.DetailedHTMLProps<
-  React.InputHTMLAttributes<HTMLInputElement>,
-  HTMLInputElement
-> & { multiline?: boolean }> = forwardRef<any>(function StyledFormInput({ multiline, ...props }: any, ref) {
+export const StyledFormInput: React.FC<
+  React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> & { multiline?: boolean }
+> = forwardRef<any>(function StyledFormInput({ multiline, ...props }: any, ref) {
   const [value, setValue] = useState<string>(props.value as string);
 
   if (multiline) {

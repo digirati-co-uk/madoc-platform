@@ -232,6 +232,7 @@ import { listProjects } from './routes/projects/list-projects';
 import { getProject } from './routes/projects/get-project';
 import { getProjectMetadata } from './routes/projects/get-project-metadata';
 import { updateProjectMetadata } from './routes/projects/update-project-metadata';
+import { updateProjectTemplateConfig } from './routes/projects/update-project-template-config';
 import { getProjectStructure } from './routes/projects/get-project-structure';
 import { getCollectionProjects } from './routes/iiif/collections/get-collection-projects';
 import { getManifestProjects } from './routes/iiif/manifests/get-manifest-projects';
@@ -547,6 +548,11 @@ export const router = new TypedRouter({
   'get-project-structure': [TypedRouter.GET, '/api/madoc/projects/:id/structure', getProjectStructure],
   'get-project-metadata': [TypedRouter.GET, '/api/madoc/projects/:id/metadata', getProjectMetadata],
   'update-project-metadata': [TypedRouter.PUT, '/api/madoc/projects/:id/metadata', updateProjectMetadata],
+  'update-project-template-config': [
+    TypedRouter.PUT,
+    '/api/madoc/projects/:id/template-config',
+    updateProjectTemplateConfig,
+  ],
   'update-project-annotation-style': [
     TypedRouter.PUT,
     '/api/madoc/projects/:id/annotation-style',

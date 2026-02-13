@@ -21,6 +21,7 @@ import { Button, ButtonRow } from '../../../../shared/navigation/Button';
 import { ErrorBoundary } from '../../../../shared/utility/error-boundary';
 import { AdminHeader } from '../../../molecules/AdminHeader';
 import { MetadataEditor } from '../../../molecules/MetadataEditor';
+import { TabularProjectWizard } from './tabular-project';
 
 const PROJECT_DETAILS = 0;
 const ADDITIONAL_SETTINGS = 1;
@@ -264,6 +265,10 @@ export const NewProjectFromTemplate: React.FC = () => {
         </WidePage>
       </>
     );
+  }
+
+  if (chosenTemplateType === 'tabular-project') {
+    return <TabularProjectWizard />;
   }
 
   if (isRemoteTemplateType && source === 'upload' && !template) {

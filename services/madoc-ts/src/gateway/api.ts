@@ -681,6 +681,15 @@ export class ApiClient {
     });
   }
 
+  async updateProjectTemplateConfig(id: string | number, template_config: any | null) {
+    return this.request<any>(`/api/madoc/projects/${id}/template-config`, {
+      method: 'PUT',
+      body: {
+        template_config,
+      },
+    });
+  }
+
   async updateProjectStatus(id: number, status: number) {
     return this.request<any>(`/api/madoc/projects/${id}/status`, {
       method: 'PUT',

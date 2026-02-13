@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { RouteObject } from 'react-router-dom';
+import { RouteObject, useLocation } from 'react-router-dom';
 import { CurrentUserWithScope, Site, SystemConfig } from '../../extensions/site-manager/types';
 import { ApiClient } from '../../gateway/api';
 import { useTranslation } from 'react-i18next';
@@ -39,10 +39,12 @@ const AdminApp: React.FC<AdminAppProps> = ({
   systemConfig,
 }) => {
   const { i18n, t } = useTranslation();
+  const { pathname } = useLocation();
   const restarting = useIsApiRestarting(api);
   const viewingDirection = useMemo(() => i18n.dir(i18n.language), [i18n.language]);
   const [updatedSite, setSite] = useState(site);
   const [updatedSystemConfig, updateSystemConfig] = useState(systemConfig);
+  const isProjectCreationRoute = /^\/projects\/create\/[^/]+(?:\/.*)?$/.test(pathname);
 
   return (
     <div lang={i18n.language} dir={viewingDirection}>
@@ -68,9 +70,11 @@ const AdminApp: React.FC<AdminAppProps> = ({
           <UserBar user={user} admin />
           {restarting ? <ErrorMessage>{t('Lost connection to server, retrying...')}</ErrorMessage> : null}
           <AdminLayoutContainer>
-            <AdminLayoutMenu>
-              <AdminSidebar />
-            </AdminLayoutMenu>
+            {!isProjectCreationRoute ? (
+              <AdminLayoutMenu>
+                <AdminSidebar />
+              </AdminLayoutMenu>
+            ) : null}
             <AdminLayoutMain>
               <RenderConfigRoutes routes={routes} />
             </AdminLayoutMain>

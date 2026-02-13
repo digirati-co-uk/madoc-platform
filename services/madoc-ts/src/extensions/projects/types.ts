@@ -12,6 +12,7 @@ import { SlotMappingRequest } from '../../types/schemas/site-page';
 
 export type JsonProjectTemplate = {
   type: string; // Required unique type used to register and index.
+  template_config?: any | null;
   metadata: {
     label: string;
     description: string;
@@ -65,7 +66,7 @@ export type ModelDefinition<Options = any> =
 export type ProjectTemplate<
   Options extends Record<string, any> = any,
   RevSession extends Record<string, any> = any,
-  CustomConfig extends Record<string, any> = any
+  CustomConfig extends Record<string, any> = any,
 > = JsonProjectTemplate & {
   // Unknown parameters.
   setup?: ModelDefinition<Options> & {
