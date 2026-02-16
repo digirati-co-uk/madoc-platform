@@ -128,7 +128,7 @@ export function createConfig(name, entry) {
     },
     plugins: [
       react({
-        jsxRuntime: 'classic',
+        jsxRuntime: 'automatic',
         jsxPure: true,
       }),
     ],

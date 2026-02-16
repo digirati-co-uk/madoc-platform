@@ -80,7 +80,7 @@ export default defineConfig({
   plugins: [
     splitVendorChunkPlugin(),
     react({
-      jsxRuntime: 'classic',
+      jsxRuntime: 'automatic',
       jsxPure: true,
       babel: {
         plugins: [
