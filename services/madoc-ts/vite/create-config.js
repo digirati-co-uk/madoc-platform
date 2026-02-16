@@ -126,10 +126,13 @@ export function createConfig(name, entry) {
               },
             },
     },
+    esbuild: {
+      jsx: 'automatic',
+      jsxSideEffects: false,
+    },
     plugins: [
       react({
         jsxRuntime: 'automatic',
-        jsxPure: true,
       }),
     ],
   });

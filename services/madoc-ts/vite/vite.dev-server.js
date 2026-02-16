@@ -67,6 +67,10 @@ export default defineConfig({
     minify: false,
     sourcemap: true,
   },
+  esbuild: {
+    jsx: 'automatic',
+    jsxSideEffects: false,
+  },
   server: {
     https: https
       ? {
@@ -91,6 +95,7 @@ export default defineConfig({
   envPrefix: ['VITE_'],
   plugins: [
     react({
+      jsxRuntime: 'automatic',
       babel: {
         plugins: [
           [

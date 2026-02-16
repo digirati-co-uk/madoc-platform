@@ -77,11 +77,14 @@ export default defineConfig({
     sourcemap: true,
     emptyOutDir: true,
   },
+  esbuild: {
+    jsx: 'automatic',
+    jsxSideEffects: false,
+  },
   plugins: [
     splitVendorChunkPlugin(),
     react({
       jsxRuntime: 'automatic',
-      jsxPure: true,
       babel: {
         plugins: [
           [

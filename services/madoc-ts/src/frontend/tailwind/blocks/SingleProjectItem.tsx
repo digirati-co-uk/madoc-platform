@@ -1,3 +1,4 @@
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ProjectListItem } from '../../../types/schemas/project-list-item';
 import { LocaleString } from '../../shared/components/LocaleString';
