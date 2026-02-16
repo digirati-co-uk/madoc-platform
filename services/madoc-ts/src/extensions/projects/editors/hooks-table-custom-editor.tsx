@@ -1,9 +1,4 @@
-import React, { useMemo } from 'react';
-import {
-  CanvasViewerGrid,
-  CanvasViewerGridContent,
-  CanvasViewerGridSidebar,
-} from '../../../frontend/shared/atoms/CanvasViewerGrid';
+import React from 'react';
 import { DynamicVaultContext } from '../../../frontend/shared/capture-models/new/DynamicVaultContext';
 import { EditorContentViewer } from '../../../frontend/shared/capture-models/new/EditorContent';
 import { RevisionProviderWithFeatures } from '../../../frontend/shared/capture-models/new/components/RevisionProviderWithFeatures';
@@ -14,6 +9,7 @@ import { useCanvasModel } from '../../../frontend/site/hooks/use-canvas-model';
 import { useCaptureModelContributionLifecycle } from '../../../frontend/site/hooks/use-capture-model-contribution-lifecycle';
 import { useRouteContext } from '../../../frontend/site/hooks/use-route-context';
 import { HrefLink } from '@/frontend/shared/utility/href-link';
+import { HooksTableGridRenderer, HooksTableTopLevelFieldsModalButton } from './hooks-table-grid-renderer';
 
 function getBlockedReason(options: {
   hasExpired: boolean;
@@ -41,15 +37,13 @@ function getBlockedReason(options: {
   return 'Contribution is currently blocked.';
 }
 
-const HooksTableCustomEditorContent: React.FC<{ canvasId: number; canvas: any }> = ({ canvasId, canvas }) => {
+function HooksTableCustomEditorContent({ canvasId, canvas }: { canvasId: number; canvas: unknown }) {
   const lifecycle = useCaptureModelContributionLifecycle();
   const table = useCaptureModelEditorApi({ tableProperty: 'rows' });
 
   const isPersisting = lifecycle.phase === 'saving-draft' || lifecycle.phase === 'submitting';
   const isLoading = lifecycle.phase === 'loading' || lifecycle.phase === 'preparing';
   const isBlocked = lifecycle.phase === 'blocked';
-
-  const topLevelKeys = useMemo(() => Object.keys(table.topLevelFields), [table.topLevelFields]);
 
   async function onSaveForLater() {
     try {
@@ -68,11 +62,11 @@ const HooksTableCustomEditorContent: React.FC<{ canvasId: number; canvas: any }>
   }
 
   return (
-    <CanvasViewerGrid>
-      <CanvasViewerGridContent>
+    <div className="flex h-full min-h-0 flex-col">
+      <div className="min-h-0 basis-1/2 border-b border-gray-300">
         <EditorContentViewer canvasId={canvasId} canvas={canvas} />
-      </CanvasViewerGridContent>
-      <CanvasViewerGridSidebar>
+      </div>
+      <div className="min-h-0 basis-1/2 overflow-auto">
         <div className="flex flex-col gap-4 p-4">
           <div>
             <strong>Hooks table editor</strong>
@@ -90,9 +84,7 @@ const HooksTableCustomEditorContent: React.FC<{ canvasId: number; canvas: any }>
             </div>
           ) : null}
 
-          {isBlocked ? (
-            <div>{getBlockedReason(lifecycle)}</div>
-          ) : null}
+          {isBlocked ? <div>{getBlockedReason(lifecycle)}</div> : null}
 
           {!isLoading && lifecycle.phase !== 'error' && table.status !== 'ready' ? (
             <div>
@@ -106,78 +98,14 @@ const HooksTableCustomEditorContent: React.FC<{ canvasId: number; canvas: any }>
 
           {!isLoading && lifecycle.phase !== 'error' && table.status === 'ready' ? (
             <>
-              <ButtonRow>
-                <Button
-                  onClick={() => table.addRow()}
-                  disabled={isBlocked || isPersisting}
-                  title="Add a new table row"
-                >
+              <div className="flex flex-wrap gap-2">
+                <Button onClick={() => table.addRow()} disabled={isBlocked || isPersisting} title="Add a new table row">
                   Add row
                 </Button>
-              </ButtonRow>
+                <HooksTableTopLevelFieldsModalButton table={table} mode="write" disabled={isBlocked || isPersisting} />
+              </div>
 
-              <table className="w-full table-fixed border-collapse">
-                <thead>
-                  <tr>
-                    {table.columns.map(column => (
-                      <th key={column.key} className="border border-gray-300 p-2 align-top">
-                        {column.label}
-                      </th>
-                    ))}
-                    <th className="border border-gray-300 p-2 align-top">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {table.rows.map(row => (
-                    <tr key={row.entityId}>
-                      {table.columns.map(column => {
-                        const cell = row.getCell(column.key);
-                        return (
-                          <td key={column.key} className="border border-gray-300 p-2 align-top">
-                            <input
-                              className="min-h-9 w-full rounded border border-gray-300 px-1.5 py-1"
-                              value={String(cell?.value ?? '')}
-                              disabled={isBlocked || isPersisting}
-                              onChange={event => row.setCell(column.key, event.target.value)}
-                            />
-                          </td>
-                        );
-                      })}
-                      <td className="border border-gray-300 p-2 align-top">
-                        <Button
-                          onClick={() => table.removeRow(row.rowIndex)}
-                          disabled={isBlocked || isPersisting || table.rowCount < 2}
-                        >
-                          Remove
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-
-              {topLevelKeys.length ? (
-                <div className="flex flex-col gap-2">
-                  <strong>Top-level fields</strong>
-                  {topLevelKeys.map(property => (
-                    <div key={property} className="flex flex-col gap-1">
-                      <label htmlFor={`top-level-${property}-0`}>
-                        <strong>{property}</strong>
-                      </label>
-                      {(table.topLevelFields[property] || []).map((field, index) => (
-                        <textarea
-                          id={`top-level-${property}-${index}`}
-                          key={`${property}-${field.fieldId || index}`}
-                          className="min-h-16 w-full rounded border border-gray-300 p-1.5"
-                          value={String(field.value ?? '')}
-                          disabled={isBlocked || isPersisting}
-                          onChange={event => field.setValue(event.target.value)}
-                        />
-                      ))}
-                    </div>
-                  ))}
-                </div>
-              ) : null}
+              <HooksTableGridRenderer table={table} mode="write" disabled={isBlocked || isPersisting} />
 
               <ButtonRow>
                 <Button onClick={onSaveForLater} disabled={isBlocked || isPersisting}>
@@ -203,12 +131,12 @@ const HooksTableCustomEditorContent: React.FC<{ canvasId: number; canvas: any }>
             <pre className="whitespace-pre-wrap">{lifecycle.lastError.message}</pre>
           ) : null}
         </div>
-      </CanvasViewerGridSidebar>
-    </CanvasViewerGrid>
+      </div>
+    </div>
   );
-};
+}
 
-export const HooksTableCustomEditor: React.FC = () => {
+export function HooksTableCustomEditor() {
   const { canvasId } = useRouteContext();
   const { data: projectModel } = useCanvasModel();
   const [{ captureModel, canvas }] = useLoadedCaptureModel(projectModel?.model?.id, undefined, canvasId);
@@ -239,4 +167,4 @@ export const HooksTableCustomEditor: React.FC = () => {
       </RevisionProviderWithFeatures>
     </DynamicVaultContext>
   );
-};
+}

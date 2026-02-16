@@ -1,6 +1,15 @@
 import React from 'react';
 import { captureModelShorthand } from '../../../frontend/shared/capture-models/helpers/capture-model-shorthand';
+import type {
+  CustomAdminPreviewRendererProps,
+  CustomReviewRendererProps,
+} from '../../../frontend/site/pages/tasks/review-renderers/types';
 import { ProjectTemplate } from '../types';
+import {
+  hooksTableTestingRowFields,
+  hooksTableTestingTopLevelFields,
+  toCaptureModelFieldDefinition,
+} from './hooks-table-testing-fields';
 
 const HooksTableCustomEditorLazy = React.lazy(async () => {
   const module = await import('../editors/hooks-table-custom-editor');
@@ -28,7 +37,7 @@ const HooksTableCustomEditorLoader: React.FC = () => {
   );
 };
 
-const HooksTableReviewRendererLoader: React.FC<any> = props => {
+const HooksTableReviewRendererLoader: React.FC<CustomReviewRendererProps> = props => {
   if (typeof window === 'undefined') {
     return null;
   }
@@ -40,7 +49,7 @@ const HooksTableReviewRendererLoader: React.FC<any> = props => {
   );
 };
 
-const HooksTableAdminPreviewRendererLoader: React.FC<any> = props => {
+const HooksTableAdminPreviewRendererLoader: React.FC<CustomAdminPreviewRendererProps> = props => {
   if (typeof window === 'undefined') {
     return null;
   }
@@ -52,30 +61,25 @@ const HooksTableAdminPreviewRendererLoader: React.FC<any> = props => {
   );
 };
 
+const rowModelFields = hooksTableTestingRowFields.reduce<Record<string, Record<string, unknown>>>((acc, field) => {
+  acc[`rows.${field.key}`] = toCaptureModelFieldDefinition(field);
+  return acc;
+}, {});
+
+const topLevelModelFields = hooksTableTestingTopLevelFields.reduce<Record<string, Record<string, unknown>>>(
+  (acc, field) => {
+    acc[field.key] = toCaptureModelFieldDefinition(field);
+    return acc;
+  },
+  {}
+);
+
 const hooksTableTestingModel = captureModelShorthand({
   __nested__: {
     rows: { label: 'Tabular row', allowMultiple: true },
   },
-  'rows.entry': {
-    type: 'text-field',
-    label: 'Entry',
-  },
-  'rows.value': {
-    type: 'text-field',
-    label: 'Value',
-  },
-  'rows.comment': {
-    type: 'text-field',
-    label: 'Comment',
-    multiline: true,
-    minLines: 2,
-  },
-  pageNotes: {
-    type: 'text-field',
-    label: 'Page notes',
-    multiline: true,
-    minLines: 3,
-  },
+  ...rowModelFields,
+  ...topLevelModelFields,
 });
 
 export const hooksTableTesting: ProjectTemplate = {
@@ -114,8 +118,8 @@ export const hooksTableTesting: ProjectTemplate = {
       'maxContributionsPerResource',
     ],
     captureModels: {
-      preventChangeStructure: true,
-      preventChangeDocument: true,
+      preventChangeStructure: false,
+      preventChangeDocument: false,
     },
   },
   components: {

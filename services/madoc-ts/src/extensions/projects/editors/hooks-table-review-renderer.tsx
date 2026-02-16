@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { useCaptureModelEditorApi } from '../../../frontend/shared/capture-models/new/hooks/use-capture-model-editor-api';
 import { useReviewRendererContext } from '../../../frontend/site/pages/tasks/review-renderers/review-renderer-context';
 import {
@@ -6,6 +6,7 @@ import {
   CustomReviewRendererProps,
 } from '../../../frontend/site/pages/tasks/review-renderers/types';
 import { Button } from '../../../frontend/shared/navigation/Button';
+import { HooksTableGridRenderer, HooksTableTopLevelFieldsModalButton } from './hooks-table-grid-renderer';
 
 type HooksTableLayoutProps = {
   mode: 'read' | 'write';
@@ -13,11 +14,11 @@ type HooksTableLayoutProps = {
   viewer?: React.ReactNode;
   saveControl?: React.ReactNode;
   controls?: React.ReactNode;
-  DefaultControls?: React.FC<any>;
+  DefaultControls?: React.ComponentType<{ compact?: boolean }>;
   meta?: React.ReactNode;
 };
 
-const HooksTableLayout: React.FC<HooksTableLayoutProps> = ({
+function HooksTableLayout({
   mode,
   subjectType,
   viewer,
@@ -25,10 +26,9 @@ const HooksTableLayout: React.FC<HooksTableLayoutProps> = ({
   controls,
   DefaultControls,
   meta,
-}) => {
+}: HooksTableLayoutProps) {
   const table = useCaptureModelEditorApi({ tableProperty: 'rows' });
   const isReadOnly = mode === 'read';
-  const topLevelKeys = useMemo(() => Object.keys(table.topLevelFields), [table.topLevelFields]);
 
   if (table.status !== 'ready') {
     return (
@@ -46,85 +46,24 @@ const HooksTableLayout: React.FC<HooksTableLayoutProps> = ({
     <div className="flex h-full min-h-0 flex-col">
       {controls || (DefaultControls ? <DefaultControls /> : null)}
       {meta ? <div className="flex flex-wrap gap-4 border-b border-gray-300 bg-gray-100 px-3 py-2 text-sm">{meta}</div> : null}
-      <div className="flex min-h-0 min-w-0 flex-1">
-        {subjectType === 'canvas' ? <div className="basis-1/2 min-w-0 overflow-hidden border-r border-gray-300">{viewer}</div> : null}
-        <div className="flex min-h-full min-w-0 basis-1/2 flex-col overflow-auto">
+      <div className="flex min-h-0 flex-1 flex-col">
+        <div className="min-h-0 basis-1/2 border-b border-gray-300">
+          {subjectType === 'canvas' ? (
+            <div className="h-full min-h-0">{viewer}</div>
+          ) : (
+            <div className="flex h-full items-center justify-center text-sm text-gray-700">
+              No image preview for manifest reviews.
+            </div>
+          )}
+        </div>
+        <div className="min-h-0 basis-1/2 overflow-auto">
           <div className="flex flex-col gap-3 p-3">
-            {subjectType === 'manifest' ? <div>No image preview for manifest reviews.</div> : null}
-            {!isReadOnly ? (
-              <div className="flex gap-2">
-                <Button onClick={() => table.addRow()}>Add row</Button>
-              </div>
-            ) : null}
-            <table className="w-full table-fixed border-collapse">
-              <thead>
-                <tr>
-                  {table.columns.map(column => (
-                    <th key={column.key} className="border border-gray-300 p-2 align-top">
-                      {column.label}
-                    </th>
-                  ))}
-                  {!isReadOnly ? <th className="border border-gray-300 p-2 align-top">Actions</th> : null}
-                </tr>
-              </thead>
-              <tbody>
-                {table.rows.map(row => (
-                  <tr key={row.entityId}>
-                    {table.columns.map(column => {
-                      const cell = row.getCell(column.key);
-                      const value = String(cell?.value ?? '');
-                      return (
-                        <td key={column.key} className="border border-gray-300 p-2 align-top">
-                          {isReadOnly ? (
-                            <div>{value || '-'}</div>
-                          ) : (
-                            <input
-                              value={value}
-                              className="w-full rounded border border-gray-300 p-1"
-                              onChange={e => row.setCell(column.key, e.target.value)}
-                            />
-                          )}
-                        </td>
-                      );
-                    })}
-                    {!isReadOnly ? (
-                      <td className="border border-gray-300 p-2 align-top">
-                        <Button onClick={() => table.removeRow(row.rowIndex)} disabled={table.rowCount < 2}>
-                          Remove
-                        </Button>
-                      </td>
-                    ) : null}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <div className="flex flex-wrap gap-2">
+              {!isReadOnly ? <Button onClick={() => table.addRow()}>Add row</Button> : null}
+              <HooksTableTopLevelFieldsModalButton table={table} mode={mode} />
+            </div>
 
-            {topLevelKeys.length ? (
-              <div className="flex flex-col gap-2">
-                <strong>Top-level fields</strong>
-                {topLevelKeys.map(property => (
-                  <div key={property}>
-                    <label htmlFor={`table-top-level-${property}`}>
-                      <strong>{property}</strong>
-                    </label>
-                    {(table.topLevelFields[property] || []).map((field, index) => (
-                      <div key={`${property}-${field.fieldId || index}`}>
-                        {isReadOnly ? (
-                          <div>{String(field.value || '-')}</div>
-                        ) : (
-                          <textarea
-                            id={`table-top-level-${property}`}
-                            className="min-h-16 w-full rounded border border-gray-300 p-1"
-                            value={String(field.value || '')}
-                            onChange={e => field.setValue(e.target.value)}
-                          />
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                ))}
-              </div>
-            ) : null}
+            <HooksTableGridRenderer table={table} mode={mode} />
 
             {saveControl ? <div>{saveControl}</div> : null}
           </div>
@@ -132,9 +71,9 @@ const HooksTableLayout: React.FC<HooksTableLayoutProps> = ({
       </div>
     </div>
   );
-};
+}
 
-export const HooksTableReviewRenderer: React.FC<CustomReviewRendererProps> = props => {
+export function HooksTableReviewRenderer(props: CustomReviewRendererProps) {
   const review = useReviewRendererContext();
 
   return (
@@ -154,9 +93,9 @@ export const HooksTableReviewRenderer: React.FC<CustomReviewRendererProps> = pro
       }
     />
   );
-};
+}
 
-export const HooksTableAdminPreviewRenderer: React.FC<CustomAdminPreviewRendererProps> = props => {
+export function HooksTableAdminPreviewRenderer(props: CustomAdminPreviewRendererProps) {
   return (
     <HooksTableLayout
       mode={props.mode}
@@ -167,4 +106,4 @@ export const HooksTableAdminPreviewRenderer: React.FC<CustomAdminPreviewRenderer
       DefaultControls={props.DefaultControls}
     />
   );
-};
+}
