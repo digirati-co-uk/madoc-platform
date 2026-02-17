@@ -1,85 +1,25 @@
 import React from 'react';
-import styled from 'styled-components';
 
 import { HTMLFieldProps } from './HTMLField';
 
-export const HTMLPreviewContainer = styled.div`
-  font-size: 1em;
-  line-height: 1.5em;
+const previewContainerClassName =
+  'text-[1em] leading-[1.5em] [&_*]:font-inherit [&_*]:text-[1em] [&_code]:inline [&_code]:rounded-[3px] ' +
+  '[&_code]:bg-[rgba(5,42,68,0.1)] [&_code]:px-[0.4em] [&_code]:py-[0.1em] ' +
+  '[&_pre_>_code]:block [&_pre_>_code]:p-[0.65em] [&_h1]:my-[0.5em] [&_h1]:text-[1.75em] ' +
+  '[&_h2]:my-[0.5em] [&_h3]:my-[0.5em] [&_h4]:my-[0.5em] [&_h5]:my-[0.5em] [&_h6]:my-[0.5em] ' +
+  '[&_blockquote]:my-[0.65em] [&_blockquote]:border-l-[3px] [&_blockquote]:border-[rgba(5,42,68,0.4)] ' +
+  '[&_blockquote]:pl-[0.65em] [&_blockquote]:italic [&_p]:my-[0.85em] [&_header]:my-[0.85em] ' +
+  '[&_footer]:my-[0.85em] [&_main]:my-[0.85em] [&_header]:border-b [&_header]:border-[rgba(5,42,68,0.2)] ' +
+  '[&_footer]:border-t [&_footer]:border-[rgba(5,42,68,0.2)] [&_strong]:font-semibold [&_u]:underline ' +
+  '[&_ul]:my-[0.85em] [&_ul]:ml-[2em] [&_ul]:p-0 [&_ol]:my-[0.85em] [&_ol]:ml-[2em] [&_ol]:p-0 ' +
+  '[&_ul_ul]:my-0 [&_ul_ol]:my-0 [&_ol_ul]:my-0 [&_ol_ol]:my-0 [&_li]:p-0';
 
-  * {
-    font-family: inherit;
-    font-size: 1em;
-  }
+type HTMLPreviewContainerProps = React.HTMLAttributes<HTMLDivElement>;
 
-  code {
-    display: inline;
-    font-family: 'Inconsolata', 'Menlo', 'Consolas', monospace;
-    background-color: rgba(5, 42, 68, 0.1);
-    border-radius: 3px;
-    padding: 0.1em 0.4em;
-  }
-
-  pre > code {
-    display: block;
-    padding: 0.65em;
-  }
-
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    margin: 0.5em 0;
-  }
-  h1 {
-    font-size: 1.75em;
-  }
-
-  blockquote {
-    margin: 0.65em 0;
-    padding-left: 0.65em;
-    font-style: italic;
-    border-left: 3px solid rgba(5, 42, 68, 0.4);
-    font-family: inherit;
-  }
-  p,
-  header,
-  footer,
-  main {
-    margin: 0.85em 0;
-  }
-  header {
-    border-bottom: 1px solid rgba(5, 42, 68, 0.2);
-  }
-  footer {
-    border-top: 1px solid rgba(5, 42, 68, 0.2);
-  }
-
-  em {
-    font-style: italic;
-  }
-  strong {
-    font-weight: 600;
-  }
-  u {
-    text-decoration: underline;
-  }
-  ul,
-  ol {
-    margin: 0.85em 0 0.85em 2em;
-    padding: 0;
-    & ul,
-    & ol {
-      margin-top: 0;
-      margin-bottom: 0;
-    }
-  }
-  li {
-    padding: 0;
-  }
-`;
+export const HTMLPreviewContainer: React.FC<HTMLPreviewContainerProps> = ({ className, ...props }) => {
+  const mergedClassName = className ? `${previewContainerClassName} ${className}` : previewContainerClassName;
+  return <div className={mergedClassName} {...props} />;
+};
 
 export const HTMLFieldPreview: React.FC<HTMLFieldProps> = ({ value }) => {
   if (!value) {

@@ -117,6 +117,12 @@ Use it as the cross-cutting guide for how Madoc works, how to change it safely, 
 
 - Local Madoc is served at `https://madoc.local`.
 - Frontend changes should hot-reload from the containerized Vite workflow.
+- Dependency install/update commands in this package require a modern Node runtime for pnpm.
+- If you hit `ERROR: This version of pnpm requires at least Node.js v18.12` (for example while on `v18.4.0`), switch Node before running pnpm.
+- Preferred sequence:
+- `source ~/.nvm/nvm.sh`
+- `nvm use 22`
+- `pnpm --dir services/madoc-ts install` (or `pnpm --dir services/madoc-ts add/remove ...`)
 - For backend code changes, always rebuild the relevant Vite server bundle and restart the matching PM2 app:
 - Server: `pnpm build:vite-server` then `docker compose exec madoc-ts pm2 restart server`
 - Auth: `pnpm build:vite-auth` then `docker compose exec madoc-ts pm2 restart auth`

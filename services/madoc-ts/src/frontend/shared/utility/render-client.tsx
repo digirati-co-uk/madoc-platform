@@ -128,7 +128,7 @@ export async function renderClient(
                   <ScrollTop />
                   <DndProvider backend={MultiBackend} options={HTML5toTouch}>
                     <ThemeProvider theme={defaultTheme}>
-                      <ErrorBoundary onError={error => <ErrorPage error={error} />}>
+                      <ErrorBoundary onError={error => <ErrorPage error={error} user={dehydratedSite.user} />}>
                         <Suspense fallback={<Spinner />}>
                           <Component
                             jwt={jwt}

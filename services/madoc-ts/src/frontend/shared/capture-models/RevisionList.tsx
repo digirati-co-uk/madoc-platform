@@ -88,10 +88,10 @@ export const RevisionList: React.FC<RevisionListProps> = ({
         <SingleRevision key={idx} request={rev} unsavedIds={unsavedIds} selectRevision={selectRevision} />
       ))}
       {myRevisions.length > 0 ? <SubmissionList submissions={myRevisions} /> : null}
-      {model.instructions ? <RoundedCard>{model.instructions}</RoundedCard> : null}
+      {model?.instructions ? <RoundedCard>{model.instructions}</RoundedCard> : null}
       <CardButtonGroup>
         {goBack ? <CardButton onClick={goBack}>Back to choices</CardButton> : null}
-        {allowEdits ? (
+        {allowEdits && model?.id ? (
           <CardButton onClick={() => createRevision({ revisionId: model.id, cloneMode: 'FORK_INSTANCE' })}>
             Create new
           </CardButton>

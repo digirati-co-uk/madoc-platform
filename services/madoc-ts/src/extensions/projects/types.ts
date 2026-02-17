@@ -29,6 +29,11 @@ export type JsonProjectTemplate = {
     defaults?: Partial<ProjectConfiguration>;
     immutable?: Array<keyof ProjectConfiguration>;
     frozen?: boolean;
+    // Editor shown on the frontend to the user.
+    editor?: {
+      type: string;
+      options?: any;
+    };
     captureModels?: ModelEditorConfig;
     tasks?: {
       generateOnCreate?: boolean;
@@ -161,6 +166,8 @@ export type ProjectTemplate<
   }>;
   components?: {
     customEditor?: React.FC<any>;
+    customReviewRenderer?: React.FC<any>;
+    customAdminPreviewRenderer?: React.FC<any>;
   };
   source?: { type: string; id?: string; name: string };
 };

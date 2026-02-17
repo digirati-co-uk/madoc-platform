@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { CanvasPanel, SimpleViewerProvider, useCanvas, VaultProvider } from 'react-iiif-vault';
 
 import { CastANetCanvas } from '../../../src/frontend/admin/components/tabular/cast-a-net/CastANetCanvas';

@@ -79,6 +79,8 @@ import { getInvitation } from './routes/manage-site/get-invitation';
 import { getSiteUsers } from './routes/manage-site/get-site-users';
 import { listJobs, runJob } from './routes/admin/list-jobs';
 import { queueStatus } from './routes/admin/queue-status';
+import { cancelSearchIndex } from './routes/admin/cancel-search-index';
+import { resumeQueue } from './routes/admin/resume-queue';
 import {
   extractLocalesFromContent,
   getLocalisation,
@@ -141,6 +143,18 @@ import { getProjectNote } from './routes/projects/get-project-note';
 import { updateCuratedFeed } from './routes/projects/update-curated-feed';
 import { updateProjectNote } from './routes/projects/update-project-note';
 import { fullReindex } from './routes/search/full-reindex';
+import { typesenseGetContext, typesenseListContexts } from './routes/search/typesense-contexts';
+import {
+  typesenseGetIndexable,
+  typesenseGetModel,
+  typesenseIndexRawIndexable,
+  typesenseIngestModelIndexables,
+  typesenseListIndexables,
+  typesenseListModels,
+} from './routes/search/typesense-indexables';
+import { typesenseDeleteIIIF, typesenseGetIIIF, typesenseIngestIIIF, typesenseListIIIF } from './routes/search/typesense-iiif';
+import { typesenseProxyMultiSearch, typesenseProxySearch, typesenseProxyStatus } from './routes/search/typesense-proxy';
+import { typesenseQuery } from './routes/search/typesense-query';
 import { siteCanvasSource } from './routes/site/site-canvas-reference';
 import { siteManifestModels } from './routes/site/site-manifest-models';
 import { siteMetadata } from './routes/site/site-metadata';
@@ -294,6 +308,8 @@ export const router = new TypedRouter({
   'pm2-restart-madoc': [TypedRouter.POST, '/api/madoc/pm2/restart/madoc', pm2RestartMadoc],
   'pm2-restart-scheduler': [TypedRouter.POST, '/api/madoc/pm2/restart/scheduler', pm2RestartScheduler],
   'queue-status': [TypedRouter.GET, '/api/madoc/queue/status', queueStatus],
+  'queue-cancel-search-index': [TypedRouter.POST, '/api/madoc/queue/cancel-search-index', cancelSearchIndex],
+  'queue-resume': [TypedRouter.POST, '/api/madoc/queue/resume', resumeQueue],
   'cron-jobs': [TypedRouter.GET, '/api/madoc/cron/jobs', listJobs],
   'run-cron-jobs': [TypedRouter.POST, '/api/madoc/cron/jobs/:jobId/run', runJob],
   'regenerate-keys': [TypedRouter.POST, '/api/madoc/system/key-regen', keyRegenerate],
@@ -371,6 +387,37 @@ export const router = new TypedRouter({
     '/api/madoc/configuration/search-facets',
     updateFacetConfiguration,
   ],
+  'madoc-search-query': [TypedRouter.POST, '/api/madoc/search', typesenseQuery],
+  'madoc-search-query-get': [TypedRouter.GET, '/api/madoc/search', typesenseQuery],
+  'madoc-typesense-status': [TypedRouter.GET, '/api/madoc/typesense/status', typesenseProxyStatus],
+  'madoc-typesense-search-get': [TypedRouter.GET, '/api/madoc/typesense', typesenseProxySearch],
+  'madoc-typesense-search-post': [TypedRouter.POST, '/api/madoc/typesense', typesenseProxySearch],
+  'madoc-typesense-multi-search-post': [
+    TypedRouter.POST,
+    '/api/madoc/typesense/multi_search',
+    typesenseProxyMultiSearch,
+  ],
+  'site-typesense-status': [TypedRouter.GET, '/s/:slug/madoc/api/typesense/status', typesenseProxyStatus],
+  'site-typesense-search-get': [TypedRouter.GET, '/s/:slug/madoc/api/typesense', typesenseProxySearch],
+  'site-typesense-search-post': [TypedRouter.POST, '/s/:slug/madoc/api/typesense', typesenseProxySearch],
+  'site-typesense-multi-search-post': [
+    TypedRouter.POST,
+    '/s/:slug/madoc/api/typesense/multi_search',
+    typesenseProxyMultiSearch,
+  ],
+  'search-index-iiif': [TypedRouter.POST, '/api/search/iiif', typesenseIngestIIIF],
+  'search-reindex-iiif': [TypedRouter.PUT, '/api/search/iiif/:id', typesenseIngestIIIF],
+  'search-list-iiif': [TypedRouter.GET, '/api/search/iiif', typesenseListIIIF],
+  'search-get-iiif': [TypedRouter.GET, '/api/search/iiif/:id', typesenseGetIIIF],
+  'search-delete-iiif': [TypedRouter.DELETE, '/api/search/iiif/:id', typesenseDeleteIIIF],
+  'search-index-model': [TypedRouter.POST, '/api/search/model', typesenseIngestModelIndexables],
+  'search-list-model': [TypedRouter.GET, '/api/search/model', typesenseListModels],
+  'search-get-model': [TypedRouter.GET, '/api/search/model/:id', typesenseGetModel],
+  'search-index-indexable': [TypedRouter.POST, '/api/search/indexables', typesenseIndexRawIndexable],
+  'search-list-indexable': [TypedRouter.GET, '/api/search/indexables', typesenseListIndexables],
+  'search-get-indexable': [TypedRouter.GET, '/api/search/indexables/:id', typesenseGetIndexable],
+  'search-list-contexts': [TypedRouter.GET, '/api/search/contexts', typesenseListContexts],
+  'search-get-context': [TypedRouter.GET, '/api/search/contexts/:id', typesenseGetContext],
   'update-metadata-configuration': [TypedRouter.POST, '/api/madoc/configuration/metadata', updateMetadataConfiguration],
   'site-details': [TypedRouter.GET, '/api/madoc/site/:siteId/details', getSiteDetails],
 

@@ -1,5 +1,6 @@
 import react from '@vitejs/plugin-react';
 import { readFileSync } from 'fs';
+import path from 'path';
 
 const pkg = JSON.parse(readFileSync('./package.json').toString());
 
@@ -65,7 +66,7 @@ export function createConfig(name, entry) {
     clearScreen: false,
     resolve: {
       dedupe: DEDUPE,
-      alias: {},
+      alias: [{ find: /^@\//, replacement: `${path.resolve(process.cwd(), 'src')}/` }],
     },
     build: {
       dedupe: DEDUPE,
@@ -125,10 +126,13 @@ export function createConfig(name, entry) {
               },
             },
     },
+    esbuild: {
+      jsx: 'automatic',
+      jsxSideEffects: false,
+    },
     plugins: [
       react({
-        jsxRuntime: 'classic',
-        jsxPure: true,
+        jsxRuntime: 'automatic',
       }),
     ],
   });

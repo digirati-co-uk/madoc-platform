@@ -1,18 +1,22 @@
 import * as React from 'react';
-import { expect } from '@storybook/test';
+import { expect } from 'storybook/test';
 import { CaptureModelTestHarness } from './CaptureModelTestHarness';
-import { within, userEvent } from '@storybook/test';
+import { within, userEvent } from 'storybook/test';
 // @ts-ignore
 import fixture from '../../../fixtures/04-selectors/05-wunder-selector.json';
 export default { title: 'Capture model interactions / Remove region', component: CaptureModelTestHarness };
 
-export const StaticModelViewer = CaptureModelTestHarness.story({
-  captureModel: fixture,
-});
+export const StaticModelViewer = {
+  args: {
+    captureModel: fixture,
+  },
+};
 
-export const TestDefineRegion = CaptureModelTestHarness.story({
-  captureModel: fixture,
-});
+export const TestDefineRegion = {
+  args: {
+    captureModel: fixture,
+  },
+};
 
 TestDefineRegion.play = async args => {
   const canvas = within(args.canvasElement);

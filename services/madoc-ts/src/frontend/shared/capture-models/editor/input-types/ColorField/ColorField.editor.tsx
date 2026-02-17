@@ -6,7 +6,7 @@ import { StyledCheckbox, StyledFormField, StyledFormInputElement, StyledFormLabe
 const ColorFieldEditor: React.FC<{
   inlineLabel?: string;
   clearable?: boolean;
-}> = ({ clearable, inlineLabel }) => {
+}> = ({ inlineLabel }) => {
   const { t } = useTranslation();
   return (
     <>
@@ -24,7 +24,7 @@ const ColorFieldEditor: React.FC<{
       </StyledFormField>
       <StyledFormField>
         <StyledFormLabel>
-          <Field as={StyledCheckbox} type="checkbox" name="clearable" value={clearable} required={false} />
+          <Field as={StyledCheckbox} type="checkbox" name="clearable" required={false} />
           {t('Allow clearing of selection')}
         </StyledFormLabel>
       </StyledFormField>

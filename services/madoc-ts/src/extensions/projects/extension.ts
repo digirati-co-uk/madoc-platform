@@ -7,6 +7,7 @@ import { metadataSuggestions } from './templates/metadata-suggestions';
 import { ocrCorrection } from './templates/ocr-correction';
 import { ProjectTemplate } from './types';
 import { tabularProject } from './templates/tabular-project';
+import { hooksTableTesting } from './templates/hooks-table-testing';
 
 export class ProjectTemplateExtension extends RegistryExtension<ProjectTemplate> implements BaseExtension {
   api: ApiClient;
@@ -23,6 +24,7 @@ export class ProjectTemplateExtension extends RegistryExtension<ProjectTemplate>
     ProjectTemplateExtension.register(crowdsourcedTranscription);
     ProjectTemplateExtension.register(ocrCorrection);
     ProjectTemplateExtension.register(tabularProject);
+    ProjectTemplateExtension.register(hooksTableTesting);
   }
 
   dispose() {

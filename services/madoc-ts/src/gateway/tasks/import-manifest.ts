@@ -283,7 +283,7 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
           // Also available through the API:
           // await userApi.batchIndexResources([{ type: 'manifest', id: task.state.resourceId }], { recursive: true });
           await userApi.newTask(
-            createSearchIndexTask([{ type: 'manifest', id: task.state.resourceId }], site.id, { recursive: true }),
+            createSearchIndexTask([{ type: 'manifest', id: task.state.resourceId }], site.id, { recursive: false }),
             taskId
           );
         }

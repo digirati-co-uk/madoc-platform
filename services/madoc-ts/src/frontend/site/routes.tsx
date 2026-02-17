@@ -638,7 +638,7 @@ export function createRoutes(Components: RouteComponents): CreateRouteType {
     {
       path: '/search',
       exact: true,
-      element: <Components.Search />,
+      element: <Components.TypesenseSearch />,
     },
     {
       path: '/dashboard',

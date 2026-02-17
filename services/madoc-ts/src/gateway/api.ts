@@ -44,7 +44,7 @@ import { ProjectManifestTasks } from '../types/manifest-tasks';
 import { NoteListResponse } from '../types/personal-notes';
 import { Pm2Status } from '../types/pm2';
 import { ProjectFeedback, ProjectMember, ProjectUpdate } from '../types/projects';
-import { BullMqSnapshot } from '../types/bullmq-status';
+import { BullMqCancelSearchIndexResult, BullMqResumeQueueResult, BullMqSnapshot } from '../types/bullmq-status';
 import { ResourceLinkResponse } from '../types/schemas/linking';
 import { ProjectConfiguration } from '../types/schemas/project-configuration';
 import { SearchIngestRequest, SearchResponse, SearchQuery } from '../types/search';
@@ -104,6 +104,17 @@ export type ApiClientWithoutExtensions = Omit<
   | 'getCaptureModelDataSources'
   | 'cloneCaptureModel'
 >;
+
+function getSearchQueryEndpoint() {
+  return '/api/search/search';
+}
+
+function getTypesenseProxyBasePath(siteSlug?: string) {
+  if (siteSlug) {
+    return `/s/${siteSlug}/madoc/api/typesense`;
+  }
+  return '/api/madoc/typesense';
+}
 
 export class ApiClient {
   private readonly gateway: string;
@@ -577,6 +588,18 @@ export class ApiClient {
     return this.request<BullMqSnapshot>(`/api/madoc/queue/status${query ? `?${query}` : ''}`);
   }
 
+  async cancelSearchIndexQueue() {
+    return this.request<BullMqCancelSearchIndexResult>(`/api/madoc/queue/cancel-search-index`, {
+      method: 'POST',
+    });
+  }
+
+  async resumeQueue() {
+    return this.request<BullMqResumeQueueResult>(`/api/madoc/queue/resume`, {
+      method: 'POST',
+    });
+  }
+
   async getMetadataKeys() {
     return this.request<{ metadata: Array<{ label: string; language: string; total_items: number }> }>(
       `/api/madoc/iiif/metadata-keys`
@@ -997,7 +1020,7 @@ export class ApiClient {
         facets: [],
       };
     return await this.request<SearchResponse>(
-      `/api/search/search?${stringify({ fulltext: searchTerm, page: pageQuery, facetType, facetValue })}`
+      `${getSearchQueryEndpoint()}?${stringify({ fulltext: searchTerm, page: pageQuery, facetType, facetValue })}`
     );
   }
 
@@ -2137,11 +2160,49 @@ export class ApiClient {
 
   // Search API
   async searchQuery(query: SearchQuery, page = 1, madoc_id?: string) {
-    return this.request<SearchResponse>(`/api/search/search?${stringify({ page, madoc_id })}`, {
+    return this.request<SearchResponse>(`${getSearchQueryEndpoint()}?${stringify({ page, madoc_id })}`, {
       method: 'POST',
       body: query,
     });
   }
+
+  async getTypesenseStatus() {
+    const basePath = getTypesenseProxyBasePath(this.getSiteSlug());
+    return this.request<{
+      available: boolean;
+      collection: string;
+      reason?: string;
+    }>(`${basePath}/status`, {
+      method: 'GET',
+      publicRequest: !!this.getSiteSlug(),
+    });
+  }
+
+  async typesenseSearch(params: Record<string, any>, { method = 'POST' }: { method?: 'GET' | 'POST' } = {}) {
+    const basePath = getTypesenseProxyBasePath(this.getSiteSlug());
+    if (method === 'GET') {
+      return this.request(`${basePath}?${stringify(params || {})}`, {
+        method: 'GET',
+        publicRequest: !!this.getSiteSlug(),
+      });
+    }
+
+    return this.request(`${basePath}`, {
+      method: 'POST',
+      body: params || {},
+      publicRequest: !!this.getSiteSlug(),
+    });
+  }
+
+  async typesenseMultiSearch(payload: { searches: Array<Record<string, any>>; [key: string]: any }) {
+    const basePath = getTypesenseProxyBasePath(this.getSiteSlug());
+    return this.request(`${basePath}/multi_search`, {
+      method: 'POST',
+      body: payload,
+      publicRequest: !!this.getSiteSlug(),
+    });
+  }
+
   // can be used for both canvases and manifests
   async searchIngest(resource: SearchIngestRequest) {
     return this.request<SearchIndexTask>(`/api/search/iiif`, {
@@ -2226,7 +2287,7 @@ export class ApiClient {
   }
 
   async getIndexedManifestById(madoc_id: string) {
-    return this.request<SearchResponse>(`/api/search/search?${stringify({ madoc_id })}`, {
+    return this.request<SearchResponse>(`${getSearchQueryEndpoint()}?${stringify({ madoc_id })}`, {
       method: 'GET',
     });
   }
@@ -2296,7 +2357,7 @@ export class ApiClient {
   }
 
   async getIndexedCanvasById(madoc_id: string) {
-    return this.request<SearchResponse>(`/api/search/search?${stringify({ madoc_id })}`, {
+    return this.request<SearchResponse>(`${getSearchQueryEndpoint()}?${stringify({ madoc_id })}`, {
       method: 'GET',
     });
   }

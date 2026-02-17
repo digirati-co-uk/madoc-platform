@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { DefineTabularModel } from '../../../src/frontend/admin/components/tabular/cast-a-net/DefineTabularModel';
 import type {
   DefineTabularModelValue,

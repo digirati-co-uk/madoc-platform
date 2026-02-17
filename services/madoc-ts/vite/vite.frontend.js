@@ -46,6 +46,7 @@ export default defineConfig({
   resolve: {
     dedupe: [...PROSEMIRROR_PACKAGES.map(([pkg]) => pkg)],
     alias: [
+      { find: /^@\//, replacement: `${path.resolve(process.cwd(), 'src')}/` },
       ...prosemirrorAliases,
       // React 19-compatible defaults.
     ],
@@ -76,11 +77,14 @@ export default defineConfig({
     sourcemap: true,
     emptyOutDir: true,
   },
+  esbuild: {
+    jsx: 'automatic',
+    jsxSideEffects: false,
+  },
   plugins: [
     splitVendorChunkPlugin(),
     react({
-      jsxRuntime: 'classic',
-      jsxPure: true,
+      jsxRuntime: 'automatic',
       babel: {
         plugins: [
           [

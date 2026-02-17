@@ -56,6 +56,7 @@ export default defineConfig({
   resolve: {
     dedupe: ['react', 'react-dom', ...PROSEMIRROR_PACKAGES.map(([pkg]) => pkg)],
     alias: [
+      { find: /^@\//, replacement: `${path.resolve(process.cwd(), 'src')}/` },
       ...prosemirrorAliases,
       // React 19-compatible defaults.
     ],
@@ -65,6 +66,10 @@ export default defineConfig({
     target: ['es2021', 'chrome97', 'safari13'],
     minify: false,
     sourcemap: true,
+  },
+  esbuild: {
+    jsx: 'automatic',
+    jsxSideEffects: false,
   },
   server: {
     https: https
@@ -90,6 +95,7 @@ export default defineConfig({
   envPrefix: ['VITE_'],
   plugins: [
     react({
+      jsxRuntime: 'automatic',
       babel: {
         plugins: [
           [
