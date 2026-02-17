@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import slugify from 'slugify';
 import { useMutation } from 'react-query';
 import { useTranslation } from 'react-i18next';
-import { InternationalString } from '@iiif/presentation-3';
+import type { Collection as IIIFCollection, InternationalString, Manifest as IIIFManifest } from '@iiif/presentation-3';
 import { CreateProject } from '../../../../../types/schemas/create-project';
 import { useApi } from '../../../../shared/hooks/use-api';
 import { useDefaultLocale, useSite, useSupportedLocales } from '../../../../shared/hooks/use-site';
@@ -12,7 +12,6 @@ import { Input, InputContainer, InputLabel } from '../../../../shared/form/Input
 import { Button, ButtonRow, TinyButton } from '../../../../shared/navigation/Button';
 import { ErrorMessage } from '../../../../shared/callouts/ErrorMessage';
 import { MetadataEditor } from '../../../molecules/MetadataEditor';
-import { ContentExplorer } from '../../../../shared/features/ContentExplorer';
 import { buildTabularProjectSetupPayload } from '../../../components/tabular/cast-a-net/CastANetStructure';
 import type {
   TabularCellRef,
@@ -90,7 +89,6 @@ const STEP_MODEL = 2;
 const STEP_NET = 3;
 const STEP_PREVIEW = 4;
 const STEP_COMPLETE = 5;
-type IiifPickerMode = 'external' | 'madoc';
 const CAST_A_NET_ROWS = 5;
 const SHARE_COPY_TIMEOUT = 1800;
 const PREVIEW_NUDGE_STEP = 0.25;
@@ -103,6 +101,10 @@ const PREVIEW_CANVAS_MIN_HEIGHT = 280;
 const PREVIEW_TABLE_MIN_HEIGHT = 180;
 const PREVIEW_CANVAS_MAX_HEIGHT =
   PREVIEW_SPLIT_TOTAL_HEIGHT - PREVIEW_SPLIT_DIVIDER_HEIGHT - PREVIEW_TABLE_MIN_HEIGHT - PREVIEW_SPLIT_GAP * 2;
+const MAX_MADOC_COLLECTION_HOME_PAGES = 20;
+const MAX_MADOC_MANIFEST_HOME_PAGES = 40;
+const IIIF_HOME_COLLECTION_PREFIX = 'iiif://madoc-tabular-home';
+const IIIF_HOME_LOCAL_STORAGE_KEY = 'iiif-browser-tabular-project-v2';
 
 const nudgeButtonStyle: React.CSSProperties = {
   height: NUDGE_BUTTON_SIZE,
@@ -121,15 +123,22 @@ const hasIntlValue = (value?: InternationalString) => {
   return Boolean(first && first.join('').trim());
 };
 
+type IiifSelectionLink = {
+  id?: string | number;
+  type?: string | number;
+};
+
+type IiifSelectionLinkValue = IiifSelectionLink | string | number;
+
 type IiifSelectionResource = {
-  id?: string;
-  type?: string;
-  partOf?: Array<{ id?: string; type?: string }>;
+  id?: string | number;
+  type?: string | number;
+  partOf?: IiifSelectionLinkValue | IiifSelectionLinkValue[];
 };
 
 type IiifSelectionPayload = IiifSelectionResource & {
-  resource?: IiifSelectionResource;
-  parent?: IiifSelectionResource | null;
+  resource?: IiifSelectionResource | string | number;
+  parent?: IiifSelectionResource | string | number | null;
 };
 
 type TabularOutlineSharePayload = {
@@ -144,8 +153,390 @@ type TabularOutlineSharePayload = {
   tabular?: TabularProjectSetupPayload;
 };
 
+type IiifHistoryItem = {
+  url: string;
+  route: string;
+  resource: string | null;
+  metadata?: {
+    type?: string;
+    label?: InternationalString;
+  };
+  timestamp?: string | null;
+};
+
 const clampToRange = (value: number, min: number, max: number) => {
   return Math.max(min, Math.min(max, value));
+};
+
+const collectionRouteForId = (id: string) => {
+  return `/collection?id=${encodeURIComponent(id)}`;
+};
+
+const loadingRouteForId = (id: string) => {
+  return `/loading?id=${encodeURIComponent(id)}`;
+};
+
+const internationalStringToSearchValue = (value?: InternationalString) => {
+  if (!value) {
+    return '';
+  }
+
+  return Object.values(value).flat().join(' ').trim().toLowerCase();
+};
+
+const isObjectRecord = (value: unknown): value is Record<string, unknown> => {
+  return !!value && typeof value === 'object' && !Array.isArray(value);
+};
+
+const normalizeLegacyIiifKeys = <T,>(value: T): { value: T; changed: boolean } => {
+  if (Array.isArray(value)) {
+    let changed = false;
+    const next = value.map(item => {
+      const normalized = normalizeLegacyIiifKeys(item);
+      if (normalized.changed) {
+        changed = true;
+      }
+      return normalized.value;
+    });
+
+    return {
+      value: (changed ? next : value) as T,
+      changed,
+    };
+  }
+
+  if (!isObjectRecord(value)) {
+    return { value, changed: false };
+  }
+
+  let changed = false;
+  const next: Record<string, unknown> = {};
+
+  for (const [key, child] of Object.entries(value)) {
+    const normalized = normalizeLegacyIiifKeys(child);
+    if (normalized.changed) {
+      changed = true;
+    }
+    next[key] = normalized.value;
+  }
+
+  if (typeof value['@id'] === 'string' && typeof value.id !== 'string') {
+    next.id = value['@id'];
+    changed = true;
+  }
+
+  if (typeof value['@type'] === 'string' && typeof value.type !== 'string') {
+    next.type = value['@type'];
+    changed = true;
+  }
+
+  return {
+    value: (changed ? next : value) as T,
+    changed,
+  };
+};
+
+const toSelectionResource = (value: unknown): IiifSelectionResource => {
+  if (value == null) {
+    return {};
+  }
+
+  if (typeof value === 'string' || typeof value === 'number') {
+    return { id: value };
+  }
+
+  if (typeof value === 'object') {
+    return value as IiifSelectionResource;
+  }
+
+  return {};
+};
+
+const toStringValue = (value: unknown): string | undefined => {
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    return trimmed ? trimmed : undefined;
+  }
+  if (typeof value === 'number' && Number.isFinite(value)) {
+    return `${value}`;
+  }
+  return undefined;
+};
+
+const toTypeValue = (value: unknown) => {
+  return (toStringValue(value) || '').toLowerCase();
+};
+
+const toArray = <T,>(value: T | T[] | undefined | null): T[] => {
+  if (value == null) {
+    return [];
+  }
+  return Array.isArray(value) ? value : [value];
+};
+
+const stripQueryAndHash = (value: string) => {
+  return value.split('#')[0].split('?')[0];
+};
+
+const toAbsoluteUrlIfPath = (value?: string) => {
+  if (!value || !value.startsWith('/') || typeof window === 'undefined') {
+    return value;
+  }
+
+  try {
+    return new URL(value, window.location.origin).toString();
+  } catch {
+    return value;
+  }
+};
+
+const madocManifestUrnPattern = /^urn:madoc:manifest:(\d+)$/i;
+const madocManifestPathPattern = /\/manifests\/(\d+)(?:\/|$)/i;
+const madocCanvasUrnPattern = /^urn:madoc:canvas:(\d+)$/i;
+const madocCanvasPathPattern = /\/canvases\/(\d+)(?:\/|$)/i;
+const madocCanvasExportPathPattern = /\/c(\d+)(?:\/|$)/i;
+const numberPattern = /^\d+$/;
+const manifestExportPattern = /\/manifests\/\d+\/export\//i;
+
+const getMadocManifestId = (value?: string): number | undefined => {
+  if (!value) {
+    return undefined;
+  }
+
+  const candidate = stripQueryAndHash(value);
+
+  if (numberPattern.test(candidate)) {
+    return Number(candidate);
+  }
+
+  const urnMatch = candidate.match(madocManifestUrnPattern);
+  if (urnMatch?.[1]) {
+    return Number(urnMatch[1]);
+  }
+
+  const pathMatch = candidate.match(madocManifestPathPattern);
+  if (pathMatch?.[1]) {
+    return Number(pathMatch[1]);
+  }
+
+  return undefined;
+};
+
+const getMadocCanvasId = (value?: string): number | undefined => {
+  if (!value) {
+    return undefined;
+  }
+
+  const candidate = stripQueryAndHash(value);
+
+  if (numberPattern.test(candidate)) {
+    return Number(candidate);
+  }
+
+  const urnMatch = candidate.match(madocCanvasUrnPattern);
+  if (urnMatch?.[1]) {
+    return Number(urnMatch[1]);
+  }
+
+  const pathMatch = candidate.match(madocCanvasPathPattern);
+  if (pathMatch?.[1]) {
+    return Number(pathMatch[1]);
+  }
+
+  const exportMatch = candidate.match(madocCanvasExportPathPattern);
+  if (exportMatch?.[1]) {
+    return Number(exportMatch[1]);
+  }
+
+  return undefined;
+};
+
+const looksLikeManifestReference = (id?: string, type?: string) => {
+  if (!id) {
+    return false;
+  }
+
+  if (type === 'manifest') {
+    return true;
+  }
+
+  const candidate = stripQueryAndHash(id);
+  return (
+    madocManifestUrnPattern.test(candidate) ||
+    manifestExportPattern.test(candidate) ||
+    /\/manifests\/\d+\/?$/i.test(candidate)
+  );
+};
+
+const deriveManifestFromCanvasId = (canvasId?: string) => {
+  if (!canvasId) {
+    return undefined;
+  }
+
+  const candidate = stripQueryAndHash(canvasId);
+  const match = candidate.match(/^(.*)\/c\d+\/?$/i);
+  if (!match?.[1]) {
+    return undefined;
+  }
+
+  return match[1];
+};
+
+const ensureManifestExportUrl = (manifestId: string, siteSlug?: string) => {
+  const asAbsolute = toAbsoluteUrlIfPath(manifestId) || manifestId;
+  const candidate = stripQueryAndHash(asAbsolute);
+
+  if (manifestExportPattern.test(candidate)) {
+    return candidate;
+  }
+
+  const manifestNumericId = getMadocManifestId(candidate);
+  if (manifestNumericId && siteSlug && typeof window !== 'undefined') {
+    return `${window.location.origin}/s/${siteSlug}/madoc/api/manifests/${manifestNumericId}/export/3.0`;
+  }
+
+  if (/\/manifests\/\d+$/i.test(candidate)) {
+    return `${candidate}/export/3.0`;
+  }
+
+  return candidate;
+};
+
+const ensureCanvasIdForManifest = (canvasId: string, manifestId: string) => {
+  const resolvedCanvas = stripQueryAndHash(toAbsoluteUrlIfPath(canvasId) || canvasId);
+  const manifestBase = manifestId.replace(/\/+$/, '');
+
+  if (resolvedCanvas.startsWith(`${manifestBase}/c`)) {
+    return resolvedCanvas;
+  }
+
+  const canvasNumericId = getMadocCanvasId(resolvedCanvas);
+  if (canvasNumericId) {
+    return `${manifestBase}/c${canvasNumericId}`;
+  }
+
+  return resolvedCanvas;
+};
+
+const resolveIiifSelectionIds = (options: { manifestId?: string; canvasId?: string; siteSlug?: string }) => {
+  const canvasCandidate = options.canvasId ? stripQueryAndHash(options.canvasId) : undefined;
+  const manifestCandidate =
+    options.manifestId && options.manifestId.trim()
+      ? stripQueryAndHash(options.manifestId)
+      : deriveManifestFromCanvasId(canvasCandidate);
+
+  if (!canvasCandidate) {
+    return {
+      manifestId: undefined,
+      canvasId: undefined,
+    };
+  }
+
+  const resolvedManifestId = manifestCandidate
+    ? ensureManifestExportUrl(manifestCandidate, options.siteSlug)
+    : undefined;
+  const resolvedCanvasId = resolvedManifestId
+    ? ensureCanvasIdForManifest(canvasCandidate, resolvedManifestId)
+    : stripQueryAndHash(toAbsoluteUrlIfPath(canvasCandidate) || canvasCandidate);
+
+  return {
+    manifestId: resolvedManifestId,
+    canvasId: resolvedCanvasId,
+  };
+};
+
+const normalizeIiifInputUrl = (value: string) => {
+  const trimmed = value.trim();
+  if (!trimmed) {
+    return undefined;
+  }
+  return toAbsoluteUrlIfPath(trimmed) || trimmed;
+};
+
+const createMadocCollectionExportUrl = (siteSlug: string, collectionId: number) => {
+  if (typeof window === 'undefined') {
+    return undefined;
+  }
+  return `${window.location.origin}/s/${siteSlug}/madoc/api/collections/${collectionId}/export/3.0`;
+};
+
+type MadocCollectionSnippet = {
+  id: number;
+  label: InternationalString;
+  thumbnail: string | null;
+};
+
+type MadocManifestSnippet = {
+  id: number;
+  label: InternationalString;
+  thumbnail: string | null;
+};
+
+const createMadocHomeCollection = (options: {
+  siteSlug: string;
+  query?: string;
+  collections: MadocCollectionSnippet[];
+  manifests: MadocManifestSnippet[];
+}): IIIFCollection => {
+  const queryToken = encodeURIComponent(options.query?.trim() || 'all');
+  const id = `${IIIF_HOME_COLLECTION_PREFIX}/${options.siteSlug}/${queryToken}`;
+  const label = options.query?.trim()
+    ? ({ en: [`Madoc content: ${options.query.trim()}`] } as InternationalString)
+    : ({ en: ['Madoc content'] } as InternationalString);
+
+  const collectionItems = options.collections
+    .map(collection => {
+      const url = createMadocCollectionExportUrl(options.siteSlug, collection.id);
+      if (!url) {
+        return null;
+      }
+
+      return {
+        id: url,
+        type: 'Collection',
+        label: hasIntlValue(collection.label)
+          ? collection.label
+          : ({ en: [`Collection ${collection.id}`] } as InternationalString),
+      };
+    })
+    .filter(Boolean) as Array<{ id: string; type: 'Collection'; label: InternationalString }>;
+
+  const manifestItems = options.manifests
+    .map(manifest => {
+      const url = ensureManifestExportUrl(`${manifest.id}`, options.siteSlug);
+      if (!url) {
+        return null;
+      }
+
+      return {
+        id: url,
+        type: 'Manifest',
+        label: hasIntlValue(manifest.label)
+          ? manifest.label
+          : ({ en: [`Manifest ${manifest.id}`] } as InternationalString),
+      };
+    })
+    .filter(Boolean) as Array<{ id: string; type: 'Manifest'; label: InternationalString }>;
+
+  return {
+    id,
+    type: 'Collection',
+    label,
+    items: [...collectionItems, ...manifestItems],
+  };
+};
+
+const createIiifHomeHistoryItem = (homeCollection: IIIFCollection): IiifHistoryItem => {
+  return {
+    url: homeCollection.id,
+    route: collectionRouteForId(homeCollection.id),
+    resource: homeCollection.id,
+    metadata: {
+      type: 'Collection',
+      label: homeCollection.label,
+    },
+    timestamp: new Date().toISOString(),
+  };
 };
 
 const encodeOutlinePayload = (payload: TabularOutlineSharePayload) => {
@@ -303,8 +694,17 @@ export const TabularProjectWizard: React.FC = () => {
   const [canvasId, setCanvasId] = useState<string | undefined>();
   const [iiifError, setIiifError] = useState<string | null>(null);
   const [iiifBrowserSelection, setIiifBrowserSelection] = useState<string | null>(null);
-  const [iiifPickerMode, setIiifPickerMode] = useState<IiifPickerMode>('external');
-  const [isResolvingMadocSelection, setIsResolvingMadocSelection] = useState(false);
+  const [iiifMadocSearchInput, setIiifMadocSearchInput] = useState('');
+  const [iiifMadocSearchQuery, setIiifMadocSearchQuery] = useState('');
+  const [iiifPasteUrl, setIiifPasteUrl] = useState('');
+  const [iiifStartupUrl, setIiifStartupUrl] = useState<string | null>(null);
+  const [iiifHomeCollection, setIiifHomeCollection] = useState<IIIFCollection | null>(null);
+  const [isLoadingIiifHome, setIsLoadingIiifHome] = useState(false);
+  const [iiifHomeLoadError, setIiifHomeLoadError] = useState<string | null>(null);
+  const [iiifBrowserModalError, setIiifBrowserModalError] = useState<string | null>(null);
+  const [iiifBrowserVersion, setIiifBrowserVersion] = useState(0);
+  const [viewerManifestId, setViewerManifestId] = useState<string | undefined>();
+  const viewerManifestBlobRef = useRef<string | null>(null);
 
   const [tabularModel, setTabularModel] = useState<DefineTabularModelValue>({
     columns: 0,
@@ -433,6 +833,161 @@ export const TabularProjectWizard: React.FC = () => {
   }, [shareCopied]);
 
   useEffect(() => {
+    if (viewerManifestBlobRef.current) {
+      URL.revokeObjectURL(viewerManifestBlobRef.current);
+      viewerManifestBlobRef.current = null;
+    }
+
+    if (!manifestId || typeof window === 'undefined') {
+      setViewerManifestId(undefined);
+      return;
+    }
+
+    let cancelled = false;
+    setViewerManifestId(manifestId);
+
+    (async () => {
+      try {
+        const response = await fetch(manifestId);
+        if (!response.ok) {
+          return;
+        }
+
+        const manifestJson = (await response.json()) as unknown;
+        if (!isObjectRecord(manifestJson)) {
+          return;
+        }
+
+        const normalized = normalizeLegacyIiifKeys(manifestJson);
+        const originalManifestId = typeof manifestJson.id === 'string' ? manifestJson.id : undefined;
+        const normalizedManifest = isObjectRecord(normalized.value)
+          ? ({ ...normalized.value, id: manifestId } as IIIFManifest)
+          : null;
+
+        if (!normalizedManifest || (!normalized.changed && originalManifestId === manifestId)) {
+          return;
+        }
+
+        const blobUrl = URL.createObjectURL(
+          new Blob([JSON.stringify(normalizedManifest)], { type: 'application/ld+json' })
+        );
+
+        if (cancelled) {
+          URL.revokeObjectURL(blobUrl);
+          return;
+        }
+
+        viewerManifestBlobRef.current = blobUrl;
+        setViewerManifestId(blobUrl);
+      } catch {
+        // Use the original manifest URL when normalization fetch fails.
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [manifestId]);
+
+  useEffect(() => {
+    return () => {
+      if (viewerManifestBlobRef.current) {
+        URL.revokeObjectURL(viewerManifestBlobRef.current);
+        viewerManifestBlobRef.current = null;
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!site?.slug || typeof window === 'undefined') {
+      return;
+    }
+
+    let cancelled = false;
+    const query = iiifMadocSearchQuery.trim();
+    const queryLowerCase = query.toLowerCase();
+
+    const loadMadocHomeResources = async () => {
+      setIsLoadingIiifHome(true);
+      setIiifHomeLoadError(null);
+
+      try {
+        const allCollections: MadocCollectionSnippet[] = [];
+        let collectionPage = 1;
+        let collectionTotalPages = 1;
+
+        while (collectionPage <= collectionTotalPages && collectionPage <= MAX_MADOC_COLLECTION_HOME_PAGES) {
+          const response = await api.getCollections(collectionPage);
+          allCollections.push(
+            ...response.collections.map(collection => ({
+              id: collection.id,
+              label: collection.label,
+              thumbnail: collection.thumbnail,
+            }))
+          );
+          collectionTotalPages = Math.max(1, response.pagination.totalPages || 1);
+          collectionPage += 1;
+        }
+
+        const allManifests: MadocManifestSnippet[] = [];
+        let manifestPage = 1;
+        let manifestTotalPages = 1;
+
+        while (manifestPage <= manifestTotalPages && manifestPage <= MAX_MADOC_MANIFEST_HOME_PAGES) {
+          const response = await api.getManifests(manifestPage, { query: query || undefined });
+          allManifests.push(
+            ...response.manifests.map(manifest => ({
+              id: manifest.id,
+              label: manifest.label,
+              thumbnail: manifest.thumbnail,
+            }))
+          );
+          manifestTotalPages = Math.max(1, response.pagination.totalPages || 1);
+          manifestPage += 1;
+        }
+
+        if (cancelled) {
+          return;
+        }
+
+        const filteredCollections = query
+          ? allCollections.filter(collection =>
+              internationalStringToSearchValue(collection.label).includes(queryLowerCase)
+            )
+          : allCollections;
+
+        const nextHomeCollection = createMadocHomeCollection({
+          siteSlug: site.slug,
+          query,
+          collections: filteredCollections,
+          manifests: allManifests,
+        });
+
+        setIiifHomeCollection(nextHomeCollection);
+        setIiifHomeLoadError(null);
+        setIiifBrowserVersion(version => version + 1);
+      } catch (error) {
+        if (cancelled) {
+          return;
+        }
+
+        setIiifHomeCollection(null);
+        setIiifHomeLoadError(getErrorMessage(error, t('Unable to load Madoc manifests and collections.')));
+      } finally {
+        if (!cancelled) {
+          setIsLoadingIiifHome(false);
+        }
+      }
+    };
+
+    void loadMadocHomeResources();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [api, iiifMadocSearchQuery, site?.slug, t]);
+
+  useEffect(() => {
     if (didLoadSharedOutline || typeof window === 'undefined') {
       return;
     }
@@ -489,7 +1044,6 @@ export const TabularProjectWizard: React.FC = () => {
     setCanvasId(undefined);
     setIiifError(null);
     setIiifBrowserSelection(null);
-    setIsResolvingMadocSelection(false);
     if (step === STEP_NET) {
       setStep(STEP_SETTINGS);
     }
@@ -687,70 +1241,75 @@ export const TabularProjectWizard: React.FC = () => {
   const onAddCanvas = useCallback(
     (result: IiifSelectionPayload | IiifSelectionPayload[]) => {
       const first = Array.isArray(result) ? result[0] : result;
-      const resource = first?.resource || first;
-      const resourceType = (resource?.type || '').toLowerCase();
-      const parent = first?.parent || null;
-      const parentType = (parent?.type || '').toLowerCase();
+      const resource = toSelectionResource(first?.resource || first);
+      const parent = toSelectionResource(first?.parent || null);
+      const resourceId = toStringValue(resource.id);
+      const resourceType = toTypeValue(resource.type);
+      const parentId = toStringValue(parent.id);
+      const parentType = toTypeValue(parent.type);
+      const isCanvasSelection = !resourceType || resourceType === 'canvas';
 
-      if (!resource?.id || resourceType !== 'canvas') {
+      if (!resourceId || !isCanvasSelection) {
         setIiifError(t('Select a canvas from the IIIF browser.'));
         return;
       }
 
-      const manifestFromParent = parent?.id && parentType === 'manifest' ? parent.id : undefined;
-      const manifestFromPartOf = Array.isArray(resource?.partOf)
-        ? resource.partOf.find(part => (part?.type || '').toLowerCase() === 'manifest')?.id
-        : undefined;
-      const resolvedManifestId = manifestFromParent || manifestFromPartOf;
+      const manifestFromParent = looksLikeManifestReference(parentId, parentType) ? parentId : undefined;
+      const manifestFromPartOf = toArray(resource.partOf)
+        .map(part => toSelectionResource(part))
+        .map(part => ({ id: toStringValue(part.id), type: toTypeValue(part.type) }))
+        .find(part => looksLikeManifestReference(part.id, part.type))?.id;
 
-      if (!resolvedManifestId) {
+      const { manifestId: resolvedManifestId, canvasId: resolvedCanvasId } = resolveIiifSelectionIds({
+        manifestId: manifestFromParent || manifestFromPartOf,
+        canvasId: resourceId,
+        siteSlug: site?.slug,
+      });
+
+      if (!resolvedManifestId || !resolvedCanvasId) {
         setIiifError(t('Select a canvas from within a manifest.'));
         return;
       }
 
-      setCanvasId(resource.id);
+      setCanvasId(resolvedCanvasId);
       setManifestId(resolvedManifestId);
       setIiifError(null);
-      setIiifBrowserSelection(`${resource.id}`);
+      setIiifBrowserSelection(resolvedCanvasId);
     },
-    [t]
+    [site?.slug, t]
   );
 
-  const onAddMadocCanvas = useCallback(
-    async (selectedCanvasId: number) => {
-      if (!site?.slug) {
-        setIiifError(t('Unable to resolve current site for Madoc browsing.'));
-        return;
-      }
+  const searchMadocResources = useCallback(() => {
+    setIiifBrowserModalError(null);
+    setIiifStartupUrl(null);
+    setIiifMadocSearchQuery(iiifMadocSearchInput.trim());
+  }, [iiifMadocSearchInput]);
 
-      setIsResolvingMadocSelection(true);
-      setIiifError(null);
+  const clearMadocSearch = useCallback(() => {
+    setIiifBrowserModalError(null);
+    setIiifStartupUrl(null);
+    setIiifMadocSearchInput('');
+    setIiifMadocSearchQuery('');
+  }, []);
 
-      try {
-        const { manifests } = await api.getCanvasManifests(selectedCanvasId);
-        const selectedManifestId = manifests?.[0];
+  const openIiifUrl = useCallback(() => {
+    const normalizedUrl = normalizeIiifInputUrl(iiifPasteUrl);
+    if (!normalizedUrl) {
+      setIiifBrowserModalError(t('Paste a valid IIIF URL to open.'));
+      return;
+    }
 
-        if (!selectedManifestId) {
-          setIiifError(t('This canvas is not linked to a manifest.'));
-          return;
-        }
+    setIiifBrowserModalError(null);
+    setIiifStartupUrl(normalizedUrl);
+    setIiifBrowserVersion(version => version + 1);
+  }, [iiifPasteUrl, t]);
 
-        const origin = typeof window === 'undefined' ? '' : window.location.origin;
-        const selectedManifestUrl = `${origin}/s/${site.slug}/madoc/api/manifests/${selectedManifestId}/export/3.0`;
-        const selectedCanvasUrl = `${selectedManifestUrl}/c${selectedCanvasId}`;
-
-        setManifestId(selectedManifestUrl);
-        setCanvasId(selectedCanvasUrl);
-        setIiifError(null);
-        setIiifBrowserSelection(selectedCanvasUrl);
-      } catch (error) {
-        setIiifError(getErrorMessage(error, t('Unable to load canvas from Madoc.')));
-      } finally {
-        setIsResolvingMadocSelection(false);
-      }
-    },
-    [api, site?.slug, t]
-  );
+  const iiifHomeHistoryItem = useMemo(() => {
+    if (!iiifHomeCollection) {
+      return null;
+    }
+    return createIiifHomeHistoryItem(iiifHomeCollection);
+  }, [iiifHomeCollection]);
 
   const navigationOptions: IIIFBrowserProps['navigation'] = useMemo(() => {
     return {
@@ -771,12 +1330,44 @@ export const TabularProjectWizard: React.FC = () => {
   }, []);
 
   const historyOptions: IIIFBrowserProps['history'] = useMemo(() => {
+    const initialHistory: IiifHistoryItem[] = [];
+    const normalizedStartupUrl = iiifStartupUrl ? normalizeIiifInputUrl(iiifStartupUrl) : undefined;
+
+    if (normalizedStartupUrl) {
+      initialHistory.push({
+        url: normalizedStartupUrl,
+        route: loadingRouteForId(normalizedStartupUrl),
+        resource: null,
+        timestamp: new Date().toISOString(),
+      });
+    }
+
+    if (iiifHomeHistoryItem) {
+      initialHistory.push(iiifHomeHistoryItem);
+    }
+
+    if (!initialHistory.length) {
+      initialHistory.push({
+        url: 'iiif://home',
+        route: '/',
+        resource: null,
+        timestamp: new Date().toISOString(),
+      });
+    }
+
     return {
-      saveToLocalStorage: true,
-      restoreFromLocalStorage: true,
-      localStorageKey: 'iiif-browser-tabular-project',
+      saveToLocalStorage: false,
+      restoreFromLocalStorage: false,
+      localStorageKey: IIIF_HOME_LOCAL_STORAGE_KEY,
+      initialHistory,
+      initialHistoryCursor: 0,
+      seedCollections: iiifHomeCollection ? [iiifHomeCollection] : [],
+      preprocessManifest: async manifest => {
+        const normalized = normalizeLegacyIiifKeys(manifest);
+        return normalized.value;
+      },
     };
-  }, []);
+  }, [iiifHomeCollection, iiifHomeHistoryItem, iiifStartupUrl]);
 
   const uiOptions: IIIFBrowserProps['ui'] = useMemo(
     () => ({
@@ -787,8 +1378,9 @@ export const TabularProjectWizard: React.FC = () => {
         viewSource: false,
         homepage: false,
       },
+      homeLink: iiifHomeCollection?.id || 'iiif://home',
     }),
-    []
+    [iiifHomeCollection?.id]
   );
   const outputOptions: IIIFBrowserProps['output'] = useMemo<IIIFBrowserProps['output']>(
     () => [
@@ -819,6 +1411,17 @@ export const TabularProjectWizard: React.FC = () => {
     [onAddCanvas, t]
   );
 
+  const iiifHomeStats = useMemo(() => {
+    const items = (iiifHomeCollection?.items || []) as Array<{ type?: string }>;
+    const collections = items.filter(item => item?.type === 'Collection').length;
+    const manifests = items.filter(item => item?.type === 'Manifest').length;
+
+    return {
+      collections,
+      manifests,
+    };
+  }, [iiifHomeCollection]);
+
   const iiifBrowser = (
     <div className="tabular-iiif-browser-modal" style={{ minHeight: 420 }}>
       <style>
@@ -842,55 +1445,74 @@ export const TabularProjectWizard: React.FC = () => {
           }
         `}
       </style>
-      <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
-        <Button type="button" $primary={iiifPickerMode === 'external'} onClick={() => setIiifPickerMode('external')}>
-          {t('Paste IIIF URL')}
-        </Button>
-        <Button type="button" $primary={iiifPickerMode === 'madoc'} onClick={() => setIiifPickerMode('madoc')}>
-          {t('Browse Madoc content')}
-        </Button>
+      <div
+        style={{
+          display: 'grid',
+          gap: 10,
+          marginBottom: 12,
+          padding: 10,
+          border: '1px solid #d7dbe8',
+          borderRadius: 4,
+          background: '#f8fafc',
+        }}
+      >
+        <div style={{ display: 'grid', gap: 8 }}>
+          <div style={{ fontSize: 12, fontWeight: 600 }}>{t('Search Madoc manifests and collections')}</div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr auto auto', gap: 8 }}>
+            <Input
+              type="text"
+              value={iiifMadocSearchInput}
+              onChange={event => setIiifMadocSearchInput(event.currentTarget.value)}
+              placeholder={t('Search by title')}
+            />
+            <Button type="button" onClick={searchMadocResources} disabled={isLoadingIiifHome}>
+              {isLoadingIiifHome ? t('Loading...') : t('Search')}
+            </Button>
+            <TinyButton type="button" onClick={clearMadocSearch} disabled={isLoadingIiifHome}>
+              {t('Clear')}
+            </TinyButton>
+          </div>
+          <div style={{ fontSize: 12, opacity: 0.8 }}>
+            {isLoadingIiifHome
+              ? t('Loading Madoc resources...')
+              : t('Showing {{collections}} collections and {{manifests}} manifests', {
+                  collections: iiifHomeStats.collections,
+                  manifests: iiifHomeStats.manifests,
+                })}
+          </div>
+        </div>
+
+        <div style={{ borderTop: '1px solid #d7dbe8', paddingTop: 10, display: 'grid', gap: 8 }}>
+          <div style={{ fontSize: 12, fontWeight: 600 }}>{t('Open a IIIF URL directly')}</div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 8 }}>
+            <Input
+              type="text"
+              value={iiifPasteUrl}
+              onChange={event => setIiifPasteUrl(event.currentTarget.value)}
+              placeholder={t('Paste manifest, collection, or canvas URL')}
+            />
+            <Button type="button" onClick={openIiifUrl}>
+              {t('Open URL')}
+            </Button>
+          </div>
+        </div>
       </div>
 
-      {iiifPickerMode === 'external' ? (
-        <div className="tabular-iiif-browser-external">
-          <BrowserComponent fallback={<div>{t('Loading IIIF browser...')}</div>}>
-            <IsolatedIIIFBrowser
-              className="h-[56vh] min-h-[420px] w-full min-w-0 flex-2 border-none"
-              navigation={navigationOptions}
-              history={historyOptions}
-              output={outputOptions}
-              ui={uiOptions}
-            />
-          </BrowserComponent>
-        </div>
-      ) : (
-        <div style={{ border: '1px solid #d6d6d6', borderRadius: 4, background: '#f5f6fa', padding: 12 }}>
-          <ContentExplorer
-            renderChoice={(selectedCanvasId, resetCanvas) => (
-              <div style={{ display: 'grid', gap: 10 }}>
-                <div style={{ fontSize: 12, opacity: 0.75 }}>
-                  {t('Canvas')}: {selectedCanvasId}
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <Button
-                    type="button"
-                    $primary
-                    disabled={isResolvingMadocSelection}
-                    onClick={() => {
-                      void onAddMadocCanvas(selectedCanvasId);
-                    }}
-                  >
-                    {isResolvingMadocSelection ? t('Loading...') : t('Use selected canvas')}
-                  </Button>
-                  <TinyButton type="button" onClick={resetCanvas}>
-                    {t('Select different image')}
-                  </TinyButton>
-                </div>
-              </div>
-            )}
+      {iiifHomeLoadError ? <ErrorMessage>{iiifHomeLoadError}</ErrorMessage> : null}
+      {iiifBrowserModalError ? <ErrorMessage>{iiifBrowserModalError}</ErrorMessage> : null}
+
+      <div className="tabular-iiif-browser-external">
+        <BrowserComponent fallback={<div>{t('Loading IIIF browser...')}</div>}>
+          <IsolatedIIIFBrowser
+            key={`tabular-iiif-browser-${iiifBrowserVersion}`}
+            className="h-[56vh] min-h-[420px] w-full min-w-0 flex-2 border-none"
+            navigation={navigationOptions}
+            history={historyOptions}
+            output={outputOptions}
+            ui={uiOptions}
           />
-        </div>
-      )}
+        </BrowserComponent>
+      </div>
     </div>
   );
 
