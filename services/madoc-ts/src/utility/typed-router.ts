@@ -4,6 +4,7 @@ import { requestBody } from '../middleware/request-body';
 import { parseJwt } from '../middleware/parse-jwt';
 import { RouteMiddleware } from '../types/route-middleware';
 import { siteState } from '../middleware/site-state';
+import { withRequestDebugTiming } from '../middleware/request-debug';
 
 export type RouteWithParams<Props, Body = any> =
   | [string, string, RouteMiddleware<Props, Body> | Array<RouteMiddleware<Props, Body>>]
@@ -11,18 +12,15 @@ export type RouteWithParams<Props, Body = any> =
       string,
       string,
       RouteMiddleware<Props, Body> | Array<RouteMiddleware<Props, Body>>,
-      { schemaName?: string; isPublic?: boolean }
+      { schemaName?: string; isPublic?: boolean },
     ];
 
-export type GetRoute<
-  Routes extends { [key in RouteName]: Value },
-  RouteName extends string,
-  Value = any
-> = Routes[RouteName] extends RouteWithParams<infer T> ? T : never;
+export type GetRoute<Routes extends { [_key in RouteName]: Value }, RouteName extends string, Value = any> =
+  Routes[RouteName] extends RouteWithParams<infer T> ? T : never;
 
 export class TypedRouter<
   Routes extends string,
-  MappedRoutes extends { [key in Routes]: RouteWithParams<GetRoute<MappedRoutes, Routes>> }
+  MappedRoutes extends { [_key in Routes]: RouteWithParams<GetRoute<MappedRoutes, Routes>> },
 > {
   static GET = 'get';
   static POST = 'post';
@@ -33,6 +31,10 @@ export class TypedRouter<
 
   private router = new Router();
 
+  private withMiddlewareName(routeName: string, layer: string, middleware: MiddlewareLike): MiddlewareLike {
+    return withRequestDebugTiming(`route:${routeName}:${layer}`, middleware);
+  }
+
   constructor(routes: MappedRoutes) {
     const routeNames = Object.keys(routes) as Routes[];
     for (const route of routeNames) {
@@ -40,6 +42,9 @@ export class TypedRouter<
       const { schemaName, isPublic } = options;
 
       const funcArray = Array.isArray(func) ? func : [func];
+      const wrappedHandlers = funcArray.map((middleware, index) =>
+        this.withMiddlewareName(route, this.getHandlerName(middleware, index), middleware)
+      );
       const bodyOpts: Partial<KoaBodyMiddlewareOptions> = {
         jsonLimit: '10mb',
       };
@@ -50,30 +55,67 @@ export class TypedRouter<
 
       switch (method) {
         case TypedRouter.PUT:
-          (this.router as any).put(route, path, koaBody(bodyOpts), parseJwt, requestBody(schemaName), ...funcArray);
+          (this.router as any).put(
+            route,
+            path,
+            this.withMiddlewareName(route, 'koa-body', koaBody(bodyOpts)),
+            this.withMiddlewareName(route, 'parse-jwt', parseJwt),
+            this.withMiddlewareName(route, 'request-body', requestBody(schemaName)),
+            ...wrappedHandlers
+          );
           break;
         case TypedRouter.POST:
-          (this.router as any).post(route, path, koaBody(bodyOpts), parseJwt, requestBody(schemaName), ...funcArray);
+          (this.router as any).post(
+            route,
+            path,
+            this.withMiddlewareName(route, 'koa-body', koaBody(bodyOpts)),
+            this.withMiddlewareName(route, 'parse-jwt', parseJwt),
+            this.withMiddlewareName(route, 'request-body', requestBody(schemaName)),
+            ...wrappedHandlers
+          );
           break;
         case TypedRouter.PATCH:
-          (this.router as any).patch(route, path, koaBody(bodyOpts), parseJwt, requestBody(schemaName), ...funcArray);
+          (this.router as any).patch(
+            route,
+            path,
+            this.withMiddlewareName(route, 'koa-body', koaBody(bodyOpts)),
+            this.withMiddlewareName(route, 'parse-jwt', parseJwt),
+            this.withMiddlewareName(route, 'request-body', requestBody(schemaName)),
+            ...wrappedHandlers
+          );
           break;
         case TypedRouter.GET: {
           if (isPublic) {
-            (this.router as any).get(route, path, ...funcArray);
+            (this.router as any).get(route, path, ...wrappedHandlers);
           } else {
-            (this.router as any).get(route, path, parseJwt, siteState, ...funcArray);
+            (this.router as any).get(
+              route,
+              path,
+              this.withMiddlewareName(route, 'parse-jwt', parseJwt),
+              this.withMiddlewareName(route, 'site-state', siteState),
+              ...wrappedHandlers
+            );
           }
           break;
         }
         case TypedRouter.DELETE:
-          (this.router as any).delete(route, path, parseJwt, ...funcArray);
+          (this.router as any).delete(
+            route,
+            path,
+            this.withMiddlewareName(route, 'parse-jwt', parseJwt),
+            ...wrappedHandlers
+          );
           break;
         case TypedRouter.OPTIONS:
-          (this.router as any).options(route, path, ...funcArray);
+          (this.router as any).options(route, path, ...wrappedHandlers);
           break;
       }
     }
+  }
+
+  private getHandlerName(middleware: MiddlewareLike, index: number) {
+    const fallback = `handler-${index + 1}`;
+    return middleware.name ? `handler:${middleware.name}` : fallback;
   }
 
   url<Route extends Routes>(
@@ -96,3 +138,5 @@ export class TypedRouter<
     return this.router.allowedMethods();
   }
 }
+
+type MiddlewareLike = RouteMiddleware<unknown, unknown>;

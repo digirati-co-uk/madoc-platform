@@ -419,7 +419,7 @@ export const siteManifestBuild: RouteMiddleware<{
           const newManifestId =
             itemRow.source && useSourceIds
               ? itemRow.source
-              : `${baseUrl}/madoc/api/${itemRow.type}/${itemRow.id}/export/${version}`;
+              : `${baseUrl}/madoc/api/${itemRow.type}s/${itemRow.id}/export/${version}`;
           const fn: 'createManifest' =
             itemRow.type === 'collection' ? ('createCollection' as 'createManifest') : 'createManifest';
           collection[fn](newManifestId, manifest => {
@@ -612,7 +612,8 @@ export const siteManifestBuild: RouteMiddleware<{
       .map(c => table.Resource[c.id]);
 
     for (const canvasRow of canvases) {
-      const newCanvasId = canvasRow.source && useSourceIds ? canvasRow.source : `${manifest.id}/c${canvasRow.id}`;
+      // const newCanvasId = canvasRow.source && useSourceIds ? canvasRow.source : `${manifest.id}/c${canvasRow.id}`;
+      const newCanvasId = canvasRow.source; // Removed due to IIIF compatibility.
       manifest.createCanvas(newCanvasId, canvas => {
         const canvasMetadata = table.Metadata[canvasRow.id] || {};
         const canvasLinking = Object.values(table.Linking[canvasRow.id] || {});

@@ -37,6 +37,7 @@ import schedule from 'node-schedule';
 import passport from 'koa-passport';
 import { WebhookServerExtension } from './webhooks/webhook-server-extension';
 import { slowRequests } from './middleware/slow-requests';
+import { requestDebugResponse, requestDebugSetup, withRequestDebugTiming } from './middleware/request-debug';
 
 const { readFile, readdir } = promises;
 
@@ -98,7 +99,6 @@ export async function createApp(config: ExternalConfig, env: EnvConfig) {
   for (const file of await readdir(SCHEMAS_PATH)) {
     if (!file.startsWith('.')) {
       awaitProperty(
-        // eslint-disable-next-line no-async-promise-executor
         (async () => {
           const pathToFile = path.resolve(SCHEMAS_PATH, file);
           const data = await readFile(pathToFile);
@@ -112,11 +112,13 @@ export async function createApp(config: ExternalConfig, env: EnvConfig) {
     }
   }
 
-  app.use(k2c(cookieParser(app.keys)));
-  app.use(postgresConnection(pool, config.pooledDatabase, env));
-  app.use(internalSubrequestContext);
-  app.use(json({ pretty: process.env.NODE_ENV !== 'production' }));
-  app.use(logger());
+  app.use(requestDebugSetup);
+  app.use(withRequestDebugTiming('cookie-parser', k2c(cookieParser(app.keys))));
+  app.use(withRequestDebugTiming('postgres-connection', postgresConnection(pool, config.pooledDatabase, env)));
+  app.use(withRequestDebugTiming('internal-subrequest-context', internalSubrequestContext));
+  app.use(withRequestDebugTiming('koa-json', json({ pretty: process.env.NODE_ENV !== 'production' })));
+  app.use(requestDebugResponse);
+  app.use(withRequestDebugTiming('koa-logger', logger()));
   // Disabled for now, causing issues logging in.
   // app.use(conditional());
 
@@ -137,18 +139,20 @@ export async function createApp(config: ExternalConfig, env: EnvConfig) {
       done(null, user);
     });
 
-    app.use(passport.initialize());
+    app.use(withRequestDebugTiming('passport-initialize', passport.initialize()));
   }
 
   if (!env.flags.disable_slow_request_tracking) {
-    app.use(slowRequests);
+    app.use(withRequestDebugTiming('slow-requests', slowRequests));
   }
-  app.use(errorHandler);
-  app.use(staticPage);
-  app.use(setJwt);
-  app.use(siteManager);
-  app.use(disposeApis);
-  app.use(router.routes()).use(router.allowedMethods());
+  app.use(withRequestDebugTiming('error-handler', errorHandler));
+  app.use(withRequestDebugTiming('static-page', staticPage));
+  app.use(withRequestDebugTiming('set-jwt', setJwt));
+  app.use(withRequestDebugTiming('site-api', siteManager));
+  app.use(withRequestDebugTiming('dispose-apis', disposeApis));
+  app
+    .use(withRequestDebugTiming('router-routes', router.routes()))
+    .use(withRequestDebugTiming('router-allowed-methods', router.allowedMethods()));
 
   // Cron jobs.
   if (process.env.NODE_APP_INSTANCE === '0' && process.env.NODE_ENV !== 'test') {
