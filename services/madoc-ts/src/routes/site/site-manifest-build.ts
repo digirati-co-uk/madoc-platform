@@ -73,6 +73,57 @@ type IIIFExportRow = {
   );
 
 const defaultCorsAllowHeaders = 'Accept, Content-Type, Authorization, Cache-Control, Pragma, X-Requested-With';
+const madocIdTypes = new Set(['collection', 'manifest', 'canvas']);
+
+function normaliseIiifType(type: unknown) {
+  if (typeof type !== 'string') {
+    return undefined;
+  }
+  const lowered = type.toLowerCase();
+  const split = lowered.split(':');
+  return split[split.length - 1];
+}
+
+function injectMadocIds(payload: any, madocIdsByResourceId: Map<string, number>) {
+  if (!payload || typeof payload !== 'object') {
+    return;
+  }
+
+  const visited = new Set<any>();
+  const queue = [payload];
+
+  while (queue.length) {
+    const current = queue.shift();
+    if (!current || typeof current !== 'object' || visited.has(current)) {
+      continue;
+    }
+    visited.add(current);
+
+    if (!Array.isArray(current)) {
+      const resourceId = typeof current.id === 'string' ? current.id : undefined;
+      const iiifType = normaliseIiifType(current.type);
+      if (resourceId && iiifType && madocIdTypes.has(iiifType)) {
+        const madocId = madocIdsByResourceId.get(resourceId);
+        if (typeof madocId === 'number') {
+          current['madoc:id'] = madocId;
+        }
+      }
+
+      for (const value of Object.values(current)) {
+        if (value && typeof value === 'object') {
+          queue.push(value);
+        }
+      }
+      continue;
+    }
+
+    for (const item of current) {
+      if (item && typeof item === 'object') {
+        queue.push(item);
+      }
+    }
+  }
+}
 
 function setManifestCorsHeaders(context: Context) {
   const requestOrigin = context.get('Origin') || '';
@@ -181,6 +232,7 @@ export const siteManifestBuild: RouteMiddleware<{
   const projectSlug = context.params.projectSlug;
 
   const baseUrl = `${gatewayHost}/s/${siteSlug}`;
+  const madocIdsByResourceId = new Map<string, number>();
 
   const rowsQueryStart = process.hrtime.bigint();
   const rows = await context.connection.any(sql<IIIFExportRow>`
@@ -403,6 +455,7 @@ export const siteManifestBuild: RouteMiddleware<{
       collectionRow.source && useSourceIds
         ? collectionRow.source
         : `${baseUrl}/madoc/api/collections/${manifestId}/export/${version}`;
+    madocIdsByResourceId.set(newCollectionId, collectionRow.id);
 
     const buildCollectionStart = process.hrtime.bigint();
     const newCollection = builder.createCollection(newCollectionId, collection => {
@@ -420,6 +473,7 @@ export const siteManifestBuild: RouteMiddleware<{
             itemRow.source && useSourceIds
               ? itemRow.source
               : `${baseUrl}/madoc/api/${itemRow.type}s/${itemRow.id}/export/${version}`;
+          madocIdsByResourceId.set(newManifestId, itemRow.id);
           const fn: 'createManifest' =
             itemRow.type === 'collection' ? ('createCollection' as 'createManifest') : 'createManifest';
           collection[fn](newManifestId, manifest => {
@@ -464,6 +518,7 @@ export const siteManifestBuild: RouteMiddleware<{
 
     switch (version) {
       case 'normalized':
+        injectMadocIds(vault.getState().iiif, madocIdsByResourceId);
         context.response.body = {
           collectionId: newCollection.id,
           madocId: collectionRow.id,
@@ -476,6 +531,7 @@ export const siteManifestBuild: RouteMiddleware<{
         const serializeCollectionStart = process.hrtime.bigint();
         const collectionJson: any = builder.toPresentation3({ id: newCollection.id, type: 'Collection' });
         collectionJson['@context'] = 'http://iiif.io/api/presentation/3/context.json';
+        injectMadocIds(collectionJson, madocIdsByResourceId);
         captureStep('serialize_source', serializeCollectionStart);
         addDebugReport(collectionJson);
         context.response.body = collectionJson;
@@ -486,6 +542,7 @@ export const siteManifestBuild: RouteMiddleware<{
         context.response.status = 200;
         const collectionJson: any = builder.toPresentation2({ id: newCollection.id, type: 'Collection' });
         collectionJson['@context'] = 'http://iiif.io/api/presentation/2/context.json';
+        injectMadocIds(collectionJson, madocIdsByResourceId);
         context.response.body = collectionJson;
         updateCache(collectionJson);
         return;
@@ -506,6 +563,7 @@ export const siteManifestBuild: RouteMiddleware<{
     manifestRow.source && useSourceIds
       ? manifestRow.source
       : `${baseUrl}/madoc/api/manifests/${manifestId}/export/${version}`;
+  madocIdsByResourceId.set(newManifestId, manifestRow.id);
 
   const buildManifestStart = process.hrtime.bigint();
   const newManifest = builder.createManifest(newManifestId, manifest => {
@@ -614,6 +672,9 @@ export const siteManifestBuild: RouteMiddleware<{
     for (const canvasRow of canvases) {
       // const newCanvasId = canvasRow.source && useSourceIds ? canvasRow.source : `${manifest.id}/c${canvasRow.id}`;
       const newCanvasId = canvasRow.source; // Removed due to IIIF compatibility.
+      if (newCanvasId) {
+        madocIdsByResourceId.set(newCanvasId, canvasRow.id);
+      }
       manifest.createCanvas(newCanvasId, canvas => {
         const canvasMetadata = table.Metadata[canvasRow.id] || {};
         const canvasLinking = Object.values(table.Linking[canvasRow.id] || {});
@@ -744,6 +805,7 @@ export const siteManifestBuild: RouteMiddleware<{
 
   switch (version) {
     case 'normalized':
+      injectMadocIds(vault.getState().iiif, madocIdsByResourceId);
       context.response.body = {
         manifestId: newManifest.id,
         madocId: manifestRow.id,
@@ -756,6 +818,7 @@ export const siteManifestBuild: RouteMiddleware<{
       const serializeManifestStart = process.hrtime.bigint();
       const manifestJson: any = builder.toPresentation3({ id: newManifest.id, type: 'Manifest' });
       manifestJson['@context'] = 'http://iiif.io/api/presentation/3/context.json';
+      injectMadocIds(manifestJson, madocIdsByResourceId);
       captureStep('serialize_source', serializeManifestStart);
       addDebugReport(manifestJson);
       context.response.body = manifestJson;
@@ -766,6 +829,7 @@ export const siteManifestBuild: RouteMiddleware<{
       context.response.status = 200;
       const manifestJson: any = builder.toPresentation2({ id: newManifest.id, type: 'Manifest' });
       manifestJson['@context'] = 'http://iiif.io/api/presentation/2/context.json';
+      injectMadocIds(manifestJson, madocIdsByResourceId);
       context.response.body = manifestJson;
       updateCache(manifestJson);
       return;
