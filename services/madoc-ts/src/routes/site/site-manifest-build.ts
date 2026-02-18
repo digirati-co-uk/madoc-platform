@@ -120,13 +120,44 @@ export const siteManifestBuild: RouteMiddleware<{
   version: string;
   projectSlug?: string;
 }> = async context => {
+  const version = context.params.version;
+  const debugParam = context.query.debug;
+  const debugValue = Array.isArray(debugParam) ? debugParam[0] : debugParam;
+  const debugEnabled =
+    version === 'source' &&
+    debugValue !== undefined &&
+    debugValue !== null &&
+    `${debugValue}`.toLowerCase() !== 'false' &&
+    `${debugValue}` !== '0';
+  const requestStart = process.hrtime.bigint();
+  const debugSteps: Array<{ step: string; durationMs: number }> = [];
+  const captureStep = (step: string, start: bigint) => {
+    if (!debugEnabled) {
+      return;
+    }
+    const durationMs = Number(process.hrtime.bigint() - start) / 1_000_000;
+    debugSteps.push({ step, durationMs: Number(durationMs.toFixed(2)) });
+  };
+  const addDebugReport = (output: any) => {
+    if (!debugEnabled) {
+      return;
+    }
+    const totalMs = Number(process.hrtime.bigint() - requestStart) / 1_000_000;
+    output.debug = {
+      steps: debugSteps,
+      totalMs: Number(totalMs.toFixed(2)),
+    };
+  };
+
   const cacheKey = `build-manifest-${context.params.slug}-${context.params.id}-${context.params.version}-${context.params.projectSlug}`;
+  const cacheLookupStart = process.hrtime.bigint();
   const cached = cache.get(cacheKey);
+  captureStep('cache_lookup', cacheLookupStart);
   const noCacheHeader = (context.get('Cache-Control') || '').toLowerCase();
 
   setManifestCorsHeaders(context as unknown as Context);
 
-  if (cached && !noCacheHeader.includes('no-cache')) {
+  if (!debugEnabled && cached && !noCacheHeader.includes('no-cache')) {
     context.set('Cache-Control', 'public, max-age=3600');
     context.set('X-Cache', 'HIT');
     context.response.body = cached;
@@ -134,6 +165,10 @@ export const siteManifestBuild: RouteMiddleware<{
   }
 
   const updateCache = (data: any) => {
+    if (debugEnabled) {
+      context.set('Cache-Control', 'no-store');
+      return;
+    }
     cache.put(cacheKey, data, 60 * 60 * 24);
     context.set('Cache-Control', 'public, max-age=3600');
   };
@@ -143,11 +178,11 @@ export const siteManifestBuild: RouteMiddleware<{
   const site = context.state.site;
   const siteSlug = context.params.slug;
   const manifestId = Number(context.params.id);
-  const version = context.params.version;
   const projectSlug = context.params.projectSlug;
 
   const baseUrl = `${gatewayHost}/s/${siteSlug}`;
 
+  const rowsQueryStart = process.hrtime.bigint();
   const rows = await context.connection.any(sql<IIIFExportRow>`
       select
         -- Derived.
@@ -199,6 +234,7 @@ export const siteManifestBuild: RouteMiddleware<{
       where derived_manifest.resource_id = ${manifestId}
         and derived_manifest.site_id = ${site.id}
   `);
+  captureStep('db_query', rowsQueryStart);
 
   function reduceIIIFExportRows(items: readonly IIIFExportRow[]) {
     const reducer = createMetadataReducer(r => ({ id: r.resource_id }));
@@ -320,10 +356,13 @@ export const siteManifestBuild: RouteMiddleware<{
     return state;
   }
 
+  const reduceRowsStart = process.hrtime.bigint();
   const table = reduceIIIFExportRows(rows);
+  captureStep('reduce_rows', reduceRowsStart);
   const manifestRow = table.Resource[manifestId];
 
   // Shim for canvases.
+  const canvasShimStart = process.hrtime.bigint();
   for (const canvas of Object.values(table.Resource)) {
     if (canvas.type === 'canvas') {
       if (!canvas.items) {
@@ -345,6 +384,7 @@ export const siteManifestBuild: RouteMiddleware<{
       }
     }
   }
+  captureStep('canvas_items_shim', canvasShimStart);
 
   const configOptions = {
     includeSearchService: false, // The search service doesn't appear to be working.
@@ -364,6 +404,7 @@ export const siteManifestBuild: RouteMiddleware<{
         ? collectionRow.source
         : `${baseUrl}/madoc/api/collections/${manifestId}/export/${version}`;
 
+    const buildCollectionStart = process.hrtime.bigint();
     const newCollection = builder.createCollection(newCollectionId, collection => {
       const collectionMetadata = table.Metadata[collectionRow.id] || {};
       //
@@ -378,7 +419,7 @@ export const siteManifestBuild: RouteMiddleware<{
           const newManifestId =
             itemRow.source && useSourceIds
               ? itemRow.source
-              : `${baseUrl}/madoc/api/manifests/${itemRow.id}/export/${version}`;
+              : `${baseUrl}/madoc/api/${itemRow.type}/${itemRow.id}/export/${version}`;
           const fn: 'createManifest' =
             itemRow.type === 'collection' ? ('createCollection' as 'createManifest') : 'createManifest';
           collection[fn](newManifestId, manifest => {
@@ -419,6 +460,7 @@ export const siteManifestBuild: RouteMiddleware<{
         });
       }
     });
+    captureStep('build_collection', buildCollectionStart);
 
     switch (version) {
       case 'normalized':
@@ -431,15 +473,18 @@ export const siteManifestBuild: RouteMiddleware<{
       case '3.0':
       case 'source': {
         context.response.status = 200;
-        const collectionJson: any = builder.toPresentation3({ id: newCollection.id, type: 'Manifest' });
+        const serializeCollectionStart = process.hrtime.bigint();
+        const collectionJson: any = builder.toPresentation3({ id: newCollection.id, type: 'Collection' });
         collectionJson['@context'] = 'http://iiif.io/api/presentation/3/context.json';
+        captureStep('serialize_source', serializeCollectionStart);
+        addDebugReport(collectionJson);
         context.response.body = collectionJson;
         updateCache(collectionJson);
         return;
       }
       case '2.1': {
         context.response.status = 200;
-        const collectionJson: any = builder.toPresentation2({ id: newCollection.id, type: 'Manifest' });
+        const collectionJson: any = builder.toPresentation2({ id: newCollection.id, type: 'Collection' });
         collectionJson['@context'] = 'http://iiif.io/api/presentation/2/context.json';
         context.response.body = collectionJson;
         updateCache(collectionJson);
@@ -462,6 +507,7 @@ export const siteManifestBuild: RouteMiddleware<{
       ? manifestRow.source
       : `${baseUrl}/madoc/api/manifests/${manifestId}/export/${version}`;
 
+  const buildManifestStart = process.hrtime.bigint();
   const newManifest = builder.createManifest(newManifestId, manifest => {
     const manifestMetadata = table.Metadata[manifestRow.id] || {};
     const manifestLinking = Object.values(table.Linking[manifestRow.id] || {});
@@ -693,6 +739,7 @@ export const siteManifestBuild: RouteMiddleware<{
       });
     }
   });
+  captureStep('build_manifest', buildManifestStart);
 
   switch (version) {
     case 'normalized':
@@ -705,8 +752,11 @@ export const siteManifestBuild: RouteMiddleware<{
     case '3.0':
     case 'source': {
       context.response.status = 200;
+      const serializeManifestStart = process.hrtime.bigint();
       const manifestJson: any = builder.toPresentation3({ id: newManifest.id, type: 'Manifest' });
       manifestJson['@context'] = 'http://iiif.io/api/presentation/3/context.json';
+      captureStep('serialize_source', serializeManifestStart);
+      addDebugReport(manifestJson);
       context.response.body = manifestJson;
       updateCache(manifestJson);
       return;
