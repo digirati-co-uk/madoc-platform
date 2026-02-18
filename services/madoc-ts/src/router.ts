@@ -132,7 +132,12 @@ import { getAllProjectNotes } from './routes/projects/get-all-project-notes';
 import { siteCompletions } from './routes/site/site-completions';
 import { siteDetails } from './routes/site/site-details';
 import { deleteManifestSummary } from './routes/iiif/manifests/delete-manifest-summary';
-import { siteManifestBuild, siteManifestBuildOptions } from './routes/site/site-manifest-build';
+import {
+  siteManifestBuild,
+  siteManifestBuildOptions,
+  siteRootCollection,
+  siteRootCollectionOptions,
+} from './routes/site/site-manifest-build';
 import { createMedia } from './routes/media/create-media';
 import { deleteMedia } from './routes/media/delete-media';
 import { generateThumbnails } from './routes/media/generate-thumbnails';
@@ -152,7 +157,12 @@ import {
   typesenseListIndexables,
   typesenseListModels,
 } from './routes/search/typesense-indexables';
-import { typesenseDeleteIIIF, typesenseGetIIIF, typesenseIngestIIIF, typesenseListIIIF } from './routes/search/typesense-iiif';
+import {
+  typesenseDeleteIIIF,
+  typesenseGetIIIF,
+  typesenseIngestIIIF,
+  typesenseListIIIF,
+} from './routes/search/typesense-iiif';
 import { typesenseProxyMultiSearch, typesenseProxySearch, typesenseProxyStatus } from './routes/search/typesense-proxy';
 import { typesenseQuery } from './routes/search/typesense-query';
 import { siteCanvasSource } from './routes/site/site-canvas-reference';
@@ -757,6 +767,13 @@ export const router = new TypedRouter({
   'current-site-details': [TypedRouter.GET, '/s/:slug/madoc/api/site', siteDetails],
   'site-canvas': [TypedRouter.GET, '/s/:slug/madoc/api/canvases/:id', siteCanvas],
   'site-canvas-metadata': [TypedRouter.GET, '/s/:slug/madoc/api/canvases/:canvasId/metadata', siteMetadata],
+  'root-collection-options': [
+    TypedRouter.OPTIONS,
+    '/s/:slug/madoc/api/collections/root',
+    siteRootCollectionOptions,
+    { isPublic: true },
+  ],
+  'root-collection': [TypedRouter.GET, '/s/:slug/madoc/api/collections/root', siteRootCollection, { isPublic: true }],
   'site-collection': [TypedRouter.GET, '/s/:slug/madoc/api/collections/:id', siteCollection],
   'site-collections': [TypedRouter.GET, '/s/:slug/madoc/api/collections', siteCollections],
   'site-collection-metadata': [TypedRouter.GET, '/s/:slug/madoc/api/collections/:collectionId/metadata', siteMetadata],

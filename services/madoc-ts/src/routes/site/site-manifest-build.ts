@@ -7,7 +7,8 @@ import { gatewayHost } from '../../gateway/api.server';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { IIIFBuilder } from '@iiif/builder';
 import { NotFound } from '../../utility/errors/not-found';
-import { createMetadataReducer } from '../../utility/iiif-metadata';
+import { createMetadataReducer, mapMetadata } from '../../utility/iiif-metadata';
+import { getMetadata } from '../../utility/iiif-database-helpers';
 import cache from 'memory-cache';
 
 type IIIFExportRow = {
@@ -838,4 +839,205 @@ export const siteManifestBuild: RouteMiddleware<{
       context.status = 404;
       return;
   }
+};
+
+type RootCollectionRow = {
+  resource_id: number;
+  resource_type: 'collection' | 'project';
+  thumbnail?: string;
+  key: string;
+  value: string;
+  language: string;
+  source: string;
+};
+
+export const siteRootCollectionOptions: RouteMiddleware<{
+  slug: string;
+}> = async context => {
+  setManifestCorsHeaders(context as unknown as Context);
+  context.status = 204;
+};
+
+export const siteRootCollection: RouteMiddleware<{
+  slug: string;
+}> = async context => {
+  const siteSlug = context.params.slug;
+  const userId = context.state.jwt ? context.state.jwt.user.id : undefined;
+  const isAdmin = context.state.jwt ? context.state.jwt.scope.indexOf('site.admin') !== -1 : false;
+  const site =
+    context.state.site ||
+    (siteSlug ? await context.siteManager.getCachedSiteIdBySlug(siteSlug, userId, isAdmin) : undefined);
+
+  if (!site) {
+    throw new NotFound('Site not found');
+  }
+
+  const siteId = site.id;
+  const baseUrl = `${gatewayHost}/s/${siteSlug}`;
+
+  const cacheKey = `root-collection-${siteSlug}`;
+  const cached = cache.get(cacheKey);
+  const noCacheHeader = (context.get('Cache-Control') || '').toLowerCase();
+
+  setManifestCorsHeaders(context as unknown as Context);
+
+  if (cached && !noCacheHeader.includes('no-cache')) {
+    context.set('Cache-Control', 'public, max-age=3600');
+    context.set('X-Cache', 'HIT');
+    context.response.body = cached;
+    return;
+  }
+
+  // Query all published collections (non-flat, top-level style)
+  const collectionsQuery = sql<{ resource_id: number; resource_type: 'collection'; thumbnail: string | null }>`
+    select
+      cidr.resource_id as resource_id,
+      'collection'::text as resource_type,
+      coalesce(
+        ir.default_thumbnail,
+        ir.placeholder_image,
+        manifest_thumbnail(${siteId}, collection_manifest.item_id)
+      ) as thumbnail
+    from iiif_derived_resource cidr
+    left join iiif_resource ir on cidr.resource_id = ir.id
+    left join lateral (
+      select im.item_id
+      from iiif_derived_resource_items im
+      left join iiif_resource mir on mir.id = im.item_id
+      where im.resource_id = cidr.resource_id
+        and im.site_id = ${siteId}
+        and mir.type = 'manifest'
+      order by im.item_index
+      limit 1
+    ) collection_manifest on true
+    where cidr.resource_type = 'collection'
+      and cidr.site_id = ${siteId}
+      and cidr.flat = false
+      and cidr.published = true
+    order by cidr.resource_id desc
+  `;
+
+  // Query all published projects
+  const projectsQuery = sql<{ resource_id: number; resource_type: 'project'; thumbnail: string | null }>`
+    select
+      iiif_project.collection_id as resource_id,
+      'project'::text as resource_type,
+      coalesce(
+        ir.default_thumbnail,
+        ir.placeholder_image,
+        manifest_thumbnail(${siteId}, project_manifest.item_id)
+      ) as thumbnail
+    from iiif_project
+    left join iiif_resource ir on iiif_project.collection_id = ir.id
+    left join lateral (
+      select im.item_id
+      from iiif_derived_resource_items im
+      left join iiif_resource mir on mir.id = im.item_id
+      where im.resource_id = iiif_project.collection_id
+        and im.site_id = ${siteId}
+        and mir.type = 'manifest'
+      order by im.item_index
+      limit 1
+    ) project_manifest on true
+    where iiif_project.site_id = ${siteId}
+      and (iiif_project.status = 1 or iiif_project.status = 2)
+    order by iiif_project.id desc
+  `;
+
+  // Get collections with metadata
+  const collectionRows = await context.connection.any(
+    getMetadata<{ resource_id: number; resource_type: 'collection'; thumbnail: string | null }, RootCollectionRow>(
+      collectionsQuery,
+      siteId,
+      ['label', 'summary']
+    )
+  );
+
+  // Get projects with metadata (using project's collection_id for metadata)
+  const projectRows = await context.connection.any(
+    getMetadata<{ resource_id: number; resource_type: 'project'; thumbnail: string | null }, RootCollectionRow>(
+      projectsQuery,
+      siteId,
+      ['label', 'summary']
+    )
+  );
+
+  // Map metadata for collections
+  const collections = mapMetadata<{ label?: any; summary?: any }, RootCollectionRow>(collectionRows, row => ({
+    id: row.resource_id,
+    type: 'collection' as const,
+    thumbnail: row.thumbnail,
+  }));
+
+  // Map metadata for projects
+  const projects = mapMetadata<{ label?: any; summary?: any }, RootCollectionRow>(projectRows, row => ({
+    id: row.resource_id,
+    type: 'project' as const,
+    thumbnail: row.thumbnail,
+  }));
+
+  // Build the root collection using IIIFBuilder
+  const vault = new Vault();
+  const builder = new IIIFBuilder(vault as any);
+  const madocIdsByResourceId = new Map<string, number>();
+
+  const rootCollectionId = `${baseUrl}/madoc/api/collections/root`;
+
+  const rootCollection = builder.createCollection(rootCollectionId, collection => {
+    collection.setLabel({ en: [site.title || 'Root Collection'] });
+    collection.setSummary({ en: [site.summary || 'All collections and projects on this site'] });
+
+    // Add collections as items
+    for (const coll of collections) {
+      const collectionItemId = `${baseUrl}/madoc/api/collections/${coll.id}/export/3.0`;
+      madocIdsByResourceId.set(collectionItemId, coll.id);
+
+      collection.createCollection(collectionItemId, item => {
+        if (coll.label) {
+          item.setLabel(coll.label);
+        }
+        if (coll.summary) {
+          item.setSummary(coll.summary);
+        }
+        if (coll.thumbnail) {
+          item.addThumbnail({
+            id: coll.thumbnail,
+            type: 'Image',
+            format: 'image/jpeg',
+          });
+        }
+      });
+    }
+
+    // Add projects as collections (since projects have collection_ids)
+    for (const proj of projects) {
+      const projectCollectionId = `${baseUrl}/madoc/api/collections/${proj.id}/export/3.0`;
+      madocIdsByResourceId.set(projectCollectionId, proj.id);
+
+      collection.createCollection(projectCollectionId, item => {
+        if (proj.label) {
+          item.setLabel(proj.label);
+        }
+        if (proj.summary) {
+          item.setSummary(proj.summary);
+        }
+        if (proj.thumbnail) {
+          item.addThumbnail({
+            id: proj.thumbnail,
+            type: 'Image',
+            format: 'image/jpeg',
+          });
+        }
+      });
+    }
+  });
+
+  context.response.status = 200;
+  const collectionJson: any = builder.toPresentation3({ id: rootCollection.id, type: 'Collection' });
+  collectionJson['@context'] = 'http://iiif.io/api/presentation/3/context.json';
+  injectMadocIds(collectionJson, madocIdsByResourceId);
+
+  cache.put(cacheKey, collectionJson, 60 * 60 * 24);
+  context.set('Cache-Control', 'public, max-age=3600');
+  context.response.body = collectionJson;
 };
