@@ -769,7 +769,7 @@ export const TabularProjectWizard: React.FC = () => {
         host: window.location.hostname,
         port: window.location.port || (window.location.protocol === 'https:' ? '443' : '80'),
         protocol: window.location.protocol.replace(':', ''),
-        path: `/s/${slug}/madoc/api/typesense`,
+        path: `/s/${site.slug}/madoc/api/typesense`,
         collection: 'madoc_site_1',
         searchParams: {
           query_by: 'resource_label,search_text,metadata_label,metadata_pairs',
