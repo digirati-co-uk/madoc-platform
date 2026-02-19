@@ -27,10 +27,10 @@ export type ContentOptions<Custom = any> = {
   interactive?: boolean;
   autoWidth?: boolean;
   autoHeight?: boolean;
-  maxHeight?: number;
-  maxWidth?: number;
-  height?: number;
-  width?: number;
+  maxHeight?: number | string;
+  maxWidth?: number | string;
+  height?: number | string;
+  width?: number | string;
   custom?: Custom;
   targetOverride?: any;
   selectorVisibility?: {

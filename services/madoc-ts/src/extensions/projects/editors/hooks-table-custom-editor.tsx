@@ -49,7 +49,7 @@ function HooksTableCustomEditorContent({ canvasId, canvas }: { canvasId: number;
     try {
       await lifecycle.saveForLater();
     } catch {
-      // Error state is surfaced from lifecycle.lastError.
+      // error
     }
   }
 
@@ -57,7 +57,7 @@ function HooksTableCustomEditorContent({ canvasId, canvas }: { canvasId: number;
     try {
       await lifecycle.submit();
     } catch {
-      // Error state is surfaced from lifecycle.lastError.
+      // error
     }
   }
 

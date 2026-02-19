@@ -8,7 +8,7 @@ import { Target } from '../capture-models/types/capture-model';
 export const ViewContent: React.FC<{
   target: Target[];
   canvas: CanvasFull['canvas'];
-  height?: number;
+  height?: number | string;
   onCreated?: (runtime: Preset) => void;
   onPanInSketchMode?: () => void;
   children?: React.ReactNode;

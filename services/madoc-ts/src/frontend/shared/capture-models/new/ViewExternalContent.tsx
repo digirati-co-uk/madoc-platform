@@ -5,7 +5,7 @@ import { useContentType } from '../plugin-api/hooks/use-content-type';
 
 export const ViewExternalContent: React.FC<{
   target: any;
-  height?: number;
+  height?: number | string;
   onCreated?: (runtime: Preset) => void;
   onPanInSketchMode?: () => void;
   children?: React.ReactNode;

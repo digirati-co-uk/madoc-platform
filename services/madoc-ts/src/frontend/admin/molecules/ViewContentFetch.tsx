@@ -7,7 +7,7 @@ import { BrowserComponent } from '../../shared/utility/browser-component';
 
 export const ViewContentFetch: React.FC<{
   id: number;
-  height?: number;
+  height?: number | string;
   onCreated?: (rt: Preset) => void;
   onPanInSketchMode?: () => void;
   children?: React.ReactNode;
