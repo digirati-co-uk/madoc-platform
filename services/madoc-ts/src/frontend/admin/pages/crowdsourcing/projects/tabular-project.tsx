@@ -298,6 +298,10 @@ export const TabularProjectWizard: React.FC = () => {
   const [slug, setSlug] = useState('');
   const [autoSlug, setAutoSlug] = useState(true);
 
+  const closeBrowserRef = useRef<any>(null);
+
+  const rootCollection = `${window.location.origin}/s/${site.slug}/madoc/api/collections/root`;
+
   const [enableZoomTracking, setEnableZoomTracking] = useState(false);
   const [manifestId, setManifestId] = useState<string | undefined>();
   const [canvasId, setCanvasId] = useState<string | undefined>();
@@ -712,6 +716,7 @@ export const TabularProjectWizard: React.FC = () => {
       setManifestId(resolvedManifestId);
       setIiifError(null);
       setIiifBrowserSelection(`${resource.id}`);
+      closeBrowserRef.current?.();
     },
     [t]
   );
@@ -752,6 +757,62 @@ export const TabularProjectWizard: React.FC = () => {
     [api, site?.slug, t]
   );
 
+  const searchOptions: IIIFBrowserProps['search'] = useMemo(() => {
+    return {
+      enableWithinCollection: false,
+      enableExternal: true,
+      combination: {
+        mode: 'externalFirst',
+        maxExternalResults: 20,
+      },
+      typesense: {
+        host: window.location.hostname,
+        port: `/s/${site.slug}/madoc/api/typesense`,
+        protocol: window.location.protocol.replace(':', ''),
+        path: `/s/${site.slug}/madoc/api/typesense`,
+        collection: 'madoc_site_1',
+        searchParams: {
+          query_by: 'resource_label,search_text,metadata_label,metadata_pairs',
+          per_page: 20,
+        },
+        mapHitToResult(hit) {
+          const doc = hit.document;
+          // Extract the numeric manifest ID from manifest_ids (e.g. ["33170"])
+          // or fall back to parsing manifest_id ("urn:madoc:manifest:33170")
+          const manifestIds = doc.manifest_ids as string[] | undefined;
+          const manifestHitId =
+            manifestIds && manifestIds.length > 0
+              ? manifestIds[0]
+              : typeof doc.manifest_id === 'string'
+                ? (doc.manifest_id as string).split(':').pop()
+                : null;
+
+          const resourceUrl = manifestHitId
+            ? `${window.location.origin}/s/${site.slug}/madoc/api/manifests/${manifestHitId}/export/3.0`
+            : String(doc.resource_id ?? doc.id);
+
+          const highlightSummary =
+            hit.highlights
+              ?.map(h => h.snippet?.trim())
+              .filter(Boolean)
+              .join(' · ') ?? null;
+
+          return {
+            id: String(doc.id),
+            label: String(doc.resource_label ?? doc.sort_label ?? 'Untitled'),
+            thumbnail: doc.thumbnail ? String(doc.thumbnail) : null,
+            summary: highlightSummary,
+            kind: 'external' as const,
+            resourceId: resourceUrl,
+            resourceType: 'Manifest',
+            metadata: doc,
+          };
+        },
+      },
+      externalSectionLabel: 'Madoc search results',
+    };
+  }, [site, slug]);
+
   const navigationOptions: IIIFBrowserProps['navigation'] = useMemo(() => {
     return {
       clickToSelect: true,
@@ -780,6 +841,7 @@ export const TabularProjectWizard: React.FC = () => {
 
   const uiOptions: IIIFBrowserProps['ui'] = useMemo(
     () => ({
+      homeLink: rootCollection,
       defaultPages: {
         about: false,
         bookmarks: false,
@@ -852,14 +914,16 @@ export const TabularProjectWizard: React.FC = () => {
       </div>
 
       {iiifPickerMode === 'external' ? (
-        <div className="tabular-iiif-browser-external">
+        <div className="tabular-iiif-browser-external relative">
           <BrowserComponent fallback={<div>{t('Loading IIIF browser...')}</div>}>
             <IsolatedIIIFBrowser
-              className="h-[56vh] min-h-[420px] w-full min-w-0 flex-2 border-none"
+              className="iiif-browser relative border-none border-t rounded-none h-[70vh] min-h-[60vh] max-h-full max-w-full"
+              // className="h-[56vh] min-h-[420px] w-full min-w-0 flex-2 border-none"
               navigation={navigationOptions}
               history={historyOptions}
               output={outputOptions}
               ui={uiOptions}
+              search={searchOptions}
             />
           </BrowserComponent>
         </div>
@@ -1091,7 +1155,14 @@ export const TabularProjectWizard: React.FC = () => {
               ) : null}
 
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <ModalButton title={t('Browse IIIF resources')} modalSize="lg" render={() => iiifBrowser}>
+                <ModalButton
+                  title={t('Browse IIIF resources')}
+                  modalSize="lg"
+                  render={({ close }) => {
+                    closeBrowserRef.current = close;
+                    return iiifBrowser;
+                  }}
+                >
                   <Button>{t('Browse manifests')}</Button>
                 </ModalButton>
                 {hasImage ? <span style={{ fontSize: 12, opacity: 0.75 }}>{t('Canvas selected')}</span> : null}
