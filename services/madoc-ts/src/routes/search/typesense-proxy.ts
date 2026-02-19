@@ -1,12 +1,12 @@
-import { RouteMiddleware } from '../../types/route-middleware';
-import { optionalUserWithScope } from '../../utility/user-with-scope';
 import {
   isTypesenseAvailable,
   resolveTypesenseSearchCollection,
-  TypesenseAvailability,
+  type TypesenseAvailability,
   TypesenseClient,
 } from '../../search/typesense/typesense-client';
+import type { RouteMiddleware } from '../../types/route-middleware';
 import { NotFound } from '../../utility/errors/not-found';
+import { optionalUserWithScope } from '../../utility/user-with-scope';
 
 function sanitizeSearchParams(input: Record<string, any> | string) {
   const scoped: Record<string, any> = {};
@@ -152,6 +152,9 @@ export const typesenseProxySearch: RouteMiddleware = async context => {
   await typesense.ensureSearchCollection(collection);
 
   const input = context.method === 'GET' ? context.query : parseRequestPayload(context.requestBody);
+  if (context.params?.collection) {
+    input.collection = context.params.collection;
+  }
   const params = sanitizeSearchParams(input);
 
   context.response.body = await typesense.searchRaw(collection, params);
