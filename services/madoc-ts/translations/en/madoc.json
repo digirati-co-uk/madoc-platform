@@ -36,6 +36,7 @@
   "Add subpage": "Add subpage",
   "Add term configuration": "Add term configuration",
   "Additional settings": "Additional settings",
+  "Adjust the grid so it matches the table in the example image. Align the pink band with the headings defined earlier.": "Adjust the grid so it matches the table in the example image. Align the pink band with the headings defined earlier.",
   "Admin": "Admin",
   "Admin dashboard": "Admin dashboard",
   "Admin operation": "Admin operation",
@@ -818,6 +819,7 @@
   "Remote plugin": "Remote plugin",
   "Remote project template": "Remote project template",
   "Remove": "Remove",
+  "Remove selected image": "Remove selected image",
   "Remove {{label}}": "Remove {{label}}",
   "Remove {{label}}?": "Remove {{label}}?",
   "Render when no other blocks are available": "Render when no other blocks are available",
@@ -1321,6 +1323,9 @@
   "{{count}} submission": "{{count}} submission",
   "{{count}} submission_plural": "{{count}} submission",
   "{{feature}} is an experimental feature": "{{feature}} is an experimental feature",
+  "{{page}} of {{count}}": "{{page}} of {{count}}",
+  "{{page}} of {{count}}_plural": "{{page}} of {{count}}"
+}
   "{{page}} of {{count}}": "{{page}} of {{count}}",
   "{{page}} of {{count}}_plural": "{{page}} of {{count}}"
 }
