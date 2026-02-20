@@ -1,0 +1,19 @@
+{
+  "prettier": {
+    "allowed": true
+  },
+  "languages": {
+    "TSX": {
+      "format_on_save": "on",
+      "remove_trailing_whitespace_on_save": false,
+      "formatter": "prettier",
+      "allow_rewrap": "in_comments"
+    },
+    "TypeScript": {
+      "format_on_save": "on",
+      "remove_trailing_whitespace_on_save": false,
+      "formatter": "prettier",
+      "allow_rewrap": "in_comments"
+    },
+  }
+}

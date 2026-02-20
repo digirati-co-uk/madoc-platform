@@ -26,6 +26,7 @@ import { queryConfig } from './query-config';
 import { ReactQueryDevtools } from 'react-query-devtools';
 import { ScrollTop } from './scroll-top';
 import '../required-modules';
+import { DevApiDebugPanel } from '../components/DevApiDebugPanel';
 
 export async function renderClient(
   Component: React.FC<any>,
@@ -40,7 +41,7 @@ export async function renderClient(
   const dehydratedState = dehydratedStateEl ? JSON.parse(dehydratedStateEl.innerText) : {};
   const dehydratedSite = dehydratedSiteEl ? JSON.parse(dehydratedSiteEl.innerText) : {};
 
-  // @ts-ignore
+  // @ts-expect-error umami is injected at runtime.
   window.umami = {
     trackEvent: () => {
       // no-op
@@ -65,7 +66,7 @@ export async function renderClient(
         const module = new Function(`
           return (function(require, module, exports) {
             ${code};
-            
+
             return exports;
           })(this.require, this.module, this.exports);
         `);
@@ -104,6 +105,12 @@ export async function renderClient(
   const localisations = dehydratedSite.locales as Array<{ label: string; code: string }>;
   const supportedLocales = localisations.map(local => local.code);
   const defaultLocale = dehydratedSite.defaultLocale || 'en';
+  const globalAdminDebugEnabled =
+    (process.env.MADOC_ENABLE_API_DEBUG_PANEL === 'true' || process.env.MADOC_ENABLE_API_DEBUG_PANEL === '1') &&
+    dehydratedSite?.user?.role === 'global_admin';
+  const showApiDebugPanel = process.env.NODE_ENV === 'development' || globalAdminDebugEnabled;
+
+  api.setRuntimeDebugEnabled(showApiDebugPanel);
 
   if (component && (jwt || !requireJwt)) {
     createBackend(slug, jwt, supportedLocales, defaultLocale).then(([t, i18n]) => {
@@ -148,6 +155,7 @@ export async function renderClient(
                             systemConfig={dehydratedSite.systemConfig}
                           />
                         </Suspense>
+                        {showApiDebugPanel ? <DevApiDebugPanel api={api} /> : null}
                         {process.env.NODE_ENV === 'development' ? <ReactQueryDevtools /> : null}
                       </ErrorBoundary>
                     </ThemeProvider>

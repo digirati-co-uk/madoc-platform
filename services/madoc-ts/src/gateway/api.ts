@@ -39,7 +39,7 @@ import {
   ProjectDeletionSummary,
   CollectionDeletionSummary,
 } from '../types/deletion-summary';
-import { PublicUserProfile, Site, SiteUser, User, UserInformationRequest } from '../extensions/site-manager/types';
+import { PublicUserProfile, Site, SiteUser, UserInformationRequest } from '../extensions/site-manager/types';
 import { ProjectManifestTasks } from '../types/manifest-tasks';
 import { NoteListResponse } from '../types/personal-notes';
 import { Pm2Status } from '../types/pm2';
@@ -105,6 +105,50 @@ export type ApiClientWithoutExtensions = Omit<
   | 'cloneCaptureModel'
 >;
 
+type ApiDebugRequestInfo = {
+  method?: string;
+  path?: string;
+  route?: string | null;
+  status?: number;
+  totalMs?: number;
+};
+
+type ApiDebugMiddlewareInfo = {
+  name: string;
+  totalMs: number;
+  selfMs: number;
+  downstreamMs: number;
+};
+
+type ApiDebugStepInfo = {
+  step: string;
+  durationMs: number;
+};
+
+export type ApiDebugPayload = {
+  request?: ApiDebugRequestInfo;
+  middleware?: ApiDebugMiddlewareInfo[];
+  steps?: ApiDebugStepInfo[];
+  totalMs?: number;
+};
+
+export type ApiDebugRequestLog = {
+  id: number;
+  method: string;
+  endpoint: string;
+  endpointWithDebug: string;
+  status: number;
+  startedAt: number;
+  endedAt: number;
+  durationMs: number;
+  pagePath?: string;
+  debug?: ApiDebugPayload;
+};
+
+function isObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null;
+}
+
 function getSearchQueryEndpoint() {
   return '/api/search/search';
 }
@@ -126,6 +170,10 @@ export class ApiClient {
   private jwt?: string;
   private readonly jwtFunction?: () => string;
   private errorRecoveryHandlers: Array<() => void> = [];
+  private debugRequestHandlers: Array<(request: ApiDebugRequestLog) => void> = [];
+  private debugRequests: ApiDebugRequestLog[] = [];
+  private debugRequestCounter = 0;
+  private runtimeDebugEnabled = false;
   private isDown = false;
   private currentUser?: { scope: string[]; user: { id: string; name?: string } };
   // Public.
@@ -288,6 +336,115 @@ export class ApiClient {
     };
   }
 
+  onDebugRequest(func: (request: ApiDebugRequestLog) => void) {
+    if (this.debugRequestHandlers.indexOf(func) === -1) {
+      this.debugRequestHandlers.push(func);
+    }
+    return () => {
+      this.debugRequestHandlers = this.debugRequestHandlers.filter(handler => handler !== func);
+    };
+  }
+
+  getDebugRequests() {
+    return [...this.debugRequests];
+  }
+
+  clearDebugRequests() {
+    this.debugRequests = [];
+  }
+
+  setRuntimeDebugEnabled(enabled: boolean) {
+    this.runtimeDebugEnabled = enabled;
+
+    if (!enabled) {
+      this.clearDebugRequests();
+    }
+  }
+
+  private isRequestDebugEnabled() {
+    return process.env.NODE_ENV === 'development' || this.runtimeDebugEnabled;
+  }
+
+  private appendDebugQuery(endpoint: string) {
+    if (!this.isRequestDebugEnabled()) {
+      return endpoint;
+    }
+
+    const [endpointWithoutHash, hash = ''] = endpoint.split('#');
+    const [pathName, queryString = ''] = endpointWithoutHash.split('?');
+    const params = new URLSearchParams(queryString);
+    if (!params.has('debug')) {
+      params.set('debug', 'true');
+    }
+    const encodedQueryString = params.toString();
+
+    return `${pathName}${encodedQueryString ? `?${encodedQueryString}` : ''}${hash ? `#${hash}` : ''}`;
+  }
+
+  private getPagePath() {
+    if (this.isServer) {
+      return undefined;
+    }
+    return `${window.location.pathname}${window.location.search}`;
+  }
+
+  private getResponseDebug(data: unknown): ApiDebugPayload | undefined {
+    if (!isObject(data) || !isObject(data.debug)) {
+      return undefined;
+    }
+
+    const debug = data.debug as Record<string, unknown>;
+    const mappedDebug: ApiDebugPayload = {};
+
+    if (isObject(debug.request)) {
+      const request = debug.request;
+      mappedDebug.request = {
+        method: typeof request.method === 'string' ? request.method : undefined,
+        path: typeof request.path === 'string' ? request.path : undefined,
+        route: typeof request.route === 'string' ? request.route : request.route === null ? null : undefined,
+        status: typeof request.status === 'number' ? request.status : undefined,
+        totalMs: typeof request.totalMs === 'number' ? request.totalMs : undefined,
+      };
+    }
+
+    if (Array.isArray(debug.middleware)) {
+      mappedDebug.middleware = debug.middleware
+        .filter(item => isObject(item))
+        .map(item => ({
+          name: typeof item.name === 'string' ? item.name : 'unknown',
+          totalMs: typeof item.totalMs === 'number' ? item.totalMs : 0,
+          selfMs: typeof item.selfMs === 'number' ? item.selfMs : 0,
+          downstreamMs: typeof item.downstreamMs === 'number' ? item.downstreamMs : 0,
+        }));
+    }
+
+    if (Array.isArray(debug.steps)) {
+      mappedDebug.steps = debug.steps
+        .filter(item => isObject(item))
+        .map(item => ({
+          step: typeof item.step === 'string' ? item.step : 'unknown',
+          durationMs: typeof item.durationMs === 'number' ? item.durationMs : 0,
+        }));
+    }
+
+    if (typeof debug.totalMs === 'number') {
+      mappedDebug.totalMs = debug.totalMs;
+    }
+
+    return mappedDebug;
+  }
+
+  private recordDebugRequest(request: ApiDebugRequestLog) {
+    if (!this.isRequestDebugEnabled()) {
+      return;
+    }
+
+    this.debugRequests.push(request);
+    for (const handler of this.debugRequestHandlers) {
+      handler(request);
+    }
+  }
+
   async wrapTask<After, Task extends BaseTask = BaseTask>(
     target: Promise<Task>,
     after: (task: Task) => After | Promise<After>,
@@ -399,13 +556,17 @@ export class ApiClient {
       allow404?: boolean;
     } = {}
   ): Promise<Return> {
+    const startedAt = Date.now();
+    const pagePath = this.getPagePath();
+    const endpointWithDebug = this.appendDebugQuery(endpoint);
+
     if (!publicRequest && !jwt) {
-      console.log(`Not authorised to ${method} ${endpoint}`);
+      console.log(`Not authorised to ${method} ${endpointWithDebug}`);
 
       throw new ApiError('Not authorised');
     }
 
-    const response = await this.fetcher<Return>(this.gateway, endpoint, {
+    const response = await this.fetcher<Return>(this.gateway, endpointWithDebug, {
       method,
       body,
       jwt: jwt,
@@ -416,6 +577,20 @@ export class ApiClient {
       headers,
       raw,
       formData,
+    });
+    const endedAt = Date.now();
+
+    this.recordDebugRequest({
+      id: this.debugRequestCounter++,
+      method,
+      endpoint,
+      endpointWithDebug,
+      status: response.status,
+      startedAt,
+      endedAt,
+      durationMs: endedAt - startedAt,
+      pagePath,
+      debug: this.getResponseDebug(response.data),
     });
 
     if (response.error) {
@@ -440,7 +615,8 @@ export class ApiClient {
         const match = window.location.pathname.match(/s\/([^/]+)\//);
         if (match) {
           const [, slug] = match;
-          const newTokenResponse = await fetchJson<{ token: string }>(this.gateway, `/s/${slug}/auth/refresh`, {
+          const refreshEndpoint = this.appendDebugQuery(`/s/${slug}/auth/refresh`);
+          const newTokenResponse = await fetchJson<{ token: string }>(this.gateway, refreshEndpoint, {
             method: 'POST',
             body: {
               token: jwt,
@@ -525,7 +701,7 @@ export class ApiClient {
     options?: { siteSlug?: string },
     withExtensions?: boolean
   ): ApiClientWithoutExtensions {
-    return new ApiClient({
+    const userApi = new ApiClient({
       gateway: this.gateway,
       jwt: this.getJwt(),
       asUser: user,
@@ -533,6 +709,9 @@ export class ApiClient {
       publicSiteSlug: options && options.siteSlug ? options.siteSlug : this.publicSiteSlug,
       withoutExtensions: !withExtensions,
     });
+    userApi.setRuntimeDebugEnabled(this.runtimeDebugEnabled);
+
+    return userApi;
   }
 
   async asUserWithExtensions<T = void>(
@@ -2280,7 +2459,7 @@ export class ApiClient {
       return this.request<SearchIndexTask>(`/api/madoc/iiif/manifests/${id}/index`, {
         method: 'POST',
       });
-    } catch (err) {
+    } catch {
       // no-op this will fail silently.
       return undefined;
     }
@@ -2315,8 +2494,8 @@ export class ApiClient {
   async searchGetIIIF(id: string) {
     try {
       return this.request(`/api/search/iiif/${id}`, { allow404: true });
-    } catch (err) {
-      console.log('caught error?', err);
+    } catch {
+      console.log('caught error?');
       return undefined;
     }
   }
@@ -2326,7 +2505,7 @@ export class ApiClient {
       return this.request(`/api/search/iiif/${id}`, {
         method: 'DELETE',
       });
-    } catch (err) {
+    } catch {
       return undefined;
     }
   }
@@ -2351,7 +2530,7 @@ export class ApiClient {
       await this.request<SearchIndexTask>(`/api/madoc/iiif/canvases/${id}/index`, {
         method: 'POST',
       });
-    } catch (err) {
+    } catch {
       // no-op this will fail silently.
     }
   }
