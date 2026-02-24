@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { DataGrid, type Column } from 'react-data-grid';
 import 'react-data-grid/lib/styles.css';
 import type { TabularValidationIssue } from './types';
@@ -24,7 +24,6 @@ function HeaderInput(props: {
   value: string;
   disabled: boolean;
   hasError: boolean;
-  isActive: boolean;
   title?: string;
   onFocus?: () => void;
   onChange: (next: string) => void;
@@ -42,19 +41,21 @@ function HeaderInput(props: {
       title={title}
       style={{
         width: '100%',
+        height: '100%',
         border: 'none',
-        padding: '10px 8px',
+        padding: '10px 12px',
         fontSize: 13,
+        color: '#283452',
+        textAlign: 'center',
         outline: 'none',
         background: 'transparent',
-        borderRadius: 6,
-        boxShadow: hasError ? 'inset 0 0 0 2px rgba(220, 38, 38, 0.55)' : undefined,
+        boxShadow: hasError ? 'inset 0 0 0 2px rgba(220, 38, 38, 0.5)' : undefined,
       }}
     />
   );
 }
 
-export const TabularHeadingsTable: React.FC<TabularHeadingsTableProps> = props => {
+export function TabularHeadingsTable(props: TabularHeadingsTableProps) {
   const {
     columns,
     headings,
@@ -111,7 +112,7 @@ export const TabularHeadingsTable: React.FC<TabularHeadingsTableProps> = props =
             style={{
               height: '100%',
               padding: 0,
-              background: c === activeColumn ? '#eef6ff' : '#f3f6ff',
+              background: c === activeColumn ? '#cfd8f2' : '#d9deee',
               cursor: 'pointer',
             }}
           >
@@ -119,7 +120,6 @@ export const TabularHeadingsTable: React.FC<TabularHeadingsTableProps> = props =
               value={safeHeadings[c] ?? ''}
               disabled={disabled}
               hasError={hasError}
-              isActive={c === activeColumn}
               title={title}
               onFocus={() => onActiveColumnChange?.(c)}
               onChange={next => {
@@ -135,7 +135,7 @@ export const TabularHeadingsTable: React.FC<TabularHeadingsTableProps> = props =
             aria-disabled="true"
             style={{
               height: '100%',
-              background: '#fafafa',
+              background: '#fff',
             }}
           />
         ),
@@ -152,8 +152,8 @@ export const TabularHeadingsTable: React.FC<TabularHeadingsTableProps> = props =
     onChangeHeadings,
   ]);
 
-  const headerRowHeight = 54;
-  const rowHeight = 42;
+  const headerRowHeight = 52;
+  const rowHeight = 46;
   const gridHeight = headerRowHeight + rowHeight * rows.length + 2;
   const minGridWidth = columns * 220 + 2;
 
@@ -165,8 +165,12 @@ export const TabularHeadingsTable: React.FC<TabularHeadingsTableProps> = props =
             outline: none !important;
           }
           .tabular-rdg .rdg-cell {
-            border-inline-end: 1px solid #d4d8df !important;
-            border-block-end: 1px solid #d4d8df !important;
+            border-inline-end: 1px solid #d6d6d6 !important;
+            border-block-end: 1px solid #d6d6d6 !important;
+            padding: 0 !important;
+          }
+          .tabular-rdg .rdg-header-row .rdg-cell {
+            padding: 0 !important;
           }
         `}
       </style>
@@ -181,11 +185,11 @@ export const TabularHeadingsTable: React.FC<TabularHeadingsTableProps> = props =
         style={{
           height: gridHeight,
           minWidth: minGridWidth,
-          border: '1px solid #d4d8df',
+          border: '1px solid #d6d6d6',
           ['--rdg-selection-width' as string]: '0px',
-          ['--rdg-border-color' as string]: '#d4d8df',
+          ['--rdg-border-color' as string]: '#d6d6d6',
         }}
       />
     </>
   );
-};
+}

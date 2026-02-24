@@ -1,6 +1,9 @@
 import React from 'react';
 import type { TabularCellRef } from '../../../frontend/admin/components/tabular/cast-a-net/types';
 import type { CaptureModelEditorApi } from '@/frontend/shared/capture-models/new/hooks/use-capture-model-editor-api';
+import { AddIcon } from '@/frontend/shared/icons/AddIcon';
+import { MinusIcon } from '@/frontend/shared/icons/MinusIcon';
+import { Button } from '@/frontend/shared/navigation/Button';
 
 type TabularProjectCustomEditorTableProps = {
   table: CaptureModelEditorApi;
@@ -79,12 +82,12 @@ export function TabularProjectCustomEditorTable({
   removeRowFromFooter,
   onCreateLegacyField,
 }: TabularProjectCustomEditorTableProps) {
+  const isRemoveRowDisabled = disabled || !canRemoveRow;
+  const isAddRowDisabled = disabled || !canAddRow;
+
   return (
-    <div
-      className="flex min-h-0 flex-1 flex-col overflow-hidden rounded border border-gray-300"
-      style={{ minHeight: 220 }}
-    >
-      <div className="min-h-0 flex-1 overflow-x-auto overflow-y-auto" style={{ minHeight: 160 }}>
+    <div className="flex min-h-0 flex-col overflow-hidden rounded border border-gray-300">
+      <div className="min-h-0 overflow-x-auto overflow-y-auto">
         <table className="w-max min-w-full border-collapse">
           <thead className="sticky top-0 z-10">
             <tr>
@@ -116,8 +119,7 @@ export function TabularProjectCustomEditorTable({
                     {legacyColumnKeys.map((columnKey, colIndex) => {
                       const field = table.topLevelFields[columnKey]?.[rowIndex];
                       const fieldType = columnHints.get(columnKey);
-                      const isActiveCell =
-                        tableActiveCell?.row === rowIndex && tableActiveCell?.col === colIndex;
+                      const isActiveCell = tableActiveCell?.row === rowIndex && tableActiveCell?.col === colIndex;
 
                       return (
                         <td
@@ -156,8 +158,7 @@ export function TabularProjectCustomEditorTable({
                     {visibleColumns.map((column, colIndex) => {
                       const cell = row.getCell(column.key);
                       const fieldType = columnHints.get(column.key) || column.fieldType;
-                      const isActiveCell =
-                        tableActiveCell?.row === row.rowIndex && tableActiveCell?.col === colIndex;
+                      const isActiveCell = tableActiveCell?.row === row.rowIndex && tableActiveCell?.col === colIndex;
 
                       return (
                         <td
@@ -194,53 +195,25 @@ export function TabularProjectCustomEditorTable({
           </tbody>
         </table>
       </div>
-      <div className="flex items-center justify-center gap-8 border-t border-gray-300 bg-gray-50 px-3 py-2">
-        <button
+      <div className="flex items-center justify-center gap-12 border-t border-gray-300 bg-gray-300 px-3 py-1">
+        <Button
           type="button"
           onClick={removeRowFromFooter}
-          disabled={disabled || !canRemoveRow}
+          disabled={isRemoveRowDisabled}
           title="Remove row"
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: 34,
-            height: 34,
-            borderRadius: 6,
-            border: '1px solid #98a3b8',
-            background: '#fff',
-            color: '#2f3a4f',
-            fontSize: 24,
-            lineHeight: 1,
-            cursor: disabled || !canRemoveRow ? 'not-allowed' : 'pointer',
-            opacity: disabled || !canRemoveRow ? 0.55 : 1,
-          }}
+          style={{ background: 'transparent', border: 'none' }}
         >
-          -
-        </button>
-        <button
+          <MinusIcon className="h-4 w-4" />
+        </Button>
+        <Button
           type="button"
           onClick={addRowFromFooter}
-          disabled={disabled || !canAddRow}
+          disabled={isAddRowDisabled}
           title="Add row"
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: 34,
-            height: 34,
-            borderRadius: 6,
-            border: '1px solid #98a3b8',
-            background: '#fff',
-            color: '#2f3a4f',
-            fontSize: 24,
-            lineHeight: 1,
-            cursor: disabled || !canAddRow ? 'not-allowed' : 'pointer',
-            opacity: disabled || !canAddRow ? 0.55 : 1,
-          }}
+          style={{ background: 'transparent', border: 'none' }}
         >
-          +
-        </button>
+          <AddIcon className="h-4 w-4" />
+        </Button>
       </div>
     </div>
   );

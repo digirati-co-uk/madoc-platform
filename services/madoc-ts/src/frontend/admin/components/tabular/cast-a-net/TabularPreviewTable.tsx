@@ -1,4 +1,6 @@
-import React, { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
+import { DataGrid, type Column } from 'react-data-grid';
+import 'react-data-grid/lib/styles.css';
 import type { TabularCellRef } from './types';
 
 export type TabularPreviewTableProps = {
@@ -16,7 +18,9 @@ export type TabularPreviewTableProps = {
   containerWidth?: number | string;
 };
 
-export const TabularPreviewTable: React.FC<TabularPreviewTableProps> = ({
+type PreviewRow = { id: number };
+
+export function TabularPreviewTable({
   headings,
   tooltips = [],
   rows,
@@ -29,7 +33,7 @@ export const TabularPreviewTable: React.FC<TabularPreviewTableProps> = ({
   addRowLabel = '+ Add row',
   containerHeight,
   containerWidth,
-}) => {
+}: TabularPreviewTableProps) {
   const safeColumns = Math.max(1, headings.length || 0);
   const safeRows = Math.max(1, rows || 0);
 
@@ -54,12 +58,89 @@ export const TabularPreviewTable: React.FC<TabularPreviewTableProps> = ({
     [values, safeRows, safeColumns]
   );
 
-  const updateCell = (rowIndex: number, colIndex: number, nextValue: string) => {
-    const nextRows = safeValues.map(row => row.slice());
-    nextRows[rowIndex][colIndex] = nextValue;
-    onChange(nextRows);
-  };
+  const rowsForGrid = useMemo<PreviewRow[]>(
+    () => Array.from({ length: safeRows }, (_row, rowIndex) => ({ id: rowIndex })),
+    [safeRows]
+  );
 
+  const updateCell = useCallback(
+    (rowIndex: number, colIndex: number, nextValue: string) => {
+      const nextRows = safeValues.map(row => row.slice());
+      nextRows[rowIndex][colIndex] = nextValue;
+      onChange(nextRows);
+    },
+    [onChange, safeValues]
+  );
+
+  const gridColumns = useMemo<readonly Column<PreviewRow>[]>(() => {
+    return Array.from({ length: safeColumns }, (_unused, colIndex) => {
+      const heading = safeHeadings[colIndex] ?? '';
+      const tooltip = safeTooltips[colIndex] ?? '';
+      const title = tooltip ? `${heading}\n${tooltip}` : heading;
+
+      return {
+        key: `c-${colIndex}`,
+        name: '',
+        width: 220,
+        sortable: false,
+        resizable: false,
+        renderHeaderCell: () => (
+          <div
+            style={{
+              height: '100%',
+              background: '#d9deee',
+              color: '#283452',
+              fontSize: 13,
+              fontWeight: 500,
+              padding: '8px 10px',
+              textAlign: 'center',
+              display: 'grid',
+              alignItems: 'center',
+            }}
+            title={title}
+          >
+            <div style={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>{heading}</div>
+          </div>
+        ),
+        renderCell: ({ row }) => {
+          const rowIndex = row.id;
+          const value = safeValues[rowIndex]?.[colIndex] ?? '';
+          const isActiveRow = activeCell?.row === rowIndex;
+          const isActiveCell = isActiveRow && activeCell?.col === colIndex;
+
+          return (
+            <div
+              style={{
+                height: '100%',
+                background: isActiveCell ? '#def3e4' : isActiveRow ? '#f2fbf4' : '#fff',
+              }}
+            >
+              <input
+                value={value}
+                disabled={disabled}
+                onFocus={() => onActiveCellChange({ row: rowIndex, col: colIndex })}
+                onChange={event => updateCell(rowIndex, colIndex, event.currentTarget.value)}
+                style={{
+                  border: 'none',
+                  width: '100%',
+                  height: '100%',
+                  background: 'transparent',
+                  padding: '10px 12px',
+                  fontSize: 13,
+                  outline: isActiveCell ? '2px solid #34a853' : 'none',
+                  outlineOffset: -2,
+                }}
+              />
+            </div>
+          );
+        },
+      } satisfies Column<PreviewRow>;
+    });
+  }, [activeCell, disabled, onActiveCellChange, safeColumns, safeHeadings, safeTooltips, safeValues, updateCell]);
+
+  const headerRowHeight = 52;
+  const rowHeight = 46;
+  const gridHeight = headerRowHeight + rowHeight * safeRows + 2;
   const hasFixedHeight = typeof containerHeight !== 'undefined';
 
   return (
@@ -76,93 +157,41 @@ export const TabularPreviewTable: React.FC<TabularPreviewTableProps> = ({
         overflow: 'hidden',
       }}
     >
-      <div
-        style={{
-          overflow: 'scroll',
-          flex: hasFixedHeight ? '1 1 auto' : undefined,
-          minHeight: 0,
-        }}
-      >
-        <table
+      <style>
+        {`
+          .tabular-preview-rdg .rdg-cell[aria-selected="true"] {
+            outline: none !important;
+          }
+          .tabular-preview-rdg .rdg-cell {
+            border-inline-end: 1px solid #d6d6d6 !important;
+            border-block-end: 1px solid #d6d6d6 !important;
+            padding: 0 !important;
+          }
+          .tabular-preview-rdg .rdg-header-row .rdg-cell {
+            padding: 0 !important;
+          }
+          .tabular-preview-rdg .rdg-row:hover {
+            background: inherit !important;
+          }
+        `}
+      </style>
+      <div style={{ flex: hasFixedHeight ? '1 1 auto' : undefined, minHeight: 0 }}>
+        <DataGrid
+          className="rdg-light tabular-preview-rdg"
+          columns={gridColumns}
+          rows={rowsForGrid}
+          rowKeyGetter={row => row.id}
+          enableVirtualization={false}
+          headerRowHeight={headerRowHeight}
+          rowHeight={rowHeight}
           style={{
-            width: safeColumns * 220,
-            minWidth: '100%',
-            borderCollapse: 'collapse',
-            tableLayout: 'fixed',
+            height: hasFixedHeight ? '100%' : gridHeight,
+            minWidth: safeColumns * 220 + 2,
+            border: 'none',
+            ['--rdg-selection-width' as string]: '0px',
+            ['--rdg-border-color' as string]: '#d6d6d6',
           }}
-        >
-          <thead>
-            <tr>
-              {safeHeadings.map((heading, colIndex) => {
-                const tooltip = safeTooltips[colIndex];
-                const title = tooltip ? `${heading}\n${tooltip}` : heading;
-                return (
-                  <th
-                    key={`header-${colIndex}`}
-                    style={{
-                      border: '1px solid #d6d6d6',
-                      background: '#d9deee',
-                      color: '#283452',
-                      fontSize: 13,
-                      fontWeight: 500,
-                      height: 52,
-                      padding: '8px 10px',
-                      textAlign: 'center',
-                      verticalAlign: 'middle',
-                      position: 'sticky',
-                      top: 0,
-                      zIndex: 1,
-                    }}
-                    title={title}
-                  >
-                    <div style={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>{heading}</div>
-                  </th>
-                );
-              })}
-            </tr>
-          </thead>
-          <tbody>
-            {safeValues.map((row, rowIndex) => {
-              const isActiveRow = activeCell?.row === rowIndex;
-
-              return (
-                <tr key={`row-${rowIndex}`} style={{ background: isActiveRow ? '#eef9f1' : '#fff' }}>
-                  {row.map((value, colIndex) => {
-                    const isActiveCell = activeCell?.row === rowIndex && activeCell?.col === colIndex;
-                    return (
-                      <td
-                        key={`cell-${rowIndex}-${colIndex}`}
-                        style={{
-                          border: '1px solid #d6d6d6',
-                          height: 46,
-                          padding: 0,
-                          background: isActiveCell ? '#def3e4' : isActiveRow ? '#f2fbf4' : '#fff',
-                        }}
-                      >
-                        <input
-                          value={value}
-                          disabled={disabled}
-                          onFocus={() => onActiveCellChange({ row: rowIndex, col: colIndex })}
-                          onChange={event => updateCell(rowIndex, colIndex, event.currentTarget.value)}
-                          style={{
-                            border: 'none',
-                            width: '100%',
-                            height: '100%',
-                            background: 'transparent',
-                            padding: '10px 12px',
-                            fontSize: 13,
-                            outline: isActiveCell ? '2px solid #34a853' : 'none',
-                            outlineOffset: -2,
-                          }}
-                        />
-                      </td>
-                    );
-                  })}
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+        />
       </div>
       {onAddRow ? (
         <div
@@ -195,4 +224,4 @@ export const TabularPreviewTable: React.FC<TabularPreviewTableProps> = ({
       ) : null}
     </div>
   );
-};
+}
