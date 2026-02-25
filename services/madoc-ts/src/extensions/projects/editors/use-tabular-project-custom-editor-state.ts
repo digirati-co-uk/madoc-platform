@@ -4,6 +4,7 @@ import type { NetConfig, TabularCellRef } from '../../../frontend/admin/componen
 import {
   createTabularColumnModel,
   isHiddenFieldType,
+  isTabularSystemProperty,
   type TabularColumnModel,
   type TabularModelColumn,
 } from './tabular-project-custom-editor-utils';
@@ -40,7 +41,7 @@ type UseTabularProjectCustomEditorStateResult = {
   canAddRow: boolean;
   canRemoveRow: boolean;
   addRowFromFooter: () => void;
-  removeRowFromFooter: () => void;
+  removeRowFromFooter: () => number | null;
 };
 
 export function useTabularProjectCustomEditorState({
@@ -72,12 +73,14 @@ export function useTabularProjectCustomEditorState({
     });
 
     return [...ordered, ...dynamic];
-  }, [columnModel.hidden, columnModel.order, table.columns]);
+  }, [columnModel.hidden, columnModel.order, table]);
 
   const legacyColumnKeys = useMemo(() => {
     const fromTemplate = columnModel.order.filter(columnKey => !columnModel.hidden.has(columnKey));
+    const fromTemplateSet = new Set(fromTemplate);
     const dynamic = Object.keys(table.topLevelFields).filter(
-      columnKey => !columnModel.hidden.has(columnKey) && fromTemplate.indexOf(columnKey) === -1
+      columnKey =>
+        !isTabularSystemProperty(columnKey) && !columnModel.hidden.has(columnKey) && !fromTemplateSet.has(columnKey)
     );
     return [...fromTemplate, ...dynamic];
   }, [columnModel.hidden, columnModel.order, table.topLevelFields]);
@@ -97,7 +100,7 @@ export function useTabularProjectCustomEditorState({
     if (existingConfiguredKeys.length) {
       return existingConfiguredKeys;
     }
-    return Object.keys(table.topLevelFields);
+    return Object.keys(table.topLevelFields).filter(columnKey => !isTabularSystemProperty(columnKey));
   }, [legacyColumnKeys, table.topLevelFields]);
 
   const legacyMutableRowCount = useMemo(() => {
@@ -181,7 +184,7 @@ export function useTabularProjectCustomEditorState({
   const removeRowFromFooter = useCallback(() => {
     if (useLegacyTopLevelLayout) {
       if (legacyMutableRowCount < 2) {
-        return;
+        return null;
       }
 
       const targetRow =
@@ -189,11 +192,11 @@ export function useTabularProjectCustomEditorState({
           ? tableActiveCell.row
           : legacyMutableRowCount - 1;
       removeLegacyRow(targetRow);
-      return;
+      return targetRow;
     }
 
     if (table.rowCount < 2) {
-      return;
+      return null;
     }
 
     const selectedRow = tableActiveCell?.row;
@@ -203,7 +206,10 @@ export function useTabularProjectCustomEditorState({
 
     if (typeof targetRow === 'number') {
       table.removeRow(targetRow);
+      return targetRow;
     }
+
+    return null;
   }, [legacyMutableRowCount, removeLegacyRow, table, tableActiveCell, useLegacyTopLevelLayout]);
 
   const canAddRow = useLegacyTopLevelLayout ? legacyMutableColumnKeys.length > 0 : true;

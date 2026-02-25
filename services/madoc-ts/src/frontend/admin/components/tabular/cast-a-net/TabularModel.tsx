@@ -9,6 +9,7 @@ import type {
   TabularValidationIssue,
 } from './types';
 import { slugifyColumnId } from './utils';
+import { TABULAR_CELL_FLAGS_PROPERTY } from '../../../../shared/utility/tabular-cell-flags';
 
 export { slugifyColumnId };
 
@@ -80,6 +81,11 @@ export function buildTabularModelPayload(headings: string[], meta?: TabularColum
   const captureModelTemplate: TabularCaptureModelTemplate = {
     __entity__: { label: 'Tabular row' },
     ...captureModelFields,
+    [TABULAR_CELL_FLAGS_PROPERTY]: {
+      type: 'text-field',
+      label: 'Cell flags',
+      description: 'Internal metadata for flagged tabular cells.',
+    },
   };
 
   return { columns, captureModelFields, captureModelTemplate };

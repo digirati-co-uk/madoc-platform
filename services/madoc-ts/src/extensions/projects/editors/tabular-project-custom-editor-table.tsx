@@ -4,6 +4,8 @@ import type { CaptureModelEditorApi } from '@/frontend/shared/capture-models/new
 import { AddIcon } from '@/frontend/shared/icons/AddIcon';
 import { MinusIcon } from '@/frontend/shared/icons/MinusIcon';
 import { Button } from '@/frontend/shared/navigation/Button';
+import FlagIcon from '@/frontend/shared/icons/FlagIcon';
+import { getTabularCellElementId } from './tabular-project-custom-editor-utils';
 
 type TabularProjectCustomEditorTableProps = {
   table: CaptureModelEditorApi;
@@ -21,6 +23,7 @@ type TabularProjectCustomEditorTableProps = {
   canRemoveRow: boolean;
   addRowFromFooter: () => void;
   removeRowFromFooter: () => void;
+  isCellFlagged: (rowIndex: number, columnKey: string) => boolean;
   onCreateLegacyField: (columnKey: string) => void;
 };
 
@@ -32,12 +35,19 @@ function renderInput(options: {
   onChange: (nextValue: unknown) => void;
   onFocus: () => void;
   isActiveCell: boolean;
+  isFlagged: boolean;
 }) {
-  const { inputId, value, fieldType, disabled, onChange, onFocus, isActiveCell } = options;
+  const { inputId, value, fieldType, disabled, onChange, onFocus, isActiveCell, isFlagged } = options;
+
+  const inputContainerClass = isActiveCell
+    ? 'border-amber-500 bg-amber-50 ring-2 ring-amber-500/40'
+    : isFlagged
+      ? 'border-red-300 bg-red-50'
+      : 'border-gray-300';
 
   if (fieldType === 'checkbox-field') {
     return (
-      <div className="flex h-full items-center justify-center">
+      <div className={`flex h-full items-center justify-center rounded border px-2 py-1 ${inputContainerClass}`}>
         <input
           id={inputId}
           type="checkbox"
@@ -53,9 +63,7 @@ function renderInput(options: {
   return (
     <input
       id={inputId}
-      className={`w-full rounded border px-2 py-1 text-sm ${
-        isActiveCell ? 'border-emerald-600 ring-2 ring-emerald-500/40' : 'border-gray-300'
-      }`}
+      className={`w-full rounded border px-2 py-1 text-sm ${inputContainerClass}`}
       value={typeof value === 'string' ? value : value === null || typeof value === 'undefined' ? '' : String(value)}
       disabled={disabled}
       onFocus={onFocus}
@@ -80,6 +88,7 @@ export function TabularProjectCustomEditorTable({
   canRemoveRow,
   addRowFromFooter,
   removeRowFromFooter,
+  isCellFlagged,
   onCreateLegacyField,
 }: TabularProjectCustomEditorTableProps) {
   const isRemoveRowDisabled = disabled || !canRemoveRow;
@@ -114,69 +123,104 @@ export function TabularProjectCustomEditorTable({
               ? Array.from({ length: legacyMutableRowCount }, (_, rowIndex) => (
                   <tr
                     key={`legacy-row-${rowIndex}`}
-                    className={tableActiveCell?.row === rowIndex ? 'bg-emerald-50' : undefined}
+                    className={tableActiveCell?.row === rowIndex ? 'bg-amber-50' : undefined}
                   >
                     {legacyColumnKeys.map((columnKey, colIndex) => {
                       const field = table.topLevelFields[columnKey]?.[rowIndex];
                       const fieldType = columnHints.get(columnKey);
                       const isActiveCell = tableActiveCell?.row === rowIndex && tableActiveCell?.col === colIndex;
+                      const isFlagged = isCellFlagged(rowIndex, columnKey);
+                      const cellElementId = getTabularCellElementId(rowIndex, columnKey, true);
 
                       return (
                         <td
                           key={`${rowIndex}-${columnKey}`}
                           className={`border-b border-gray-200 px-2 py-2 align-top ${
-                            isActiveCell ? 'bg-emerald-100' : ''
+                            isActiveCell
+                              ? 'bg-amber-100 ring-2 ring-inset ring-amber-500'
+                              : isFlagged
+                                ? 'bg-red-50'
+                                : ''
                           }`}
                           style={{ minWidth: 220 }}
+                          id={cellElementId}
+                          onMouseDown={() => onActiveCellChange({ row: rowIndex, col: colIndex })}
                         >
-                          {renderInput({
-                            inputId: `tabular-legacy-row-${rowIndex}-${columnKey}`,
-                            value: field?.value,
-                            fieldType,
-                            disabled,
-                            onFocus: () => onActiveCellChange({ row: rowIndex, col: colIndex }),
-                            isActiveCell,
-                            onChange: nextValue => {
-                              if (field) {
-                                field.setValue(nextValue);
-                                return;
-                              }
+                          <div className="relative">
+                            {isFlagged ? (
+                              <span
+                                className="absolute right-2 top-2 rounded border border-red-300 bg-red-100 px-1 text-[10px] font-semibold leading-4 text-red-700"
+                                title="Flagged for review"
+                              >
+                                <FlagIcon />
+                              </span>
+                            ) : null}
+                            {renderInput({
+                              inputId: `tabular-legacy-row-${rowIndex}-${columnKey}`,
+                              value: field?.value,
+                              fieldType,
+                              disabled,
+                              onFocus: () => onActiveCellChange({ row: rowIndex, col: colIndex }),
+                              isActiveCell,
+                              isFlagged,
+                              onChange: nextValue => {
+                                if (field) {
+                                  field.setValue(nextValue);
+                                  return;
+                                }
 
-                              onCreateLegacyField(columnKey);
-                            },
-                          })}
+                                onCreateLegacyField(columnKey);
+                              },
+                            })}
+                          </div>
                         </td>
                       );
                     })}
                   </tr>
                 ))
               : table.rows.map(row => (
-                  <tr
-                    key={row.entityId}
-                    className={tableActiveCell?.row === row.rowIndex ? 'bg-emerald-50' : undefined}
-                  >
+                  <tr key={row.entityId} className={tableActiveCell?.row === row.rowIndex ? 'bg-amber-50' : undefined}>
                     {visibleColumns.map((column, colIndex) => {
                       const cell = row.getCell(column.key);
                       const fieldType = columnHints.get(column.key) || column.fieldType;
                       const isActiveCell = tableActiveCell?.row === row.rowIndex && tableActiveCell?.col === colIndex;
+                      const isFlagged = isCellFlagged(row.rowIndex, column.key);
+                      const cellElementId = getTabularCellElementId(row.rowIndex, column.key, false);
 
                       return (
                         <td
                           key={column.key}
                           className={`border-b border-gray-200 px-2 py-2 align-top ${
-                            isActiveCell ? 'bg-emerald-100' : ''
+                            isActiveCell
+                              ? 'bg-amber-100 ring-2 ring-inset ring-amber-500'
+                              : isFlagged
+                                ? 'bg-red-50'
+                                : ''
                           }`}
                           style={{ minWidth: 220 }}
+                          id={cellElementId}
+                          onMouseDown={() => onActiveCellChange({ row: row.rowIndex, col: colIndex })}
                         >
-                          {renderInput({
-                            inputId: `tabular-row-${row.rowIndex}-${column.key}`,
-                            value: cell?.value,
-                            fieldType,
-                            disabled,
-                            onFocus: () => onActiveCellChange({ row: row.rowIndex, col: colIndex }),
-                            isActiveCell,
-                            onChange: nextValue => row.setCell(column.key, nextValue),
-                          })}
+                          <div className="relative">
+                            {isFlagged ? (
+                              <span
+                                className="absolute right-2 top-2 rounded border border-red-300 bg-red-100 px-1 text-[10px] font-semibold leading-4 text-red-700"
+                                title="Flagged for review"
+                              >
+                                <FlagIcon />
+                              </span>
+                            ) : null}
+                            {renderInput({
+                              inputId: `tabular-row-${row.rowIndex}-${column.key}`,
+                              value: cell?.value,
+                              fieldType,
+                              disabled,
+                              onFocus: () => onActiveCellChange({ row: row.rowIndex, col: colIndex }),
+                              isActiveCell,
+                              isFlagged,
+                              onChange: nextValue => row.setCell(column.key, nextValue),
+                            })}
+                          </div>
                         </td>
                       );
                     })}

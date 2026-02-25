@@ -1,4 +1,5 @@
 import type { NetConfig } from '../../../frontend/admin/components/tabular/cast-a-net/types';
+import { TABULAR_CELL_FLAGS_PROPERTY } from '../../../frontend/shared/utility/tabular-cell-flags';
 import type { TabularProjectTemplateOptions } from '../templates/tabular-project';
 
 export type TabularModelColumn = {
@@ -106,6 +107,10 @@ export function isHiddenFieldType(type?: string) {
   return type === 'hidden' || type === 'hidden-field';
 }
 
+export function isTabularSystemProperty(property: string) {
+  return property === TABULAR_CELL_FLAGS_PROPERTY;
+}
+
 export function createTabularColumnModel(tabularColumns: TabularModelColumn[]): TabularColumnModel {
   const order: string[] = [];
   const hidden = new Set<string>();
@@ -134,4 +139,11 @@ export function createTabularColumnModel(tabularColumns: TabularModelColumn[]): 
   }
 
   return { order, hidden, labels, hints };
+}
+
+export function getTabularCellElementId(rowIndex: number, columnKey: string, useLegacyTopLevelLayout: boolean) {
+  const encodedColumnKey = encodeURIComponent(columnKey);
+  return useLegacyTopLevelLayout
+    ? `tabular-legacy-cell-${rowIndex}-${encodedColumnKey}`
+    : `tabular-row-cell-${rowIndex}-${encodedColumnKey}`;
 }

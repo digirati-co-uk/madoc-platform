@@ -1,5 +1,6 @@
 import React from 'react';
 import { captureModelShorthand } from '../../../frontend/shared/capture-models/helpers/capture-model-shorthand';
+import { TABULAR_CELL_FLAGS_PROPERTY } from '../../../frontend/shared/utility/tabular-cell-flags';
 import { ProjectTemplate } from '../types';
 
 type TabularColumnConfig = {
@@ -59,6 +60,11 @@ const fallbackCaptureModelTemplate = {
     type: 'text-field',
     label: 'Value',
   },
+  [TABULAR_CELL_FLAGS_PROPERTY]: {
+    type: 'text-field',
+    label: 'Cell flags',
+    description: 'Internal metadata for flagged tabular cells.',
+  },
 };
 
 const getCaptureModelTemplateFromOptions = (options: TabularProjectTemplateOptions) => {
@@ -85,11 +91,7 @@ const TabularProjectCustomEditorLoader: React.FC = () => {
     return null;
   }
 
-  return React.createElement(
-    React.Suspense,
-    { fallback: null },
-    React.createElement(TabularProjectCustomEditorLazy)
-  );
+  return React.createElement(React.Suspense, { fallback: null }, React.createElement(TabularProjectCustomEditorLazy));
 };
 
 export const tabularProject: ProjectTemplate<TabularProjectTemplateOptions> = {
