@@ -1,4 +1,9 @@
+import React from 'react';
 import { captureModelShorthand } from '../../../frontend/shared/capture-models/helpers/capture-model-shorthand';
+import {
+  TABULAR_CELL_FLAGS_PROPERTY,
+  createTabularCellFlagsCaptureModelField,
+} from '../../../frontend/shared/utility/tabular-cell-flags';
 import { ProjectTemplate } from '../types';
 
 type TabularColumnConfig = {
@@ -16,7 +21,12 @@ type TabularCaptureModelField = {
   description?: string;
 };
 
-type TabularWizardSetup = {
+type TabularCaptureModelTemplate = {
+  __entity__?: { label: string };
+  [term: string]: TabularCaptureModelField | { label: string } | undefined;
+};
+
+export type TabularWizardSetup = {
   structure?: {
     topLeft?: { x: number; y: number };
     topRight?: { x: number; y: number };
@@ -34,11 +44,11 @@ type TabularWizardSetup = {
   model?: {
     columns?: TabularColumnConfig[];
     captureModelFields?: Record<string, TabularCaptureModelField>;
-    captureModelTemplate?: Record<string, TabularCaptureModelField | { label: string } | undefined>;
+    captureModelTemplate?: TabularCaptureModelTemplate;
   };
 };
 
-type TabularProjectTemplateOptions = {
+export type TabularProjectTemplateOptions = {
   enableZoomTracking?: boolean;
   iiif?: {
     manifestId?: string;
@@ -53,6 +63,7 @@ const fallbackCaptureModelTemplate = {
     type: 'text-field',
     label: 'Value',
   },
+  [TABULAR_CELL_FLAGS_PROPERTY]: createTabularCellFlagsCaptureModelField(),
 };
 
 const getCaptureModelTemplateFromOptions = (options: TabularProjectTemplateOptions) => {
@@ -61,12 +72,25 @@ const getCaptureModelTemplateFromOptions = (options: TabularProjectTemplateOptio
     return null;
   }
 
-  const fieldKeys = Object.keys(template).filter(key => key !== '__entity__');
+  const fieldKeys = Object.keys(template).filter(key => !key.startsWith('__'));
   if (!fieldKeys.length) {
     return null;
   }
 
   return template;
+};
+
+const TabularProjectCustomEditorLazy = React.lazy(async () => {
+  const module = await import('../editors/tabular-project-custom-editor');
+  return { default: module.TabularProjectCustomEditor };
+});
+
+const TabularProjectCustomEditorLoader: React.FC = () => {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+
+  return React.createElement(React.Suspense, { fallback: null }, React.createElement(TabularProjectCustomEditorLazy));
 };
 
 export const tabularProject: ProjectTemplate<TabularProjectTemplateOptions> = {
@@ -126,5 +150,8 @@ export const tabularProject: ProjectTemplate<TabularProjectTemplateOptions> = {
 
       return captureModelShorthand(captureModelTemplate);
     },
+  },
+  components: {
+    customEditor: TabularProjectCustomEditorLoader,
   },
 };

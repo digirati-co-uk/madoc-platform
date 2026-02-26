@@ -1,3 +1,5 @@
+export type { NetConfig, TabularCellRef } from '../../../../shared/utility/tabular-types';
+
 export type DragMode =
   | null
   | 'move'
@@ -8,19 +10,7 @@ export type DragMode =
   | { type: 'row'; index: number }
   | { type: 'col'; index: number };
 
-export type NetConfig = {
-  rows: number;
-  cols: number;
-  top: number;
-  left: number;
-  width: number;
-  height: number;
-  rowPositions: number[];
-  colPositions: number[];
-};
-
 export type CastANetPoint = { x: number; y: number };
-export type TabularCellRef = { row: number; col: number };
 
 export type CastANetMargins = {
   top: number;

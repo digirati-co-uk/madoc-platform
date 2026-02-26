@@ -14,6 +14,7 @@ import { ResultTitle } from '../features/search/SearchResults';
 import { usePaginatedData } from '../../shared/hooks/use-data';
 import { serverRendererFor } from '../../shared/plugins/external/server-renderer-for';
 import { HrefLink } from '../../shared/utility/href-link';
+import { parsePersonalNotePayload } from '../../shared/utility/personal-note-payload';
 import { useProject } from '../hooks/use-project';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 
@@ -49,6 +50,7 @@ export const ViewProjectNotes: React.FC = () => {
         {data
           ? data.notes.map(note => {
               const isManifest = note.type === 'manifest';
+              const personalNote = parsePersonalNotePayload(note.note);
               return (
                 <GridContainer key={note.id}>
                   {note.resource.thumbnail ? (
@@ -82,7 +84,7 @@ export const ViewProjectNotes: React.FC = () => {
                       <LocaleString as={ResultTitle}>{note.resource.label}</LocaleString>
                     )}
 
-                    <div style={{ paddingBottom: '.8em', whiteSpace: 'pre' }}>{note.note}</div>
+                    <div style={{ paddingBottom: '.8em', whiteSpace: 'pre' }}>{personalNote.note}</div>
                   </div>
                 </GridContainer>
               );

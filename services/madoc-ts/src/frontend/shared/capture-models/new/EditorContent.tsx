@@ -23,7 +23,7 @@ export type EditorContentVariations = {
   explorerReset?: boolean;
   canvasUri?: string;
   manifestUri?: string;
-  height?: number;
+  height?: number | string;
   onCreated?: (preset: Preset) => void;
   onPanInSketchMode?: () => void;
   children?: React.ReactNode;
