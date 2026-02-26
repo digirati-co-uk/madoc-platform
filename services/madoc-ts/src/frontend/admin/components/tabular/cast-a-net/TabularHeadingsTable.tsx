@@ -2,6 +2,12 @@ import { useMemo } from 'react';
 import { DataGrid, type Column } from 'react-data-grid';
 import 'react-data-grid/lib/styles.css';
 import type { TabularValidationIssue } from './types';
+import {
+  TABULAR_COLUMN_MIN_WIDTH_PX,
+  TABULAR_GRID_HEADER_ROW_HEIGHT_PX,
+  TABULAR_GRID_ROW_HEIGHT_PX,
+} from '../../../../shared/utility/tabular-grid-constants';
+import { TabularDataGridStyles } from '../../../../shared/components/TabularDataGridStyles';
 
 export type TabularHeadingsTableProps = {
   columns: number;
@@ -97,7 +103,7 @@ export function TabularHeadingsTable(props: TabularHeadingsTableProps) {
       return {
         key: `c-${c}`,
         name: '',
-        width: 220,
+        width: TABULAR_COLUMN_MIN_WIDTH_PX,
         resizable: false,
         sortable: false,
         renderHeaderCell: () => (
@@ -152,28 +158,14 @@ export function TabularHeadingsTable(props: TabularHeadingsTableProps) {
     onChangeHeadings,
   ]);
 
-  const headerRowHeight = 52;
-  const rowHeight = 46;
+  const headerRowHeight = TABULAR_GRID_HEADER_ROW_HEIGHT_PX;
+  const rowHeight = TABULAR_GRID_ROW_HEIGHT_PX;
   const gridHeight = headerRowHeight + rowHeight * rows.length + 2;
-  const minGridWidth = columns * 220 + 2;
+  const minGridWidth = columns * TABULAR_COLUMN_MIN_WIDTH_PX + 2;
 
   return (
     <>
-      <style>
-        {`
-          .tabular-rdg .rdg-cell[aria-selected="true"] {
-            outline: none !important;
-          }
-          .tabular-rdg .rdg-cell {
-            border-inline-end: 1px solid #d6d6d6 !important;
-            border-block-end: 1px solid #d6d6d6 !important;
-            padding: 0 !important;
-          }
-          .tabular-rdg .rdg-header-row .rdg-cell {
-            padding: 0 !important;
-          }
-        `}
-      </style>
+      <TabularDataGridStyles scopeClassName="tabular-rdg" />
       <DataGrid
         className="rdg-light tabular-rdg"
         columns={gridColumns}

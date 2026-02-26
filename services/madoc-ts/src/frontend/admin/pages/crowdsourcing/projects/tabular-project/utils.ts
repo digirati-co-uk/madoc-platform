@@ -1,11 +1,15 @@
 import type { Collection as IIIFCollection, InternationalString } from '@iiif/presentation-3';
-import { makeEvenPositions } from '../../../../components/tabular/cast-a-net/utils';
 import type {
   DefineTabularModelValue,
   NetConfig,
   TabularModelPayload,
   TabularProjectSetupPayload,
 } from '../../../../components/tabular/cast-a-net/types';
+import {
+  clampToRange as clampToRangeShared,
+  netConfigFromSharedStructure as netConfigFromSharedStructureShared,
+} from '@/frontend/shared/utility/tabular-net-config';
+import { TABULAR_WIZARD_CAST_A_NET_ROWS } from './constants';
 import type {
   IiifHistoryItem,
   IiifSelectionResource,
@@ -14,7 +18,6 @@ import type {
   TabularOutlineSharePayload,
 } from './types';
 
-const CAST_A_NET_ROWS = 5;
 const IIIF_HOME_COLLECTION_PREFIX = 'iiif://madoc-tabular-home';
 
 const madocManifestUrnPattern = /^urn:madoc:manifest:(\d+)$/i;
@@ -31,9 +34,7 @@ export const hasIntlValue = (value?: InternationalString) => {
   return Boolean(first && first.join('').trim());
 };
 
-export const clampToRange = (value: number, min: number, max: number) => {
-  return Math.max(min, Math.min(max, value));
-};
+export const clampToRange = clampToRangeShared;
 
 export const collectionRouteForId = (id: string) => {
   return `/collection?id=${encodeURIComponent(id)}`;
@@ -424,54 +425,10 @@ export const getErrorMessage = (error: unknown, fallback: string) => {
   return fallback;
 };
 
-export const toRelativePositions = (parts: number[], total: number, count: number) => {
-  if (count <= 1) return [];
-
-  if (!parts.length || total <= 0) {
-    return makeEvenPositions(count);
-  }
-
-  let cumulative = 0;
-  const positions: number[] = [];
-  for (let index = 0; index < count - 1; index++) {
-    cumulative += parts[index] ?? 0;
-    const ratio = (cumulative / total) * 100;
-    positions.push(clampToRange(ratio, 0, 100));
-  }
-  return positions;
-};
-
 export const netConfigFromSharedStructure = (tabular?: TabularProjectSetupPayload['structure']): NetConfig | null => {
-  if (!tabular) {
-    return null;
-  }
-
-  const fallbackLeft = tabular.topLeft?.x ?? 10;
-  const fallbackTop = tabular.topLeft?.y ?? 10;
-  const fallbackWidth = (tabular.topRight?.x ?? 90) - fallbackLeft;
-  const widthFromMargins = 100 - (tabular.marginsPct?.left ?? fallbackLeft) - (tabular.marginsPct?.right ?? 10);
-  const totalWidth = clampToRange(widthFromMargins > 0 ? widthFromMargins : fallbackWidth, 1, 100);
-
-  const totalHeightFromRows = tabular.rowHeightsPctOfPage.reduce((sum, rowHeight) => sum + rowHeight, 0);
-  const heightFromMargins = 100 - (tabular.marginsPct?.top ?? fallbackTop) - (tabular.marginsPct?.bottom ?? 10);
-  const totalHeight = clampToRange(heightFromMargins > 0 ? heightFromMargins : totalHeightFromRows, 1, 100);
-
-  const left = clampToRange(tabular.marginsPct?.left ?? fallbackLeft, 0, 100 - totalWidth);
-  const top = clampToRange(tabular.marginsPct?.top ?? fallbackTop, 0, 100 - totalHeight);
-
-  const cols = Math.max(1, tabular.columnCount || tabular.columnWidthsPctOfPage.length || 1);
-  const rows = Math.max(1, tabular.rowHeightsPctOfPage.length || 1);
-
-  return {
-    rows,
-    cols,
-    top,
-    left,
-    width: totalWidth,
-    height: totalHeight,
-    rowPositions: toRelativePositions(tabular.rowHeightsPctOfPage, totalHeight, rows),
-    colPositions: toRelativePositions(tabular.columnWidthsPctOfPage, totalWidth, cols),
-  };
+  return netConfigFromSharedStructureShared(tabular, {
+    useEvenlySpacedFallbackPositions: true,
+  });
 };
 
 export const tabularModelValueFromSharedPayload = (payload: TabularModelPayload): DefineTabularModelValue => {
@@ -479,7 +436,7 @@ export const tabularModelValueFromSharedPayload = (payload: TabularModelPayload)
 
   return {
     columns,
-    previewRows: CAST_A_NET_ROWS,
+    previewRows: TABULAR_WIZARD_CAST_A_NET_ROWS,
     headings: Array.from({ length: columns }, (_, index) => payload.columns[index]?.label ?? ''),
     fieldTypes: Array.from(
       { length: columns },

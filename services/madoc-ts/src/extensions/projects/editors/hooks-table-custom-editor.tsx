@@ -10,32 +10,8 @@ import { useCaptureModelContributionLifecycle } from '../../../frontend/site/hoo
 import { useRouteContext } from '../../../frontend/site/hooks/use-route-context';
 import { HrefLink } from '@/frontend/shared/utility/href-link';
 import { HooksTableGridRenderer, HooksTableTopLevelFieldsModalButton } from './hooks-table-grid-renderer';
-
-function getBlockedReason(options: {
-  hasExpired: boolean;
-  canContribute: boolean;
-  canUserSubmit: boolean;
-  preventFurtherSubmission: boolean;
-  markedAsUnusable: boolean;
-}) {
-  if (options.hasExpired) {
-    return 'This contribution has expired and cannot be edited.';
-  }
-
-  if (options.markedAsUnusable) {
-    return 'This resource has been marked as unusable.';
-  }
-
-  if (options.preventFurtherSubmission) {
-    return 'Further submission is disabled for this task.';
-  }
-
-  if (!options.canContribute || !options.canUserSubmit) {
-    return 'Contribution is currently unavailable for this task.';
-  }
-
-  return 'Contribution is currently blocked.';
-}
+import { ContributionEditorStateAlerts } from './contribution-editor-state-alerts';
+import { getBlockedReason } from './tabular-project-custom-editor-utils';
 
 function HooksTableCustomEditorContent({ canvasId, canvas }: { canvasId: number; canvas: unknown }) {
   const lifecycle = useCaptureModelContributionLifecycle();
@@ -72,29 +48,18 @@ function HooksTableCustomEditorContent({ canvasId, canvas }: { canvasId: number;
             <strong>Hooks table editor</strong>
           </div>
 
-          {isLoading ? <div>Loading contribution data...</div> : null}
-
-          {lifecycle.phase === 'error' ? (
-            <div>
-              <p>Something went wrong while preparing this contribution.</p>
-              {lifecycle.lastError ? <pre className="whitespace-pre-wrap">{lifecycle.lastError.message}</pre> : null}
-              <ButtonRow>
-                <Button onClick={() => lifecycle.refresh()}>Retry</Button>
-              </ButtonRow>
-            </div>
-          ) : null}
-
-          {isBlocked ? <div>{getBlockedReason(lifecycle)}</div> : null}
-
-          {!isLoading && lifecycle.phase !== 'error' && table.status !== 'ready' ? (
-            <div>
-              <p>Table configuration is unavailable.</p>
-              {table.errors.length ? <pre className="whitespace-pre-wrap">{table.errors.join('\n')}</pre> : null}
-              {lifecycle.needsRevisionSelection ? (
-                <Button onClick={() => lifecycle.ensureRevision()}>Try selecting revision</Button>
-              ) : null}
-            </div>
-          ) : null}
+          <ContributionEditorStateAlerts
+            isLoading={isLoading}
+            isError={lifecycle.phase === 'error'}
+            lastErrorMessage={lifecycle.lastError?.message}
+            isBlocked={isBlocked}
+            blockedReason={getBlockedReason(lifecycle)}
+            showTableUnavailable={!isLoading && lifecycle.phase !== 'error' && table.status !== 'ready'}
+            tableErrors={table.errors}
+            needsRevisionSelection={lifecycle.needsRevisionSelection}
+            onRetry={() => lifecycle.refresh()}
+            onEnsureRevision={() => lifecycle.ensureRevision()}
+          />
 
           {!isLoading && lifecycle.phase !== 'error' && table.status === 'ready' ? (
             <>

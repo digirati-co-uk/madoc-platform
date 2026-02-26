@@ -10,7 +10,7 @@ import { useDocumentPanel } from '@/frontend/site/hooks/canvas-menu/document-pan
 import { useMetadataMenu } from '@/frontend/site/hooks/canvas-menu/metadata-panel';
 import { usePersonalNotesMenu } from '@/frontend/site/hooks/canvas-menu/personal-notes';
 import { useRevisionPanel } from '@/frontend/site/hooks/canvas-menu/revision-panel';
-import type { TabularCellRef } from '@/frontend/admin/components/tabular/cast-a-net/types';
+import type { TabularCellRef } from '@/frontend/shared/utility/tabular-types';
 import FlagIcon from '@/frontend/shared/icons/FlagIcon';
 
 type TabularSidebarPanelId = 'metadata' | 'document' | 'my-contributions' | 'personal-notes' | 'flag-cell';

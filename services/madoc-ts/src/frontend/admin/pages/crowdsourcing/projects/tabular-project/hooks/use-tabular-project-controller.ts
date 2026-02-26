@@ -6,6 +6,13 @@ import type { TFunction } from 'i18next';
 import type { IIIFBrowserProps } from 'iiif-browser';
 import type { ApiClient } from '@/gateway/api';
 import type { CreateProject } from '@/types/schemas/create-project';
+import { offsetTabularCellRef } from '@/frontend/shared/utility/tabular-cell-ref';
+import {
+  TABULAR_WIZARD_CAST_A_NET_ROWS,
+  TABULAR_WIZARD_PREVIEW_SPLIT_DIVIDER_HEIGHT,
+  TABULAR_WIZARD_PREVIEW_SPLIT_GAP,
+  TABULAR_WIZARD_PREVIEW_SPLIT_TOTAL_HEIGHT,
+} from '../constants';
 import { buildTabularProjectSetupPayload } from '../../../../../components/tabular/cast-a-net/CastANetStructure';
 import type {
   DefineTabularModelValue,
@@ -52,19 +59,18 @@ const STEP_NET = 3;
 const STEP_PREVIEW = 4;
 const STEP_COMPLETE = 5;
 
-const CAST_A_NET_ROWS = 5;
 const CAST_A_NET_DEFAULT_HEIGHT = 520;
 
 const SHARE_COPY_TIMEOUT = 1800;
 
 const PREVIEW_CANVAS_HEIGHT = 420;
-const PREVIEW_SPLIT_TOTAL_HEIGHT = 760;
-const PREVIEW_SPLIT_GAP = 12;
-const PREVIEW_SPLIT_DIVIDER_HEIGHT = 18;
 const PREVIEW_CANVAS_MIN_HEIGHT = 280;
 const PREVIEW_TABLE_MIN_HEIGHT = 180;
 const PREVIEW_CANVAS_MAX_HEIGHT =
-  PREVIEW_SPLIT_TOTAL_HEIGHT - PREVIEW_SPLIT_DIVIDER_HEIGHT - PREVIEW_TABLE_MIN_HEIGHT - PREVIEW_SPLIT_GAP * 2;
+  TABULAR_WIZARD_PREVIEW_SPLIT_TOTAL_HEIGHT -
+  TABULAR_WIZARD_PREVIEW_SPLIT_DIVIDER_HEIGHT -
+  PREVIEW_TABLE_MIN_HEIGHT -
+  TABULAR_WIZARD_PREVIEW_SPLIT_GAP * 2;
 
 const MAX_MADOC_COLLECTION_HOME_PAGES = 20;
 const MAX_MADOC_MANIFEST_HOME_PAGES = 40;
@@ -127,7 +133,7 @@ export function useTabularProjectController(options: UseTabularProjectController
   const [isModelValid, setIsModelValid] = useState(false);
 
   const [netConfig, setNetConfig] = useState<NetConfig>({
-    rows: CAST_A_NET_ROWS,
+    rows: TABULAR_WIZARD_CAST_A_NET_ROWS,
     cols: 5,
     top: 10,
     left: 10,
@@ -175,11 +181,14 @@ export function useTabularProjectController(options: UseTabularProjectController
   const requiresNetStep = enableZoomTracking && hasImage;
   const modelSaved = tabularModel.saved ? tabularModel.saved.every(Boolean) : false;
   const previewRowOffset = enableZoomTracking && hasImage ? 1 : 0;
-  const basePreviewTableRowCount = Math.max(1, (netConfig.rows || CAST_A_NET_ROWS) - previewRowOffset);
+  const basePreviewTableRowCount = Math.max(1, (netConfig.rows || TABULAR_WIZARD_CAST_A_NET_ROWS) - previewRowOffset);
   const previewTableRowCount = basePreviewTableRowCount + previewAdditionalRows;
   const previewTableHeight = Math.max(
     PREVIEW_TABLE_MIN_HEIGHT,
-    PREVIEW_SPLIT_TOTAL_HEIGHT - previewCanvasHeight - PREVIEW_SPLIT_DIVIDER_HEIGHT - PREVIEW_SPLIT_GAP * 2
+    TABULAR_WIZARD_PREVIEW_SPLIT_TOTAL_HEIGHT -
+      previewCanvasHeight -
+      TABULAR_WIZARD_PREVIEW_SPLIT_DIVIDER_HEIGHT -
+      TABULAR_WIZARD_PREVIEW_SPLIT_GAP * 2
   );
   const modelColumnCount = Math.max(1, tabularModel.columns || 1);
   const netColumnCount = Math.max(1, netConfig.cols);
@@ -204,7 +213,7 @@ export function useTabularProjectController(options: UseTabularProjectController
     setNetConfig(prev => ({
       ...prev,
       cols: colsFromSavedModel,
-      rows: CAST_A_NET_ROWS,
+      rows: TABULAR_WIZARD_CAST_A_NET_ROWS,
     }));
   }, [modelSaved, tabularModel.columns, tabularPayload]);
 
@@ -508,14 +517,11 @@ export function useTabularProjectController(options: UseTabularProjectController
   );
 
   const previewCanvasActiveCell = useMemo<TabularCellRef | null>(() => {
-    if (!canTrackPreviewOnCanvas || !previewActiveCell) {
+    if (!canTrackPreviewOnCanvas) {
       return null;
     }
 
-    return {
-      row: previewActiveCell.row + previewRowOffset,
-      col: previewActiveCell.col,
-    };
+    return offsetTabularCellRef(previewActiveCell, previewRowOffset);
   }, [canTrackPreviewOnCanvas, previewActiveCell, previewRowOffset]);
 
   const copyShareLink = useCallback(async () => {

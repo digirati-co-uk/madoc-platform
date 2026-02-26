@@ -1,5 +1,6 @@
-import type { NetConfig } from '../../../frontend/admin/components/tabular/cast-a-net/types';
+import type { NetConfig } from '@/frontend/shared/utility/tabular-types';
 import { TABULAR_CELL_FLAGS_PROPERTY } from '../../../frontend/shared/utility/tabular-cell-flags';
+import { netConfigFromSharedStructure as netConfigFromSharedStructureShared } from '../../../frontend/shared/utility/tabular-net-config';
 import type { TabularProjectTemplateOptions } from '../templates/tabular-project';
 
 export type TabularModelColumn = {
@@ -51,56 +52,8 @@ export function getBlockedReason(options: {
   return 'Contribution is currently blocked.';
 }
 
-function clampToRange(value: number, min: number, max: number) {
-  return Math.max(min, Math.min(max, value));
-}
-
-function toRelativePositions(parts: number[] | undefined, total: number, count: number): number[] {
-  if (!parts?.length || total <= 0 || count <= 1) {
-    return [];
-  }
-
-  let cumulative = 0;
-  const positions: number[] = [];
-  for (let index = 0; index < count - 1; index++) {
-    cumulative += parts[index] ?? 0;
-    const ratio = (cumulative / total) * 100;
-    positions.push(clampToRange(ratio, 0, 100));
-  }
-  return positions;
-}
-
 export function netConfigFromSharedStructure(tabular?: TabularStructureConfig): NetConfig | null {
-  if (!tabular) {
-    return null;
-  }
-
-  const fallbackLeft = tabular.topLeft?.x ?? 10;
-  const fallbackTop = tabular.topLeft?.y ?? 10;
-  const fallbackWidth = (tabular.topRight?.x ?? 90) - fallbackLeft;
-  const widthFromMargins = 100 - (tabular.marginsPct?.left ?? fallbackLeft) - (tabular.marginsPct?.right ?? 10);
-  const totalWidth = clampToRange(widthFromMargins > 0 ? widthFromMargins : fallbackWidth, 1, 100);
-
-  const totalHeightFromRows = (tabular.rowHeightsPctOfPage || []).reduce((sum, rowHeight) => sum + rowHeight, 0);
-  const heightFromMargins = 100 - (tabular.marginsPct?.top ?? fallbackTop) - (tabular.marginsPct?.bottom ?? 10);
-  const totalHeight = clampToRange(heightFromMargins > 0 ? heightFromMargins : totalHeightFromRows, 1, 100);
-
-  const left = clampToRange(tabular.marginsPct?.left ?? fallbackLeft, 0, 100 - totalWidth);
-  const top = clampToRange(tabular.marginsPct?.top ?? fallbackTop, 0, 100 - totalHeight);
-
-  const cols = Math.max(1, tabular.columnCount || tabular.columnWidthsPctOfPage?.length || 1);
-  const rows = Math.max(1, tabular.rowHeightsPctOfPage?.length || 1);
-
-  return {
-    rows,
-    cols,
-    top,
-    left,
-    width: totalWidth,
-    height: totalHeight,
-    rowPositions: toRelativePositions(tabular.rowHeightsPctOfPage, totalHeight, rows),
-    colPositions: toRelativePositions(tabular.columnWidthsPctOfPage, totalWidth, cols),
-  };
+  return netConfigFromSharedStructureShared(tabular);
 }
 
 export function isHiddenFieldType(type?: string) {

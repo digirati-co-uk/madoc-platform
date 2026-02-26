@@ -1,4 +1,5 @@
-import { useCallback, useState } from 'react';
+import { useRef, useState } from 'react';
+import { useVerticalDragResize } from '../../../../../../shared/hooks/use-vertical-drag-resize';
 
 interface ResizeBounds {
   min: number;
@@ -7,29 +8,16 @@ interface ResizeBounds {
 
 export function useResizableHeight(initialHeight: number, bounds: ResizeBounds) {
   const [height, setHeight] = useState(initialHeight);
-
-  const startResize = useCallback(
-    (event: React.MouseEvent<HTMLDivElement>) => {
-      event.preventDefault();
-      const startY = event.clientY;
-      const startHeight = height;
-
-      const onMove = (moveEvent: MouseEvent) => {
-        const delta = moveEvent.clientY - startY;
-        const nextHeight = Math.max(bounds.min, Math.min(bounds.max, startHeight + delta));
-        setHeight(nextHeight);
-      };
-
-      const onUp = () => {
-        window.removeEventListener('mousemove', onMove);
-        window.removeEventListener('mouseup', onUp);
-      };
-
-      window.addEventListener('mousemove', onMove);
-      window.addEventListener('mouseup', onUp);
+  const startHeightRef = useRef(initialHeight);
+  const startResize = useVerticalDragResize({
+    onStart: () => {
+      startHeightRef.current = height;
     },
-    [bounds.max, bounds.min, height]
-  );
+    onDrag: deltaY => {
+      const nextHeight = Math.max(bounds.min, Math.min(bounds.max, startHeightRef.current + deltaY));
+      setHeight(nextHeight);
+    },
+  });
 
   return {
     height,

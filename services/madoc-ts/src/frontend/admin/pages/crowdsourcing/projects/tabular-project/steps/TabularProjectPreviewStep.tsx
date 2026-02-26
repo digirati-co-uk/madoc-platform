@@ -1,17 +1,21 @@
 import type { ComponentType, CSSProperties, ReactNode } from 'react';
 import type { TFunction } from 'i18next';
 import { ModalButton } from '@/frontend/shared/components/Modal';
+import { VerticalResizeSeparator } from '@/frontend/shared/components/VerticalResizeSeparator';
 import { Button, ButtonRow } from '@/frontend/shared/navigation/Button';
 import { BrowserComponent } from '@/frontend/shared/utility/browser-component';
 import { LinkIcon } from '@/frontend/shared/icons/LinkIcon';
 import { TabularPreviewTable } from '../../../../../components/tabular/cast-a-net/TabularPreviewTable';
 import type { NetConfig, TabularCellRef } from '../../../../../components/tabular/cast-a-net/types';
+import {
+  TABULAR_WIZARD_PREVIEW_SPLIT_DIVIDER_HEIGHT,
+  TABULAR_WIZARD_PREVIEW_SPLIT_GAP,
+  TABULAR_WIZARD_PREVIEW_SPLIT_TOTAL_HEIGHT,
+} from '../constants';
+import type { CastANetStepComponentProps } from '../types';
 
 const PREVIEW_NUDGE_STEP = 0.25;
 const NUDGE_BUTTON_SIZE = 54;
-const PREVIEW_SPLIT_TOTAL_HEIGHT = 760;
-const PREVIEW_SPLIT_GAP = 12;
-const PREVIEW_SPLIT_DIVIDER_HEIGHT = 18;
 
 const nudgeButtonStyle: CSSProperties = {
   height: NUDGE_BUTTON_SIZE,
@@ -23,16 +27,6 @@ const nudgeButtonStyle: CSSProperties = {
   fontSize: 22,
   lineHeight: '1',
 };
-
-interface CastANetComponentProps {
-  manifestId: string;
-  canvasId?: string;
-  value: NetConfig;
-  onChange: (next: NetConfig) => void;
-  height: number;
-  activeCell?: TabularCellRef | null;
-  previewOverlayOnly?: boolean;
-}
 
 interface TabularProjectPreviewStepProps {
   t: TFunction;
@@ -65,7 +59,7 @@ interface TabularProjectPreviewStepProps {
   onPreviewActiveCellChange: (next: TabularCellRef | null) => void;
   onAddRow: () => void;
   onSave: () => void;
-  CastANetComponent: ComponentType<CastANetComponentProps>;
+  CastANetComponent: ComponentType<CastANetStepComponentProps>;
 }
 
 export function TabularProjectPreviewStep(props: TabularProjectPreviewStepProps) {
@@ -239,8 +233,8 @@ export function TabularProjectPreviewStep(props: TabularProjectPreviewStepProps)
         <div
           style={{
             display: 'grid',
-            gap: PREVIEW_SPLIT_GAP,
-            height: PREVIEW_SPLIT_TOTAL_HEIGHT,
+            gap: TABULAR_WIZARD_PREVIEW_SPLIT_GAP,
+            height: TABULAR_WIZARD_PREVIEW_SPLIT_TOTAL_HEIGHT,
             overflow: 'hidden',
           }}
         >
@@ -288,15 +282,12 @@ export function TabularProjectPreviewStep(props: TabularProjectPreviewStepProps)
           )}
 
           <div style={{ display: 'flex', justifyContent: 'center', marginTop: -4 }}>
-            <div
-              role="separator"
-              aria-orientation="horizontal"
-              aria-label={t('Resize preview canvas and table')}
-              onMouseDown={onStartResize}
-              onMouseEnter={() => onDividerHoverChange(true)}
-              onMouseLeave={() => onDividerHoverChange(false)}
+            <VerticalResizeSeparator
+              ariaLabel={t('Resize preview canvas and table')}
+              onResizeStart={onStartResize}
+              onHoverChange={onDividerHoverChange}
               style={{
-                height: PREVIEW_SPLIT_DIVIDER_HEIGHT,
+                height: TABULAR_WIZARD_PREVIEW_SPLIT_DIVIDER_HEIGHT,
                 minWidth: 28,
                 border: '1px solid #c8c8c8',
                 borderRadius: 4,
@@ -309,7 +300,7 @@ export function TabularProjectPreviewStep(props: TabularProjectPreviewStepProps)
               }}
             >
               =
-            </div>
+            </VerticalResizeSeparator>
           </div>
 
           <TabularPreviewTable

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useCanvas } from 'react-iiif-vault';
 import type { NetConfig, TabularCellRef } from './types';
-import { getStops, makeEvenPositions, normalisePositions } from './utils';
+import { getEffectivePositions, getStops } from './utils';
 
 type CanvasViewport = {
   x: number;
@@ -46,16 +46,8 @@ export function FollowActiveCellOnCanvas(props: FollowActiveCellOnCanvasProps) {
 
     const rows = Math.max(1, Math.floor(value.rows || 1));
     const cols = Math.max(1, Math.floor(value.cols || 1));
-    const expectedRows = Math.max(0, rows - 1);
-    const expectedCols = Math.max(0, cols - 1);
-    const rowPositions =
-      value.rowPositions.length === expectedRows
-        ? normalisePositions(value.rowPositions, rows)
-        : normalisePositions(makeEvenPositions(rows), rows);
-    const colPositions =
-      value.colPositions.length === expectedCols
-        ? normalisePositions(value.colPositions, cols)
-        : normalisePositions(makeEvenPositions(cols), cols);
+    const rowPositions = getEffectivePositions(rows, value.rowPositions);
+    const colPositions = getEffectivePositions(cols, value.colPositions);
 
     const rowStops = getStops(rows, rowPositions);
     const colStops = getStops(cols, colPositions);

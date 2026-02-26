@@ -1,22 +1,13 @@
 import type { ComponentType, ReactNode } from 'react';
 import type { TFunction } from 'i18next';
 import { ModalButton } from '@/frontend/shared/components/Modal';
+import { VerticalResizeSeparator } from '@/frontend/shared/components/VerticalResizeSeparator';
 import { BrowserComponent } from '@/frontend/shared/utility/browser-component';
 import { Button, TinyButton } from '@/frontend/shared/navigation/Button';
 import { TabularHeadingsTable } from '../../../../../components/tabular/cast-a-net/TabularHeadingsTable';
-import type { NetConfig, TabularCellRef } from '../../../../../components/tabular/cast-a-net/types';
-
-const CAST_A_NET_ROWS = 5;
-
-interface CastANetComponentProps {
-  manifestId: string;
-  canvasId?: string;
-  value: NetConfig;
-  onChange: (next: NetConfig) => void;
-  height: number;
-  activeCell?: TabularCellRef | null;
-  previewOverlayOnly?: boolean;
-}
+import type { NetConfig } from '../../../../../components/tabular/cast-a-net/types';
+import { TABULAR_WIZARD_CAST_A_NET_ROWS } from '../constants';
+import type { CastANetStepComponentProps } from '../types';
 
 interface TabularProjectNetStepProps {
   t: TFunction;
@@ -36,7 +27,7 @@ interface TabularProjectNetStepProps {
   onRegisterBrowserClose: (close?: () => void) => void;
   onStartResize: (event: React.MouseEvent<HTMLDivElement>) => void;
   onDividerHoverChange: (isHover: boolean) => void;
-  CastANetComponent: ComponentType<CastANetComponentProps>;
+  CastANetComponent: ComponentType<CastANetStepComponentProps>;
 }
 
 export function TabularProjectNetStep(props: TabularProjectNetStepProps) {
@@ -124,13 +115,10 @@ export function TabularProjectNetStep(props: TabularProjectNetStepProps) {
             </BrowserComponent>
 
             <div style={{ display: 'flex', justifyContent: 'center', marginTop: -4 }}>
-              <div
-                role="separator"
-                aria-orientation="horizontal"
-                aria-label={t('Resize cast-a-net and table')}
-                onMouseDown={onStartResize}
-                onMouseEnter={() => onDividerHoverChange(true)}
-                onMouseLeave={() => onDividerHoverChange(false)}
+              <VerticalResizeSeparator
+                ariaLabel={t('Resize cast-a-net and table')}
+                onResizeStart={onStartResize}
+                onHoverChange={onDividerHoverChange}
                 style={{
                   height: 18,
                   minWidth: 28,
@@ -145,13 +133,13 @@ export function TabularProjectNetStep(props: TabularProjectNetStepProps) {
                 }}
               >
                 =
-              </div>
+              </VerticalResizeSeparator>
             </div>
 
             <div style={{ border: '1px solid #d6d6d6', background: '#fff', overflow: 'auto' }}>
               <TabularHeadingsTable
                 columns={netColumnCount}
-                visibleRows={CAST_A_NET_ROWS}
+                visibleRows={TABULAR_WIZARD_CAST_A_NET_ROWS}
                 headings={headings}
                 tooltips={tooltips}
                 onChangeHeadings={() => {

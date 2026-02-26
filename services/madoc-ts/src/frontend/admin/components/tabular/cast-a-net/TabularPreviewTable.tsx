@@ -2,6 +2,12 @@ import { useCallback, useMemo } from 'react';
 import { DataGrid, type Column } from 'react-data-grid';
 import 'react-data-grid/lib/styles.css';
 import type { TabularCellRef } from './types';
+import {
+  TABULAR_COLUMN_MIN_WIDTH_PX,
+  TABULAR_GRID_HEADER_ROW_HEIGHT_PX,
+  TABULAR_GRID_ROW_HEIGHT_PX,
+} from '../../../../shared/utility/tabular-grid-constants';
+import { TabularDataGridStyles } from '../../../../shared/components/TabularDataGridStyles';
 
 export type TabularPreviewTableProps = {
   headings: string[];
@@ -81,7 +87,7 @@ export function TabularPreviewTable({
       return {
         key: `c-${colIndex}`,
         name: '',
-        width: 220,
+        width: TABULAR_COLUMN_MIN_WIDTH_PX,
         sortable: false,
         resizable: false,
         renderHeaderCell: () => (
@@ -138,8 +144,8 @@ export function TabularPreviewTable({
     });
   }, [activeCell, disabled, onActiveCellChange, safeColumns, safeHeadings, safeTooltips, safeValues, updateCell]);
 
-  const headerRowHeight = 52;
-  const rowHeight = 46;
+  const headerRowHeight = TABULAR_GRID_HEADER_ROW_HEIGHT_PX;
+  const rowHeight = TABULAR_GRID_ROW_HEIGHT_PX;
   const gridHeight = headerRowHeight + rowHeight * safeRows + 2;
   const hasFixedHeight = typeof containerHeight !== 'undefined';
 
@@ -157,24 +163,7 @@ export function TabularPreviewTable({
         overflow: 'hidden',
       }}
     >
-      <style>
-        {`
-          .tabular-preview-rdg .rdg-cell[aria-selected="true"] {
-            outline: none !important;
-          }
-          .tabular-preview-rdg .rdg-cell {
-            border-inline-end: 1px solid #d6d6d6 !important;
-            border-block-end: 1px solid #d6d6d6 !important;
-            padding: 0 !important;
-          }
-          .tabular-preview-rdg .rdg-header-row .rdg-cell {
-            padding: 0 !important;
-          }
-          .tabular-preview-rdg .rdg-row:hover {
-            background: inherit !important;
-          }
-        `}
-      </style>
+      <TabularDataGridStyles scopeClassName="tabular-preview-rdg" disableRowHover />
       <div style={{ flex: hasFixedHeight ? '1 1 auto' : undefined, minHeight: 0 }}>
         <DataGrid
           className="rdg-light tabular-preview-rdg"
@@ -186,7 +175,7 @@ export function TabularPreviewTable({
           rowHeight={rowHeight}
           style={{
             height: hasFixedHeight ? '100%' : gridHeight,
-            minWidth: safeColumns * 220 + 2,
+            minWidth: safeColumns * TABULAR_COLUMN_MIN_WIDTH_PX + 2,
             border: 'none',
             ['--rdg-selection-width' as string]: '0px',
             ['--rdg-border-color' as string]: '#d6d6d6',

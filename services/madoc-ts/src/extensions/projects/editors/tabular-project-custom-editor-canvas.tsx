@@ -4,13 +4,11 @@ import {
   FollowActiveCellOnCanvas,
   type RuntimeWithViewport,
 } from '../../../frontend/admin/components/tabular/cast-a-net/FollowActiveCellOnCanvas';
-import type { NetConfig, TabularCellRef } from '../../../frontend/admin/components/tabular/cast-a-net/types';
-import { CanvasViewerButton, CanvasViewerControls } from '../../../frontend/shared/atoms/CanvasViewerGrid';
+import type { NetConfig, TabularCellRef } from '@/frontend/shared/utility/tabular-types';
+import { CanvasViewerButton } from '../../../frontend/shared/atoms/CanvasViewerGrid';
 import { EditorContentViewer } from '../../../frontend/shared/capture-models/new/EditorContent';
-import { HomeIcon } from '../../../frontend/shared/icons/HomeIcon';
-import { MinusIcon } from '../../../frontend/shared/icons/MinusIcon';
 import { PanIcon } from '../../../frontend/shared/icons/PanIcon';
-import { PlusIcon } from '../../../frontend/shared/icons/PlusIcon';
+import { TabularCanvasViewportControls } from '../../../frontend/shared/components/TabularCanvasViewportControls';
 import type { CanvasFull } from '../../../types/canvas-full';
 
 type TabularProjectCustomEditorCanvasProps = {
@@ -51,28 +49,28 @@ export function TabularProjectCustomEditorCanvas({
   return (
     <div className="min-h-0 border-b border-gray-300 bg-gray-100 p-2">
       <div className="relative h-full min-h-0 overflow-hidden rounded border border-gray-400 bg-white">
-        <CanvasViewerControls style={{ top: 12, right: 12, zIndex: 50 }}>
-          <CanvasViewerButton
-            type="button"
-            onClick={() => setZoomTrackingOverride(!isZoomTrackingEnabled)}
-            disabled={!netConfig}
-            data-active={isZoomTrackingEnabled}
-            aria-label="Toggle zoom tracking"
-            aria-pressed={isZoomTrackingEnabled}
-            title={isZoomTrackingEnabled ? 'Disable zoom tracking' : 'Enable zoom tracking'}
-          >
-            <PanIcon />
-          </CanvasViewerButton>
-          <CanvasViewerButton type="button" onClick={goHome} disabled={!runtimeRef.current}>
-            <HomeIcon title="Home" />
-          </CanvasViewerButton>
-          <CanvasViewerButton type="button" onClick={zoomOut} disabled={!runtimeRef.current}>
-            <MinusIcon title="Zoom out" />
-          </CanvasViewerButton>
-          <CanvasViewerButton type="button" onClick={zoomIn} disabled={!runtimeRef.current}>
-            <PlusIcon title="Zoom in" />
-          </CanvasViewerButton>
-        </CanvasViewerControls>
+        <TabularCanvasViewportControls
+          onHome={goHome}
+          onZoomOut={zoomOut}
+          onZoomIn={zoomIn}
+          homeDisabled={!runtimeRef.current}
+          zoomOutDisabled={!runtimeRef.current}
+          zoomInDisabled={!runtimeRef.current}
+          style={{ top: 12, right: 12, zIndex: 50 }}
+          leadingControls={
+            <CanvasViewerButton
+              type="button"
+              onClick={() => setZoomTrackingOverride(!isZoomTrackingEnabled)}
+              disabled={!netConfig}
+              data-active={isZoomTrackingEnabled}
+              aria-label="Toggle zoom tracking"
+              aria-pressed={isZoomTrackingEnabled}
+              title={isZoomTrackingEnabled ? 'Disable zoom tracking' : 'Enable zoom tracking'}
+            >
+              <PanIcon />
+            </CanvasViewerButton>
+          }
+        />
         <EditorContentViewer
           height="100%"
           canvasId={canvasId}

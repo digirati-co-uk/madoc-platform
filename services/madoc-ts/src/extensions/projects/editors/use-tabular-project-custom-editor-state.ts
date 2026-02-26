@@ -1,13 +1,15 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { CaptureModelEditorApi } from '@/frontend/shared/capture-models/new/hooks/use-capture-model-editor-api';
-import type { NetConfig, TabularCellRef } from '../../../frontend/admin/components/tabular/cast-a-net/types';
+import { offsetTabularCellRef } from '@/frontend/shared/utility/tabular-cell-ref';
+import type { NetConfig, TabularCellRef } from '@/frontend/shared/utility/tabular-types';
 import {
   createTabularColumnModel,
+  getTabularCellElementId,
   isHiddenFieldType,
   isTabularSystemProperty,
-  type TabularColumnModel,
   type TabularModelColumn,
 } from './tabular-project-custom-editor-utils';
+import type { TabularEditorHeaderModel, TabularEditorRowModel } from './tabular-project-custom-editor-table-model';
 
 type CreateNewFieldInstanceAction = (payload: {
   path: Array<[string, string]>;
@@ -31,13 +33,12 @@ type UseTabularProjectCustomEditorStateResult = {
   tableActiveCell: TabularCellRef | null;
   setTableActiveCell: (next: TabularCellRef | null) => void;
   overlayActiveCell: TabularCellRef | null;
-  columnModel: TabularColumnModel;
-  visibleColumns: CaptureModelEditorApi['columns'];
-  legacyColumnKeys: string[];
   visibleColumnKeys: string[];
+  headerColumns: TabularEditorHeaderModel[];
+  tableRows: TabularEditorRowModel[];
+  showEmptyTableState: boolean;
   useLegacyTopLevelLayout: boolean;
   visibleTableErrors: string[];
-  legacyMutableRowCount: number;
   canAddRow: boolean;
   canRemoveRow: boolean;
   addRowFromFooter: () => void;
@@ -133,15 +134,12 @@ export function useTabularProjectCustomEditorState({
   }, [displayedRowCount, tableActiveCell, visibleColumnKeys.length]);
 
   const overlayActiveCell = useMemo<TabularCellRef | null>(() => {
-    if (!tableActiveCell || !netConfig) {
+    if (!netConfig) {
       return null;
     }
 
     // Row 0 in cast-a-net is the heading row, so contributor data rows start at +1.
-    return {
-      row: tableActiveCell.row + 1,
-      col: tableActiveCell.col,
-    };
+    return offsetTabularCellRef(tableActiveCell, 1);
   }, [netConfig, tableActiveCell]);
 
   const addLegacyRow = useCallback(() => {
@@ -170,6 +168,21 @@ export function useTabularProjectCustomEditorState({
       }
     },
     [legacyMutableColumnKeys, removeInstance, table.topLevelFields]
+  );
+
+  const createLegacyField = useCallback(
+    (columnKey: string) => {
+      try {
+        createNewFieldInstance({
+          path: [],
+          property: columnKey,
+          multipleOverride: true,
+        });
+      } catch {
+        // Error is surfaced through table.errors from helper hooks.
+      }
+    },
+    [createNewFieldInstance]
   );
 
   const addRowFromFooter = useCallback(() => {
@@ -215,17 +228,92 @@ export function useTabularProjectCustomEditorState({
   const canAddRow = useLegacyTopLevelLayout ? legacyMutableColumnKeys.length > 0 : true;
   const canRemoveRow = useLegacyTopLevelLayout ? legacyMutableRowCount > 1 : table.rowCount > 1;
 
+  const visibleColumnsById = useMemo(
+    () => new Map(visibleColumns.map(column => [column.key, column])),
+    [visibleColumns]
+  );
+
+  const headerColumns = useMemo<TabularEditorHeaderModel[]>(() => {
+    return visibleColumnKeys.map(columnKey => {
+      const column = visibleColumnsById.get(columnKey);
+      return {
+        key: columnKey,
+        label: columnModel.labels.get(columnKey) || column?.label || columnKey,
+        description: column?.description,
+      };
+    });
+  }, [columnModel.labels, visibleColumnKeys, visibleColumnsById]);
+
+  const tableRows = useMemo<TabularEditorRowModel[]>(() => {
+    if (useLegacyTopLevelLayout) {
+      return Array.from({ length: legacyMutableRowCount }, (_unused, rowIndex) => ({
+        key: `legacy-row-${rowIndex}`,
+        rowIndex,
+        cells: legacyColumnKeys.map((columnKey, colIndex) => {
+          const field = table.topLevelFields[columnKey]?.[rowIndex];
+          return {
+            key: `${rowIndex}-${columnKey}`,
+            rowIndex,
+            colIndex,
+            columnKey,
+            fieldType: columnModel.hints.get(columnKey),
+            value: field?.value,
+            cellElementId: getTabularCellElementId(rowIndex, columnKey, true),
+            inputId: `tabular-legacy-row-${rowIndex}-${columnKey}`,
+            onChange: nextValue => {
+              if (field) {
+                field.setValue(nextValue);
+                return;
+              }
+
+              createLegacyField(columnKey);
+            },
+          };
+        }),
+      }));
+    }
+
+    return table.rows.map(row => ({
+      key: String(row.entityId),
+      rowIndex: row.rowIndex,
+      cells: visibleColumns.map((column, colIndex) => {
+        const cell = row.getCell(column.key);
+        return {
+          key: `${row.rowIndex}-${column.key}`,
+          rowIndex: row.rowIndex,
+          colIndex,
+          columnKey: column.key,
+          fieldType: columnModel.hints.get(column.key) || column.fieldType,
+          value: cell?.value,
+          cellElementId: getTabularCellElementId(row.rowIndex, column.key, false),
+          inputId: `tabular-row-${row.rowIndex}-${column.key}`,
+          onChange: nextValue => row.setCell(column.key, nextValue),
+        };
+      }),
+    }));
+  }, [
+    columnModel.hints,
+    createLegacyField,
+    legacyColumnKeys,
+    legacyMutableRowCount,
+    table.rows,
+    table.topLevelFields,
+    useLegacyTopLevelLayout,
+    visibleColumns,
+  ]);
+
+  const showEmptyTableState = !useLegacyTopLevelLayout && table.rows.length === 0;
+
   return {
     tableActiveCell,
     setTableActiveCell,
     overlayActiveCell,
-    columnModel,
-    visibleColumns,
-    legacyColumnKeys,
     visibleColumnKeys,
+    headerColumns,
+    tableRows,
+    showEmptyTableState,
     useLegacyTopLevelLayout,
     visibleTableErrors,
-    legacyMutableRowCount,
     canAddRow,
     canRemoveRow,
     addRowFromFooter,

@@ -16,6 +16,13 @@ export const makeEvenPositions = (count: number): number[] => {
   return Array.from({ length: count - 1 }, (_, i) => step * (i + 1));
 };
 
+export const getEffectivePositions = (count: number, positions: number[]): number[] => {
+  const safeCount = Math.max(1, Math.floor(count || 1));
+  const expectedLen = Math.max(0, safeCount - 1);
+  const source = positions.length === expectedLen ? positions : makeEvenPositions(safeCount);
+  return normalisePositions(source, safeCount);
+};
+
 export const sanitizeIndexList = (indexes: number[] | undefined, maxExclusive: number): number[] => {
   if (!indexes?.length || maxExclusive <= 0) return [];
   const uniq = new Set<number>();

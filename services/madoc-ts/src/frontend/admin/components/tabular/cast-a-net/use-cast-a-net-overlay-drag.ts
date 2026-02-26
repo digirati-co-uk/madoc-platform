@@ -11,7 +11,7 @@ import {
   NET_LINE_MIN_GAP_PCT,
   NET_OVERLAY_MIN_SIZE_PCT,
   clamp,
-  makeEvenPositions,
+  getEffectivePositions,
   normalisePositions,
 } from './utils';
 
@@ -73,19 +73,11 @@ export function useCastANetOverlayDrag({
   );
 
   const effectiveRowPositions = useMemo(() => {
-    const expectedLen = Math.max(0, value.rows - 1);
-    if (value.rowPositions.length === expectedLen) {
-      return normalisePositions(value.rowPositions, value.rows);
-    }
-    return normalisePositions(makeEvenPositions(value.rows), value.rows);
+    return getEffectivePositions(value.rows, value.rowPositions);
   }, [value.rows, value.rowPositions]);
 
   const effectiveColPositions = useMemo(() => {
-    const expectedLen = Math.max(0, value.cols - 1);
-    if (value.colPositions.length === expectedLen) {
-      return normalisePositions(value.colPositions, value.cols);
-    }
-    return normalisePositions(makeEvenPositions(value.cols), value.cols);
+    return getEffectivePositions(value.cols, value.colPositions);
   }, [value.cols, value.colPositions]);
 
   const endDrag = useCallback(() => {

@@ -1,5 +1,9 @@
 import type { Collection as IIIFCollection, InternationalString } from '@iiif/presentation-3';
-import type { TabularProjectSetupPayload } from '../../../../components/tabular/cast-a-net/types';
+import type {
+  NetConfig,
+  TabularCellRef,
+  TabularProjectSetupPayload,
+} from '../../../../components/tabular/cast-a-net/types';
 
 export type IiifSelectionLink = {
   id?: string | number;
@@ -66,3 +70,13 @@ export type IiifHomeStats = {
 };
 
 export type IiifHomeCollection = IIIFCollection;
+
+export type CastANetStepComponentProps = {
+  manifestId: string;
+  canvasId?: string;
+  value: NetConfig;
+  onChange: (next: NetConfig) => void;
+  height: number;
+  activeCell?: TabularCellRef | null;
+  previewOverlayOnly?: boolean;
+};

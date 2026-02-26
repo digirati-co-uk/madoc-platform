@@ -4,17 +4,9 @@ import { CanvasPanel, SimpleViewerProvider } from 'react-iiif-vault';
 import { CastANetOverlayAtlas } from './CastANetOverlayAtlas';
 import { buildCastANetStructure } from './CastANetStructure';
 import { FollowActiveCellOnCanvas, type RuntimeWithViewport } from './FollowActiveCellOnCanvas';
-import { CanvasViewerButton, CanvasViewerControls } from '../../../../shared/atoms/CanvasViewerGrid';
-import { HomeIcon } from '../../../../shared/icons/HomeIcon';
-import { MinusIcon } from '../../../../shared/icons/MinusIcon';
 import { OpacityIcon } from '../../../../shared/icons/OpacityIcon';
-import { PlusIcon } from '../../../../shared/icons/PlusIcon';
-import {
-  NET_DIM_STEP,
-  NET_MAX_DIM_OPACITY,
-  clampDimOpacity,
-  dimOpacityToPercent,
-} from './utils';
+import { TabularCanvasViewportControls } from '../../../../shared/components/TabularCanvasViewportControls';
+import { NET_DIM_STEP, NET_MAX_DIM_OPACITY, clampDimOpacity, dimOpacityToPercent } from './utils';
 import './CastANetCanvas.css';
 
 type CastANetCanvasProps = {
@@ -109,17 +101,15 @@ export const CastANetCanvas: React.FC<CastANetCanvasProps> = ({
         </div>
       ) : null}
 
-      <CanvasViewerControls style={{ top: 12, right: 12, zIndex: 50 }}>
-        <CanvasViewerButton type="button" title="Home" onClick={goHome} disabled={disabled}>
-          <HomeIcon />
-        </CanvasViewerButton>
-        <CanvasViewerButton type="button" title="Zoom out" onClick={zoomOut} disabled={disabled}>
-          <MinusIcon />
-        </CanvasViewerButton>
-        <CanvasViewerButton type="button" title="Zoom in" onClick={zoomIn} disabled={disabled}>
-          <PlusIcon />
-        </CanvasViewerButton>
-      </CanvasViewerControls>
+      <TabularCanvasViewportControls
+        onHome={goHome}
+        onZoomOut={zoomOut}
+        onZoomIn={zoomIn}
+        homeDisabled={disabled}
+        zoomOutDisabled={disabled}
+        zoomInDisabled={disabled}
+        style={{ top: 12, right: 12, zIndex: 50 }}
+      />
 
       <AnySimpleViewerProvider key={viewerKey} manifest={manifestId} startCanvas={canvasId}>
         <CanvasPanel.Viewer

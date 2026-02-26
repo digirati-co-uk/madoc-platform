@@ -15,6 +15,11 @@ type TabularCellFlagsPayload = {
 };
 
 const LEGACY_FLAGGED_AT_FALLBACK = '1970-01-01T00:00:00.000Z';
+const TABULAR_CELL_FLAGS_CAPTURE_MODEL_FIELD = {
+  type: 'text-field',
+  label: 'Cell flags',
+  description: 'Internal metadata for flagged tabular cells.',
+} as const;
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return !!value && typeof value === 'object' && !Array.isArray(value);
@@ -88,6 +93,10 @@ function toPayloadCandidate(value: unknown): unknown {
 
 export function getTabularCellFlagKey(rowIndex: number, columnKey: string): string {
   return `${rowIndex}:${columnKey}`;
+}
+
+export function createTabularCellFlagsCaptureModelField() {
+  return { ...TABULAR_CELL_FLAGS_CAPTURE_MODEL_FIELD };
 }
 
 export function sortTabularCellFlags(flags: TabularCellFlagMap): TabularCellFlag[] {
