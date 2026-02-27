@@ -702,6 +702,8 @@ export function useTabularProjectController(options: UseTabularProjectController
   const historyOptions: IIIFBrowserProps['history'] = useMemo(() => {
     const initialHistory: IiifHistoryItem[] = [];
     const normalizedStartupUrl = iiifStartupUrl ? normalizeIiifInputUrl(iiifStartupUrl) : undefined;
+    const madocApiRoot =
+      typeof window !== 'undefined' && siteSlug ? `${window.location.origin}/s/${siteSlug}/madoc/api` : undefined;
 
     if (normalizedStartupUrl) {
       initialHistory.push({
@@ -732,17 +734,19 @@ export function useTabularProjectController(options: UseTabularProjectController
       initialHistory,
       initialHistoryCursor: 0,
       seedCollections: iiifHomeCollection ? [iiifHomeCollection] : [],
+      collectionUrlMapping: madocApiRoot && iiifHomeCollection ? { [madocApiRoot]: iiifHomeCollection.id } : {},
+      collectionUrlMappingParams: {},
       preprocessManifest: async manifest => {
         const normalized = normalizeLegacyIiifKeys(manifest);
         return normalized.value;
       },
     };
-  }, [iiifHomeCollection, iiifHomeHistoryItem, iiifStartupUrl]);
+  }, [iiifHomeCollection, iiifHomeHistoryItem, iiifStartupUrl, siteSlug]);
 
   const rootCollection =
     typeof window !== 'undefined' && siteSlug
-      ? `${window.location.origin}/s/${siteSlug}/madoc/api/collections/root`
-      : 'iiif://home';
+      ? `${window.location.origin}/s/${siteSlug}/madoc/api`
+      : iiifHomeCollection?.id || 'iiif://home';
 
   const searchOptions: IIIFBrowserProps['search'] = useMemo(() => {
     if (!siteSlug || typeof window === 'undefined') {

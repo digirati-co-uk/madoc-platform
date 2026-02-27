@@ -27,6 +27,7 @@ export const ModalButton: React.FC<{
   autoHeight?: boolean;
   footerAlignRight?: boolean;
   modalSize?: 'lg' | 'md' | 'sm';
+  allowResize?: boolean;
   disabled?: boolean;
   openByDefault?: boolean;
   style?: any;
@@ -47,6 +48,7 @@ export const ModalButton: React.FC<{
     renderFooter,
     onClose,
     modalSize,
+    allowResize = true,
     autoHeight,
     footerAlignRight,
     children,
@@ -107,7 +109,7 @@ export const ModalButton: React.FC<{
                 <InnerModalContainer $expanded={expanded} size={modalSize} data-cy="modal">
                   <ModalHeader>
                     <ModalHeaderTitle>{title}</ModalHeaderTitle>
-                    <ModalResizeIcon onClick={() => setIsExpanded(e => !e)} />
+                    {allowResize ? <ModalResizeIcon onClick={() => setIsExpanded(e => !e)} /> : null}
                     <ModalCloseIcon onClick={closeModal} />
                   </ModalHeader>
                   <BrowserComponent fallback={<Spinner />}>

@@ -6,23 +6,9 @@ import { buildTabularModelPayload, validateTabularModel } from './TabularModel';
 import { TabularHeadingsTable } from './TabularHeadingsTable';
 import { TabularColumnEditor } from './TabularColumnEditor';
 import { Button } from '../../../../shared/navigation/Button';
-import { HomeIcon } from '../../../../shared/icons/HomeIcon';
-import { MinusIcon } from '../../../../shared/icons/MinusIcon';
-import { PlusIcon } from '../../../../shared/icons/PlusIcon';
+import { TabularCanvasViewportControls } from '../../../../shared/components/TabularCanvasViewportControls';
 import { AddIcon } from '../../../../shared/icons/AddIcon';
-
-const viewerButtonStyle: React.CSSProperties = {
-  height: 34,
-  minWidth: 34,
-  border: '1px solid #d1d5db',
-  borderRadius: 6,
-  background: '#fff',
-  color: '#3b82f6',
-  display: 'inline-flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  cursor: 'pointer',
-};
+import { MinusIcon } from '../../../../shared/icons/MinusIcon';
 
 function ReferenceImagePanel(props: { manifestId: string; canvasId?: string; imageHeight: number }) {
   const { manifestId, canvasId, imageHeight } = props;
@@ -35,29 +21,13 @@ function ReferenceImagePanel(props: { manifestId: string; canvasId?: string; ima
 
   return (
     <div style={{ border: '1px solid #e5e5e5', borderRadius: 8, background: '#fff', overflow: 'hidden' }}>
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '10px 12px',
-          borderBottom: '1px solid #eee',
-        }}
-      >
-        <div style={{ display: 'flex', gap: 8 }}>
-          <button type="button" title="Home" onClick={goHome} style={viewerButtonStyle}>
-            <HomeIcon />
-          </button>
-          <button type="button" title="Zoom out" onClick={zoomOut} style={viewerButtonStyle}>
-            <MinusIcon />
-          </button>
-          <button type="button" title="Zoom in" onClick={zoomIn} style={viewerButtonStyle}>
-            <PlusIcon />
-          </button>
-        </div>
-      </div>
-
-      <div style={{ height: imageHeight, background: '#e5e7eb' }}>
+      <div style={{ height: imageHeight, background: '#e5e7eb', position: 'relative' }}>
+        <TabularCanvasViewportControls
+          onHome={goHome}
+          onZoomOut={zoomOut}
+          onZoomIn={zoomIn}
+          style={{ top: 12, right: 12, zIndex: 40 }}
+        />
         <AnySimpleViewerProvider manifest={manifestId} startCanvas={canvasId}>
           <CanvasPanel.Viewer
             runtimeOptions={{ maxOverZoom: 5, visibilityRatio: 1, maxUnderZoom: 1 }}
@@ -115,6 +85,8 @@ export function DefineTabularModel(props: {
   const [imageHeight, setImageHeight] = useState(300);
   const [attemptedSave, setAttemptedSave] = useState(false);
   const [isResizeHandleHover, setIsResizeHandleHover] = useState(false);
+  const tableScrollRef = useRef<HTMLDivElement>(null);
+  const shouldScrollToNewColumnRef = useRef(false);
   const tableVisibleRows = 4;
   const tableHeight = 54 + 42 * tableVisibleRows + 2;
 
@@ -145,6 +117,18 @@ export function DefineTabularModel(props: {
       setActiveColumn(Math.max(0, safeColumns - 1));
     }
   }, [activeColumn, safeColumns]);
+
+  useEffect(() => {
+    if (!shouldScrollToNewColumnRef.current) {
+      return;
+    }
+    shouldScrollToNewColumnRef.current = false;
+    const container = tableScrollRef.current;
+    if (!container) {
+      return;
+    }
+    container.scrollTo({ left: container.scrollWidth, behavior: 'smooth' });
+  }, [safeColumns]);
 
   const issues = useMemo(
     () =>
@@ -185,6 +169,42 @@ export function DefineTabularModel(props: {
   }, [issues]);
 
   const activeError = issuesByColumn.get(activeColumn)?.[0]?.message;
+  const duplicateHeadings = useMemo(() => {
+    const counts = new Map<string, { heading: string; count: number }>();
+    for (const rawHeading of safeHeadings) {
+      const heading = rawHeading.trim();
+      if (!heading) {
+        continue;
+      }
+      const key = heading.toLowerCase();
+      const existing = counts.get(key);
+      if (existing) {
+        existing.count += 1;
+      } else {
+        counts.set(key, { heading, count: 1 });
+      }
+    }
+    return Array.from(counts.values())
+      .filter(entry => entry.count > 1)
+      .map(entry => entry.heading);
+  }, [safeHeadings]);
+
+  const topErrorMessage = useMemo(() => {
+    const firstIssue = issues[0];
+    if (!firstIssue) {
+      return '';
+    }
+
+    if (firstIssue.type === 'duplicate-heading') {
+      const duplicateHeadingList = duplicateHeadings.map(heading => `'${heading}'`).join(', ');
+      if (duplicateHeadingList) {
+        return `Duplicate headings found: ${duplicateHeadingList}. These headings are highlighted in the table.`;
+      }
+      return 'Duplicate headings found. These headings are highlighted in the table.';
+    }
+
+    return firstIssue.message;
+  }, [issues, duplicateHeadings]);
 
   const setColumns = (nextCols: number) => {
     const n = Math.max(minColumns, Math.min(maxColumns, Math.floor(nextCols)));
@@ -238,8 +258,36 @@ export function DefineTabularModel(props: {
     onChange(nextValue);
   };
 
-  const addColumn = () => setColumns(safeColumns + 1);
-  const removeLastColumn = () => setColumns(safeColumns - 1);
+  const addColumn = () => {
+    if (safeColumns >= maxColumns) {
+      return;
+    }
+    shouldScrollToNewColumnRef.current = true;
+    setActiveColumn(safeColumns);
+    setColumns(safeColumns + 1);
+  };
+  const removeColumnAt = (columnIndex: number) => {
+    if (safeColumns <= minColumns) {
+      return;
+    }
+
+    const nextColumns = safeColumns - 1;
+    const headings = safeHeadings.filter((_, index) => index !== columnIndex);
+    const fieldTypes = safeFieldTypes.filter((_, index) => index !== columnIndex);
+    const helpText = safeHelpText.filter((_, index) => index !== columnIndex);
+
+    onChange({
+      ...value,
+      columns: nextColumns,
+      previewRows: safePreviewRows,
+      headings,
+      fieldTypes,
+      helpText,
+      saved: buildSavedFlags(nextColumns, false),
+    });
+    setActiveColumn(Math.min(columnIndex, nextColumns - 1));
+  };
+  const removeLastColumn = () => removeColumnAt(safeColumns - 1);
   const startResize = (event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault();
     const startY = event.clientY;
@@ -275,7 +323,7 @@ export function DefineTabularModel(props: {
             fontSize: 13,
           }}
         >
-          {issues[0]?.message}
+          {topErrorMessage}
         </div>
       ) : null}
 
@@ -308,6 +356,8 @@ export function DefineTabularModel(props: {
               disabled={disabled}
               error={attemptedSave ? activeError : undefined}
               onChange={next => updateColumn(activeColumn, next)}
+              onRemove={() => removeColumnAt(activeColumn)}
+              removeDisabled={safeColumns <= minColumns}
             />
           </div>
 
@@ -352,7 +402,7 @@ export function DefineTabularModel(props: {
 
           <div style={{ border: '1px solid #d6d6d6', background: '#fff', overflow: 'hidden' }}>
             <div style={{ display: 'flex', height: tableHeight }}>
-              <div style={{ flex: 1, minWidth: 0, overflow: 'auto', padding: 0 }}>
+              <div ref={tableScrollRef} style={{ flex: 1, minWidth: 0, overflow: 'auto', padding: 0 }}>
                 <TabularHeadingsTable
                   columns={safeColumns}
                   visibleRows={tableVisibleRows}

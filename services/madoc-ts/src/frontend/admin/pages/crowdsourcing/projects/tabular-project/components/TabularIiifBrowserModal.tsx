@@ -16,9 +16,6 @@ interface TabularIiifBrowserModalProps {
   onSearchMadocResources: () => void;
   onClearMadocSearch: () => void;
   iiifHomeStats: IiifHomeStats;
-  iiifPasteUrl: string;
-  onIiifPasteUrlChange: (value: string) => void;
-  onOpenIiifUrl: () => void;
   iiifHomeLoadError: string | null;
   iiifBrowserModalError: string | null;
   browserVersion: number;
@@ -38,9 +35,6 @@ export function TabularIiifBrowserModal(props: TabularIiifBrowserModalProps) {
     onSearchMadocResources,
     onClearMadocSearch,
     iiifHomeStats,
-    iiifPasteUrl,
-    onIiifPasteUrlChange,
-    onOpenIiifUrl,
     iiifHomeLoadError,
     iiifBrowserModalError,
     browserVersion,
@@ -72,6 +66,13 @@ export function TabularIiifBrowserModal(props: TabularIiifBrowserModalProps) {
           .tabular-iiif-browser-external button:disabled,
           .tabular-iiif-browser-external [role="button"][aria-disabled="true"] {
             color: #64748b;
+          }
+
+          /* Keep the output action bar ("Use selected canvas") pinned like the top toolbar. */
+          .tabular-iiif-browser-external .p-2.border-t.bg-gray-100.flex.gap-2.relative.justify-between.min-h-16.items-center.z-30 {
+            position: sticky;
+            bottom: 0;
+            z-index: 35;
           }
         `}
       </style>
@@ -111,21 +112,6 @@ export function TabularIiifBrowserModal(props: TabularIiifBrowserModalProps) {
                 })}
           </div>
         </div>
-
-        <div style={{ borderTop: '1px solid #d7dbe8', paddingTop: 10, display: 'grid', gap: 8 }}>
-          <div style={{ fontSize: 12, fontWeight: 600 }}>{t('Open a IIIF URL directly')}</div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 8 }}>
-            <Input
-              type="text"
-              value={iiifPasteUrl}
-              onChange={event => onIiifPasteUrlChange(event.currentTarget.value)}
-              placeholder={t('Paste manifest, collection, or canvas URL')}
-            />
-            <Button type="button" onClick={onOpenIiifUrl}>
-              {t('Open URL')}
-            </Button>
-          </div>
-        </div>
       </div>
 
       {iiifHomeLoadError ? <ErrorMessage>{iiifHomeLoadError}</ErrorMessage> : null}
@@ -136,7 +122,7 @@ export function TabularIiifBrowserModal(props: TabularIiifBrowserModalProps) {
           <BrowserComponent fallback={<div>{t('Loading IIIF browser...')}</div>}>
             <IsolatedIIIFBrowser
               key={`tabular-iiif-browser-${browserVersion}`}
-              className="iiif-browser relative border-none border-t rounded-none h-[70vh] min-h-[60vh] max-h-full max-w-full"
+              className="iiif-browser relative border-none border-t rounded-none h-[56vh] min-h-[420px] max-h-[56vh] max-w-full"
               navigation={navigationOptions}
               history={historyOptions}
               output={outputOptions}

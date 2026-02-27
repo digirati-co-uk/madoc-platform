@@ -425,10 +425,10 @@ export const Select = React.forwardRef<SelectRef, SelectProps>(function SafeFunc
         setInputValue(valueToText(getOptionLabel ? getOptionLabel(option) : option));
         onOptionChange?.(option);
       }}
-      className="w-full"
+      className="block w-full min-w-0 max-w-full"
     >
       <div
-        className={`flex min-h-[38px] w-full items-stretch border bg-white shadow-none outline-none ${borderRadiusClass} ${
+        className={`box-border flex min-h-[38px] w-full min-w-0 max-w-full items-stretch border bg-white shadow-none outline-none ${borderRadiusClass} ${
           isInvalid ? 'border-[#d63031]' : 'border-[#c8ced6]'
         }`}
       >

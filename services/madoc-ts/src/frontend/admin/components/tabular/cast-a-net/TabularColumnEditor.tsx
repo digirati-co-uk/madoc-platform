@@ -9,6 +9,8 @@ import {
   StyledFormInputElement,
 } from '../../../../shared/capture-models/editor/atoms/StyledForm';
 import { Button } from '../../../../shared/capture-models/editor/atoms/Button';
+import { ButtonIcon, TinyButton } from '@/frontend/shared/navigation/Button';
+import { DeleteForeverIcon } from '@/frontend/shared/icons/DeleteForeverIcon';
 
 export function TabularColumnEditor(props: {
   index: number;
@@ -17,8 +19,9 @@ export function TabularColumnEditor(props: {
   error?: string;
   onChange: (next: TabularColumnEditorValue) => void;
   onRemove?: () => void;
+  removeDisabled?: boolean;
 }) {
-  const { index, value, disabled, error, onChange, onRemove } = props;
+  const { index, value, disabled, error, onChange, onRemove, removeDisabled } = props;
   const { fields } = useContext(PluginContext);
 
   const availableFieldTypes = useMemo(
@@ -75,9 +78,9 @@ export function TabularColumnEditor(props: {
           {error ? <div style={{ marginTop: 6, fontSize: 12, color: '#b91c1c' }}>{error}</div> : null}
         </div>
 
-        <div style={{ display: 'grid', gap: 6 }}>
+        <div style={{ display: 'grid', gap: 6, minWidth: 0 }}>
           <StyledFormLabel>Field type</StyledFormLabel>
-          <div>
+          <div style={{ width: '100%', maxWidth: '100%', minWidth: 0, overflow: 'hidden' }}>
             <Dropdown
               value={value.fieldType ?? ''}
               placeholder={typeLabel}
@@ -109,16 +112,12 @@ export function TabularColumnEditor(props: {
 
         <div style={{ display: 'grid', gap: 6 }}>
           <StyledFormLabel />
-          <div style={{ display: 'flex', gap: 10 }}>
+          <div style={{ display: 'flex', marginTop: 6 }}>
             {onRemove ? (
-              <Button
-                type="button"
-                onClick={onRemove}
-                disabled={disabled}
-                style={{ background: 'rgba(239,68,68,0.10)' }}
-              >
+              <TinyButton type="button" onClick={onRemove} disabled={disabled || removeDisabled}>
+                <DeleteForeverIcon />
                 Remove column
-              </Button>
+              </TinyButton>
             ) : null}
           </div>
         </div>

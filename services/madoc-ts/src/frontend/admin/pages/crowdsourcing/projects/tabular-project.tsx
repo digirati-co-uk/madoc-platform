@@ -59,9 +59,6 @@ export const TabularProjectWizard: React.FC = () => {
       onSearchMadocResources={controller.searchMadocResources}
       onClearMadocSearch={controller.clearMadocSearch}
       iiifHomeStats={controller.iiifHomeStats}
-      iiifPasteUrl={controller.iiifPasteUrl}
-      onIiifPasteUrlChange={controller.setIiifPasteUrl}
-      onOpenIiifUrl={controller.openIiifUrl}
       iiifHomeLoadError={controller.iiifHomeLoadError}
       iiifBrowserModalError={controller.iiifBrowserModalError}
       browserVersion={controller.iiifBrowserVersion}
