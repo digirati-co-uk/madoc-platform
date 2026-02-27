@@ -47,8 +47,8 @@ export function TabularProjectCustomEditorCanvas({
   }
 
   return (
-    <div className="min-h-0 border-b border-gray-300 bg-gray-100 p-2">
-      <div className="relative h-full min-h-0 overflow-hidden rounded border border-gray-400 bg-white">
+    <div className="min-h-0 min-w-0 border-b border-gray-300 bg-gray-100 p-2">
+      <div className="relative h-full min-h-0 min-w-0 overflow-hidden rounded border border-gray-400 bg-white">
         <TabularCanvasViewportControls
           onHome={goHome}
           onZoomOut={zoomOut}

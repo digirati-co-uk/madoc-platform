@@ -6,7 +6,7 @@ import { CONTRIBUTOR_EDITOR_CANVAS_SPLIT, CONTRIBUTOR_EDITOR_TABLE_SPLIT } from 
 
 const CONTRIBUTOR_EDITOR_SPLIT_DIVIDER_HEIGHT = 12;
 const CONTRIBUTOR_EDITOR_MIN_CANVAS_HEIGHT = 220;
-const CONTRIBUTOR_EDITOR_MIN_TABLE_HEIGHT = 240;
+const CONTRIBUTOR_EDITOR_MIN_TABLE_HEIGHT = 280;
 
 export function useTabularEditorLayout() {
   const [isSidebarPanelOpen, setIsSidebarPanelOpen] = useState(true);

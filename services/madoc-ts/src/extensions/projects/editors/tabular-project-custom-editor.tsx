@@ -14,7 +14,6 @@ import {
   OuterLayoutContainer,
 } from '@/frontend/shared/layout/LayoutContainer';
 import { Button, ButtonRow } from '@/frontend/shared/navigation/Button';
-import { HrefLink } from '@/frontend/shared/utility/href-link';
 import { useCanvasModel } from '@/frontend/site/hooks/use-canvas-model';
 import { useCaptureModelContributionLifecycle } from '@/frontend/site/hooks/use-capture-model-contribution-lifecycle';
 import { useProject } from '@/frontend/site/hooks/use-project';
@@ -247,9 +246,9 @@ function TabularProjectCustomEditorContent({
                 </div>
               </VerticalResizeSeparator>
 
-              <div className="flex min-h-0 flex-col">
-                <div className="min-h-0 flex-1 overflow-y-auto">
-                  <div className="flex h-full min-h-0 flex-col gap-4">
+              <div className="flex min-h-0 min-w-0 flex-col">
+                <div className="min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto">
+                  <div className="flex h-full min-h-0 min-w-0 flex-col gap-4">
                     {!netConfig ? (
                       <div className="rounded border border-yellow-300 bg-yellow-50 p-2 text-sm">
                         No cast-a-net overlay is configured for this project.
@@ -298,12 +297,6 @@ function TabularProjectCustomEditorContent({
 
                         {lifecycle.phase === 'submitted' ? <div>Contribution submitted.</div> : null}
                       </>
-                    ) : null}
-
-                    {lifecycle.nextCanvas.hasNext && lifecycle.nextCanvas.next ? (
-                      <ButtonRow>
-                        <HrefLink href={lifecycle.nextCanvas.next.href}>Next image</HrefLink>
-                      </ButtonRow>
                     ) : null}
 
                     {visibleTableErrors.length ? (
