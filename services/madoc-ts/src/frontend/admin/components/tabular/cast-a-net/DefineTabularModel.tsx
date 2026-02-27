@@ -266,7 +266,28 @@ export function DefineTabularModel(props: {
     setActiveColumn(safeColumns);
     setColumns(safeColumns + 1);
   };
-  const removeLastColumn = () => setColumns(safeColumns - 1);
+  const removeColumnAt = (columnIndex: number) => {
+    if (safeColumns <= minColumns) {
+      return;
+    }
+
+    const nextColumns = safeColumns - 1;
+    const headings = safeHeadings.filter((_, index) => index !== columnIndex);
+    const fieldTypes = safeFieldTypes.filter((_, index) => index !== columnIndex);
+    const helpText = safeHelpText.filter((_, index) => index !== columnIndex);
+
+    onChange({
+      ...value,
+      columns: nextColumns,
+      previewRows: safePreviewRows,
+      headings,
+      fieldTypes,
+      helpText,
+      saved: buildSavedFlags(nextColumns, false),
+    });
+    setActiveColumn(Math.min(columnIndex, nextColumns - 1));
+  };
+  const removeLastColumn = () => removeColumnAt(safeColumns - 1);
   const startResize = (event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault();
     const startY = event.clientY;
@@ -335,6 +356,8 @@ export function DefineTabularModel(props: {
               disabled={disabled}
               error={attemptedSave ? activeError : undefined}
               onChange={next => updateColumn(activeColumn, next)}
+              onRemove={() => removeColumnAt(activeColumn)}
+              removeDisabled={safeColumns <= minColumns}
             />
           </div>
 
