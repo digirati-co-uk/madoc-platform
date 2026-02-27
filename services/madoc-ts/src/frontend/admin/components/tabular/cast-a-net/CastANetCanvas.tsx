@@ -6,6 +6,8 @@ import { buildCastANetStructure } from './CastANetStructure';
 import { FollowActiveCellOnCanvas, type RuntimeWithViewport } from './FollowActiveCellOnCanvas';
 import { OpacityIcon } from '../../../../shared/icons/OpacityIcon';
 import { TabularCanvasViewportControls } from '../../../../shared/components/TabularCanvasViewportControls';
+import { CanvasViewerButton } from '../../../../shared/atoms/CanvasViewerGrid';
+import { ArrowDownIcon } from '../../../../shared/icons/ArrowDownIcon';
 import { NET_DIM_STEP, NET_MAX_DIM_OPACITY, clampDimOpacity, dimOpacityToPercent } from './utils';
 import './CastANetCanvas.css';
 
@@ -22,6 +24,9 @@ type CastANetCanvasProps = {
   onChangeDimOpacity?: (next: number) => void;
   activeCell?: TabularCellRef | null;
   previewOverlayOnly?: boolean;
+  showVerticalNudgeControls?: boolean;
+  onNudgeUp?: () => void;
+  onNudgeDown?: () => void;
 };
 
 export const CastANetCanvas: React.FC<CastANetCanvasProps> = ({
@@ -37,6 +42,9 @@ export const CastANetCanvas: React.FC<CastANetCanvasProps> = ({
   onChangeDimOpacity,
   activeCell,
   previewOverlayOnly,
+  showVerticalNudgeControls = false,
+  onNudgeUp,
+  onNudgeDown,
 }) => {
   const AnySimpleViewerProvider = SimpleViewerProvider as unknown as React.FC<any>;
   const runtime = useRef<RuntimeWithViewport | null>(null);
@@ -149,6 +157,31 @@ export const CastANetCanvas: React.FC<CastANetCanvasProps> = ({
         zoomInDisabled={disabled}
         style={{ top: 12, right: 12, zIndex: 50 }}
       />
+      {showVerticalNudgeControls && (onNudgeUp || onNudgeDown) ? (
+        <div
+          style={{
+            position: 'absolute',
+            top: 12,
+            left: 12,
+            zIndex: 50,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 8,
+          }}
+        >
+          <CanvasViewerButton type="button" onClick={onNudgeUp} disabled={disabled || !onNudgeUp} title="Nudge up">
+            <ArrowDownIcon style={{ transform: 'rotate(180deg)', fill: 'currentColor' }} />
+          </CanvasViewerButton>
+          <CanvasViewerButton
+            type="button"
+            onClick={onNudgeDown}
+            disabled={disabled || !onNudgeDown}
+            title="Nudge down"
+          >
+            <ArrowDownIcon style={{ fill: 'currentColor' }} />
+          </CanvasViewerButton>
+        </div>
+      ) : null}
 
       <AnySimpleViewerProvider key={viewerKey} manifest={manifestId} startCanvas={canvasId}>
         <CanvasPanel.Viewer

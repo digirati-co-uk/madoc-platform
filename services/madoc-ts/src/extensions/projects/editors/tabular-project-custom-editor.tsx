@@ -1,11 +1,13 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { NetConfig } from '@/frontend/shared/utility/tabular-types';
 import { DynamicVaultContext } from '@/frontend/shared/capture-models/new/DynamicVaultContext';
 import { RevisionProviderWithFeatures } from '@/frontend/shared/capture-models/new/components/RevisionProviderWithFeatures';
 import { useCaptureModelEditorApi } from '@/frontend/shared/capture-models/new/hooks/use-capture-model-editor-api';
 import { Revisions } from '@/frontend/shared/capture-models/editor/stores/revisions';
+import { useApi } from '@/frontend/shared/hooks/use-api';
 import { useLoadedCaptureModel } from '@/frontend/shared/hooks/use-loaded-capture-model';
 import { VerticalResizeSeparator } from '@/frontend/shared/components/VerticalResizeSeparator';
+import { clampToRange } from '@/frontend/shared/utility/tabular-net-config';
 import {
   LayoutContainer,
   LayoutContent,
@@ -14,13 +16,13 @@ import {
   OuterLayoutContainer,
 } from '@/frontend/shared/layout/LayoutContainer';
 import { Button, ButtonRow } from '@/frontend/shared/navigation/Button';
-import { HrefLink } from '@/frontend/shared/utility/href-link';
 import { useCanvasModel } from '@/frontend/site/hooks/use-canvas-model';
 import { useCaptureModelContributionLifecycle } from '@/frontend/site/hooks/use-capture-model-contribution-lifecycle';
 import { useProject } from '@/frontend/site/hooks/use-project';
 import { useRouteContext } from '@/frontend/site/hooks/use-route-context';
 import type { CanvasFull } from '@/types/canvas-full';
 import ResizeHandleIcon from '@/frontend/shared/icons/ResizeHandleIcon';
+import { buildCastANetStructure } from '../../../frontend/admin/components/tabular/cast-a-net/CastANetStructure';
 import { TabularProjectCustomEditorCanvas } from './tabular-project-custom-editor-canvas';
 import { ContributionEditorStateAlerts } from './contribution-editor-state-alerts';
 import { TabularProjectCustomEditorSidebar } from './tabular-project-custom-editor-sidebar';
@@ -42,7 +44,43 @@ type TabularProjectCustomEditorContentProps = {
   netConfig: NetConfig | null;
   tabularColumns: TabularModelColumn[];
   zoomTrackingDefaultEnabled: boolean;
+  initialNetConfig: NetConfig | null;
+  onNetConfigChange: (next: NetConfig) => void;
+  templateConfig?: TabularTemplateConfig;
 };
+
+const CONTRIBUTOR_NET_NUDGE_STEP = 0.25;
+
+function areNumberArraysEqual(left: number[], right: number[]) {
+  if (left.length !== right.length) {
+    return false;
+  }
+
+  for (let index = 0; index < left.length; index += 1) {
+    if (left[index] !== right[index]) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+function areNetConfigsEqual(left: NetConfig | null, right: NetConfig | null) {
+  if (!left || !right) {
+    return left === right;
+  }
+
+  return (
+    left.rows === right.rows &&
+    left.cols === right.cols &&
+    left.top === right.top &&
+    left.left === right.left &&
+    left.width === right.width &&
+    left.height === right.height &&
+    areNumberArraysEqual(left.rowPositions || [], right.rowPositions || []) &&
+    areNumberArraysEqual(left.colPositions || [], right.colPositions || [])
+  );
+}
 
 function TabularProjectCustomEditorContent({
   canvasId,
@@ -50,12 +88,18 @@ function TabularProjectCustomEditorContent({
   netConfig,
   tabularColumns,
   zoomTrackingDefaultEnabled,
+  initialNetConfig,
+  onNetConfigChange,
+  templateConfig,
 }: TabularProjectCustomEditorContentProps) {
+  const api = useApi();
   const lifecycle = useCaptureModelContributionLifecycle();
   const { projectId } = useRouteContext();
   const table = useCaptureModelEditorApi({ tableProperty: 'rows' });
   const createNewFieldInstance = Revisions.useStoreActions(actions => actions.createNewFieldInstance);
   const removeInstance = Revisions.useStoreActions(actions => actions.removeInstance);
+  const sharedNetConfigRef = useRef<NetConfig | null>(initialNetConfig);
+  const [netSyncError, setNetSyncError] = useState<string | null>(null);
 
   const isPersisting = lifecycle.phase === 'saving-draft' || lifecycle.phase === 'submitting';
   const isLoading = lifecycle.phase === 'loading' || lifecycle.phase === 'preparing';
@@ -125,6 +169,10 @@ function TabularProjectCustomEditorContent({
   const isTableEditorReady =
     !isLoading && lifecycle.phase !== 'error' && (table.status === 'ready' || useLegacyTopLevelLayout);
 
+  useEffect(() => {
+    sharedNetConfigRef.current = initialNetConfig;
+  }, [initialNetConfig]);
+
   async function onSaveForLater() {
     try {
       await lifecycle.saveForLater();
@@ -133,8 +181,64 @@ function TabularProjectCustomEditorContent({
     }
   }
 
+  const nudgeNetVertical = useCallback(
+    (deltaY: number) => {
+      if (!netConfig) {
+        return;
+      }
+
+      setNetSyncError(null);
+      onNetConfigChange({
+        ...netConfig,
+        top: clampToRange(netConfig.top + deltaY, 0, 100 - netConfig.height),
+      });
+    },
+    [netConfig, onNetConfigChange]
+  );
+
+  const syncSharedNetConfig = useCallback(async () => {
+    if (!netConfig || !templateConfig?.tabular || !projectId) {
+      return;
+    }
+
+    if (areNetConfigsEqual(sharedNetConfigRef.current, netConfig)) {
+      return;
+    }
+
+    const structure = buildCastANetStructure(netConfig, {
+      blankColumnIndexes: templateConfig.tabular.structure?.blankColumnIndexes,
+    });
+
+    const nextTemplateConfig: TabularTemplateConfig = {
+      ...templateConfig,
+      tabular: {
+        ...templateConfig.tabular,
+        structure: {
+          ...(templateConfig.tabular.structure || {}),
+          topLeft: structure.topLeft,
+          topRight: structure.topRight,
+          marginsPct: structure.marginsPct,
+          columnCount: structure.columnCount,
+          columnWidthsPctOfPage: structure.columnWidthsPctOfPage,
+          rowHeightsPctOfPage: structure.rowHeightsPctOfPage,
+          blankColumnIndexes: structure.blankColumnIndexes,
+        },
+      },
+    };
+
+    try {
+      await api.updateProjectTemplateConfig(projectId, nextTemplateConfig);
+      sharedNetConfigRef.current = netConfig;
+      setNetSyncError(null);
+    } catch {
+      // Keep submission working even when user cannot update project-level config.
+      setNetSyncError('Could not sync zoom tracking coordinates for other contributors.');
+    }
+  }, [api, netConfig, projectId, templateConfig]);
+
   async function onSubmit() {
     try {
+      await syncSharedNetConfig();
       await lifecycle.submit();
     } catch {
       /* empty */
@@ -211,6 +315,10 @@ function TabularProjectCustomEditorContent({
                 netConfig={netConfig}
                 activeCell={overlayActiveCell}
                 zoomTrackingDefaultEnabled={zoomTrackingDefaultEnabled}
+                showVerticalNudgeControls={!!netConfig}
+                onNudgeUp={() => nudgeNetVertical(-CONTRIBUTOR_NET_NUDGE_STEP)}
+                onNudgeDown={() => nudgeNetVertical(CONTRIBUTOR_NET_NUDGE_STEP)}
+                nudgeDisabled={isPersisting || isBlocked}
               />
 
               <VerticalResizeSeparator
@@ -247,9 +355,9 @@ function TabularProjectCustomEditorContent({
                 </div>
               </VerticalResizeSeparator>
 
-              <div className="flex min-h-0 flex-col">
-                <div className="min-h-0 flex-1 overflow-y-auto">
-                  <div className="flex h-full min-h-0 flex-col gap-4">
+              <div className="flex min-h-0 min-w-0 flex-col">
+                <div className="min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto">
+                  <div className="flex h-full min-h-0 min-w-0 flex-col gap-4">
                     {!netConfig ? (
                       <div className="rounded border border-yellow-300 bg-yellow-50 p-2 text-sm">
                         No cast-a-net overlay is configured for this project.
@@ -295,15 +403,7 @@ function TabularProjectCustomEditorContent({
                             No visible table columns were found for this project template.
                           </div>
                         ) : null}
-
-                        {lifecycle.phase === 'submitted' ? <div>Contribution submitted.</div> : null}
                       </>
-                    ) : null}
-
-                    {lifecycle.nextCanvas.hasNext && lifecycle.nextCanvas.next ? (
-                      <ButtonRow>
-                        <HrefLink href={lifecycle.nextCanvas.next.href}>Next image</HrefLink>
-                      </ButtonRow>
                     ) : null}
 
                     {visibleTableErrors.length ? (
@@ -312,6 +412,7 @@ function TabularProjectCustomEditorContent({
                     {lifecycle.lastError && lifecycle.phase !== 'error' ? (
                       <pre className="whitespace-pre-wrap">{lifecycle.lastError.message}</pre>
                     ) : null}
+                    {netSyncError ? <pre className="whitespace-pre-wrap">{netSyncError}</pre> : null}
                   </div>
                 </div>
 
@@ -341,10 +442,15 @@ export function TabularProjectCustomEditor() {
   const { data: project } = useProject();
   const templateConfig = project?.template_config as TabularTemplateConfig | undefined;
   const tabularStructure = templateConfig?.tabular?.structure;
-  const netConfig = useMemo(() => netConfigFromSharedStructure(tabularStructure), [tabularStructure]);
+  const initialNetConfig = useMemo(() => netConfigFromSharedStructure(tabularStructure), [tabularStructure]);
+  const [netConfig, setNetConfig] = useState<NetConfig | null>(initialNetConfig);
   const tabularColumns = (templateConfig?.tabular?.model?.columns || []) as TabularModelColumn[];
   const { data: projectModel } = useCanvasModel();
   const [{ captureModel, canvas }] = useLoadedCaptureModel(projectModel?.model?.id, undefined, canvasId);
+
+  useEffect(() => {
+    setNetConfig(initialNetConfig);
+  }, [initialNetConfig]);
 
   if (!canvasId) {
     return null;
@@ -374,6 +480,9 @@ export function TabularProjectCustomEditor() {
           netConfig={netConfig}
           tabularColumns={tabularColumns}
           zoomTrackingDefaultEnabled={templateConfig?.enableZoomTracking !== false}
+          initialNetConfig={initialNetConfig}
+          onNetConfigChange={next => setNetConfig(next)}
+          templateConfig={templateConfig}
         />
       </RevisionProviderWithFeatures>
     </DynamicVaultContext>

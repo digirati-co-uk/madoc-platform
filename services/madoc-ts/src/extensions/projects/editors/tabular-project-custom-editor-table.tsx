@@ -1,9 +1,16 @@
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
+import { DataGrid, type Column } from 'react-data-grid';
+import 'react-data-grid/lib/styles.css';
 import type { TabularCellRef } from '@/frontend/shared/utility/tabular-types';
 import { AddIcon } from '@/frontend/shared/icons/AddIcon';
 import { MinusIcon } from '@/frontend/shared/icons/MinusIcon';
 import { Button } from '@/frontend/shared/navigation/Button';
-import { TABULAR_COLUMN_MIN_WIDTH_PX } from '@/frontend/shared/utility/tabular-grid-constants';
+import {
+  TABULAR_COLUMN_MIN_WIDTH_PX,
+  TABULAR_GRID_HEADER_ROW_HEIGHT_PX,
+  TABULAR_GRID_ROW_HEIGHT_PX,
+} from '@/frontend/shared/utility/tabular-grid-constants';
+import { TabularDataGridStyles } from '@/frontend/shared/components/TabularDataGridStyles';
 import FlagIcon from '@/frontend/shared/icons/FlagIcon';
 import type { TabularEditorHeaderModel, TabularEditorRowModel } from './tabular-project-custom-editor-table-model';
 
@@ -21,11 +28,12 @@ type TabularProjectCustomEditorTableProps = {
   isCellFlagged: (rowIndex: number, columnKey: string) => boolean;
 };
 
-function getTableCellClassName(isActiveCell: boolean, isFlagged: boolean) {
-  return `border-b border-gray-200 px-2 py-2 align-top ${
-    isActiveCell ? 'bg-amber-100 ring-2 ring-inset ring-amber-500' : isFlagged ? 'bg-red-50' : ''
-  }`;
-}
+type TabularGridRow = {
+  id: string;
+  rowIndex: number;
+  rowPosition: number;
+  row: TabularEditorRowModel;
+};
 
 function FlaggedCellBadge() {
   return (
@@ -33,7 +41,7 @@ function FlaggedCellBadge() {
       className="absolute right-2 top-2 rounded border border-red-300 bg-red-100 px-1 text-[10px] font-semibold leading-4 text-red-700"
       title="Flagged for review"
     >
-      <FlagIcon />
+      <FlagIcon className="h-3 w-3" />
     </span>
   );
 }
@@ -45,16 +53,17 @@ function renderInput(options: {
   disabled: boolean;
   onChange: (nextValue: unknown) => void;
   onFocus: () => void;
+  onKeyDown: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   isActiveCell: boolean;
   isFlagged: boolean;
 }) {
-  const { inputId, value, fieldType, disabled, onChange, onFocus, isActiveCell, isFlagged } = options;
+  const { inputId, value, fieldType, disabled, onChange, onFocus, onKeyDown, isActiveCell, isFlagged } = options;
 
   const inputContainerClass = isActiveCell
-    ? 'border-amber-500 bg-amber-50 ring-2 ring-amber-500/40'
+    ? 'border-[#5071f4] bg-[#eaf0ff]'
     : isFlagged
       ? 'border-red-300 bg-red-50'
-      : 'border-gray-300';
+      : 'border-transparent bg-transparent';
 
   if (fieldType === 'checkbox-field') {
     return (
@@ -65,6 +74,7 @@ function renderInput(options: {
           checked={!!value}
           disabled={disabled}
           onFocus={onFocus}
+          onKeyDown={onKeyDown}
           onChange={event => onChange(event.target.checked)}
         />
       </div>
@@ -74,59 +84,13 @@ function renderInput(options: {
   return (
     <input
       id={inputId}
-      className={`w-full rounded border px-2 py-1 text-sm ${inputContainerClass}`}
+      className={`h-full w-full rounded border px-2 py-1 text-sm outline-none ${inputContainerClass}`}
       value={typeof value === 'string' ? value : value === null || typeof value === 'undefined' ? '' : String(value)}
       disabled={disabled}
       onFocus={onFocus}
+      onKeyDown={onKeyDown}
       onChange={event => onChange(event.target.value)}
     />
-  );
-}
-
-type TabularBodyCellProps = {
-  cellElementId: string;
-  inputId: string;
-  value: unknown;
-  fieldType?: string;
-  disabled: boolean;
-  isActiveCell: boolean;
-  isFlagged: boolean;
-  onActivate: () => void;
-  onChange: (nextValue: unknown) => void;
-};
-
-function TabularBodyCell({
-  cellElementId,
-  inputId,
-  value,
-  fieldType,
-  disabled,
-  isActiveCell,
-  isFlagged,
-  onActivate,
-  onChange,
-}: TabularBodyCellProps) {
-  return (
-    <td
-      className={getTableCellClassName(isActiveCell, isFlagged)}
-      style={{ minWidth: TABULAR_COLUMN_MIN_WIDTH_PX }}
-      id={cellElementId}
-      onMouseDown={onActivate}
-    >
-      <div className="relative">
-        {isFlagged ? <FlaggedCellBadge /> : null}
-        {renderInput({
-          inputId,
-          value,
-          fieldType,
-          disabled,
-          onFocus: onActivate,
-          isActiveCell,
-          isFlagged,
-          onChange,
-        })}
-      </div>
-    </td>
   );
 }
 
@@ -145,64 +109,240 @@ export function TabularProjectCustomEditorTable({
 }: TabularProjectCustomEditorTableProps) {
   const isRemoveRowDisabled = disabled || !canRemoveRow;
   const isAddRowDisabled = disabled || !canAddRow;
+  const headerRowHeight = TABULAR_GRID_HEADER_ROW_HEIGHT_PX;
+  const rowHeight = TABULAR_GRID_ROW_HEIGHT_PX;
+  const minGridWidth = Math.max(1, headerColumns.length) * TABULAR_COLUMN_MIN_WIDTH_PX + 2;
+
+  const gridRows = useMemo<readonly TabularGridRow[]>(
+    () =>
+      rows.map((row, rowPosition) => ({
+        id: row.key,
+        rowIndex: row.rowIndex,
+        rowPosition,
+        row,
+      })),
+    [rows]
+  );
+
+  const focusGridInput = useCallback(
+    (rowPosition: number, colIndex: number, caretPosition: 'start' | 'end' = 'end') => {
+      const targetRow = gridRows[rowPosition];
+      const targetCell = targetRow?.row.cells[colIndex];
+      if (!targetCell) {
+        return false;
+      }
+
+      onActiveCellChange({ row: targetCell.rowIndex, col: colIndex });
+      if (typeof window !== 'undefined') {
+        window.requestAnimationFrame(() => {
+          const input = document.getElementById(targetCell.inputId) as HTMLInputElement | null;
+          if (!input) {
+            return;
+          }
+
+          input.focus();
+          if (input.type !== 'checkbox' && typeof input.setSelectionRange === 'function') {
+            const caret = caretPosition === 'start' ? 0 : input.value.length;
+            input.setSelectionRange(caret, caret);
+          }
+          input.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+        });
+      }
+
+      return true;
+    },
+    [gridRows, onActiveCellChange]
+  );
+
+  const gridColumns = useMemo<readonly Column<TabularGridRow>[]>(() => {
+    return headerColumns.map((column, colIndex) => {
+      return {
+        key: column.key,
+        name: '',
+        width: TABULAR_COLUMN_MIN_WIDTH_PX,
+        sortable: false,
+        resizable: false,
+        renderHeaderCell: () => {
+          const isActiveColumn = tableActiveCell?.col === colIndex;
+
+          return (
+            <div
+              style={{
+                height: '100%',
+                background: isActiveColumn ? '#b9c8f5' : '#d9deee',
+                boxShadow: isActiveColumn ? 'inset 0 0 0 2px #8aa3ea' : undefined,
+                color: '#283452',
+                display: 'grid',
+                alignContent: 'center',
+                padding: '8px 10px',
+                textAlign: 'left',
+              }}
+            >
+              <div style={{ fontSize: 13, fontWeight: 600 }}>{column.label}</div>
+              {column.description ? (
+                <div
+                  style={{
+                    fontSize: 11,
+                    fontWeight: 400,
+                    lineHeight: 1.2,
+                    opacity: 0.85,
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                  }}
+                >
+                  {column.description}
+                </div>
+              ) : null}
+            </div>
+          );
+        },
+        renderCell: ({ row }) => {
+          const cell = row.row.cells[colIndex];
+          if (!cell) {
+            return <div />;
+          }
+
+          const isActiveRow = tableActiveCell?.row === cell.rowIndex;
+          const isActiveCell = isActiveRow && tableActiveCell?.col === colIndex;
+          const isFlagged = isCellFlagged(cell.rowIndex, cell.columnKey);
+          const lastColIndex = headerColumns.length - 1;
+
+          const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+            if (event.altKey || event.ctrlKey || event.metaKey) {
+              return;
+            }
+
+            if (event.key === 'Tab') {
+              let nextRow = row.rowPosition;
+              let nextCol = colIndex + (event.shiftKey ? -1 : 1);
+
+              if (nextCol < 0) {
+                nextRow -= 1;
+                nextCol = lastColIndex;
+              } else if (nextCol > lastColIndex) {
+                nextRow += 1;
+                nextCol = 0;
+              }
+
+              if (nextRow < 0 || nextRow >= gridRows.length) {
+                return;
+              }
+
+              event.preventDefault();
+              event.stopPropagation();
+              focusGridInput(nextRow, nextCol, event.shiftKey ? 'end' : 'start');
+              return;
+            }
+
+            if (event.key === 'ArrowUp') {
+              const nextRow = row.rowPosition - 1;
+              if (nextRow < 0) {
+                return;
+              }
+
+              event.preventDefault();
+              event.stopPropagation();
+              focusGridInput(nextRow, colIndex, 'end');
+              return;
+            }
+
+            if (event.key === 'ArrowDown') {
+              const nextRow = row.rowPosition + 1;
+              if (nextRow >= gridRows.length) {
+                return;
+              }
+
+              event.preventDefault();
+              event.stopPropagation();
+              focusGridInput(nextRow, colIndex, 'end');
+              return;
+            }
+
+            if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+              const moveLeft = event.key === 'ArrowLeft';
+              const nextCol = colIndex + (moveLeft ? -1 : 1);
+              if (nextCol < 0 || nextCol > lastColIndex) {
+                return;
+              }
+
+              if (cell.fieldType !== 'checkbox-field') {
+                const input = event.currentTarget;
+                const selectionStart = input.selectionStart ?? 0;
+                const selectionEnd = input.selectionEnd ?? 0;
+                const hasSelection = selectionStart !== selectionEnd;
+                const isBoundary = moveLeft
+                  ? !hasSelection && selectionStart === 0
+                  : !hasSelection && selectionEnd === input.value.length;
+
+                if (!isBoundary) {
+                  return;
+                }
+              }
+
+              event.preventDefault();
+              event.stopPropagation();
+              focusGridInput(row.rowPosition, nextCol, moveLeft ? 'end' : 'start');
+            }
+          };
+
+          return (
+            <div
+              id={cell.cellElementId}
+              onMouseDown={() => onActiveCellChange({ row: cell.rowIndex, col: colIndex })}
+              style={{
+                height: '100%',
+                padding: 4,
+                position: 'relative',
+                background: isActiveCell ? '#eaf0ff' : isFlagged ? '#fef2f2' : isActiveRow ? '#f5f8ff' : '#fff',
+              }}
+            >
+              {isFlagged ? <FlaggedCellBadge /> : null}
+              {renderInput({
+                inputId: cell.inputId,
+                value: cell.value,
+                fieldType: cell.fieldType,
+                disabled,
+                onFocus: () => onActiveCellChange({ row: cell.rowIndex, col: colIndex }),
+                onKeyDown: handleKeyDown,
+                isActiveCell,
+                isFlagged,
+                onChange: cell.onChange,
+              })}
+            </div>
+          );
+        },
+      } satisfies Column<TabularGridRow>;
+    });
+  }, [disabled, focusGridInput, gridRows.length, headerColumns, isCellFlagged, onActiveCellChange, tableActiveCell]);
 
   return (
-    <div className="flex min-h-0 flex-col overflow-hidden rounded border border-gray-300">
-      <div className="min-h-0 overflow-x-auto overflow-y-auto">
-        <table className="w-max min-w-full border-collapse">
-          <thead className="sticky top-0 z-10">
-            <tr>
-              {headerColumns.map(column => {
-                return (
-                  <th
-                    key={column.key}
-                    className="border-b border-gray-300 bg-gray-50 px-2 py-2 text-left text-sm"
-                    style={{ minWidth: TABULAR_COLUMN_MIN_WIDTH_PX }}
-                  >
-                    <div>{column.label}</div>
-                    {column.description ? (
-                      <div className="text-xs font-normal text-gray-600">{column.description}</div>
-                    ) : null}
-                  </th>
-                );
-              })}
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map(row => (
-              <tr key={row.key} className={tableActiveCell?.row === row.rowIndex ? 'bg-amber-50' : undefined}>
-                {row.cells.map(cell => {
-                  const isActiveCell = tableActiveCell?.row === cell.rowIndex && tableActiveCell?.col === cell.colIndex;
-                  const isFlagged = isCellFlagged(cell.rowIndex, cell.columnKey);
-
-                  return (
-                    <TabularBodyCell
-                      key={`${cell.rowIndex}-${cell.columnKey}`}
-                      cellElementId={cell.cellElementId}
-                      inputId={cell.inputId}
-                      value={cell.value}
-                      fieldType={cell.fieldType}
-                      disabled={disabled}
-                      isActiveCell={isActiveCell}
-                      isFlagged={isFlagged}
-                      onActivate={() => onActiveCellChange({ row: cell.rowIndex, col: cell.colIndex })}
-                      onChange={cell.onChange}
-                    />
-                  );
-                })}
-              </tr>
-            ))}
-            {showEmptyState ? (
-              <tr>
-                <td colSpan={Math.max(1, headerColumns.length)} className="px-3 py-6 text-center text-sm text-gray-600">
-                  No rows yet. Use + to create the first row.
-                </td>
-              </tr>
-            ) : null}
-          </tbody>
-        </table>
+    <div className="flex min-h-0 min-w-0 flex-col overflow-hidden rounded border border-[#d6d6d6] bg-white">
+      <TabularDataGridStyles scopeClassName="tabular-contributor-rdg" disableRowHover />
+      <div className="min-h-0 min-w-0 flex-1 overflow-x-scroll overflow-y-auto">
+        <DataGrid
+          className="rdg-light tabular-contributor-rdg"
+          columns={gridColumns}
+          rows={gridRows}
+          rowKeyGetter={row => row.id}
+          enableVirtualization={false}
+          headerRowHeight={headerRowHeight}
+          rowHeight={rowHeight}
+          style={{
+            height: '100%',
+            minWidth: minGridWidth,
+            border: 'none',
+            ['--rdg-selection-width' as string]: '0px',
+            ['--rdg-border-color' as string]: '#d6d6d6',
+          }}
+        />
       </div>
-      <div className="flex items-center justify-center gap-12 border-t border-gray-300 bg-gray-300 px-3 py-1">
+      {showEmptyState ? (
+        <div className="border-t border-[#d6d6d6] px-3 py-6 text-center text-sm text-gray-600">
+          No rows yet. Use + to create the first row.
+        </div>
+      ) : null}
+      <div className="flex flex-none items-center justify-center gap-12 border-t border-gray-300 bg-gray-300 px-3 py-1">
         <Button
           type="button"
           onClick={removeRowFromFooter}

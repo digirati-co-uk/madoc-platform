@@ -79,4 +79,7 @@ export type CastANetStepComponentProps = {
   height: number;
   activeCell?: TabularCellRef | null;
   previewOverlayOnly?: boolean;
+  showVerticalNudgeControls?: boolean;
+  onNudgeUp?: () => void;
+  onNudgeDown?: () => void;
 };

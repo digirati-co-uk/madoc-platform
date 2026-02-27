@@ -7,6 +7,7 @@ import {
 import type { NetConfig, TabularCellRef } from '@/frontend/shared/utility/tabular-types';
 import { CanvasViewerButton } from '../../../frontend/shared/atoms/CanvasViewerGrid';
 import { EditorContentViewer } from '../../../frontend/shared/capture-models/new/EditorContent';
+import { ArrowDownIcon } from '../../../frontend/shared/icons/ArrowDownIcon';
 import { PanIcon } from '../../../frontend/shared/icons/PanIcon';
 import { TabularCanvasViewportControls } from '../../../frontend/shared/components/TabularCanvasViewportControls';
 import type { CanvasFull } from '../../../types/canvas-full';
@@ -17,6 +18,10 @@ type TabularProjectCustomEditorCanvasProps = {
   netConfig: NetConfig | null;
   activeCell: TabularCellRef | null;
   zoomTrackingDefaultEnabled: boolean;
+  showVerticalNudgeControls?: boolean;
+  onNudgeUp?: () => void;
+  onNudgeDown?: () => void;
+  nudgeDisabled?: boolean;
 };
 
 export function TabularProjectCustomEditorCanvas({
@@ -25,6 +30,10 @@ export function TabularProjectCustomEditorCanvas({
   netConfig,
   activeCell,
   zoomTrackingDefaultEnabled,
+  showVerticalNudgeControls = false,
+  onNudgeUp,
+  onNudgeDown,
+  nudgeDisabled = false,
 }: TabularProjectCustomEditorCanvasProps) {
   const runtimeRef = useRef<RuntimeWithViewport | null>(null);
   const [runtimeTick, setRuntimeTick] = useState(0);
@@ -47,8 +56,8 @@ export function TabularProjectCustomEditorCanvas({
   }
 
   return (
-    <div className="min-h-0 border-b border-gray-300 bg-gray-100 p-2">
-      <div className="relative h-full min-h-0 overflow-hidden rounded border border-gray-400 bg-white">
+    <div className="min-h-0 min-w-0 border-b border-gray-300 bg-gray-100 p-2">
+      <div className="relative h-full min-h-0 min-w-0 overflow-hidden rounded border border-gray-400 bg-white">
         <TabularCanvasViewportControls
           onHome={goHome}
           onZoomOut={zoomOut}
@@ -71,6 +80,36 @@ export function TabularProjectCustomEditorCanvas({
             </CanvasViewerButton>
           }
         />
+        {showVerticalNudgeControls && (onNudgeUp || onNudgeDown) ? (
+          <div
+            style={{
+              position: 'absolute',
+              top: 12,
+              left: 12,
+              zIndex: 50,
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 8,
+            }}
+          >
+            <CanvasViewerButton
+              type="button"
+              onClick={onNudgeUp}
+              disabled={nudgeDisabled || !onNudgeUp}
+              title="Nudge zoom tracking up"
+            >
+              <ArrowDownIcon style={{ transform: 'rotate(180deg)', fill: 'currentColor' }} />
+            </CanvasViewerButton>
+            <CanvasViewerButton
+              type="button"
+              onClick={onNudgeDown}
+              disabled={nudgeDisabled || !onNudgeDown}
+              title="Nudge zoom tracking down"
+            >
+              <ArrowDownIcon style={{ fill: 'currentColor' }} />
+            </CanvasViewerButton>
+          </div>
+        ) : null}
         <EditorContentViewer
           height="100%"
           canvasId={canvasId}
