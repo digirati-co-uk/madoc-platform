@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import type { CastANetStructure, NetConfig, TabularCellRef } from './types';
 import { CanvasPanel, SimpleViewerProvider } from 'react-iiif-vault';
 import { CastANetOverlayAtlas } from './CastANetOverlayAtlas';
@@ -42,12 +42,37 @@ export const CastANetCanvas: React.FC<CastANetCanvasProps> = ({
   const runtime = useRef<RuntimeWithViewport | null>(null);
   const [internalDimOpacity, setInternalDimOpacity] = useState(0);
   const [runtimeTick, setRuntimeTick] = useState(0);
+  const [viewerRetryToken, setViewerRetryToken] = useState(0);
+  const [viewerRetryCount, setViewerRetryCount] = useState(0);
+  const viewerBaseKey = `${manifestId}::${canvasId ?? ''}`;
 
   useEffect(() => {
     if (typeof dimOpacity === 'number') {
       setInternalDimOpacity(clampDimOpacity(dimOpacity));
     }
   }, [dimOpacity]);
+
+  useEffect(() => {
+    runtime.current = null;
+    setViewerRetryToken(0);
+    setViewerRetryCount(0);
+  }, [viewerBaseKey]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || viewerRetryCount >= 1) {
+      return;
+    }
+
+    const timeout = window.setTimeout(() => {
+      // Sometimes Atlas fails to initialize on first mount; remount once as a self-heal.
+      if (!runtime.current) {
+        setViewerRetryCount(count => count + 1);
+        setViewerRetryToken(token => token + 1);
+      }
+    }, 1400);
+
+    return () => window.clearTimeout(timeout);
+  }, [viewerRetryCount, viewerRetryToken, viewerBaseKey]);
 
   useEffect(() => {
     if (!onStructureChange) return;
@@ -61,6 +86,20 @@ export const CastANetCanvas: React.FC<CastANetCanvasProps> = ({
   const goHome = () => runtime.current?.world?.goHome?.();
   const zoomIn = () => runtime.current?.world?.zoomIn?.();
   const zoomOut = () => runtime.current?.world?.zoomOut?.();
+  const zoomFromWheel = useCallback(
+    (deltaY: number) => {
+      if (disabled) {
+        return;
+      }
+
+      if (deltaY < 0) {
+        runtime.current?.world?.zoomIn?.();
+      } else if (deltaY > 0) {
+        runtime.current?.world?.zoomOut?.();
+      }
+    },
+    [disabled]
+  );
   const resolvedDimOpacity = typeof dimOpacity === 'number' ? dimOpacity : internalDimOpacity;
   const safeDim = clampDimOpacity(resolvedDimOpacity);
   const dimPercent = dimOpacityToPercent(safeDim);
@@ -75,7 +114,7 @@ export const CastANetCanvas: React.FC<CastANetCanvasProps> = ({
     setInternalDimOpacity(clamped);
     onChangeDimOpacity?.(clamped);
   };
-  const viewerKey = `${manifestId}::${canvasId ?? ''}`;
+  const viewerKey = `${viewerBaseKey}::${viewerRetryToken}`;
 
   return (
     <div style={{ border: '1px solid #ddd', height, position: 'relative', background: '#fff', overflow: 'hidden' }}>
@@ -134,6 +173,7 @@ export const CastANetCanvas: React.FC<CastANetCanvasProps> = ({
               activeCell={activeCell}
               dimOpacity={safeDim}
               previewOverlayOnly={previewOverlayOnly}
+              onOverlayWheel={zoomFromWheel}
             />
           </CanvasPanel.RenderCanvas>
         </CanvasPanel.Viewer>

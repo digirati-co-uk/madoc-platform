@@ -16,13 +16,16 @@ import { TabularProjectPreviewStep } from './tabular-project/steps/TabularProjec
 import { TabularProjectCompleteStep } from './tabular-project/steps/TabularProjectCompleteStep';
 import { useTabularProjectController } from './tabular-project/hooks/use-tabular-project-controller';
 
+const loadDefineTabularModel = () => import('../../../components/tabular/cast-a-net/DefineTabularModel');
+const loadCastANet = () => import('../../../components/tabular/cast-a-net/CastANet');
+
 const DefineTabularModelLazy = madocLazy(async () => {
-  const imported = await import('../../../components/tabular/cast-a-net/DefineTabularModel');
+  const imported = await loadDefineTabularModel();
   return { default: imported.DefineTabularModel };
 });
 
 const CastANetLazy = madocLazy(async () => {
-  const imported = await import('../../../components/tabular/cast-a-net/CastANet');
+  const imported = await loadCastANet();
   return { default: imported.CastANet };
 });
 
@@ -40,6 +43,12 @@ export const TabularProjectWizard: React.FC = () => {
     t,
   });
   const { stepIds } = controller;
+
+  React.useEffect(() => {
+    // Warm these chunks so the wizard step transition is deterministic.
+    void loadDefineTabularModel();
+    void loadCastANet();
+  }, []);
 
   const iiifBrowser = (
     <TabularIiifBrowserModal

@@ -7,13 +7,7 @@ import {
   useRef,
 } from 'react';
 import type { DragMode, NetConfig } from './types';
-import {
-  NET_LINE_MIN_GAP_PCT,
-  NET_OVERLAY_MIN_SIZE_PCT,
-  clamp,
-  getEffectivePositions,
-  normalisePositions,
-} from './utils';
+import { NET_OVERLAY_MIN_SIZE_PCT, clamp, getLineMinGapPct, getEffectivePositions, normalisePositions } from './utils';
 
 type UseCastANetOverlayDragProps = {
   value: NetConfig;
@@ -33,6 +27,15 @@ type UseCastANetOverlayDragResult = {
   effectiveRowPositions: number[];
   effectiveColPositions: number[];
   startDrag: (mode: DragMode) => (event: ReactMouseEvent<SVGElement>) => void;
+};
+
+const projectPositionsToAbsolute = (positions: number[], start: number, size: number) => {
+  return positions.map(position => start + (position / 100) * size);
+};
+
+const projectAbsoluteToPositions = (positions: number[], start: number, size: number) => {
+  const safeSize = Math.max(0.0001, size);
+  return positions.map(position => ((position - start) / safeSize) * 100);
 };
 
 export function useCastANetOverlayDrag({
@@ -111,6 +114,11 @@ export function useCastANetOverlayDrag({
         return;
       }
 
+      // Keep image panning as the default; moving the net requires Shift + drag.
+      if (mode === 'move' && !event.shiftKey) {
+        return;
+      }
+
       event.preventDefault();
 
       const overlay = overlayRef.current;
@@ -170,6 +178,52 @@ export function useCastANetOverlayDrag({
           return;
         }
 
+        if (modeNow === 'resize-n') {
+          next.top = start.top + dy;
+          next.height = start.height - dy;
+          next.rowPositions = projectAbsoluteToPositions(
+            projectPositionsToAbsolute(start.rowPositions, start.top, start.height),
+            next.top,
+            next.height
+          );
+          emitChange(next);
+          return;
+        }
+
+        if (modeNow === 'resize-s') {
+          next.height = start.height + dy;
+          next.rowPositions = projectAbsoluteToPositions(
+            projectPositionsToAbsolute(start.rowPositions, start.top, start.height),
+            next.top,
+            next.height
+          );
+          emitChange(next);
+          return;
+        }
+
+        if (modeNow === 'resize-w') {
+          next.left = start.left + dx;
+          next.width = start.width - dx;
+          next.colPositions = projectAbsoluteToPositions(
+            projectPositionsToAbsolute(start.colPositions, start.left, start.width),
+            next.left,
+            next.width
+          );
+          emitChange(next);
+          return;
+        }
+
+        if (modeNow === 'resize-e') {
+          next.width = start.width + dx;
+          next.colPositions = projectAbsoluteToPositions(
+            projectPositionsToAbsolute(start.colPositions, start.left, start.width),
+            next.left,
+            next.width
+          );
+          emitChange(next);
+          return;
+        }
+
         if (modeNow === 'resize-ne') {
           next.top = start.top + dy;
           next.width = start.width + dx;
@@ -195,7 +249,8 @@ export function useCastANetOverlayDrag({
 
         if (typeof modeNow === 'object' && modeNow.type === 'row') {
           const rowIndex = modeNow.index;
-          const minGap = NET_LINE_MIN_GAP_PCT;
+          const rowCount = Math.max(1, Math.floor(start.rows));
+          const minGap = getLineMinGapPct(rowCount);
           const pointerInNet = clamp(((currentY - start.top) / start.height) * 100, 0, 100);
 
           if (!dragStartRef.current.shiftKey) {
@@ -207,7 +262,6 @@ export function useCastANetOverlayDrag({
             return;
           }
 
-          const rowCount = Math.max(1, Math.floor(start.rows));
           if (rowCount <= 1) {
             return;
           }
@@ -223,7 +277,8 @@ export function useCastANetOverlayDrag({
 
         if (typeof modeNow === 'object' && modeNow.type === 'col') {
           const colIndex = modeNow.index;
-          const minGap = NET_LINE_MIN_GAP_PCT;
+          const colCount = Math.max(1, Math.floor(start.cols));
+          const minGap = getLineMinGapPct(colCount);
           const pointerInNet = clamp(((currentX - start.left) / start.width) * 100, 0, 100);
 
           if (!dragStartRef.current.shiftKey) {
@@ -235,7 +290,6 @@ export function useCastANetOverlayDrag({
             return;
           }
 
-          const colCount = Math.max(1, Math.floor(start.cols));
           if (colCount <= 1) {
             return;
           }
