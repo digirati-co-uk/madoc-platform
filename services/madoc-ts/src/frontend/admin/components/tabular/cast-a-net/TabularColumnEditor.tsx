@@ -75,9 +75,9 @@ export function TabularColumnEditor(props: {
           {error ? <div style={{ marginTop: 6, fontSize: 12, color: '#b91c1c' }}>{error}</div> : null}
         </div>
 
-        <div style={{ display: 'grid', gap: 6 }}>
+        <div style={{ display: 'grid', gap: 6, minWidth: 0 }}>
           <StyledFormLabel>Field type</StyledFormLabel>
-          <div>
+          <div style={{ width: '100%', maxWidth: '100%', minWidth: 0, overflow: 'hidden' }}>
             <Dropdown
               value={value.fieldType ?? ''}
               placeholder={typeLabel}

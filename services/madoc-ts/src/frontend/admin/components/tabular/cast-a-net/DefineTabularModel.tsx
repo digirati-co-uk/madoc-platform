@@ -115,6 +115,8 @@ export function DefineTabularModel(props: {
   const [imageHeight, setImageHeight] = useState(300);
   const [attemptedSave, setAttemptedSave] = useState(false);
   const [isResizeHandleHover, setIsResizeHandleHover] = useState(false);
+  const tableScrollRef = useRef<HTMLDivElement>(null);
+  const shouldScrollToNewColumnRef = useRef(false);
   const tableVisibleRows = 4;
   const tableHeight = 54 + 42 * tableVisibleRows + 2;
 
@@ -145,6 +147,18 @@ export function DefineTabularModel(props: {
       setActiveColumn(Math.max(0, safeColumns - 1));
     }
   }, [activeColumn, safeColumns]);
+
+  useEffect(() => {
+    if (!shouldScrollToNewColumnRef.current) {
+      return;
+    }
+    shouldScrollToNewColumnRef.current = false;
+    const container = tableScrollRef.current;
+    if (!container) {
+      return;
+    }
+    container.scrollTo({ left: container.scrollWidth, behavior: 'smooth' });
+  }, [safeColumns]);
 
   const issues = useMemo(
     () =>
@@ -185,6 +199,42 @@ export function DefineTabularModel(props: {
   }, [issues]);
 
   const activeError = issuesByColumn.get(activeColumn)?.[0]?.message;
+  const duplicateHeadings = useMemo(() => {
+    const counts = new Map<string, { heading: string; count: number }>();
+    for (const rawHeading of safeHeadings) {
+      const heading = rawHeading.trim();
+      if (!heading) {
+        continue;
+      }
+      const key = heading.toLowerCase();
+      const existing = counts.get(key);
+      if (existing) {
+        existing.count += 1;
+      } else {
+        counts.set(key, { heading, count: 1 });
+      }
+    }
+    return Array.from(counts.values())
+      .filter(entry => entry.count > 1)
+      .map(entry => entry.heading);
+  }, [safeHeadings]);
+
+  const topErrorMessage = useMemo(() => {
+    const firstIssue = issues[0];
+    if (!firstIssue) {
+      return '';
+    }
+
+    if (firstIssue.type === 'duplicate-heading') {
+      const duplicateHeadingList = duplicateHeadings.map(heading => `'${heading}'`).join(', ');
+      if (duplicateHeadingList) {
+        return `Duplicate headings found: ${duplicateHeadingList}. These headings are highlighted in the table.`;
+      }
+      return 'Duplicate headings found. These headings are highlighted in the table.';
+    }
+
+    return firstIssue.message;
+  }, [issues, duplicateHeadings]);
 
   const setColumns = (nextCols: number) => {
     const n = Math.max(minColumns, Math.min(maxColumns, Math.floor(nextCols)));
@@ -238,7 +288,14 @@ export function DefineTabularModel(props: {
     onChange(nextValue);
   };
 
-  const addColumn = () => setColumns(safeColumns + 1);
+  const addColumn = () => {
+    if (safeColumns >= maxColumns) {
+      return;
+    }
+    shouldScrollToNewColumnRef.current = true;
+    setActiveColumn(safeColumns);
+    setColumns(safeColumns + 1);
+  };
   const removeLastColumn = () => setColumns(safeColumns - 1);
   const startResize = (event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault();
@@ -275,7 +332,7 @@ export function DefineTabularModel(props: {
             fontSize: 13,
           }}
         >
-          {issues[0]?.message}
+          {topErrorMessage}
         </div>
       ) : null}
 
@@ -352,7 +409,7 @@ export function DefineTabularModel(props: {
 
           <div style={{ border: '1px solid #d6d6d6', background: '#fff', overflow: 'hidden' }}>
             <div style={{ display: 'flex', height: tableHeight }}>
-              <div style={{ flex: 1, minWidth: 0, overflow: 'auto', padding: 0 }}>
+              <div ref={tableScrollRef} style={{ flex: 1, minWidth: 0, overflow: 'auto', padding: 0 }}>
                 <TabularHeadingsTable
                   columns={safeColumns}
                   visibleRows={tableVisibleRows}
