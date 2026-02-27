@@ -3,6 +3,10 @@ export type { NetConfig, TabularCellRef } from '../../../../shared/utility/tabul
 export type DragMode =
   | null
   | 'move'
+  | 'resize-n'
+  | 'resize-s'
+  | 'resize-w'
+  | 'resize-e'
   | 'resize-nw'
   | 'resize-ne'
   | 'resize-sw'

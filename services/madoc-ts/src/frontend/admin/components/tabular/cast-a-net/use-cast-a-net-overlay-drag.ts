@@ -29,6 +29,15 @@ type UseCastANetOverlayDragResult = {
   startDrag: (mode: DragMode) => (event: ReactMouseEvent<SVGElement>) => void;
 };
 
+const projectPositionsToAbsolute = (positions: number[], start: number, size: number) => {
+  return positions.map(position => start + (position / 100) * size);
+};
+
+const projectAbsoluteToPositions = (positions: number[], start: number, size: number) => {
+  const safeSize = Math.max(0.0001, size);
+  return positions.map(position => ((position - start) / safeSize) * 100);
+};
+
 export function useCastANetOverlayDrag({
   value,
   onChange,
@@ -165,6 +174,52 @@ export function useCastANetOverlayDrag({
           next.top = start.top + dy;
           next.width = start.width - dx;
           next.height = start.height - dy;
+          emitChange(next);
+          return;
+        }
+
+        if (modeNow === 'resize-n') {
+          next.top = start.top + dy;
+          next.height = start.height - dy;
+          next.rowPositions = projectAbsoluteToPositions(
+            projectPositionsToAbsolute(start.rowPositions, start.top, start.height),
+            next.top,
+            next.height
+          );
+          emitChange(next);
+          return;
+        }
+
+        if (modeNow === 'resize-s') {
+          next.height = start.height + dy;
+          next.rowPositions = projectAbsoluteToPositions(
+            projectPositionsToAbsolute(start.rowPositions, start.top, start.height),
+            next.top,
+            next.height
+          );
+          emitChange(next);
+          return;
+        }
+
+        if (modeNow === 'resize-w') {
+          next.left = start.left + dx;
+          next.width = start.width - dx;
+          next.colPositions = projectAbsoluteToPositions(
+            projectPositionsToAbsolute(start.colPositions, start.left, start.width),
+            next.left,
+            next.width
+          );
+          emitChange(next);
+          return;
+        }
+
+        if (modeNow === 'resize-e') {
+          next.width = start.width + dx;
+          next.colPositions = projectAbsoluteToPositions(
+            projectPositionsToAbsolute(start.colPositions, start.left, start.width),
+            next.left,
+            next.width
+          );
           emitChange(next);
           return;
         }

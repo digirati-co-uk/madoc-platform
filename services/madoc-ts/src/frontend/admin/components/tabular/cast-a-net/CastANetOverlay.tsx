@@ -351,6 +351,74 @@ export const CastANetOverlay: React.FC<CastANetOverlayProps> = ({
               );
             })}
 
+            <line
+              x1={netLeft}
+              y1={netTop}
+              x2={netRight}
+              y2={netTop}
+              stroke="rgba(0, 0, 0, 0.001)"
+              strokeWidth={GRID_HIT_THICKNESS}
+              vectorEffect="non-scaling-stroke"
+              pointerEvents="stroke"
+              onMouseDown={e => {
+                e.stopPropagation();
+                startDrag('resize-n')(e);
+              }}
+              onWheel={handleWheel}
+              style={{ cursor: disabled ? 'not-allowed' : 'row-resize' }}
+            />
+
+            <line
+              x1={netLeft}
+              y1={netBottom}
+              x2={netRight}
+              y2={netBottom}
+              stroke="rgba(0, 0, 0, 0.001)"
+              strokeWidth={GRID_HIT_THICKNESS}
+              vectorEffect="non-scaling-stroke"
+              pointerEvents="stroke"
+              onMouseDown={e => {
+                e.stopPropagation();
+                startDrag('resize-s')(e);
+              }}
+              onWheel={handleWheel}
+              style={{ cursor: disabled ? 'not-allowed' : 'row-resize' }}
+            />
+
+            <line
+              x1={netLeft}
+              y1={netTop}
+              x2={netLeft}
+              y2={netBottom}
+              stroke="rgba(0, 0, 0, 0.001)"
+              strokeWidth={GRID_HIT_THICKNESS}
+              vectorEffect="non-scaling-stroke"
+              pointerEvents="stroke"
+              onMouseDown={e => {
+                e.stopPropagation();
+                startDrag('resize-w')(e);
+              }}
+              onWheel={handleWheel}
+              style={{ cursor: disabled ? 'not-allowed' : 'col-resize' }}
+            />
+
+            <line
+              x1={netRight}
+              y1={netTop}
+              x2={netRight}
+              y2={netBottom}
+              stroke="rgba(0, 0, 0, 0.001)"
+              strokeWidth={GRID_HIT_THICKNESS}
+              vectorEffect="non-scaling-stroke"
+              pointerEvents="stroke"
+              onMouseDown={e => {
+                e.stopPropagation();
+                startDrag('resize-e')(e);
+              }}
+              onWheel={handleWheel}
+              style={{ cursor: disabled ? 'not-allowed' : 'col-resize' }}
+            />
+
             {handleDefinitions.map(handle => (
               <line
                 key={handle.key}
