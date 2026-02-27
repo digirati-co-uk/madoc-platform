@@ -1,10 +1,118 @@
 import { InternationalString } from '@iiif/presentation-3';
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FacetConfig } from '../../shared/features/MetadataFacetEditor';
 import { apiHooks, paginatedApiHooks } from '../../shared/hooks/use-api-query';
 import { useSiteConfiguration } from '../features/SiteConfigurationContext';
 import { useRouteContext } from './use-route-context';
 import { useSearchQuery } from './use-search-query';
+
+/**
+ * Detects the primary script of a text string.
+ * Returns 'cjk' for Chinese/Japanese/Korean, 'latin' for Latin-based scripts, or 'other'.
+ */
+function detectScript(text: string): 'cjk' | 'latin' | 'arabic' | 'cyrillic' | 'other' {
+  if (!text || typeof text !== 'string') return 'other';
+
+  // Count characters in different scripts
+  let cjkCount = 0;
+  let latinCount = 0;
+  let arabicCount = 0;
+  let cyrillicCount = 0;
+
+  for (const char of text) {
+    const code = char.charCodeAt(0);
+
+    // CJK Unified Ideographs and extensions
+    if (
+      (code >= 0x4E00 && code <= 0x9FFF) ||   // CJK Unified Ideographs
+      (code >= 0x3400 && code <= 0x4DBF) ||   // CJK Extension A
+      (code >= 0x20000 && code <= 0x2A6DF) || // CJK Extension B
+      (code >= 0x2A700 && code <= 0x2B73F) || // CJK Extension C
+      (code >= 0x2B740 && code <= 0x2B81F) || // CJK Extension D
+      (code >= 0xF900 && code <= 0xFAFF) ||   // CJK Compatibility Ideographs
+      (code >= 0x3000 && code <= 0x303F) ||   // CJK Symbols and Punctuation
+      (code >= 0x3040 && code <= 0x309F) ||   // Hiragana
+      (code >= 0x30A0 && code <= 0x30FF) ||   // Katakana
+      (code >= 0xAC00 && code <= 0xD7AF)      // Korean Hangul
+    ) {
+      cjkCount++;
+    }
+    // Latin characters
+    else if (
+      (code >= 0x0041 && code <= 0x005A) ||   // A-Z
+      (code >= 0x0061 && code <= 0x007A) ||   // a-z
+      (code >= 0x00C0 && code <= 0x00FF) ||   // Latin Extended-A
+      (code >= 0x0100 && code <= 0x017F) ||   // Latin Extended-B
+      (code >= 0x0180 && code <= 0x024F)      // Latin Extended Additional
+    ) {
+      latinCount++;
+    }
+    // Arabic
+    else if (code >= 0x0600 && code <= 0x06FF) {
+      arabicCount++;
+    }
+    // Cyrillic
+    else if (code >= 0x0400 && code <= 0x04FF) {
+      cyrillicCount++;
+    }
+  }
+
+  // Determine dominant script
+  const max = Math.max(cjkCount, latinCount, arabicCount, cyrillicCount);
+  if (max === 0) return 'other';
+  if (cjkCount === max) return 'cjk';
+  if (latinCount === max) return 'latin';
+  if (arabicCount === max) return 'arabic';
+  if (cyrillicCount === max) return 'cyrillic';
+  return 'other';
+}
+
+/**
+ * Maps language codes to their expected scripts.
+ */
+function getExpectedScriptForLanguage(lang: string): 'cjk' | 'latin' | 'arabic' | 'cyrillic' | 'other' | null {
+  const langLower = lang.toLowerCase().split('-')[0];
+
+  // CJK languages
+  if (['zh', 'ja', 'ko'].includes(langLower)) {
+    return 'cjk';
+  }
+
+  // Latin-script languages
+  if (['en', 'de', 'fr', 'es', 'it', 'pt', 'nl', 'pl', 'cs', 'sk', 'sv', 'da', 'no', 'fi', 'et', 'lv', 'lt', 'hu', 'ro', 'tr', 'vi', 'id', 'ms'].includes(langLower)) {
+    return 'latin';
+  }
+
+  // Arabic-script languages
+  if (['ar', 'fa', 'ur'].includes(langLower)) {
+    return 'arabic';
+  }
+
+  // Cyrillic-script languages
+  if (['ru', 'uk', 'bg', 'sr', 'mk', 'be'].includes(langLower)) {
+    return 'cyrillic';
+  }
+
+  return null; // Unknown, don't filter
+}
+
+/**
+ * Checks if a facet value matches the expected language based on script detection.
+ */
+function doesValueMatchLanguage(value: string, currentLanguage: string): boolean {
+  const expectedScript = getExpectedScriptForLanguage(currentLanguage);
+
+  // If we don't know what script to expect, don't filter
+  if (!expectedScript) return true;
+
+  const detectedScript = detectScript(value);
+
+  // If we can't detect the script (numbers, punctuation only), keep it
+  if (detectedScript === 'other') return true;
+
+  return detectedScript === expectedScript;
+}
 
 function normalizeDotKey(key: string) {
   return key.startsWith('metadata.') ? key.slice('metadata.'.length).toLowerCase() : key.toLowerCase();
@@ -13,6 +121,8 @@ function normalizeDotKey(key: string) {
 export function useSearch() {
   const { projectId, collectionId, manifestId } = useRouteContext();
   const { fulltext, appliedFacets, page } = useSearchQuery();
+  const { i18n } = useTranslation();
+  const currentLanguage = i18n.language || 'en';
   const {
     project: { searchStrategy, claimGranularity, searchOptions },
   } = useSiteConfiguration();
@@ -49,6 +159,7 @@ export function useSearch() {
         manifestId,
         fulltext: fulltext,
         facet_fields: facetsToRequest.length ? facetsToRequest : undefined,
+
         //  @todo stringify facets.
         facets: appliedFacets.map(facet => ({
           type: 'metadata',
@@ -61,6 +172,8 @@ export function useSearch() {
         iiif_type: claimGranularity === 'manifest' || onlyShowManifests ? 'Manifest' : undefined,
         non_latin_fulltext: nonLatinFulltext,
         search_multiple_fields: searchMultipleFields,
+        // Request facets filtered by current language (if search service supports it)
+        facet_languages: [currentLanguage, currentLanguage.split('-')[0]].filter((v, i, a) => a.indexOf(v) === i),
       },
       page,
     ],
@@ -176,8 +289,12 @@ export function useSearch() {
         for (const field of fieldsToMap.keys) {
           const searchResultFacetValues = mappedSearchResponseMetadata[field];
           if (searchResultFacetValues) {
+            // Filter facet values to only show those matching the current language's script
+            const filteredValues = searchResultFacetValues.filter(fieldValue =>
+              doesValueMatchLanguage(fieldValue.value, currentLanguage)
+            );
             displayItem.items.push(
-              ...searchResultFacetValues.map(fieldValue => ({
+              ...filteredValues.map(fieldValue => ({
                 label: { none: [fieldValue.value] },
                 key: fieldValue.key,
                 values: [fieldValue.value],
@@ -192,7 +309,7 @@ export function useSearch() {
     }
 
     return displayList;
-  }, [facetDisplayOrder, facetIdMap, searchResponse.resolvedData]);
+  }, [facetDisplayOrder, facetIdMap, searchResponse.resolvedData, currentLanguage]);
 
   return [searchResponse, displayFacets, searchFacetConfig.isLoading || searchResponse.isLoading] as const;
 }

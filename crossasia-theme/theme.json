@@ -1,0 +1,12 @@
+{
+  "name": "Cross asia theme",
+  "version": "1.0.0",
+  "description": "Example cross-asia theme.",
+  "thumbnail": "https://crossasia.org/fileadmin/templates/img/xa1.png",
+  "theme": {
+    "header": "default",
+    "accent": "default",
+    "siteContainer": "default",
+    "footer": "light"
+  }
+}

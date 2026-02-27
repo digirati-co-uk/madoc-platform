@@ -47,14 +47,14 @@ export const indexManifest: RouteMiddleware<{ id: string }> = async context => {
 
   const collectionsWithin = await context.connection.any<{ resource_id: number }>(
     sql`select cols.resource_id from iiif_derived_resource_items cols
-        left join iiif_derived_resource ir on ir.resource_id = cols.resource_id
+        left join iiif_derived_resource ir on ir.resource_id = cols.resource_id and ir.site_id = cols.site_id
         where item_id = ${manifestId} and cols.site_id = ${Number(siteId)} and ir.flat = false`
   );
 
   const projectsWithin = await context.connection.any<{ id: number }>(
     sql`select ip.id from iiif_derived_resource_items cols
-        left join iiif_derived_resource ir on ir.resource_id = cols.resource_id
-        left join iiif_project ip on ip.collection_id = ir.resource_id
+        left join iiif_derived_resource ir on ir.resource_id = cols.resource_id and ir.site_id = cols.site_id
+        left join iiif_project ip on ip.collection_id = ir.resource_id and ip.site_id = cols.site_id
         where item_id = ${manifestId} and cols.site_id = ${Number(siteId)} and ir.flat = true`
   );
 
