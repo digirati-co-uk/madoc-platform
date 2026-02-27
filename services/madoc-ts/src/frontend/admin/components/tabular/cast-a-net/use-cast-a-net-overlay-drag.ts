@@ -105,6 +105,11 @@ export function useCastANetOverlayDrag({
         return;
       }
 
+      // Keep image panning as the default; moving the net requires Shift + drag.
+      if (mode === 'move' && !event.shiftKey) {
+        return;
+      }
+
       event.preventDefault();
 
       const overlay = overlayRef.current;

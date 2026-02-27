@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import type { NetConfig, TabularCellRef } from './types';
 import { useCastANetOverlayDrag } from './use-cast-a-net-overlay-drag';
 import { useCastANetOverlayGeometry } from './use-cast-a-net-overlay-geometry';
@@ -9,6 +9,7 @@ type CastANetOverlayProps = {
   disabled?: boolean;
   activeCell?: TabularCellRef | null;
   previewOverlayOnly?: boolean;
+  onOverlayWheel?: (deltaY: number) => void;
 };
 
 export const CastANetOverlay: React.FC<CastANetOverlayProps> = ({
@@ -17,6 +18,7 @@ export const CastANetOverlay: React.FC<CastANetOverlayProps> = ({
   disabled = false,
   activeCell,
   previewOverlayOnly = false,
+  onOverlayWheel,
 }) => {
   const OUTER_BORDER_THICKNESS = 5;
   const GRID_LINE_THICKNESS = 5;
@@ -27,6 +29,33 @@ export const CastANetOverlay: React.FC<CastANetOverlayProps> = ({
     onChange,
     disabled,
   });
+  const [isShiftPressed, setIsShiftPressed] = useState(false);
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Shift') {
+        setIsShiftPressed(true);
+      }
+    };
+
+    const onKeyUp = (event: KeyboardEvent) => {
+      if (event.key === 'Shift') {
+        setIsShiftPressed(false);
+      }
+    };
+
+    const onBlur = () => setIsShiftPressed(false);
+
+    window.addEventListener('keydown', onKeyDown);
+    window.addEventListener('keyup', onKeyUp);
+    window.addEventListener('blur', onBlur);
+
+    return () => {
+      window.removeEventListener('keydown', onKeyDown);
+      window.removeEventListener('keyup', onKeyUp);
+      window.removeEventListener('blur', onBlur);
+    };
+  }, []);
   const {
     rowStops,
     colStops,
@@ -44,6 +73,14 @@ export const CastANetOverlay: React.FC<CastANetOverlayProps> = ({
     colPositions: effectiveColPositions,
   });
   const showInteractiveNet = !previewOverlayOnly;
+  const handleWheel = useCallback(
+    (event: React.WheelEvent<SVGElement>) => {
+      event.preventDefault();
+      event.stopPropagation();
+      onOverlayWheel?.(event.deltaY);
+    },
+    [onOverlayWheel]
+  );
 
   const headerStart = rowStops[0];
   const headerEnd = rowStops[1];
@@ -240,8 +277,9 @@ export const CastANetOverlay: React.FC<CastANetOverlayProps> = ({
               width={value.width}
               height={value.height}
               fill="rgba(0,0,0,0.001)"
-              pointerEvents="all"
+              pointerEvents={isShiftPressed ? 'all' : 'none'}
               onMouseDown={startDrag('move')}
+              onWheel={handleWheel}
               style={{ cursor: disabled ? 'not-allowed' : 'move' }}
             />
 
@@ -262,6 +300,7 @@ export const CastANetOverlay: React.FC<CastANetOverlayProps> = ({
                       e.stopPropagation();
                       startDrag({ type: 'row', index })(e);
                     }}
+                    onWheel={handleWheel}
                     style={{ cursor: disabled ? 'not-allowed' : 'row-resize' }}
                   />
                   <line
@@ -295,6 +334,7 @@ export const CastANetOverlay: React.FC<CastANetOverlayProps> = ({
                       e.stopPropagation();
                       startDrag({ type: 'col', index })(e);
                     }}
+                    onWheel={handleWheel}
                     style={{ cursor: disabled ? 'not-allowed' : 'col-resize' }}
                   />
                   <line
@@ -327,6 +367,7 @@ export const CastANetOverlay: React.FC<CastANetOverlayProps> = ({
                   e.stopPropagation();
                   startDrag(handle.mode)(e);
                 }}
+                onWheel={handleWheel}
                 style={{ cursor: disabled ? 'not-allowed' : handle.cursor }}
               />
             ))}

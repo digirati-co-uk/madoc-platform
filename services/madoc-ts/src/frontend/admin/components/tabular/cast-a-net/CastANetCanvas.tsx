@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import type { CastANetStructure, NetConfig, TabularCellRef } from './types';
 import { CanvasPanel, SimpleViewerProvider } from 'react-iiif-vault';
 import { CastANetOverlayAtlas } from './CastANetOverlayAtlas';
@@ -61,6 +61,20 @@ export const CastANetCanvas: React.FC<CastANetCanvasProps> = ({
   const goHome = () => runtime.current?.world?.goHome?.();
   const zoomIn = () => runtime.current?.world?.zoomIn?.();
   const zoomOut = () => runtime.current?.world?.zoomOut?.();
+  const zoomFromWheel = useCallback(
+    (deltaY: number) => {
+      if (disabled) {
+        return;
+      }
+
+      if (deltaY < 0) {
+        runtime.current?.world?.zoomIn?.();
+      } else if (deltaY > 0) {
+        runtime.current?.world?.zoomOut?.();
+      }
+    },
+    [disabled]
+  );
   const resolvedDimOpacity = typeof dimOpacity === 'number' ? dimOpacity : internalDimOpacity;
   const safeDim = clampDimOpacity(resolvedDimOpacity);
   const dimPercent = dimOpacityToPercent(safeDim);
@@ -134,6 +148,7 @@ export const CastANetCanvas: React.FC<CastANetCanvasProps> = ({
               activeCell={activeCell}
               dimOpacity={safeDim}
               previewOverlayOnly={previewOverlayOnly}
+              onOverlayWheel={zoomFromWheel}
             />
           </CanvasPanel.RenderCanvas>
         </CanvasPanel.Viewer>

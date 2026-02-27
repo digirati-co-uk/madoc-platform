@@ -12,6 +12,7 @@ type CastANetOverlayAtlasProps = {
   activeCell?: TabularCellRef | null;
   dimOpacity?: number;
   previewOverlayOnly?: boolean;
+  onOverlayWheel?: (deltaY: number) => void;
 };
 
 export function CastANetOverlayAtlas({
@@ -21,6 +22,7 @@ export function CastANetOverlayAtlas({
   activeCell,
   dimOpacity = 0,
   previewOverlayOnly,
+  onOverlayWheel,
 }: CastANetOverlayAtlasProps) {
   const canvas = useCanvas();
   if (!canvas) return null;
@@ -50,6 +52,7 @@ export function CastANetOverlayAtlas({
           disabled={disabled}
           activeCell={activeCell}
           previewOverlayOnly={previewOverlayOnly}
+          onOverlayWheel={onOverlayWheel}
         />
       </div>
     </HTMLPortal>
