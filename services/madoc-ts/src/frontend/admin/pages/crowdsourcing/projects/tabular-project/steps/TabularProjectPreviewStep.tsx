@@ -268,6 +268,7 @@ export function TabularProjectPreviewStep(props: TabularProjectPreviewStepProps)
                   <ModalButton
                     title={t('Browse IIIF resources')}
                     modalSize="lg"
+                    allowResize={false}
                     render={({ close }) => {
                       onRegisterBrowserClose(close);
 

@@ -89,6 +89,7 @@ export function TabularProjectNetStep(props: TabularProjectNetStepProps) {
               <ModalButton
                 title={t('Browse IIIF resources')}
                 modalSize="lg"
+                allowResize={false}
                 render={({ close }) => {
                   onRegisterBrowserClose(close);
                   return iiifBrowser;
