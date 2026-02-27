@@ -3,6 +3,7 @@ import type { CreateProject } from '../../../../../../../types/schemas/create-pr
 import { ErrorMessage } from '../../../../../../shared/callouts/ErrorMessage';
 import { SuccessMessage } from '../../../../../../shared/callouts/SuccessMessage';
 import { Button, ButtonRow } from '../../../../../../shared/navigation/Button';
+import { HrefLink } from '../../../../../../shared/utility/href-link';
 import type {
   TabularModelPayload,
   TabularProjectSetupPayload,
@@ -58,7 +59,7 @@ export function TabularProjectCompleteStep(props: TabularProjectCompleteStepProp
           <SuccessMessage $banner>{t('Project completed.')}</SuccessMessage>
           {createdProjectPath ? (
             <ButtonRow>
-              <Button $primary as="a" href={createdProjectPath}>
+              <Button $primary as={HrefLink} href={createdProjectPath}>
                 {t('Go to project')}
               </Button>
             </ButtonRow>
