@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { DataGrid, type Column } from 'react-data-grid';
 import 'react-data-grid/lib/styles.css';
 import type { TabularCellRef } from '@/frontend/shared/utility/tabular-types';
@@ -31,6 +31,7 @@ type TabularProjectCustomEditorTableProps = {
 type TabularGridRow = {
   id: string;
   rowIndex: number;
+  rowPosition: number;
   row: TabularEditorRowModel;
 };
 
@@ -52,10 +53,11 @@ function renderInput(options: {
   disabled: boolean;
   onChange: (nextValue: unknown) => void;
   onFocus: () => void;
+  onKeyDown: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   isActiveCell: boolean;
   isFlagged: boolean;
 }) {
-  const { inputId, value, fieldType, disabled, onChange, onFocus, isActiveCell, isFlagged } = options;
+  const { inputId, value, fieldType, disabled, onChange, onFocus, onKeyDown, isActiveCell, isFlagged } = options;
 
   const inputContainerClass = isActiveCell
     ? 'border-[#5071f4] bg-[#eaf0ff]'
@@ -72,6 +74,7 @@ function renderInput(options: {
           checked={!!value}
           disabled={disabled}
           onFocus={onFocus}
+          onKeyDown={onKeyDown}
           onChange={event => onChange(event.target.checked)}
         />
       </div>
@@ -85,6 +88,7 @@ function renderInput(options: {
       value={typeof value === 'string' ? value : value === null || typeof value === 'undefined' ? '' : String(value)}
       disabled={disabled}
       onFocus={onFocus}
+      onKeyDown={onKeyDown}
       onChange={event => onChange(event.target.value)}
     />
   );
@@ -111,12 +115,43 @@ export function TabularProjectCustomEditorTable({
 
   const gridRows = useMemo<readonly TabularGridRow[]>(
     () =>
-      rows.map(row => ({
+      rows.map((row, rowPosition) => ({
         id: row.key,
         rowIndex: row.rowIndex,
+        rowPosition,
         row,
       })),
     [rows]
+  );
+
+  const focusGridInput = useCallback(
+    (rowPosition: number, colIndex: number, caretPosition: 'start' | 'end' = 'end') => {
+      const targetRow = gridRows[rowPosition];
+      const targetCell = targetRow?.row.cells[colIndex];
+      if (!targetCell) {
+        return false;
+      }
+
+      onActiveCellChange({ row: targetCell.rowIndex, col: colIndex });
+      if (typeof window !== 'undefined') {
+        window.requestAnimationFrame(() => {
+          const input = document.getElementById(targetCell.inputId) as HTMLInputElement | null;
+          if (!input) {
+            return;
+          }
+
+          input.focus();
+          if (input.type !== 'checkbox' && typeof input.setSelectionRange === 'function') {
+            const caret = caretPosition === 'start' ? 0 : input.value.length;
+            input.setSelectionRange(caret, caret);
+          }
+          input.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+        });
+      }
+
+      return true;
+    },
+    [gridRows, onActiveCellChange]
   );
 
   const gridColumns = useMemo<readonly Column<TabularGridRow>[]>(() => {
@@ -171,6 +206,85 @@ export function TabularProjectCustomEditorTable({
           const isActiveRow = tableActiveCell?.row === cell.rowIndex;
           const isActiveCell = isActiveRow && tableActiveCell?.col === colIndex;
           const isFlagged = isCellFlagged(cell.rowIndex, cell.columnKey);
+          const lastColIndex = headerColumns.length - 1;
+
+          const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+            if (event.altKey || event.ctrlKey || event.metaKey) {
+              return;
+            }
+
+            if (event.key === 'Tab') {
+              let nextRow = row.rowPosition;
+              let nextCol = colIndex + (event.shiftKey ? -1 : 1);
+
+              if (nextCol < 0) {
+                nextRow -= 1;
+                nextCol = lastColIndex;
+              } else if (nextCol > lastColIndex) {
+                nextRow += 1;
+                nextCol = 0;
+              }
+
+              if (nextRow < 0 || nextRow >= gridRows.length) {
+                return;
+              }
+
+              event.preventDefault();
+              event.stopPropagation();
+              focusGridInput(nextRow, nextCol, event.shiftKey ? 'end' : 'start');
+              return;
+            }
+
+            if (event.key === 'ArrowUp') {
+              const nextRow = row.rowPosition - 1;
+              if (nextRow < 0) {
+                return;
+              }
+
+              event.preventDefault();
+              event.stopPropagation();
+              focusGridInput(nextRow, colIndex, 'end');
+              return;
+            }
+
+            if (event.key === 'ArrowDown') {
+              const nextRow = row.rowPosition + 1;
+              if (nextRow >= gridRows.length) {
+                return;
+              }
+
+              event.preventDefault();
+              event.stopPropagation();
+              focusGridInput(nextRow, colIndex, 'end');
+              return;
+            }
+
+            if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+              const moveLeft = event.key === 'ArrowLeft';
+              const nextCol = colIndex + (moveLeft ? -1 : 1);
+              if (nextCol < 0 || nextCol > lastColIndex) {
+                return;
+              }
+
+              if (cell.fieldType !== 'checkbox-field') {
+                const input = event.currentTarget;
+                const selectionStart = input.selectionStart ?? 0;
+                const selectionEnd = input.selectionEnd ?? 0;
+                const hasSelection = selectionStart !== selectionEnd;
+                const isBoundary = moveLeft
+                  ? !hasSelection && selectionStart === 0
+                  : !hasSelection && selectionEnd === input.value.length;
+
+                if (!isBoundary) {
+                  return;
+                }
+              }
+
+              event.preventDefault();
+              event.stopPropagation();
+              focusGridInput(row.rowPosition, nextCol, moveLeft ? 'end' : 'start');
+            }
+          };
 
           return (
             <div
@@ -190,6 +304,7 @@ export function TabularProjectCustomEditorTable({
                 fieldType: cell.fieldType,
                 disabled,
                 onFocus: () => onActiveCellChange({ row: cell.rowIndex, col: colIndex }),
+                onKeyDown: handleKeyDown,
                 isActiveCell,
                 isFlagged,
                 onChange: cell.onChange,
@@ -199,12 +314,12 @@ export function TabularProjectCustomEditorTable({
         },
       } satisfies Column<TabularGridRow>;
     });
-  }, [disabled, headerColumns, isCellFlagged, onActiveCellChange, tableActiveCell]);
+  }, [disabled, focusGridInput, gridRows.length, headerColumns, isCellFlagged, onActiveCellChange, tableActiveCell]);
 
   return (
     <div className="flex min-h-0 min-w-0 flex-col overflow-hidden rounded border border-[#d6d6d6] bg-white">
       <TabularDataGridStyles scopeClassName="tabular-contributor-rdg" disableRowHover />
-      <div className="min-h-0 min-w-0 flex-1 overflow-x-auto overflow-y-auto">
+      <div className="min-h-0 min-w-0 flex-1 overflow-x-scroll overflow-y-auto">
         <DataGrid
           className="rdg-light tabular-contributor-rdg"
           columns={gridColumns}
