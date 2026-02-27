@@ -6,23 +6,9 @@ import { buildTabularModelPayload, validateTabularModel } from './TabularModel';
 import { TabularHeadingsTable } from './TabularHeadingsTable';
 import { TabularColumnEditor } from './TabularColumnEditor';
 import { Button } from '../../../../shared/navigation/Button';
-import { HomeIcon } from '../../../../shared/icons/HomeIcon';
-import { MinusIcon } from '../../../../shared/icons/MinusIcon';
-import { PlusIcon } from '../../../../shared/icons/PlusIcon';
+import { TabularCanvasViewportControls } from '../../../../shared/components/TabularCanvasViewportControls';
 import { AddIcon } from '../../../../shared/icons/AddIcon';
-
-const viewerButtonStyle: React.CSSProperties = {
-  height: 34,
-  minWidth: 34,
-  border: '1px solid #d1d5db',
-  borderRadius: 6,
-  background: '#fff',
-  color: '#3b82f6',
-  display: 'inline-flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  cursor: 'pointer',
-};
+import { MinusIcon } from '../../../../shared/icons/MinusIcon';
 
 function ReferenceImagePanel(props: { manifestId: string; canvasId?: string; imageHeight: number }) {
   const { manifestId, canvasId, imageHeight } = props;
@@ -35,29 +21,13 @@ function ReferenceImagePanel(props: { manifestId: string; canvasId?: string; ima
 
   return (
     <div style={{ border: '1px solid #e5e5e5', borderRadius: 8, background: '#fff', overflow: 'hidden' }}>
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '10px 12px',
-          borderBottom: '1px solid #eee',
-        }}
-      >
-        <div style={{ display: 'flex', gap: 8 }}>
-          <button type="button" title="Home" onClick={goHome} style={viewerButtonStyle}>
-            <HomeIcon />
-          </button>
-          <button type="button" title="Zoom out" onClick={zoomOut} style={viewerButtonStyle}>
-            <MinusIcon />
-          </button>
-          <button type="button" title="Zoom in" onClick={zoomIn} style={viewerButtonStyle}>
-            <PlusIcon />
-          </button>
-        </div>
-      </div>
-
-      <div style={{ height: imageHeight, background: '#e5e7eb' }}>
+      <div style={{ height: imageHeight, background: '#e5e7eb', position: 'relative' }}>
+        <TabularCanvasViewportControls
+          onHome={goHome}
+          onZoomOut={zoomOut}
+          onZoomIn={zoomIn}
+          style={{ top: 12, right: 12, zIndex: 40 }}
+        />
         <AnySimpleViewerProvider manifest={manifestId} startCanvas={canvasId}>
           <CanvasPanel.Viewer
             runtimeOptions={{ maxOverZoom: 5, visibilityRatio: 1, maxUnderZoom: 1 }}
