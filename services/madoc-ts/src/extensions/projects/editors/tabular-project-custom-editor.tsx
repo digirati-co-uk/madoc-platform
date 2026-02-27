@@ -403,8 +403,6 @@ function TabularProjectCustomEditorContent({
                             No visible table columns were found for this project template.
                           </div>
                         ) : null}
-
-                        {lifecycle.phase === 'submitted' ? <div>Contribution submitted.</div> : null}
                       </>
                     ) : null}
 
