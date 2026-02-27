@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 import { DataGrid, type Column } from 'react-data-grid';
 import 'react-data-grid/lib/styles.css';
 import type { TabularValidationIssue } from './types';
@@ -27,21 +27,69 @@ export type TabularHeadingsTableProps = {
 type Row = { id: number };
 
 function HeaderInput(props: {
+  index: number;
+  columnCount: number;
   value: string;
   disabled: boolean;
   hasError: boolean;
   title?: string;
   onFocus?: () => void;
+  setInputRef: (index: number, node: HTMLInputElement | null) => void;
+  onNavigateToColumn: (index: number, caretPosition: 'start' | 'end') => void;
   onChange: (next: string) => void;
 }) {
-  const { value, disabled, hasError, title, onFocus, onChange } = props;
+  const { index, columnCount, value, disabled, hasError, title, onFocus, setInputRef, onNavigateToColumn, onChange } =
+    props;
 
   return (
     <input
+      ref={node => setInputRef(index, node)}
       value={value}
       placeholder="Click to add header"
       onFocus={onFocus}
       onChange={e => onChange(e.target.value)}
+      onKeyDown={event => {
+        // Keep keyboard behavior controlled by the input, not the grid container.
+        event.stopPropagation();
+
+        if (event.key === 'Tab') {
+          const nextIndex = index + (event.shiftKey ? -1 : 1);
+          if (nextIndex < 0 || nextIndex >= columnCount) {
+            return;
+          }
+
+          event.preventDefault();
+          onNavigateToColumn(nextIndex, event.shiftKey ? 'end' : 'start');
+          return;
+        }
+
+        if (event.altKey || event.ctrlKey || event.metaKey) {
+          return;
+        }
+        if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') {
+          return;
+        }
+
+        const input = event.currentTarget;
+        const selectionStart = input.selectionStart ?? 0;
+        const selectionEnd = input.selectionEnd ?? 0;
+        const valueLength = input.value.length;
+        const hasSelection = selectionStart !== selectionEnd;
+        const moveToPrevious = event.key === 'ArrowLeft' && !hasSelection && selectionStart === 0;
+        const moveToNext = event.key === 'ArrowRight' && !hasSelection && selectionEnd === valueLength;
+
+        if (!moveToPrevious && !moveToNext) {
+          return;
+        }
+
+        const nextIndex = index + (moveToPrevious ? -1 : 1);
+        if (nextIndex < 0 || nextIndex >= columnCount) {
+          return;
+        }
+
+        event.preventDefault();
+        onNavigateToColumn(nextIndex, moveToPrevious ? 'end' : 'start');
+      }}
       disabled={disabled}
       aria-invalid={hasError ? 'true' : 'false'}
       title={title}
@@ -90,6 +138,28 @@ export function TabularHeadingsTable(props: TabularHeadingsTableProps) {
     () => Array.from({ length: Math.max(0, visibleRows) }, (_, i) => ({ id: i })),
     [visibleRows]
   );
+  const headingInputRefs = useRef<Array<HTMLInputElement | null>>([]);
+
+  const setHeaderInputRef = useCallback((index: number, node: HTMLInputElement | null) => {
+    headingInputRefs.current[index] = node;
+  }, []);
+
+  const focusHeaderInput = useCallback(
+    (index: number, caretPosition: 'start' | 'end') => {
+      onActiveColumnChange?.(index);
+      requestAnimationFrame(() => {
+        const input = headingInputRefs.current[index];
+        if (!input) {
+          return;
+        }
+        input.focus();
+        const caret = caretPosition === 'end' ? input.value.length : 0;
+        input.setSelectionRange(caret, caret);
+        input.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+      });
+    },
+    [onActiveColumnChange]
+  );
 
   const gridColumns = useMemo<readonly Column<Row>[]>(() => {
     return Array.from({ length: columns }, (_, c) => {
@@ -108,25 +178,25 @@ export function TabularHeadingsTable(props: TabularHeadingsTableProps) {
         sortable: false,
         renderHeaderCell: () => (
           <div
-            role="button"
-            tabIndex={0}
             title={title}
             onMouseDown={() => onActiveColumnChange?.(c)}
-            onKeyDown={e => {
-              if (e.key === 'Enter' || e.key === ' ') onActiveColumnChange?.(c);
-            }}
             style={{
               height: '100%',
               padding: 0,
-              background: c === activeColumn ? '#cfd8f2' : '#d9deee',
+              background: c === activeColumn ? '#b9c8f5' : '#d9deee',
+              boxShadow: c === activeColumn ? 'inset 0 0 0 2px #8aa3ea' : undefined,
               cursor: 'pointer',
             }}
           >
             <HeaderInput
+              index={c}
+              columnCount={columns}
               value={safeHeadings[c] ?? ''}
               disabled={disabled}
               hasError={hasError}
               title={title}
+              setInputRef={setHeaderInputRef}
+              onNavigateToColumn={focusHeaderInput}
               onFocus={() => onActiveColumnChange?.(c)}
               onChange={next => {
                 const copy = safeHeadings.slice();
@@ -155,6 +225,8 @@ export function TabularHeadingsTable(props: TabularHeadingsTableProps) {
     issuesByColumn,
     activeColumn,
     onActiveColumnChange,
+    setHeaderInputRef,
+    focusHeaderInput,
     onChangeHeadings,
   ]);
 
