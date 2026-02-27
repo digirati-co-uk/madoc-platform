@@ -7,13 +7,7 @@ import {
   useRef,
 } from 'react';
 import type { DragMode, NetConfig } from './types';
-import {
-  NET_LINE_MIN_GAP_PCT,
-  NET_OVERLAY_MIN_SIZE_PCT,
-  clamp,
-  getEffectivePositions,
-  normalisePositions,
-} from './utils';
+import { NET_OVERLAY_MIN_SIZE_PCT, clamp, getLineMinGapPct, getEffectivePositions, normalisePositions } from './utils';
 
 type UseCastANetOverlayDragProps = {
   value: NetConfig;
@@ -195,7 +189,8 @@ export function useCastANetOverlayDrag({
 
         if (typeof modeNow === 'object' && modeNow.type === 'row') {
           const rowIndex = modeNow.index;
-          const minGap = NET_LINE_MIN_GAP_PCT;
+          const rowCount = Math.max(1, Math.floor(start.rows));
+          const minGap = getLineMinGapPct(rowCount);
           const pointerInNet = clamp(((currentY - start.top) / start.height) * 100, 0, 100);
 
           if (!dragStartRef.current.shiftKey) {
@@ -207,7 +202,6 @@ export function useCastANetOverlayDrag({
             return;
           }
 
-          const rowCount = Math.max(1, Math.floor(start.rows));
           if (rowCount <= 1) {
             return;
           }
@@ -223,7 +217,8 @@ export function useCastANetOverlayDrag({
 
         if (typeof modeNow === 'object' && modeNow.type === 'col') {
           const colIndex = modeNow.index;
-          const minGap = NET_LINE_MIN_GAP_PCT;
+          const colCount = Math.max(1, Math.floor(start.cols));
+          const minGap = getLineMinGapPct(colCount);
           const pointerInNet = clamp(((currentX - start.left) / start.width) * 100, 0, 100);
 
           if (!dragStartRef.current.shiftKey) {
@@ -235,7 +230,6 @@ export function useCastANetOverlayDrag({
             return;
           }
 
-          const colCount = Math.max(1, Math.floor(start.cols));
           if (colCount <= 1) {
             return;
           }
