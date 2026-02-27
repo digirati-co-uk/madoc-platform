@@ -1,4 +1,4 @@
-import type { ComponentType, CSSProperties, ReactNode } from 'react';
+import type { ComponentType, ReactNode } from 'react';
 import type { TFunction } from 'i18next';
 import { ModalButton } from '@/frontend/shared/components/Modal';
 import { VerticalResizeSeparator } from '@/frontend/shared/components/VerticalResizeSeparator';
@@ -15,18 +15,6 @@ import {
 import type { CastANetStepComponentProps } from '../types';
 
 const PREVIEW_NUDGE_STEP = 0.25;
-const NUDGE_BUTTON_SIZE = 54;
-
-const nudgeButtonStyle: CSSProperties = {
-  height: NUDGE_BUTTON_SIZE,
-  width: NUDGE_BUTTON_SIZE,
-  border: '1px solid #d4d6df',
-  borderRadius: 8,
-  background: '#fff',
-  cursor: 'pointer',
-  fontSize: 22,
-  lineHeight: '1',
-};
 
 interface TabularProjectPreviewStepProps {
   t: TFunction;
@@ -182,50 +170,8 @@ export function TabularProjectPreviewStep(props: TabularProjectPreviewStepProps)
           </div>
 
           {canTrackPreviewOnCanvas ? (
-            <div style={{ marginTop: 14, paddingTop: 10, borderTop: '1px solid #d6d6d6' }}>
-              <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 8 }}>{t('Nudge zoom tracking')}</div>
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: `${NUDGE_BUTTON_SIZE}px ${NUDGE_BUTTON_SIZE}px ${NUDGE_BUTTON_SIZE}px`,
-                  gridTemplateRows: `${NUDGE_BUTTON_SIZE}px ${NUDGE_BUTTON_SIZE}px ${NUDGE_BUTTON_SIZE}px`,
-                  gap: 10,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-              >
-                <button
-                  type="button"
-                  onClick={() => onNudgePreviewNet(0, -PREVIEW_NUDGE_STEP)}
-                  style={{ ...nudgeButtonStyle, gridColumn: 2, gridRow: 1 }}
-                >
-                  ↑
-                </button>
-                <button
-                  type="button"
-                  onClick={() => onNudgePreviewNet(-PREVIEW_NUDGE_STEP, 0)}
-                  style={{ ...nudgeButtonStyle, gridColumn: 1, gridRow: 2 }}
-                >
-                  ←
-                </button>
-                <button
-                  type="button"
-                  onClick={() => onNudgePreviewNet(PREVIEW_NUDGE_STEP, 0)}
-                  style={{ ...nudgeButtonStyle, gridColumn: 3, gridRow: 2 }}
-                >
-                  →
-                </button>
-                <button
-                  type="button"
-                  onClick={() => onNudgePreviewNet(0, PREVIEW_NUDGE_STEP)}
-                  style={{ ...nudgeButtonStyle, gridColumn: 2, gridRow: 3 }}
-                >
-                  ↓
-                </button>
-              </div>
-              <div style={{ marginTop: 6, fontSize: 11, opacity: 0.8 }}>
-                {t('Nudge updates are saved with this project setup.')}
-              </div>
+            <div style={{ marginTop: 14, paddingTop: 10, borderTop: '1px solid #d6d6d6', fontSize: 11, opacity: 0.8 }}>
+              {t('Nudge updates are saved with this project setup.')}
             </div>
           ) : null}
         </div>
@@ -248,6 +194,9 @@ export function TabularProjectPreviewStep(props: TabularProjectPreviewStepProps)
                 height={previewCanvasHeight}
                 activeCell={previewCanvasActiveCell}
                 previewOverlayOnly
+                showVerticalNudgeControls={canTrackPreviewOnCanvas}
+                onNudgeUp={() => onNudgePreviewNet(0, -PREVIEW_NUDGE_STEP)}
+                onNudgeDown={() => onNudgePreviewNet(0, PREVIEW_NUDGE_STEP)}
               />
             </BrowserComponent>
           ) : (

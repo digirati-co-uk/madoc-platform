@@ -15,6 +15,9 @@ type CastANetProps = {
   onChangeDimOpacity?: (next: number) => void;
   activeCell?: TabularCellRef | null;
   previewOverlayOnly?: boolean;
+  showVerticalNudgeControls?: boolean;
+  onNudgeUp?: () => void;
+  onNudgeDown?: () => void;
 };
 
 export const CastANet: React.FC<CastANetProps> = props => {
