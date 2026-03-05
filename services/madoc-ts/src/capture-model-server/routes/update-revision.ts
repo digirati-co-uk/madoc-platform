@@ -4,13 +4,14 @@ import { castBool } from '../../utility/cast-bool';
 import { RequestError } from '../../utility/errors/request-error';
 import { userCan } from '../../utility/user-can';
 import { userWithScope } from '../../utility/user-with-scope';
+import { sanitizeTabularRevisionRequestForSave } from '../../frontend/shared/utility/sanitize-tabular-revision-request';
 import { migrateModel } from '../migration/migrate-model';
 
 export const updateRevisionApi: RouteMiddleware<{ id: string }, RevisionRequest> = async (context, next) => {
   const { id, userUrn, siteId } = userWithScope(context, ['models.contribute']);
   const canCreate = userCan('models.create', context.state);
 
-  const revisionRequest = context.requestBody;
+  const revisionRequest = sanitizeTabularRevisionRequestForSave(context.requestBody);
   if (context.params.id !== revisionRequest.revision.id) {
     throw new RequestError('Revision cannot be saved to another revision');
   }

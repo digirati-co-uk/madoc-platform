@@ -21,8 +21,7 @@ export type TabularColumnModel = {
   hints: Map<string, string>;
 };
 
-export const CONTRIBUTOR_EDITOR_VIEWPORT_OFFSET_PX = 240;
-export const CONTRIBUTOR_EDITOR_SPLIT_HEIGHT = `calc(100vh - ${CONTRIBUTOR_EDITOR_VIEWPORT_OFFSET_PX}px)`;
+export const CONTRIBUTOR_EDITOR_SPLIT_HEIGHT = '100vh';
 export const CONTRIBUTOR_EDITOR_CANVAS_SPLIT = '58%';
 export const CONTRIBUTOR_EDITOR_TABLE_SPLIT = '42%';
 

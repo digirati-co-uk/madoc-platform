@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { DataGrid, type Column } from 'react-data-grid';
 import 'react-data-grid/lib/styles.css';
 import type { TabularCellRef } from '@/frontend/shared/utility/tabular-types';
@@ -46,7 +46,11 @@ function FlaggedCellBadge() {
   );
 }
 
-function renderInput(options: {
+function toTextValue(value: unknown) {
+  return typeof value === 'string' ? value : value === null || typeof value === 'undefined' ? '' : String(value);
+}
+
+type TabularGridCellInputProps = {
   inputId: string;
   value: unknown;
   fieldType?: string;
@@ -56,8 +60,12 @@ function renderInput(options: {
   onKeyDown: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   isActiveCell: boolean;
   isFlagged: boolean;
-}) {
+};
+
+function TabularGridCellInput(options: TabularGridCellInputProps) {
   const { inputId, value, fieldType, disabled, onChange, onFocus, onKeyDown, isActiveCell, isFlagged } = options;
+  const [optimisticTextValue, setOptimisticTextValue] = useState<string>(() => toTextValue(value));
+  const [optimisticCheckedValue, setOptimisticCheckedValue] = useState<boolean>(() => !!value);
 
   const inputContainerClass = isActiveCell
     ? 'border-[#5071f4] bg-[#eaf0ff]'
@@ -65,17 +73,30 @@ function renderInput(options: {
       ? 'border-red-300 bg-red-50'
       : 'border-transparent bg-transparent';
 
+  useEffect(() => {
+    if (fieldType === 'checkbox-field') {
+      setOptimisticCheckedValue(!!value);
+      return;
+    }
+
+    setOptimisticTextValue(toTextValue(value));
+  }, [fieldType, inputId, value]);
+
   if (fieldType === 'checkbox-field') {
     return (
       <div className={`flex h-full items-center justify-center rounded border px-2 py-1 ${inputContainerClass}`}>
         <input
           id={inputId}
           type="checkbox"
-          checked={!!value}
+          checked={optimisticCheckedValue}
           disabled={disabled}
           onFocus={onFocus}
           onKeyDown={onKeyDown}
-          onChange={event => onChange(event.target.checked)}
+          onChange={event => {
+            const nextValue = event.target.checked;
+            setOptimisticCheckedValue(nextValue);
+            onChange(nextValue);
+          }}
         />
       </div>
     );
@@ -85,11 +106,15 @@ function renderInput(options: {
     <input
       id={inputId}
       className={`h-full w-full rounded border px-2 py-1 text-sm outline-none ${inputContainerClass}`}
-      value={typeof value === 'string' ? value : value === null || typeof value === 'undefined' ? '' : String(value)}
+      value={optimisticTextValue}
       disabled={disabled}
       onFocus={onFocus}
       onKeyDown={onKeyDown}
-      onChange={event => onChange(event.target.value)}
+      onChange={event => {
+        const nextValue = event.target.value;
+        setOptimisticTextValue(nextValue);
+        onChange(nextValue);
+      }}
     />
   );
 }
@@ -298,17 +323,17 @@ export function TabularProjectCustomEditorTable({
               }}
             >
               {isFlagged ? <FlaggedCellBadge /> : null}
-              {renderInput({
-                inputId: cell.inputId,
-                value: cell.value,
-                fieldType: cell.fieldType,
-                disabled,
-                onFocus: () => onActiveCellChange({ row: cell.rowIndex, col: colIndex }),
-                onKeyDown: handleKeyDown,
-                isActiveCell,
-                isFlagged,
-                onChange: cell.onChange,
-              })}
+              <TabularGridCellInput
+                inputId={cell.inputId}
+                value={cell.value}
+                fieldType={cell.fieldType}
+                disabled={disabled}
+                onFocus={() => onActiveCellChange({ row: cell.rowIndex, col: colIndex })}
+                onKeyDown={handleKeyDown}
+                isActiveCell={isActiveCell}
+                isFlagged={isFlagged}
+                onChange={cell.onChange}
+              />
             </div>
           );
         },

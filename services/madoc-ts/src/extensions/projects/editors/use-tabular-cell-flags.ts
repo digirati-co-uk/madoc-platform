@@ -215,6 +215,7 @@ export function useTabularCellFlags({
           columnKey: flag.columnKey,
           columnLabel: columnLabelsByKey.get(flag.columnKey) || flag.columnKey,
           isVisibleInTable: visibleColumnKeys.includes(flag.columnKey),
+          flaggedAt: flag.flaggedAt,
           comment: flag.comment,
         };
       });

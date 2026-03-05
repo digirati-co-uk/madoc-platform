@@ -274,6 +274,7 @@ function TabularProjectCustomEditorContent({
               activeCellIsFlagged={activeCellIsFlagged}
               activeCellComment={activeCellComment}
               flaggedCells={flaggedCells}
+              visibleColumnKeys={visibleColumnKeys}
               canPersistFlags={canPersistFlags}
               onToggleActiveCellFlag={onToggleActiveCellFlag}
               onUpdateActiveCellComment={onUpdateActiveCellComment}

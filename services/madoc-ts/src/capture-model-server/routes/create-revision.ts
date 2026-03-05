@@ -4,12 +4,13 @@ import { castBool } from '../../utility/cast-bool';
 import { RequestError } from '../../utility/errors/request-error';
 import { userWithScope } from '../../utility/user-with-scope';
 import { userCan } from '../../utility/user-can';
+import { sanitizeTabularRevisionRequestForSave } from '../../frontend/shared/utility/sanitize-tabular-revision-request';
 import { migrateModel } from '../migration/migrate-model';
 
 export const createRevisionApi: RouteMiddleware<{ captureModelId: string }, RevisionRequest> = async context => {
   const { siteId, id } = userWithScope(context, ['models.contribute']);
 
-  const revisionRequest = context.requestBody;
+  const revisionRequest = sanitizeTabularRevisionRequestForSave(context.requestBody);
   const captureModelId = context.params.captureModelId;
   const showRevised = castBool(context.query.show_revised as string);
 
