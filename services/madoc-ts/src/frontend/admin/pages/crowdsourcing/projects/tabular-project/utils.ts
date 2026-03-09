@@ -29,12 +29,36 @@ const numberPattern = /^\d+$/;
 const manifestExportPattern = /\/manifests\/\d+\/export\//i;
 
 export const hasIntlValue = (value?: InternationalString) => {
-  if (!value) return false;
-  const first = Object.values(value)[0];
-  return Boolean(first && first.join('').trim());
+  return Boolean(getPreferredIntlValue(value));
 };
 
 export const clampToRange = clampToRangeShared;
+
+export const getPreferredIntlValue = (value?: InternationalString, preferredLocale?: string) => {
+  if (!value) {
+    return '';
+  }
+
+  const preferred = preferredLocale ? value[preferredLocale] : undefined;
+  if (preferred?.length) {
+    const preferredText = preferred.join(' ').trim();
+    if (preferredText) {
+      return preferredText;
+    }
+  }
+
+  for (const parts of Object.values(value)) {
+    if (!parts?.length) {
+      continue;
+    }
+    const text = parts.join(' ').trim();
+    if (text) {
+      return text;
+    }
+  }
+
+  return '';
+};
 
 export const collectionRouteForId = (id: string) => {
   return `/collection?id=${encodeURIComponent(id)}`;
@@ -120,6 +144,10 @@ export const toSelectionResource = (value: unknown): IiifSelectionResource => {
   return {};
 };
 
+const toDisplayUrl = (value?: string) => {
+  return toAbsoluteUrlIfPath(value) || value;
+};
+
 export const toStringValue = (value: unknown): string | undefined => {
   if (typeof value === 'string') {
     const trimmed = value.trim();
@@ -140,6 +168,147 @@ export const toArray = <T>(value: T | T[] | undefined | null): T[] => {
     return [];
   }
   return Array.isArray(value) ? value : [value];
+};
+
+const toInternationalString = (value: unknown): InternationalString | undefined => {
+  if (!isObjectRecord(value)) {
+    return undefined;
+  }
+
+  const entries = Object.entries(value)
+    .map(([locale, localeValue]) => {
+      if (Array.isArray(localeValue)) {
+        const text = localeValue
+          .map(part => toStringValue(part))
+          .filter(Boolean)
+          .map(part => part as string);
+        return [locale, text] as const;
+      }
+
+      const single = toStringValue(localeValue);
+      return [locale, single ? [single] : []] as const;
+    })
+    .filter(([, localeValue]) => localeValue.length > 0);
+
+  if (!entries.length) {
+    return undefined;
+  }
+
+  return Object.fromEntries(entries) as InternationalString;
+};
+
+const getIiifImageIdFromBody = (value: unknown, visited: WeakSet<object>): string | undefined => {
+  for (const candidate of toArray(value)) {
+    if (candidate == null) {
+      continue;
+    }
+
+    if (typeof candidate === 'string' || typeof candidate === 'number') {
+      const directId = toStringValue(candidate);
+      if (directId) {
+        return toDisplayUrl(directId);
+      }
+      continue;
+    }
+
+    if (!isObjectRecord(candidate)) {
+      continue;
+    }
+    if (visited.has(candidate)) {
+      continue;
+    }
+    visited.add(candidate);
+
+    const candidateType = toTypeValue(candidate.type ?? candidate['@type']);
+    const candidateId = toStringValue(candidate.id ?? candidate['@id']);
+    const isImageLike =
+      !candidateType ||
+      candidateType === 'image' ||
+      candidateType === 'contentresource' ||
+      candidateType === 'specificresource';
+
+    if (candidateId && isImageLike) {
+      return toDisplayUrl(candidateId);
+    }
+
+    const nestedBody =
+      getIiifImageIdFromBody(candidate.body, visited) ||
+      getIiifImageIdFromBody(candidate.item, visited) ||
+      getIiifImageIdFromBody(candidate.items, visited);
+
+    if (nestedBody) {
+      return nestedBody;
+    }
+  }
+
+  return undefined;
+};
+
+const getIiifImageIdFromCanvasItems = (value: unknown): string | undefined => {
+  const visited = new WeakSet<object>();
+
+  for (const page of toArray(value)) {
+    if (!isObjectRecord(page)) {
+      continue;
+    }
+
+    for (const annotation of toArray(page.items)) {
+      if (!isObjectRecord(annotation)) {
+        continue;
+      }
+
+      const bodyId = getIiifImageIdFromBody(annotation.body, visited);
+      if (bodyId) {
+        return bodyId;
+      }
+    }
+  }
+
+  return undefined;
+};
+
+export const getIiifSelectionLabel = (resource?: IiifSelectionResource, preferredLocale?: string) => {
+  if (!resource) {
+    return '';
+  }
+
+  const rawLabel = (resource as Record<string, unknown>).label;
+
+  if (typeof rawLabel === 'string') {
+    return rawLabel.trim();
+  }
+
+  if (Array.isArray(rawLabel)) {
+    const value = rawLabel
+      .map(part => toStringValue(part))
+      .filter(Boolean)
+      .join(' ')
+      .trim();
+    return value;
+  }
+
+  const normalizedLabel = toInternationalString(rawLabel);
+  return getPreferredIntlValue(normalizedLabel, preferredLocale);
+};
+
+export const getIiifSelectionThumbnail = (resource?: IiifSelectionResource) => {
+  if (!resource) {
+    return undefined;
+  }
+
+  const visited = new WeakSet<object>();
+  const record = resource as Record<string, unknown>;
+  const thumbnailFromField = getIiifImageIdFromBody(record.thumbnail, visited);
+  if (thumbnailFromField) {
+    return thumbnailFromField;
+  }
+
+  const thumbnailFromItems = getIiifImageIdFromCanvasItems(record.items);
+  if (thumbnailFromItems) {
+    return thumbnailFromItems;
+  }
+
+  return getIiifImageIdFromBody(record.body, visited);
 };
 
 export const stripQueryAndHash = (value: string) => {

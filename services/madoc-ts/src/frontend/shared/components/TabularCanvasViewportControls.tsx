@@ -11,6 +11,7 @@ type TabularCanvasViewportControlsProps = {
   homeDisabled?: boolean;
   zoomOutDisabled?: boolean;
   zoomInDisabled?: boolean;
+  className?: string;
   style?: React.CSSProperties;
   leadingControls?: React.ReactNode;
 };
@@ -22,11 +23,12 @@ export function TabularCanvasViewportControls({
   homeDisabled,
   zoomOutDisabled,
   zoomInDisabled,
+  className,
   style,
   leadingControls,
 }: TabularCanvasViewportControlsProps) {
   return (
-    <CanvasViewerControls style={style}>
+    <CanvasViewerControls className={className} style={style}>
       {leadingControls}
       <CanvasViewerButton type="button" onClick={onHome} disabled={homeDisabled}>
         <HomeIcon title="Home" />

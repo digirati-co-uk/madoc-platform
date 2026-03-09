@@ -1,4 +1,4 @@
-import type { ComponentType, ReactNode } from 'react';
+import React, { ComponentType, ReactNode } from 'react';
 import type { TFunction } from 'i18next';
 import { ModalButton } from '@/frontend/shared/components/Modal';
 import { VerticalResizeSeparator } from '@/frontend/shared/components/VerticalResizeSeparator';
@@ -6,12 +6,7 @@ import { Button, ButtonRow } from '@/frontend/shared/navigation/Button';
 import { BrowserComponent } from '@/frontend/shared/utility/browser-component';
 import { LinkIcon } from '@/frontend/shared/icons/LinkIcon';
 import { TabularPreviewTable } from '../../../../../components/tabular/cast-a-net/TabularPreviewTable';
-import type { NetConfig, TabularCellRef } from '../../../../../components/tabular/cast-a-net/types';
-import {
-  TABULAR_WIZARD_PREVIEW_SPLIT_DIVIDER_HEIGHT,
-  TABULAR_WIZARD_PREVIEW_SPLIT_GAP,
-  TABULAR_WIZARD_PREVIEW_SPLIT_TOTAL_HEIGHT,
-} from '../constants';
+import type { NetConfig, TabularCellRef } from '@/frontend/shared/utility/tabular-types';
 import type { CastANetStepComponentProps } from '../types';
 
 const PREVIEW_NUDGE_STEP = 0.25;
@@ -22,7 +17,6 @@ interface TabularProjectPreviewStepProps {
   shareCopied: 'idle' | 'copied' | 'error';
   canTrackPreviewOnCanvas: boolean;
   hasImage: boolean;
-  enableZoomTracking: boolean;
   manifestId?: string;
   canvasId?: string;
   netConfig: NetConfig;
@@ -47,6 +41,7 @@ interface TabularProjectPreviewStepProps {
   onPreviewActiveCellChange: (next: TabularCellRef | null) => void;
   onAddRow: () => void;
   onSave: () => void;
+  onCancel: () => void;
   CastANetComponent: ComponentType<CastANetStepComponentProps>;
 }
 
@@ -57,7 +52,6 @@ export function TabularProjectPreviewStep(props: TabularProjectPreviewStepProps)
     shareCopied,
     canTrackPreviewOnCanvas,
     hasImage,
-    enableZoomTracking,
     manifestId,
     canvasId,
     netConfig,
@@ -82,108 +76,65 @@ export function TabularProjectPreviewStep(props: TabularProjectPreviewStepProps)
     onPreviewActiveCellChange,
     onAddRow,
     onSave,
+    onCancel,
     CastANetComponent,
   } = props;
 
   return (
     <>
-      <div style={{ fontSize: 16, fontWeight: 500, marginBottom: 12 }}>{t('Preview')}</div>
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '280px minmax(0, 1fr)',
-          gap: 16,
-          alignItems: 'stretch',
-          paddingBottom: 16,
-        }}
-      >
-        <div style={{ border: '1px solid #d6d6d6', borderRadius: 4, background: '#f4f4f4', padding: 12 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-            <div style={{ fontSize: 13, fontWeight: 600 }}>{t('Share project outline')}</div>
+      <div className="grid grid-cols-[280px_minmax(0,1fr)] items-stretch gap-4">
+        <div className="rounded border border-[#d6d6d6] bg-[#f4f4f4] p-3">
+          <div className="text-2xl font-light mb-1">{t('Preview')}</div>
+          <hr />
+
+          <div className="my-3 flex items-center justify-between">
+            <div className="text-[13px] font-semibold">{t('Share project outline')}</div>
             {shareUrl ? (
               <button
                 type="button"
                 onClick={onCopyShareLink}
                 title={t('Copy share link')}
-                style={{
-                  height: 30,
-                  width: 30,
-                  border: '1px solid #d4d6df',
-                  borderRadius: 4,
-                  background: '#fff',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: '#283452',
-                  cursor: 'pointer',
-                }}
+                className="inline-flex h-[30px] w-[30px] cursor-pointer items-center justify-center rounded border border-[#d4d6df] bg-white text-[#283452]"
               >
-                <LinkIcon style={{ fontSize: 18 }} />
+                <LinkIcon className="text-[18px]" />
               </button>
             ) : null}
           </div>
           {shareUrl ? (
-            <div style={{ marginBottom: 12 }}>
+            <div className="mb-3">
               <input
                 type="text"
                 value={shareUrl}
                 readOnly
                 onFocus={event => event.currentTarget.select()}
-                style={{
-                  width: '100%',
-                  border: '1px solid #cfd6e5',
-                  borderRadius: 4,
-                  fontSize: 12,
-                  padding: '8px 10px',
-                  color: '#1f2d5a',
-                  background: '#fff',
-                }}
+                className="w-full rounded border border-[#cfd6e5] bg-white px-[10px] py-2 text-xs text-[#1f2d5a]"
               />
-              <div style={{ marginTop: 6, fontSize: 12 }}>
+              <div className="mt-1.5 text-xs">
                 <a href={shareUrl} target="_blank" rel="noreferrer">
                   {t('Open shared outline')}
                 </a>
               </div>
               {shareCopied === 'copied' ? (
-                <div style={{ marginTop: 6, fontSize: 12, color: '#166534' }}>{t('Share link copied.')}</div>
+                <div className="mt-1.5 text-xs text-[#166534]">{t('Share link copied.')}</div>
               ) : null}
               {shareCopied === 'error' ? (
-                <div style={{ marginTop: 6, fontSize: 12, color: '#b91c1c' }}>
-                  {t('Copy failed. Please copy the link manually.')}
-                </div>
+                <div className="mt-1.5 text-xs text-[#b91c1c]">{t('Copy failed. Please copy the link manually.')}</div>
               ) : null}
             </div>
           ) : null}
 
-          <div
-            style={{
-              padding: 12,
-              background: '#dfe5ff',
-              borderRadius: 4,
-              color: '#1f2d5a',
-              fontSize: 14,
-              lineHeight: 1.35,
-              marginBottom: 12,
-            }}
-          >
+          <div className="mb-3 rounded bg-[#dfe5ff] p-3 text-sm leading-[1.35] text-[#1f2d5a]">
             {t('Review all project details, capture model data, and cast-a-net contract before creating the project.')}
           </div>
 
           {canTrackPreviewOnCanvas ? (
-            <div style={{ marginTop: 14, paddingTop: 10, borderTop: '1px solid #d6d6d6', fontSize: 11, opacity: 0.8 }}>
+            <div className="mt-[14px] border-t border-[#d6d6d6] pt-[10px] text-[11px] opacity-80">
               {t('Nudge updates are saved with this project setup.')}
             </div>
           ) : null}
         </div>
 
-        <div
-          style={{
-            display: 'grid',
-            gap: TABULAR_WIZARD_PREVIEW_SPLIT_GAP,
-            height: TABULAR_WIZARD_PREVIEW_SPLIT_TOTAL_HEIGHT,
-            overflow: 'hidden',
-          }}
-        >
+        <div className={hasImage ? 'grid h-[760px] content-start gap-3 overflow-hidden' : 'grid content-start gap-3'}>
           {hasImage ? (
             <BrowserComponent fallback={<div>{t('Loading...')}</div>}>
               <CastANetComponent
@@ -200,58 +151,39 @@ export function TabularProjectPreviewStep(props: TabularProjectPreviewStepProps)
               />
             </BrowserComponent>
           ) : (
-            <div
-              style={{
-                border: '1px solid #d6d6d6',
-                borderRadius: 4,
-                height: '100%',
-                display: 'grid',
-                placeItems: 'center',
-                fontSize: 13,
-                opacity: 0.75,
-              }}
-            >
-              <div style={{ display: 'grid', gap: 10, textAlign: 'center', justifyItems: 'center' }}>
-                <div>{t('Select a reference image to preview zoom tracking.')}</div>
-                {!enableZoomTracking ? (
-                  <ModalButton
-                    title={t('Browse IIIF resources')}
-                    modalSize="lg"
-                    allowResize={false}
-                    render={({ close }) => {
-                      onRegisterBrowserClose(close);
+            <div className="grid min-h-[180px] place-items-center rounded border border-[#d6d6d6] bg-[#fafbff] text-[13px]">
+              <div className="grid justify-items-center gap-[10px] text-center">
+                <div className="text-[#41506f]">{t('Select a reference image to preview zoom tracking.')}</div>
+                <ModalButton
+                  title={t('Browse IIIF resources')}
+                  modalSize="lg"
+                  allowResize={false}
+                  render={({ close }) => {
+                    onRegisterBrowserClose(close);
 
-                      return iiifBrowser;
-                    }}
-                  >
-                    <Button>{t('Browse manifests')}</Button>
-                  </ModalButton>
-                ) : null}
+                    return iiifBrowser;
+                  }}
+                >
+                  <Button>{t('Browse IIIF resources')}</Button>
+                </ModalButton>
               </div>
             </div>
           )}
 
-          <div style={{ display: 'flex', justifyContent: 'center', marginTop: -4 }}>
-            <VerticalResizeSeparator
-              ariaLabel={t('Resize preview canvas and table')}
-              onResizeStart={onStartResize}
-              onHoverChange={onDividerHoverChange}
-              style={{
-                height: TABULAR_WIZARD_PREVIEW_SPLIT_DIVIDER_HEIGHT,
-                minWidth: 28,
-                border: '1px solid #c8c8c8',
-                borderRadius: 4,
-                background: isDividerHover ? '#e5e7eb' : '#fff',
-                fontWeight: 700,
-                lineHeight: '14px',
-                textAlign: 'center',
-                cursor: 'row-resize',
-                userSelect: 'none',
-              }}
-            >
-              =
-            </VerticalResizeSeparator>
-          </div>
+          {hasImage ? (
+            <div className="mt-[-4px] flex justify-center">
+              <VerticalResizeSeparator
+                ariaLabel={t('Resize preview canvas and table')}
+                onResizeStart={onStartResize}
+                onHoverChange={onDividerHoverChange}
+                className={`h-[18px] min-w-[28px] cursor-row-resize select-none rounded border border-[#c8c8c8] text-center text-[14px] font-bold leading-[14px] ${
+                  isDividerHover ? 'bg-gray-200' : 'bg-white'
+                }`}
+              >
+                =
+              </VerticalResizeSeparator>
+            </div>
+          ) : null}
 
           <TabularPreviewTable
             headings={previewColumns}
@@ -263,14 +195,17 @@ export function TabularProjectPreviewStep(props: TabularProjectPreviewStepProps)
             onActiveCellChange={onPreviewActiveCellChange}
             onAddRow={onAddRow}
             addRowLabel={t('+ Add row')}
-            containerHeight={previewTableHeight}
+            containerHeight={hasImage ? previewTableHeight : undefined}
             containerWidth="100%"
           />
         </div>
       </div>
       <ButtonRow>
+        <Button type="button" onClick={onCancel}>
+          {t('Cancel')}
+        </Button>
         <Button $primary disabled={!canSave} onClick={onSave}>
-          {t('Save')}
+          {t('Save and continue')}
         </Button>
       </ButtonRow>
     </>

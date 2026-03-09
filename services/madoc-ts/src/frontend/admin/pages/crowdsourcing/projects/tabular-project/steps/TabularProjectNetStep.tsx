@@ -1,9 +1,9 @@
-import type { ComponentType, ReactNode } from 'react';
+import React, { ComponentType, ReactNode } from 'react';
 import type { TFunction } from 'i18next';
 import { ModalButton } from '@/frontend/shared/components/Modal';
 import { VerticalResizeSeparator } from '@/frontend/shared/components/VerticalResizeSeparator';
 import { BrowserComponent } from '@/frontend/shared/utility/browser-component';
-import { Button, TinyButton } from '@/frontend/shared/navigation/Button';
+import { Button, ButtonRow, TinyButton } from '@/frontend/shared/navigation/Button';
 import { TabularHeadingsTable } from '../../../../../components/tabular/cast-a-net/TabularHeadingsTable';
 import type { NetConfig } from '../../../../../components/tabular/cast-a-net/types';
 import { TABULAR_WIZARD_CAST_A_NET_ROWS } from '../constants';
@@ -27,6 +27,7 @@ interface TabularProjectNetStepProps {
   onRegisterBrowserClose: (close?: () => void) => void;
   onStartResize: (event: React.MouseEvent<HTMLDivElement>) => void;
   onDividerHoverChange: (isHover: boolean) => void;
+  onCancel: () => void;
   CastANetComponent: ComponentType<CastANetStepComponentProps>;
 }
 
@@ -49,43 +50,29 @@ export function TabularProjectNetStep(props: TabularProjectNetStepProps) {
     onRegisterBrowserClose,
     onStartResize,
     onDividerHoverChange,
+    onCancel,
     CastANetComponent,
   } = props;
 
   return (
     <>
-      <div style={{ fontSize: 16, fontWeight: 500, marginBottom: 12 }}>{t('Cast a net')}</div>
       {requiresNetStep ? (
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: '280px minmax(0, 1fr)',
-            gap: 16,
-            alignItems: 'stretch',
-            paddingBottom: 16,
-          }}
-        >
-          <div style={{ border: '1px solid #d6d6d6', borderRadius: 4, background: '#f4f4f4', padding: 12 }}>
-            <div
-              style={{
-                padding: 12,
-                background: '#dfe5ff',
-                borderRadius: 4,
-                color: '#1f2d5a',
-                fontSize: 14,
-                lineHeight: 1.35,
-                marginBottom: 14,
-              }}
-            >
-              {t(
-                'Adjust the grid so it matches the table in the example image. Align the pink band with the headings defined earlier.'
-              )}
-              <br />
-              <br />
-              {t('Use the non-editable table below as reference for your row and column layout.')}
+        <div className="grid grid-cols-[280px_minmax(0,1fr)] items-stretch gap-4">
+          <div className="rounded border border-[#d6d6d6] bg-[#f4f4f4] p-3">
+            <div className="text-2xl font-light mb-1">{t('Cast a net')}</div>
+            <hr />
+            <div className="mt-1  pt-4">
+              <div className="rounded bg-[#dfe5ff] p-3 text-sm text-[#1f2d5a]">
+                {t(
+                  'Adjust the grid so it matches the table in the example image. Align the pink band with the headings defined earlier.'
+                )}
+                <br />
+                <br />
+                {t('Use the non-editable table below as reference for your row and column layout.')}
+              </div>
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10, alignItems: 'flex-start' }}>
+            <div className="flex flex-col items-start gap-2 my-2">
               <ModalButton
                 title={t('Browse IIIF resources')}
                 modalSize="lg"
@@ -98,13 +85,10 @@ export function TabularProjectNetStep(props: TabularProjectNetStepProps) {
                 <TinyButton>{t('Select a different image')}</TinyButton>
               </ModalButton>
               <TinyButton onClick={onClearImageSelection}>{t('Remove selected image')}</TinyButton>
-              <Button $primary onClick={onSave}>
-                {t('Save')}
-              </Button>
             </div>
           </div>
 
-          <div style={{ display: 'grid', gap: 12 }}>
+          <div className="grid gap-3">
             <BrowserComponent fallback={<div>{t('Loading...')}</div>}>
               <CastANetComponent
                 manifestId={manifestId!}
@@ -115,29 +99,20 @@ export function TabularProjectNetStep(props: TabularProjectNetStepProps) {
               />
             </BrowserComponent>
 
-            <div style={{ display: 'flex', justifyContent: 'center', marginTop: -4 }}>
+            <div className="mt-[-4px] flex justify-center">
               <VerticalResizeSeparator
                 ariaLabel={t('Resize cast-a-net and table')}
                 onResizeStart={onStartResize}
                 onHoverChange={onDividerHoverChange}
-                style={{
-                  height: 18,
-                  minWidth: 28,
-                  border: '1px solid #c8c8c8',
-                  borderRadius: 4,
-                  background: isDividerHover ? '#e5e7eb' : '#fff',
-                  fontWeight: 700,
-                  lineHeight: '14px',
-                  textAlign: 'center',
-                  cursor: 'row-resize',
-                  userSelect: 'none',
-                }}
+                className={`h-[18px] min-w-[28px] cursor-row-resize select-none rounded border border-[#c8c8c8] text-center text-[14px] font-bold leading-[14px] ${
+                  isDividerHover ? 'bg-gray-200' : 'bg-white'
+                }`}
               >
                 =
               </VerticalResizeSeparator>
             </div>
 
-            <div style={{ border: '1px solid #d6d6d6', background: '#fff', overflow: 'auto' }}>
+            <div className="overflow-auto border border-[#d6d6d6] bg-white">
               <TabularHeadingsTable
                 columns={netColumnCount}
                 visibleRows={TABULAR_WIZARD_CAST_A_NET_ROWS}
@@ -154,8 +129,16 @@ export function TabularProjectNetStep(props: TabularProjectNetStepProps) {
           </div>
         </div>
       ) : (
-        <div style={{ padding: 12, fontSize: 13 }}>{t('Select a reference canvas to use Cast a net.')}</div>
+        <div className="p-3 text-[13px]">{t('Select a reference canvas to use Cast a net.')}</div>
       )}
+      <ButtonRow>
+        <Button type="button" onClick={onCancel}>
+          {t('Cancel')}
+        </Button>
+        <Button $primary onClick={onSave}>
+          {t('Save and continue')}
+        </Button>
+      </ButtonRow>
     </>
   );
 }

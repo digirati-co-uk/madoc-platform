@@ -6,82 +6,69 @@ interface TabularWizardHeaderProps {
   t: TFunction;
   steps: TabularWizardStep[];
   currentStep: number;
+  maxReachedStep: number;
   completeStepId: number;
   isProjectCompleted: boolean;
   onStepClick: (id: number, isDisabled: boolean) => void;
 }
 
 export function TabularWizardHeader(props: TabularWizardHeaderProps) {
-  const { t, steps, currentStep, completeStepId, isProjectCompleted, onStepClick } = props;
+  const { t, steps, currentStep, maxReachedStep, completeStepId, isProjectCompleted, onStepClick } = props;
 
   return (
-    <div
-      style={{
-        background: '#273668',
-        color: '#fff',
-        padding: '18px 32px 14px',
-        marginBottom: 24,
-        borderTop: '1px solid rgba(255,255,255,0.08)',
-        borderBottom: '1px solid rgba(0,0,0,0.25)',
-      }}
-    >
-      <div style={{ display: 'flex', alignItems: 'center', gap: 14, overflowX: 'auto' }}>
+    <div className="mb-6 border-b border-black/25 border-t border-white/10 bg-[#273668] px-8 pb-[14px] pt-[18px] text-white">
+      <div className="flex items-center gap-[14px] overflow-x-auto">
         {steps.map((item, index) => {
+          const isVisited = maxReachedStep >= item.id || (item.id === completeStepId && isProjectCompleted);
           const isDone = currentStep > item.id || (item.id === completeStepId && isProjectCompleted);
           const isActive = currentStep === item.id || (item.id === completeStepId && isProjectCompleted);
           const isLockedByCompletion = isProjectCompleted && item.id !== completeStepId;
-          const isDisabled = !!item.disabled || isLockedByCompletion;
-          const circleStyle: React.CSSProperties = {
-            height: 24,
-            width: 24,
-            borderRadius: '50%',
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            background: isDone ? '#8DA0FF' : isActive ? '#ffffff' : '#cdd4ea',
-            color: isDone ? '#fff' : isActive ? '#273668' : '#273668',
-            border: isActive && !isDone ? '2px solid #8DA0FF' : '2px solid transparent',
-            fontSize: 12,
-            fontWeight: 600,
-            flex: '0 0 auto',
-            opacity: isDisabled ? 0.5 : 1,
-          };
-          const lineStyle: React.CSSProperties = {
-            height: 2,
-            width: 44,
-            background: isDone ? '#8DA0FF' : '#4a5b9e',
-            opacity: isDisabled ? 0.4 : 1,
-            flex: '0 0 auto',
-          };
+          const isDisabled = !!item.disabled || isLockedByCompletion || !isVisited;
+          const stepButtonClasses = [
+            'flex items-center gap-3 border text-left transition-colors',
+            isActive
+              ? 'rounded-md border-[#8DA0FF] bg-white/10 px-2 py-1'
+              : 'border-transparent bg-transparent px-0 py-0',
+            isDisabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer opacity-100',
+          ].join(' ');
+          const circleClasses = [
+            'inline-flex h-6 w-6 flex-none items-center justify-center rounded-full text-xs font-semibold',
+            isDone ? 'bg-[#8DA0FF] text-white' : '',
+            !isDone && isActive
+              ? 'border-2 border-[#8DA0FF] bg-white text-[#273668] shadow-[0_0_0_2px_rgba(141,160,255,0.35)]'
+              : '',
+            !isDone && !isActive ? 'bg-[#cdd4ea] text-[#273668]' : '',
+          ].join(' ');
+          const connectorClasses = [
+            'h-0.5 w-11 flex-none',
+            isDone ? 'bg-[#8DA0FF]' : 'bg-[#4a5b9e]',
+            isDisabled ? 'opacity-40' : 'opacity-100',
+          ].join(' ');
 
           return (
             <React.Fragment key={item.id}>
               <button
                 type="button"
                 onClick={() => onStepClick(item.id, isDisabled)}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 12,
-                  background: 'transparent',
-                  border: 'none',
-                  color: 'inherit',
-                  cursor: isDisabled ? 'not-allowed' : 'pointer',
-                  padding: 0,
-                  textAlign: 'left',
-                }}
+                aria-current={isActive ? 'step' : undefined}
+                className={stepButtonClasses}
               >
-                <span style={circleStyle}>{isDone ? '✓' : ''}</span>
-                <span style={{ display: 'grid', gap: 2 }}>
-                  <span style={{ fontSize: 16, fontWeight: isActive ? 600 : 500 }}>{item.label}</span>
-                  {isDone && !isDisabled && item.id !== completeStepId ? (
-                    <span style={{ fontSize: 12, textDecoration: 'underline', opacity: 0.9 }}>
-                      {t('Click to edit')}
+                <span className={circleClasses}>{isDone ? '✓' : ''}</span>
+                <span className="grid gap-0.5">
+                  <span className={`text-base ${isActive ? 'font-semibold text-white' : 'font-medium text-white/95'}`}>
+                    {item.label}
+                  </span>
+                  {isActive ? (
+                    <span className="text-[11px] uppercase tracking-[0.04em] text-[#b9c8ff]">{t('Current step')}</span>
+                  ) : null}
+                  {!isActive && !isDisabled && item.id !== completeStepId ? (
+                    <span className="text-xs underline opacity-90">
+                      {isDone ? t('Click to edit') : t('Click to return')}
                     </span>
                   ) : null}
                 </span>
               </button>
-              {index < steps.length - 1 ? <span style={lineStyle} /> : null}
+              {index < steps.length - 1 ? <span className={connectorClasses} /> : null}
             </React.Fragment>
           );
         })}

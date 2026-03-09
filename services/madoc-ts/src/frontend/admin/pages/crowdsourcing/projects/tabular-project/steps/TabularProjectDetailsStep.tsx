@@ -1,7 +1,7 @@
 import type { InternationalString } from '@iiif/presentation-3';
 import type { TFunction } from 'i18next';
-import { Input, InputContainer, InputLabel } from '../../../../../../shared/form/Input';
-import { Button, ButtonRow } from '../../../../../../shared/navigation/Button';
+import { Input, InputContainer, InputLabel } from '@/frontend/shared/form/Input';
+import { Button, ButtonRow } from '@/frontend/shared/navigation/Button';
 import { MetadataEditor } from '../../../../../molecules/MetadataEditor';
 
 interface TabularProjectDetailsStepProps {
@@ -17,6 +17,7 @@ interface TabularProjectDetailsStepProps {
   onSlugFocus: () => void;
   onSlugChange: (value: string) => void;
   onSave: () => void;
+  onCancel: () => void;
 }
 
 export function TabularProjectDetailsStep(props: TabularProjectDetailsStepProps) {
@@ -33,13 +34,34 @@ export function TabularProjectDetailsStep(props: TabularProjectDetailsStepProps)
     onSlugFocus,
     onSlugChange,
     onSave,
+    onCancel,
   } = props;
+
+  const labelUsage = t('Used as the project title shown in listings and on the project page.');
+  const descriptionUsage = t('Used as the project summary shown to contributors before they start work.');
+  const slugUsage = t('Used in the project URL. Keep it short and unique for this site.');
+
+  const TooltipHint = (tooltipProps: { text: string }) => {
+    return (
+      <span
+        title={tooltipProps.text}
+        aria-label={tooltipProps.text}
+        className="ml-1 inline-flex h-4 w-4 cursor-help items-center justify-center rounded-full border border-slate-400 text-[11px] leading-none text-slate-600"
+      >
+        ?
+      </span>
+    );
+  };
 
   return (
     <>
-      <div style={{ fontSize: 16, fontWeight: 500, marginBottom: 12 }}>{t('Project details')}</div>
+      <h2 className="text-2xl font-light mb-1">{t('Project details')}</h2>
+      <div className="text-xs text-slate-700 mb-1">* {t('Required fields')}</div>
+      <hr className="mb-4" />
       <InputContainer wide>
-        <InputLabel htmlFor="label">{t('Label')}</InputLabel>
+        <InputLabel htmlFor="label">
+          {t('Label')} * <TooltipHint text={labelUsage} />
+        </InputLabel>
         <MetadataEditor
           fluid
           id="label"
@@ -51,32 +73,41 @@ export function TabularProjectDetailsStep(props: TabularProjectDetailsStepProps)
       </InputContainer>
 
       <InputContainer wide>
-        <InputLabel htmlFor="summary">{t('Description')}</InputLabel>
+        <InputLabel htmlFor="description">
+          {t('Description')} * <TooltipHint text={descriptionUsage} />
+        </InputLabel>
         <MetadataEditor
           fluid
-          id="summary"
+          id="description"
           fields={summary}
           onSave={output => onSummaryChange(output.toInternationalString())}
           availableLanguages={availableLanguages}
-          metadataKey="summary"
+          metadataKey="description"
           defaultLocale={defaultLocale}
         />
       </InputContainer>
 
       <InputContainer wide>
-        <InputLabel htmlFor="slug">{t('Slug')}</InputLabel>
+        <InputLabel htmlFor="slug">
+          {t('Slug')} * <TooltipHint text={slugUsage} />
+        </InputLabel>
         <Input
           type="text"
           value={slug}
-          onFocus={onSlugFocus}
-          onChange={event => onSlugChange(event.currentTarget.value)}
+          onChange={event => {
+            onSlugFocus();
+            onSlugChange(event.currentTarget.value);
+          }}
           id="slug"
         />
       </InputContainer>
 
       <ButtonRow>
+        <Button type="button" onClick={onCancel}>
+          {t('Cancel')}
+        </Button>
         <Button $primary disabled={!detailsDone} onClick={onSave}>
-          {t('Save')}
+          {t('Save and continue')}
         </Button>
       </ButtonRow>
     </>

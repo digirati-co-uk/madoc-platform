@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { useDefaultLocale, useSite, useSupportedLocales } from '@/frontend/shared/hooks/use-site';
 import { useApi } from '@/frontend/shared/hooks/use-api';
 import { WidePage } from '@/frontend/shared/layout/WidePage';
@@ -29,9 +30,12 @@ const CastANetLazy = madocLazy(async () => {
   return { default: imported.CastANet };
 });
 
+const LEAVE_SETUP_MESSAGE = 'are you sure you want to leave? Your tabular project will not be saved.';
+
 export const TabularProjectWizard: React.FC = () => {
   const api = useApi();
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const defaultLocale = useDefaultLocale();
   const availableLanguages = useSupportedLocales();
   const site = useSite();
@@ -43,6 +47,109 @@ export const TabularProjectWizard: React.FC = () => {
     t,
   });
   const { stepIds } = controller;
+  const shouldWarnOnLeave = !controller.isProjectCompleted;
+  const isUndoingPopNavigationRef = React.useRef(false);
+
+  const confirmLeaveSetup = React.useCallback(() => window.confirm(LEAVE_SETUP_MESSAGE), []);
+
+  const cancelSetup = React.useCallback(() => {
+    if (!shouldWarnOnLeave || confirmLeaveSetup()) {
+      navigate('/projects/create');
+    }
+  }, [confirmLeaveSetup, navigate, shouldWarnOnLeave]);
+
+  React.useEffect(() => {
+    if (!shouldWarnOnLeave) {
+      return;
+    }
+    const onBeforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = LEAVE_SETUP_MESSAGE;
+    };
+    window.addEventListener('beforeunload', onBeforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', onBeforeUnload);
+    };
+  }, [shouldWarnOnLeave]);
+
+  React.useEffect(() => {
+    if (!shouldWarnOnLeave) {
+      return;
+    }
+
+    const onDocumentClick = (event: MouseEvent) => {
+      if (event.defaultPrevented) {
+        return;
+      }
+      if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+        return;
+      }
+
+      const target = event.target;
+      if (!(target instanceof Element)) {
+        return;
+      }
+
+      const anchor = target.closest('a[href]');
+      if (!(anchor instanceof HTMLAnchorElement)) {
+        return;
+      }
+
+      const href = anchor.getAttribute('href');
+      if (!href || href.startsWith('#')) {
+        return;
+      }
+      if (anchor.target && anchor.target.toLowerCase() !== '_self') {
+        return;
+      }
+      if (anchor.hasAttribute('download')) {
+        return;
+      }
+
+      const currentUrl = new URL(window.location.href);
+      const nextUrl = new URL(anchor.href, window.location.href);
+      const isSameDestination =
+        currentUrl.origin === nextUrl.origin &&
+        currentUrl.pathname === nextUrl.pathname &&
+        currentUrl.search === nextUrl.search &&
+        currentUrl.hash === nextUrl.hash;
+      if (isSameDestination) {
+        return;
+      }
+
+      if (!confirmLeaveSetup()) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+    };
+
+    document.addEventListener('click', onDocumentClick, true);
+    return () => {
+      document.removeEventListener('click', onDocumentClick, true);
+    };
+  }, [confirmLeaveSetup, shouldWarnOnLeave]);
+
+  React.useEffect(() => {
+    if (!shouldWarnOnLeave) {
+      return;
+    }
+
+    const onPopState = () => {
+      if (isUndoingPopNavigationRef.current) {
+        isUndoingPopNavigationRef.current = false;
+        return;
+      }
+      if (!confirmLeaveSetup()) {
+        isUndoingPopNavigationRef.current = true;
+        window.history.go(1);
+      }
+    };
+
+    window.addEventListener('popstate', onPopState);
+    return () => {
+      window.removeEventListener('popstate', onPopState);
+    };
+  }, [confirmLeaveSetup, shouldWarnOnLeave]);
 
   React.useEffect(() => {
     // Warm these chunks so the wizard step transition is deterministic.
@@ -53,14 +160,7 @@ export const TabularProjectWizard: React.FC = () => {
   const iiifBrowser = (
     <TabularIiifBrowserModal
       t={t}
-      iiifMadocSearchInput={controller.iiifMadocSearchInput}
-      onIiifMadocSearchInputChange={controller.setIiifMadocSearchInput}
-      isLoadingIiifHome={controller.isLoadingIiifHome}
-      onSearchMadocResources={controller.searchMadocResources}
-      onClearMadocSearch={controller.clearMadocSearch}
-      iiifHomeStats={controller.iiifHomeStats}
       iiifHomeLoadError={controller.iiifHomeLoadError}
-      iiifBrowserModalError={controller.iiifBrowserModalError}
       browserVersion={controller.iiifBrowserVersion}
       navigationOptions={controller.navigationOptions}
       historyOptions={controller.historyOptions}
@@ -79,8 +179,10 @@ export const TabularProjectWizard: React.FC = () => {
           { label: t('Create project'), link: '/projects/create' },
           { label: t('Tabular project'), link: '/projects/create/tabular-project', active: true },
         ]}
-        title={t('Create tabular project')}
-        subtitle={t('Build a tabular model project')}
+        title={t('Create tabular data project')}
+        subtitle={t(
+          'Build a tabular capture model to support transcribing data for your project, using a table structure'
+        )}
         noMargin
       />
 
@@ -88,6 +190,7 @@ export const TabularProjectWizard: React.FC = () => {
         t={t}
         steps={controller.steps}
         currentStep={controller.step}
+        maxReachedStep={controller.maxReachedStep}
         completeStepId={stepIds.complete}
         isProjectCompleted={controller.isProjectCompleted}
         onStepClick={controller.goToStep}
@@ -108,6 +211,7 @@ export const TabularProjectWizard: React.FC = () => {
             onSlugFocus={controller.disableAutoSlug}
             onSlugChange={controller.setSlug}
             onSave={controller.saveDetailsStep}
+            onCancel={cancelSetup}
           />
         ) : null}
 
@@ -118,6 +222,8 @@ export const TabularProjectWizard: React.FC = () => {
             hasImage={controller.hasImage}
             manifestId={controller.manifestId}
             canvasId={controller.canvasId}
+            selectedCanvasLabel={controller.selectedCanvasLabel}
+            selectedCanvasThumbnail={controller.selectedCanvasThumbnail}
             iiifBrowserSelection={controller.iiifBrowserSelection}
             iiifError={controller.iiifError}
             iiifBrowser={iiifBrowser}
@@ -125,6 +231,7 @@ export const TabularProjectWizard: React.FC = () => {
             onClearImageSelection={controller.clearImageSelection}
             onRegisterBrowserClose={controller.setBrowserCloseHandler}
             onSave={controller.saveSettingsStep}
+            onCancel={cancelSetup}
           />
         ) : null}
 
@@ -139,6 +246,7 @@ export const TabularProjectWizard: React.FC = () => {
             onTabularModelChange={controller.setTabularModel}
             onModelChange={controller.onModelChange}
             onSave={controller.moveNextFromModel}
+            onCancel={cancelSetup}
             DefineTabularModelComponent={DefineTabularModelLazy}
           />
         ) : null}
@@ -162,6 +270,7 @@ export const TabularProjectWizard: React.FC = () => {
             onRegisterBrowserClose={controller.setBrowserCloseHandler}
             onStartResize={controller.startCastANetResize}
             onDividerHoverChange={controller.setIsCastANetDividerHover}
+            onCancel={cancelSetup}
             CastANetComponent={CastANetLazy}
           />
         ) : null}
@@ -173,7 +282,6 @@ export const TabularProjectWizard: React.FC = () => {
             shareCopied={controller.shareCopied}
             canTrackPreviewOnCanvas={controller.canTrackPreviewOnCanvas}
             hasImage={controller.hasImage}
-            enableZoomTracking={controller.enableZoomTracking}
             manifestId={controller.manifestId}
             canvasId={controller.canvasId}
             netConfig={controller.netConfig}
@@ -198,6 +306,7 @@ export const TabularProjectWizard: React.FC = () => {
             onPreviewActiveCellChange={controller.setPreviewActiveCell}
             onAddRow={controller.addPreviewRow}
             onSave={controller.savePreviewStep}
+            onCancel={cancelSetup}
             CastANetComponent={CastANetLazy}
           />
         ) : null}
