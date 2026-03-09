@@ -2,22 +2,12 @@ import React from 'react';
 import type { TFunction } from 'i18next';
 import type { IIIFBrowserProps } from 'iiif-browser';
 import { ErrorMessage } from '../../../../../../shared/callouts/ErrorMessage';
-import { Input } from '../../../../../../shared/form/Input';
-import { Button, TinyButton } from '../../../../../../shared/navigation/Button';
 import { BrowserComponent } from '../../../../../../shared/utility/browser-component';
-import type { IiifHomeStats } from '../types';
 import { IsolatedIIIFBrowser } from './IsolatedIIIFBrowser';
 
 interface TabularIiifBrowserModalProps {
   t: TFunction;
-  iiifMadocSearchInput: string;
-  onIiifMadocSearchInputChange: (value: string) => void;
-  isLoadingIiifHome: boolean;
-  onSearchMadocResources: () => void;
-  onClearMadocSearch: () => void;
-  iiifHomeStats: IiifHomeStats;
   iiifHomeLoadError: string | null;
-  iiifBrowserModalError: string | null;
   browserVersion: number;
   navigationOptions: IIIFBrowserProps['navigation'];
   historyOptions: IIIFBrowserProps['history'];
@@ -29,14 +19,7 @@ interface TabularIiifBrowserModalProps {
 export function TabularIiifBrowserModal(props: TabularIiifBrowserModalProps) {
   const {
     t,
-    iiifMadocSearchInput,
-    onIiifMadocSearchInputChange,
-    isLoadingIiifHome,
-    onSearchMadocResources,
-    onClearMadocSearch,
-    iiifHomeStats,
     iiifHomeLoadError,
-    iiifBrowserModalError,
     browserVersion,
     navigationOptions,
     historyOptions,
@@ -74,57 +57,31 @@ export function TabularIiifBrowserModal(props: TabularIiifBrowserModalProps) {
             bottom: 0;
             z-index: 35;
           }
+
+          .tabular-iiif-browser-external .p-2.border-t.bg-gray-100.flex.gap-2.relative.justify-between.min-h-16.items-center.z-30 button {
+            color: #ffffff;
+          }
+
+          .tabular-iiif-browser-external .p-2.border-t.bg-gray-100.flex.gap-2.relative.justify-between.min-h-16.items-center.z-30 button:disabled {
+            color: #cbd5e1;
+          }
         `}
       </style>
       <div className="mb-3 grid gap-1.5 rounded border border-[#d7dbe8] bg-[#eef3ff] p-2.5">
         <div className="text-xs font-semibold text-[#1f2d5a]">{t('How to find the right canvas')}</div>
         <div className="text-xs text-[#1f2d5a]/90">
-          {t('1. Search Madoc resources by title using the search bar below.')}
+          {t('1. Use the browser bar to search in Madoc by title or keyword.')}
         </div>
         <div className="text-xs text-[#1f2d5a]/90">
-          {t('2. In the browser, double-click collections or manifests to navigate.')}
+          {t('2. Use the browser bar to paste a IIIF URI for items outwith Madoc.')}
         </div>
         <div className="text-xs text-[#1f2d5a]/90">
-          {t('3. Click a canvas, then use “Use selected canvas” to confirm your choice.')}
+          {t('3. Double-click collections or manifests to navigate, then select a canvas.')}
         </div>
-      </div>
-      <div className="mb-3 grid gap-2.5 rounded border border-[#d7dbe8] bg-[#f8fafc] p-2.5">
-        <div className="grid gap-2">
-          <div className="text-xs font-semibold">{t('Search Madoc manifests and collections')}</div>
-          <div className="grid grid-cols-[1fr_auto_auto] gap-2">
-            <Input
-              type="text"
-              value={iiifMadocSearchInput}
-              onChange={event => onIiifMadocSearchInputChange(event.currentTarget.value)}
-              onKeyDown={event => {
-                if (event.key === 'Enter') {
-                  event.preventDefault();
-                  onSearchMadocResources();
-                }
-              }}
-              placeholder={t('Search by collection or manifest title')}
-            />
-            <Button type="button" onClick={onSearchMadocResources} disabled={isLoadingIiifHome}>
-              {isLoadingIiifHome ? t('Loading...') : t('Search')}
-            </Button>
-            <TinyButton type="button" onClick={onClearMadocSearch} disabled={isLoadingIiifHome}>
-              {t('Clear')}
-            </TinyButton>
-          </div>
-          <div className="text-xs opacity-80">{t('Tip: clear search to return to the default Madoc browse view.')}</div>
-          <div className="text-xs opacity-80">
-            {isLoadingIiifHome
-              ? t('Loading Madoc resources...')
-              : t('Showing {{collections}} collections and {{manifests}} manifests', {
-                  collections: iiifHomeStats.collections,
-                  manifests: iiifHomeStats.manifests,
-                })}
-          </div>
-        </div>
+        <div className="text-xs text-[#1f2d5a]/90">{t('4. Click "Use selected canvas" to confirm your choice.')}</div>
       </div>
 
       {iiifHomeLoadError ? <ErrorMessage>{iiifHomeLoadError}</ErrorMessage> : null}
-      {iiifBrowserModalError ? <ErrorMessage>{iiifBrowserModalError}</ErrorMessage> : null}
 
       {iiifPickerMode === 'external' ? (
         <div className="tabular-iiif-browser-external relative">

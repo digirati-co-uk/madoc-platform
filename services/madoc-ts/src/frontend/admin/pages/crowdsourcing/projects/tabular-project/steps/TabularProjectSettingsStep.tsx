@@ -1,9 +1,9 @@
-import type { ReactNode } from 'react';
+import { useCallback, useEffect, useState, type ReactNode } from 'react';
 import type { TFunction } from 'i18next';
 import { ErrorMessage } from '@/frontend/shared/callouts/ErrorMessage';
-import { SuccessMessage } from '@/frontend/shared/callouts/SuccessMessage';
 import { Button, ButtonRow, TinyButton } from '@/frontend/shared/navigation/Button';
 import { ModalButton } from '@/frontend/shared/components/Modal';
+import { LinkIcon } from '@/frontend/shared/icons/LinkIcon';
 
 interface TabularProjectSettingsStepProps {
   t: TFunction;
@@ -23,31 +23,74 @@ interface TabularProjectSettingsStepProps {
   onCancel: () => void;
 }
 
-function UriField(props: { label: string; value?: string; linkLabel: string; t: TFunction }) {
-  const { label, value, linkLabel, t } = props;
+const URI_COPY_TIMEOUT = 1800;
+
+function compactUri(value: string) {
+  const startLength = 30;
+  const endLength = 20;
+
+  if (value.length <= startLength + endLength + 3) {
+    return value;
+  }
+
+  return `${value.slice(0, startLength)}...${value.slice(-endLength)}`;
+}
+
+function UriField(props: { label: string; value?: string; t: TFunction }) {
+  const { label, value, t } = props;
+  const [copyState, setCopyState] = useState<'idle' | 'copied' | 'error'>('idle');
+
+  useEffect(() => {
+    if (copyState !== 'copied' || typeof window === 'undefined') {
+      return;
+    }
+
+    const timeout = window.setTimeout(() => setCopyState('idle'), URI_COPY_TIMEOUT);
+    return () => window.clearTimeout(timeout);
+  }, [copyState]);
+
+  const onCopy = useCallback(async () => {
+    if (!value) {
+      return;
+    }
+
+    if (typeof navigator === 'undefined' || !navigator.clipboard?.writeText) {
+      setCopyState('error');
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopyState('copied');
+    } catch {
+      setCopyState('error');
+    }
+  }, [value]);
+
   if (!value) {
     return null;
   }
 
-  const canOpen = /^https?:\/\//i.test(value);
-
   return (
     <div className="grid gap-1">
-      <div className="text-xs font-semibold text-[#1f2d5a]">{label}</div>
-      <input
-        type="text"
-        value={value}
-        readOnly
-        onFocus={event => event.currentTarget.select()}
-        className="w-full rounded border border-[#cfd6e5] bg-white px-[10px] py-2 text-xs text-[#1f2d5a]"
-      />
-      {canOpen ? (
-        <a href={value} target="_blank" rel="noreferrer" className="text-xs">
-          {linkLabel}
-        </a>
-      ) : (
-        <div className="text-xs text-gray-600">{t('Copy this URI value to use it elsewhere.')}</div>
-      )}
+      <div className="text-[11px] font-semibold uppercase tracking-wide text-[#1f2d5a]/80">{label}</div>
+      <button
+        type="button"
+        onClick={onCopy}
+        title={value}
+        aria-label={t('Copy URI')}
+        className="group flex min-h-[30px] w-full items-center gap-2 rounded border border-[#cfd6e5] bg-white/95 px-2 py-1 text-left text-[11px] text-[#1f2d5a] hover:bg-white"
+      >
+        <span className="min-w-0 flex-1 truncate">{compactUri(value)}</span>
+        <span className="inline-flex h-5 w-5 items-center justify-center rounded border border-[#d4d6df] bg-white text-[#36507f] group-hover:bg-[#edf2ff]">
+          <LinkIcon className="text-[12px]" />
+        </span>
+      </button>
+      {copyState === 'copied' ? (
+        <div className="text-[10px] text-[#166534]">{t('Copied to clipboard')}</div>
+      ) : copyState === 'error' ? (
+        <div className="text-[10px] text-[#b91c1c]">{t('Clipboard unavailable. Copy manually.')}</div>
+      ) : null}
     </div>
   );
 }
@@ -113,7 +156,7 @@ export function TabularProjectSettingsStep(props: TabularProjectSettingsStepProp
         </div>
 
         {hasImage ? (
-          <SuccessMessage>
+          <div className="rounded-md border border-green-200 bg-green-50/80 p-3 text-sm mb-2">
             <div className="grid gap-3">
               <div className="grid gap-3 md:grid-cols-[7.5rem_minmax(0,1fr)] md:items-start">
                 <div className="h-[7.5rem] w-[7.5rem] overflow-hidden rounded border border-[#cfd6e5] bg-white">
@@ -144,8 +187,8 @@ export function TabularProjectSettingsStep(props: TabularProjectSettingsStepProp
                   <div className="text-sm font-semibold text-[#1f2d5a]">
                     {selectedCanvasLabel || t('Selected canvas')}
                   </div>
-                  <UriField label={t('Canvas URI')} value={canvasId} linkLabel={t('Open canvas URI')} t={t} />
-                  <UriField label={t('Manifest URI')} value={manifestId} linkLabel={t('Open manifest URI')} t={t} />
+                  <UriField label={t('Canvas URI')} value={canvasId} t={t} />
+                  <UriField label={t('Manifest URI')} value={manifestId} t={t} />
                 </div>
               </div>
               <div className="text-xs text-gray-700">
@@ -155,7 +198,7 @@ export function TabularProjectSettingsStep(props: TabularProjectSettingsStepProp
                 <TinyButton onClick={onClearImageSelection}>{t('Clear selection')}</TinyButton>
               </div>
             </div>
-          </SuccessMessage>
+          </div>
         ) : null}
 
         {!hasImage && iiifBrowserSelection ? <div className="text-xs text-gray-600">{iiifBrowserSelection}</div> : null}
@@ -178,11 +221,11 @@ export function TabularProjectSettingsStep(props: TabularProjectSettingsStepProp
 
           {hasImage ? <span className="text-sm text-gray-600">{t('Canvas selected')}</span> : null}
         </div>
-        <div className="pl-0.5 min-h-[2.5rem] text-xs text-gray-600">
-          <span className={showZoomTrackingHint ? '' : 'invisible'} aria-hidden={!showZoomTrackingHint}>
-            {zoomTrackingHint}
-          </span>
-        </div>
+        {showZoomTrackingHint && (
+          <div className="rounded bg-[#dfe5ff] p-1 text-xs mt-1 text-[#1f2d5a] w-96">
+            <span aria-hidden={!showZoomTrackingHint}>{zoomTrackingHint}</span>
+          </div>
+        )}
       </div>
 
       <ButtonRow>

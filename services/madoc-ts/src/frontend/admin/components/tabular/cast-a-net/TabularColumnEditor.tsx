@@ -1,5 +1,5 @@
 import React, { useContext, useMemo } from 'react';
-import type { TabularColumnEditorValue, TabularFieldPlugin, TabularFieldType } from './types';
+import type { TabularColumnEditorValue, TabularFieldPlugin } from './types';
 import { PluginContext } from '../../../../shared/capture-models/plugin-api/context';
 import { Segment } from '../../../../shared/capture-models/editor/atoms/Segment';
 import { Dropdown } from '../../../../shared/capture-models/editor/atoms/Dropdown';
@@ -10,6 +10,8 @@ import {
 } from '../../../../shared/capture-models/editor/atoms/StyledForm';
 import { TinyButton } from '@/frontend/shared/navigation/Button';
 import { DeleteForeverIcon } from '@/frontend/shared/icons/DeleteForeverIcon';
+
+const TEXT_FIELD_TYPE = 'text-field';
 
 export function TabularColumnEditor(props: {
   index: number;
@@ -29,31 +31,15 @@ export function TabularColumnEditor(props: {
     [fields]
   );
 
-  const selectedType = useMemo(() => {
-    if (!value.fieldType) return undefined;
-    return availableFieldTypes.find(field => field.type === value.fieldType);
-  }, [availableFieldTypes, value.fieldType]);
-
-  const typeOptions = useMemo(
-    () =>
-      availableFieldTypes.map(field => ({
-        text: field.label,
-        value: field.type,
-        label: field.type,
-      })),
+  const textFieldType = useMemo(
+    () => availableFieldTypes.find(field => field.type === TEXT_FIELD_TYPE),
     [availableFieldTypes]
   );
-  const hasSelectedType = Boolean(value.fieldType && typeOptions.find(option => option.value === value.fieldType));
-  const typeLabel = selectedType?.label ?? value.fieldType ?? 'Select field type';
-  const dropdownOptions = hasSelectedType
-    ? [{ text: 'Select field type', value: '' }, ...typeOptions]
-    : value.fieldType
-      ? [
-          { text: 'Select field type', value: '' },
-          { text: value.fieldType, value: value.fieldType, label: value.fieldType },
-          ...typeOptions,
-        ]
-      : [{ text: 'Select field type', value: '' }, ...typeOptions];
+  const typeLabel = textFieldType?.label ?? 'Text';
+  const dropdownOptions = useMemo(
+    () => [{ text: typeLabel, value: TEXT_FIELD_TYPE, label: TEXT_FIELD_TYPE }],
+    [typeLabel]
+  );
 
   return (
     <Segment style={{ borderTopColor: 'lightcoral' }}>
@@ -84,19 +70,14 @@ export function TabularColumnEditor(props: {
           <StyledFormLabel>Field type *</StyledFormLabel>
           <div style={{ width: '100%', maxWidth: '100%', minWidth: 0, overflow: 'hidden' }}>
             <Dropdown
-              value={value.fieldType ?? ''}
+              value={TEXT_FIELD_TYPE}
               placeholder={typeLabel}
               options={dropdownOptions}
-              onChange={(next: any) =>
-                onChange({ ...value, fieldType: (next || undefined) as TabularFieldType | undefined })
-              }
-              disabled={disabled || typeOptions.length === 0}
+              onChange={() => undefined}
+              disabled
             />
             <div style={{ marginTop: 6, fontSize: 12, opacity: 0.75 }}>
-              {selectedType?.description ??
-                (value.fieldType
-                  ? `Selected type: ${value.fieldType}`
-                  : 'Pick a type to control how data entry will work. Required before saving model.')}
+              {textFieldType?.description ?? 'Field type is fixed to Text for tabular projects.'}
             </div>
           </div>
         </div>

@@ -95,8 +95,8 @@ export function DefineTabularModel(props: {
   );
 
   const safeFieldTypes = useMemo(
-    () => Array.from({ length: safeColumns }, (_, i) => value.fieldTypes?.[i] ?? defaultFieldType),
-    [safeColumns, value.fieldTypes, defaultFieldType]
+    () => Array.from({ length: safeColumns }, () => defaultFieldType),
+    [safeColumns, defaultFieldType]
   );
 
   const safeHelpText = useMemo(
@@ -224,7 +224,7 @@ export function DefineTabularModel(props: {
     const helpText = safeHelpText.slice();
 
     headings[index] = next.heading;
-    fieldTypes[index] = next.fieldType ?? defaultFieldType;
+    fieldTypes[index] = defaultFieldType;
     helpText[index] = next.helpText;
 
     onChange({

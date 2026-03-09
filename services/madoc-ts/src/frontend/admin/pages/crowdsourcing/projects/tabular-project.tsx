@@ -160,14 +160,7 @@ export const TabularProjectWizard: React.FC = () => {
   const iiifBrowser = (
     <TabularIiifBrowserModal
       t={t}
-      iiifMadocSearchInput={controller.iiifMadocSearchInput}
-      onIiifMadocSearchInputChange={controller.setIiifMadocSearchInput}
-      isLoadingIiifHome={controller.isLoadingIiifHome}
-      onSearchMadocResources={controller.searchMadocResources}
-      onClearMadocSearch={controller.clearMadocSearch}
-      iiifHomeStats={controller.iiifHomeStats}
       iiifHomeLoadError={controller.iiifHomeLoadError}
-      iiifBrowserModalError={controller.iiifBrowserModalError}
       browserVersion={controller.iiifBrowserVersion}
       navigationOptions={controller.navigationOptions}
       historyOptions={controller.historyOptions}

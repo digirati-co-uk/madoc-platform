@@ -32,19 +32,16 @@ import type {
 import {
   clampToRange,
   createIiifHomeHistoryItem,
-  getIiifSelectionLabel,
-  getIiifSelectionThumbnail,
-  getPreferredIntlValue,
   createMadocHomeCollection,
   decodeOutlinePayload,
   encodeOutlinePayload,
   getErrorMessage,
+  getIiifSelectionLabel,
+  getIiifSelectionThumbnail,
+  getPreferredIntlValue,
   hasIntlValue,
-  internationalStringToSearchValue,
-  loadingRouteForId,
   looksLikeManifestReference,
   netConfigFromSharedStructure,
-  normalizeIiifInputUrl,
   normalizeLegacyIiifKeys,
   resolveIiifSelectionIds,
   tabularModelValueFromSharedPayload,
@@ -120,14 +117,8 @@ export function useTabularProjectController(options: UseTabularProjectController
 
   const [iiifError, setIiifError] = useState<string | null>(null);
   const [iiifBrowserSelection, setIiifBrowserSelection] = useState<string | null>(null);
-  const [iiifMadocSearchInput, setIiifMadocSearchInput] = useState('');
-  const [iiifMadocSearchQuery, setIiifMadocSearchQuery] = useState('');
-  const [iiifPasteUrl, setIiifPasteUrl] = useState('');
-  const [iiifStartupUrl, setIiifStartupUrl] = useState<string | null>(null);
   const [iiifHomeCollection, setIiifHomeCollection] = useState<IIIFCollection | null>(null);
-  const [isLoadingIiifHome, setIsLoadingIiifHome] = useState(false);
   const [iiifHomeLoadError, setIiifHomeLoadError] = useState<string | null>(null);
-  const [iiifBrowserModalError, setIiifBrowserModalError] = useState<string | null>(null);
   const [iiifBrowserVersion, setIiifBrowserVersion] = useState(0);
 
   const [tabularModel, setTabularModel] = useState<DefineTabularModelValue>({
@@ -288,11 +279,8 @@ export function useTabularProjectController(options: UseTabularProjectController
     }
 
     let cancelled = false;
-    const query = iiifMadocSearchQuery.trim();
-    const queryLowerCase = query.toLowerCase();
 
     const loadMadocHomeResources = async () => {
-      setIsLoadingIiifHome(true);
       setIiifHomeLoadError(null);
 
       try {
@@ -318,7 +306,7 @@ export function useTabularProjectController(options: UseTabularProjectController
         let manifestTotalPages = 1;
 
         while (manifestPage <= manifestTotalPages && manifestPage <= MAX_MADOC_MANIFEST_HOME_PAGES) {
-          const response = await api.getManifests(manifestPage, { query: query || undefined });
+          const response = await api.getManifests(manifestPage);
           allManifests.push(
             ...response.manifests.map(manifest => ({
               id: manifest.id,
@@ -334,16 +322,9 @@ export function useTabularProjectController(options: UseTabularProjectController
           return;
         }
 
-        const filteredCollections = query
-          ? allCollections.filter(collection =>
-              internationalStringToSearchValue(collection.label).includes(queryLowerCase)
-            )
-          : allCollections;
-
         const nextHomeCollection = createMadocHomeCollection({
           siteSlug,
-          query,
-          collections: filteredCollections,
+          collections: allCollections,
           manifests: allManifests,
         });
 
@@ -357,10 +338,6 @@ export function useTabularProjectController(options: UseTabularProjectController
 
         setIiifHomeCollection(null);
         setIiifHomeLoadError(getErrorMessage(error, t('Unable to load Madoc manifests and collections.')));
-      } finally {
-        if (!cancelled) {
-          setIsLoadingIiifHome(false);
-        }
       }
     };
 
@@ -369,7 +346,7 @@ export function useTabularProjectController(options: UseTabularProjectController
     return () => {
       cancelled = true;
     };
-  }, [api, iiifMadocSearchQuery, siteSlug, t]);
+  }, [api, siteSlug, t]);
 
   useEffect(() => {
     if (didLoadSharedOutline || typeof window === 'undefined') {
@@ -665,31 +642,6 @@ export function useTabularProjectController(options: UseTabularProjectController
     [defaultLocale, siteSlug, t]
   );
 
-  const searchMadocResources = useCallback(() => {
-    setIiifBrowserModalError(null);
-    setIiifStartupUrl(null);
-    setIiifMadocSearchQuery(iiifMadocSearchInput.trim());
-  }, [iiifMadocSearchInput]);
-
-  const clearMadocSearch = useCallback(() => {
-    setIiifBrowserModalError(null);
-    setIiifStartupUrl(null);
-    setIiifMadocSearchInput('');
-    setIiifMadocSearchQuery('');
-  }, []);
-
-  const openIiifUrl = useCallback(() => {
-    const normalizedUrl = normalizeIiifInputUrl(iiifPasteUrl);
-    if (!normalizedUrl) {
-      setIiifBrowserModalError(t('Paste a valid IIIF URL to open.'));
-      return;
-    }
-
-    setIiifBrowserModalError(null);
-    setIiifStartupUrl(normalizedUrl);
-    setIiifBrowserVersion(version => version + 1);
-  }, [iiifPasteUrl, t]);
-
   const iiifHomeHistoryItem = useMemo(() => {
     if (!iiifHomeCollection) {
       return null;
@@ -718,18 +670,8 @@ export function useTabularProjectController(options: UseTabularProjectController
 
   const historyOptions: IIIFBrowserProps['history'] = useMemo(() => {
     const initialHistory: IiifHistoryItem[] = [];
-    const normalizedStartupUrl = iiifStartupUrl ? normalizeIiifInputUrl(iiifStartupUrl) : undefined;
     const madocApiRoot =
       typeof window !== 'undefined' && siteSlug ? `${window.location.origin}/s/${siteSlug}/madoc/api` : undefined;
-
-    if (normalizedStartupUrl) {
-      initialHistory.push({
-        url: normalizedStartupUrl,
-        route: loadingRouteForId(normalizedStartupUrl),
-        resource: null,
-        timestamp: new Date().toISOString(),
-      });
-    }
 
     if (iiifHomeHistoryItem) {
       initialHistory.push(iiifHomeHistoryItem);
@@ -758,7 +700,7 @@ export function useTabularProjectController(options: UseTabularProjectController
         return normalized.value;
       },
     };
-  }, [iiifHomeCollection, iiifHomeHistoryItem, iiifStartupUrl, siteSlug]);
+  }, [iiifHomeCollection, iiifHomeHistoryItem, siteSlug]);
 
   const rootCollection =
     typeof window !== 'undefined' && siteSlug
@@ -866,17 +808,6 @@ export function useTabularProjectController(options: UseTabularProjectController
     [onAddCanvas, t]
   );
 
-  const iiifHomeStats = useMemo(() => {
-    const items = (iiifHomeCollection?.items || []) as Array<{ type?: string }>;
-    const collections = items.filter(item => item?.type === 'Collection').length;
-    const manifests = items.filter(item => item?.type === 'Manifest').length;
-
-    return {
-      collections,
-      manifests,
-    };
-  }, [iiifHomeCollection]);
-
   const onModelChange = useCallback((res: TabularModelChange) => {
     setTabularPayload(res.payload);
     setIsModelValid(res.isValid);
@@ -979,17 +910,7 @@ export function useTabularProjectController(options: UseTabularProjectController
     addPreviewRow,
     savePreviewStep,
 
-    iiifMadocSearchInput,
-    setIiifMadocSearchInput,
-    isLoadingIiifHome,
-    searchMadocResources,
-    clearMadocSearch,
-    iiifHomeStats,
-    iiifPasteUrl,
-    setIiifPasteUrl,
-    openIiifUrl,
     iiifHomeLoadError,
-    iiifBrowserModalError,
     iiifBrowserVersion,
     navigationOptions,
     historyOptions,
