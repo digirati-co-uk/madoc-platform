@@ -1,9 +1,9 @@
 import type { ReactNode } from 'react';
 import type { TFunction } from 'i18next';
-import { ErrorMessage } from '../../../../../../shared/callouts/ErrorMessage';
-import { SuccessMessage } from '../../../../../../shared/callouts/SuccessMessage';
-import { Button, ButtonRow, TinyButton } from '../../../../../../shared/navigation/Button';
-import { ModalButton } from '../../../../../../shared/components/Modal';
+import { ErrorMessage } from '@/frontend/shared/callouts/ErrorMessage';
+import { SuccessMessage } from '@/frontend/shared/callouts/SuccessMessage';
+import { Button, ButtonRow, TinyButton } from '@/frontend/shared/navigation/Button';
+import { ModalButton } from '@/frontend/shared/components/Modal';
 
 interface TabularProjectSettingsStepProps {
   t: TFunction;
@@ -11,6 +11,8 @@ interface TabularProjectSettingsStepProps {
   hasImage: boolean;
   manifestId?: string;
   canvasId?: string;
+  selectedCanvasLabel?: string;
+  selectedCanvasThumbnail?: string;
   iiifBrowserSelection: string | null;
   iiifError: string | null;
   iiifBrowser: ReactNode;
@@ -18,6 +20,36 @@ interface TabularProjectSettingsStepProps {
   onClearImageSelection: () => void;
   onRegisterBrowserClose: (close?: () => void) => void;
   onSave: () => void;
+  onCancel: () => void;
+}
+
+function UriField(props: { label: string; value?: string; linkLabel: string; t: TFunction }) {
+  const { label, value, linkLabel, t } = props;
+  if (!value) {
+    return null;
+  }
+
+  const canOpen = /^https?:\/\//i.test(value);
+
+  return (
+    <div className="grid gap-1">
+      <div className="text-xs font-semibold text-[#1f2d5a]">{label}</div>
+      <input
+        type="text"
+        value={value}
+        readOnly
+        onFocus={event => event.currentTarget.select()}
+        className="w-full rounded border border-[#cfd6e5] bg-white px-[10px] py-2 text-xs text-[#1f2d5a]"
+      />
+      {canOpen ? (
+        <a href={value} target="_blank" rel="noreferrer" className="text-xs">
+          {linkLabel}
+        </a>
+      ) : (
+        <div className="text-xs text-gray-600">{t('Copy this URI value to use it elsewhere.')}</div>
+      )}
+    </div>
+  );
 }
 
 export function TabularProjectSettingsStep(props: TabularProjectSettingsStepProps) {
@@ -27,6 +59,8 @@ export function TabularProjectSettingsStep(props: TabularProjectSettingsStepProp
     hasImage,
     manifestId,
     canvasId,
+    selectedCanvasLabel,
+    selectedCanvasThumbnail,
     iiifBrowserSelection,
     iiifError,
     iiifBrowser,
@@ -34,64 +68,101 @@ export function TabularProjectSettingsStep(props: TabularProjectSettingsStepProp
     onClearImageSelection,
     onRegisterBrowserClose,
     onSave,
+    onCancel,
   } = props;
+  const showZoomTrackingHint = enableZoomTracking && !hasImage;
+  const zoomTrackingHint = t('Select a reference canvas to enable zoom tracking and Cast a net.');
+  const canOpenCanvasUri = canvasId ? /^https?:\/\//i.test(canvasId) : false;
 
   return (
     <>
-      <div style={{ fontSize: 16, fontWeight: 500, marginBottom: 20 }}>{t('Additional settings')}</div>
-      <div style={{ marginBottom: 20 }}>
-        <div>{t('Select to enable the zoom tracking option for your tabular model')}</div>
-        <div style={{ fontSize: 12, opacity: 0.75, marginBottom: 10, maxWidth: 600 }}>
+      <h2 className="text-2xl font-light mb-1">{t('Additional settings')}</h2>
+      <hr className="mb-4" />
+
+      <div className="mb-6">
+        <div className="text-md mb-1">
+          {t('' + 'Select to enable the zoom tracking option for' + ' your tabular model')}
+        </div>
+        <div className="text-sm w-[700px] mb-4 font-light">
           {t(
-            'Zoom tracking enables the application to support contributor users as they  navigate through the tabular data structure. The zoom tracking will  attempt to move the image focus to reflect the user’s current location  in the table structure. To provide this option to the user, casting a  grid on a reference image is necessary.'
+            'Zoom tracking enables the application to support contributor users as they' +
+              ' navigate through the tabular data structure. The zoom tracking will  attempt to' +
+              ' move the image focus to reflect the user’s current location  in the table structure.' +
+              ' To provide this option to the user, casting a  grid on a reference image is necessary.'
           )}
         </div>
-        <label style={{ display: 'inline-flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
+
+        <label className="inline-flex items-center gap-2">
           <input
-            style={{ margin: 0 }}
             type="checkbox"
             checked={enableZoomTracking}
             onChange={event => onEnableZoomTrackingChange(event.currentTarget.checked)}
           />
-          <span style={{ fontSize: 13 }}>{t('Use zoom tracking')}</span>
+          <span className="text-sm font-medium">{t('Use zoom tracking')}</span>
         </label>
       </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-        <div>{t('Reference image (optional)')}</div>
-        <div style={{ fontSize: 12, opacity: 0.75 }}>
+      <div>
+        <div className="text-md mb-1">
+          {t('Reference image')} <small> {t('(optional)')}</small>
+        </div>
+        <div className="text-sm w-[700px] mb-4 font-light">
           {t(
-            'Select an image to guide configuration. This is required when zoom tracking is on; optional when zoom tracking is off.'
+            'Select an image from the content which will be used within this tabular data project to help guide configuration of the model in the next steps. Selecting an image from the content is is required when the zoom tracking selection is on; optional when zoom tracking is off.'
           )}
         </div>
 
         {hasImage ? (
           <SuccessMessage>
-            <div style={{ display: 'flex', flexDirection: 'column', rowGap: 4 }}>
-              <div>
-                {t('Selected manifest')}: <strong>{manifestId}</strong>
+            <div className="grid gap-3">
+              <div className="grid gap-3 md:grid-cols-[7.5rem_minmax(0,1fr)] md:items-start">
+                <div className="h-[7.5rem] w-[7.5rem] overflow-hidden rounded border border-[#cfd6e5] bg-white">
+                  {selectedCanvasThumbnail ? (
+                    canOpenCanvasUri ? (
+                      <a href={canvasId} target="_blank" rel="noreferrer" className="block h-full w-full">
+                        <img
+                          src={selectedCanvasThumbnail}
+                          alt={selectedCanvasLabel || t('Selected canvas thumbnail')}
+                          className="h-full w-full object-cover"
+                        />
+                      </a>
+                    ) : (
+                      <img
+                        src={selectedCanvasThumbnail}
+                        alt={selectedCanvasLabel || t('Selected canvas thumbnail')}
+                        className="h-full w-full object-cover"
+                      />
+                    )
+                  ) : (
+                    <div className="grid h-full place-items-center px-2 text-center text-[11px] text-gray-600">
+                      {t('Thumbnail unavailable')}
+                    </div>
+                  )}
+                </div>
+
+                <div className="grid gap-2">
+                  <div className="text-sm font-semibold text-[#1f2d5a]">
+                    {selectedCanvasLabel || t('Selected canvas')}
+                  </div>
+                  <UriField label={t('Canvas URI')} value={canvasId} linkLabel={t('Open canvas URI')} t={t} />
+                  <UriField label={t('Manifest URI')} value={manifestId} linkLabel={t('Open manifest URI')} t={t} />
+                </div>
+              </div>
+              <div className="text-xs text-gray-700">
+                {t('Need a different canvas? Use Browse IIIF resources to select an alternative.')}
               </div>
               <div>
-                {t('Selected canvas')}: <strong>{canvasId}</strong>
+                <TinyButton onClick={onClearImageSelection}>{t('Clear selection')}</TinyButton>
               </div>
-              <TinyButton onClick={onClearImageSelection}>{t('Clear selection')}</TinyButton>
             </div>
           </SuccessMessage>
         ) : null}
 
-        {!hasImage && iiifBrowserSelection ? (
-          <div style={{ fontSize: 12, opacity: 0.75 }}>{iiifBrowserSelection}</div>
-        ) : null}
+        {!hasImage && iiifBrowserSelection ? <div className="text-xs text-gray-600">{iiifBrowserSelection}</div> : null}
 
         {iiifError ? <ErrorMessage>{iiifError}</ErrorMessage> : null}
 
-        {enableZoomTracking && !hasImage ? (
-          <div style={{ fontSize: 12, opacity: 0.75 }}>
-            {t('Select a reference canvas to enable zoom tracking and Cast a net.')}
-          </div>
-        ) : null}
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <div className="flex items-center gap-2">
           <ModalButton
             title={t('Browse IIIF resources')}
             modalSize="lg"
@@ -102,15 +173,24 @@ export function TabularProjectSettingsStep(props: TabularProjectSettingsStepProp
               return iiifBrowser;
             }}
           >
-            <Button>{t('Browse manifests')}</Button>
+            <Button>{t('Browse IIIF resources')}</Button>
           </ModalButton>
-          {hasImage ? <span style={{ fontSize: 12, opacity: 0.75 }}>{t('Canvas selected')}</span> : null}
+
+          {hasImage ? <span className="text-sm text-gray-600">{t('Canvas selected')}</span> : null}
+        </div>
+        <div className="pl-0.5 min-h-[2.5rem] text-xs text-gray-600">
+          <span className={showZoomTrackingHint ? '' : 'invisible'} aria-hidden={!showZoomTrackingHint}>
+            {zoomTrackingHint}
+          </span>
         </div>
       </div>
 
       <ButtonRow>
+        <Button type="button" onClick={onCancel}>
+          {t('Cancel')}
+        </Button>
         <Button $primary disabled={enableZoomTracking && !hasImage} onClick={onSave}>
-          {t('Save')}
+          {t('Save and continue')}
         </Button>
       </ButtonRow>
     </>

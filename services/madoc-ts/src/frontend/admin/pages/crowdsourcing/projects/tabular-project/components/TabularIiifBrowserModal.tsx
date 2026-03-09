@@ -47,7 +47,7 @@ export function TabularIiifBrowserModal(props: TabularIiifBrowserModalProps) {
   const iiifPickerMode = 'external';
 
   return (
-    <div className="tabular-iiif-browser-modal" style={{ minHeight: 420 }}>
+    <div className="tabular-iiif-browser-modal min-h-[420px]">
       <style>
         {`
           .tabular-iiif-browser-external .grid-lg,
@@ -76,25 +76,33 @@ export function TabularIiifBrowserModal(props: TabularIiifBrowserModalProps) {
           }
         `}
       </style>
-      <div
-        style={{
-          display: 'grid',
-          gap: 10,
-          marginBottom: 12,
-          padding: 10,
-          border: '1px solid #d7dbe8',
-          borderRadius: 4,
-          background: '#f8fafc',
-        }}
-      >
-        <div style={{ display: 'grid', gap: 8 }}>
-          <div style={{ fontSize: 12, fontWeight: 600 }}>{t('Search Madoc manifests and collections')}</div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr auto auto', gap: 8 }}>
+      <div className="mb-3 grid gap-1.5 rounded border border-[#d7dbe8] bg-[#eef3ff] p-2.5">
+        <div className="text-xs font-semibold text-[#1f2d5a]">{t('How to find the right canvas')}</div>
+        <div className="text-xs text-[#1f2d5a]/90">
+          {t('1. Search Madoc resources by title using the search bar below.')}
+        </div>
+        <div className="text-xs text-[#1f2d5a]/90">
+          {t('2. In the browser, double-click collections or manifests to navigate.')}
+        </div>
+        <div className="text-xs text-[#1f2d5a]/90">
+          {t('3. Click a canvas, then use “Use selected canvas” to confirm your choice.')}
+        </div>
+      </div>
+      <div className="mb-3 grid gap-2.5 rounded border border-[#d7dbe8] bg-[#f8fafc] p-2.5">
+        <div className="grid gap-2">
+          <div className="text-xs font-semibold">{t('Search Madoc manifests and collections')}</div>
+          <div className="grid grid-cols-[1fr_auto_auto] gap-2">
             <Input
               type="text"
               value={iiifMadocSearchInput}
               onChange={event => onIiifMadocSearchInputChange(event.currentTarget.value)}
-              placeholder={t('Search by title')}
+              onKeyDown={event => {
+                if (event.key === 'Enter') {
+                  event.preventDefault();
+                  onSearchMadocResources();
+                }
+              }}
+              placeholder={t('Search by collection or manifest title')}
             />
             <Button type="button" onClick={onSearchMadocResources} disabled={isLoadingIiifHome}>
               {isLoadingIiifHome ? t('Loading...') : t('Search')}
@@ -103,7 +111,8 @@ export function TabularIiifBrowserModal(props: TabularIiifBrowserModalProps) {
               {t('Clear')}
             </TinyButton>
           </div>
-          <div style={{ fontSize: 12, opacity: 0.8 }}>
+          <div className="text-xs opacity-80">{t('Tip: clear search to return to the default Madoc browse view.')}</div>
+          <div className="text-xs opacity-80">
             {isLoadingIiifHome
               ? t('Loading Madoc resources...')
               : t('Showing {{collections}} collections and {{manifests}} manifests', {

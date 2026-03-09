@@ -8,20 +8,20 @@ import {
   StyledFormLabel,
   StyledFormInputElement,
 } from '../../../../shared/capture-models/editor/atoms/StyledForm';
-import { Button } from '../../../../shared/capture-models/editor/atoms/Button';
-import { ButtonIcon, TinyButton } from '@/frontend/shared/navigation/Button';
+import { TinyButton } from '@/frontend/shared/navigation/Button';
 import { DeleteForeverIcon } from '@/frontend/shared/icons/DeleteForeverIcon';
 
 export function TabularColumnEditor(props: {
   index: number;
   value: TabularColumnEditorValue;
+  maxHeadingLength?: number;
   disabled?: boolean;
   error?: string;
   onChange: (next: TabularColumnEditorValue) => void;
   onRemove?: () => void;
   removeDisabled?: boolean;
 }) {
-  const { index, value, disabled, error, onChange, onRemove, removeDisabled } = props;
+  const { value, maxHeadingLength = 80, disabled, error, onChange, onRemove, removeDisabled } = props;
   const { fields } = useContext(PluginContext);
 
   const availableFieldTypes = useMemo(
@@ -63,23 +63,25 @@ export function TabularColumnEditor(props: {
         }}
       >
         <div style={{ display: 'grid', gap: 6 }}>
-          <StyledFormLabel>Heading</StyledFormLabel>
+          <StyledFormLabel>Heading *</StyledFormLabel>
           <StyledFormInputElement
             as="input"
             value={value.heading}
             placeholder="Enter column heading"
             disabled={disabled}
+            maxLength={maxHeadingLength}
             aria-invalid={error ? 'true' : 'false'}
             onChange={(e: any) => onChange({ ...value, heading: e.target.value })}
             style={{
               boxShadow: error ? '0 0 0 2px rgba(220, 38, 38, 0.25)' : undefined,
             }}
           />
+          <div style={{ marginTop: 6, fontSize: 12, opacity: 0.75 }}>Required. Max {maxHeadingLength} characters.</div>
           {error ? <div style={{ marginTop: 6, fontSize: 12, color: '#b91c1c' }}>{error}</div> : null}
         </div>
 
         <div style={{ display: 'grid', gap: 6, minWidth: 0 }}>
-          <StyledFormLabel>Field type</StyledFormLabel>
+          <StyledFormLabel>Field type *</StyledFormLabel>
           <div style={{ width: '100%', maxWidth: '100%', minWidth: 0, overflow: 'hidden' }}>
             <Dropdown
               value={value.fieldType ?? ''}
@@ -94,13 +96,13 @@ export function TabularColumnEditor(props: {
               {selectedType?.description ??
                 (value.fieldType
                   ? `Selected type: ${value.fieldType}`
-                  : 'Pick a type to control how data entry will work.')}
+                  : 'Pick a type to control how data entry will work. Required before saving model.')}
             </div>
           </div>
         </div>
 
         <div style={{ display: 'grid', gap: 6 }}>
-          <StyledFormLabel>Tooltip</StyledFormLabel>
+          <StyledFormLabel>Tooltip (optional)</StyledFormLabel>
           <StyledFormInputElement
             as="input"
             value={value.helpText ?? ''}

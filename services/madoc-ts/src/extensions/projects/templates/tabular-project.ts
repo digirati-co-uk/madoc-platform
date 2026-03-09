@@ -97,9 +97,9 @@ export const tabularProject: ProjectTemplate<TabularProjectTemplateOptions> = {
   type: 'tabular-project',
   metadata: {
     label: 'Tabular data project',
-    description: 'Create a tabular data project using a guided setup flow.',
+    description: 'Build a tabular capture model to support transcribing data for your project, using a table structure',
     version: '1.0.0',
-    actionLabel: 'Create tabular project',
+    actionLabel: 'Create tabular data project',
   },
   captureModel: {
     // Fallback model for non-wizard creation paths.

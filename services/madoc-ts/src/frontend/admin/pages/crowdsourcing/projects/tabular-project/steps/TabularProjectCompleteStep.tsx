@@ -1,9 +1,9 @@
 import type { TFunction } from 'i18next';
-import type { CreateProject } from '../../../../../../../types/schemas/create-project';
-import { ErrorMessage } from '../../../../../../shared/callouts/ErrorMessage';
-import { SuccessMessage } from '../../../../../../shared/callouts/SuccessMessage';
-import { Button, ButtonRow } from '../../../../../../shared/navigation/Button';
-import { HrefLink } from '../../../../../../shared/utility/href-link';
+import type { CreateProject } from '@/types/schemas/create-project';
+import { ErrorMessage } from '@/frontend/shared/callouts/ErrorMessage';
+import { SuccessMessage } from '@/frontend/shared/callouts/SuccessMessage';
+import { Button, ButtonRow } from '@/frontend/shared/navigation/Button';
+import { HrefLink } from '@/frontend/shared/utility/href-link';
 import type {
   TabularModelPayload,
   TabularProjectSetupPayload,
@@ -121,7 +121,7 @@ export function TabularProjectCompleteStep(props: TabularProjectCompleteStepProp
               disabled={status === 'loading' || isProjectCompleted || !createProjectPayload}
               onClick={onComplete}
             >
-              {t('Complete')}
+              {t('Complete project')}
             </Button>
           </ButtonRow>
         </>

@@ -5,10 +5,10 @@ import type { DefineTabularModelValue, TabularFieldType, TabularModelChange, Tab
 import { buildTabularModelPayload, validateTabularModel } from './TabularModel';
 import { TabularHeadingsTable } from './TabularHeadingsTable';
 import { TabularColumnEditor } from './TabularColumnEditor';
-import { Button } from '../../../../shared/navigation/Button';
-import { TabularCanvasViewportControls } from '../../../../shared/components/TabularCanvasViewportControls';
-import { AddIcon } from '../../../../shared/icons/AddIcon';
-import { MinusIcon } from '../../../../shared/icons/MinusIcon';
+import { Button } from '@/frontend/shared/navigation/Button';
+import { TabularCanvasViewportControls } from '@/frontend/shared/components/TabularCanvasViewportControls';
+import { AddIcon } from '@/frontend/shared/icons/AddIcon';
+import { MinusIcon } from '@/frontend/shared/icons/MinusIcon';
 
 function ReferenceImagePanel(props: { manifestId: string; canvasId?: string; imageHeight: number }) {
   const { manifestId, canvasId, imageHeight } = props;
@@ -20,13 +20,13 @@ function ReferenceImagePanel(props: { manifestId: string; canvasId?: string; ima
   const zoomOut = () => runtime.current?.world?.zoomOut?.();
 
   return (
-    <div style={{ border: '1px solid #e5e5e5', borderRadius: 8, background: '#fff', overflow: 'hidden' }}>
-      <div style={{ height: imageHeight, background: '#e5e7eb', position: 'relative' }}>
+    <div className="overflow-hidden rounded-lg border border-[#e5e5e5] bg-white">
+      <div className={`relative bg-red-800 h-[${imageHeight}px]`}>
         <TabularCanvasViewportControls
           onHome={goHome}
           onZoomOut={zoomOut}
           onZoomIn={zoomIn}
-          style={{ top: 12, right: 12, zIndex: 40 }}
+          className="!right-3 !top-3 !z-40"
         />
         <AnySimpleViewerProvider manifest={manifestId} startCanvas={canvasId}>
           <CanvasPanel.Viewer
@@ -88,7 +88,6 @@ export function DefineTabularModel(props: {
   const tableScrollRef = useRef<HTMLDivElement>(null);
   const shouldScrollToNewColumnRef = useRef(false);
   const tableVisibleRows = 4;
-  const tableHeight = 54 + 42 * tableVisibleRows + 2;
 
   const safeHeadings = useMemo(
     () => Array.from({ length: safeColumns }, (_, i) => value.headings?.[i] ?? ''),
@@ -311,41 +310,29 @@ export function DefineTabularModel(props: {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 12, width: '100%' }}>
+    <div className="flex w-full flex-col gap-3">
       {attemptedSave && issues.length ? (
-        <div
-          style={{
-            padding: '10px 12px',
-            border: '1px solid #fecaca',
-            borderRadius: 8,
-            background: '#fff1f2',
-            color: '#9f1239',
-            fontSize: 13,
-          }}
-        >
+        <div className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-[10px] text-[13px] text-rose-800">
           {topErrorMessage}
         </div>
       ) : null}
 
-      <div style={{ display: 'grid', gridTemplateColumns: '280px minmax(0, 1fr)', gap: 16, alignItems: 'stretch' }}>
-        <div style={{ border: '1px solid #d6d6d6', borderRadius: 4, background: '#f4f4f4', padding: 12 }}>
-          <div style={{ fontWeight: 500, fontSize: 16, lineHeight: 1, marginBottom: 14 }}>{t('Tabular document')}</div>
-          <div style={{ borderTop: '1px solid #d7d7d7', marginTop: 10, paddingTop: 18 }}>
-            <div
-              style={{
-                padding: 12,
-                background: '#dfe5ff',
-                borderRadius: 4,
-                color: '#1f2d5a',
-                fontSize: 14,
-                lineHeight: 1.35,
-              }}
-            >
-              Click a cell to add a heading. Any cell with text will be treated as a header cell in your capture model.
+      <div className="grid grid-cols-[280px_minmax(0,1fr)] items-stretch gap-4">
+        <div className="rounded border border-[#d6d6d6] bg-[#f4f4f4] p-3">
+          <div className="text-2xl font-light mb-1">{t('Tabular document')}</div>
+          <div className="text-xs text-slate-700">
+            * Required fields. Headings: max {maxHeadingLength} characters. Columns: {minColumns}-{maxColumns}.
+          </div>
+          <hr />
+          <div className="mt-1 pt-4">
+            <div className="rounded bg-[#dfe5ff] p-3 text-sm  text-[#1f2d5a]">
+              {t(
+                'Click a cell to add a heading. Any cell with text will be treated as a header cell in your capture model.'
+              )}
             </div>
           </div>
 
-          <div style={{ marginTop: 12 }}>
+          <div className="mt-3">
             <TabularColumnEditor
               index={activeColumn}
               value={{
@@ -355,26 +342,27 @@ export function DefineTabularModel(props: {
               }}
               disabled={disabled}
               error={attemptedSave ? activeError : undefined}
+              maxHeadingLength={maxHeadingLength}
               onChange={next => updateColumn(activeColumn, next)}
               onRemove={() => removeColumnAt(activeColumn)}
               removeDisabled={safeColumns <= minColumns}
             />
           </div>
 
-          <div style={{ marginTop: 12, display: 'flex', justifyContent: 'flex-start' }}>
+          <div className="mt-3 flex justify-start">
             <Button $primary type="button" onClick={saveModel} disabled={disabled}>
               {isModelSaved ? 'Model saved' : 'Save model'}
             </Button>
           </div>
         </div>
 
-        <div style={{ display: 'grid', gap: 12 }}>
+        <div className="grid gap-3">
           {manifestId ? (
             <ReferenceImagePanel manifestId={manifestId} canvasId={canvasId} imageHeight={imageHeight} />
           ) : null}
 
           {manifestId && (
-            <div style={{ display: 'flex', justifyContent: 'center', marginTop: -4 }}>
+            <div className="mt-[-4px] flex justify-center">
               <div
                 role="separator"
                 aria-orientation="horizontal"
@@ -382,27 +370,18 @@ export function DefineTabularModel(props: {
                 onMouseDown={startResize}
                 onMouseEnter={() => setIsResizeHandleHover(true)}
                 onMouseLeave={() => setIsResizeHandleHover(false)}
-                style={{
-                  height: 18,
-                  minWidth: 28,
-                  border: '1px solid #c8c8c8',
-                  borderRadius: 4,
-                  background: isResizeHandleHover ? '#e5e7eb' : '#fff',
-                  fontWeight: 700,
-                  lineHeight: '14px',
-                  textAlign: 'center',
-                  cursor: 'row-resize',
-                  userSelect: 'none',
-                }}
+                className={`h-[18px] min-w-[28px] cursor-row-resize select-none rounded border border-[#c8c8c8] text-center text-[14px] font-bold leading-[14px] ${
+                  isResizeHandleHover ? 'bg-gray-200' : 'bg-white'
+                }`}
               >
                 =
               </div>
             </div>
           )}
 
-          <div style={{ border: '1px solid #d6d6d6', background: '#fff', overflow: 'hidden' }}>
-            <div style={{ display: 'flex', height: tableHeight }}>
-              <div ref={tableScrollRef} style={{ flex: 1, minWidth: 0, overflow: 'auto', padding: 0 }}>
+          <div className="overflow-hidden border border-[#d6d6d6] bg-white">
+            <div className="flex h-[224px]">
+              <div ref={tableScrollRef} className="min-w-0 flex-1 overflow-auto p-0">
                 <TabularHeadingsTable
                   columns={safeColumns}
                   visibleRows={tableVisibleRows}
@@ -425,18 +404,7 @@ export function DefineTabularModel(props: {
                   disabled={disabled}
                 />
               </div>
-              <div
-                style={{
-                  width: 56,
-                  borderLeft: '1px solid #eee',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  padding: '56px 8px 24px',
-                  background: '#f3f3f5',
-                }}
-              >
+              <div className="flex w-14 flex-col items-center justify-between border-l border-[#eee] bg-[#f3f3f5] px-2 pb-6 pt-14">
                 <button type="button" onClick={addColumn} disabled={disabled || safeColumns >= maxColumns}>
                   <AddIcon />
                 </button>

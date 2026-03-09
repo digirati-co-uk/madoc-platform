@@ -1,7 +1,7 @@
 import type { ComponentType } from 'react';
 import type { TFunction } from 'i18next';
-import { BrowserComponent } from '../../../../../../shared/utility/browser-component';
-import { Button, ButtonRow } from '../../../../../../shared/navigation/Button';
+import { BrowserComponent } from '@/frontend/shared/utility/browser-component';
+import { Button, ButtonRow } from '@/frontend/shared/navigation/Button';
 import type { DefineTabularModelValue, TabularModelChange } from '../../../../../components/tabular/cast-a-net/types';
 
 interface DefineTabularModelComponentProps {
@@ -22,6 +22,7 @@ interface TabularProjectModelStepProps {
   onTabularModelChange: (next: DefineTabularModelValue) => void;
   onModelChange: (res: TabularModelChange) => void;
   onSave: () => void;
+  onCancel: () => void;
   DefineTabularModelComponent: ComponentType<DefineTabularModelComponentProps>;
 }
 
@@ -36,6 +37,7 @@ export function TabularProjectModelStep(props: TabularProjectModelStepProps) {
     onTabularModelChange,
     onModelChange,
     onSave,
+    onCancel,
     DefineTabularModelComponent,
   } = props;
 
@@ -51,13 +53,14 @@ export function TabularProjectModelStep(props: TabularProjectModelStepProps) {
         />
       </BrowserComponent>
 
-      {!modelSaved ? (
-        <div style={{ marginTop: 12, fontSize: 12, opacity: 0.7 }}>{t('Save the model to continue.')}</div>
-      ) : null}
+      {!modelSaved ? <div className="mt-1 text-sm">{t('Save the model to continue.')}</div> : null}
 
-      <ButtonRow style={{ marginTop: 16 }}>
+      <ButtonRow>
+        <Button type="button" onClick={onCancel}>
+          {t('Cancel')}
+        </Button>
         <Button $primary disabled={!isModelValid || !modelSaved} onClick={onSave}>
-          {t('Save')}
+          {t('Save and continue')}
         </Button>
       </ButtonRow>
     </div>

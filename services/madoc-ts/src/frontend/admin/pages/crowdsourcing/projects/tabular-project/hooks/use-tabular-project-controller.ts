@@ -32,6 +32,9 @@ import type {
 import {
   clampToRange,
   createIiifHomeHistoryItem,
+  getIiifSelectionLabel,
+  getIiifSelectionThumbnail,
+  getPreferredIntlValue,
   createMadocHomeCollection,
   decodeOutlinePayload,
   encodeOutlinePayload,
@@ -103,6 +106,7 @@ export function useTabularProjectController(options: UseTabularProjectController
   const closeBrowserRef = useRef<null | (() => void)>(null);
 
   const [step, setStep] = useState(STEP_DETAILS);
+  const [maxReachedStep, setMaxReachedStep] = useState(STEP_DETAILS);
   const [label, setLabel] = useState<InternationalString>({ [defaultLocale]: [''] });
   const [summary, setSummary] = useState<InternationalString>({ [defaultLocale]: [''] });
   const [slug, setSlug] = useState('');
@@ -111,6 +115,8 @@ export function useTabularProjectController(options: UseTabularProjectController
   const [enableZoomTracking, setEnableZoomTracking] = useState(false);
   const [manifestId, setManifestId] = useState<string | undefined>();
   const [canvasId, setCanvasId] = useState<string | undefined>();
+  const [selectedCanvasLabel, setSelectedCanvasLabel] = useState<string | undefined>();
+  const [selectedCanvasThumbnail, setSelectedCanvasThumbnail] = useState<string | undefined>();
 
   const [iiifError, setIiifError] = useState<string | null>(null);
   const [iiifBrowserSelection, setIiifBrowserSelection] = useState<string | null>(null);
@@ -193,15 +199,15 @@ export function useTabularProjectController(options: UseTabularProjectController
   const modelColumnCount = Math.max(1, tabularModel.columns || 1);
   const netColumnCount = Math.max(1, netConfig.cols);
   const configuredColumnCount = Math.max(1, tabularPayload?.columns?.length || modelColumnCount);
-  const primaryLabel = Object.values(label)[0]?.join('').trim() || '';
-  const primarySummary = Object.values(summary)[0]?.join('').trim() || '';
+  const primaryLabel = getPreferredIntlValue(label, defaultLocale);
+  const primarySummary = getPreferredIntlValue(summary, defaultLocale);
 
   useEffect(() => {
     if (autoSlug) {
-      const textLabel = Object.values(label)[0]?.join('') || '';
+      const textLabel = getPreferredIntlValue(label, defaultLocale);
       setSlug(slugify(textLabel, { lower: true }));
     }
-  }, [autoSlug, label]);
+  }, [autoSlug, label, defaultLocale]);
 
   useEffect(() => {
     if (!modelSaved) {
@@ -429,6 +435,8 @@ export function useTabularProjectController(options: UseTabularProjectController
   const clearImageSelection = useCallback(() => {
     setManifestId(undefined);
     setCanvasId(undefined);
+    setSelectedCanvasLabel(undefined);
+    setSelectedCanvasThumbnail(undefined);
     setIiifError(null);
     setIiifBrowserSelection(null);
 
@@ -577,6 +585,10 @@ export function useTabularProjectController(options: UseTabularProjectController
     }
   }, [isProjectCompleted]);
 
+  useEffect(() => {
+    setMaxReachedStep(previous => (step > previous ? step : previous));
+  }, [step]);
+
   const steps = useMemo<TabularWizardStep[]>(
     () => [
       { id: STEP_DETAILS, label: t('Project details') },
@@ -599,11 +611,11 @@ export function useTabularProjectController(options: UseTabularProjectController
         return;
       }
 
-      if (id <= step) {
+      if (id <= maxReachedStep) {
         setStep(id);
       }
     },
-    [isProjectCompleted, step]
+    [isProjectCompleted, maxReachedStep]
   );
 
   const onAddCanvas = useCallback(
@@ -639,13 +651,18 @@ export function useTabularProjectController(options: UseTabularProjectController
         return;
       }
 
+      const resolvedLabel = getIiifSelectionLabel(resource, defaultLocale);
+      const resolvedThumbnail = getIiifSelectionThumbnail(resource);
+
       setCanvasId(resolvedCanvasId);
       setManifestId(resolvedManifestId);
+      setSelectedCanvasLabel(resolvedLabel || undefined);
+      setSelectedCanvasThumbnail(resolvedThumbnail || undefined);
       setIiifError(null);
-      setIiifBrowserSelection(`${resource.id}`);
+      setIiifBrowserSelection(resolvedLabel || resourceId);
       closeBrowserRef.current?.();
     },
-    [siteSlug, t]
+    [defaultLocale, siteSlug, t]
   );
 
   const searchMadocResources = useCallback(() => {
@@ -895,6 +912,7 @@ export function useTabularProjectController(options: UseTabularProjectController
   return {
     stepIds: TABULAR_PROJECT_STEP_IDS,
     step,
+    maxReachedStep,
     setStep,
     steps,
     isProjectCompleted,
@@ -915,6 +933,8 @@ export function useTabularProjectController(options: UseTabularProjectController
     hasImage,
     manifestId,
     canvasId,
+    selectedCanvasLabel,
+    selectedCanvasThumbnail,
     iiifBrowserSelection,
     iiifError,
     clearImageSelection,
