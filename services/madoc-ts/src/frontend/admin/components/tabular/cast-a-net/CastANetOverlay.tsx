@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { NetConfig, TabularCellRef } from './types';
 import { useCastANetOverlayDrag } from './use-cast-a-net-overlay-drag';
 import { useCastANetOverlayGeometry } from './use-cast-a-net-overlay-geometry';
@@ -10,16 +10,34 @@ type CastANetOverlayProps = {
   activeCell?: TabularCellRef | null;
   previewOverlayOnly?: boolean;
   onOverlayWheel?: (deltaY: number) => void;
+}
+
+const isMoveModifierPressed = (event: { altKey: boolean; metaKey: boolean }) => {
+  return event.altKey || event.metaKey;
 };
 
-export const CastANetOverlay: React.FC<CastANetOverlayProps> = ({
+const sanitiseLineIndexes = (indexes: number[], max: number) => {
+  return Array.from(new Set(indexes.filter(index => index >= 0 && index < max))).sort((a, b) => a - b);
+};
+
+const toggleLineSelection = (indexes: number[], index: number, max: number) => {
+  const selection = new Set(indexes);
+  if (selection.has(index)) {
+    selection.delete(index);
+  } else if (index >= 0 && index < max) {
+    selection.add(index);
+  }
+  return sanitiseLineIndexes(Array.from(selection), max);
+};
+
+export function CastANetOverlay({
   value,
   onChange,
   disabled = false,
   activeCell,
   previewOverlayOnly = false,
   onOverlayWheel,
-}) => {
+}: CastANetOverlayProps) {
   const OUTER_BORDER_THICKNESS = 5;
   const GRID_LINE_THICKNESS = 5;
   const GRID_HIT_THICKNESS = 20;
@@ -30,32 +48,39 @@ export const CastANetOverlay: React.FC<CastANetOverlayProps> = ({
     disabled,
   });
   const [isShiftPressed, setIsShiftPressed] = useState(false);
+  const [isMoveModifierActive, setIsMoveModifierActive] = useState(false);
+  const [selectedRowIndexes, setSelectedRowIndexes] = useState<number[]>([]);
+  const [selectedColIndexes, setSelectedColIndexes] = useState<number[]>([]);
 
   useEffect(() => {
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Shift') {
-        setIsShiftPressed(true);
-      }
+    const syncModifierState = (event: KeyboardEvent) => {
+      setIsShiftPressed(event.shiftKey);
+      setIsMoveModifierActive(isMoveModifierPressed(event));
     };
 
-    const onKeyUp = (event: KeyboardEvent) => {
-      if (event.key === 'Shift') {
-        setIsShiftPressed(false);
-      }
+    const onBlur = () => {
+      setIsShiftPressed(false);
+      setIsMoveModifierActive(false);
     };
 
-    const onBlur = () => setIsShiftPressed(false);
-
-    window.addEventListener('keydown', onKeyDown);
-    window.addEventListener('keyup', onKeyUp);
+    window.addEventListener('keydown', syncModifierState);
+    window.addEventListener('keyup', syncModifierState);
     window.addEventListener('blur', onBlur);
 
     return () => {
-      window.removeEventListener('keydown', onKeyDown);
-      window.removeEventListener('keyup', onKeyUp);
+      window.removeEventListener('keydown', syncModifierState);
+      window.removeEventListener('keyup', syncModifierState);
       window.removeEventListener('blur', onBlur);
     };
   }, []);
+
+  useEffect(() => {
+    setSelectedRowIndexes(current => sanitiseLineIndexes(current, effectiveRowPositions.length));
+  }, [effectiveRowPositions.length]);
+
+  useEffect(() => {
+    setSelectedColIndexes(current => sanitiseLineIndexes(current, effectiveColPositions.length));
+  }, [effectiveColPositions.length]);
   const {
     rowStops,
     colStops,
@@ -80,6 +105,74 @@ export const CastANetOverlay: React.FC<CastANetOverlayProps> = ({
       onOverlayWheel?.(event.deltaY);
     },
     [onOverlayWheel]
+  );
+  const clearLineSelection = useCallback(() => {
+    setSelectedRowIndexes([]);
+    setSelectedColIndexes([]);
+  }, []);
+
+  const handleMoveMouseDown = useCallback(
+    (event: React.MouseEvent<SVGRectElement>) => {
+      clearLineSelection();
+      startDrag('move')(event);
+    },
+    [clearLineSelection, startDrag]
+  );
+
+  const handleRowMouseDown = useCallback(
+    (index: number) => (event: React.MouseEvent<SVGLineElement>) => {
+      event.stopPropagation();
+      if (disabled) {
+        return;
+      }
+
+      if (event.shiftKey) {
+        setSelectedColIndexes([]);
+        setSelectedRowIndexes(current => toggleLineSelection(current, index, effectiveRowPositions.length));
+        return;
+      }
+
+      const activeSelection = selectedRowIndexes.includes(index)
+        ? sanitiseLineIndexes(selectedRowIndexes, effectiveRowPositions.length)
+        : [index];
+
+      setSelectedRowIndexes(activeSelection);
+      setSelectedColIndexes([]);
+      startDrag({
+        type: 'row',
+        index,
+        selectedIndexes: activeSelection.length > 1 ? activeSelection : undefined,
+      })(event);
+    },
+    [disabled, effectiveRowPositions.length, selectedRowIndexes, startDrag]
+  );
+
+  const handleColMouseDown = useCallback(
+    (index: number) => (event: React.MouseEvent<SVGLineElement>) => {
+      event.stopPropagation();
+      if (disabled) {
+        return;
+      }
+
+      if (event.shiftKey) {
+        setSelectedRowIndexes([]);
+        setSelectedColIndexes(current => toggleLineSelection(current, index, effectiveColPositions.length));
+        return;
+      }
+
+      const activeSelection = selectedColIndexes.includes(index)
+        ? sanitiseLineIndexes(selectedColIndexes, effectiveColPositions.length)
+        : [index];
+
+      setSelectedColIndexes(activeSelection);
+      setSelectedRowIndexes([]);
+      startDrag({
+        type: 'col',
+        index,
+        selectedIndexes: activeSelection.length > 1 ? activeSelection : undefined,
+      })(event);
+    },
+    [disabled, effectiveColPositions.length, selectedColIndexes, startDrag]
   );
 
   const headerStart = rowStops[0];
@@ -277,13 +370,14 @@ export const CastANetOverlay: React.FC<CastANetOverlayProps> = ({
               width={value.width}
               height={value.height}
               fill="rgba(0,0,0,0.001)"
-              pointerEvents={isShiftPressed ? 'all' : 'none'}
-              onMouseDown={startDrag('move')}
+              pointerEvents={isMoveModifierActive ? 'all' : 'none'}
+              onMouseDown={handleMoveMouseDown}
               onWheel={handleWheel}
               style={{ cursor: disabled ? 'not-allowed' : 'move' }}
             />
 
             {effectiveRowPositions.map((position, index) => {
+              const isSelected = selectedRowIndexes.includes(index);
               const y = toCanvasY(position);
               return (
                 <g key={`row-${index}`}>
@@ -296,20 +390,17 @@ export const CastANetOverlay: React.FC<CastANetOverlayProps> = ({
                     strokeWidth={GRID_HIT_THICKNESS}
                     vectorEffect="non-scaling-stroke"
                     pointerEvents="stroke"
-                    onMouseDown={e => {
-                      e.stopPropagation();
-                      startDrag({ type: 'row', index })(e);
-                    }}
+                    onMouseDown={handleRowMouseDown(index)}
                     onWheel={handleWheel}
-                    style={{ cursor: disabled ? 'not-allowed' : 'row-resize' }}
+                    style={{ cursor: disabled ? 'not-allowed' : isShiftPressed ? 'copy' : 'row-resize' }}
                   />
                   <line
                     x1={netLeft}
                     y1={y}
                     x2={netRight}
                     y2={y}
-                    stroke="#4A64E1"
-                    strokeWidth={GRID_LINE_THICKNESS}
+                    stroke={isSelected ? '#1e8b72' : '#4A64E1'}
+                    strokeWidth={isSelected ? GRID_LINE_THICKNESS + 1 : GRID_LINE_THICKNESS}
                     vectorEffect="non-scaling-stroke"
                     pointerEvents="none"
                   />
@@ -318,6 +409,7 @@ export const CastANetOverlay: React.FC<CastANetOverlayProps> = ({
             })}
 
             {effectiveColPositions.map((position, index) => {
+              const isSelected = selectedColIndexes.includes(index);
               const x = toCanvasX(position);
               return (
                 <g key={`col-${index}`}>
@@ -330,20 +422,17 @@ export const CastANetOverlay: React.FC<CastANetOverlayProps> = ({
                     strokeWidth={GRID_HIT_THICKNESS}
                     vectorEffect="non-scaling-stroke"
                     pointerEvents="stroke"
-                    onMouseDown={e => {
-                      e.stopPropagation();
-                      startDrag({ type: 'col', index })(e);
-                    }}
+                    onMouseDown={handleColMouseDown(index)}
                     onWheel={handleWheel}
-                    style={{ cursor: disabled ? 'not-allowed' : 'col-resize' }}
+                    style={{ cursor: disabled ? 'not-allowed' : isShiftPressed ? 'copy' : 'col-resize' }}
                   />
                   <line
                     x1={x}
                     y1={netTop}
                     x2={x}
                     y2={netBottom}
-                    stroke="#4A64E1"
-                    strokeWidth={GRID_LINE_THICKNESS}
+                    stroke={isSelected ? '#1e8b72' : '#4A64E1'}
+                    strokeWidth={isSelected ? GRID_LINE_THICKNESS + 1 : GRID_LINE_THICKNESS}
                     vectorEffect="non-scaling-stroke"
                     pointerEvents="none"
                   />
@@ -362,6 +451,7 @@ export const CastANetOverlay: React.FC<CastANetOverlayProps> = ({
               pointerEvents="stroke"
               onMouseDown={e => {
                 e.stopPropagation();
+                clearLineSelection();
                 startDrag('resize-n')(e);
               }}
               onWheel={handleWheel}
@@ -379,6 +469,7 @@ export const CastANetOverlay: React.FC<CastANetOverlayProps> = ({
               pointerEvents="stroke"
               onMouseDown={e => {
                 e.stopPropagation();
+                clearLineSelection();
                 startDrag('resize-s')(e);
               }}
               onWheel={handleWheel}
@@ -396,6 +487,7 @@ export const CastANetOverlay: React.FC<CastANetOverlayProps> = ({
               pointerEvents="stroke"
               onMouseDown={e => {
                 e.stopPropagation();
+                clearLineSelection();
                 startDrag('resize-w')(e);
               }}
               onWheel={handleWheel}
@@ -413,6 +505,7 @@ export const CastANetOverlay: React.FC<CastANetOverlayProps> = ({
               pointerEvents="stroke"
               onMouseDown={e => {
                 e.stopPropagation();
+                clearLineSelection();
                 startDrag('resize-e')(e);
               }}
               onWheel={handleWheel}
@@ -433,6 +526,7 @@ export const CastANetOverlay: React.FC<CastANetOverlayProps> = ({
                 pointerEvents="stroke"
                 onMouseDown={e => {
                   e.stopPropagation();
+                  clearLineSelection();
                   startDrag(handle.mode)(e);
                 }}
                 onWheel={handleWheel}

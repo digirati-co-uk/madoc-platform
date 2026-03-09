@@ -11,8 +11,8 @@ export type DragMode =
   | 'resize-ne'
   | 'resize-sw'
   | 'resize-se'
-  | { type: 'row'; index: number }
-  | { type: 'col'; index: number };
+  | { type: 'row'; index: number; selectedIndexes?: number[] }
+  | { type: 'col'; index: number; selectedIndexes?: number[] };
 
 export type CastANetPoint = { x: number; y: number };
 

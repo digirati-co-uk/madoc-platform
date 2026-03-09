@@ -19,7 +19,6 @@ type DragStart = {
   x: number;
   y: number;
   config: NetConfig;
-  shiftKey: boolean;
 };
 
 type UseCastANetOverlayDragResult = {
@@ -36,6 +35,57 @@ const projectPositionsToAbsolute = (positions: number[], start: number, size: nu
 const projectAbsoluteToPositions = (positions: number[], start: number, size: number) => {
   const safeSize = Math.max(0.0001, size);
   return positions.map(position => ((position - start) / safeSize) * 100);
+};
+
+const isMoveModifierPressed = (event: { altKey: boolean; metaKey: boolean }) => {
+  return event.altKey || event.metaKey;
+};
+
+const sanitizeLineIndexes = (indexes: number[] | undefined, max: number) => {
+  if (!indexes?.length || max <= 0) {
+    return [];
+  }
+
+  return Array.from(
+    new Set(
+      indexes
+        .map(index => Math.floor(index))
+        .filter(index => Number.isFinite(index) && index >= 0 && index < max)
+    )
+  ).sort((a, b) => a - b);
+};
+
+const clampSelectedLineDelta = (positions: number[], selectedIndexes: number[], requestedDelta: number, minGap: number) => {
+  if (!selectedIndexes.length) {
+    return 0;
+  }
+
+  const selectedSet = new Set(selectedIndexes);
+  let minDelta = Number.NEGATIVE_INFINITY;
+  let maxDelta = Number.POSITIVE_INFINITY;
+
+  for (const index of selectedIndexes) {
+    const position = positions[index];
+    if (position == null) {
+      continue;
+    }
+
+    if (!selectedSet.has(index - 1)) {
+      const previousPosition = index === 0 ? 0 : positions[index - 1];
+      minDelta = Math.max(minDelta, previousPosition + minGap - position);
+    }
+
+    if (!selectedSet.has(index + 1)) {
+      const nextPosition = index === positions.length - 1 ? 100 : positions[index + 1];
+      maxDelta = Math.min(maxDelta, nextPosition - minGap - position);
+    }
+  }
+
+  if (minDelta > maxDelta) {
+    return 0;
+  }
+
+  return clamp(requestedDelta, minDelta, maxDelta);
 };
 
 export function useCastANetOverlayDrag({
@@ -114,8 +164,8 @@ export function useCastANetOverlayDrag({
         return;
       }
 
-      // Keep image panning as the default; moving the net requires Shift + drag.
-      if (mode === 'move' && !event.shiftKey) {
+      // Keep image panning as the default; moving the net requires a dedicated modifier.
+      if (mode === 'move' && !isMoveModifierPressed(event)) {
         return;
       }
 
@@ -139,7 +189,6 @@ export function useCastANetOverlayDrag({
           rowPositions: effectiveRowPositions,
           colPositions: effectiveColPositions,
         },
-        shiftKey: event.shiftKey,
       };
 
       const onWindowMove = (moveEvent: MouseEvent) => {
@@ -251,26 +300,26 @@ export function useCastANetOverlayDrag({
           const rowIndex = modeNow.index;
           const rowCount = Math.max(1, Math.floor(start.rows));
           const minGap = getLineMinGapPct(rowCount);
-          const pointerInNet = clamp(((currentY - start.top) / start.height) * 100, 0, 100);
+          const safeHeight = Math.max(0.0001, start.height);
+          const pointerInNet = clamp(((currentY - start.top) / safeHeight) * 100, 0, 100);
+          const selectedRowIndexes = sanitizeLineIndexes(modeNow.selectedIndexes ?? [rowIndex], start.rowPositions.length);
 
-          if (!dragStartRef.current.shiftKey) {
-            const prev = rowIndex === 0 ? 0 : start.rowPositions[rowIndex - 1];
-            const nextPos = rowIndex === start.rowPositions.length - 1 ? 100 : start.rowPositions[rowIndex + 1];
+          if (selectedRowIndexes.length <= 1) {
+            const previousPosition = rowIndex === 0 ? 0 : start.rowPositions[rowIndex - 1];
+            const nextPosition = rowIndex === start.rowPositions.length - 1 ? 100 : start.rowPositions[rowIndex + 1];
             next.rowPositions = [...start.rowPositions];
-            next.rowPositions[rowIndex] = clamp(pointerInNet, prev + minGap, nextPos - minGap);
+            next.rowPositions[rowIndex] = clamp(pointerInNet, previousPosition + minGap, nextPosition - minGap);
             emitChange(next);
             return;
           }
 
-          if (rowCount <= 1) {
-            return;
-          }
-
-          const k = rowIndex + 1;
-          let step = pointerInNet / k;
-          const maxStep = (100 - minGap) / (rowCount - 1);
-          step = clamp(step, minGap, maxStep);
-          next.rowPositions = Array.from({ length: rowCount - 1 }, (_, index) => step * (index + 1));
+          const startPointerInNet = clamp(((dragStartRef.current.y - start.top) / safeHeight) * 100, 0, 100);
+          const requestedDelta = pointerInNet - startPointerInNet;
+          const boundedDelta = clampSelectedLineDelta(start.rowPositions, selectedRowIndexes, requestedDelta, minGap);
+          const selectedRowSet = new Set(selectedRowIndexes);
+          next.rowPositions = start.rowPositions.map((position, index) =>
+            selectedRowSet.has(index) ? position + boundedDelta : position
+          );
           emitChange(next);
           return;
         }
@@ -279,26 +328,26 @@ export function useCastANetOverlayDrag({
           const colIndex = modeNow.index;
           const colCount = Math.max(1, Math.floor(start.cols));
           const minGap = getLineMinGapPct(colCount);
-          const pointerInNet = clamp(((currentX - start.left) / start.width) * 100, 0, 100);
+          const safeWidth = Math.max(0.0001, start.width);
+          const pointerInNet = clamp(((currentX - start.left) / safeWidth) * 100, 0, 100);
+          const selectedColIndexes = sanitizeLineIndexes(modeNow.selectedIndexes ?? [colIndex], start.colPositions.length);
 
-          if (!dragStartRef.current.shiftKey) {
-            const prev = colIndex === 0 ? 0 : start.colPositions[colIndex - 1];
-            const nextPos = colIndex === start.colPositions.length - 1 ? 100 : start.colPositions[colIndex + 1];
+          if (selectedColIndexes.length <= 1) {
+            const previousPosition = colIndex === 0 ? 0 : start.colPositions[colIndex - 1];
+            const nextPosition = colIndex === start.colPositions.length - 1 ? 100 : start.colPositions[colIndex + 1];
             next.colPositions = [...start.colPositions];
-            next.colPositions[colIndex] = clamp(pointerInNet, prev + minGap, nextPos - minGap);
+            next.colPositions[colIndex] = clamp(pointerInNet, previousPosition + minGap, nextPosition - minGap);
             emitChange(next);
             return;
           }
 
-          if (colCount <= 1) {
-            return;
-          }
-
-          const k = colIndex + 1;
-          let step = pointerInNet / k;
-          const maxStep = (100 - minGap) / (colCount - 1);
-          step = clamp(step, minGap, maxStep);
-          next.colPositions = Array.from({ length: colCount - 1 }, (_, index) => step * (index + 1));
+          const startPointerInNet = clamp(((dragStartRef.current.x - start.left) / safeWidth) * 100, 0, 100);
+          const requestedDelta = pointerInNet - startPointerInNet;
+          const boundedDelta = clampSelectedLineDelta(start.colPositions, selectedColIndexes, requestedDelta, minGap);
+          const selectedColSet = new Set(selectedColIndexes);
+          next.colPositions = start.colPositions.map((position, index) =>
+            selectedColSet.has(index) ? position + boundedDelta : position
+          );
           emitChange(next);
         }
       };
