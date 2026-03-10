@@ -5,12 +5,14 @@ import { ModalButton } from '../../../frontend/shared/components/Modal';
 import { type CaptureModelEditorApi } from '../../../frontend/shared/capture-models/new/hooks/use-capture-model-editor-api';
 import { type TopLevelFieldRef } from '../../../frontend/shared/capture-models/new/utility/table-editor-api';
 import { Button } from '../../../frontend/shared/navigation/Button';
+import { usePersonalNotesMenu } from '../../../frontend/site/hooks/canvas-menu/personal-notes';
 import {
   hooksTableTestingRowFieldMap,
   hooksTableTestingTopLevelFieldMap,
   type HooksTableAutocompleteField,
   type HooksTableFieldDefinition,
 } from '../templates/hooks-table-testing-fields';
+import { isTabularSystemProperty } from './tabular-project-custom-editor-utils';
 
 type HooksTableMode = 'read' | 'write';
 
@@ -209,7 +211,11 @@ function renderTopLevelField(options: {
   const { definition, field, mode, disabled, inputId } = options;
 
   if (mode === 'read') {
-    return <div className="rounded border border-gray-300 bg-gray-50 px-2 py-1 text-sm">{formatFieldValue(field.value, definition)}</div>;
+    return (
+      <div className="rounded border border-gray-300 bg-gray-50 px-2 py-1 text-sm">
+        {formatFieldValue(field.value, definition)}
+      </div>
+    );
   }
 
   if (definition?.type === 'text-field' && definition.multiline) {
@@ -218,7 +224,13 @@ function renderTopLevelField(options: {
         id={inputId}
         className="min-h-24 w-full rounded border border-gray-300 p-2 text-sm"
         rows={definition.minLines || 3}
-        value={typeof field.value === 'string' ? field.value : field.value === null || typeof field.value === 'undefined' ? '' : String(field.value)}
+        value={
+          typeof field.value === 'string'
+            ? field.value
+            : field.value === null || typeof field.value === 'undefined'
+              ? ''
+              : String(field.value)
+        }
         disabled={disabled}
         onChange={event => field.setValue(event.target.value)}
       />
@@ -244,8 +256,12 @@ export function HooksTableTopLevelFieldsModalButton({
   disabled?: boolean;
 }) {
   const properties = useMemo(() => {
-    const known = Object.keys(hooksTableTestingTopLevelFieldMap).filter(property => !!table.topLevelFields[property]);
-    const unknown = Object.keys(table.topLevelFields).filter(property => !hooksTableTestingTopLevelFieldMap[property]);
+    const known = Object.keys(hooksTableTestingTopLevelFieldMap).filter(
+      property => !!table.topLevelFields[property] && !isTabularSystemProperty(property)
+    );
+    const unknown = Object.keys(table.topLevelFields).filter(
+      property => !hooksTableTestingTopLevelFieldMap[property] && !isTabularSystemProperty(property)
+    );
 
     return [...known, ...unknown];
   }, [table.topLevelFields]);
@@ -291,6 +307,40 @@ export function HooksTableTopLevelFieldsModalButton({
       )}
     >
       Extra fields
+    </ModalButton>
+  );
+}
+
+export function HooksTablePersonalNotesModalButton({ disabled }: { disabled?: boolean }) {
+  const personalNotesPanel = usePersonalNotesMenu();
+  const label = personalNotesPanel.label || 'Personal notes';
+  const notifications = personalNotesPanel.notifications;
+  const buttonLabel = notifications ? `${label} (${notifications})` : label;
+
+  if (personalNotesPanel.isHidden) {
+    return null;
+  }
+
+  return (
+    <ModalButton
+      as={Button}
+      title={label}
+      disabled={disabled || personalNotesPanel.isDisabled}
+      modalSize="lg"
+      render={() => {
+        if (!personalNotesPanel.isLoaded) {
+          return <div className="p-2 text-sm text-gray-700">Loading personal notes...</div>;
+        }
+
+        return personalNotesPanel.content || <div className="p-2 text-sm text-gray-700">No personal notes yet.</div>;
+      }}
+      renderFooter={({ close }) => (
+        <div className="flex justify-end">
+          <Button onClick={close}>Close</Button>
+        </div>
+      )}
+    >
+      {buttonLabel}
     </ModalButton>
   );
 }
@@ -359,10 +409,7 @@ export function HooksTableGridRenderer({ table, mode, disabled }: HooksTableGrid
         renderCell: ({ row }) => {
           return (
             <div className="flex h-full items-center justify-center">
-              <Button
-                onClick={() => table.removeRow(row.rowIndex)}
-                disabled={isDisabled || table.rowCount < 2}
-              >
+              <Button onClick={() => table.removeRow(row.rowIndex)} disabled={isDisabled || table.rowCount < 2}>
                 Remove
               </Button>
             </div>

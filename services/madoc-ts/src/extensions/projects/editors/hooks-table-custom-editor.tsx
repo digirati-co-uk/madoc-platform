@@ -10,7 +10,11 @@ import { useCanvasModel } from '../../../frontend/site/hooks/use-canvas-model';
 import { useCaptureModelContributionLifecycle } from '../../../frontend/site/hooks/use-capture-model-contribution-lifecycle';
 import { useRouteContext } from '../../../frontend/site/hooks/use-route-context';
 import { HrefLink } from '@/frontend/shared/utility/href-link';
-import { HooksTableGridRenderer, HooksTableTopLevelFieldsModalButton } from './hooks-table-grid-renderer';
+import {
+  HooksTableGridRenderer,
+  HooksTablePersonalNotesModalButton,
+  HooksTableTopLevelFieldsModalButton,
+} from './hooks-table-grid-renderer';
 import { ContributionEditorStateAlerts } from './contribution-editor-state-alerts';
 import { ContributionSuccessModal } from './contribution-success-modal';
 import { getBlockedReason } from './tabular-project-custom-editor-utils';
@@ -102,6 +106,7 @@ function HooksTableCustomEditorContent({ canvasId, canvas }: { canvasId: number;
                   Add row
                 </Button>
                 <HooksTableTopLevelFieldsModalButton table={table} mode="write" disabled={isEditingDisabled} />
+                <HooksTablePersonalNotesModalButton disabled={isEditingDisabled} />
               </div>
 
               <HooksTableGridRenderer table={table} mode="write" disabled={isEditingDisabled} />

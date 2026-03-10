@@ -474,7 +474,7 @@ export function TabularProjectCustomEditorSidebar({
       {
         id: 'flag-cell',
         label: 'Cell review',
-        icon: <NotificationIcon />,
+        icon: <FlagIcon />,
         notifications: flaggedCells.length + historicalFlaggedCells.length || undefined,
         content: (
           <TabularSidebarFlagPanel

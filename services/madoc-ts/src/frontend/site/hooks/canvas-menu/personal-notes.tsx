@@ -26,7 +26,8 @@ export function usePersonalNotesMenu(): CanvasMenuHook {
   const [newNote, setNewNote] = useState('');
   const api = useApi();
 
-  const enabled = config.project.allowPersonalNotes || false;
+  const modelPageOptions = config.project.modelPageOptions as { allowPersonalNotes?: boolean } | undefined;
+  const enabled = config.project.allowPersonalNotes || modelPageOptions?.allowPersonalNotes || false;
 
   const { data, refetch } = apiHooks.getPersonalNote(() =>
     canvasId && projectId && user ? [projectId, canvasId] : undefined
