@@ -1,4 +1,6 @@
-export type { NetConfig, TabularCellRef } from '../../../../shared/utility/tabular-types';
+import type { TabularRowOffsetAdjustment } from '../../../../shared/utility/tabular-types';
+
+export type { NetConfig, TabularCellRef, TabularRowOffsetAdjustment } from '../../../../shared/utility/tabular-types';
 
 export type DragMode =
   | null
@@ -11,8 +13,8 @@ export type DragMode =
   | 'resize-ne'
   | 'resize-sw'
   | 'resize-se'
-  | { type: 'row'; index: number }
-  | { type: 'col'; index: number };
+  | { type: 'row'; index: number; selectedIndexes?: number[] }
+  | { type: 'col'; index: number; selectedIndexes?: number[] };
 
 export type CastANetPoint = { x: number; y: number };
 
@@ -56,6 +58,7 @@ export type CastANetStructure = {
   rowCount: number;
   columnWidthsPctOfPage: number[];
   rowHeightsPctOfPage: number[];
+  rowOffsetAdjustments: TabularRowOffsetAdjustment[];
   blankColumnIndexes: number[];
   columns: CastANetColumnStructure[];
   rows: CastANetRowStructure[];
@@ -68,6 +71,7 @@ export type CastANetPayload = {
   columnCount: number;
   columnWidthsPctOfPage: number[];
   rowHeightsPctOfPage: number[];
+  rowOffsetAdjustments: TabularRowOffsetAdjustment[];
   blankColumnIndexes: number[];
 };
 

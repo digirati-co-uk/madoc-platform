@@ -2,7 +2,6 @@ import React, { useContext, useMemo } from 'react';
 import type { TabularColumnEditorValue, TabularFieldPlugin } from './types';
 import { PluginContext } from '../../../../shared/capture-models/plugin-api/context';
 import { Segment } from '../../../../shared/capture-models/editor/atoms/Segment';
-import { Dropdown } from '../../../../shared/capture-models/editor/atoms/Dropdown';
 import {
   StyledForm,
   StyledFormLabel,
@@ -36,10 +35,6 @@ export function TabularColumnEditor(props: {
     [availableFieldTypes]
   );
   const typeLabel = textFieldType?.label ?? 'Text';
-  const dropdownOptions = useMemo(
-    () => [{ text: typeLabel, value: TEXT_FIELD_TYPE, label: TEXT_FIELD_TYPE }],
-    [typeLabel]
-  );
 
   return (
     <Segment style={{ borderTopColor: 'lightcoral' }}>
@@ -69,13 +64,7 @@ export function TabularColumnEditor(props: {
         <div style={{ display: 'grid', gap: 6, minWidth: 0 }}>
           <StyledFormLabel>Field type *</StyledFormLabel>
           <div style={{ width: '100%', maxWidth: '100%', minWidth: 0, overflow: 'hidden' }}>
-            <Dropdown
-              value={TEXT_FIELD_TYPE}
-              placeholder={typeLabel}
-              options={dropdownOptions}
-              onChange={() => undefined}
-              disabled
-            />
+            <StyledFormInputElement as="input" value={typeLabel} readOnly disabled />
             <div style={{ marginTop: 6, fontSize: 12, opacity: 0.75 }}>
               {textFieldType?.description ?? 'Field type is fixed to Text for tabular projects.'}
             </div>

@@ -1,5 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import type { DragMode, NetConfig } from './types';
+import { getProjectedBodyRowHeightPctOfTable, getTabularRowBoundsPctOfTable } from './projected-row-bounds';
+import { sanitizeTabularRowOffsetAdjustments } from '@/frontend/shared/utility/tabular-row-offset-adjustments';
 import { getStops } from './utils';
 
 type ResizeHandleMode = Extract<DragMode, 'resize-nw' | 'resize-ne' | 'resize-sw' | 'resize-se'>;
@@ -59,30 +61,14 @@ export function useCastANetOverlayGeometry({
     [netTop, value.height]
   );
 
-  const projectedBodyRowHeight = useMemo(() => {
-    if (rowStops.length < 2) {
-      return 0;
-    }
-
-    const rowHeights = Array.from({ length: value.rows }, (_, index) => {
-      const start = rowStops[index];
-      const end = rowStops[index + 1];
-      if (start == null || end == null) {
-        return 0;
-      }
-      return Math.max(0, end - start);
-    }).filter(height => height > 0);
-
-    if (!rowHeights.length) {
-      return 0;
-    }
-
-    // Row 0 is the heading row in the tabular flow; use data row sizes for extrapolation
-    const bodyRows = rowHeights.slice(1);
-    const target = bodyRows.length ? bodyRows : rowHeights;
-    const total = target.reduce((sum, height) => sum + height, 0);
-    return total / target.length;
+  const projectedBodyRowHeightPctOfTable = useMemo(() => {
+    return getProjectedBodyRowHeightPctOfTable(rowStops, value.rows);
   }, [rowStops, value.rows]);
+
+  const rowOffsetAdjustments = useMemo(
+    () => sanitizeTabularRowOffsetAdjustments(value.rowOffsetAdjustments),
+    [value.rowOffsetAdjustments]
+  );
 
   const getProjectedRowBounds = useCallback(
     (rowIndex: number) => {
@@ -90,32 +76,16 @@ export function useCastANetOverlayGeometry({
         return null;
       }
 
-      const directStart = rowStops[rowIndex];
-      const directEnd = rowStops[rowIndex + 1];
-      if (directStart != null && directEnd != null) {
-        return {
-          top: directStart,
-          bottom: directEnd,
-        };
-      }
-
-      if (projectedBodyRowHeight <= 0) {
-        return null;
-      }
-
-      const beyond = rowIndex - value.rows;
-      if (beyond < 0) {
-        return null;
-      }
-
-      const start = 100 + beyond * projectedBodyRowHeight;
-      const end = start + projectedBodyRowHeight;
-      return {
-        top: start,
-        bottom: end,
-      };
+      return getTabularRowBoundsPctOfTable({
+        rowIndex,
+        rowStops,
+        rowCount: value.rows,
+        projectedBodyRowHeightPctOfTable,
+        rowOffsetAdjustments,
+        netHeightPctOfPage: value.height,
+      });
     },
-    [projectedBodyRowHeight, rowStops, value.rows]
+    [projectedBodyRowHeightPctOfTable, rowOffsetAdjustments, rowStops, value.height, value.rows]
   );
 
   const handleDefinitions = useMemo<readonly CastANetResizeHandle[]>(

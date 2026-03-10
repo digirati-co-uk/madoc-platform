@@ -2,6 +2,8 @@ import React, { useEffect } from 'react';
 import { useCanvas } from 'react-iiif-vault';
 import type { NetConfig, TabularCellRef } from './types';
 import { getEffectivePositions, getStops } from './utils';
+import { getProjectedBodyRowHeightPctOfTable, getTabularRowBoundsPctOfTable } from './projected-row-bounds';
+import { sanitizeTabularRowOffsetAdjustments } from '@/frontend/shared/utility/tabular-row-offset-adjustments';
 
 type CanvasViewport = {
   x: number;
@@ -48,37 +50,23 @@ export function FollowActiveCellOnCanvas(props: FollowActiveCellOnCanvasProps) {
     const cols = Math.max(1, Math.floor(value.cols || 1));
     const rowPositions = getEffectivePositions(rows, value.rowPositions);
     const colPositions = getEffectivePositions(cols, value.colPositions);
+    const rowOffsetAdjustments = sanitizeTabularRowOffsetAdjustments(value.rowOffsetAdjustments);
 
     const rowStops = getStops(rows, rowPositions);
     const colStops = getStops(cols, colPositions);
-
-    const rowHeights = Array.from({ length: rows }, (_, index) => {
-      const start = rowStops[index];
-      const end = rowStops[index + 1];
-      if (start == null || end == null) {
-        return 0;
-      }
-      return Math.max(0, end - start);
-    }).filter(height => height > 0);
-    const bodyRows = rowHeights.slice(1);
-    const projectedBodyRowHeight =
-      (bodyRows.length ? bodyRows : rowHeights).reduce((sum, height) => sum + height, 0) /
-      Math.max(1, (bodyRows.length ? bodyRows : rowHeights).length);
-
-    const rowStart = rowStops[activeCell.row];
-    const rowEnd = rowStops[activeCell.row + 1];
+    const projectedBodyRowHeightPctOfTable = getProjectedBodyRowHeightPctOfTable(rowStops, rows);
+    const rowBounds = getTabularRowBoundsPctOfTable({
+      rowIndex: activeCell.row,
+      rowStops,
+      rowCount: rows,
+      projectedBodyRowHeightPctOfTable,
+      rowOffsetAdjustments,
+      netHeightPctOfPage: value.height,
+    });
     const colStart = colStops[activeCell.col];
     const colEnd = colStops[activeCell.col + 1];
-
-    let r0 = rowStart;
-    let r1 = rowEnd;
-
-    // Data rows beyond the configured net rows use the average height
-    if ((r0 == null || r1 == null) && projectedBodyRowHeight > 0 && activeCell.row >= rows) {
-      const offset = activeCell.row - rows;
-      r0 = 100 + offset * projectedBodyRowHeight;
-      r1 = r0 + projectedBodyRowHeight;
-    }
+    const r0 = rowBounds?.top;
+    const r1 = rowBounds?.bottom;
 
     if (r0 == null || r1 == null || colStart == null || colEnd == null) {
       return;
@@ -166,6 +154,7 @@ export function FollowActiveCellOnCanvas(props: FollowActiveCellOnCanvasProps) {
     value.height,
     value.left,
     value.rows,
+    value.rowOffsetAdjustments,
     value.rowPositions,
     value.top,
     value.width,

@@ -7,6 +7,7 @@ import type { IIIFBrowserProps } from 'iiif-browser';
 import type { ApiClient } from '@/gateway/api';
 import type { CreateProject } from '@/types/schemas/create-project';
 import { offsetTabularCellRef } from '@/frontend/shared/utility/tabular-cell-ref';
+import { addTabularRowOffsetAdjustment } from '@/frontend/shared/utility/tabular-row-offset-adjustments';
 import {
   TABULAR_WIZARD_CAST_A_NET_ROWS,
   TABULAR_WIZARD_PREVIEW_SPLIT_DIVIDER_HEIGHT,
@@ -138,6 +139,7 @@ export function useTabularProjectController(options: UseTabularProjectController
     height: 80,
     rowPositions: [],
     colPositions: [],
+    rowOffsetAdjustments: [],
   });
 
   const { height: castANetHeight, startResize: startCastANetResize } = useResizableHeight(CAST_A_NET_DEFAULT_HEIGHT, {
@@ -527,17 +529,27 @@ export function useTabularProjectController(options: UseTabularProjectController
     }
   }, [shareUrl]);
 
-  const nudgePreviewNet = useCallback((x: number, y: number) => {
-    setNetConfig(prev => {
-      const nextLeft = clampToRange(prev.left + x, 0, 100 - prev.width);
-      const nextTop = clampToRange(prev.top + y, 0, 100 - prev.height);
-      return {
-        ...prev,
-        left: nextLeft,
-        top: nextTop,
-      };
-    });
-  }, []);
+  const nudgePreviewNet = useCallback(
+    (x: number, y: number) => {
+      setNetConfig(prev => {
+        const nextLeft = clampToRange(prev.left + x, 0, 100 - prev.width);
+        const fallbackAnchorRow = Math.max(0, Math.floor(prev.rows || 0));
+        const anchorRow = previewCanvasActiveCell?.row ?? fallbackAnchorRow;
+        if (Number.isFinite(anchorRow) && anchorRow >= 0 && y !== 0) {
+          return {
+            ...prev,
+            left: nextLeft,
+            rowOffsetAdjustments: addTabularRowOffsetAdjustment(prev.rowOffsetAdjustments, anchorRow, y),
+          };
+        }
+        return {
+          ...prev,
+          left: nextLeft,
+        };
+      });
+    },
+    [previewCanvasActiveCell]
+  );
 
   const addPreviewRow = useCallback(() => {
     setPreviewAdditionalRows(prev => prev + 1);

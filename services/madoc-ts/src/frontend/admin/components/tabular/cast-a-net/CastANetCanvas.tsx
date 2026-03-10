@@ -47,6 +47,7 @@ export const CastANetCanvas: React.FC<CastANetCanvasProps> = ({
   onNudgeDown,
 }) => {
   const AnySimpleViewerProvider = SimpleViewerProvider as unknown as React.FC<any>;
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const runtime = useRef<RuntimeWithViewport | null>(null);
   const [internalDimOpacity, setInternalDimOpacity] = useState(0);
   const [runtimeTick, setRuntimeTick] = useState(0);
@@ -66,6 +67,23 @@ export const CastANetCanvas: React.FC<CastANetCanvasProps> = ({
     setViewerRetryCount(0);
   }, [viewerBaseKey]);
 
+  const hasRenderedCanvas = useCallback(() => {
+    const container = containerRef.current;
+    if (!container) {
+      return false;
+    }
+
+    const canvases = Array.from(container.querySelectorAll('canvas'));
+    if (!canvases.length) {
+      return false;
+    }
+
+    return canvases.some(canvas => {
+      const rect = canvas.getBoundingClientRect();
+      return canvas.width > 0 && canvas.height > 0 && rect.width > 0 && rect.height > 0;
+    });
+  }, []);
+
   useEffect(() => {
     if (typeof window === 'undefined' || viewerRetryCount >= 1) {
       return;
@@ -73,14 +91,15 @@ export const CastANetCanvas: React.FC<CastANetCanvasProps> = ({
 
     const timeout = window.setTimeout(() => {
       // Sometimes Atlas fails to initialize on first mount; remount once as a self-heal.
-      if (!runtime.current) {
+      if (!runtime.current || !hasRenderedCanvas()) {
+        runtime.current = null;
         setViewerRetryCount(count => count + 1);
         setViewerRetryToken(token => token + 1);
       }
     }, 1400);
 
     return () => window.clearTimeout(timeout);
-  }, [viewerRetryCount, viewerRetryToken, viewerBaseKey]);
+  }, [hasRenderedCanvas, viewerRetryCount, viewerRetryToken, viewerBaseKey]);
 
   useEffect(() => {
     if (!onStructureChange) return;
@@ -125,7 +144,10 @@ export const CastANetCanvas: React.FC<CastANetCanvasProps> = ({
   const viewerKey = `${viewerBaseKey}::${viewerRetryToken}`;
 
   return (
-    <div style={{ border: '1px solid #ddd', height, position: 'relative', background: '#fff', overflow: 'hidden' }}>
+    <div
+      ref={containerRef}
+      style={{ border: '1px solid #ddd', height, position: 'relative', background: '#fff', overflow: 'hidden' }}
+    >
       {!previewOverlayOnly ? (
         <div className="cast-a-net-opacity-control" role="group" aria-label="Canvas opacity">
           <OpacityIcon className="cast-a-net-opacity-icon" aria-hidden="true" />
