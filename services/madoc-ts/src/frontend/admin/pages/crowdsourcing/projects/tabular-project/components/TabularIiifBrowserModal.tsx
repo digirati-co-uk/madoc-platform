@@ -4,6 +4,7 @@ import type { IIIFBrowserProps } from 'iiif-browser';
 import { ErrorMessage } from '../../../../../../shared/callouts/ErrorMessage';
 import { BrowserComponent } from '../../../../../../shared/utility/browser-component';
 import { IsolatedIIIFBrowser } from './IsolatedIIIFBrowser';
+import { ChevronDown } from '@/frontend/shared/icons/ChevronIcon';
 
 interface TabularIiifBrowserModalProps {
   t: TFunction;
@@ -17,6 +18,7 @@ interface TabularIiifBrowserModalProps {
 }
 
 export function TabularIiifBrowserModal(props: TabularIiifBrowserModalProps) {
+  const [showCanvasHelp, setShowCanvasHelp] = React.useState(true);
   const {
     t,
     iiifHomeLoadError,
@@ -28,6 +30,7 @@ export function TabularIiifBrowserModal(props: TabularIiifBrowserModalProps) {
     uiOptions,
   } = props;
   const iiifPickerMode = 'external';
+  const canvasHelpPanelId = 'tabular-iiif-canvas-help';
 
   return (
     <div className="tabular-iiif-browser-modal min-h-[420px]">
@@ -68,17 +71,37 @@ export function TabularIiifBrowserModal(props: TabularIiifBrowserModalProps) {
         `}
       </style>
       <div className="mb-3 grid gap-1.5 rounded border border-[#d7dbe8] bg-[#eef3ff] p-2.5">
-        <div className="text-xs font-semibold text-[#1f2d5a]">{t('How to find the right canvas')}</div>
-        <div className="text-xs text-[#1f2d5a]/90">
-          {t('1. Use the browser bar to search in Madoc by title or keyword.')}
-        </div>
-        <div className="text-xs text-[#1f2d5a]/90">
-          {t('2. Use the browser bar to paste a IIIF URI for items outwith Madoc.')}
-        </div>
-        <div className="text-xs text-[#1f2d5a]/90">
-          {t('3. Double-click collections or manifests to navigate, then select a canvas.')}
-        </div>
-        <div className="text-xs text-[#1f2d5a]/90">{t('4. Click "Use selected canvas" to confirm your choice.')}</div>
+        <button
+          type="button"
+          aria-expanded={showCanvasHelp}
+          aria-controls={canvasHelpPanelId}
+          onClick={() => setShowCanvasHelp(currentState => !currentState)}
+          className="flex w-full items-center justify-between gap-2 text-left"
+        >
+          <span className="text-xs font-semibold text-[#1f2d5a]">{t('How to find the right canvas')}</span>
+          <span className="text-xs font-medium text-[#1f2d5a]">
+            <ChevronDown
+              aria-hidden="true"
+              className={`h-4 w-4 transition-transform duration-200 ${showCanvasHelp ? 'rotate-180' : 'rotate-0'}`}
+            />
+          </span>
+        </button>
+        {showCanvasHelp ? (
+          <div id={canvasHelpPanelId} className="grid gap-1.5">
+            <div className="text-xs text-[#1f2d5a]/90">
+              {t('1. Use the browser bar to search in Madoc by title or keyword.')}
+            </div>
+            <div className="text-xs text-[#1f2d5a]/90">
+              {t('2. Use the browser bar to paste a IIIF URI for items outwith Madoc.')}
+            </div>
+            <div className="text-xs text-[#1f2d5a]/90">
+              {t('3. Double-click collections or manifests to navigate, then select a canvas.')}
+            </div>
+            <div className="text-xs text-[#1f2d5a]/90">
+              {t('4. Click "Use selected canvas" to confirm your choice.')}
+            </div>
+          </div>
+        ) : null}
       </div>
 
       {iiifHomeLoadError ? <ErrorMessage>{iiifHomeLoadError}</ErrorMessage> : null}

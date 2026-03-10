@@ -1,4 +1,11 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  type MouseEvent as ReactMouseEvent,
+  type WheelEvent as ReactWheelEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import type { NetConfig, TabularCellRef } from './types';
 import { useCastANetOverlayDrag } from './use-cast-a-net-overlay-drag';
 import { useCastANetOverlayGeometry } from './use-cast-a-net-overlay-geometry';
@@ -10,10 +17,10 @@ type CastANetOverlayProps = {
   activeCell?: TabularCellRef | null;
   previewOverlayOnly?: boolean;
   onOverlayWheel?: (deltaY: number) => void;
-}
+};
 
-const isMoveModifierPressed = (event: { altKey: boolean; metaKey: boolean }) => {
-  return event.altKey || event.metaKey;
+const isMoveModifierPressed = (event: { altKey: boolean }) => {
+  return event.altKey;
 };
 
 const sanitiseLineIndexes = (indexes: number[], max: number) => {
@@ -99,7 +106,7 @@ export function CastANetOverlay({
   });
   const showInteractiveNet = !previewOverlayOnly;
   const handleWheel = useCallback(
-    (event: React.WheelEvent<SVGElement>) => {
+    (event: ReactWheelEvent<SVGElement>) => {
       event.preventDefault();
       event.stopPropagation();
       onOverlayWheel?.(event.deltaY);
@@ -111,8 +118,28 @@ export function CastANetOverlay({
     setSelectedColIndexes([]);
   }, []);
 
+  useEffect(() => {
+    if (!selectedRowIndexes.length && !selectedColIndexes.length) {
+      return;
+    }
+
+    const onWindowMouseDown = (event: MouseEvent) => {
+      const target = event.target;
+      if (target instanceof Element && target.closest('[data-cast-a-net-interactive="true"]')) {
+        return;
+      }
+      clearLineSelection();
+    };
+
+    window.addEventListener('mousedown', onWindowMouseDown);
+
+    return () => {
+      window.removeEventListener('mousedown', onWindowMouseDown);
+    };
+  }, [clearLineSelection, selectedColIndexes.length, selectedRowIndexes.length]);
+
   const handleMoveMouseDown = useCallback(
-    (event: React.MouseEvent<SVGRectElement>) => {
+    (event: ReactMouseEvent<SVGRectElement>) => {
       clearLineSelection();
       startDrag('move')(event);
     },
@@ -120,7 +147,7 @@ export function CastANetOverlay({
   );
 
   const handleRowMouseDown = useCallback(
-    (index: number) => (event: React.MouseEvent<SVGLineElement>) => {
+    (index: number) => (event: ReactMouseEvent<SVGLineElement>) => {
       event.stopPropagation();
       if (disabled) {
         return;
@@ -148,7 +175,7 @@ export function CastANetOverlay({
   );
 
   const handleColMouseDown = useCallback(
-    (index: number) => (event: React.MouseEvent<SVGLineElement>) => {
+    (index: number) => (event: ReactMouseEvent<SVGLineElement>) => {
       event.stopPropagation();
       if (disabled) {
         return;
@@ -371,6 +398,7 @@ export function CastANetOverlay({
               height={value.height}
               fill="rgba(0,0,0,0.001)"
               pointerEvents={isMoveModifierActive ? 'all' : 'none'}
+              data-cast-a-net-interactive="true"
               onMouseDown={handleMoveMouseDown}
               onWheel={handleWheel}
               style={{ cursor: disabled ? 'not-allowed' : 'move' }}
@@ -390,6 +418,7 @@ export function CastANetOverlay({
                     strokeWidth={GRID_HIT_THICKNESS}
                     vectorEffect="non-scaling-stroke"
                     pointerEvents="stroke"
+                    data-cast-a-net-interactive="true"
                     onMouseDown={handleRowMouseDown(index)}
                     onWheel={handleWheel}
                     style={{ cursor: disabled ? 'not-allowed' : isShiftPressed ? 'copy' : 'row-resize' }}
@@ -422,6 +451,7 @@ export function CastANetOverlay({
                     strokeWidth={GRID_HIT_THICKNESS}
                     vectorEffect="non-scaling-stroke"
                     pointerEvents="stroke"
+                    data-cast-a-net-interactive="true"
                     onMouseDown={handleColMouseDown(index)}
                     onWheel={handleWheel}
                     style={{ cursor: disabled ? 'not-allowed' : isShiftPressed ? 'copy' : 'col-resize' }}
@@ -449,6 +479,7 @@ export function CastANetOverlay({
               strokeWidth={GRID_HIT_THICKNESS}
               vectorEffect="non-scaling-stroke"
               pointerEvents="stroke"
+              data-cast-a-net-interactive="true"
               onMouseDown={e => {
                 e.stopPropagation();
                 clearLineSelection();
@@ -467,6 +498,7 @@ export function CastANetOverlay({
               strokeWidth={GRID_HIT_THICKNESS}
               vectorEffect="non-scaling-stroke"
               pointerEvents="stroke"
+              data-cast-a-net-interactive="true"
               onMouseDown={e => {
                 e.stopPropagation();
                 clearLineSelection();
@@ -485,6 +517,7 @@ export function CastANetOverlay({
               strokeWidth={GRID_HIT_THICKNESS}
               vectorEffect="non-scaling-stroke"
               pointerEvents="stroke"
+              data-cast-a-net-interactive="true"
               onMouseDown={e => {
                 e.stopPropagation();
                 clearLineSelection();
@@ -503,6 +536,7 @@ export function CastANetOverlay({
               strokeWidth={GRID_HIT_THICKNESS}
               vectorEffect="non-scaling-stroke"
               pointerEvents="stroke"
+              data-cast-a-net-interactive="true"
               onMouseDown={e => {
                 e.stopPropagation();
                 clearLineSelection();
@@ -524,6 +558,7 @@ export function CastANetOverlay({
                 strokeLinecap="square"
                 vectorEffect="non-scaling-stroke"
                 pointerEvents="stroke"
+                data-cast-a-net-interactive="true"
                 onMouseDown={e => {
                   e.stopPropagation();
                   clearLineSelection();
@@ -538,4 +573,4 @@ export function CastANetOverlay({
       </svg>
     </div>
   );
-};
+}
