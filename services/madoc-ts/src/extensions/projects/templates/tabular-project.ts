@@ -102,6 +102,28 @@ export const tabularProject: ProjectTemplate<TabularProjectTemplateOptions> = {
     description: 'Build a tabular capture model to support transcribing data for your project, using a table structure',
     version: '1.0.0',
     actionLabel: 'Create tabular data project',
+    thumbnail: `<svg width="109" height="109" viewBox="0 0 109 109" xmlns="http://www.w3.org/2000/svg">
+  <g fill="none" fill-rule="evenodd">
+    <rect x="1" y="1" width="107" height="107" rx="5" stroke="#E7E9EC" stroke-width="2"/>
+    <g stroke="#E7E9EC" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="18" y="18" width="66" height="66" rx="5"/>
+      <path d="M40 18V84"/>
+      <path d="M62 18V84"/>
+      <path d="M18 40H84"/>
+      <path d="M18 62H84"/>
+    </g>
+    <g fill-rule="nonzero">
+      <path fill="#9DAEF0" fill-opacity=".7"
+        d="M82 43 84.5 37.6 90 35 84.5 32.4 82 27 79.5 32.4 74 35 79.5 37.6z"/>
+      <path fill="#5B78E5"
+        d="M60 55 53.5 41 47 55 33 61.5 47 68 53.5 82 60 68 74 61.5z"/>
+      <path fill="#5B78E5" fill-opacity=".45"
+        d="M82 70 79.5 75.4 74 78 79.5 80.6 82 86 84.5 80.6 90 78 84.5 75.4z"/>
+
+    </g>
+
+  </g>
+</svg>`,
   },
   captureModel: {
     // Fallback model for non-wizard creation paths.
@@ -114,6 +136,7 @@ export const tabularProject: ProjectTemplate<TabularProjectTemplateOptions> = {
       allowCollectionNavigation: true,
       allowManifestNavigation: true,
       allowCanvasNavigation: true,
+      allowPersonalNotes: true,
       randomlyAssignCanvas: false,
       maxContributionsPerResource: false,
       allowSubmissionsWhenCanvasComplete: false,

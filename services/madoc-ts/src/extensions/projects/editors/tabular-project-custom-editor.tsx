@@ -25,6 +25,7 @@ import ResizeHandleIcon from '@/frontend/shared/icons/ResizeHandleIcon';
 import { buildCastANetStructure } from '../../../frontend/admin/components/tabular/cast-a-net/CastANetStructure';
 import { TabularProjectCustomEditorCanvas } from './tabular-project-custom-editor-canvas';
 import { ContributionEditorStateAlerts } from './contribution-editor-state-alerts';
+import { ContributionSuccessModal } from './contribution-success-modal';
 import { TabularProjectCustomEditorSidebar } from './tabular-project-custom-editor-sidebar';
 import { TabularProjectCustomEditorTable } from './tabular-project-custom-editor-table';
 import {
@@ -50,6 +51,7 @@ type TabularProjectCustomEditorContentProps = {
 };
 
 const CONTRIBUTOR_NET_NUDGE_STEP = 0.25;
+const TABULAR_CONTRIBUTOR_BASE_ROW_COUNT = 5;
 
 function areNumberArraysEqual(left: number[], right: number[]) {
   if (left.length !== right.length) {
@@ -117,15 +119,23 @@ function TabularProjectCustomEditorContent({
   const lifecycle = useCaptureModelContributionLifecycle();
   const { projectId } = useRouteContext();
   const table = useCaptureModelEditorApi({ tableProperty: 'rows' });
+  const currentRevisionId = Revisions.useStoreState(state => state.currentRevisionId);
+  const currentRevisionStatus = Revisions.useStoreState(state => state.currentRevision?.revision.status);
   const createNewFieldInstance = Revisions.useStoreActions(actions => actions.createNewFieldInstance);
+  const deselectRevision = Revisions.useStoreActions(actions => actions.deselectRevision);
   const removeInstance = Revisions.useStoreActions(actions => actions.removeInstance);
   const sharedNetConfigRef = useRef<NetConfig | null>(initialNetConfig);
+  const seededBaseRowsRevisionRef = useRef<string | null>(null);
   const [netSyncError, setNetSyncError] = useState<string | null>(null);
+  const [successModalState, setSuccessModalState] = useState<'saved' | 'submitted' | null>(null);
 
   const isPersisting = lifecycle.phase === 'saving-draft' || lifecycle.phase === 'submitting';
   const isLoading = lifecycle.phase === 'loading' || lifecycle.phase === 'preparing';
   const isBlocked = lifecycle.phase === 'blocked';
-  const isEditingDisabled = isBlocked || isPersisting;
+  const isSubmittedRevision = currentRevisionStatus === 'submitted';
+  const isEditingDisabled = isBlocked || isPersisting || isSubmittedRevision;
+  const canStartAnotherSubmission =
+    !lifecycle.preventFurtherSubmission && lifecycle.canContribute && lifecycle.canUserSubmit;
   const {
     widthB,
     refs,
@@ -194,9 +204,53 @@ function TabularProjectCustomEditorContent({
     sharedNetConfigRef.current = initialNetConfig;
   }, [initialNetConfig]);
 
+  useEffect(() => {
+    if (!lifecycle.revisionId) {
+      seededBaseRowsRevisionRef.current = null;
+      return;
+    }
+
+    if (isEditingDisabled || !isTableEditorReady) {
+      return;
+    }
+
+    if (seededBaseRowsRevisionRef.current === lifecycle.revisionId) {
+      return;
+    }
+
+    const currentRowCount = useLegacyTopLevelLayout ? tableRows.length : table.rowCount;
+    const rowsToAdd = TABULAR_CONTRIBUTOR_BASE_ROW_COUNT - currentRowCount;
+
+    if (rowsToAdd > 0) {
+      if (!canAddRow) {
+        return;
+      }
+
+      for (let rowIndex = 0; rowIndex < rowsToAdd; rowIndex += 1) {
+        addRowFromFooter();
+      }
+    }
+
+    seededBaseRowsRevisionRef.current = lifecycle.revisionId;
+  }, [
+    addRowFromFooter,
+    canAddRow,
+    isEditingDisabled,
+    isTableEditorReady,
+    lifecycle.revisionId,
+    table.rowCount,
+    tableRows.length,
+    useLegacyTopLevelLayout,
+  ]);
+
   async function onSaveForLater() {
+    if (isSubmittedRevision) {
+      return;
+    }
+
     try {
       await lifecycle.saveForLater();
+      setSuccessModalState('saved');
     } catch {
       /* empty */
     }
@@ -264,13 +318,32 @@ function TabularProjectCustomEditorContent({
   }, [api, netConfig, projectId, templateConfig]);
 
   async function onSubmit() {
+    if (isSubmittedRevision) {
+      return;
+    }
+
     try {
       await syncSharedNetConfig();
       await lifecycle.submit();
+      setSuccessModalState('submitted');
     } catch {
       /* empty */
     }
   }
+
+  const onContinueAfterSuccess = useCallback(() => {
+    if (successModalState !== 'submitted' || !canStartAnotherSubmission) {
+      return;
+    }
+
+    if (currentRevisionId) {
+      deselectRevision({ revisionId: currentRevisionId });
+    }
+
+    void lifecycle.ensureRevision().catch(() => {
+      /* empty */
+    });
+  }, [canStartAnotherSubmission, currentRevisionId, deselectRevision, lifecycle, successModalState]);
 
   return (
     <div
@@ -406,7 +479,7 @@ function TabularProjectCustomEditorContent({
                       }
                       tableErrors={visibleTableErrors}
                       needsRevisionSelection={lifecycle.needsRevisionSelection}
-                      onRetry={() => lifecycle.refresh()}
+                      onRetry={() => lifecycle.prepare()}
                       onEnsureRevision={() => lifecycle.ensureRevision()}
                     />
 
@@ -437,10 +510,18 @@ function TabularProjectCustomEditorContent({
                     {visibleTableErrors.length ? (
                       <pre className="whitespace-pre-wrap">{visibleTableErrors.join('\n')}</pre>
                     ) : null}
-                    {lifecycle.lastError && lifecycle.phase !== 'error' ? (
-                      <pre className="whitespace-pre-wrap">{lifecycle.lastError.message}</pre>
+                    {lifecycle.lastError && lifecycle.lastErrorStage === 'save' && lifecycle.phase !== 'error' ? (
+                      <div className="rounded border border-red-200 bg-red-50 p-2 text-sm">
+                        <p>Could not save your latest changes. Please try again.</p>
+                        <pre className="whitespace-pre-wrap">{lifecycle.lastError.message}</pre>
+                      </div>
                     ) : null}
                     {netSyncError ? <pre className="whitespace-pre-wrap">{netSyncError}</pre> : null}
+                    {isSubmittedRevision ? (
+                      <div className="rounded border border-blue-200 bg-blue-50 p-2 text-sm">
+                        This submission has already been submitted and cannot be edited.
+                      </div>
+                    ) : null}
                   </div>
                 </div>
 
@@ -461,6 +542,14 @@ function TabularProjectCustomEditorContent({
           </LayoutContent>
         </LayoutContainer>
       </OuterLayoutContainer>
+      {successModalState ? (
+        <ContributionSuccessModal
+          mode={successModalState}
+          nextImageHref={lifecycle.nextCanvas.next?.href}
+          onContinueWorking={onContinueAfterSuccess}
+          onClose={() => setSuccessModalState(null)}
+        />
+      ) : null}
     </div>
   );
 }

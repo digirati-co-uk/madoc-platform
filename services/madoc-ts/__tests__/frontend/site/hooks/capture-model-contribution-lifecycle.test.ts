@@ -42,7 +42,7 @@ describe('capture model contribution lifecycle utility', () => {
   test('empty canvas lifecycle can transition loading -> preparing -> ready', () => {
     expect(
       resolveContributionPhase({
-        hasError: false,
+        hasBlockingError: false,
         isLoading: true,
         isPreparing: false,
         isBlocked: false,
@@ -52,7 +52,7 @@ describe('capture model contribution lifecycle utility', () => {
 
     expect(
       resolveContributionPhase({
-        hasError: false,
+        hasBlockingError: false,
         isLoading: false,
         isPreparing: true,
         isBlocked: false,
@@ -62,13 +62,35 @@ describe('capture model contribution lifecycle utility', () => {
 
     expect(
       resolveContributionPhase({
-        hasError: false,
+        hasBlockingError: false,
         isLoading: false,
         isPreparing: false,
         isBlocked: false,
         pendingState: 'idle',
       })
     ).toEqual('ready');
+  });
+
+  test('non-blocking save errors keep editor in ready phase', () => {
+    expect(
+      resolveContributionPhase({
+        hasBlockingError: false,
+        isLoading: false,
+        isPreparing: false,
+        isBlocked: false,
+        pendingState: 'idle',
+      })
+    ).toEqual('ready');
+
+    expect(
+      resolveContributionPhase({
+        hasBlockingError: true,
+        isLoading: false,
+        isPreparing: false,
+        isBlocked: false,
+        pendingState: 'idle',
+      })
+    ).toEqual('error');
   });
 
   test('saveDraft persists with draft status and refreshes', async () => {

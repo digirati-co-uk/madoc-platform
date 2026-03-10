@@ -6,7 +6,11 @@ import {
   CustomReviewRendererProps,
 } from '../../../frontend/site/pages/tasks/review-renderers/types';
 import { Button } from '../../../frontend/shared/navigation/Button';
-import { HooksTableGridRenderer, HooksTableTopLevelFieldsModalButton } from './hooks-table-grid-renderer';
+import {
+  HooksTableGridRenderer,
+  HooksTablePersonalNotesModalButton,
+  HooksTableTopLevelFieldsModalButton,
+} from './hooks-table-grid-renderer';
 
 type HooksTableLayoutProps = {
   mode: 'read' | 'write';
@@ -45,7 +49,9 @@ function HooksTableLayout({
   return (
     <div className="flex h-full min-h-0 flex-col">
       {controls || (DefaultControls ? <DefaultControls /> : null)}
-      {meta ? <div className="flex flex-wrap gap-4 border-b border-gray-300 bg-gray-100 px-3 py-2 text-sm">{meta}</div> : null}
+      {meta ? (
+        <div className="flex flex-wrap gap-4 border-b border-gray-300 bg-gray-100 px-3 py-2 text-sm">{meta}</div>
+      ) : null}
       <div className="flex min-h-0 flex-1 flex-col">
         <div className="min-h-0 basis-1/2 border-b border-gray-300">
           {subjectType === 'canvas' ? (
@@ -61,6 +67,7 @@ function HooksTableLayout({
             <div className="flex flex-wrap gap-2">
               {!isReadOnly ? <Button onClick={() => table.addRow()}>Add row</Button> : null}
               <HooksTableTopLevelFieldsModalButton table={table} mode={mode} />
+              <HooksTablePersonalNotesModalButton />
             </div>
 
             <HooksTableGridRenderer table={table} mode={mode} />
