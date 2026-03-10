@@ -78,6 +78,16 @@ const MAX_MADOC_COLLECTION_HOME_PAGES = 20;
 const MAX_MADOC_MANIFEST_HOME_PAGES = 40;
 const IIIF_HOME_LOCAL_STORAGE_KEY = 'iiif-browser-tabular-project-v2';
 
+const buildEvenLinePositions = (count: number): number[] => {
+  const safeCount = Math.max(1, Math.floor(count || 1));
+  if (safeCount <= 1) {
+    return [];
+  }
+
+  const step = 100 / safeCount;
+  return Array.from({ length: safeCount - 1 }, (_, index) => step * (index + 1));
+};
+
 export const TABULAR_PROJECT_STEP_IDS = {
   details: STEP_DETAILS,
   settings: STEP_SETTINGS,
@@ -212,12 +222,29 @@ export function useTabularProjectController(options: UseTabularProjectController
     }
 
     const colsFromSavedModel = Math.max(1, Math.floor(tabularModel.columns || tabularPayload?.columns?.length || 0));
+    const targetRows = TABULAR_WIZARD_CAST_A_NET_ROWS;
 
-    setNetConfig(prev => ({
-      ...prev,
-      cols: colsFromSavedModel,
-      rows: TABULAR_WIZARD_CAST_A_NET_ROWS,
-    }));
+    setNetConfig(prev => {
+      const colsChanged = prev.cols !== colsFromSavedModel;
+      const rowsChanged = prev.rows !== targetRows;
+      const colPositionCountChanged = (prev.colPositions || []).length !== Math.max(0, colsFromSavedModel - 1);
+      const rowPositionCountChanged = (prev.rowPositions || []).length !== Math.max(0, targetRows - 1);
+      const shouldResetCols = colsChanged || colPositionCountChanged;
+      const shouldResetRows = rowsChanged || rowPositionCountChanged;
+
+      if (!colsChanged && !rowsChanged && !shouldResetCols && !shouldResetRows) {
+        return prev;
+      }
+
+      return {
+        ...prev,
+        cols: colsFromSavedModel,
+        rows: targetRows,
+        colPositions: shouldResetCols ? buildEvenLinePositions(colsFromSavedModel) : prev.colPositions,
+        rowPositions: shouldResetRows ? buildEvenLinePositions(targetRows) : prev.rowPositions,
+        rowOffsetAdjustments: shouldResetRows ? [] : prev.rowOffsetAdjustments,
+      };
+    });
   }, [modelSaved, tabularModel.columns, tabularPayload]);
 
   const previewColumns = useMemo(
@@ -779,7 +806,7 @@ export function useTabularProjectController(options: UseTabularProjectController
       },
       externalSectionLabel: slug ? 'Madoc search results' : 'Madoc search results',
     };
-  }, [siteSlug, slug]);
+  }, [siteSlug, slug, siteId]);
 
   const uiOptions: IIIFBrowserProps['ui'] = useMemo(
     () => ({

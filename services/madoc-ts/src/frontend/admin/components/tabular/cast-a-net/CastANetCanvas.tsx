@@ -53,7 +53,8 @@ export const CastANetCanvas: React.FC<CastANetCanvasProps> = ({
   const [runtimeTick, setRuntimeTick] = useState(0);
   const [viewerRetryToken, setViewerRetryToken] = useState(0);
   const [viewerRetryCount, setViewerRetryCount] = useState(0);
-  const viewerBaseKey = `${manifestId}::${canvasId ?? ''}`;
+  const viewerBaseKey = `${manifestId}::${canvasId ?? ''}::${value.cols}::${value.rows}`;
+  const maxViewerRetries = 3;
 
   useEffect(() => {
     if (typeof dimOpacity === 'number') {
@@ -85,12 +86,12 @@ export const CastANetCanvas: React.FC<CastANetCanvasProps> = ({
   }, []);
 
   useEffect(() => {
-    if (typeof window === 'undefined' || viewerRetryCount >= 1) {
+    if (typeof window === 'undefined' || viewerRetryCount >= maxViewerRetries) {
       return;
     }
 
     const timeout = window.setTimeout(() => {
-      // Sometimes Atlas fails to initialize on first mount; remount once as a self-heal.
+      // Atlas can occasionally miss render on remount. Retry a few times to self-heal.
       if (!runtime.current || !hasRenderedCanvas()) {
         runtime.current = null;
         setViewerRetryCount(count => count + 1);
@@ -99,7 +100,7 @@ export const CastANetCanvas: React.FC<CastANetCanvasProps> = ({
     }, 1400);
 
     return () => window.clearTimeout(timeout);
-  }, [hasRenderedCanvas, viewerRetryCount, viewerRetryToken, viewerBaseKey]);
+  }, [hasRenderedCanvas, maxViewerRetries, viewerRetryCount, viewerRetryToken, viewerBaseKey]);
 
   useEffect(() => {
     if (!onStructureChange) return;
