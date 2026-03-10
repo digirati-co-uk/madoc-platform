@@ -50,6 +50,7 @@ type TabularProjectCustomEditorContentProps = {
 };
 
 const CONTRIBUTOR_NET_NUDGE_STEP = 0.25;
+const TABULAR_CONTRIBUTOR_BASE_ROW_COUNT = 5;
 
 function areNumberArraysEqual(left: number[], right: number[]) {
   if (left.length !== right.length) {
@@ -120,6 +121,7 @@ function TabularProjectCustomEditorContent({
   const createNewFieldInstance = Revisions.useStoreActions(actions => actions.createNewFieldInstance);
   const removeInstance = Revisions.useStoreActions(actions => actions.removeInstance);
   const sharedNetConfigRef = useRef<NetConfig | null>(initialNetConfig);
+  const seededBaseRowsRevisionRef = useRef<string | null>(null);
   const [netSyncError, setNetSyncError] = useState<string | null>(null);
 
   const isPersisting = lifecycle.phase === 'saving-draft' || lifecycle.phase === 'submitting';
@@ -193,6 +195,45 @@ function TabularProjectCustomEditorContent({
   useEffect(() => {
     sharedNetConfigRef.current = initialNetConfig;
   }, [initialNetConfig]);
+
+  useEffect(() => {
+    if (!lifecycle.revisionId) {
+      seededBaseRowsRevisionRef.current = null;
+      return;
+    }
+
+    if (isEditingDisabled || !isTableEditorReady) {
+      return;
+    }
+
+    if (seededBaseRowsRevisionRef.current === lifecycle.revisionId) {
+      return;
+    }
+
+    const currentRowCount = useLegacyTopLevelLayout ? tableRows.length : table.rowCount;
+    const rowsToAdd = TABULAR_CONTRIBUTOR_BASE_ROW_COUNT - currentRowCount;
+
+    if (rowsToAdd > 0) {
+      if (!canAddRow) {
+        return;
+      }
+
+      for (let rowIndex = 0; rowIndex < rowsToAdd; rowIndex += 1) {
+        addRowFromFooter();
+      }
+    }
+
+    seededBaseRowsRevisionRef.current = lifecycle.revisionId;
+  }, [
+    addRowFromFooter,
+    canAddRow,
+    isEditingDisabled,
+    isTableEditorReady,
+    lifecycle.revisionId,
+    table.rowCount,
+    tableRows.length,
+    useLegacyTopLevelLayout,
+  ]);
 
   async function onSaveForLater() {
     try {
