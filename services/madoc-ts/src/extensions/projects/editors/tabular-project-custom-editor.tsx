@@ -7,7 +7,7 @@ import { Revisions } from '@/frontend/shared/capture-models/editor/stores/revisi
 import { useApi } from '@/frontend/shared/hooks/use-api';
 import { useLoadedCaptureModel } from '@/frontend/shared/hooks/use-loaded-capture-model';
 import { VerticalResizeSeparator } from '@/frontend/shared/components/VerticalResizeSeparator';
-import { clampToRange } from '@/frontend/shared/utility/tabular-net-config';
+import { addTabularRowOffsetAdjustment } from '@/frontend/shared/utility/tabular-row-offset-adjustments';
 import {
   LayoutContainer,
   LayoutContent,
@@ -65,6 +65,26 @@ function areNumberArraysEqual(left: number[], right: number[]) {
   return true;
 }
 
+function areRowOffsetAdjustmentsEqual(
+  left: NetConfig['rowOffsetAdjustments'],
+  right: NetConfig['rowOffsetAdjustments']
+) {
+  if (left.length !== right.length) {
+    return false;
+  }
+
+  for (let index = 0; index < left.length; index += 1) {
+    if (
+      left[index].startRow !== right[index].startRow ||
+      left[index].offsetPctOfPage !== right[index].offsetPctOfPage
+    ) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 function areNetConfigsEqual(left: NetConfig | null, right: NetConfig | null) {
   if (!left || !right) {
     return left === right;
@@ -78,7 +98,8 @@ function areNetConfigsEqual(left: NetConfig | null, right: NetConfig | null) {
     left.width === right.width &&
     left.height === right.height &&
     areNumberArraysEqual(left.rowPositions || [], right.rowPositions || []) &&
-    areNumberArraysEqual(left.colPositions || [], right.colPositions || [])
+    areNumberArraysEqual(left.colPositions || [], right.colPositions || []) &&
+    areRowOffsetAdjustmentsEqual(left.rowOffsetAdjustments || [], right.rowOffsetAdjustments || [])
   );
 }
 
@@ -188,12 +209,17 @@ function TabularProjectCustomEditorContent({
       }
 
       setNetSyncError(null);
-      onNetConfigChange({
-        ...netConfig,
-        top: clampToRange(netConfig.top + deltaY, 0, 100 - netConfig.height),
-      });
+
+      const fallbackAnchorRow = Math.max(0, Math.floor(netConfig.rows || 0));
+      const anchorRow = overlayActiveCell?.row ?? fallbackAnchorRow;
+      if (Number.isFinite(anchorRow) && anchorRow >= 0 && deltaY !== 0) {
+        onNetConfigChange({
+          ...netConfig,
+          rowOffsetAdjustments: addTabularRowOffsetAdjustment(netConfig.rowOffsetAdjustments, anchorRow, deltaY),
+        });
+      }
     },
-    [netConfig, onNetConfigChange]
+    [netConfig, onNetConfigChange, overlayActiveCell]
   );
 
   const syncSharedNetConfig = useCallback(async () => {
@@ -221,6 +247,7 @@ function TabularProjectCustomEditorContent({
           columnCount: structure.columnCount,
           columnWidthsPctOfPage: structure.columnWidthsPctOfPage,
           rowHeightsPctOfPage: structure.rowHeightsPctOfPage,
+          rowOffsetAdjustments: structure.rowOffsetAdjustments,
           blankColumnIndexes: structure.blankColumnIndexes,
         },
       },

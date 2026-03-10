@@ -2,8 +2,8 @@ export type PxRect = { left: number; top: number; width: number; height: number 
 
 export const NET_MIN_SIZE_PCT = 1;
 export const NET_OVERLAY_MIN_SIZE_PCT = 5;
-export const NET_LINE_MIN_GAP_PCT = 2;
-export const NET_LINE_MIN_GAP_FLOOR_PCT = 0.25;
+export const NET_LINE_MIN_GAP_PCT = 1.5;
+export const NET_LINE_MIN_GAP_FLOOR_PCT = 0.1;
 export const NET_LINE_MIN_GAP_DENSITY_FACTOR = 6;
 export const NET_MAX_DIM_OPACITY = 1;
 export const NET_DIM_STEP = 0.01;

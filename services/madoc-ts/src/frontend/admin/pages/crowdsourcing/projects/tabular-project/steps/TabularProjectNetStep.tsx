@@ -69,6 +69,12 @@ export function TabularProjectNetStep(props: TabularProjectNetStepProps) {
                 <br />
                 <br />
                 {t('Use the non-editable table below as reference for your row and column layout.')}
+                <br />
+                <br />
+                {t('Hold ')}
+                <small>ALT/OPTION</small> {t('to move the whole net. ')}
+                {t('Hold ')}
+                <small>SHIFT</small> {t('to select multiple row/column lines, then drag one to move them together.')}
               </div>
             </div>
 

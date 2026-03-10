@@ -1,5 +1,6 @@
 import React from 'react';
 import { captureModelShorthand } from '../../../frontend/shared/capture-models/helpers/capture-model-shorthand';
+import type { TabularRowOffsetAdjustment } from '../../../frontend/shared/utility/tabular-types';
 import {
   TABULAR_CELL_FLAGS_PROPERTY,
   createTabularCellFlagsCaptureModelField,
@@ -39,6 +40,7 @@ export type TabularWizardSetup = {
     columnCount?: number;
     columnWidthsPctOfPage?: number[];
     rowHeightsPctOfPage?: number[];
+    rowOffsetAdjustments?: TabularRowOffsetAdjustment[];
     blankColumnIndexes?: number[];
   };
   model?: {

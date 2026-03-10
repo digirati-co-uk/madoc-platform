@@ -1,4 +1,5 @@
-import type { NetConfig } from '@/frontend/shared/utility/tabular-types';
+import type { NetConfig, TabularRowOffsetAdjustment } from '@/frontend/shared/utility/tabular-types';
+import { sanitizeTabularRowOffsetAdjustments } from '@/frontend/shared/utility/tabular-row-offset-adjustments';
 
 export type TabularStructureLike = {
   topLeft?: { x: number; y: number };
@@ -12,6 +13,7 @@ export type TabularStructureLike = {
   columnCount?: number;
   columnWidthsPctOfPage?: number[];
   rowHeightsPctOfPage?: number[];
+  rowOffsetAdjustments?: TabularRowOffsetAdjustment[];
 };
 
 export type TabularNetConfigOptions = {
@@ -91,5 +93,6 @@ export function netConfigFromSharedStructure(
       cols,
       options.useEvenlySpacedFallbackPositions === true
     ),
+    rowOffsetAdjustments: sanitizeTabularRowOffsetAdjustments(tabular.rowOffsetAdjustments),
   };
 }
