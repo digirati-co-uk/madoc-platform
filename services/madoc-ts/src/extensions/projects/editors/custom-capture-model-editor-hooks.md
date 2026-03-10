@@ -210,6 +210,7 @@ This section maps to real user flow, from empty canvas to submitted contribution
   - `refresh()`, `prepare()`, `ensureRevision()`, `saveDraft()`, `saveForLater()`, `submit()`
 - Errors:
   - `lastError?: Error`
+  - `lastErrorStage?: 'prepare' | 'save'`
 
 ### Save behavior
 
@@ -226,7 +227,8 @@ Recommended UI handling:
 - `saving-draft` / `submitting`: disable interactive buttons.
 - `submitted`: show completion state and next-image action from `nextCanvas`.
 - `blocked`: disable write actions and show reason/context.
-- `error`: show `lastError?.message` and provide retry (`refresh`, `prepare`, or action retry).
+- `error`: preparation failed; show `lastError?.message` and provide retry via `prepare`.
+- `ready` + `lastErrorStage === 'save'`: keep editor interactive, show save failure details, and let the user retry save/submit.
 
 ## Migration from ad-hoc `Revisions` usage
 

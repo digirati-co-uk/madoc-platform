@@ -76,12 +76,16 @@ export const siteCanvasTasks: RouteMiddleware<{
     manifestTask && user ? findUserManifestTask(manifestTask?.subject, user, manifestTask) : undefined;
 
   const isManifestComplete = manifestTask?.status === 3 || userManifestTask?.status === 3;
+  const allowFurtherSubmissions = !!config.allowSubmissionsWhenCanvasComplete;
+  const canvasOpenForSubmission = allowFurtherSubmissions || canvasTask?.status !== 3;
+  const manifestOpenForSubmission = allowFurtherSubmissions || manifestTask?.status !== 3;
+  const userManifestTaskOpenForSubmission = allowFurtherSubmissions || userManifestTask?.status !== 3;
 
   const canUserSubmit =
-    (userManifestTask && userManifestTask.status !== 3) ||
+    (userManifestTask && userManifestTaskOpenForSubmission) ||
     ((!maxContributors || userTasks.length || maxContributors > contributors.length) &&
-      canvasTask?.status !== 3 &&
-      manifestTask?.status !== 3);
+      canvasOpenForSubmission &&
+      manifestOpenForSubmission);
 
   context.response.status = 200;
   context.response.body = {

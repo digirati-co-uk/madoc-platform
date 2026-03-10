@@ -53,6 +53,7 @@ export type ContributionLifecycle = {
   saveForLater: () => Promise<void>;
   submit: () => Promise<void>;
   lastError?: Error;
+  lastErrorStage?: 'prepare' | 'save';
 };
 
 export function getNextCanvasData(options: {
@@ -108,15 +109,15 @@ export function getNextCanvasData(options: {
 }
 
 export function resolveContributionPhase(options: {
-  hasError: boolean;
+  hasBlockingError: boolean;
   isLoading: boolean;
   isPreparing: boolean;
   isBlocked: boolean;
   pendingState: 'idle' | 'preparing' | 'saving-draft' | 'submitting' | 'submitted';
 }): ContributionLifecycle['phase'] {
-  const { hasError, isLoading, isPreparing, isBlocked, pendingState } = options;
+  const { hasBlockingError, isLoading, isPreparing, isBlocked, pendingState } = options;
 
-  if (hasError) {
+  if (hasBlockingError) {
     return 'error';
   }
 
@@ -203,6 +204,7 @@ export function useCaptureModelContributionLifecycle(): ContributionLifecycle {
   );
   const [needsRevisionSelection, setNeedsRevisionSelection] = useState(false);
   const [lastError, setLastError] = useState<Error | undefined>(undefined);
+  const [lastErrorStage, setLastErrorStage] = useState<'prepare' | 'save' | undefined>(undefined);
   const attemptedAutoRevision = useRef<string | undefined>(undefined);
 
   const saveRevision = useViewerSaving(async revisionRequest => {
@@ -265,6 +267,7 @@ export function useCaptureModelContributionLifecycle(): ContributionLifecycle {
   const prepare = useCallback(async () => {
     setPendingState('preparing');
     setLastError(undefined);
+    setLastErrorStage(undefined);
 
     try {
       await prepareContribution();
@@ -272,6 +275,7 @@ export function useCaptureModelContributionLifecycle(): ContributionLifecycle {
       setPendingState('idle');
     } catch (error: any) {
       setLastError(error instanceof Error ? error : new Error(String(error)));
+      setLastErrorStage('prepare');
       setPendingState('idle');
       throw error;
     }
@@ -280,6 +284,7 @@ export function useCaptureModelContributionLifecycle(): ContributionLifecycle {
   const saveWithStatus = useCallback(
     async (status: 'draft' | 'submitted') => {
       setLastError(undefined);
+      setLastErrorStage(undefined);
       setPendingState(status === 'draft' ? 'saving-draft' : 'submitting');
 
       try {
@@ -295,6 +300,7 @@ export function useCaptureModelContributionLifecycle(): ContributionLifecycle {
         setPendingState(status === 'submitted' ? 'submitted' : 'idle');
       } catch (error: any) {
         setLastError(error instanceof Error ? error : new Error(String(error)));
+        setLastErrorStage('save');
         setPendingState('idle');
         throw error;
       }
@@ -321,7 +327,7 @@ export function useCaptureModelContributionLifecycle(): ContributionLifecycle {
   );
 
   const phase = resolveContributionPhase({
-    hasError: !!lastError,
+    hasBlockingError: !!lastError && lastErrorStage === 'prepare',
     isLoading: isCanvasModelLoading || isTaskLoading || modelStatus === 'loading',
     isPreparing: preparedCanvasModel.isPreparing || prepareContributionState.isLoading,
     isBlocked,
@@ -346,5 +352,6 @@ export function useCaptureModelContributionLifecycle(): ContributionLifecycle {
     saveForLater: saveDraft,
     submit,
     lastError,
+    lastErrorStage,
   };
 }
