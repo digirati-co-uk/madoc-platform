@@ -724,7 +724,7 @@ export function useTabularProjectController(options: UseTabularProjectController
         port: `/s/${siteSlug}/madoc/api/typesense`,
         protocol: window.location.protocol.replace(':', ''),
         path: `/s/${siteSlug}/madoc/api/typesense`,
-        collection: 'madoc_site_1',
+        collection: 'madoc_site_7',
         searchParams: {
           query_by: 'resource_label,search_text,metadata_label,metadata_pairs',
           per_page: 20,
