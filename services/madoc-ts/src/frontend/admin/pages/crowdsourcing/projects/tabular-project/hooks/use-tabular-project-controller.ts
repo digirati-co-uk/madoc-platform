@@ -716,7 +716,7 @@ export function useTabularProjectController(options: UseTabularProjectController
 
   const rootCollection =
     typeof window !== 'undefined' && siteSlug
-      ? `${window.location.origin}/s/${siteSlug}/madoc/api`
+      ? `${window.location.origin}/s/${siteSlug}/madoc/api/collections/root`
       : iiifHomeCollection?.id || 'iiif://home';
 
   const searchOptions: IIIFBrowserProps['search'] = useMemo(() => {
