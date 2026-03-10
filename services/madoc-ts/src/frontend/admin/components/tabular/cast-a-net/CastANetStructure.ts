@@ -5,6 +5,7 @@ import type {
   TabularModelPayload,
   TabularProjectSetupPayload,
 } from './types';
+import { sanitizeTabularRowOffsetAdjustments } from '@/frontend/shared/utility/tabular-row-offset-adjustments';
 import { NET_MIN_SIZE_PCT, clamp, getStops, normalisePositions, sanitizeIndexList } from './utils';
 
 function sanitizeNetConfig(value: NetConfig): NetConfig {
@@ -27,6 +28,7 @@ function sanitizeNetConfig(value: NetConfig): NetConfig {
     height,
     rowPositions: normalisePositions(value.rowPositions || [], rows),
     colPositions: normalisePositions(value.colPositions || [], cols),
+    rowOffsetAdjustments: sanitizeTabularRowOffsetAdjustments(value.rowOffsetAdjustments),
   };
 }
 
@@ -101,6 +103,7 @@ export function buildCastANetStructure(
     rowCount: safe.rows,
     columnWidthsPctOfPage: columns.map(column => column.widthPctOfPage),
     rowHeightsPctOfPage: rows.map(row => row.heightPctOfPage),
+    rowOffsetAdjustments: safe.rowOffsetAdjustments,
     blankColumnIndexes,
     columns,
     rows,
@@ -115,6 +118,7 @@ function buildCastANetPayload(structure: CastANetStructure): CastANetPayload {
     columnCount: structure.columnCount,
     columnWidthsPctOfPage: structure.columnWidthsPctOfPage,
     rowHeightsPctOfPage: structure.rowHeightsPctOfPage,
+    rowOffsetAdjustments: structure.rowOffsetAdjustments,
     blankColumnIndexes: structure.blankColumnIndexes,
   };
 }
