@@ -52,6 +52,7 @@ import {
   toTypeValue,
 } from '../utils';
 import { useResizableHeight } from './use-resizable-height';
+import { useSite } from '@/frontend/shared/hooks/use-site';
 
 const STEP_DETAILS = 0;
 const STEP_SETTINGS = 1;
@@ -194,6 +195,9 @@ export function useTabularProjectController(options: UseTabularProjectController
   const configuredColumnCount = Math.max(1, tabularPayload?.columns?.length || modelColumnCount);
   const primaryLabel = getPreferredIntlValue(label, defaultLocale);
   const primarySummary = getPreferredIntlValue(summary, defaultLocale);
+
+  const site = useSite();
+  const siteId = site?.id;
 
   useEffect(() => {
     if (autoSlug) {
@@ -736,7 +740,7 @@ export function useTabularProjectController(options: UseTabularProjectController
         port: `/s/${siteSlug}/madoc/api/typesense`,
         protocol: window.location.protocol.replace(':', ''),
         path: `/s/${siteSlug}/madoc/api/typesense`,
-        collection: 'madoc_site_7',
+        collection: `madoc_site_${siteId}`,
         searchParams: {
           query_by: 'resource_label,search_text,metadata_label,metadata_pairs',
           per_page: 20,
