@@ -245,11 +245,7 @@ export const TabularProjectWizard: React.FC = () => {
             modelSaved={controller.modelSaved}
             onTabularModelChange={controller.setTabularModel}
             onModelChange={controller.onModelChange}
-            onSave={() => {
-              void loadCastANet().finally(() => {
-                controller.moveNextFromModel();
-              });
-            }}
+            onSave={controller.moveNextFromModel}
             onCancel={cancelSetup}
             DefineTabularModelComponent={DefineTabularModelLazy}
           />

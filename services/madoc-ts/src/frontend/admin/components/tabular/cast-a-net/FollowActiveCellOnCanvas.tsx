@@ -16,6 +16,11 @@ export type RuntimeWithViewport = {
   getViewport?: () => CanvasViewport | null | undefined;
   setViewport?: (next: CanvasViewport) => void;
   updateNextFrame?: () => void;
+  resize?: {
+    (): void;
+    (width?: number, height?: number): void;
+    (fromWidth: number, toWidth: number, fromHeight: number, toHeight: number): void;
+  };
   world?: {
     gotoRegion?: (next: CanvasViewport) => void;
     goHome?: () => void;

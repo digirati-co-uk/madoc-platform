@@ -1,3 +1,10 @@
+.cast-a-net-canvas .atlas-container {
+  --atlas-container-flex: 1 1 0px;
+  --atlas-background: #fff;
+  height: 100%;
+  min-height: 0;
+}
+
 .cast-a-net-opacity-control {
   position: absolute;
   top: 12px;

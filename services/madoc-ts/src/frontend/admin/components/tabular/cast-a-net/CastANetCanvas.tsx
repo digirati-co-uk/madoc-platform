@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { CastANetStructure, NetConfig, TabularCellRef } from './types';
 import { CanvasPanel, SimpleViewerProvider } from 'react-iiif-vault';
 import { CastANetOverlayAtlas } from './CastANetOverlayAtlas';
@@ -51,10 +51,18 @@ export const CastANetCanvas: React.FC<CastANetCanvasProps> = ({
   const runtime = useRef<RuntimeWithViewport | null>(null);
   const [internalDimOpacity, setInternalDimOpacity] = useState(0);
   const [runtimeTick, setRuntimeTick] = useState(0);
-  const [viewerRetryToken, setViewerRetryToken] = useState(0);
-  const [viewerRetryCount, setViewerRetryCount] = useState(0);
-  const viewerBaseKey = `${manifestId}::${canvasId ?? ''}::${value.cols}::${value.rows}`;
-  const maxViewerRetries = 3;
+  const [overlayRetryToken, setOverlayRetryToken] = useState(0);
+  const overlayRetryCountRef = useRef(0);
+  const missingOverlayTicksRef = useRef(0);
+  const runtimeSizeRef = useRef<{ width: number; height: number } | null>(null);
+  const viewerBaseKey = `${manifestId}::${canvasId ?? ''}`;
+  const maxOverlayRetries = 4;
+  const healthCheckIntervalMs = 500;
+  const overlayMissingRetryTicks = 2;
+  const viewerName = useMemo(
+    () => `cast-a-net::${previewOverlayOnly ? 'preview' : 'edit'}::${manifestId}::${canvasId ?? 'default'}`,
+    [canvasId, manifestId, previewOverlayOnly]
+  );
 
   useEffect(() => {
     if (typeof dimOpacity === 'number') {
@@ -64,9 +72,96 @@ export const CastANetCanvas: React.FC<CastANetCanvasProps> = ({
 
   useEffect(() => {
     runtime.current = null;
-    setViewerRetryToken(0);
-    setViewerRetryCount(0);
-  }, [viewerBaseKey]);
+    runtimeSizeRef.current = null;
+    missingOverlayTicksRef.current = 0;
+    overlayRetryCountRef.current = 0;
+    setOverlayRetryToken(0);
+  }, [viewerBaseKey, canvasId]);
+
+  const getContainerSize = useCallback(() => {
+    const container = containerRef.current;
+    if (!container) {
+      return null;
+    }
+
+    const rect = container.getBoundingClientRect();
+    const width = Math.round(rect.width);
+    const containerHeight = Math.round(rect.height);
+
+    if (width <= 0 || containerHeight <= 0) {
+      return null;
+    }
+
+    return { width, height: containerHeight };
+  }, []);
+
+  const resizeRuntimeToSize = useCallback((nextSize: { width: number; height: number }) => {
+    const currentRuntime = runtime.current;
+    const previousSize = runtimeSizeRef.current;
+    runtimeSizeRef.current = nextSize;
+
+    if (!currentRuntime?.resize) {
+      return;
+    }
+
+    if (previousSize) {
+      currentRuntime.resize(previousSize.width, nextSize.width, previousSize.height, nextSize.height);
+    } else {
+      currentRuntime.resize(nextSize.width, nextSize.height);
+    }
+    currentRuntime.updateNextFrame?.();
+  }, []);
+
+  const remountOverlayLayer = useCallback(() => {
+    if (previewOverlayOnly || overlayRetryCountRef.current >= maxOverlayRetries) {
+      return;
+    }
+
+    missingOverlayTicksRef.current = 0;
+    overlayRetryCountRef.current += 1;
+    setOverlayRetryToken(token => token + 1);
+    runtime.current?.updateNextFrame?.();
+  }, [maxOverlayRetries, previewOverlayOnly]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    const container = containerRef.current;
+    if (!container) {
+      return;
+    }
+
+    const applyFromElement = () => {
+      const size = getContainerSize();
+      if (size) {
+        resizeRuntimeToSize(size);
+      }
+    };
+
+    let frameHandle: number | null = null;
+    const observer = new ResizeObserver(() => {
+      if (frameHandle != null) {
+        window.cancelAnimationFrame(frameHandle);
+      }
+
+      frameHandle = window.requestAnimationFrame(() => {
+        applyFromElement();
+        frameHandle = null;
+      });
+    });
+
+    observer.observe(container);
+    applyFromElement();
+
+    return () => {
+      observer.disconnect();
+      if (frameHandle != null) {
+        window.cancelAnimationFrame(frameHandle);
+      }
+    };
+  }, [getContainerSize, resizeRuntimeToSize]);
 
   const hasRenderedCanvas = useCallback(() => {
     const container = containerRef.current;
@@ -85,22 +180,63 @@ export const CastANetCanvas: React.FC<CastANetCanvasProps> = ({
     });
   }, []);
 
+  const hasRenderedOverlay = useCallback(() => {
+    if (previewOverlayOnly) {
+      return true;
+    }
+
+    const container = containerRef.current;
+    if (!container) {
+      return false;
+    }
+
+    return Boolean(container.querySelector('[data-cast-a-net-overlay="true"]'));
+  }, [previewOverlayOnly]);
+
   useEffect(() => {
-    if (typeof window === 'undefined' || viewerRetryCount >= maxViewerRetries) {
+    if (typeof window === 'undefined') {
       return;
     }
 
-    const timeout = window.setTimeout(() => {
-      // Atlas can occasionally miss render on remount. Retry a few times to self-heal.
-      if (!runtime.current || !hasRenderedCanvas()) {
-        runtime.current = null;
-        setViewerRetryCount(count => count + 1);
-        setViewerRetryToken(token => token + 1);
+    const interval = window.setInterval(() => {
+      const size = getContainerSize();
+      if (!size) {
+        return;
       }
-    }, 1400);
 
-    return () => window.clearTimeout(timeout);
-  }, [hasRenderedCanvas, maxViewerRetries, viewerRetryCount, viewerRetryToken, viewerBaseKey]);
+      if (!runtime.current) {
+        return;
+      }
+
+      if (!hasRenderedCanvas()) {
+        // Canvas can be briefly absent while atlas settles after navigation/resize.
+        resizeRuntimeToSize(size);
+        runtime.current.updateNextFrame?.();
+        return;
+      }
+
+      if (hasRenderedOverlay()) {
+        missingOverlayTicksRef.current = 0;
+        overlayRetryCountRef.current = 0;
+        return;
+      }
+
+      missingOverlayTicksRef.current += 1;
+      if (missingOverlayTicksRef.current >= overlayMissingRetryTicks) {
+        remountOverlayLayer();
+      }
+    }, healthCheckIntervalMs);
+
+    return () => window.clearInterval(interval);
+  }, [
+    getContainerSize,
+    hasRenderedCanvas,
+    hasRenderedOverlay,
+    healthCheckIntervalMs,
+    overlayMissingRetryTicks,
+    remountOverlayLayer,
+    resizeRuntimeToSize,
+  ]);
 
   useEffect(() => {
     if (!onStructureChange) return;
@@ -142,12 +278,22 @@ export const CastANetCanvas: React.FC<CastANetCanvasProps> = ({
     setInternalDimOpacity(clamped);
     onChangeDimOpacity?.(clamped);
   };
-  const viewerKey = `${viewerBaseKey}::${viewerRetryToken}`;
+  const viewerKey = viewerBaseKey;
 
   return (
     <div
+      className="cast-a-net-canvas"
       ref={containerRef}
-      style={{ border: '1px solid #ddd', height, position: 'relative', background: '#fff', overflow: 'hidden' }}
+      style={{
+        border: '1px solid #ddd',
+        height,
+        position: 'relative',
+        background: '#fff',
+        overflow: 'hidden',
+        display: 'flex',
+        flexDirection: 'column',
+        minHeight: 0,
+      }}
     >
       {!previewOverlayOnly ? (
         <div className="cast-a-net-opacity-control" role="group" aria-label="Canvas opacity">
@@ -208,10 +354,17 @@ export const CastANetCanvas: React.FC<CastANetCanvasProps> = ({
 
       <AnySimpleViewerProvider key={viewerKey} manifest={manifestId} startCanvas={canvasId}>
         <CanvasPanel.Viewer
+          name={viewerName}
+          height={height}
+          resizeHash={height}
           runtimeOptions={{ maxOverZoom: 5, visibilityRatio: 1, maxUnderZoom: 1 }}
           onCreated={preset => {
             runtime.current = (preset.runtime as RuntimeWithViewport | null) ?? null;
             setRuntimeTick(tick => tick + 1);
+            const size = getContainerSize();
+            if (size) {
+              resizeRuntimeToSize(size);
+            }
           }}
         >
           <FollowActiveCellOnCanvas
@@ -223,6 +376,7 @@ export const CastANetCanvas: React.FC<CastANetCanvasProps> = ({
           />
           <CanvasPanel.RenderCanvas>
             <CastANetOverlayAtlas
+              key={`overlay::${overlayRetryToken}`}
               value={value}
               onChange={onChange}
               disabled={disabled}

@@ -21,7 +21,7 @@ function ReferenceImagePanel(props: { manifestId: string; canvasId?: string; ima
 
   return (
     <div className="overflow-hidden rounded-lg border border-[#e5e5e5] bg-white">
-      <div className={`relative bg-red-800 h-[${imageHeight}px]`}>
+      <div className="relative bg-red-800" style={{ height: imageHeight }}>
         <TabularCanvasViewportControls
           onHome={goHome}
           onZoomOut={zoomOut}
@@ -30,6 +30,9 @@ function ReferenceImagePanel(props: { manifestId: string; canvasId?: string; ima
         />
         <AnySimpleViewerProvider manifest={manifestId} startCanvas={canvasId}>
           <CanvasPanel.Viewer
+            name={`tabular-model-reference::${manifestId}::${canvasId ?? 'default'}`}
+            height={imageHeight}
+            resizeHash={imageHeight}
             runtimeOptions={{ maxOverZoom: 5, visibilityRatio: 1, maxUnderZoom: 1 }}
             onCreated={(preset: any) => {
               runtime.current = preset.runtime;

@@ -354,6 +354,7 @@ export function CastANetOverlay({
   return (
     <div
       ref={overlayRef}
+      data-cast-a-net-overlay="true"
       style={{
         position: 'absolute',
         inset: 0,
