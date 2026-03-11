@@ -6,6 +6,8 @@ import type { TabularProjectTemplateOptions } from '../templates/tabular-project
 export type TabularModelColumn = {
   id?: string;
   label?: string;
+  helpText?: string;
+  description?: string;
   type?: string;
   fieldType?: string;
   saved?: boolean;
@@ -18,6 +20,7 @@ export type TabularColumnModel = {
   order: string[];
   hidden: Set<string>;
   labels: Map<string, string>;
+  descriptions: Map<string, string>;
   hints: Map<string, string>;
 };
 
@@ -67,6 +70,7 @@ export function createTabularColumnModel(tabularColumns: TabularModelColumn[]): 
   const order: string[] = [];
   const hidden = new Set<string>();
   const labels = new Map<string, string>();
+  const descriptions = new Map<string, string>();
   const hints = new Map<string, string>();
 
   for (const column of tabularColumns) {
@@ -85,12 +89,17 @@ export function createTabularColumnModel(tabularColumns: TabularModelColumn[]): 
     if (column.label?.trim()) {
       labels.set(id, column.label.trim());
     }
+    if (column.helpText?.trim()) {
+      descriptions.set(id, column.helpText.trim());
+    } else if (column.description?.trim()) {
+      descriptions.set(id, column.description.trim());
+    }
     if (type) {
       hints.set(id, type);
     }
   }
 
-  return { order, hidden, labels, hints };
+  return { order, hidden, labels, descriptions, hints };
 }
 
 export function getTabularCellElementId(rowIndex: number, columnKey: string, useLegacyTopLevelLayout: boolean) {

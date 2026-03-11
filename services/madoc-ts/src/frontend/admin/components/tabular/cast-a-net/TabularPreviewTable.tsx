@@ -26,6 +26,10 @@ export type TabularPreviewTableProps = {
 
 type PreviewRow = { id: number };
 
+function getPreviewInputId(rowIndex: number, colIndex: number) {
+  return `tabular-preview-row-${rowIndex}-col-${colIndex}`;
+}
+
 export function TabularPreviewTable({
   headings,
   tooltips = [],
@@ -78,11 +82,40 @@ export function TabularPreviewTable({
     [onChange, safeValues]
   );
 
+  const focusGridInput = useCallback(
+    (rowIndex: number, colIndex: number, caretPosition: 'start' | 'end' = 'end') => {
+      if (rowIndex < 0 || rowIndex >= safeRows || colIndex < 0 || colIndex >= safeColumns) {
+        return false;
+      }
+
+      onActiveCellChange({ row: rowIndex, col: colIndex });
+
+      if (typeof window !== 'undefined') {
+        window.requestAnimationFrame(() => {
+          const input = document.getElementById(getPreviewInputId(rowIndex, colIndex)) as HTMLInputElement | null;
+          if (!input) {
+            return;
+          }
+
+          input.focus();
+          if (typeof input.setSelectionRange === 'function') {
+            const caret = caretPosition === 'start' ? 0 : input.value.length;
+            input.setSelectionRange(caret, caret);
+          }
+          input.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+        });
+      }
+
+      return true;
+    },
+    [onActiveCellChange, safeColumns, safeRows]
+  );
+
   const gridColumns = useMemo<readonly Column<PreviewRow>[]>(() => {
     return Array.from({ length: safeColumns }, (_unused, colIndex) => {
       const heading = safeHeadings[colIndex] ?? '';
       const tooltip = safeTooltips[colIndex] ?? '';
-      const title = tooltip ? `${heading}\n${tooltip}` : heading;
+      const title = tooltip || undefined;
 
       return {
         key: `c-${colIndex}`,
@@ -113,6 +146,86 @@ export function TabularPreviewTable({
           const value = safeValues[rowIndex]?.[colIndex] ?? '';
           const isActiveRow = activeCell?.row === rowIndex;
           const isActiveCell = isActiveRow && activeCell?.col === colIndex;
+          const lastColIndex = safeColumns - 1;
+          const lastRowIndex = safeRows - 1;
+
+          const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+            if (event.altKey || event.ctrlKey || event.metaKey) {
+              return;
+            }
+
+            if (event.key === 'Tab') {
+              let nextRow = rowIndex;
+              let nextCol = colIndex + (event.shiftKey ? -1 : 1);
+
+              if (nextCol < 0) {
+                nextRow -= 1;
+                nextCol = lastColIndex;
+              } else if (nextCol > lastColIndex) {
+                nextRow += 1;
+                nextCol = 0;
+              }
+
+              if (nextRow < 0 || nextRow > lastRowIndex) {
+                return;
+              }
+
+              event.preventDefault();
+              event.stopPropagation();
+              focusGridInput(nextRow, nextCol, event.shiftKey ? 'end' : 'start');
+              return;
+            }
+
+            if (event.key === 'ArrowUp') {
+              const nextRow = rowIndex - 1;
+              if (nextRow < 0) {
+                return;
+              }
+
+              event.preventDefault();
+              event.stopPropagation();
+              focusGridInput(nextRow, colIndex, 'end');
+              return;
+            }
+
+            if (event.key === 'ArrowDown') {
+              const nextRow = rowIndex + 1;
+              if (nextRow > lastRowIndex) {
+                return;
+              }
+
+              event.preventDefault();
+              event.stopPropagation();
+              focusGridInput(nextRow, colIndex, 'end');
+              return;
+            }
+
+            if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') {
+              return;
+            }
+
+            const moveLeft = event.key === 'ArrowLeft';
+            const nextCol = colIndex + (moveLeft ? -1 : 1);
+            if (nextCol < 0 || nextCol > lastColIndex) {
+              return;
+            }
+
+            const input = event.currentTarget;
+            const selectionStart = input.selectionStart ?? 0;
+            const selectionEnd = input.selectionEnd ?? 0;
+            const hasSelection = selectionStart !== selectionEnd;
+            const isBoundary = moveLeft
+              ? !hasSelection && selectionStart === 0
+              : !hasSelection && selectionEnd === input.value.length;
+
+            if (!isBoundary) {
+              return;
+            }
+
+            event.preventDefault();
+            event.stopPropagation();
+            focusGridInput(rowIndex, nextCol, moveLeft ? 'end' : 'start');
+          };
 
           return (
             <div
@@ -122,9 +235,11 @@ export function TabularPreviewTable({
               }}
             >
               <input
+                id={getPreviewInputId(rowIndex, colIndex)}
                 value={value}
                 disabled={disabled}
                 onFocus={() => onActiveCellChange({ row: rowIndex, col: colIndex })}
+                onKeyDown={handleKeyDown}
                 onChange={event => updateCell(rowIndex, colIndex, event.currentTarget.value)}
                 style={{
                   border: 'none',
@@ -142,7 +257,18 @@ export function TabularPreviewTable({
         },
       } satisfies Column<PreviewRow>;
     });
-  }, [activeCell, disabled, onActiveCellChange, safeColumns, safeHeadings, safeTooltips, safeValues, updateCell]);
+  }, [
+    activeCell,
+    disabled,
+    focusGridInput,
+    onActiveCellChange,
+    safeColumns,
+    safeHeadings,
+    safeRows,
+    safeTooltips,
+    safeValues,
+    updateCell,
+  ]);
 
   const headerRowHeight = TABULAR_GRID_HEADER_ROW_HEIGHT_PX;
   const rowHeight = TABULAR_GRID_ROW_HEIGHT_PX;

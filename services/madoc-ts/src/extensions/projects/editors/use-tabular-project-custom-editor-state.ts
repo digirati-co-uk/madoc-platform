@@ -239,10 +239,10 @@ export function useTabularProjectCustomEditorState({
       return {
         key: columnKey,
         label: columnModel.labels.get(columnKey) || column?.label || columnKey,
-        description: column?.description,
+        description: column?.description || columnModel.descriptions.get(columnKey),
       };
     });
-  }, [columnModel.labels, visibleColumnKeys, visibleColumnsById]);
+  }, [columnModel.descriptions, columnModel.labels, visibleColumnKeys, visibleColumnsById]);
 
   const tableRows = useMemo<TabularEditorRowModel[]>(() => {
     if (useLegacyTopLevelLayout) {

@@ -189,9 +189,11 @@ export function TabularProjectCustomEditorTable({
         resizable: false,
         renderHeaderCell: () => {
           const isActiveColumn = tableActiveCell?.col === colIndex;
+          const tooltip = column.description?.trim() || undefined;
 
           return (
             <div
+              title={tooltip}
               style={{
                 height: '100%',
                 background: isActiveColumn ? '#b9c8f5' : '#d9deee',
@@ -204,21 +206,6 @@ export function TabularProjectCustomEditorTable({
               }}
             >
               <div style={{ fontSize: 13, fontWeight: 600 }}>{column.label}</div>
-              {column.description ? (
-                <div
-                  style={{
-                    fontSize: 11,
-                    fontWeight: 400,
-                    lineHeight: 1.2,
-                    opacity: 0.85,
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                  }}
-                >
-                  {column.description}
-                </div>
-              ) : null}
             </div>
           );
         },
