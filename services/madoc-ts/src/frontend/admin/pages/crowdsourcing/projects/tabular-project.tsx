@@ -304,7 +304,9 @@ export const TabularProjectWizard: React.FC = () => {
             onDividerHoverChange={controller.setIsCastANetDividerHover}
             onPreviewRowsChange={controller.setPreviewRows}
             onPreviewActiveCellChange={controller.setPreviewActiveCell}
+            canRemovePreviewRow={controller.canRemovePreviewRow}
             onAddRow={controller.addPreviewRow}
+            onRemoveRow={controller.removePreviewRow}
             onSave={controller.savePreviewStep}
             onCancel={cancelSetup}
             CastANetComponent={CastANetLazy}

@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { DataGrid, type Column } from 'react-data-grid';
 import 'react-data-grid/lib/styles.css';
 import type { TabularCellRef } from './types';
@@ -6,8 +6,9 @@ import {
   TABULAR_COLUMN_MIN_WIDTH_PX,
   TABULAR_GRID_HEADER_ROW_HEIGHT_PX,
   TABULAR_GRID_ROW_HEIGHT_PX,
-} from '../../../../shared/utility/tabular-grid-constants';
-import { TabularDataGridStyles } from '../../../../shared/components/TabularDataGridStyles';
+} from '@/frontend/shared/utility/tabular-grid-constants';
+import { TabularDataGridStyles } from '@/frontend/shared/components/TabularDataGridStyles';
+import { Button } from '@/frontend/shared/navigation/Button';
 
 export type TabularPreviewTableProps = {
   headings: string[];
@@ -19,7 +20,10 @@ export type TabularPreviewTableProps = {
   onActiveCellChange: (next: TabularCellRef | null) => void;
   disabled?: boolean;
   onAddRow?: () => void;
+  onRemoveRow?: () => void;
+  canRemoveRow?: boolean;
   addRowLabel?: string;
+  removeRowLabel?: string;
   containerHeight?: number | string;
   containerWidth?: number | string;
 };
@@ -40,12 +44,17 @@ export function TabularPreviewTable({
   onActiveCellChange,
   disabled = false,
   onAddRow,
+  onRemoveRow,
+  canRemoveRow = true,
   addRowLabel = '+ Add row',
+  removeRowLabel = 'Remove row -',
   containerHeight,
   containerWidth,
 }: TabularPreviewTableProps) {
   const safeColumns = Math.max(1, headings.length || 0);
   const safeRows = Math.max(1, rows || 0);
+  const tableScrollRef = useRef<HTMLDivElement | null>(null);
+  const shouldScrollToNewRowRef = useRef(false);
 
   const safeHeadings = useMemo(
     () =>
@@ -110,6 +119,36 @@ export function TabularPreviewTable({
     },
     [onActiveCellChange, safeColumns, safeRows]
   );
+
+  useEffect(() => {
+    if (!shouldScrollToNewRowRef.current) {
+      return;
+    }
+    shouldScrollToNewRowRef.current = false;
+
+    const lastRowIndex = safeRows - 1;
+    if (lastRowIndex < 0) {
+      return;
+    }
+
+    const container = tableScrollRef.current;
+    if (container) {
+      const viewport = container.querySelector('.rdg-viewport') as HTMLDivElement | null;
+      const scrollTarget = viewport || container;
+      scrollTarget.scrollTo({ top: scrollTarget.scrollHeight, behavior: 'smooth' });
+    }
+
+    focusGridInput(lastRowIndex, 0, 'start');
+  }, [focusGridInput, safeRows]);
+
+  const handleAddRow = useCallback(() => {
+    if (!onAddRow || disabled) {
+      return;
+    }
+
+    shouldScrollToNewRowRef.current = true;
+    onAddRow();
+  }, [disabled, onAddRow]);
 
   const gridColumns = useMemo<readonly Column<PreviewRow>[]>(() => {
     return Array.from({ length: safeColumns }, (_unused, colIndex) => {
@@ -290,7 +329,7 @@ export function TabularPreviewTable({
       }}
     >
       <TabularDataGridStyles scopeClassName="tabular-preview-rdg" disableRowHover />
-      <div style={{ flex: hasFixedHeight ? '1 1 auto' : undefined, minHeight: 0 }}>
+      <div ref={tableScrollRef} style={{ flex: hasFixedHeight ? '1 1 auto' : undefined, minHeight: 0 }}>
         <DataGrid
           className="rdg-light tabular-preview-rdg"
           columns={gridColumns}
@@ -308,33 +347,40 @@ export function TabularPreviewTable({
           }}
         />
       </div>
-      {onAddRow ? (
+      {onAddRow || onRemoveRow ? (
         <div
           style={{
             display: 'flex',
-            justifyContent: 'flex-end',
+            justifyContent: 'center',
+            gap: 8,
             padding: '8px 10px',
             borderTop: '1px solid #d6d6d6',
-            background: '#f8fafc',
+            background: '#f1f5f9',
             flex: '0 0 auto',
           }}
         >
-          <button
-            type="button"
-            onClick={onAddRow}
-            disabled={disabled}
-            style={{
-              border: '1px solid #cfd6e5',
-              background: '#fff',
-              borderRadius: 4,
-              color: '#1f2d5a',
-              cursor: disabled ? 'not-allowed' : 'pointer',
-              fontSize: 12,
-              padding: '6px 10px',
-            }}
-          >
-            {addRowLabel}
-          </button>
+          {onRemoveRow ? (
+            <Button
+              $error
+              type="button"
+              onClick={onRemoveRow}
+              disabled={disabled || !canRemoveRow}
+              className="!min-w-28 justify-center !px-3 !py-1 !text-xs !rounded-md font-semibold shadow-sm"
+            >
+              {removeRowLabel}
+            </Button>
+          ) : null}
+          {onAddRow ? (
+            <Button
+              $primary
+              type="button"
+              onClick={handleAddRow}
+              disabled={disabled}
+              className="!min-w-28 justify-center !px-3 !py-1 !text-xs !rounded-md font-semibold shadow-sm"
+            >
+              {addRowLabel}
+            </Button>
+          ) : null}
         </div>
       ) : null}
     </div>

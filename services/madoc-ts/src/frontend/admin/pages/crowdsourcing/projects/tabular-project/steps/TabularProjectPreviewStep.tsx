@@ -39,7 +39,9 @@ interface TabularProjectPreviewStepProps {
   onDividerHoverChange: (isHover: boolean) => void;
   onPreviewRowsChange: (next: string[][]) => void;
   onPreviewActiveCellChange: (next: TabularCellRef | null) => void;
+  canRemovePreviewRow: boolean;
   onAddRow: () => void;
+  onRemoveRow: () => void;
   onSave: () => void;
   onCancel: () => void;
   CastANetComponent: ComponentType<CastANetStepComponentProps>;
@@ -74,7 +76,9 @@ export function TabularProjectPreviewStep(props: TabularProjectPreviewStepProps)
     onDividerHoverChange,
     onPreviewRowsChange,
     onPreviewActiveCellChange,
+    canRemovePreviewRow,
     onAddRow,
+    onRemoveRow,
     onSave,
     onCancel,
     CastANetComponent,
@@ -194,7 +198,10 @@ export function TabularProjectPreviewStep(props: TabularProjectPreviewStepProps)
             activeCell={previewActiveCell}
             onActiveCellChange={onPreviewActiveCellChange}
             onAddRow={onAddRow}
-            addRowLabel={t('+ Add row')}
+            onRemoveRow={onRemoveRow}
+            canRemoveRow={canRemovePreviewRow}
+            addRowLabel={t('Add new row +')}
+            removeRowLabel={t('Remove row -')}
             containerHeight={hasImage ? previewTableHeight : undefined}
             containerWidth="100%"
           />

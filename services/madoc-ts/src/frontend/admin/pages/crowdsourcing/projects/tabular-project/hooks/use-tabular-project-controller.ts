@@ -192,7 +192,7 @@ export function useTabularProjectController(options: UseTabularProjectController
   const modelSaved = tabularModel.saved ? tabularModel.saved.every(Boolean) : false;
   const previewRowOffset = enableZoomTracking && hasImage ? 1 : 0;
   const basePreviewTableRowCount = Math.max(1, (netConfig.rows || TABULAR_WIZARD_CAST_A_NET_ROWS) - previewRowOffset);
-  const previewTableRowCount = basePreviewTableRowCount + previewAdditionalRows;
+  const previewTableRowCount = Math.max(1, basePreviewTableRowCount + previewAdditionalRows);
   const previewTableHeight = Math.max(
     PREVIEW_TABLE_MIN_HEIGHT,
     TABULAR_WIZARD_PREVIEW_SPLIT_TOTAL_HEIGHT -
@@ -586,6 +586,18 @@ export function useTabularProjectController(options: UseTabularProjectController
     setPreviewAdditionalRows(prev => prev + 1);
   }, []);
 
+  const removePreviewRow = useCallback(() => {
+    setPreviewAdditionalRows(prev => {
+      const nextRowCount = basePreviewTableRowCount + prev - 1;
+      if (nextRowCount < 1) {
+        return prev;
+      }
+      return prev - 1;
+    });
+  }, [basePreviewTableRowCount]);
+
+  const canRemovePreviewRow = previewTableRowCount > 1;
+
   const moveNextFromModel = useCallback(() => {
     if (!isModelValid || !modelSaved) {
       return;
@@ -951,6 +963,8 @@ export function useTabularProjectController(options: UseTabularProjectController
     previewTableHeight,
     nudgePreviewNet,
     addPreviewRow,
+    removePreviewRow,
+    canRemovePreviewRow,
     savePreviewStep,
 
     iiifHomeLoadError,

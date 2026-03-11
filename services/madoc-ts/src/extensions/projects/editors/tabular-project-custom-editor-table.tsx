@@ -1,9 +1,7 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DataGrid, type Column } from 'react-data-grid';
 import 'react-data-grid/lib/styles.css';
 import type { TabularCellRef } from '@/frontend/shared/utility/tabular-types';
-import { AddIcon } from '@/frontend/shared/icons/AddIcon';
-import { MinusIcon } from '@/frontend/shared/icons/MinusIcon';
 import { Button } from '@/frontend/shared/navigation/Button';
 import {
   TABULAR_COLUMN_MIN_WIDTH_PX,
@@ -68,7 +66,7 @@ function TabularGridCellInput(options: TabularGridCellInputProps) {
   const [optimisticCheckedValue, setOptimisticCheckedValue] = useState<boolean>(() => !!value);
 
   const inputContainerClass = isActiveCell
-    ? 'border-[#5071f4] bg-[#eaf0ff]'
+    ? 'border-[#34a853] bg-[#def3e4]'
     : isFlagged
       ? 'border-red-300 bg-red-50'
       : 'border-transparent bg-transparent';
@@ -137,6 +135,8 @@ export function TabularProjectCustomEditorTable({
   const headerRowHeight = TABULAR_GRID_HEADER_ROW_HEIGHT_PX;
   const rowHeight = TABULAR_GRID_ROW_HEIGHT_PX;
   const minGridWidth = Math.max(1, headerColumns.length) * TABULAR_COLUMN_MIN_WIDTH_PX + 2;
+  const tableScrollRef = useRef<HTMLDivElement | null>(null);
+  const shouldScrollToNewRowRef = useRef(false);
 
   const gridRows = useMemo<readonly TabularGridRow[]>(
     () =>
@@ -306,7 +306,7 @@ export function TabularProjectCustomEditorTable({
                 height: '100%',
                 padding: 4,
                 position: 'relative',
-                background: isActiveCell ? '#eaf0ff' : isFlagged ? '#fef2f2' : isActiveRow ? '#f5f8ff' : '#fff',
+                background: isActiveCell ? '#def3e4' : isFlagged ? '#fef2f2' : isActiveRow ? '#f2fbf4' : '#fff',
               }}
             >
               {isFlagged ? <FlaggedCellBadge /> : null}
@@ -328,10 +328,42 @@ export function TabularProjectCustomEditorTable({
     });
   }, [disabled, focusGridInput, gridRows.length, headerColumns, isCellFlagged, onActiveCellChange, tableActiveCell]);
 
+  useEffect(() => {
+    if (!shouldScrollToNewRowRef.current) {
+      return;
+    }
+    shouldScrollToNewRowRef.current = false;
+
+    const lastRowPosition = gridRows.length - 1;
+    if (lastRowPosition < 0) {
+      return;
+    }
+
+    const container = tableScrollRef.current;
+    if (container) {
+      const viewport = container.querySelector('.rdg-viewport') as HTMLDivElement | null;
+      const scrollTarget = viewport || container;
+      scrollTarget.scrollTo({ top: scrollTarget.scrollHeight, behavior: 'smooth' });
+    }
+
+    if (headerColumns.length > 0) {
+      focusGridInput(lastRowPosition, 0, 'start');
+    }
+  }, [focusGridInput, gridRows.length, headerColumns.length]);
+
+  const handleAddRowFromFooter = useCallback(() => {
+    if (isAddRowDisabled) {
+      return;
+    }
+
+    shouldScrollToNewRowRef.current = true;
+    addRowFromFooter();
+  }, [addRowFromFooter, isAddRowDisabled]);
+
   return (
     <div className="flex min-h-0 min-w-0 flex-col overflow-hidden rounded border border-[#d6d6d6] bg-white">
       <TabularDataGridStyles scopeClassName="tabular-contributor-rdg" disableRowHover />
-      <div className="min-h-0 min-w-0 flex-1 overflow-x-scroll overflow-y-auto">
+      <div ref={tableScrollRef} className="min-h-0 min-w-0 flex-1 overflow-hidden">
         <DataGrid
           className="rdg-light tabular-contributor-rdg"
           columns={gridColumns}
@@ -354,24 +386,26 @@ export function TabularProjectCustomEditorTable({
           No rows yet. Use + to create the first row.
         </div>
       ) : null}
-      <div className="flex flex-none items-center justify-center gap-12 border-t border-gray-300 bg-gray-300 px-3 py-1">
+      <div className="flex flex-none items-center justify-center gap-2 border-t border-[#d6d6d6] bg-[#f1f5f9] px-3 py-2">
         <Button
+          $error
           type="button"
           onClick={removeRowFromFooter}
           disabled={isRemoveRowDisabled}
           title="Remove row"
-          style={{ background: 'transparent', border: 'none' }}
+          className="!min-w-28 justify-center !px-3 !py-1 !text-xs !rounded-md font-semibold shadow-sm"
         >
-          <MinusIcon className="h-4 w-4" />
+          Remove row -
         </Button>
         <Button
+          $primary
           type="button"
-          onClick={addRowFromFooter}
+          onClick={handleAddRowFromFooter}
           disabled={isAddRowDisabled}
-          title="Add row"
-          style={{ background: 'transparent', border: 'none' }}
+          title="Add new row"
+          className="!min-w-28 justify-center !px-3 !py-1 !text-xs !rounded-md font-semibold shadow-sm"
         >
-          <AddIcon className="h-4 w-4" />
+          Add new row +
         </Button>
       </div>
     </div>
