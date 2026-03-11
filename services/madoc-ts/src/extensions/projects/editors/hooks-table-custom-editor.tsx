@@ -146,6 +146,7 @@ function HooksTableCustomEditorContent({ canvasId, canvas }: { canvasId: number;
         <ContributionSuccessModal
           mode={successModalState}
           nextImageHref={lifecycle.nextCanvas.next?.href}
+          showContinueWorking={successModalState !== 'submitted' || canStartAnotherSubmission}
           onContinueWorking={onContinueAfterSuccess}
           onClose={() => setSuccessModalState(null)}
         />

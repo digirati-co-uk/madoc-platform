@@ -6,6 +6,7 @@ type ContributionSuccessModalProps = {
   mode: 'saved' | 'submitted';
   nextImageHref?: string;
   continueLabel?: string;
+  showContinueWorking?: boolean;
   onContinueWorking?: () => void;
   onClose: () => void;
 };
@@ -14,10 +15,19 @@ export function ContributionSuccessModal({
   mode,
   nextImageHref,
   continueLabel,
+  showContinueWorking = true,
   onContinueWorking,
   onClose,
 }: ContributionSuccessModalProps) {
   const title = mode === 'submitted' ? 'Contribution submitted' : 'Saved successfully';
+  const helperMessage =
+    mode === 'submitted'
+      ? showContinueWorking
+        ? 'Keep working on this image or move on to the next image.'
+        : nextImageHref
+          ? 'Move on to the next image.'
+          : 'You can close this message.'
+      : 'Keep working on this image or move on to the next image.';
 
   return (
     <ModalButton
@@ -33,26 +43,28 @@ export function ContributionSuccessModal({
           {mode === 'submitted' ? (
             <>
               <p>Your contribution has been submitted.</p>
-              <p>Keep working on this image or move on to the next image.</p>
+              <p>{helperMessage}</p>
             </>
           ) : (
             <>
               <p>Your latest changes have been saved.</p>
-              <p>Keep working on this image or move on to the next image.</p>
+              <p>{helperMessage}</p>
             </>
           )}
         </div>
       )}
       renderFooter={({ close }) => (
         <ButtonRow $noMargin>
-          <Button
-            onClick={() => {
-              onContinueWorking?.();
-              close();
-            }}
-          >
-            {continueLabel || 'Continue working'}
-          </Button>
+          {showContinueWorking ? (
+            <Button
+              onClick={() => {
+                onContinueWorking?.();
+                close();
+              }}
+            >
+              {continueLabel || 'Continue working'}
+            </Button>
+          ) : null}
           {nextImageHref ? (
             <Button
               $primary

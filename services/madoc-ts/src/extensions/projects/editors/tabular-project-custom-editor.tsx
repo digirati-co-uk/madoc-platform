@@ -116,6 +116,8 @@ function TabularProjectCustomEditorContent({
   templateConfig,
 }: TabularProjectCustomEditorContentProps) {
   const api = useApi();
+  const currentUser = api.getIsServer() ? undefined : api.getCurrentUser();
+  const isSiteAdmin = !!currentUser?.scope?.includes('site.admin');
   const lifecycle = useCaptureModelContributionLifecycle();
   const { projectId } = useRouteContext();
   const table = useCaptureModelEditorApi({ tableProperty: 'rows' });
@@ -281,6 +283,11 @@ function TabularProjectCustomEditorContent({
       return;
     }
 
+    if (!isSiteAdmin) {
+      setNetSyncError(null);
+      return;
+    }
+
     if (areNetConfigsEqual(sharedNetConfigRef.current, netConfig)) {
       return;
     }
@@ -315,7 +322,7 @@ function TabularProjectCustomEditorContent({
       // Keep submission working even when user cannot update project-level config.
       setNetSyncError('Could not sync zoom tracking coordinates for other contributors.');
     }
-  }, [api, netConfig, projectId, templateConfig]);
+  }, [api, isSiteAdmin, netConfig, projectId, templateConfig]);
 
   async function onSubmit() {
     if (isSubmittedRevision) {
@@ -546,6 +553,7 @@ function TabularProjectCustomEditorContent({
         <ContributionSuccessModal
           mode={successModalState}
           nextImageHref={lifecycle.nextCanvas.next?.href}
+          showContinueWorking={successModalState !== 'submitted' || canStartAnotherSubmission}
           onContinueWorking={onContinueAfterSuccess}
           onClose={() => setSuccessModalState(null)}
         />
