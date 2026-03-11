@@ -1,6 +1,5 @@
 import React, { useMemo, useState } from 'react';
 import { EmptyState } from '@/frontend/shared/layout/EmptyState';
-import { NotificationIcon } from '@/frontend/shared/icons/NotificationIcon';
 import { LockIcon } from '@/frontend/shared/icons/LockIcon';
 import { ModelDocumentIcon } from '@/frontend/shared/icons/ModelDocumentIcon';
 import { PersonIcon } from '@/frontend/shared/icons/PersonIcon';
@@ -90,6 +89,7 @@ type TabularSidebarFlagPanelProps = Pick<
   | 'onClearAllFlags'
 > & {
   canEditCurrentFlags: boolean;
+  flagEditDisabledMessage?: string;
   historicalFlaggedCells: HistoricalTabularFlagItem[];
   onFocusHistoricalFlaggedCell: (flag: HistoricalTabularFlagItem) => void;
 };
@@ -176,6 +176,7 @@ function TabularSidebarFlagPanel({
   flaggedCells,
   canPersistFlags,
   canEditCurrentFlags,
+  flagEditDisabledMessage,
   onToggleActiveCellFlag,
   onUpdateActiveCellComment,
   onFocusFlaggedCell,
@@ -238,9 +239,9 @@ function TabularSidebarFlagPanel({
             onChange={event => onUpdateActiveCellComment(event.target.value)}
           />
         </div>
-        {!canEditCurrentFlags ? (
+        {!canEditCurrentFlags && flagEditDisabledMessage ? (
           <div className="mt-3 rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
-            This revision is read-only. You can still review current and previous flags below.
+            {flagEditDisabledMessage}
           </div>
         ) : null}
       </div>
@@ -383,7 +384,30 @@ export function TabularProjectCustomEditorSidebar({
   const currentRevisionStatus = Revisions.useStoreState(state => state.currentRevision?.revision.status);
   const currentRevisionReadMode = Revisions.useStoreState(state => state.currentRevisionReadMode);
   const [activePanelId, setActivePanelId] = useState<TabularSidebarPanelId>('metadata');
-  const canEditCurrentFlags = canPersistFlags && currentRevisionStatus === 'draft' && !currentRevisionReadMode;
+  const canEditCurrentFlags =
+    canPersistFlags &&
+    !!currentRevisionId &&
+    (currentRevisionStatus === 'draft' || typeof currentRevisionStatus === 'undefined') &&
+    !currentRevisionReadMode;
+  const flagEditDisabledMessage = useMemo(() => {
+    if (!canPersistFlags) {
+      return undefined;
+    }
+
+    if (!currentRevisionId) {
+      return 'Select or create a working revision to add cell flags.';
+    }
+
+    if (currentRevisionReadMode) {
+      return 'This revision is currently in read-only mode. Switch to an editable draft to change flags.';
+    }
+
+    if (currentRevisionStatus && currentRevisionStatus !== 'draft') {
+      return 'Only draft revisions can be changed. You can still review current and previous flags below.';
+    }
+
+    return 'This revision is read-only. You can still review current and previous flags below.';
+  }, [canPersistFlags, currentRevisionId, currentRevisionReadMode, currentRevisionStatus]);
   const visibleColumnKeySet = useMemo(() => new Set(visibleColumnKeys), [visibleColumnKeys]);
 
   const historicalFlaggedCells = useMemo(() => {
@@ -486,6 +510,7 @@ export function TabularProjectCustomEditorSidebar({
             flaggedCells={flaggedCells}
             canPersistFlags={canPersistFlags}
             canEditCurrentFlags={canEditCurrentFlags}
+            flagEditDisabledMessage={flagEditDisabledMessage}
             onToggleActiveCellFlag={onToggleActiveCellFlag}
             onUpdateActiveCellComment={onUpdateActiveCellComment}
             onFocusFlaggedCell={onFocusFlaggedCell}
@@ -525,6 +550,7 @@ export function TabularProjectCustomEditorSidebar({
       flaggedCells,
       canPersistFlags,
       canEditCurrentFlags,
+      flagEditDisabledMessage,
       onToggleActiveCellFlag,
       onUpdateActiveCellComment,
       onFocusFlaggedCell,
