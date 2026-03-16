@@ -249,18 +249,6 @@ export function TabularPreviewTable({
               return;
             }
 
-            const input = event.currentTarget;
-            const selectionStart = input.selectionStart ?? 0;
-            const selectionEnd = input.selectionEnd ?? 0;
-            const hasSelection = selectionStart !== selectionEnd;
-            const isBoundary = moveLeft
-              ? !hasSelection && selectionStart === 0
-              : !hasSelection && selectionEnd === input.value.length;
-
-            if (!isBoundary) {
-              return;
-            }
-
             event.preventDefault();
             event.stopPropagation();
             focusGridInput(rowIndex, nextCol, moveLeft ? 'end' : 'start');

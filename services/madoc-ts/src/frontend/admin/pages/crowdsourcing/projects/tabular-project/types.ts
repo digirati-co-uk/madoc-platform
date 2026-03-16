@@ -77,6 +77,7 @@ export type CastANetStepComponentProps = {
   value: NetConfig;
   onChange: (next: NetConfig) => void;
   height: number;
+  atlasBackgroundColor?: string;
   activeCell?: TabularCellRef | null;
   previewOverlayOnly?: boolean;
   showVerticalNudgeControls?: boolean;

@@ -178,6 +178,7 @@ export function TabularHeadingsTable(props: TabularHeadingsTableProps) {
         width: TABULAR_COLUMN_MIN_WIDTH_PX,
         resizable: false,
         sortable: false,
+        headerCellClass: 'tabular-heading-cell',
         draggable: !disabled,
         renderHeaderCell: () => (
           <div

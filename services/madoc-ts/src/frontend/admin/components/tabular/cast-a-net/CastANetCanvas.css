@@ -1,6 +1,6 @@
 .cast-a-net-canvas .atlas-container {
   --atlas-container-flex: 1 1 0px;
-  --atlas-background: #fff;
+  --atlas-background: var(--cast-a-net-atlas-background, #fff);
   height: 100%;
   min-height: 0;
 }

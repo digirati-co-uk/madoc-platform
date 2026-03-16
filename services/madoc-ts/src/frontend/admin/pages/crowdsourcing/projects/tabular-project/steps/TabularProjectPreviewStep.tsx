@@ -11,6 +11,7 @@ import type { NetConfig, TabularCellRef } from '@/frontend/shared/utility/tabula
 import type { CastANetStepComponentProps } from '../types';
 
 const PREVIEW_NUDGE_STEP = 0.25;
+const CONTRIBUTOR_CANVAS_BACKGROUND = '#E4E7F0';
 
 interface TabularProjectPreviewStepProps {
   t: TFunction;
@@ -153,6 +154,7 @@ export function TabularProjectPreviewStep(props: TabularProjectPreviewStepProps)
                 value={netConfig}
                 onChange={onNetConfigChange}
                 height={previewCanvasHeight}
+                atlasBackgroundColor={CONTRIBUTOR_CANVAS_BACKGROUND}
                 activeCell={previewCanvasActiveCell}
                 previewOverlayOnly
                 showVerticalNudgeControls={canTrackPreviewOnCanvas}

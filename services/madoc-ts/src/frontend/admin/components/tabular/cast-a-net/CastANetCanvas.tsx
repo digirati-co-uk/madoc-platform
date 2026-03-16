@@ -17,6 +17,7 @@ type CastANetCanvasProps = {
   value: NetConfig;
   onChange: (next: NetConfig) => void;
   height?: number;
+  atlasBackgroundColor?: string;
   onStructureChange?: (next: CastANetStructure) => void;
   blankColumnIndexes?: number[];
   disabled?: boolean;
@@ -35,6 +36,7 @@ export const CastANetCanvas: React.FC<CastANetCanvasProps> = ({
   value,
   onChange,
   height = 520,
+  atlasBackgroundColor,
   onStructureChange,
   blankColumnIndexes,
   disabled,
@@ -367,7 +369,12 @@ export const CastANetCanvas: React.FC<CastANetCanvasProps> = ({
     <div
       className="cast-a-net-canvas relative flex min-h-0 flex-col overflow-hidden border border-[#ddd] bg-white"
       ref={containerRef}
-      style={{ height }}
+      style={
+        {
+          height,
+          '--cast-a-net-atlas-background': atlasBackgroundColor || '#fff',
+        } as React.CSSProperties
+      }
     >
       {!previewOverlayOnly ? (
         <div
