@@ -8,7 +8,18 @@ const CONTRIBUTOR_EDITOR_SPLIT_DIVIDER_HEIGHT = 12;
 const CONTRIBUTOR_EDITOR_MIN_CANVAS_HEIGHT = 220;
 const CONTRIBUTOR_EDITOR_MIN_TABLE_HEIGHT = 280;
 
-export function useTabularEditorLayout() {
+type UseTabularEditorLayoutOptions = {
+  defaultCanvasSplitPct?: number;
+  minCanvasHeight?: number;
+  minTableHeight?: number;
+};
+
+export function useTabularEditorLayout(options: UseTabularEditorLayoutOptions = {}) {
+  const {
+    defaultCanvasSplitPct,
+    minCanvasHeight = CONTRIBUTOR_EDITOR_MIN_CANVAS_HEIGHT,
+    minTableHeight = CONTRIBUTOR_EDITOR_MIN_TABLE_HEIGHT,
+  } = options;
   const [isSidebarPanelOpen, setIsSidebarPanelOpen] = useState(true);
   const [isCanvasTableDividerHover, setIsCanvasTableDividerHover] = useState(false);
   const [isCanvasTableResizing, setIsCanvasTableResizing] = useState(false);
@@ -21,6 +32,10 @@ export function useTabularEditorLayout() {
   } | null>(null);
 
   const initialCanvasSplit = useMemo(() => {
+    if (typeof defaultCanvasSplitPct === 'number' && Number.isFinite(defaultCanvasSplitPct)) {
+      return clampToRange(defaultCanvasSplitPct, 5, 95);
+    }
+
     const defaultCanvasSplit = Number.parseFloat(CONTRIBUTOR_EDITOR_CANVAS_SPLIT);
     const defaultTableSplit = Number.parseFloat(CONTRIBUTOR_EDITOR_TABLE_SPLIT);
     const safeCanvasSplit = Number.isFinite(defaultCanvasSplit) ? defaultCanvasSplit : 58;
@@ -28,51 +43,54 @@ export function useTabularEditorLayout() {
     const total = safeCanvasSplit + safeTableSplit || 100;
 
     return (safeCanvasSplit / total) * 100;
-  }, []);
+  }, [defaultCanvasSplitPct]);
 
   const [canvasSplitPct, setCanvasSplitPct] = useState(initialCanvasSplit);
 
-  const startCanvasTableResize = useVerticalDragResize({
-    onStart: () => {
-      setIsCanvasTableResizing(true);
+  const startCanvasTableResize = useVerticalDragResize(
+    {
+      onStart: () => {
+        setIsCanvasTableResizing(true);
 
-      const splitContainer = splitContainerRef.current;
-      if (!splitContainer) {
+        const splitContainer = splitContainerRef.current;
+        if (!splitContainer) {
+          splitResizeContextRef.current = null;
+          setIsCanvasTableResizing(false);
+          return false;
+        }
+
+        const bounds = splitContainer.getBoundingClientRect();
+        const availableHeight = Math.max(1, bounds.height - CONTRIBUTOR_EDITOR_SPLIT_DIVIDER_HEIGHT);
+        const minCanvasPct = clampToRange((minCanvasHeight / availableHeight) * 100, 5, 95);
+        const maxCanvasPct = clampToRange(100 - (minTableHeight / availableHeight) * 100, 5, 95);
+        const lowerBound = Math.min(minCanvasPct, maxCanvasPct);
+        const upperBound = Math.max(minCanvasPct, maxCanvasPct);
+
+        splitResizeContextRef.current = {
+          availableHeight,
+          lowerBound,
+          upperBound,
+          startCanvasSplitPct: canvasSplitPct,
+        };
+      },
+      onDrag: deltaY => {
+        const resizeContext = splitResizeContextRef.current;
+        if (!resizeContext) {
+          return;
+        }
+
+        const deltaPct = (deltaY / resizeContext.availableHeight) * 100;
+        setCanvasSplitPct(
+          clampToRange(resizeContext.startCanvasSplitPct + deltaPct, resizeContext.lowerBound, resizeContext.upperBound)
+        );
+      },
+      onEnd: () => {
         splitResizeContextRef.current = null;
         setIsCanvasTableResizing(false);
-        return false;
-      }
-
-      const bounds = splitContainer.getBoundingClientRect();
-      const availableHeight = Math.max(1, bounds.height - CONTRIBUTOR_EDITOR_SPLIT_DIVIDER_HEIGHT);
-      const minCanvasPct = clampToRange((CONTRIBUTOR_EDITOR_MIN_CANVAS_HEIGHT / availableHeight) * 100, 5, 95);
-      const maxCanvasPct = clampToRange(100 - (CONTRIBUTOR_EDITOR_MIN_TABLE_HEIGHT / availableHeight) * 100, 5, 95);
-      const lowerBound = Math.min(minCanvasPct, maxCanvasPct);
-      const upperBound = Math.max(minCanvasPct, maxCanvasPct);
-
-      splitResizeContextRef.current = {
-        availableHeight,
-        lowerBound,
-        upperBound,
-        startCanvasSplitPct: canvasSplitPct,
-      };
+      },
     },
-    onDrag: deltaY => {
-      const resizeContext = splitResizeContextRef.current;
-      if (!resizeContext) {
-        return;
-      }
-
-      const deltaPct = (deltaY / resizeContext.availableHeight) * 100;
-      setCanvasSplitPct(
-        clampToRange(resizeContext.startCanvasSplitPct + deltaPct, resizeContext.lowerBound, resizeContext.upperBound)
-      );
-    },
-    onEnd: () => {
-      splitResizeContextRef.current = null;
-      setIsCanvasTableResizing(false);
-    },
-  });
+    [canvasSplitPct, minCanvasHeight, minTableHeight]
+  );
 
   const isCanvasTableDividerActive = isCanvasTableDividerHover || isCanvasTableResizing;
 

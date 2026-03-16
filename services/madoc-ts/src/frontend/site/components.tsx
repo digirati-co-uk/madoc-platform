@@ -43,6 +43,7 @@ export { ViewProjectNotes } from './pages/view-project-notes';
 export { RedirectPage } from './pages/redirect';
 export { ReviewListingPage } from './pages/tasks/review-listing/review-listing-page';
 export { SingleReview } from './pages/tasks/review-listing/single-review';
+export { ProjectReviewListingPage } from './pages/tasks/review-listing/project-review-listing-page';
 export { UserSettings } from './pages/user-settings';
 export { SiteTerms } from './pages/site-terms';
 export { BlocksPage } from './pages/blocks';

@@ -6,6 +6,7 @@ import { useQuery } from 'react-query';
 
 export function useLoadedCaptureModel(modelId?: string, initialModel?: CaptureModel, canvasId?: number) {
   const api = useApi();
+  const shouldLoadModel = !!modelId || !!initialModel;
   const { data, status, refetch } = useQuery(
     ['model-preview', { id: modelId, canvasId, modelId: initialModel?.id }],
     async () => {
@@ -40,9 +41,11 @@ export function useLoadedCaptureModel(modelId?: string, initialModel?: CaptureMo
       return { canvas, target, captureModel };
     },
     {
+      enabled: shouldLoadModel,
       cacheTime: 1000 * 60 * 60,
-      staleTime: 0,
-      refetchOnMount: true,
+      staleTime: 1000 * 60 * 5,
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
       keepPreviousData: true,
     }
   );

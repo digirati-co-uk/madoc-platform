@@ -1,6 +1,7 @@
 import React from 'react';
 import { captureModelShorthand } from '../../../frontend/shared/capture-models/helpers/capture-model-shorthand';
 import type { TabularRowOffsetAdjustment } from '../../../frontend/shared/utility/tabular-types';
+import type { CustomReviewRendererProps } from '../../../frontend/site/pages/tasks/review-renderers/types';
 import {
   TABULAR_CELL_FLAGS_PROPERTY,
   createTabularCellFlagsCaptureModelField,
@@ -86,6 +87,10 @@ const TabularProjectCustomEditorLazy = React.lazy(async () => {
   const module = await import('../editors/tabular-project-custom-editor');
   return { default: module.TabularProjectCustomEditor };
 });
+const TabularProjectReviewRendererLazy = React.lazy(async () => {
+  const module = await import('../editors/tabular-project-review-renderer');
+  return { default: module.TabularProjectReviewRenderer };
+});
 
 const TabularProjectCustomEditorLoader: React.FC = () => {
   if (typeof window === 'undefined') {
@@ -93,6 +98,18 @@ const TabularProjectCustomEditorLoader: React.FC = () => {
   }
 
   return React.createElement(React.Suspense, { fallback: null }, React.createElement(TabularProjectCustomEditorLazy));
+};
+
+const TabularProjectReviewRendererLoader: React.FC<CustomReviewRendererProps> = props => {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+
+  return React.createElement(
+    React.Suspense,
+    { fallback: null },
+    React.createElement(TabularProjectReviewRendererLazy, props)
+  );
 };
 
 export const tabularProject: ProjectTemplate<TabularProjectTemplateOptions> = {
@@ -178,5 +195,6 @@ export const tabularProject: ProjectTemplate<TabularProjectTemplateOptions> = {
   },
   components: {
     customEditor: TabularProjectCustomEditorLoader,
+    customReviewRenderer: TabularProjectReviewRendererLoader,
   },
 };

@@ -225,7 +225,9 @@ function ViewSingleReview({
   const annotationTheme = useProjectAnnotationStyles();
   const api = useApi();
   const template = useProjectTemplate(project?.template);
-  const CustomReviewRenderer = template?.components?.customReviewRenderer as React.FC<CustomReviewRendererProps> | undefined;
+  const CustomReviewRenderer = template?.components?.customReviewRenderer as
+    | React.FC<CustomReviewRendererProps>
+    | undefined;
   const [unassignUser] = useMutation(
     async () => {
       if (task) {
@@ -583,7 +585,8 @@ function ViewSingleReview({
         <SimpleStatus status={task.status} status_text={task.status_text || ''} />
         {task.assignee && (
           <Assignee>
-            {t('assigned to')}: <HrefLink href={`/users/${extractIdFromUrn(task.assignee.id)}`}>{task.assignee.name}</HrefLink>
+            {t('assigned to')}:{' '}
+            <HrefLink href={`/users/${extractIdFromUrn(task.assignee.id)}`}>{task.assignee.name}</HrefLink>
           </Assignee>
         )}
       </div>
@@ -630,7 +633,7 @@ function ViewSingleReview({
               mode={getReviewRendererMode(isEditing)}
               subjectType={subjectType}
               viewer={viewerNode}
-              saveControl={<EditorSlots.SubmitButton captureModel={captureModel} />}
+              saveControl={isEditing ? <EditorSlots.SubmitButton captureModel={captureModel} /> : null}
               controls={reviewHeaderActions}
               DefaultControls={DefaultReviewControls}
             />
@@ -656,7 +659,7 @@ function ViewSingleReview({
 
 export function SingleReview() {
   const params = useParams<{ taskId: string }>();
-  const { data, refetch, updatedAt } = useData(SingleReview);
+  const { data, refetch } = useData(SingleReview);
 
   return (
     <MaximiseWindow>
@@ -667,7 +670,6 @@ export function SingleReview() {
           return (
             <RefetchProvider refetch={refetch}>
               <ViewSingleReview
-                key={updatedAt}
                 taskId={params.taskId}
                 task={data.task}
                 review={data.review}

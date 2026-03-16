@@ -24,6 +24,7 @@ type TabularProjectCustomEditorTableProps = {
   addRowFromFooter: () => void;
   removeRowFromFooter: () => void;
   isCellFlagged: (rowIndex: number, columnKey: string) => boolean;
+  showRowControls?: boolean;
 };
 
 type TabularGridRow = {
@@ -87,10 +88,14 @@ function TabularGridCellInput(options: TabularGridCellInputProps) {
           id={inputId}
           type="checkbox"
           checked={optimisticCheckedValue}
-          disabled={disabled}
+          aria-disabled={disabled}
           onFocus={onFocus}
+          onClick={onFocus}
           onKeyDown={onKeyDown}
           onChange={event => {
+            if (disabled) {
+              return;
+            }
             const nextValue = event.target.checked;
             setOptimisticCheckedValue(nextValue);
             onChange(nextValue);
@@ -105,10 +110,15 @@ function TabularGridCellInput(options: TabularGridCellInputProps) {
       id={inputId}
       className={`h-full w-full rounded border px-2 py-1 text-sm outline-none ${inputContainerClass}`}
       value={optimisticTextValue}
-      disabled={disabled}
+      readOnly={disabled}
+      aria-readonly={disabled}
       onFocus={onFocus}
+      onClick={onFocus}
       onKeyDown={onKeyDown}
       onChange={event => {
+        if (disabled) {
+          return;
+        }
         const nextValue = event.target.value;
         setOptimisticTextValue(nextValue);
         onChange(nextValue);
@@ -129,6 +139,7 @@ export function TabularProjectCustomEditorTable({
   addRowFromFooter,
   removeRowFromFooter,
   isCellFlagged,
+  showRowControls = true,
 }: TabularProjectCustomEditorTableProps) {
   const isRemoveRowDisabled = disabled || !canRemoveRow;
   const isAddRowDisabled = disabled || !canAddRow;
@@ -386,28 +397,30 @@ export function TabularProjectCustomEditorTable({
           No rows yet. Use + to create the first row.
         </div>
       ) : null}
-      <div className="flex flex-none items-center justify-center gap-2 border-t border-[#d6d6d6] bg-[#f1f5f9] px-3 py-2">
-        <Button
-          $error
-          type="button"
-          onClick={removeRowFromFooter}
-          disabled={isRemoveRowDisabled}
-          title="Remove row"
-          className="!min-w-28 justify-center !px-3 !py-1 !text-xs !rounded-md font-semibold shadow-sm"
-        >
-          Remove row -
-        </Button>
-        <Button
-          $primary
-          type="button"
-          onClick={handleAddRowFromFooter}
-          disabled={isAddRowDisabled}
-          title="Add new row"
-          className="!min-w-28 justify-center !px-3 !py-1 !text-xs !rounded-md font-semibold shadow-sm"
-        >
-          Add new row +
-        </Button>
-      </div>
+      {showRowControls ? (
+        <div className="flex flex-none items-center justify-center gap-2 border-t border-[#d6d6d6] bg-[#f1f5f9] px-3 py-2">
+          <Button
+            $error
+            type="button"
+            onClick={removeRowFromFooter}
+            disabled={isRemoveRowDisabled}
+            title="Remove row"
+            className="!min-w-28 justify-center !px-3 !py-1 !text-xs !rounded-md font-semibold shadow-sm"
+          >
+            Remove row -
+          </Button>
+          <Button
+            $primary
+            type="button"
+            onClick={handleAddRowFromFooter}
+            disabled={isAddRowDisabled}
+            title="Add new row"
+            className="!min-w-28 justify-center !px-3 !py-1 !text-xs !rounded-md font-semibold shadow-sm"
+          >
+            Add new row +
+          </Button>
+        </div>
+      ) : null}
     </div>
   );
 }

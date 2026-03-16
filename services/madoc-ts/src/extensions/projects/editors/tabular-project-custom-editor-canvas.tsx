@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { CastANetOverlayAtlas } from '../../../frontend/admin/components/tabular/cast-a-net/CastANetOverlayAtlas';
 import {
   FollowActiveCellOnCanvas,
@@ -42,6 +42,23 @@ export function TabularProjectCustomEditorCanvas({
     () => zoomTrackingOverride ?? zoomTrackingDefaultEnabled,
     [zoomTrackingDefaultEnabled, zoomTrackingOverride]
   );
+  const viewerTarget = useMemo(() => {
+    if (!canvas) {
+      return undefined;
+    }
+
+    const canvasTargetId =
+      typeof canvas.source_id === 'string' && canvas.source_id ? canvas.source_id : `http://canvas/${canvasId}`;
+
+    return [
+      { type: 'Canvas', id: canvasTargetId },
+      { type: 'Manifest', id: 'http://manifest/top' },
+    ];
+  }, [canvas, canvasId]);
+  const handleViewerCreated = useCallback((preset: { runtime?: RuntimeWithViewport | null }) => {
+    runtimeRef.current = preset.runtime ?? null;
+    setRuntimeTick(tick => tick + 1);
+  }, []);
 
   function goHome() {
     runtimeRef.current?.world?.goHome?.();
@@ -56,7 +73,7 @@ export function TabularProjectCustomEditorCanvas({
   }
 
   return (
-    <div className="min-h-0 min-w-0 border-b border-gray-300 bg-gray-100 p-2">
+    <div className="h-full min-h-0 min-w-0 border-b border-gray-300 bg-gray-100 p-2">
       <div className="relative h-full min-h-0 min-w-0 overflow-hidden rounded border border-gray-400 bg-white">
         <TabularCanvasViewportControls
           onHome={goHome}
@@ -114,10 +131,8 @@ export function TabularProjectCustomEditorCanvas({
           height="100%"
           canvasId={canvasId}
           canvas={canvas}
-          onCreated={preset => {
-            runtimeRef.current = (preset.runtime as RuntimeWithViewport | null) ?? null;
-            setRuntimeTick(tick => tick + 1);
-          }}
+          target={viewerTarget as any}
+          onCreated={handleViewerCreated as any}
         >
           {netConfig ? (
             <>
