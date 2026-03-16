@@ -16,6 +16,10 @@ export type RuntimeWithViewport = {
   getViewport?: () => CanvasViewport | null | undefined;
   setViewport?: (next: CanvasViewport) => void;
   updateNextFrame?: () => void;
+  updateRendererScreenPosition?: () => void;
+  renderer?: {
+    resize?: (width?: number, height?: number) => void;
+  };
   resize?: {
     (): void;
     (width?: number, height?: number): void;

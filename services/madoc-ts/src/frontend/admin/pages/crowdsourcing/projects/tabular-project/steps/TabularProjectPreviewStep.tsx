@@ -4,6 +4,7 @@ import { ModalButton } from '@/frontend/shared/components/Modal';
 import { VerticalResizeSeparator } from '@/frontend/shared/components/VerticalResizeSeparator';
 import { Button, ButtonRow } from '@/frontend/shared/navigation/Button';
 import { BrowserComponent } from '@/frontend/shared/utility/browser-component';
+import { ArrowForwardIcon } from '@/frontend/shared/icons/ArrowForwardIcon';
 import { LinkIcon } from '@/frontend/shared/icons/LinkIcon';
 import { TabularPreviewTable } from '../../../../../components/tabular/cast-a-net/TabularPreviewTable';
 import type { NetConfig, TabularCellRef } from '@/frontend/shared/utility/tabular-types';
@@ -91,32 +92,27 @@ export function TabularProjectPreviewStep(props: TabularProjectPreviewStepProps)
           <div className="text-2xl font-light mb-1">{t('Preview')}</div>
           <hr />
 
-          <div className="my-3 flex items-center justify-between">
-            <div className="text-[13px] font-semibold">{t('Share project outline')}</div>
-            {shareUrl ? (
-              <button
-                type="button"
-                onClick={onCopyShareLink}
-                title={t('Copy share link')}
-                className="inline-flex h-[30px] w-[30px] cursor-pointer items-center justify-center rounded border border-[#d4d6df] bg-white text-[#283452]"
-              >
-                <LinkIcon className="text-[18px]" />
-              </button>
-            ) : null}
-          </div>
           {shareUrl ? (
-            <div className="mb-3">
-              <input
-                type="text"
-                value={shareUrl}
-                readOnly
-                onFocus={event => event.currentTarget.select()}
-                className="w-full rounded border border-[#cfd6e5] bg-white px-[10px] py-2 text-xs text-[#1f2d5a]"
-              />
-              <div className="mt-1.5 text-xs">
-                <a href={shareUrl} target="_blank" rel="noreferrer">
-                  {t('Open shared outline')}
+            <div className="my-3">
+              <div className="flex items-center gap-2">
+                <a
+                  href={shareUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label={t('Open shared outline in a new tab')}
+                  className="group inline-flex min-w-0 flex-1 items-center justify-center gap-1.5 rounded border border-[#9fb4e8] bg-[#edf2ff] px-2.5 py-1.5 text-xs font-semibold text-[#17306f] hover:bg-[#e2ebff] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#4265e9]"
+                >
+                  <span>{t('Open shared outline')}</span>
+                  <ArrowForwardIcon className="text-[13px] transition-transform group-hover:translate-x-0.5" />
                 </a>
+                <button
+                  type="button"
+                  onClick={onCopyShareLink}
+                  title={t('Copy share link')}
+                  className="inline-flex h-[30px] w-[30px] shrink-0 cursor-pointer items-center justify-center rounded border border-[#d4d6df] bg-white text-[#283452]"
+                >
+                  <LinkIcon className="text-[18px]" />
+                </button>
               </div>
               {shareCopied === 'copied' ? (
                 <div className="mt-1.5 text-xs text-[#166534]">{t('Share link copied.')}</div>
@@ -127,15 +123,25 @@ export function TabularProjectPreviewStep(props: TabularProjectPreviewStepProps)
             </div>
           ) : null}
 
-          <div className="mb-3 rounded bg-[#dfe5ff] p-3 text-sm leading-[1.35] text-[#1f2d5a]">
-            {t('Review all project details, capture model data, and cast-a-net contract before creating the project.')}
-          </div>
-
-          {canTrackPreviewOnCanvas ? (
-            <div className="mt-[14px] border-t border-[#d6d6d6] pt-[10px] text-[11px] opacity-80">
-              {t('Nudge updates are saved with this project setup.')}
+          <div className="mb-3 rounded border border-[#ced8ff] bg-[#e8edff] p-3 text-[#1f2d5a]">
+            <div className="text-sm leading-[1.35]">
+              {t(
+                'Review all project details, capture model data, and cast-a-net contract before creating the project.'
+              )}
             </div>
-          ) : null}
+            {canTrackPreviewOnCanvas ? (
+              <div className="mt-2 border-t border-[#ced8ff] pt-2">
+                <div className="text-[11px] font-semibold uppercase tracking-wide text-[#3d4f88]">
+                  {t('Nudge actions')}
+                </div>
+                <div className="mt-1 text-sm leading-[1.35]">
+                  {t(
+                    'Use the Nudge options to push the rows to align more correctly with the image. Any changes you make using the Nudge options will be saved, and used to help position the zoom tracking display for contributor users.'
+                  )}
+                </div>
+              </div>
+            ) : null}
+          </div>
         </div>
 
         <div className={hasImage ? 'grid h-[760px] content-start gap-3 overflow-hidden' : 'grid content-start gap-3'}>

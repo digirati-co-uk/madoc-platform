@@ -19,8 +19,8 @@ type CastANetOverlayProps = {
   onOverlayWheel?: (deltaY: number) => void;
 };
 
-const isMoveModifierPressed = (event: { altKey: boolean }) => {
-  return event.altKey;
+const isMoveModifierPressed = (event: { altKey: boolean; shiftKey: boolean }) => {
+  return event.altKey && event.shiftKey;
 };
 
 const sanitiseLineIndexes = (indexes: number[], max: number) => {

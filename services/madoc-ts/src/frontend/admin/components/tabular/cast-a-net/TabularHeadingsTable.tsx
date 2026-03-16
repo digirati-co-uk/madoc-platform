@@ -14,6 +14,7 @@ export type TabularHeadingsTableProps = {
   headings: string[];
   tooltips?: (string | undefined)[];
   onChangeHeadings: (next: string[]) => void;
+  onColumnsReorder?: (sourceColumnIndex: number, targetColumnIndex: number) => void;
 
   visibleRows?: number;
 
@@ -115,6 +116,7 @@ export function TabularHeadingsTable(props: TabularHeadingsTableProps) {
     headings,
     tooltips = [],
     onChangeHeadings,
+    onColumnsReorder,
     visibleRows = 8,
     activeColumn = 0,
     onActiveColumnChange,
@@ -176,6 +178,7 @@ export function TabularHeadingsTable(props: TabularHeadingsTableProps) {
         width: TABULAR_COLUMN_MIN_WIDTH_PX,
         resizable: false,
         sortable: false,
+        draggable: !disabled,
         renderHeaderCell: () => (
           <div
             title={title}
@@ -185,7 +188,8 @@ export function TabularHeadingsTable(props: TabularHeadingsTableProps) {
               padding: 0,
               background: c === activeColumn ? '#b9c8f5' : '#d9deee',
               boxShadow: c === activeColumn ? 'inset 0 0 0 2px #8aa3ea' : undefined,
-              cursor: 'pointer',
+              cursor: disabled ? 'default' : 'grab',
+              transition: 'background-color 120ms ease, box-shadow 120ms ease',
             }}
           >
             <HeaderInput
@@ -252,6 +256,26 @@ export function TabularHeadingsTable(props: TabularHeadingsTableProps) {
           border: '1px solid #d6d6d6',
           ['--rdg-selection-width' as string]: '0px',
           ['--rdg-border-color' as string]: '#d6d6d6',
+        }}
+        onColumnsReorder={(sourceColumnKey, targetColumnKey) => {
+          if (!onColumnsReorder) {
+            return;
+          }
+
+          const sourceColumnIndex = Number.parseInt(sourceColumnKey.replace(/^c-/, ''), 10);
+          const targetColumnIndex = Number.parseInt(targetColumnKey.replace(/^c-/, ''), 10);
+
+          if (!Number.isFinite(sourceColumnIndex) || !Number.isFinite(targetColumnIndex)) {
+            return;
+          }
+          if (sourceColumnIndex < 0 || sourceColumnIndex >= columns) {
+            return;
+          }
+          if (targetColumnIndex < 0 || targetColumnIndex >= columns) {
+            return;
+          }
+
+          onColumnsReorder(sourceColumnIndex, targetColumnIndex);
         }}
       />
     </>
