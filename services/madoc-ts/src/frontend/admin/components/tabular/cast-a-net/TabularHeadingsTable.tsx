@@ -71,18 +71,7 @@ function HeaderInput(props: {
           return;
         }
 
-        const input = event.currentTarget;
-        const selectionStart = input.selectionStart ?? 0;
-        const selectionEnd = input.selectionEnd ?? 0;
-        const valueLength = input.value.length;
-        const hasSelection = selectionStart !== selectionEnd;
-        const moveToPrevious = event.key === 'ArrowLeft' && !hasSelection && selectionStart === 0;
-        const moveToNext = event.key === 'ArrowRight' && !hasSelection && selectionEnd === valueLength;
-
-        if (!moveToPrevious && !moveToNext) {
-          return;
-        }
-
+        const moveToPrevious = event.key === 'ArrowLeft';
         const nextIndex = index + (moveToPrevious ? -1 : 1);
         if (nextIndex < 0 || nextIndex >= columnCount) {
           return;

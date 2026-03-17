@@ -100,6 +100,23 @@ function TabularGridCellInput(options: TabularGridCellInputProps) {
     );
   }
 
+  if (!isActiveCell) {
+    return (
+      <div
+        className={`h-full w-full rounded border px-2 py-1 text-sm leading-5 ${inputContainerClass}`}
+        style={{
+          whiteSpace: 'normal',
+          overflowWrap: 'anywhere',
+          wordBreak: 'break-word',
+          overflow: 'hidden',
+        }}
+        title={optimisticTextValue || undefined}
+      >
+        {optimisticTextValue || '\u00A0'}
+      </div>
+    );
+  }
+
   return (
     <input
       id={inputId}
@@ -109,7 +126,7 @@ function TabularGridCellInput(options: TabularGridCellInputProps) {
       onFocus={onFocus}
       onKeyDown={onKeyDown}
       onChange={event => {
-        const nextValue = event.target.value;
+        const nextValue = event.currentTarget.value;
         setOptimisticTextValue(nextValue);
         onChange(nextValue);
       }}
@@ -133,10 +150,33 @@ export function TabularProjectCustomEditorTable({
   const isRemoveRowDisabled = disabled || !canRemoveRow;
   const isAddRowDisabled = disabled || !canAddRow;
   const headerRowHeight = TABULAR_GRID_HEADER_ROW_HEIGHT_PX;
-  const rowHeight = TABULAR_GRID_ROW_HEIGHT_PX;
-  const minGridWidth = Math.max(1, headerColumns.length) * TABULAR_COLUMN_MIN_WIDTH_PX + 2;
+  const rowHeight = Math.max(TABULAR_GRID_ROW_HEIGHT_PX, 60);
   const tableScrollRef = useRef<HTMLDivElement | null>(null);
   const shouldScrollToNewRowRef = useRef(false);
+  const [tableViewportWidth, setTableViewportWidth] = useState(0);
+
+  useEffect(() => {
+    const container = tableScrollRef.current;
+    if (!container) {
+      return;
+    }
+
+    const updateWidth = () => {
+      setTableViewportWidth(Math.floor(container.clientWidth));
+    };
+    updateWidth();
+
+    if (typeof ResizeObserver === 'undefined') {
+      return;
+    }
+
+    const observer = new ResizeObserver(() => {
+      updateWidth();
+    });
+    observer.observe(container);
+
+    return () => observer.disconnect();
+  }, []);
 
   const gridRows = useMemo<readonly TabularGridRow[]>(
     () =>
@@ -179,12 +219,23 @@ export function TabularProjectCustomEditorTable({
     [gridRows, onActiveCellChange]
   );
 
+  const columnWidth = useMemo(() => {
+    const visibleColumns = Math.max(1, headerColumns.length);
+    if (tableViewportWidth <= 0) {
+      return TABULAR_COLUMN_MIN_WIDTH_PX;
+    }
+
+    const availableWidth = Math.max(0, tableViewportWidth - 2);
+    const stretchedWidth = Math.floor(availableWidth / visibleColumns);
+    return Math.max(TABULAR_COLUMN_MIN_WIDTH_PX, stretchedWidth);
+  }, [headerColumns.length, tableViewportWidth]);
+
   const gridColumns = useMemo<readonly Column<TabularGridRow>[]>(() => {
     return headerColumns.map((column, colIndex) => {
       return {
         key: column.key,
         name: '',
-        width: TABULAR_COLUMN_MIN_WIDTH_PX,
+        width: columnWidth,
         sortable: false,
         resizable: false,
         renderHeaderCell: () => {
@@ -278,20 +329,6 @@ export function TabularProjectCustomEditorTable({
                 return;
               }
 
-              if (cell.fieldType !== 'checkbox-field') {
-                const input = event.currentTarget;
-                const selectionStart = input.selectionStart ?? 0;
-                const selectionEnd = input.selectionEnd ?? 0;
-                const hasSelection = selectionStart !== selectionEnd;
-                const isBoundary = moveLeft
-                  ? !hasSelection && selectionStart === 0
-                  : !hasSelection && selectionEnd === input.value.length;
-
-                if (!isBoundary) {
-                  return;
-                }
-              }
-
               event.preventDefault();
               event.stopPropagation();
               focusGridInput(row.rowPosition, nextCol, moveLeft ? 'end' : 'start');
@@ -301,7 +338,9 @@ export function TabularProjectCustomEditorTable({
           return (
             <div
               id={cell.cellElementId}
-              onMouseDown={() => onActiveCellChange({ row: cell.rowIndex, col: colIndex })}
+              onMouseDown={() => {
+                focusGridInput(row.rowPosition, colIndex, 'end');
+              }}
               style={{
                 height: '100%',
                 padding: 4,
@@ -326,7 +365,16 @@ export function TabularProjectCustomEditorTable({
         },
       } satisfies Column<TabularGridRow>;
     });
-  }, [disabled, focusGridInput, gridRows.length, headerColumns, isCellFlagged, onActiveCellChange, tableActiveCell]);
+  }, [
+    columnWidth,
+    disabled,
+    focusGridInput,
+    gridRows.length,
+    headerColumns,
+    isCellFlagged,
+    onActiveCellChange,
+    tableActiveCell,
+  ]);
 
   useEffect(() => {
     if (!shouldScrollToNewRowRef.current) {
@@ -374,7 +422,7 @@ export function TabularProjectCustomEditorTable({
           rowHeight={rowHeight}
           style={{
             height: '100%',
-            minWidth: minGridWidth,
+            width: '100%',
             border: 'none',
             ['--rdg-selection-width' as string]: '0px',
             ['--rdg-border-color' as string]: '#d6d6d6',

@@ -22,7 +22,7 @@ import { useProject } from '@/frontend/site/hooks/use-project';
 import { useRouteContext } from '@/frontend/site/hooks/use-route-context';
 import type { CanvasFull } from '@/types/canvas-full';
 import ResizeHandleIcon from '@/frontend/shared/icons/ResizeHandleIcon';
-import { buildCastANetStructure } from '../../../frontend/admin/components/tabular/cast-a-net/CastANetStructure';
+import { buildCastANetStructure } from '@/frontend/admin/components/tabular/cast-a-net/CastANetStructure';
 import { TabularProjectCustomEditorCanvas } from './tabular-project-custom-editor-canvas';
 import { ContributionEditorStateAlerts } from './contribution-editor-state-alerts';
 import { ContributionSuccessModal } from './contribution-success-modal';
