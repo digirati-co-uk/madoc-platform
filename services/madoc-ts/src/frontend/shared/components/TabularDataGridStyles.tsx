@@ -21,6 +21,24 @@ export function TabularDataGridStyles({ scopeClassName, disableRowHover = false 
         ${selector} .rdg-header-row .rdg-cell {
           padding: 0 !important;
         }
+        ${selector} .rdg-cell-drag-over {
+          background: #e8edff !important;
+        }
+        ${selector} .rdg-cell-drag-over::after {
+          content: '';
+          position: absolute;
+          inset: 4px;
+          border: 2px dotted #6f84e8;
+          border-radius: 6px;
+          pointer-events: none;
+        }
+        ${selector} .rdg-cell-dragging {
+          opacity: 0.92;
+        }
+        ${selector} .tabular-heading-cell:not([role='columnheader']) {
+          box-shadow: 0 14px 30px rgba(15, 23, 42, 0.24), 0 4px 12px rgba(15, 23, 42, 0.18);
+          border-radius: 6px;
+        }
         ${
           disableRowHover
             ? `${selector} .rdg-row:hover {

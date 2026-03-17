@@ -17,6 +17,7 @@ type CastANetCanvasProps = {
   value: NetConfig;
   onChange: (next: NetConfig) => void;
   height?: number;
+  atlasBackgroundColor?: string;
   onStructureChange?: (next: CastANetStructure) => void;
   blankColumnIndexes?: number[];
   disabled?: boolean;
@@ -35,6 +36,7 @@ export const CastANetCanvas: React.FC<CastANetCanvasProps> = ({
   value,
   onChange,
   height = 520,
+  atlasBackgroundColor,
   onStructureChange,
   blankColumnIndexes,
   disabled,
@@ -54,11 +56,15 @@ export const CastANetCanvas: React.FC<CastANetCanvasProps> = ({
   const [overlayRetryToken, setOverlayRetryToken] = useState(0);
   const overlayRetryCountRef = useRef(0);
   const missingOverlayTicksRef = useRef(0);
-  const runtimeSizeRef = useRef<{ width: number; height: number } | null>(null);
+  const initialZoomAppliedRef = useRef(false);
+  const initialZoomRetryCountRef = useRef(0);
+  const initialZoomFrameRef = useRef<number | null>(null);
   const viewerBaseKey = `${manifestId}::${canvasId ?? ''}`;
   const maxOverlayRetries = 4;
+  const maxInitialZoomRetries = 20;
   const healthCheckIntervalMs = 500;
   const overlayMissingRetryTicks = 2;
+  const INITIAL_CANVAS_ZOOM_FACTOR = 0.76;
   const viewerName = useMemo(
     () => `cast-a-net::${previewOverlayOnly ? 'preview' : 'edit'}::${manifestId}::${canvasId ?? 'default'}`,
     [canvasId, manifestId, previewOverlayOnly]
@@ -70,13 +76,28 @@ export const CastANetCanvas: React.FC<CastANetCanvasProps> = ({
     }
   }, [dimOpacity]);
 
+  const cancelInitialZoomRetry = useCallback(() => {
+    if (typeof window !== 'undefined' && initialZoomFrameRef.current != null) {
+      window.cancelAnimationFrame(initialZoomFrameRef.current);
+    }
+    initialZoomFrameRef.current = null;
+  }, []);
+
   useEffect(() => {
     runtime.current = null;
-    runtimeSizeRef.current = null;
+    initialZoomAppliedRef.current = false;
+    initialZoomRetryCountRef.current = 0;
+    cancelInitialZoomRetry();
     missingOverlayTicksRef.current = 0;
     overlayRetryCountRef.current = 0;
     setOverlayRetryToken(0);
-  }, [viewerBaseKey, canvasId]);
+  }, [viewerBaseKey, canvasId, cancelInitialZoomRetry]);
+
+  useEffect(() => {
+    return () => {
+      cancelInitialZoomRetry();
+    };
+  }, [cancelInitialZoomRetry]);
 
   const getContainerSize = useCallback(() => {
     const container = containerRef.current;
@@ -97,20 +118,84 @@ export const CastANetCanvas: React.FC<CastANetCanvasProps> = ({
 
   const resizeRuntimeToSize = useCallback((nextSize: { width: number; height: number }) => {
     const currentRuntime = runtime.current;
-    const previousSize = runtimeSizeRef.current;
-    runtimeSizeRef.current = nextSize;
-
-    if (!currentRuntime?.resize) {
+    if (!currentRuntime) {
       return;
     }
 
-    if (previousSize) {
-      currentRuntime.resize(previousSize.width, nextSize.width, previousSize.height, nextSize.height);
-    } else {
-      currentRuntime.resize(nextSize.width, nextSize.height);
+    if (typeof currentRuntime.updateRendererScreenPosition === 'function') {
+      currentRuntime.updateRendererScreenPosition();
     }
+
+    if (currentRuntime.renderer?.resize) {
+      currentRuntime.renderer.resize(nextSize.width, nextSize.height);
+    }
+
     currentRuntime.updateNextFrame?.();
   }, []);
+
+  const applyInitialZoom = useCallback(() => {
+    const currentRuntime = runtime.current;
+    if (!currentRuntime || initialZoomAppliedRef.current) {
+      return false;
+    }
+
+    if (typeof currentRuntime.getViewport === 'function' && typeof currentRuntime.setViewport === 'function') {
+      const viewport = currentRuntime.getViewport();
+      if (!viewport || viewport.width <= 0 || viewport.height <= 0) {
+        return false;
+      }
+
+      const nextWidth = viewport.width * INITIAL_CANVAS_ZOOM_FACTOR;
+      const nextHeight = viewport.height * INITIAL_CANVAS_ZOOM_FACTOR;
+      const nextX = viewport.x + (viewport.width - nextWidth) / 2;
+      const nextY = viewport.y;
+      currentRuntime.setViewport({
+        x: nextX,
+        y: nextY,
+        width: nextWidth,
+        height: nextHeight,
+      });
+    } else if (currentRuntime.world?.zoomIn) {
+      currentRuntime.world?.zoomIn?.();
+    } else {
+      return false;
+    }
+
+    currentRuntime.updateNextFrame?.();
+    initialZoomAppliedRef.current = true;
+    return true;
+  }, []);
+
+  const scheduleInitialZoom = useCallback(() => {
+    if (initialZoomAppliedRef.current) {
+      return;
+    }
+
+    if (typeof window === 'undefined') {
+      applyInitialZoom();
+      return;
+    }
+
+    cancelInitialZoomRetry();
+    initialZoomRetryCountRef.current = 0;
+
+    const attemptApply = () => {
+      if (applyInitialZoom()) {
+        initialZoomFrameRef.current = null;
+        return;
+      }
+
+      if (initialZoomRetryCountRef.current >= maxInitialZoomRetries) {
+        initialZoomFrameRef.current = null;
+        return;
+      }
+
+      initialZoomRetryCountRef.current += 1;
+      initialZoomFrameRef.current = window.requestAnimationFrame(attemptApply);
+    };
+
+    initialZoomFrameRef.current = window.requestAnimationFrame(attemptApply);
+  }, [applyInitialZoom, cancelInitialZoomRetry, maxInitialZoomRetries]);
 
   const remountOverlayLayer = useCallback(() => {
     if (previewOverlayOnly || overlayRetryCountRef.current >= maxOverlayRetries) {
@@ -282,22 +367,25 @@ export const CastANetCanvas: React.FC<CastANetCanvasProps> = ({
 
   return (
     <div
-      className="cast-a-net-canvas"
+      className="cast-a-net-canvas relative flex min-h-0 flex-col overflow-hidden border border-[#ddd] bg-white"
       ref={containerRef}
-      style={{
-        border: '1px solid #ddd',
-        height,
-        position: 'relative',
-        background: '#fff',
-        overflow: 'hidden',
-        display: 'flex',
-        flexDirection: 'column',
-        minHeight: 0,
-      }}
+      style={
+        {
+          height,
+          '--cast-a-net-atlas-background': atlasBackgroundColor || '#fff',
+        } as React.CSSProperties
+      }
     >
       {!previewOverlayOnly ? (
-        <div className="cast-a-net-opacity-control" role="group" aria-label="Canvas opacity">
-          <OpacityIcon className="cast-a-net-opacity-icon" aria-hidden="true" />
+        <div
+          className="absolute left-3 top-3 z-50 flex w-[min(210px,calc(100%-120px))] min-w-[140px] max-w-[210px] items-center gap-1.5 rounded-[7px] border border-[#cfd2db] bg-[rgba(236,236,241,0.96)] px-2 py-1.5 max-[1100px]:w-[min(170px,calc(100%-112px))] max-[1100px]:min-w-[120px] max-[1100px]:max-w-[170px] max-[1100px]:px-[7px] max-[1100px]:py-[5px]"
+          role="group"
+          aria-label="Canvas opacity"
+        >
+          <OpacityIcon
+            className="h-4 w-4 shrink-0 text-[#3f3f46] max-[1100px]:h-3.5 max-[1100px]:w-3.5"
+            aria-hidden="true"
+          />
           <input
             type="range"
             aria-label="Canvas opacity"
@@ -324,20 +412,10 @@ export const CastANetCanvas: React.FC<CastANetCanvasProps> = ({
         homeDisabled={disabled}
         zoomOutDisabled={disabled}
         zoomInDisabled={disabled}
-        style={{ top: 12, right: 12, zIndex: 50 }}
+        className="!right-3 !top-3 !z-50"
       />
       {showVerticalNudgeControls && (onNudgeUp || onNudgeDown) ? (
-        <div
-          style={{
-            position: 'absolute',
-            top: 12,
-            left: 12,
-            zIndex: 50,
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 8,
-          }}
-        >
+        <div className="absolute left-3 top-3 z-50 flex flex-col gap-2">
           <CanvasViewerButton type="button" onClick={onNudgeUp} disabled={disabled || !onNudgeUp} title="Nudge up">
             <ArrowDownIcon style={{ transform: 'rotate(180deg)', fill: 'currentColor' }} />
           </CanvasViewerButton>
@@ -357,6 +435,7 @@ export const CastANetCanvas: React.FC<CastANetCanvasProps> = ({
           name={viewerName}
           height={height}
           resizeHash={height}
+          updateViewportTimeout={180}
           runtimeOptions={{ maxOverZoom: 5, visibilityRatio: 1, maxUnderZoom: 1 }}
           onCreated={preset => {
             runtime.current = (preset.runtime as RuntimeWithViewport | null) ?? null;
@@ -365,6 +444,7 @@ export const CastANetCanvas: React.FC<CastANetCanvasProps> = ({
             if (size) {
               resizeRuntimeToSize(size);
             }
+            scheduleInitialZoom();
           }}
         >
           <FollowActiveCellOnCanvas

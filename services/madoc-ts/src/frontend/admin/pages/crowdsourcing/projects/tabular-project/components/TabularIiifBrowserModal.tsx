@@ -70,7 +70,7 @@ export function TabularIiifBrowserModal(props: TabularIiifBrowserModalProps) {
           }
         `}
       </style>
-      <div className="mb-3 grid gap-1.5 rounded border border-[#d7dbe8] bg-[#eef3ff] p-2.5">
+      <div className="mb-3 grid gap-1.5 rounded border border-[#ced8ff] bg-[#e8edff] p-3">
         <button
           type="button"
           aria-expanded={showCanvasHelp}

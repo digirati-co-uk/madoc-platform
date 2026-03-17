@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DataGrid, type Column } from 'react-data-grid';
 import 'react-data-grid/lib/styles.css';
 import type { TabularCellRef } from './types';
@@ -55,6 +55,30 @@ export function TabularPreviewTable({
   const safeRows = Math.max(1, rows || 0);
   const tableScrollRef = useRef<HTMLDivElement | null>(null);
   const shouldScrollToNewRowRef = useRef(false);
+  const [tableViewportWidth, setTableViewportWidth] = useState(0);
+
+  useEffect(() => {
+    const container = tableScrollRef.current;
+    if (!container) {
+      return;
+    }
+
+    const updateWidth = () => {
+      setTableViewportWidth(Math.floor(container.clientWidth));
+    };
+    updateWidth();
+
+    if (typeof ResizeObserver === 'undefined') {
+      return;
+    }
+
+    const observer = new ResizeObserver(() => {
+      updateWidth();
+    });
+    observer.observe(container);
+
+    return () => observer.disconnect();
+  }, []);
 
   const safeHeadings = useMemo(
     () =>
@@ -150,6 +174,16 @@ export function TabularPreviewTable({
     onAddRow();
   }, [disabled, onAddRow]);
 
+  const columnWidth = useMemo(() => {
+    if (tableViewportWidth <= 0) {
+      return TABULAR_COLUMN_MIN_WIDTH_PX;
+    }
+
+    const availableWidth = Math.max(0, tableViewportWidth - 2);
+    const stretchedWidth = Math.floor(availableWidth / safeColumns);
+    return Math.max(TABULAR_COLUMN_MIN_WIDTH_PX, stretchedWidth);
+  }, [safeColumns, tableViewportWidth]);
+
   const gridColumns = useMemo<readonly Column<PreviewRow>[]>(() => {
     return Array.from({ length: safeColumns }, (_unused, colIndex) => {
       const heading = safeHeadings[colIndex] ?? '';
@@ -159,7 +193,7 @@ export function TabularPreviewTable({
       return {
         key: `c-${colIndex}`,
         name: '',
-        width: TABULAR_COLUMN_MIN_WIDTH_PX,
+        width: columnWidth,
         sortable: false,
         resizable: false,
         renderHeaderCell: () => (
@@ -249,18 +283,6 @@ export function TabularPreviewTable({
               return;
             }
 
-            const input = event.currentTarget;
-            const selectionStart = input.selectionStart ?? 0;
-            const selectionEnd = input.selectionEnd ?? 0;
-            const hasSelection = selectionStart !== selectionEnd;
-            const isBoundary = moveLeft
-              ? !hasSelection && selectionStart === 0
-              : !hasSelection && selectionEnd === input.value.length;
-
-            if (!isBoundary) {
-              return;
-            }
-
             event.preventDefault();
             event.stopPropagation();
             focusGridInput(rowIndex, nextCol, moveLeft ? 'end' : 'start');
@@ -268,29 +290,52 @@ export function TabularPreviewTable({
 
           return (
             <div
+              onMouseDown={() => {
+                focusGridInput(rowIndex, colIndex, 'end');
+              }}
               style={{
                 height: '100%',
                 background: isActiveCell ? '#def3e4' : isActiveRow ? '#f2fbf4' : '#fff',
               }}
             >
-              <input
-                id={getPreviewInputId(rowIndex, colIndex)}
-                value={value}
-                disabled={disabled}
-                onFocus={() => onActiveCellChange({ row: rowIndex, col: colIndex })}
-                onKeyDown={handleKeyDown}
-                onChange={event => updateCell(rowIndex, colIndex, event.currentTarget.value)}
-                style={{
-                  border: 'none',
-                  width: '100%',
-                  height: '100%',
-                  background: 'transparent',
-                  padding: '10px 12px',
-                  fontSize: 13,
-                  outline: isActiveCell ? '2px solid #34a853' : 'none',
-                  outlineOffset: -2,
-                }}
-              />
+              {isActiveCell ? (
+                <input
+                  id={getPreviewInputId(rowIndex, colIndex)}
+                  value={value}
+                  disabled={disabled}
+                  onFocus={() => onActiveCellChange({ row: rowIndex, col: colIndex })}
+                  onKeyDown={handleKeyDown}
+                  onChange={event => updateCell(rowIndex, colIndex, event.currentTarget.value)}
+                  style={{
+                    border: 'none',
+                    width: '100%',
+                    height: '100%',
+                    background: 'transparent',
+                    padding: '10px 12px',
+                    fontSize: 13,
+                    outline: isActiveCell ? '2px solid #34a853' : 'none',
+                    outlineOffset: -2,
+                  }}
+                />
+              ) : (
+                <div
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    background: 'transparent',
+                    padding: '10px 12px',
+                    fontSize: 13,
+                    lineHeight: '20px',
+                    whiteSpace: 'normal',
+                    overflowWrap: 'anywhere',
+                    wordBreak: 'break-word',
+                    overflow: 'hidden',
+                  }}
+                  title={value || undefined}
+                >
+                  {value || '\u00A0'}
+                </div>
+              )}
             </div>
           );
         },
@@ -298,6 +343,7 @@ export function TabularPreviewTable({
     });
   }, [
     activeCell,
+    columnWidth,
     disabled,
     focusGridInput,
     onActiveCellChange,
@@ -310,7 +356,7 @@ export function TabularPreviewTable({
   ]);
 
   const headerRowHeight = TABULAR_GRID_HEADER_ROW_HEIGHT_PX;
-  const rowHeight = TABULAR_GRID_ROW_HEIGHT_PX;
+  const rowHeight = Math.max(TABULAR_GRID_ROW_HEIGHT_PX, 60);
   const gridHeight = headerRowHeight + rowHeight * safeRows + 2;
   const hasFixedHeight = typeof containerHeight !== 'undefined';
 
@@ -329,7 +375,10 @@ export function TabularPreviewTable({
       }}
     >
       <TabularDataGridStyles scopeClassName="tabular-preview-rdg" disableRowHover />
-      <div ref={tableScrollRef} style={{ flex: hasFixedHeight ? '1 1 auto' : undefined, minHeight: 0 }}>
+      <div
+        ref={tableScrollRef}
+        style={{ flex: hasFixedHeight ? '1 1 auto' : undefined, minHeight: 0, overflow: 'hidden' }}
+      >
         <DataGrid
           className="rdg-light tabular-preview-rdg"
           columns={gridColumns}
@@ -340,7 +389,7 @@ export function TabularPreviewTable({
           rowHeight={rowHeight}
           style={{
             height: hasFixedHeight ? '100%' : gridHeight,
-            minWidth: safeColumns * TABULAR_COLUMN_MIN_WIDTH_PX + 2,
+            width: '100%',
             border: 'none',
             ['--rdg-selection-width' as string]: '0px',
             ['--rdg-border-color' as string]: '#d6d6d6',

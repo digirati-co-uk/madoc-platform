@@ -62,6 +62,7 @@ const STEP_PREVIEW = 4;
 const STEP_COMPLETE = 5;
 
 const CAST_A_NET_DEFAULT_HEIGHT = 520;
+const CAST_A_NET_MIN_HEIGHT = 280;
 
 const SHARE_COPY_TIMEOUT = 1800;
 
@@ -154,7 +155,7 @@ export function useTabularProjectController(options: UseTabularProjectController
   });
 
   const { height: castANetHeight, startResize: startCastANetResize } = useResizableHeight(CAST_A_NET_DEFAULT_HEIGHT, {
-    min: 360,
+    min: CAST_A_NET_MIN_HEIGHT,
     max: 760,
   });
 

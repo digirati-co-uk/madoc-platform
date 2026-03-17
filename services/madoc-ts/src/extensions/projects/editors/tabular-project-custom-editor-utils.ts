@@ -25,8 +25,8 @@ export type TabularColumnModel = {
 };
 
 export const CONTRIBUTOR_EDITOR_SPLIT_HEIGHT = '100vh';
-export const CONTRIBUTOR_EDITOR_CANVAS_SPLIT = '58%';
-export const CONTRIBUTOR_EDITOR_TABLE_SPLIT = '42%';
+export const CONTRIBUTOR_EDITOR_CANVAS_SPLIT = '33%';
+export const CONTRIBUTOR_EDITOR_TABLE_SPLIT = '67%';
 
 export function getBlockedReason(options: {
   hasExpired: boolean;

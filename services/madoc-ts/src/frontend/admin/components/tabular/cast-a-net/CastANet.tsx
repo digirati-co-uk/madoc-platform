@@ -8,6 +8,7 @@ type CastANetProps = {
   value: NetConfig;
   onChange: (next: NetConfig) => void;
   height?: number;
+  atlasBackgroundColor?: string;
   onStructureChange?: (next: CastANetStructure) => void;
   blankColumnIndexes?: number[];
   disabled?: boolean;

@@ -62,9 +62,9 @@ export function TabularProjectNetStep(props: TabularProjectNetStepProps) {
             <div className="text-2xl font-light mb-1">{t('Cast a net')}</div>
             <hr />
             <div className="mt-1  pt-4">
-              <div className="rounded bg-[#dfe5ff] p-3 text-sm text-[#1f2d5a]">
+              <div className="rounded border border-[#ced8ff] bg-[#e8edff] p-3 text-sm leading-[1.35] text-[#1f2d5a]">
                 {t(
-                  'Adjust the grid so it matches the table in the example image. Align the pink band with the headings defined earlier.'
+                  'Align the tabular net so that it aligns with the table in the example image. Start by aligning the header (pink row) with the headings defined in the previous step.'
                 )}
                 <br />
                 <br />
@@ -72,12 +72,14 @@ export function TabularProjectNetStep(props: TabularProjectNetStepProps) {
                 <br />
                 <br />
                 {t('Hold ')}
-                <small>ALT/OPTION</small> {t('to move the whole net. ')}
+                <small>ALT+SHIFT</small> {t('to move the whole tabular net. ')}
                 {t('Hold ')}
-                <small>SHIFT</small> {t('to select multiple row/column lines, then drag one to move them together.')}
+                <small>SHIFT</small>{' '}
+                {t(
+                  'to click and select multiple row(s) or multiple column(s). Once selected, click on one of the selected lines to move them together.'
+                )}
               </div>
             </div>
-
             <div className="flex flex-col items-start gap-2 my-2">
               <ModalButton
                 title={t('Browse IIIF resources')}

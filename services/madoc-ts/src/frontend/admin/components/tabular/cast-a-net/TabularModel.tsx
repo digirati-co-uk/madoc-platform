@@ -101,7 +101,7 @@ export function validateTabularModel(
   }
 ): TabularValidationIssue[] {
   const minColumns = opts?.minColumns ?? 1;
-  const maxColumns = opts?.maxColumns ?? 50;
+  const maxColumns = opts?.maxColumns ?? 100;
   const maxHeadingLength = opts?.maxHeadingLength ?? 80;
 
   const issues: TabularValidationIssue[] = [];

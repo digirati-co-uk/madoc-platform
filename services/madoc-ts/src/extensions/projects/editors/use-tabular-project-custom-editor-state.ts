@@ -53,6 +53,17 @@ export function useTabularProjectCustomEditorState({
   removeInstance,
 }: UseTabularProjectCustomEditorStateProps): UseTabularProjectCustomEditorStateResult {
   const [tableActiveCell, setTableActiveCell] = useState<TabularCellRef | null>(null);
+  const [rowMutationTick, setRowMutationTick] = useState(0);
+
+  const bumpRowMutationTick = useCallback(() => {
+    setRowMutationTick(previous => previous + 1);
+
+    if (typeof window !== 'undefined') {
+      window.requestAnimationFrame(() => {
+        setRowMutationTick(previous => previous + 1);
+      });
+    }
+  }, []);
 
   const columnModel = useMemo(() => createTabularColumnModel(tabularColumns), [tabularColumns]);
 
@@ -117,9 +128,7 @@ export function useTabularProjectCustomEditorState({
     return useLegacyTopLevelLayout ? legacyColumnKeys : visibleColumns.map(column => column.key);
   }, [legacyColumnKeys, useLegacyTopLevelLayout, visibleColumns]);
 
-  const displayedRowCount = useMemo(() => {
-    return useLegacyTopLevelLayout ? legacyMutableRowCount : table.rows.length;
-  }, [legacyMutableRowCount, table.rows.length, useLegacyTopLevelLayout]);
+  const displayedRowCount = useLegacyTopLevelLayout ? legacyMutableRowCount : table.rowCount;
 
   useEffect(() => {
     if (!tableActiveCell) {
@@ -188,11 +197,13 @@ export function useTabularProjectCustomEditorState({
   const addRowFromFooter = useCallback(() => {
     if (useLegacyTopLevelLayout) {
       addLegacyRow();
+      bumpRowMutationTick();
       return;
     }
 
     table.addRow();
-  }, [addLegacyRow, table, useLegacyTopLevelLayout]);
+    bumpRowMutationTick();
+  }, [addLegacyRow, bumpRowMutationTick, table, useLegacyTopLevelLayout]);
 
   const removeRowFromFooter = useCallback(() => {
     if (useLegacyTopLevelLayout) {
@@ -205,6 +216,7 @@ export function useTabularProjectCustomEditorState({
           ? tableActiveCell.row
           : legacyMutableRowCount - 1;
       removeLegacyRow(targetRow);
+      bumpRowMutationTick();
       return targetRow;
     }
 
@@ -219,11 +231,12 @@ export function useTabularProjectCustomEditorState({
 
     if (typeof targetRow === 'number') {
       table.removeRow(targetRow);
+      bumpRowMutationTick();
       return targetRow;
     }
 
     return null;
-  }, [legacyMutableRowCount, removeLegacyRow, table, tableActiveCell, useLegacyTopLevelLayout]);
+  }, [bumpRowMutationTick, legacyMutableRowCount, removeLegacyRow, table, tableActiveCell, useLegacyTopLevelLayout]);
 
   const canAddRow = useLegacyTopLevelLayout ? legacyMutableColumnKeys.length > 0 : true;
   const canRemoveRow = useLegacyTopLevelLayout ? legacyMutableRowCount > 1 : table.rowCount > 1;
@@ -245,6 +258,9 @@ export function useTabularProjectCustomEditorState({
   }, [columnModel.descriptions, columnModel.labels, visibleColumnKeys, visibleColumnsById]);
 
   const tableRows = useMemo<TabularEditorRowModel[]>(() => {
+    // Force recomputation after explicit row mutations in case table refs stay stable across updates.
+    void rowMutationTick;
+
     if (useLegacyTopLevelLayout) {
       return Array.from({ length: legacyMutableRowCount }, (_unused, rowIndex) => ({
         key: `legacy-row-${rowIndex}`,
@@ -296,6 +312,7 @@ export function useTabularProjectCustomEditorState({
     createLegacyField,
     legacyColumnKeys,
     legacyMutableRowCount,
+    rowMutationTick,
     table.rows,
     table.topLevelFields,
     useLegacyTopLevelLayout,

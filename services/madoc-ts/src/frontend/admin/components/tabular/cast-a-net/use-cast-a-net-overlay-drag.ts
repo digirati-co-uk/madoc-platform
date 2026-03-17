@@ -37,8 +37,8 @@ const projectAbsoluteToPositions = (positions: number[], start: number, size: nu
   return positions.map(position => ((position - start) / safeSize) * 100);
 };
 
-const isMoveModifierPressed = (event: { altKey: boolean }) => {
-  return event.altKey;
+const isMoveModifierPressed = (event: { altKey: boolean; shiftKey: boolean }) => {
+  return event.altKey && event.shiftKey;
 };
 
 // Keep a visible, non-zero separation even in fallback paths so lines
@@ -231,7 +231,7 @@ export function useCastANetOverlayDrag({
         return;
       }
 
-      // Keep image panning as the default; moving the net requires Alt/Option + drag.
+      // Keep image panning as the default; moving the net requires Alt+Shift + drag.
       if (mode === 'move' && !isMoveModifierPressed(event)) {
         return;
       }

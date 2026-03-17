@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useResizeLayout } from '@/frontend/shared/hooks/use-resize-layout';
 import { useVerticalDragResize } from '@/frontend/shared/hooks/use-vertical-drag-resize';
 import { clampToRange } from '@/frontend/shared/utility/tabular-net-config';
@@ -7,6 +7,21 @@ import { CONTRIBUTOR_EDITOR_CANVAS_SPLIT, CONTRIBUTOR_EDITOR_TABLE_SPLIT } from 
 const CONTRIBUTOR_EDITOR_SPLIT_DIVIDER_HEIGHT = 12;
 const CONTRIBUTOR_EDITOR_MIN_CANVAS_HEIGHT = 220;
 const CONTRIBUTOR_EDITOR_MIN_TABLE_HEIGHT = 280;
+const CONTRIBUTOR_EDITOR_SIDEBAR_MIN_WIDTH = 320;
+const CONTRIBUTOR_EDITOR_SIDEBAR_AUTO_COLLAPSE_THRESHOLD = CONTRIBUTOR_EDITOR_SIDEBAR_MIN_WIDTH + 8;
+
+function parsePixelWidth(value: string | number | undefined) {
+  if (typeof value === 'number') {
+    return Number.isFinite(value) ? value : null;
+  }
+
+  if (typeof value === 'string') {
+    const numericValue = Number.parseFloat(value);
+    return Number.isFinite(numericValue) ? numericValue : null;
+  }
+
+  return null;
+}
 
 type UseTabularEditorLayoutOptions = {
   defaultCanvasSplitPct?: number;
@@ -23,6 +38,7 @@ export function useTabularEditorLayout(options: UseTabularEditorLayoutOptions = 
   const [isSidebarPanelOpen, setIsSidebarPanelOpen] = useState(true);
   const [isCanvasTableDividerHover, setIsCanvasTableDividerHover] = useState(false);
   const [isCanvasTableResizing, setIsCanvasTableResizing] = useState(false);
+  const wasSidebarDraggingRef = useRef(false);
   const splitContainerRef = useRef<HTMLDivElement | null>(null);
   const splitResizeContextRef = useRef<{
     availableHeight: number;
@@ -94,17 +110,37 @@ export function useTabularEditorLayout(options: UseTabularEditorLayoutOptions = 
 
   const isCanvasTableDividerActive = isCanvasTableDividerHover || isCanvasTableResizing;
 
-  const { widthB, refs } = useResizeLayout('tabular-custom-editor-sidebar', {
+  const { widthB, refs, isDragging } = useResizeLayout('tabular-custom-editor-sidebar', {
     left: true,
     widthB: '420px',
     maxWidthPx: 620,
-    minWidthPx: 320,
+    minWidthPx: CONTRIBUTOR_EDITOR_SIDEBAR_MIN_WIDTH,
     onDragEnd: () => {
       if (typeof window !== 'undefined') {
         window.dispatchEvent(new Event('resize'));
       }
     },
   });
+
+  useEffect(() => {
+    const justFinishedDragging = wasSidebarDraggingRef.current && !isDragging;
+    wasSidebarDraggingRef.current = isDragging;
+
+    if (!justFinishedDragging || !isSidebarPanelOpen) {
+      return;
+    }
+
+    const measuredWidth = refs.resizableDiv.current?.getBoundingClientRect().width;
+    const fallbackWidth = parsePixelWidth(widthB);
+    const sidebarWidth = Number.isFinite(measuredWidth) ? measuredWidth : fallbackWidth;
+
+    if (sidebarWidth != null && sidebarWidth <= CONTRIBUTOR_EDITOR_SIDEBAR_AUTO_COLLAPSE_THRESHOLD) {
+      setIsSidebarPanelOpen(false);
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new Event('resize'));
+      }
+    }
+  }, [isDragging, isSidebarPanelOpen, refs.resizableDiv, widthB]);
 
   return {
     widthB,

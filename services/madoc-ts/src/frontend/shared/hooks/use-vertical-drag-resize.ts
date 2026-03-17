@@ -22,13 +22,14 @@ export function useVerticalDragResize(options: UseVerticalDragResizeOptions) {
         onDrag(moveEvent.clientY - startY, moveEvent);
       };
       const onUp = () => {
-        window.removeEventListener('mousemove', onMove);
-        window.removeEventListener('mouseup', onUp);
+        window.removeEventListener('mousemove', onMove, true);
+        window.removeEventListener('mouseup', onUp, true);
         onEnd?.();
       };
 
-      window.addEventListener('mousemove', onMove);
-      window.addEventListener('mouseup', onUp);
+      // Capture phase keeps drag updates flowing even if nested viewers stop bubbling.
+      window.addEventListener('mousemove', onMove, true);
+      window.addEventListener('mouseup', onUp, true);
     },
     [onDrag, onEnd, onStart]
   );
