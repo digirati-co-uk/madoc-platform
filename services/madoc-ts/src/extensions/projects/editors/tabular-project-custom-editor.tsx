@@ -15,12 +15,15 @@ import {
   LayoutSidebar,
   OuterLayoutContainer,
 } from '@/frontend/shared/layout/LayoutContainer';
+import { MaximiseWindow } from '@/frontend/shared/layout/MaximiseWindow';
 import { Button, ButtonRow } from '@/frontend/shared/navigation/Button';
 import { useCanvasModel } from '@/frontend/site/hooks/use-canvas-model';
 import { useCaptureModelContributionLifecycle } from '@/frontend/site/hooks/use-capture-model-contribution-lifecycle';
 import { useProject } from '@/frontend/site/hooks/use-project';
 import { useRouteContext } from '@/frontend/site/hooks/use-route-context';
 import type { CanvasFull } from '@/types/canvas-full';
+import { FullScreenEnterIcon } from '@/frontend/shared/icons/FullScreenEnterIcon';
+import { FullScreenExitIcon } from '@/frontend/shared/icons/FullScreenExitIcon';
 import ResizeHandleIcon from '@/frontend/shared/icons/ResizeHandleIcon';
 import { buildCastANetStructure } from '@/frontend/admin/components/tabular/cast-a-net/CastANetStructure';
 import { TabularProjectCustomEditorCanvas } from './tabular-project-custom-editor-canvas';
@@ -492,19 +495,40 @@ function TabularProjectCustomEditorContent({
 
                     {isTableEditorReady ? (
                       <>
-                        <TabularProjectCustomEditorTable
-                          headerColumns={headerColumns}
-                          rows={tableRows}
-                          showEmptyState={showEmptyTableState}
-                          tableActiveCell={tableActiveCell}
-                          onActiveCellChange={setTableActiveCell}
-                          disabled={isEditingDisabled}
-                          canAddRow={canAddRow}
-                          canRemoveRow={canRemoveRow}
-                          addRowFromFooter={addRowFromFooter}
-                          removeRowFromFooter={removeRowAndSyncFlags}
-                          isCellFlagged={isCellFlagged}
-                        />
+                        <MaximiseWindow openZIndex={55}>
+                          {({ toggle, isOpen }) => (
+                            <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+                              <TabularProjectCustomEditorTable
+                                headerColumns={headerColumns}
+                                rows={tableRows}
+                                showEmptyState={showEmptyTableState}
+                                showRowControls={!isOpen}
+                                footerActions={
+                                  <button
+                                    type="button"
+                                    className="inline-flex items-center gap-2 rounded border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-50"
+                                    onClick={toggle}
+                                  >
+                                    {isOpen ? (
+                                      <FullScreenExitIcon className="h-4 w-4" />
+                                    ) : (
+                                      <FullScreenEnterIcon className="h-4 w-4" />
+                                    )}
+                                    {isOpen ? 'Exit full screen' : 'Full screen'}
+                                  </button>
+                                }
+                                tableActiveCell={tableActiveCell}
+                                onActiveCellChange={setTableActiveCell}
+                                disabled={isEditingDisabled}
+                                canAddRow={canAddRow}
+                                canRemoveRow={canRemoveRow}
+                                addRowFromFooter={addRowFromFooter}
+                                removeRowFromFooter={removeRowAndSyncFlags}
+                                isCellFlagged={isCellFlagged}
+                              />
+                            </div>
+                          )}
+                        </MaximiseWindow>
 
                         {headerColumns.length === 0 ? (
                           <div className="rounded border border-red-200 bg-red-50 p-2 text-sm">

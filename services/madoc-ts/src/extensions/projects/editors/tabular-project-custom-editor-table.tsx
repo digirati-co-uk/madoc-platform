@@ -16,6 +16,8 @@ type TabularProjectCustomEditorTableProps = {
   headerColumns: TabularEditorHeaderModel[];
   rows: TabularEditorRowModel[];
   showEmptyState: boolean;
+  showRowControls?: boolean;
+  footerActions?: React.ReactNode;
   tableActiveCell: TabularCellRef | null;
   onActiveCellChange: (next: TabularCellRef | null) => void;
   disabled: boolean;
@@ -138,6 +140,8 @@ export function TabularProjectCustomEditorTable({
   headerColumns,
   rows,
   showEmptyState,
+  showRowControls = true,
+  footerActions,
   tableActiveCell,
   onActiveCellChange,
   disabled,
@@ -149,6 +153,9 @@ export function TabularProjectCustomEditorTable({
 }: TabularProjectCustomEditorTableProps) {
   const isRemoveRowDisabled = disabled || !canRemoveRow;
   const isAddRowDisabled = disabled || !canAddRow;
+  const hasFooterActions = !!footerActions;
+  const footerJustifyClass =
+    showRowControls && hasFooterActions ? 'justify-between' : hasFooterActions ? 'justify-end' : 'justify-center';
   const headerRowHeight = TABULAR_GRID_HEADER_ROW_HEIGHT_PX;
   const rowHeight = Math.max(TABULAR_GRID_ROW_HEIGHT_PX, 60);
   const tableScrollRef = useRef<HTMLDivElement | null>(null);
@@ -434,28 +441,37 @@ export function TabularProjectCustomEditorTable({
           No rows yet. Use + to create the first row.
         </div>
       ) : null}
-      <div className="flex flex-none items-center justify-center gap-2 border-t border-[#d6d6d6] bg-[#f1f5f9] px-3 py-2">
-        <Button
-          $error
-          type="button"
-          onClick={removeRowFromFooter}
-          disabled={isRemoveRowDisabled}
-          title="Remove row"
-          className="!min-w-28 justify-center !px-3 !py-1 !text-xs !rounded-md font-semibold shadow-sm"
+      {showRowControls || hasFooterActions ? (
+        <div
+          className={`flex flex-none items-center gap-2 border-t border-[#d6d6d6] bg-[#f1f5f9] px-3 py-2 ${footerJustifyClass}`}
         >
-          Remove row -
-        </Button>
-        <Button
-          $primary
-          type="button"
-          onClick={handleAddRowFromFooter}
-          disabled={isAddRowDisabled}
-          title="Add new row"
-          className="!min-w-28 justify-center !px-3 !py-1 !text-xs !rounded-md font-semibold shadow-sm"
-        >
-          Add new row +
-        </Button>
-      </div>
+          {showRowControls ? (
+            <div className="flex items-center justify-center gap-2">
+              <Button
+                $error
+                type="button"
+                onClick={removeRowFromFooter}
+                disabled={isRemoveRowDisabled}
+                title="Remove row"
+                className="!min-w-28 justify-center !px-3 !py-1 !text-xs !rounded-md font-semibold shadow-sm"
+              >
+                Remove row -
+              </Button>
+              <Button
+                $primary
+                type="button"
+                onClick={handleAddRowFromFooter}
+                disabled={isAddRowDisabled}
+                title="Add new row"
+                className="!min-w-28 justify-center !px-3 !py-1 !text-xs !rounded-md font-semibold shadow-sm"
+              >
+                Add new row +
+              </Button>
+            </div>
+          ) : null}
+          {hasFooterActions ? <div className="flex items-center gap-2">{footerActions}</div> : null}
+        </div>
+      ) : null}
     </div>
   );
 }
