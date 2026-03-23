@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { DataGrid, type Column } from 'react-data-grid';
+import { DataGrid, type Column, type DataGridHandle } from 'react-data-grid';
 import 'react-data-grid/lib/styles.css';
 import type { TabularCellRef } from '@/frontend/shared/utility/tabular-types';
 import { Button } from '@/frontend/shared/navigation/Button';
@@ -10,6 +10,7 @@ import {
 } from '@/frontend/shared/utility/tabular-grid-constants';
 import { getTabularGridKeyboardNavigation } from '@/frontend/shared/utility/tabular-grid-keyboard-navigation';
 import { TabularDataGridStyles } from '@/frontend/shared/components/TabularDataGridStyles';
+import { scrollTabularGridCellIntoView } from '@/frontend/shared/utility/tabular-grid-scroll';
 import FlagIcon from '@/frontend/shared/icons/FlagIcon';
 import type { TabularEditorHeaderModel, TabularEditorRowModel } from './tabular-project-custom-editor-table-model';
 
@@ -186,7 +187,9 @@ export function TabularProjectCustomEditorTable({
   const headerRowHeight = TABULAR_GRID_HEADER_ROW_HEIGHT_PX;
   const rowHeight = Math.max(TABULAR_GRID_ROW_HEIGHT_PX, 60);
   const tableScrollRef = useRef<HTMLDivElement | null>(null);
+  const dataGridRef = useRef<DataGridHandle | null>(null);
   const shouldScrollToNewRowRef = useRef(false);
+  const lastScrolledCellKeyRef = useRef<string | null>(null);
   const [tableViewportWidth, setTableViewportWidth] = useState(0);
 
   useEffect(() => {
@@ -231,7 +234,12 @@ export function TabularProjectCustomEditorTable({
         return false;
       }
 
+      lastScrolledCellKeyRef.current = `${targetCell.rowIndex}:${colIndex}`;
       onActiveCellChange({ row: targetCell.rowIndex, col: colIndex });
+      scrollTabularGridCellIntoView(dataGridRef.current, {
+        gridRowIndex: rowPosition,
+        gridColumnIndex: colIndex,
+      });
       if (typeof window !== 'undefined') {
         window.requestAnimationFrame(() => {
           const input = document.getElementById(targetCell.inputId) as HTMLInputElement | null;
@@ -244,7 +252,6 @@ export function TabularProjectCustomEditorTable({
             const caret = caretPosition === 'start' ? 0 : input.value.length;
             input.setSelectionRange(caret, caret);
           }
-          input.scrollIntoView({ block: 'nearest', inline: 'nearest' });
         });
       }
 
@@ -394,17 +401,37 @@ export function TabularProjectCustomEditorTable({
       return;
     }
 
-    const container = tableScrollRef.current;
-    if (container) {
-      const viewport = container.querySelector('.rdg-viewport') as HTMLDivElement | null;
-      const scrollTarget = viewport || container;
-      scrollTarget.scrollTo({ top: scrollTarget.scrollHeight, behavior: 'smooth' });
-    }
-
     if (headerColumns.length > 0) {
       focusGridInput(lastRowPosition, 0, 'start');
+      return;
     }
+
+    scrollTabularGridCellIntoView(dataGridRef.current, { gridRowIndex: lastRowPosition });
   }, [focusGridInput, gridRows.length, headerColumns.length]);
+
+  useEffect(() => {
+    if (!tableActiveCell) {
+      lastScrolledCellKeyRef.current = null;
+      return;
+    }
+
+    const targetCellKey = `${tableActiveCell.row}:${tableActiveCell.col}`;
+    if (lastScrolledCellKeyRef.current === targetCellKey) {
+      return;
+    }
+
+    const targetRow = gridRows.find(row => row.rowIndex === tableActiveCell.row);
+    const targetCell = targetRow?.row.cells[tableActiveCell.col];
+    if (!targetCell) {
+      return;
+    }
+
+    lastScrolledCellKeyRef.current = targetCellKey;
+    scrollTabularGridCellIntoView(dataGridRef.current, {
+      gridRowIndex: targetRow.rowPosition,
+      gridColumnIndex: tableActiveCell.col,
+    });
+  }, [gridRows, tableActiveCell]);
 
   const handleAddRowFromFooter = useCallback(() => {
     if (isAddRowDisabled) {
@@ -426,6 +453,7 @@ export function TabularProjectCustomEditorTable({
       <TabularDataGridStyles scopeClassName="tabular-contributor-rdg" disableRowHover />
       <div ref={tableScrollRef} className="min-h-0 min-w-0 flex-1 overflow-hidden">
         <DataGrid
+          ref={dataGridRef}
           className="rdg-light tabular-contributor-rdg"
           columns={gridColumns}
           rows={gridRows}

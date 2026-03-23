@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useRef } from 'react';
-import { DataGrid, type Column } from 'react-data-grid';
+import { DataGrid, type Column, type DataGridHandle } from 'react-data-grid';
 import 'react-data-grid/lib/styles.css';
 import type { TabularValidationIssue } from './types';
 import {
@@ -8,6 +8,7 @@ import {
   TABULAR_GRID_ROW_HEIGHT_PX,
 } from '../../../../shared/utility/tabular-grid-constants';
 import { TabularDataGridStyles } from '../../../../shared/components/TabularDataGridStyles';
+import { scrollTabularGridCellIntoView } from '../../../../shared/utility/tabular-grid-scroll';
 
 export type TabularHeadingsTableProps = {
   columns: number;
@@ -129,6 +130,7 @@ export function TabularHeadingsTable(props: TabularHeadingsTableProps) {
     () => Array.from({ length: Math.max(0, visibleRows) }, (_, i) => ({ id: i })),
     [visibleRows]
   );
+  const dataGridRef = useRef<DataGridHandle | null>(null);
   const headingInputRefs = useRef<Array<HTMLInputElement | null>>([]);
 
   const setHeaderInputRef = useCallback((index: number, node: HTMLInputElement | null) => {
@@ -138,6 +140,9 @@ export function TabularHeadingsTable(props: TabularHeadingsTableProps) {
   const focusHeaderInput = useCallback(
     (index: number, caretPosition: 'start' | 'end') => {
       onActiveColumnChange?.(index);
+      scrollTabularGridCellIntoView(dataGridRef.current, {
+        gridColumnIndex: index,
+      });
       requestAnimationFrame(() => {
         const input = headingInputRefs.current[index];
         if (!input) {
@@ -146,7 +151,6 @@ export function TabularHeadingsTable(props: TabularHeadingsTableProps) {
         input.focus();
         const caret = caretPosition === 'end' ? input.value.length : 0;
         input.setSelectionRange(caret, caret);
-        input.scrollIntoView({ block: 'nearest', inline: 'nearest' });
       });
     },
     [onActiveColumnChange]
@@ -233,6 +237,7 @@ export function TabularHeadingsTable(props: TabularHeadingsTableProps) {
     <>
       <TabularDataGridStyles scopeClassName="tabular-rdg" />
       <DataGrid
+        ref={dataGridRef}
         className="rdg-light tabular-rdg"
         columns={gridColumns}
         rows={rows}

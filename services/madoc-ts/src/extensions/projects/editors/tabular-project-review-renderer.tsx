@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useCaptureModelEditorApi } from '@/frontend/shared/capture-models/new/hooks/use-capture-model-editor-api';
 import { Revisions } from '@/frontend/shared/capture-models/editor/stores/revisions';
 import { TabularSplitView } from '@/frontend/shared/components/TabularSplitView';
@@ -33,6 +33,73 @@ function toEditableTextValue(value: unknown): string {
 
 function getCellLookupKey(rowIndex: number, columnKey: string): string {
   return `${rowIndex}:${columnKey}`;
+}
+
+type ReviewFlaggedCellItem = {
+  key: string;
+  rowIndex: number;
+  columnLabel: string;
+  comment?: string;
+};
+
+type ReviewLinkedCell = {
+  fieldType?: string;
+  value: unknown;
+};
+
+type FlaggedCellCardProps = {
+  flag: ReviewFlaggedCellItem;
+  linkedCell?: ReviewLinkedCell;
+  canFocusCell: boolean;
+  onFocusCell: () => void;
+};
+
+function FlaggedCellCard({ flag, linkedCell, canFocusCell, onFocusCell }: FlaggedCellCardProps) {
+  const linkedValue =
+    linkedCell?.fieldType === 'checkbox-field'
+      ? linkedCell.value
+        ? 'Yes'
+        : 'No'
+      : toEditableTextValue(linkedCell?.value);
+  const hasLinkedValue = linkedValue.trim().length > 0;
+
+  return (
+    <div className="rounded border border-gray-300 bg-white">
+      <button
+        type="button"
+        className="flex w-full items-center justify-between gap-2 px-3 py-2 text-left"
+        onClick={onFocusCell}
+      >
+        <div className="min-w-0">
+          <div className="text-xs font-semibold uppercase tracking-wide text-red-700">Row {flag.rowIndex + 1}</div>
+          <div className="truncate text-sm font-semibold text-slate-900">{flag.columnLabel}</div>
+        </div>
+        <span className="rounded border border-red-200 bg-red-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-red-700">
+          Flagged
+        </span>
+      </button>
+
+      <div className="space-y-2 border-t border-gray-200 px-2 py-2 text-xs text-slate-700">
+        {linkedCell ? (
+          <div
+            className={`rounded border border-gray-300 bg-gray-50 px-2 py-1 text-sm ${
+              hasLinkedValue ? 'text-gray-900' : 'text-gray-400'
+            }`}
+          >
+            {hasLinkedValue ? linkedValue : 'Empty'}
+          </div>
+        ) : (
+          <div className="text-slate-500">This cell is not available in the table view.</div>
+        )}
+        {flag.comment ? (
+          <div className="rounded border border-red-200 bg-red-50 px-2 py-1 text-red-800">{flag.comment}</div>
+        ) : null}
+        {!canFocusCell ? (
+          <div className="text-slate-500">This column is currently hidden in the table view.</div>
+        ) : null}
+      </div>
+    </div>
+  );
 }
 
 export function TabularProjectReviewRenderer(props: CustomReviewRendererProps) {
@@ -157,6 +224,7 @@ export function TabularProjectReviewRenderer(props: CustomReviewRendererProps) {
 
   const selectedRowIndex = selectedRow?.rowIndex ?? null;
   const [expandedRowIndex, setExpandedRowIndex] = useState<number | null>(selectedRowIndex);
+  const [isFlaggedCellsExpanded, setIsFlaggedCellsExpanded] = useState(true);
   const previousSelectedRowIndexRef = useRef<number | null>(selectedRowIndex);
 
   useEffect(() => {
@@ -182,6 +250,62 @@ export function TabularProjectReviewRenderer(props: CustomReviewRendererProps) {
     }
     return next;
   }, [flaggedCells]);
+
+  const tableRowsByRowIndex = useMemo(() => {
+    const next = new Map<number, (typeof tableRows)[number]>();
+    for (const row of tableRows) {
+      next.set(row.rowIndex, row);
+    }
+    return next;
+  }, [tableRows]);
+
+  const visibleColumnIndexByKey = useMemo(() => {
+    const next = new Map<string, number>();
+    for (const [index, columnKey] of visibleColumnKeys.entries()) {
+      next.set(columnKey, index);
+    }
+    return next;
+  }, [visibleColumnKeys]);
+
+  const flaggedCellsForPanel = useMemo(
+    () =>
+      flaggedCells.map(flag => {
+        const row = tableRowsByRowIndex.get(flag.rowIndex);
+        const linkedCell = row?.cells.find(cell => cell.columnKey === flag.columnKey);
+        const colIndex = visibleColumnIndexByKey.get(flag.columnKey) ?? -1;
+
+        return {
+          flag,
+          linkedCell,
+          colIndex,
+          canFocusCell: colIndex >= 0,
+        };
+      }),
+    [flaggedCells, tableRowsByRowIndex, visibleColumnIndexByKey]
+  );
+
+  useEffect(() => {
+    if (!selectedCell) {
+      return;
+    }
+
+    const selectedKey = getCellLookupKey(selectedCell.rowIndex, selectedCell.columnKey);
+    if (!flaggedCellsByKey.has(selectedKey)) {
+      return;
+    }
+
+    setIsFlaggedCellsExpanded(true);
+  }, [flaggedCellsByKey, selectedCell]);
+
+  const focusFlaggedCell = useCallback(
+    (rowIndex: number, colIndex: number, canFocusCell: boolean) => {
+      if (canFocusCell) {
+        setTableActiveCell({ row: rowIndex, col: colIndex });
+      }
+      setExpandedRowIndex(rowIndex);
+    },
+    [setTableActiveCell]
+  );
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
@@ -220,6 +344,46 @@ export function TabularProjectReviewRenderer(props: CustomReviewRendererProps) {
                 {activeCellComment}
               </div>
             ) : null}
+
+            <div>
+              <button
+                type="button"
+                className="flex w-full items-center justify-between rounded border border-gray-300 bg-white px-3 py-2 text-left"
+                onClick={() => setIsFlaggedCellsExpanded(previous => !previous)}
+              >
+                <span className="text-xs font-semibold uppercase tracking-wide text-gray-600">
+                  Flagged cells ({flaggedCells.length})
+                </span>
+                <ChevronDown
+                  aria-hidden="true"
+                  className={`fill-current h-4 w-4 text-slate-500 transition-transform duration-200 ${
+                    isFlaggedCellsExpanded ? 'rotate-180' : 'rotate-0'
+                  }`}
+                />
+              </button>
+
+              {isFlaggedCellsExpanded ? (
+                <div className="mt-2">
+                  {flaggedCellsForPanel.length ? (
+                    <div className="space-y-2 rounded border border-red-300 bg-red-50 p-2">
+                      {flaggedCellsForPanel.map(({ flag, linkedCell, colIndex, canFocusCell }) => (
+                        <FlaggedCellCard
+                          key={flag.key}
+                          flag={flag}
+                          linkedCell={linkedCell}
+                          canFocusCell={canFocusCell}
+                          onFocusCell={() => focusFlaggedCell(flag.rowIndex, colIndex, canFocusCell)}
+                        />
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="rounded border border-gray-200 bg-white px-3 py-2 text-sm text-gray-500">
+                      No flagged cells in this document.
+                    </div>
+                  )}
+                </div>
+              ) : null}
+            </div>
 
             <div>
               <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500">Rows</div>
