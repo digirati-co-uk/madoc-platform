@@ -6,7 +6,7 @@ import { CrowdsourcingTask } from '../../../../../gateway/tasks/crowdsourcing-ta
 import { EditorSlots } from '../../../../shared/capture-models/new/components/EditorSlots';
 import { RevisionProviderWithFeatures } from '../../../../shared/capture-models/new/components/RevisionProviderWithFeatures';
 import { EditorContentViewer } from '../../../../shared/capture-models/new/EditorContent';
-import styled, { css } from 'styled-components';
+import styledComponents, { css } from 'styled-components';
 import {
   CanvasViewerButton,
   CanvasViewerControls,
@@ -30,6 +30,7 @@ import { HrefLink } from '../../../../shared/utility/href-link';
 import { RefetchProvider, useRefetch } from '../../../../shared/utility/refetch-context';
 import { useCrowdsourcingTaskDetails } from '../../../hooks/use-crowdsourcing-task-details';
 import { useRelativeLinks } from '../../../hooks/use-relative-links';
+import { useLocationQuery } from '../../../../shared/hooks/use-location-query';
 import { ApproveSubmission } from '../actions/approve-submission';
 import { RejectSubmission } from '../actions/reject-submission';
 import { RequestChanges } from '../actions/request-changes';
@@ -48,6 +49,7 @@ import { Runtime } from '@atlas-viewer/atlas';
 import { HomeIcon } from '../../../../shared/icons/HomeIcon';
 import { MinusIcon } from '../../../../shared/icons/MinusIcon';
 import { PlusIcon } from '../../../../shared/icons/PlusIcon';
+import { ArrowBackIcon } from '../../../../shared/icons/ArrowBackIcon';
 import { useTranslation } from 'react-i18next';
 import { extractIdFromUrn, parseUrn } from '../../../../../utility/parse-urn';
 import { useProjectAnnotationStyles } from '../../../hooks/use-project-annotation-styles';
@@ -64,7 +66,7 @@ import {
   ReviewDefaultControlsComponent,
 } from '../review-renderers/types';
 
-const ReviewContainer = styled.div`
+const ReviewContainer = styledComponents.div`
   position: relative;
   overflow-x: hidden;
   height: 80vh;
@@ -80,7 +82,7 @@ const ReviewContainer = styled.div`
   }
 `;
 
-const ReviewHeader = styled.div`
+const ReviewHeader = styledComponents.div`
   height: 48px;
   background-color: #f7f7f7;
   display: flex;
@@ -92,7 +94,7 @@ const ReviewHeader = styled.div`
   z-index: 12;
 `;
 
-const Label = styled.div`
+const Label = styledComponents.div`
   font-weight: 600;
   padding: 0.6em;
   white-space: nowrap;
@@ -100,7 +102,7 @@ const Label = styled.div`
   text-overflow: ellipsis;
 `;
 
-const SubLabel = styled.div`
+const SubLabel = styledComponents.div`
   color: #6b6b6b;
   padding: 0.6em;
   font-size: 14px;
@@ -109,7 +111,7 @@ const SubLabel = styled.div`
   white-space: nowrap;
   margin-right: 130px;
 `;
-const ReviewActionBar = styled.div`
+const ReviewActionBar = styledComponents.div`
   border-bottom: 1px solid #dddddd;
   display: inline-flex;
   justify-content: space-between;
@@ -117,17 +119,17 @@ const ReviewActionBar = styled.div`
   width: 100%;
   padding: 0.6em;
   min-height: 42px;
-  overflow: auto;
+  overflow: visible;
 `;
 
-const ReviewActionMessage = styled.div`
+const ReviewActionMessage = styledComponents.div`
   background-color: rgba(0, 92, 197, 0.15);
   padding: 0.5em;
   border-radius: 4px;
   font-size: small;
 `;
 
-const ReviewActions = styled.div`
+const ReviewActions = styledComponents.div`
   display: flex;
   margin-left: auto;
 
@@ -136,17 +138,24 @@ const ReviewActions = styled.div`
   }
 `;
 
-const ReviewDropdownContainer = styled.div`
+const ReviewActionControls = styledComponents.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  margin-left: auto;
+`;
+
+const ReviewDropdownContainer = styledComponents.div`
   position: relative;
   max-width: 150px;
   align-self: end;
-  z-index: 11;
+  z-index: 2000;
 `;
 
-const ReviewDropdownPopup = styled.div<{ $visible?: boolean }>`
+const ReviewDropdownPopup = styledComponents.div<{ $visible?: boolean }>`
   background: #ffffff;
   border: 1px solid #3498db;
-  z-index: 11;
+  z-index: 2001;
   border-radius: 4px;
   position: absolute;
   display: none;
@@ -162,7 +171,7 @@ const ReviewDropdownPopup = styled.div<{ $visible?: boolean }>`
     `}
 `;
 
-const ReviewPreview = styled.div`
+const ReviewPreview = styledComponents.div`
   display: flex;
   overflow-y: scroll;
   flex-wrap: wrap;
@@ -174,13 +183,74 @@ const ReviewPreview = styled.div`
   }
 `;
 
-const Assignee = styled.div`
+const Assignee = styledComponents.div`
   font-size: small;
   color: #575757;
   align-self: center;
   margin-left: 0.5em;
   min-width: 200px;
 `;
+
+type ViewOptionsDropdownProps = {
+  isFullscreen: boolean;
+  onToggleFullscreen: () => void;
+  canvasLink?: string;
+  manifestLink?: string;
+  hideFocusMode?: boolean;
+};
+
+function ViewOptionsDropdown({
+  isFullscreen,
+  onToggleFullscreen,
+  canvasLink,
+  manifestLink,
+  hideFocusMode = false,
+}: ViewOptionsDropdownProps) {
+  const { t } = useTranslation();
+  const menuItemCount = (hideFocusMode ? 0 : 1) + (canvasLink ? 1 : 0) + (manifestLink ? 1 : 0);
+  const { buttonProps, isOpen: isDropdownOpen } = useDropdownMenu(Math.max(menuItemCount, 1), {
+    disableFocusFirstItemOnClick: true,
+  });
+
+  if (!menuItemCount) {
+    return null;
+  }
+
+  return (
+    <ReviewDropdownContainer>
+      <Button type="button" $link {...buttonProps}>
+        {t('View options')}
+      </Button>
+      <ReviewDropdownPopup $visible={isDropdownOpen} role="menu">
+        <>
+          {/* Temporarily disabled on tabular reviews to prevent canvas flashing while the dropdown opens. */}
+          {!hideFocusMode ? (
+            <EditorToolbarButton type="button" onClick={onToggleFullscreen} style={{ width: '100%' }}>
+              <EditorToolbarIcon>{isFullscreen ? <FullScreenExitIcon /> : <FullScreenEnterIcon />}</EditorToolbarIcon>
+              <EditorToolbarLabel> {isFullscreen ? 'List mode' : 'Focus mode'} </EditorToolbarLabel>
+            </EditorToolbarButton>
+          ) : null}
+          {canvasLink ? (
+            <EditorToolbarButton as={HrefLink} href={canvasLink}>
+              <EditorToolbarIcon>
+                <PreviewIcon />
+              </EditorToolbarIcon>
+              <EditorToolbarLabel>{t('View resource')}</EditorToolbarLabel>
+            </EditorToolbarButton>
+          ) : null}
+          {manifestLink ? (
+            <EditorToolbarButton as={HrefLink} href={manifestLink}>
+              <EditorToolbarIcon>
+                <PreviewIcon />
+              </EditorToolbarIcon>
+              <EditorToolbarLabel>{t('View manifest')}</EditorToolbarLabel>
+            </EditorToolbarButton>
+          ) : null}
+        </>
+      </ReviewDropdownPopup>
+    </ReviewDropdownContainer>
+  );
+}
 
 function ViewSingleReview({
   task,
@@ -200,6 +270,8 @@ function ViewSingleReview({
 
   const refetch = useRefetch();
   const createLink = useRelativeLinks();
+  const { ...query } = useLocationQuery();
+  const reviewListLink = createLink({ taskId: undefined, subRoute: 'reviews', query });
   const metadata = useTaskMetadata<{ subject?: SubjectSnippet }>(task);
   const [isEditing, setIsEditing] = useState(false);
   // const isLocked = props.lockedTasks && props.lockedTasks.indexOf(props.task.id) !== -1;
@@ -216,9 +288,6 @@ function ViewSingleReview({
 
   const canReview = limitedReviewer ? review?.assignee?.id === user.user?.id : reviewer;
   const isDone = task?.status === 3;
-  const { buttonProps, isOpen: isDropdownOpen } = useDropdownMenu(1, {
-    disableFocusFirstItemOnClick: true,
-  });
   const { t } = useTranslation();
   const gridRef = useRef<any>(undefined);
   const runtime = useRef<Runtime>(undefined);
@@ -336,12 +405,32 @@ function ViewSingleReview({
     ) : null;
   };
 
+  const backToReviewListButton = (
+    <HrefLink
+      href={reviewListLink}
+      aria-label={t('Back to reviews list')}
+      title={t('Back to reviews list')}
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: 36,
+        height: 36,
+        marginLeft: 4,
+        color: '#333333',
+      }}
+    >
+      <ArrowBackIcon aria-hidden="true" style={{ width: 18, height: 18, fill: 'currentColor' }} />
+    </HrefLink>
+  );
+
   if (!review) {
     if (task.status === -1) {
       // Task has been rejected
       return (
         <>
           <ReviewHeader>
+            {backToReviewListButton}
             <Label>
               {metadata && metadata.subject ? <LocaleString>{metadata.subject.label}</LocaleString> : task.name}
             </Label>
@@ -378,6 +467,7 @@ function ViewSingleReview({
     return (
       <>
         <ReviewHeader>
+          {backToReviewListButton}
           <Label>
             {metadata && metadata.subject ? <LocaleString>{metadata.subject.label}</LocaleString> : task.name}
           </Label>
@@ -426,38 +516,19 @@ function ViewSingleReview({
   }
 
   const subjectType = metadata.subject?.type === 'manifest' ? 'manifest' : 'canvas';
+  const isTabularProject = project?.template === 'tabular-project';
+  const viewOptionsDropdown = (
+    <ViewOptionsDropdown
+      isFullscreen={isOpen}
+      onToggleFullscreen={toggle}
+      canvasLink={canvasLink || undefined}
+      manifestLink={manifestLink || undefined}
+      hideFocusMode={isTabularProject}
+    />
+  );
+
   const viewerNode = (
     <div style={{ flex: 1, minWidth: 200, display: 'flex', flexDirection: 'column' }}>
-      <ReviewDropdownContainer>
-        <Button $link {...buttonProps}>
-          {t('View options')}
-        </Button>
-        <ReviewDropdownPopup $visible={isDropdownOpen} role="menu">
-          <>
-            <EditorToolbarButton onClick={toggle} style={{ width: '100%' }}>
-              <EditorToolbarIcon>{isOpen ? <FullScreenExitIcon /> : <FullScreenEnterIcon />}</EditorToolbarIcon>
-              <EditorToolbarLabel> {isOpen ? 'List mode' : 'Focus mode'} </EditorToolbarLabel>
-            </EditorToolbarButton>
-            {canvasLink ? (
-              <EditorToolbarButton as={HrefLink} href={canvasLink}>
-                <EditorToolbarIcon>
-                  <PreviewIcon />
-                </EditorToolbarIcon>
-                <EditorToolbarLabel>{t('View resource')}</EditorToolbarLabel>
-              </EditorToolbarButton>
-            ) : null}
-            {manifestLink ? (
-              <EditorToolbarButton as={HrefLink} href={manifestLink}>
-                <EditorToolbarIcon>
-                  <PreviewIcon />
-                </EditorToolbarIcon>
-                <EditorToolbarLabel>{t('View manifest')}</EditorToolbarLabel>
-              </EditorToolbarButton>
-            ) : null}
-          </>
-        </ReviewDropdownPopup>
-      </ReviewDropdownContainer>
-
       {canvas ? (
         <CanvasViewerGrid ref={gridRef}>
           <EditorContentViewer
@@ -590,7 +661,10 @@ function ViewSingleReview({
           </Assignee>
         )}
       </div>
-      <DefaultReviewControls />
+      <ReviewActionControls>
+        {viewOptionsDropdown}
+        <DefaultReviewControls />
+      </ReviewActionControls>
     </ReviewActionBar>
   );
 
@@ -613,6 +687,7 @@ function ViewSingleReview({
       <ReviewContextWithActions>
         <ReviewContainer id={'review-container'} data-is-max-window={isOpen}>
           <ReviewHeader>
+            {backToReviewListButton}
             <Label>
               {metadata && metadata.subject ? <LocaleString>{metadata.subject.label}</LocaleString> : task.name}
             </Label>

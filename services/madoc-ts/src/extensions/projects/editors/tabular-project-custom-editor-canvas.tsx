@@ -165,6 +165,14 @@ export function TabularProjectCustomEditorCanvas({
     initialZoomFrameRef.current = window.requestAnimationFrame(attemptApply);
   }, [applyInitialZoom, cancelInitialZoomRetry, maxInitialZoomRetries]);
 
+  useEffect(() => {
+    if (!runtimeRef.current) {
+      return;
+    }
+
+    scheduleInitialZoom();
+  }, [runtimeTick, scheduleInitialZoom]);
+
   function goHome() {
     runtimeRef.current?.world?.goHome?.();
   }

@@ -6,7 +6,6 @@ import { useCaptureModelEditorApi } from '@/frontend/shared/capture-models/new/h
 import { Revisions } from '@/frontend/shared/capture-models/editor/stores/revisions';
 import { useApi } from '@/frontend/shared/hooks/use-api';
 import { useLoadedCaptureModel } from '@/frontend/shared/hooks/use-loaded-capture-model';
-import { VerticalResizeSeparator } from '@/frontend/shared/components/VerticalResizeSeparator';
 import { addTabularRowOffsetAdjustment } from '@/frontend/shared/utility/tabular-row-offset-adjustments';
 import {
   LayoutContainer,
@@ -26,6 +25,7 @@ import { FullScreenEnterIcon } from '@/frontend/shared/icons/FullScreenEnterIcon
 import { FullScreenExitIcon } from '@/frontend/shared/icons/FullScreenExitIcon';
 import ResizeHandleIcon from '@/frontend/shared/icons/ResizeHandleIcon';
 import { buildCastANetStructure } from '@/frontend/admin/components/tabular/cast-a-net/CastANetStructure';
+import { TabularContributorSplitView } from './tabular-contributor-split-view';
 import { TabularProjectCustomEditorCanvas } from './tabular-project-custom-editor-canvas';
 import { ContributionEditorStateAlerts } from './contribution-editor-state-alerts';
 import { ContributionSuccessModal } from './contribution-success-modal';
@@ -411,165 +411,132 @@ function TabularProjectCustomEditorContent({
               minHeight: 0,
             }}
           >
-            <div
-              ref={splitContainerRef}
-              className="grid min-h-0 min-w-0 flex-1 overflow-hidden"
-              style={{
-                gridTemplateRows: `minmax(0, ${canvasSplitPct}fr) ${splitDividerHeight}px minmax(0, ${
-                  100 - canvasSplitPct
-                }fr)`,
-              }}
-            >
-              <TabularProjectCustomEditorCanvas
-                canvasId={canvasId}
-                canvas={canvas}
-                netConfig={netConfig}
-                activeCell={overlayActiveCell}
-                zoomTrackingDefaultEnabled={zoomTrackingDefaultEnabled}
-                showVerticalNudgeControls={!!netConfig}
-                onNudgeUp={() => nudgeNetVertical(-CONTRIBUTOR_NET_NUDGE_STEP)}
-                onNudgeDown={() => nudgeNetVertical(CONTRIBUTOR_NET_NUDGE_STEP)}
-                nudgeDisabled={isPersisting || isBlocked}
-              />
+            <TabularContributorSplitView
+              splitContainerRef={splitContainerRef}
+              canvasSplitPct={canvasSplitPct}
+              splitDividerHeight={splitDividerHeight}
+              startCanvasTableResize={startCanvasTableResize}
+              isCanvasTableDividerActive={isCanvasTableDividerActive}
+              setIsCanvasTableDividerHover={setIsCanvasTableDividerHover}
+              topPanel={
+                <TabularProjectCustomEditorCanvas
+                  canvasId={canvasId}
+                  canvas={canvas}
+                  netConfig={netConfig}
+                  activeCell={overlayActiveCell}
+                  zoomTrackingDefaultEnabled={zoomTrackingDefaultEnabled}
+                  showVerticalNudgeControls={!!netConfig}
+                  onNudgeUp={() => nudgeNetVertical(-CONTRIBUTOR_NET_NUDGE_STEP)}
+                  onNudgeDown={() => nudgeNetVertical(CONTRIBUTOR_NET_NUDGE_STEP)}
+                  nudgeDisabled={isPersisting || isBlocked}
+                />
+              }
+              bottomPanel={
+                <div className="flex min-h-0 min-w-0 flex-col">
+                  <div className="min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto">
+                    <div className="flex h-full min-h-0 min-w-0 flex-col gap-4">
+                      {!netConfig ? (
+                        <div className="rounded border border-yellow-300 bg-yellow-50 p-2 text-sm">
+                          No cast-a-net overlay is configured for this project.
+                        </div>
+                      ) : null}
 
-              <VerticalResizeSeparator
-                ariaLabel="Resize canvas and table"
-                onResizeStart={startCanvasTableResize}
-                onHoverChange={setIsCanvasTableDividerHover}
-                className="flex items-center justify-center"
-                style={{
-                  cursor: 'row-resize',
-                  userSelect: 'none',
-                  background: isCanvasTableDividerActive ? '#a1a1a1' : '#ddd',
-                }}
-              >
-                <div
-                  style={{
-                    display: 'grid',
-                    gap: 2,
-                  }}
-                >
-                  <div
-                    style={{
-                      width: 16,
-                      height: 2,
-                      background: isCanvasTableDividerActive ? '#181818' : '#a1a1a1',
-                    }}
-                  />
-                  <div
-                    style={{
-                      width: 16,
-                      height: 2,
-                      background: isCanvasTableDividerActive ? '#181818' : '#a1a1a1',
-                    }}
-                  />
-                </div>
-              </VerticalResizeSeparator>
+                      <ContributionEditorStateAlerts
+                        isLoading={isLoading}
+                        isError={lifecycle.phase === 'error'}
+                        lastErrorMessage={lifecycle.lastError?.message}
+                        isBlocked={isBlocked}
+                        blockedReason={getBlockedReason(lifecycle)}
+                        showTableUnavailable={
+                          !isLoading &&
+                          lifecycle.phase !== 'error' &&
+                          table.status !== 'ready' &&
+                          !useLegacyTopLevelLayout
+                        }
+                        tableErrors={visibleTableErrors}
+                        needsRevisionSelection={lifecycle.needsRevisionSelection}
+                        onRetry={() => lifecycle.prepare()}
+                        onEnsureRevision={() => lifecycle.ensureRevision()}
+                      />
 
-              <div className="flex min-h-0 min-w-0 flex-col">
-                <div className="min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto">
-                  <div className="flex h-full min-h-0 min-w-0 flex-col gap-4">
-                    {!netConfig ? (
-                      <div className="rounded border border-yellow-300 bg-yellow-50 p-2 text-sm">
-                        No cast-a-net overlay is configured for this project.
-                      </div>
-                    ) : null}
+                      {isTableEditorReady ? (
+                        <>
+                          <MaximiseWindow openZIndex={55}>
+                            {({ toggle, isOpen }) => (
+                              <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+                                <TabularProjectCustomEditorTable
+                                  headerColumns={headerColumns}
+                                  rows={tableRows}
+                                  showEmptyState={showEmptyTableState}
+                                  showRowControls={!isOpen}
+                                  footerActions={
+                                    <button
+                                      type="button"
+                                      className="inline-flex items-center gap-2 rounded border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-50"
+                                      onClick={toggle}
+                                    >
+                                      {isOpen ? (
+                                        <FullScreenExitIcon className="h-4 w-4" />
+                                      ) : (
+                                        <FullScreenEnterIcon className="h-4 w-4" />
+                                      )}
+                                      {isOpen ? 'Exit full screen' : 'Full screen'}
+                                    </button>
+                                  }
+                                  tableActiveCell={tableActiveCell}
+                                  onActiveCellChange={setTableActiveCell}
+                                  disabled={isEditingDisabled}
+                                  canAddRow={canAddRow}
+                                  canRemoveRow={canRemoveRow}
+                                  addRowFromFooter={addRowFromFooter}
+                                  removeRowFromFooter={removeRowAndSyncFlags}
+                                  isCellFlagged={isCellFlagged}
+                                />
+                              </div>
+                            )}
+                          </MaximiseWindow>
 
-                    <ContributionEditorStateAlerts
-                      isLoading={isLoading}
-                      isError={lifecycle.phase === 'error'}
-                      lastErrorMessage={lifecycle.lastError?.message}
-                      isBlocked={isBlocked}
-                      blockedReason={getBlockedReason(lifecycle)}
-                      showTableUnavailable={
-                        !isLoading &&
-                        lifecycle.phase !== 'error' &&
-                        table.status !== 'ready' &&
-                        !useLegacyTopLevelLayout
-                      }
-                      tableErrors={visibleTableErrors}
-                      needsRevisionSelection={lifecycle.needsRevisionSelection}
-                      onRetry={() => lifecycle.prepare()}
-                      onEnsureRevision={() => lifecycle.ensureRevision()}
-                    />
-
-                    {isTableEditorReady ? (
-                      <>
-                        <MaximiseWindow openZIndex={55}>
-                          {({ toggle, isOpen }) => (
-                            <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-                              <TabularProjectCustomEditorTable
-                                headerColumns={headerColumns}
-                                rows={tableRows}
-                                showEmptyState={showEmptyTableState}
-                                showRowControls={!isOpen}
-                                footerActions={
-                                  <button
-                                    type="button"
-                                    className="inline-flex items-center gap-2 rounded border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-50"
-                                    onClick={toggle}
-                                  >
-                                    {isOpen ? (
-                                      <FullScreenExitIcon className="h-4 w-4" />
-                                    ) : (
-                                      <FullScreenEnterIcon className="h-4 w-4" />
-                                    )}
-                                    {isOpen ? 'Exit full screen' : 'Full screen'}
-                                  </button>
-                                }
-                                tableActiveCell={tableActiveCell}
-                                onActiveCellChange={setTableActiveCell}
-                                disabled={isEditingDisabled}
-                                canAddRow={canAddRow}
-                                canRemoveRow={canRemoveRow}
-                                addRowFromFooter={addRowFromFooter}
-                                removeRowFromFooter={removeRowAndSyncFlags}
-                                isCellFlagged={isCellFlagged}
-                              />
+                          {headerColumns.length === 0 ? (
+                            <div className="rounded border border-red-200 bg-red-50 p-2 text-sm">
+                              No visible table columns were found for this project template.
                             </div>
-                          )}
-                        </MaximiseWindow>
+                          ) : null}
+                        </>
+                      ) : null}
 
-                        {headerColumns.length === 0 ? (
-                          <div className="rounded border border-red-200 bg-red-50 p-2 text-sm">
-                            No visible table columns were found for this project template.
-                          </div>
-                        ) : null}
-                      </>
-                    ) : null}
-
-                    {visibleTableErrors.length ? (
-                      <pre className="whitespace-pre-wrap">{visibleTableErrors.join('\n')}</pre>
-                    ) : null}
-                    {lifecycle.lastError && lifecycle.lastErrorStage === 'save' && lifecycle.phase !== 'error' ? (
-                      <div className="rounded border border-red-200 bg-red-50 p-2 text-sm">
-                        <p>Could not save your latest changes. Please try again.</p>
-                        <pre className="whitespace-pre-wrap">{lifecycle.lastError.message}</pre>
-                      </div>
-                    ) : null}
-                    {netSyncError ? <pre className="whitespace-pre-wrap">{netSyncError}</pre> : null}
-                    {isSubmittedRevision ? (
-                      <div className="rounded border border-blue-200 bg-blue-50 p-2 text-sm">
-                        This submission has already been submitted and cannot be edited.
-                      </div>
-                    ) : null}
+                      {visibleTableErrors.length ? (
+                        <pre className="whitespace-pre-wrap">{visibleTableErrors.join('\n')}</pre>
+                      ) : null}
+                      {lifecycle.lastError && lifecycle.lastErrorStage === 'save' && lifecycle.phase !== 'error' ? (
+                        <div className="rounded border border-red-200 bg-red-50 p-2 text-sm">
+                          <p>Could not save your latest changes. Please try again.</p>
+                          <pre className="whitespace-pre-wrap">{lifecycle.lastError.message}</pre>
+                        </div>
+                      ) : null}
+                      {netSyncError ? <pre className="whitespace-pre-wrap">{netSyncError}</pre> : null}
+                      {isSubmittedRevision ? (
+                        <div className="rounded border border-blue-200 bg-blue-50 p-2 text-sm">
+                          This submission has already been submitted and cannot be edited.
+                        </div>
+                      ) : null}
+                    </div>
                   </div>
+
+                  {isTableEditorReady ? (
+                    <div className="border-t border-gray-300 bg-gray-100 px-3 py-2">
+                      <ButtonRow $noMargin>
+                        <Button onClick={onSaveForLater} disabled={isEditingDisabled}>
+                          {isPersisting && lifecycle.phase === 'saving-draft' ? 'Saving...' : 'Save for later'}
+                        </Button>
+                        <Button $primary onClick={onSubmit} disabled={isEditingDisabled}>
+                          {isPersisting && lifecycle.phase === 'submitting' ? 'Submitting...' : 'Submit'}
+                        </Button>
+                      </ButtonRow>
+                    </div>
+                  ) : null}
                 </div>
-
-                {isTableEditorReady ? (
-                  <div className="border-t border-gray-300 bg-gray-100 px-3 py-2">
-                    <ButtonRow $noMargin>
-                      <Button onClick={onSaveForLater} disabled={isEditingDisabled}>
-                        {isPersisting && lifecycle.phase === 'saving-draft' ? 'Saving...' : 'Save for later'}
-                      </Button>
-                      <Button $primary onClick={onSubmit} disabled={isEditingDisabled}>
-                        {isPersisting && lifecycle.phase === 'submitting' ? 'Submitting...' : 'Submit'}
-                      </Button>
-                    </ButtonRow>
-                  </div>
-                ) : null}
-              </div>
-            </div>
+              }
+            />
           </LayoutContent>
         </LayoutContainer>
       </OuterLayoutContainer>

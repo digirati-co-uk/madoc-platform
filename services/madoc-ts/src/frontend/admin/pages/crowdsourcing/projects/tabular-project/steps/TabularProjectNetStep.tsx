@@ -1,7 +1,7 @@
 import React, { ComponentType, ReactNode } from 'react';
 import type { TFunction } from 'i18next';
 import { ModalButton } from '@/frontend/shared/components/Modal';
-import { VerticalResizeSeparator } from '@/frontend/shared/components/VerticalResizeSeparator';
+import { TabularSplitView } from '@/frontend/shared/components/TabularSplitView';
 import { BrowserComponent } from '@/frontend/shared/utility/browser-component';
 import { Button, ButtonRow, TinyButton } from '@/frontend/shared/navigation/Button';
 import { TabularHeadingsTable } from '../../../../../components/tabular/cast-a-net/TabularHeadingsTable';
@@ -96,45 +96,43 @@ export function TabularProjectNetStep(props: TabularProjectNetStepProps) {
             </div>
           </div>
 
-          <div className="grid gap-3">
-            <BrowserComponent fallback={<div>{t('Loading...')}</div>}>
-              <CastANetComponent
-                manifestId={manifestId!}
-                canvasId={canvasId}
-                value={netConfig}
-                onChange={onNetConfigChange}
-                height={castANetHeight}
-              />
-            </BrowserComponent>
-
-            <div className="mt-[-4px] flex justify-center">
-              <VerticalResizeSeparator
-                ariaLabel={t('Resize cast-a-net and table')}
-                onResizeStart={onStartResize}
-                onHoverChange={onDividerHoverChange}
-                className={`h-[18px] min-w-[28px] cursor-row-resize select-none rounded border border-[#c8c8c8] text-center text-[14px] font-bold leading-[14px] ${
-                  isDividerHover ? 'bg-gray-200' : 'bg-white'
-                }`}
-              >
-                =
-              </VerticalResizeSeparator>
-            </div>
-
-            <div className="overflow-auto border border-[#d6d6d6] bg-white">
-              <TabularHeadingsTable
-                columns={netColumnCount}
-                visibleRows={TABULAR_WIZARD_CAST_A_NET_ROWS}
-                headings={headings}
-                tooltips={tooltips}
-                onChangeHeadings={() => {
-                  // Intentionally read-only in Cast a net step.
-                }}
-                activeColumn={-1}
-                issues={[]}
-                disabled
-              />
-            </div>
-          </div>
+          <TabularSplitView
+            style={{ rowGap: 12 }}
+            topTrack={`${castANetHeight}px`}
+            bottomTrack="auto"
+            dividerHeight={18}
+            dividerAriaLabel={t('Resize cast-a-net and table')}
+            onResizeStart={onStartResize}
+            onDividerHoverChange={onDividerHoverChange}
+            isDividerActive={isDividerHover}
+            topPanel={
+              <BrowserComponent fallback={<div>{t('Loading...')}</div>}>
+                <CastANetComponent
+                  manifestId={manifestId!}
+                  canvasId={canvasId}
+                  value={netConfig}
+                  onChange={onNetConfigChange}
+                  height={castANetHeight}
+                />
+              </BrowserComponent>
+            }
+            bottomPanel={
+              <div className="overflow-auto border border-[#d6d6d6] bg-white">
+                <TabularHeadingsTable
+                  columns={netColumnCount}
+                  visibleRows={TABULAR_WIZARD_CAST_A_NET_ROWS}
+                  headings={headings}
+                  tooltips={tooltips}
+                  onChangeHeadings={() => {
+                    // Intentionally read-only in Cast a net step.
+                  }}
+                  activeColumn={-1}
+                  issues={[]}
+                  disabled
+                />
+              </div>
+            }
+          />
         </div>
       ) : (
         <div className="p-3 text-[13px]">{t('Select a reference canvas to use Cast a net.')}</div>

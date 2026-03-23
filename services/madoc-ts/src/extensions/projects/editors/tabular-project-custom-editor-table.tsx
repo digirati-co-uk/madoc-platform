@@ -8,6 +8,7 @@ import {
   TABULAR_GRID_HEADER_ROW_HEIGHT_PX,
   TABULAR_GRID_ROW_HEIGHT_PX,
 } from '@/frontend/shared/utility/tabular-grid-constants';
+import { getTabularGridKeyboardNavigation } from '@/frontend/shared/utility/tabular-grid-keyboard-navigation';
 import { TabularDataGridStyles } from '@/frontend/shared/components/TabularDataGridStyles';
 import FlagIcon from '@/frontend/shared/icons/FlagIcon';
 import type { TabularEditorHeaderModel, TabularEditorRowModel } from './tabular-project-custom-editor-table-model';
@@ -17,6 +18,10 @@ type TabularProjectCustomEditorTableProps = {
   rows: TabularEditorRowModel[];
   showEmptyState: boolean;
   showRowControls?: boolean;
+  showAddRowControl?: boolean;
+  showRemoveRowControl?: boolean;
+  addRowLabel?: string;
+  removeRowLabel?: string;
   footerActions?: React.ReactNode;
   tableActiveCell: TabularCellRef | null;
   onActiveCellChange: (next: TabularCellRef | null) => void;
@@ -26,6 +31,8 @@ type TabularProjectCustomEditorTableProps = {
   addRowFromFooter: () => void;
   removeRowFromFooter: () => void;
   isCellFlagged: (rowIndex: number, columnKey: string) => boolean;
+  containerClassName?: string;
+  containerStyle?: React.CSSProperties;
 };
 
 type TabularGridRow = {
@@ -48,6 +55,10 @@ function FlaggedCellBadge() {
 
 function toTextValue(value: unknown) {
   return typeof value === 'string' ? value : value === null || typeof value === 'undefined' ? '' : String(value);
+}
+
+function joinClasses(...classNames: Array<string | undefined>) {
+  return classNames.filter(Boolean).join(' ');
 }
 
 type TabularGridCellInputProps = {
@@ -150,6 +161,10 @@ export function TabularProjectCustomEditorTable({
   rows,
   showEmptyState,
   showRowControls = true,
+  showAddRowControl = true,
+  showRemoveRowControl = true,
+  addRowLabel = 'Add new row +',
+  removeRowLabel = 'Remove row -',
   footerActions,
   tableActiveCell,
   onActiveCellChange,
@@ -159,12 +174,15 @@ export function TabularProjectCustomEditorTable({
   addRowFromFooter,
   removeRowFromFooter,
   isCellFlagged,
+  containerClassName,
+  containerStyle,
 }: TabularProjectCustomEditorTableProps) {
   const isRemoveRowDisabled = disabled || !canRemoveRow;
   const isAddRowDisabled = disabled || !canAddRow;
+  const hasAnyRowControl = showRowControls && (showAddRowControl || showRemoveRowControl);
   const hasFooterActions = !!footerActions;
   const footerJustifyClass =
-    showRowControls && hasFooterActions ? 'justify-between' : hasFooterActions ? 'justify-end' : 'justify-center';
+    hasAnyRowControl && hasFooterActions ? 'justify-between' : hasFooterActions ? 'justify-end' : 'justify-center';
   const headerRowHeight = TABULAR_GRID_HEADER_ROW_HEIGHT_PX;
   const rowHeight = Math.max(TABULAR_GRID_ROW_HEIGHT_PX, 60);
   const tableScrollRef = useRef<HTMLDivElement | null>(null);
@@ -285,70 +303,43 @@ export function TabularProjectCustomEditorTable({
           const isActiveRow = tableActiveCell?.row === cell.rowIndex;
           const isActiveCell = isActiveRow && tableActiveCell?.col === colIndex;
           const isFlagged = isCellFlagged(cell.rowIndex, cell.columnKey);
-          const lastColIndex = headerColumns.length - 1;
 
           const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-            if (event.altKey || event.ctrlKey || event.metaKey) {
+            const navigation = getTabularGridKeyboardNavigation({
+              key: event.key,
+              shiftKey: event.shiftKey,
+              altKey: event.altKey,
+              ctrlKey: event.ctrlKey,
+              metaKey: event.metaKey,
+              rowIndex: row.rowPosition,
+              colIndex,
+              rowCount: gridRows.length,
+              colCount: headerColumns.length,
+              inputType: event.currentTarget.type,
+              selectionStart: event.currentTarget.selectionStart,
+              selectionEnd: event.currentTarget.selectionEnd,
+              valueLength: event.currentTarget.value.length,
+              horizontalArrowBehavior: 'always',
+            });
+
+            if (!navigation) {
+              const isDirectionalArrowKey =
+                event.key === 'ArrowUp' ||
+                event.key === 'ArrowDown' ||
+                event.key === 'ArrowLeft' ||
+                event.key === 'ArrowRight';
+
+              // Without this, react-data-grid can intercept the event and trap keyboard navigation.
+              if (isDirectionalArrowKey && !event.altKey && !event.ctrlKey && !event.metaKey) {
+                event.preventDefault();
+                event.stopPropagation();
+              }
               return;
             }
 
-            if (event.key === 'Tab') {
-              let nextRow = row.rowPosition;
-              let nextCol = colIndex + (event.shiftKey ? -1 : 1);
-
-              if (nextCol < 0) {
-                nextRow -= 1;
-                nextCol = lastColIndex;
-              } else if (nextCol > lastColIndex) {
-                nextRow += 1;
-                nextCol = 0;
-              }
-
-              if (nextRow < 0 || nextRow >= gridRows.length) {
-                return;
-              }
-
-              event.preventDefault();
-              event.stopPropagation();
-              focusGridInput(nextRow, nextCol, event.shiftKey ? 'end' : 'start');
-              return;
-            }
-
-            if (event.key === 'ArrowUp') {
-              const nextRow = row.rowPosition - 1;
-              if (nextRow < 0) {
-                return;
-              }
-
-              event.preventDefault();
-              event.stopPropagation();
-              focusGridInput(nextRow, colIndex, 'end');
-              return;
-            }
-
-            if (event.key === 'ArrowDown') {
-              const nextRow = row.rowPosition + 1;
-              if (nextRow >= gridRows.length) {
-                return;
-              }
-
-              event.preventDefault();
-              event.stopPropagation();
-              focusGridInput(nextRow, colIndex, 'end');
-              return;
-            }
-
-            if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
-              const moveLeft = event.key === 'ArrowLeft';
-              const nextCol = colIndex + (moveLeft ? -1 : 1);
-              if (nextCol < 0 || nextCol > lastColIndex) {
-                return;
-              }
-
-              event.preventDefault();
-              event.stopPropagation();
-              focusGridInput(row.rowPosition, nextCol, moveLeft ? 'end' : 'start');
-            }
+            event.preventDefault();
+            event.stopPropagation();
+            focusGridInput(navigation.nextRow, navigation.nextCol, navigation.caretPosition);
           };
 
           return (
@@ -425,7 +416,13 @@ export function TabularProjectCustomEditorTable({
   }, [addRowFromFooter, isAddRowDisabled]);
 
   return (
-    <div className="flex min-h-0 min-w-0 flex-col overflow-hidden rounded border border-[#d6d6d6] bg-white">
+    <div
+      className={joinClasses(
+        'flex min-h-0 min-w-0 flex-col overflow-hidden rounded border border-[#d6d6d6] bg-white',
+        containerClassName
+      )}
+      style={containerStyle}
+    >
       <TabularDataGridStyles scopeClassName="tabular-contributor-rdg" disableRowHover />
       <div ref={tableScrollRef} className="min-h-0 min-w-0 flex-1 overflow-hidden">
         <DataGrid
@@ -450,32 +447,36 @@ export function TabularProjectCustomEditorTable({
           No rows yet. Use + to create the first row.
         </div>
       ) : null}
-      {showRowControls || hasFooterActions ? (
+      {hasAnyRowControl || hasFooterActions ? (
         <div
           className={`flex flex-none items-center gap-2 border-t border-[#d6d6d6] bg-[#f1f5f9] px-3 py-2 ${footerJustifyClass}`}
         >
-          {showRowControls ? (
+          {hasAnyRowControl ? (
             <div className="flex items-center justify-center gap-2">
-              <Button
-                $error
-                type="button"
-                onClick={removeRowFromFooter}
-                disabled={isRemoveRowDisabled}
-                title="Remove row"
-                className="!min-w-28 justify-center !px-3 !py-1 !text-xs !rounded-md font-semibold shadow-sm"
-              >
-                Remove row -
-              </Button>
-              <Button
-                $primary
-                type="button"
-                onClick={handleAddRowFromFooter}
-                disabled={isAddRowDisabled}
-                title="Add new row"
-                className="!min-w-28 justify-center !px-3 !py-1 !text-xs !rounded-md font-semibold shadow-sm"
-              >
-                Add new row +
-              </Button>
+              {showRemoveRowControl ? (
+                <Button
+                  $error
+                  type="button"
+                  onClick={removeRowFromFooter}
+                  disabled={isRemoveRowDisabled}
+                  title="Remove row"
+                  className="!min-w-28 justify-center !px-3 !py-1 !text-xs !rounded-md font-semibold shadow-sm"
+                >
+                  {removeRowLabel}
+                </Button>
+              ) : null}
+              {showAddRowControl ? (
+                <Button
+                  $primary
+                  type="button"
+                  onClick={handleAddRowFromFooter}
+                  disabled={isAddRowDisabled}
+                  title="Add new row"
+                  className="!min-w-28 justify-center !px-3 !py-1 !text-xs !rounded-md font-semibold shadow-sm"
+                >
+                  {addRowLabel}
+                </Button>
+              ) : null}
             </div>
           ) : null}
           {hasFooterActions ? <div className="flex items-center gap-2">{footerActions}</div> : null}

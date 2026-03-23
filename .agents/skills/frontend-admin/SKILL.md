@@ -23,6 +23,8 @@ Describe the admin React app structure and routing so management UI changes foll
 - `services/madoc-ts/src/frontend/admin/routes.tsx`
 - `services/madoc-ts/src/frontend/admin/server.tsx`
 - `services/madoc-ts/src/routes/admin/`
+- `services/madoc-ts/src/frontend/shared/components/TabularSplitView.tsx` shared split canvas/table scaffolding
+- `services/madoc-ts/src/frontend/shared/utility/tabular-grid-keyboard-navigation.ts` shared tabular keyboard movement
 
 ## Quick Start Workflow
 1. Start with `services/madoc-ts/src/frontend/admin/routes.tsx` to locate the route tree.

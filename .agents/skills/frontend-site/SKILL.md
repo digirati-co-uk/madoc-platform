@@ -23,6 +23,8 @@ Document the site-specific React app structure, route setup, and SSR entrypoints
 - `services/madoc-ts/src/frontend/site/routes.tsx`
 - `services/madoc-ts/src/frontend/site/server.ts`
 - `services/madoc-ts/src/routes/site/`
+- `services/madoc-ts/src/frontend/shared/components/TabularSplitView.tsx` shared split canvas/table scaffolding
+- `services/madoc-ts/src/frontend/shared/utility/tabular-grid-keyboard-navigation.ts` shared tabular keyboard movement
 
 ## Quick Start Workflow
 1. Start with `services/madoc-ts/src/frontend/site/routes.tsx` to locate the route tree.

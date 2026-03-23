@@ -1,7 +1,7 @@
 import React, { ComponentType, ReactNode } from 'react';
 import type { TFunction } from 'i18next';
 import { ModalButton } from '@/frontend/shared/components/Modal';
-import { VerticalResizeSeparator } from '@/frontend/shared/components/VerticalResizeSeparator';
+import { TabularSplitView } from '@/frontend/shared/components/TabularSplitView';
 import { Button, ButtonRow } from '@/frontend/shared/navigation/Button';
 import { BrowserComponent } from '@/frontend/shared/utility/browser-component';
 import { ArrowForwardIcon } from '@/frontend/shared/icons/ArrowForwardIcon';
@@ -147,21 +147,52 @@ export function TabularProjectPreviewStep(props: TabularProjectPreviewStepProps)
 
         <div className={hasImage ? 'grid h-[760px] content-start gap-3 overflow-hidden' : 'grid content-start gap-3'}>
           {hasImage ? (
-            <BrowserComponent fallback={<div>{t('Loading...')}</div>}>
-              <CastANetComponent
-                manifestId={manifestId!}
-                canvasId={canvasId}
-                value={netConfig}
-                onChange={onNetConfigChange}
-                height={previewCanvasHeight}
-                atlasBackgroundColor={CONTRIBUTOR_CANVAS_BACKGROUND}
-                activeCell={previewCanvasActiveCell}
-                previewOverlayOnly
-                showVerticalNudgeControls={canTrackPreviewOnCanvas}
-                onNudgeUp={() => onNudgePreviewNet(0, -PREVIEW_NUDGE_STEP)}
-                onNudgeDown={() => onNudgePreviewNet(0, PREVIEW_NUDGE_STEP)}
-              />
-            </BrowserComponent>
+            <TabularSplitView
+              className="h-full"
+              style={{ rowGap: 12 }}
+              topTrack={`${previewCanvasHeight}px`}
+              bottomTrack={`minmax(${previewTableHeight}px, 1fr)`}
+              dividerHeight={18}
+              dividerAriaLabel={t('Resize preview canvas and table')}
+              onResizeStart={onStartResize}
+              onDividerHoverChange={onDividerHoverChange}
+              isDividerActive={isDividerHover}
+              topPanel={
+                <BrowserComponent fallback={<div>{t('Loading...')}</div>}>
+                  <CastANetComponent
+                    manifestId={manifestId!}
+                    canvasId={canvasId}
+                    value={netConfig}
+                    onChange={onNetConfigChange}
+                    height={previewCanvasHeight}
+                    atlasBackgroundColor={CONTRIBUTOR_CANVAS_BACKGROUND}
+                    activeCell={previewCanvasActiveCell}
+                    previewOverlayOnly
+                    showVerticalNudgeControls={canTrackPreviewOnCanvas}
+                    onNudgeUp={() => onNudgePreviewNet(0, -PREVIEW_NUDGE_STEP)}
+                    onNudgeDown={() => onNudgePreviewNet(0, PREVIEW_NUDGE_STEP)}
+                  />
+                </BrowserComponent>
+              }
+              bottomPanel={
+                <TabularPreviewTable
+                  headings={previewColumns}
+                  tooltips={previewTooltips}
+                  rows={previewTableRowCount}
+                  values={previewRows}
+                  onChange={onPreviewRowsChange}
+                  activeCell={previewActiveCell}
+                  onActiveCellChange={onPreviewActiveCellChange}
+                  onAddRow={onAddRow}
+                  onRemoveRow={onRemoveRow}
+                  canRemoveRow={canRemovePreviewRow}
+                  addRowLabel={t('Add new row +')}
+                  removeRowLabel={t('Remove row -')}
+                  containerHeight="100%"
+                  containerWidth="100%"
+                />
+              }
+            />
           ) : (
             <div className="grid min-h-[180px] place-items-center rounded border border-[#d6d6d6] bg-[#fafbff] text-[13px]">
               <div className="grid justify-items-center gap-[10px] text-center">
@@ -181,38 +212,23 @@ export function TabularProjectPreviewStep(props: TabularProjectPreviewStepProps)
               </div>
             </div>
           )}
-
-          {hasImage ? (
-            <div className="mt-[-4px] flex justify-center">
-              <VerticalResizeSeparator
-                ariaLabel={t('Resize preview canvas and table')}
-                onResizeStart={onStartResize}
-                onHoverChange={onDividerHoverChange}
-                className={`h-[18px] min-w-[28px] cursor-row-resize select-none rounded border border-[#c8c8c8] text-center text-[14px] font-bold leading-[14px] ${
-                  isDividerHover ? 'bg-gray-200' : 'bg-white'
-                }`}
-              >
-                =
-              </VerticalResizeSeparator>
-            </div>
+          {!hasImage ? (
+            <TabularPreviewTable
+              headings={previewColumns}
+              tooltips={previewTooltips}
+              rows={previewTableRowCount}
+              values={previewRows}
+              onChange={onPreviewRowsChange}
+              activeCell={previewActiveCell}
+              onActiveCellChange={onPreviewActiveCellChange}
+              onAddRow={onAddRow}
+              onRemoveRow={onRemoveRow}
+              canRemoveRow={canRemovePreviewRow}
+              addRowLabel={t('Add new row +')}
+              removeRowLabel={t('Remove row -')}
+              containerWidth="100%"
+            />
           ) : null}
-
-          <TabularPreviewTable
-            headings={previewColumns}
-            tooltips={previewTooltips}
-            rows={previewTableRowCount}
-            values={previewRows}
-            onChange={onPreviewRowsChange}
-            activeCell={previewActiveCell}
-            onActiveCellChange={onPreviewActiveCellChange}
-            onAddRow={onAddRow}
-            onRemoveRow={onRemoveRow}
-            canRemoveRow={canRemovePreviewRow}
-            addRowLabel={t('Add new row +')}
-            removeRowLabel={t('Remove row -')}
-            containerHeight={hasImage ? previewTableHeight : undefined}
-            containerWidth="100%"
-          />
         </div>
       </div>
       <ButtonRow>

@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useCaptureModelEditorApi } from '@/frontend/shared/capture-models/new/hooks/use-capture-model-editor-api';
 import { Revisions } from '@/frontend/shared/capture-models/editor/stores/revisions';
-import { VerticalResizeSeparator } from '@/frontend/shared/components/VerticalResizeSeparator';
+import { TabularSplitView } from '@/frontend/shared/components/TabularSplitView';
 import { useReviewRendererContext } from '@/frontend/site/pages/tasks/review-renderers/review-renderer-context';
 import type { CustomReviewRendererProps } from '@/frontend/site/pages/tasks/review-renderers/types';
 import { useTabularEditorLayout } from './use-tabular-editor-layout';
@@ -14,6 +14,7 @@ import {
 } from './tabular-project-custom-editor-utils';
 import { useTabularCellFlags } from './use-tabular-cell-flags';
 import { useTabularProjectCustomEditorState } from './use-tabular-project-custom-editor-state';
+import { ChevronDown } from '@/frontend/shared/icons/ChevronIcon';
 
 function toNumericId(value: unknown): number | undefined {
   if (typeof value === 'number' && Number.isFinite(value)) {
@@ -57,6 +58,7 @@ export function TabularProjectReviewRenderer(props: CustomReviewRendererProps) {
         ? toNumericId(taskSubject.parent.id)
         : undefined;
   const canvasId = fallbackCanvasId;
+  const isCorrectionMode = props.mode === 'write';
   const isEditingDisabled = props.mode !== 'write';
 
   const {
@@ -265,7 +267,12 @@ export function TabularProjectReviewRenderer(props: CustomReviewRendererProps) {
                                 {flaggedCount} flagged
                               </span>
                             ) : null}
-                            <span className="text-xs text-slate-500">{isExpanded ? 'Hide' : 'Show'}</span>
+                            <span className="text-xs text-slate-500">
+                              <ChevronDown
+                                aria-hidden="true"
+                                className={`fill-current h-4 w-4 transition-transform duration-200 ${isExpanded ? 'rotate-180' : 'rotate-0'}`}
+                              />
+                            </span>
                           </div>
                         </button>
 
@@ -277,6 +284,8 @@ export function TabularProjectReviewRenderer(props: CustomReviewRendererProps) {
                               const cellFlag = flaggedCellsByKey.get(getCellLookupKey(cell.rowIndex, cell.columnKey));
                               const flagged = !!cellFlag || isCellFlagged(cell.rowIndex, cell.columnKey);
                               const isCheckbox = cell.fieldType === 'checkbox-field';
+                              const textValue = toEditableTextValue(cell.value);
+                              const hasTextValue = textValue.trim().length > 0;
 
                               return (
                                 <div
@@ -298,27 +307,37 @@ export function TabularProjectReviewRenderer(props: CustomReviewRendererProps) {
                                     ) : null}
                                   </div>
                                   {isCheckbox ? (
-                                    <label className="inline-flex items-center gap-2 text-sm text-gray-800">
-                                      <input
-                                        type="checkbox"
-                                        checked={!!cell.value}
-                                        disabled={isEditingDisabled}
-                                        onFocus={() => setTableActiveCell({ row: cell.rowIndex, col: cell.colIndex })}
+                                    isCorrectionMode ? (
+                                      <label className="inline-flex items-center gap-2 text-sm text-gray-800">
+                                        <input
+                                          type="checkbox"
+                                          checked={!!cell.value}
+                                          disabled={isEditingDisabled}
+                                          onFocus={() => setTableActiveCell({ row: cell.rowIndex, col: cell.colIndex })}
+                                          onClick={() => setTableActiveCell({ row: cell.rowIndex, col: cell.colIndex })}
+                                          onChange={event => {
+                                            if (isEditingDisabled) {
+                                              return;
+                                            }
+                                            cell.onChange(event.target.checked);
+                                          }}
+                                        />
+                                        <span>{cell.value ? 'Yes' : 'No'}</span>
+                                      </label>
+                                    ) : (
+                                      <button
+                                        type="button"
+                                        className="inline-flex min-h-[32px] items-center rounded border border-gray-300 bg-gray-50 px-2 py-1 text-sm text-gray-800"
                                         onClick={() => setTableActiveCell({ row: cell.rowIndex, col: cell.colIndex })}
-                                        onChange={event => {
-                                          if (isEditingDisabled) {
-                                            return;
-                                          }
-                                          cell.onChange(event.target.checked);
-                                        }}
-                                      />
-                                      <span>{cell.value ? 'Yes' : 'No'}</span>
-                                    </label>
-                                  ) : (
+                                      >
+                                        {cell.value ? 'Yes' : 'No'}
+                                      </button>
+                                    )
+                                  ) : isCorrectionMode ? (
                                     <textarea
                                       rows={2}
                                       className="w-full rounded border border-gray-300 bg-white px-2 py-1 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                                      value={toEditableTextValue(cell.value)}
+                                      value={textValue}
                                       readOnly={isEditingDisabled}
                                       onFocus={() => setTableActiveCell({ row: cell.rowIndex, col: cell.colIndex })}
                                       onClick={() => setTableActiveCell({ row: cell.rowIndex, col: cell.colIndex })}
@@ -329,6 +348,16 @@ export function TabularProjectReviewRenderer(props: CustomReviewRendererProps) {
                                         cell.onChange(event.target.value);
                                       }}
                                     />
+                                  ) : (
+                                    <button
+                                      type="button"
+                                      className={`w-full rounded border border-gray-300 bg-gray-50 px-2 py-1 text-left text-sm ${
+                                        hasTextValue ? 'text-gray-900' : 'text-gray-400'
+                                      }`}
+                                      onClick={() => setTableActiveCell({ row: cell.rowIndex, col: cell.colIndex })}
+                                    >
+                                      {hasTextValue ? textValue : 'Empty'}
+                                    </button>
                                   )}
                                   {cellFlag?.comment ? (
                                     <div className="mt-2 rounded border border-red-200 bg-red-50 px-2 py-1 text-xs text-red-800">
@@ -350,71 +379,60 @@ export function TabularProjectReviewRenderer(props: CustomReviewRendererProps) {
         </aside>
 
         <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-          <div
-            ref={splitContainerRef}
-            className="grid min-h-0 min-w-0 flex-1 overflow-hidden"
-            style={{
-              gridTemplateRows: `minmax(0, ${canvasSplitPct}fr) ${splitDividerHeight}px minmax(0, ${100 - canvasSplitPct}fr)`,
-            }}
-          >
-            <div className="h-full min-h-0 min-w-0 overflow-hidden">
-              {canvasId ? (
-                <TabularProjectCustomEditorCanvas
-                  canvasId={canvasId}
-                  netConfig={netConfig}
-                  activeCell={overlayActiveCell}
-                  zoomTrackingDefaultEnabled={templateConfig?.enableZoomTracking !== false}
-                />
-              ) : (
-                <div className="flex h-full items-center justify-center bg-gray-100 text-sm text-gray-600">
-                  No image preview available for this task.
-                </div>
-              )}
-            </div>
-
-            <VerticalResizeSeparator
-              ariaLabel="Resize canvas and table"
-              onResizeStart={startCanvasTableResize}
-              onHoverChange={setIsCanvasTableDividerHover}
-              className="flex items-center justify-center"
-              style={{
-                cursor: 'row-resize',
-                userSelect: 'none',
-                background: isCanvasTableDividerActive ? '#a1a1a1' : '#ddd',
-              }}
-            >
-              <div style={{ display: 'grid', gap: 2 }}>
-                <div style={{ width: 16, height: 2, background: isCanvasTableDividerActive ? '#181818' : '#a1a1a1' }} />
-                <div style={{ width: 16, height: 2, background: isCanvasTableDividerActive ? '#181818' : '#a1a1a1' }} />
+          <TabularSplitView
+            containerRef={splitContainerRef}
+            className="flex-1"
+            topTrack={`minmax(0, ${canvasSplitPct}fr)`}
+            bottomTrack={`minmax(0, ${100 - canvasSplitPct}fr)`}
+            dividerHeight={splitDividerHeight}
+            dividerAriaLabel="Resize canvas and table"
+            onResizeStart={startCanvasTableResize}
+            onDividerHoverChange={setIsCanvasTableDividerHover}
+            isDividerActive={isCanvasTableDividerActive}
+            topPanel={
+              <div className="h-full min-h-0 min-w-0 overflow-hidden">
+                {canvasId ? (
+                  <TabularProjectCustomEditorCanvas
+                    canvasId={canvasId}
+                    netConfig={netConfig}
+                    activeCell={overlayActiveCell}
+                    zoomTrackingDefaultEnabled={templateConfig?.enableZoomTracking !== false}
+                  />
+                ) : (
+                  <div className="flex h-full items-center justify-center bg-gray-100 text-sm text-gray-600">
+                    No image preview available for this task.
+                  </div>
+                )}
               </div>
-            </VerticalResizeSeparator>
-
-            <div className="min-h-0 min-w-0 overflow-auto p-3">
-              {table.status !== 'ready' && !useLegacyTopLevelLayout ? (
-                <div className="rounded border border-yellow-300 bg-yellow-50 px-3 py-2 text-sm text-yellow-900">
-                  Table configuration unavailable for this review.
-                </div>
-              ) : (
-                <TabularProjectCustomEditorTable
-                  headerColumns={headerColumns}
-                  rows={tableRows}
-                  showEmptyState={showEmptyTableState}
-                  tableActiveCell={tableActiveCell}
-                  onActiveCellChange={setTableActiveCell}
-                  disabled={isEditingDisabled}
-                  canAddRow={canAddRow && !isEditingDisabled}
-                  canRemoveRow={canRemoveRow && !isEditingDisabled}
-                  addRowFromFooter={addRowFromFooter}
-                  removeRowFromFooter={removeRowFromFooter}
-                  isCellFlagged={isCellFlagged}
-                  showRowControls={false}
-                />
-              )}
-              {visibleTableErrors.length ? (
-                <pre className="mt-3 whitespace-pre-wrap text-sm text-red-700">{visibleTableErrors.join('\n')}</pre>
-              ) : null}
-            </div>
-          </div>
+            }
+            bottomPanel={
+              <div className="min-h-0 min-w-0 overflow-auto p-3">
+                {table.status !== 'ready' && !useLegacyTopLevelLayout ? (
+                  <div className="rounded border border-yellow-300 bg-yellow-50 px-3 py-2 text-sm text-yellow-900">
+                    Table configuration unavailable for this review.
+                  </div>
+                ) : (
+                  <TabularProjectCustomEditorTable
+                    headerColumns={headerColumns}
+                    rows={tableRows}
+                    showEmptyState={showEmptyTableState}
+                    tableActiveCell={tableActiveCell}
+                    onActiveCellChange={setTableActiveCell}
+                    disabled={isEditingDisabled}
+                    canAddRow={canAddRow && !isEditingDisabled}
+                    canRemoveRow={canRemoveRow && !isEditingDisabled}
+                    addRowFromFooter={addRowFromFooter}
+                    removeRowFromFooter={removeRowFromFooter}
+                    isCellFlagged={isCellFlagged}
+                    showRowControls={false}
+                  />
+                )}
+                {visibleTableErrors.length ? (
+                  <pre className="mt-3 whitespace-pre-wrap text-sm text-red-700">{visibleTableErrors.join('\n')}</pre>
+                ) : null}
+              </div>
+            }
+          />
 
           {props.saveControl ? (
             <div className="border-t border-gray-300 bg-gray-100 px-3 py-2">{props.saveControl}</div>
