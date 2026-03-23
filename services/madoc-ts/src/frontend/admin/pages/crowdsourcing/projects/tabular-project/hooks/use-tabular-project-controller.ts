@@ -168,7 +168,7 @@ export function useTabularProjectController(options: UseTabularProjectController
   );
 
   const [isCastANetDividerHover, setIsCastANetDividerHover] = useState(false);
-  const [previewActiveCell, setPreviewActiveCell] = useState<TabularCellRef | null>(null);
+  const [previewActiveCell, setPreviewActiveCell] = useState<TabularCellRef | null>({ row: 0, col: 0 });
   const [previewRows, setPreviewRows] = useState<string[][]>([]);
   const [previewAdditionalRows, setPreviewAdditionalRows] = useState(0);
   const [shareCopied, setShareCopied] = useState<'idle' | 'copied' | 'error'>('idle');
@@ -286,15 +286,19 @@ export function useTabularProjectController(options: UseTabularProjectController
   }, [previewTableRowCount, previewColumns.length]);
 
   useEffect(() => {
-    if (!previewActiveCell) {
-      return;
-    }
-
     const maxRow = previewTableRowCount - 1;
     const maxCol = Math.max(1, previewColumns.length || 1) - 1;
 
+    if (!previewActiveCell) {
+      setPreviewActiveCell({ row: 0, col: 0 });
+      return;
+    }
+
     if (previewActiveCell.row > maxRow || previewActiveCell.col > maxCol) {
-      setPreviewActiveCell(null);
+      setPreviewActiveCell({
+        row: Math.min(previewActiveCell.row, maxRow),
+        col: Math.min(previewActiveCell.col, maxCol),
+      });
     }
   }, [previewActiveCell, previewTableRowCount, previewColumns.length]);
 
