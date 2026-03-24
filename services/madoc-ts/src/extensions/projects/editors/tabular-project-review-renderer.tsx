@@ -1,7 +1,11 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useCaptureModelEditorApi } from '@/frontend/shared/capture-models/new/hooks/use-capture-model-editor-api';
 import { Revisions } from '@/frontend/shared/capture-models/editor/stores/revisions';
 import { TabularSplitView } from '@/frontend/shared/components/TabularSplitView';
+import { FullScreenEnterIcon } from '@/frontend/shared/icons/FullScreenEnterIcon';
+import { FullScreenExitIcon } from '@/frontend/shared/icons/FullScreenExitIcon';
+import FlagIcon from '@/frontend/shared/icons/FlagIcon';
+import { MaximiseWindow } from '@/frontend/shared/layout/MaximiseWindow';
 import { useReviewRendererContext } from '@/frontend/site/pages/tasks/review-renderers/review-renderer-context';
 import type { CustomReviewRendererProps } from '@/frontend/site/pages/tasks/review-renderers/types';
 import { useTabularEditorLayout } from './use-tabular-editor-layout';
@@ -14,7 +18,26 @@ import {
 } from './tabular-project-custom-editor-utils';
 import { useTabularCellFlags } from './use-tabular-cell-flags';
 import { useTabularProjectCustomEditorState } from './use-tabular-project-custom-editor-state';
-import { ChevronDown } from '@/frontend/shared/icons/ChevronIcon';
+
+function getReviewFlaggedPanelStorageKey(taskId: string) {
+  return `tabular-review-flagged-panel-open:${taskId}`;
+}
+
+function getStoredFlaggedPanelState(taskId?: string) {
+  if (typeof window === 'undefined') {
+    return false;
+  }
+
+  if (!taskId) {
+    return false;
+  }
+
+  try {
+    return window.sessionStorage.getItem(getReviewFlaggedPanelStorageKey(taskId)) === '1';
+  } catch {
+    return false;
+  }
+}
 
 function toNumericId(value: unknown): number | undefined {
   if (typeof value === 'number' && Number.isFinite(value)) {
@@ -31,36 +54,28 @@ function toEditableTextValue(value: unknown): string {
   return typeof value === 'string' ? value : value === null || typeof value === 'undefined' ? '' : String(value);
 }
 
-function getCellLookupKey(rowIndex: number, columnKey: string): string {
-  return `${rowIndex}:${columnKey}`;
-}
-
 type ReviewFlaggedCellItem = {
   key: string;
   rowIndex: number;
+  columnKey: string;
   columnLabel: string;
   comment?: string;
 };
 
 type ReviewLinkedCell = {
-  fieldType?: string;
   value: unknown;
 };
 
 type FlaggedCellCardProps = {
   flag: ReviewFlaggedCellItem;
   linkedCell?: ReviewLinkedCell;
-  canFocusCell: boolean;
+  canUnflagCell: boolean;
   onFocusCell: () => void;
+  onUnflagCell: () => void;
 };
 
-function FlaggedCellCard({ flag, linkedCell, canFocusCell, onFocusCell }: FlaggedCellCardProps) {
-  const linkedValue =
-    linkedCell?.fieldType === 'checkbox-field'
-      ? linkedCell.value
-        ? 'Yes'
-        : 'No'
-      : toEditableTextValue(linkedCell?.value);
+function FlaggedCellCard({ flag, linkedCell, canUnflagCell, onFocusCell, onUnflagCell }: FlaggedCellCardProps) {
+  const linkedValue = toEditableTextValue(linkedCell?.value);
   const hasLinkedValue = linkedValue.trim().length > 0;
 
   return (
@@ -89,13 +104,25 @@ function FlaggedCellCard({ flag, linkedCell, canFocusCell, onFocusCell }: Flagge
             {hasLinkedValue ? linkedValue : 'Empty'}
           </div>
         ) : (
-          <div className="text-slate-500">This cell is not available in the table view.</div>
+          <div className="text-slate-500">This flagged cell is no longer available in the current table view.</div>
         )}
+
         {flag.comment ? (
-          <div className="rounded border border-red-200 bg-red-50 px-2 py-1 text-red-800">{flag.comment}</div>
+          <div className="whitespace-pre-wrap break-all rounded border border-red-200 bg-red-50 px-2 py-1 text-red-800">
+            {flag.comment}
+          </div>
         ) : null}
-        {!canFocusCell ? (
-          <div className="text-slate-500">This column is currently hidden in the table view.</div>
+
+        {canUnflagCell ? (
+          <div className="pt-1">
+            <button
+              type="button"
+              className="rounded border border-slate-300 bg-white px-2 py-1 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-50"
+              onClick={onUnflagCell}
+            >
+              Unflag cell
+            </button>
+          </div>
         ) : null}
       </div>
     </div>
@@ -125,8 +152,9 @@ export function TabularProjectReviewRenderer(props: CustomReviewRendererProps) {
         ? toNumericId(taskSubject.parent.id)
         : undefined;
   const canvasId = fallbackCanvasId;
-  const isCorrectionMode = props.mode === 'write';
+  const reviewTaskId = review.task?.id ? String(review.task.id) : undefined;
   const isEditingDisabled = props.mode !== 'write';
+  const [isFlaggedPanelOpen, setIsFlaggedPanelOpen] = useState(() => getStoredFlaggedPanelState(reviewTaskId));
 
   const {
     splitContainerRef,
@@ -136,9 +164,9 @@ export function TabularProjectReviewRenderer(props: CustomReviewRendererProps) {
     setIsCanvasTableDividerHover,
     splitDividerHeight,
   } = useTabularEditorLayout({
-    defaultCanvasSplitPct: 68,
-    minCanvasHeight: 280,
-    minTableHeight: 200,
+    defaultCanvasSplitPct: 40,
+    minCanvasHeight: 160,
+    minTableHeight: 180,
   });
 
   const {
@@ -163,93 +191,33 @@ export function TabularProjectReviewRenderer(props: CustomReviewRendererProps) {
     removeInstance,
   });
 
-  const { activeCellColumnLabel, activeCellIsFlagged, activeCellComment, flaggedCells, isCellFlagged } =
-    useTabularCellFlags({
-      table,
-      projectId: review.project?.id,
-      canvasId,
-      visibleColumnKeys,
-      headerColumns,
-      tableActiveCell,
-      setTableActiveCell,
-      useLegacyTopLevelLayout,
-      removeRowFromFooter,
-    });
-
-  const headerColumnsByKey = useMemo(() => {
-    const labels = new Map<string, string>();
-    for (const column of headerColumns) {
-      labels.set(column.key, column.label);
-    }
-    return labels;
-  }, [headerColumns]);
-
-  const selectedRow = useMemo(() => {
-    if (!tableRows.length) {
-      return undefined;
-    }
-
-    if (tableActiveCell) {
-      return tableRows.find(row => row.rowIndex === tableActiveCell.row) || tableRows[0];
-    }
-
-    return tableRows[0];
-  }, [tableActiveCell, tableRows]);
+  const { flaggedCells, isCellFlagged, onRemoveFlag } = useTabularCellFlags({
+    table,
+    projectId: review.project?.id,
+    canvasId,
+    visibleColumnKeys,
+    headerColumns,
+    tableActiveCell,
+    setTableActiveCell,
+    useLegacyTopLevelLayout,
+    removeRowFromFooter,
+  });
 
   useEffect(() => {
-    if (tableActiveCell || !selectedRow || !selectedRow.cells.length) {
+    if (tableActiveCell) {
+      return;
+    }
+
+    const firstCell = tableRows[0]?.cells[0];
+    if (!firstCell) {
       return;
     }
 
     setTableActiveCell({
-      row: selectedRow.rowIndex,
-      col: selectedRow.cells[0].colIndex,
+      row: firstCell.rowIndex,
+      col: firstCell.colIndex,
     });
-  }, [selectedRow, setTableActiveCell, tableActiveCell]);
-
-  const selectedCell = useMemo(() => {
-    if (!selectedRow?.cells.length) {
-      return undefined;
-    }
-
-    if (!tableActiveCell) {
-      return selectedRow.cells[0];
-    }
-
-    return (
-      selectedRow.cells.find(cell => cell.rowIndex === tableActiveCell.row && cell.colIndex === tableActiveCell.col) ||
-      selectedRow.cells[0]
-    );
-  }, [selectedRow, tableActiveCell]);
-
-  const selectedRowIndex = selectedRow?.rowIndex ?? null;
-  const [expandedRowIndex, setExpandedRowIndex] = useState<number | null>(selectedRowIndex);
-  const [isFlaggedCellsExpanded, setIsFlaggedCellsExpanded] = useState(true);
-  const previousSelectedRowIndexRef = useRef<number | null>(selectedRowIndex);
-
-  useEffect(() => {
-    const previousRowIndex = previousSelectedRowIndexRef.current;
-    previousSelectedRowIndexRef.current = selectedRowIndex;
-
-    if (selectedRowIndex === null) {
-      return;
-    }
-
-    if (previousRowIndex === selectedRowIndex) {
-      return;
-    }
-
-    setExpandedRowIndex(selectedRowIndex);
-  }, [selectedRowIndex]);
-
-  const getColumnLabel = (columnKey: string) => headerColumnsByKey.get(columnKey) || columnKey;
-  const flaggedCellsByKey = useMemo(() => {
-    const next = new Map<string, (typeof flaggedCells)[number]>();
-    for (const flag of flaggedCells) {
-      next.set(getCellLookupKey(flag.rowIndex, flag.columnKey), flag);
-    }
-    return next;
-  }, [flaggedCells]);
+  }, [setTableActiveCell, tableActiveCell, tableRows]);
 
   const tableRowsByRowIndex = useMemo(() => {
     const next = new Map<number, (typeof tableRows)[number]>();
@@ -271,99 +239,97 @@ export function TabularProjectReviewRenderer(props: CustomReviewRendererProps) {
     () =>
       flaggedCells.map(flag => {
         const row = tableRowsByRowIndex.get(flag.rowIndex);
-        const linkedCell = row?.cells.find(cell => cell.columnKey === flag.columnKey);
         const colIndex = visibleColumnIndexByKey.get(flag.columnKey) ?? -1;
+        const linkedCellByIndex = row && colIndex >= 0 ? row.cells[colIndex] : undefined;
+        const linkedCellByKey = row?.cells.find(cell => cell.columnKey === flag.columnKey);
+        const linkedCell = linkedCellByKey || linkedCellByIndex;
+        const canFocusCell = !!linkedCellByIndex;
 
         return {
           flag,
           linkedCell,
           colIndex,
-          canFocusCell: colIndex >= 0,
+          canFocusCell,
         };
       }),
     [flaggedCells, tableRowsByRowIndex, visibleColumnIndexByKey]
   );
 
-  useEffect(() => {
-    if (!selectedCell) {
-      return;
-    }
-
-    const selectedKey = getCellLookupKey(selectedCell.rowIndex, selectedCell.columnKey);
-    if (!flaggedCellsByKey.has(selectedKey)) {
-      return;
-    }
-
-    setIsFlaggedCellsExpanded(true);
-  }, [flaggedCellsByKey, selectedCell]);
-
   const focusFlaggedCell = useCallback(
     (rowIndex: number, colIndex: number, canFocusCell: boolean) => {
-      if (canFocusCell) {
-        setTableActiveCell({ row: rowIndex, col: colIndex });
+      if (!canFocusCell) {
+        return;
       }
-      setExpandedRowIndex(rowIndex);
+
+      setTableActiveCell({ row: rowIndex, col: colIndex });
     },
     [setTableActiveCell]
   );
+
+  const unflagCell = useCallback(
+    (flag: ReviewFlaggedCellItem) => {
+      if (isEditingDisabled) {
+        return;
+      }
+
+      onRemoveFlag(flag.rowIndex, flag.columnKey);
+    },
+    [isEditingDisabled, onRemoveFlag]
+  );
+
+  useEffect(() => {
+    setIsFlaggedPanelOpen(getStoredFlaggedPanelState(reviewTaskId));
+  }, [reviewTaskId]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    if (!reviewTaskId) {
+      return;
+    }
+
+    try {
+      window.sessionStorage.setItem(getReviewFlaggedPanelStorageKey(reviewTaskId), isFlaggedPanelOpen ? '1' : '0');
+    } catch {
+      // Ignore storage errors and keep in-memory behavior.
+    }
+  }, [isFlaggedPanelOpen, reviewTaskId]);
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       {props.controls || <props.DefaultControls />}
       <div className="flex min-h-0 min-w-0 flex-1 overflow-hidden border-t border-gray-300 bg-white">
-        <aside className="w-[320px] shrink-0 overflow-y-auto border-r border-gray-300 bg-gray-50">
-          <div className="border-b border-gray-300 px-4 py-3 text-sm font-semibold text-gray-900">Document</div>
-          <div className="flex flex-col gap-4 p-4 text-sm">
-            <div>
-              <div className="text-xs font-semibold uppercase tracking-wide text-gray-500">Selected cell</div>
-              <div className="mt-1 rounded-lg border border-slate-200 bg-slate-100 px-3 py-2 text-gray-900">
-                {selectedCell ? (
-                  <div className="flex flex-col gap-1">
-                    <div className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
-                      Row {selectedCell.rowIndex + 1}
-                    </div>
-                    <div className="text-sm font-semibold">
-                      {activeCellColumnLabel || getColumnLabel(selectedCell.columnKey)}
-                    </div>
-                    <div className="text-xs text-slate-500">Click any table cell or row section to change focus.</div>
-                  </div>
-                ) : (
-                  <span className="text-sm text-slate-600">Select a table cell to inspect this document.</span>
-                )}
-              </div>
-            </div>
-
-            {activeCellIsFlagged ? (
-              <div className="rounded border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-800">
-                This cell was flagged
-              </div>
-            ) : null}
-
-            {activeCellComment ? (
-              <div className="rounded border border-gray-300 bg-white px-3 py-2 text-sm text-gray-800">
-                {activeCellComment}
-              </div>
-            ) : null}
-
-            <div>
+        <aside
+          className={`shrink-0 border-r border-gray-300 bg-gray-50 transition-[width] duration-200 ease-in-out ${
+            isFlaggedPanelOpen ? 'w-[320px]' : 'w-14'
+          }`}
+        >
+          <div className="flex h-full min-h-0">
+            <div className="flex w-14 shrink-0 flex-col items-center border-r border-gray-300 bg-white py-2">
               <button
                 type="button"
-                className="flex w-full items-center justify-between rounded border border-gray-300 bg-white px-3 py-2 text-left"
-                onClick={() => setIsFlaggedCellsExpanded(previous => !previous)}
+                className="relative flex h-10 w-10 items-center justify-center rounded border border-slate-300 bg-white text-slate-700 transition-colors hover:bg-slate-50"
+                onClick={() => setIsFlaggedPanelOpen(previous => !previous)}
+                aria-label={isFlaggedPanelOpen ? 'Close flagged cells panel' : 'Open flagged cells panel'}
+                title={isFlaggedPanelOpen ? 'Close flagged cells panel' : 'Open flagged cells panel'}
               >
-                <span className="text-xs font-semibold uppercase tracking-wide text-gray-600">
-                  Flagged cells ({flaggedCells.length})
-                </span>
-                <ChevronDown
-                  aria-hidden="true"
-                  className={`fill-current h-4 w-4 text-slate-500 transition-transform duration-200 ${
-                    isFlaggedCellsExpanded ? 'rotate-180' : 'rotate-0'
-                  }`}
-                />
+                <FlagIcon className="h-4 w-4" />
+                {flaggedCells.length ? (
+                  <span className="absolute -right-1 -top-1 rounded border border-red-200 bg-red-100 px-1 text-[10px] font-semibold leading-4 text-red-700">
+                    {flaggedCells.length > 99 ? '99+' : flaggedCells.length}
+                  </span>
+                ) : null}
               </button>
+            </div>
 
-              {isFlaggedCellsExpanded ? (
-                <div className="mt-2">
+            {isFlaggedPanelOpen ? (
+              <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+                <div className="border-b border-gray-300 px-4 py-3 text-sm font-semibold text-gray-900">
+                  Flagged cells ({flaggedCells.length})
+                </div>
+                <div className="min-h-0 flex-1 overflow-y-auto p-3">
                   {flaggedCellsForPanel.length ? (
                     <div className="space-y-2 rounded border border-red-300 bg-red-50 p-2">
                       {flaggedCellsForPanel.map(({ flag, linkedCell, colIndex, canFocusCell }) => (
@@ -371,8 +337,9 @@ export function TabularProjectReviewRenderer(props: CustomReviewRendererProps) {
                           key={flag.key}
                           flag={flag}
                           linkedCell={linkedCell}
-                          canFocusCell={canFocusCell}
+                          canUnflagCell={!isEditingDisabled}
                           onFocusCell={() => focusFlaggedCell(flag.rowIndex, colIndex, canFocusCell)}
+                          onUnflagCell={() => unflagCell(flag)}
                         />
                       ))}
                     </div>
@@ -382,163 +349,8 @@ export function TabularProjectReviewRenderer(props: CustomReviewRendererProps) {
                     </div>
                   )}
                 </div>
-              ) : null}
-            </div>
-
-            <div>
-              <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500">Rows</div>
-              {!tableRows.length ? (
-                <div className="rounded border border-gray-200 bg-white px-3 py-2 text-sm text-gray-500">
-                  No table data available.
-                </div>
-              ) : (
-                <div className="flex max-h-[45vh] flex-col gap-2 overflow-y-auto pr-1">
-                  {tableRows.map(row => {
-                    const isExpanded = expandedRowIndex === row.rowIndex;
-                    const isActiveRow = selectedCell?.rowIndex === row.rowIndex;
-                    const flaggedCount = row.cells.reduce(
-                      (count, cell) => count + (isCellFlagged(cell.rowIndex, cell.columnKey) ? 1 : 0),
-                      0
-                    );
-
-                    return (
-                      <div
-                        key={row.key}
-                        className={`rounded border ${isActiveRow ? 'border-blue-300 bg-blue-50' : 'border-gray-300 bg-white'}`}
-                      >
-                        <button
-                          type="button"
-                          className="flex w-full items-center justify-between gap-2 px-3 py-2 text-left"
-                          onClick={() => {
-                            const targetCell = row.cells[0];
-                            if (targetCell) {
-                              setTableActiveCell({ row: targetCell.rowIndex, col: targetCell.colIndex });
-                            }
-                            setExpandedRowIndex(previous => (previous === row.rowIndex ? null : row.rowIndex));
-                          }}
-                        >
-                          <div className="min-w-0">
-                            <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                              Row {row.rowIndex + 1}
-                            </div>
-                            <div className="text-sm font-medium text-slate-900">
-                              {isActiveRow ? 'Active row' : `${row.cells.length} fields`}
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            {flaggedCount ? (
-                              <span className="rounded border border-red-200 bg-red-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-red-700">
-                                {flaggedCount} flagged
-                              </span>
-                            ) : null}
-                            <span className="text-xs text-slate-500">
-                              <ChevronDown
-                                aria-hidden="true"
-                                className={`fill-current h-4 w-4 transition-transform duration-200 ${isExpanded ? 'rotate-180' : 'rotate-0'}`}
-                              />
-                            </span>
-                          </div>
-                        </button>
-
-                        {isExpanded ? (
-                          <div className="space-y-2 border-t border-gray-200 px-2 py-2">
-                            {row.cells.map(cell => {
-                              const isSelectedCell = selectedCell?.key === cell.key;
-                              const columnLabel = getColumnLabel(cell.columnKey);
-                              const cellFlag = flaggedCellsByKey.get(getCellLookupKey(cell.rowIndex, cell.columnKey));
-                              const flagged = !!cellFlag || isCellFlagged(cell.rowIndex, cell.columnKey);
-                              const isCheckbox = cell.fieldType === 'checkbox-field';
-                              const textValue = toEditableTextValue(cell.value);
-                              const hasTextValue = textValue.trim().length > 0;
-
-                              return (
-                                <div
-                                  key={cell.key}
-                                  className={`rounded border px-2 py-2 ${isSelectedCell ? 'border-blue-300 bg-blue-50' : 'border-gray-300 bg-white'}`}
-                                >
-                                  <div className="mb-1 flex items-center justify-between gap-2">
-                                    <button
-                                      type="button"
-                                      className="text-left text-xs font-semibold uppercase tracking-wide text-gray-600"
-                                      onClick={() => setTableActiveCell({ row: cell.rowIndex, col: cell.colIndex })}
-                                    >
-                                      {columnLabel}
-                                    </button>
-                                    {flagged ? (
-                                      <span className="rounded border border-red-200 bg-red-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-red-700">
-                                        Flagged
-                                      </span>
-                                    ) : null}
-                                  </div>
-                                  {isCheckbox ? (
-                                    isCorrectionMode ? (
-                                      <label className="inline-flex items-center gap-2 text-sm text-gray-800">
-                                        <input
-                                          type="checkbox"
-                                          checked={!!cell.value}
-                                          disabled={isEditingDisabled}
-                                          onFocus={() => setTableActiveCell({ row: cell.rowIndex, col: cell.colIndex })}
-                                          onClick={() => setTableActiveCell({ row: cell.rowIndex, col: cell.colIndex })}
-                                          onChange={event => {
-                                            if (isEditingDisabled) {
-                                              return;
-                                            }
-                                            cell.onChange(event.target.checked);
-                                          }}
-                                        />
-                                        <span>{cell.value ? 'Yes' : 'No'}</span>
-                                      </label>
-                                    ) : (
-                                      <button
-                                        type="button"
-                                        className="inline-flex min-h-[32px] items-center rounded border border-gray-300 bg-gray-50 px-2 py-1 text-sm text-gray-800"
-                                        onClick={() => setTableActiveCell({ row: cell.rowIndex, col: cell.colIndex })}
-                                      >
-                                        {cell.value ? 'Yes' : 'No'}
-                                      </button>
-                                    )
-                                  ) : isCorrectionMode ? (
-                                    <textarea
-                                      rows={2}
-                                      className="w-full rounded border border-gray-300 bg-white px-2 py-1 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                                      value={textValue}
-                                      readOnly={isEditingDisabled}
-                                      onFocus={() => setTableActiveCell({ row: cell.rowIndex, col: cell.colIndex })}
-                                      onClick={() => setTableActiveCell({ row: cell.rowIndex, col: cell.colIndex })}
-                                      onChange={event => {
-                                        if (isEditingDisabled) {
-                                          return;
-                                        }
-                                        cell.onChange(event.target.value);
-                                      }}
-                                    />
-                                  ) : (
-                                    <button
-                                      type="button"
-                                      className={`w-full rounded border border-gray-300 bg-gray-50 px-2 py-1 text-left text-sm ${
-                                        hasTextValue ? 'text-gray-900' : 'text-gray-400'
-                                      }`}
-                                      onClick={() => setTableActiveCell({ row: cell.rowIndex, col: cell.colIndex })}
-                                    >
-                                      {hasTextValue ? textValue : 'Empty'}
-                                    </button>
-                                  )}
-                                  {cellFlag?.comment ? (
-                                    <div className="mt-2 rounded border border-red-200 bg-red-50 px-2 py-1 text-xs text-red-800">
-                                      {cellFlag.comment}
-                                    </div>
-                                  ) : null}
-                                </div>
-                              );
-                            })}
-                          </div>
-                        ) : null}
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
+              </div>
+            ) : null}
           </div>
         </aside>
 
@@ -570,30 +382,52 @@ export function TabularProjectReviewRenderer(props: CustomReviewRendererProps) {
               </div>
             }
             bottomPanel={
-              <div className="min-h-0 min-w-0 overflow-auto p-3">
-                {table.status !== 'ready' && !useLegacyTopLevelLayout ? (
-                  <div className="rounded border border-yellow-300 bg-yellow-50 px-3 py-2 text-sm text-yellow-900">
-                    Table configuration unavailable for this review.
-                  </div>
-                ) : (
-                  <TabularProjectCustomEditorTable
-                    headerColumns={headerColumns}
-                    rows={tableRows}
-                    showEmptyState={showEmptyTableState}
-                    tableActiveCell={tableActiveCell}
-                    onActiveCellChange={setTableActiveCell}
-                    disabled={isEditingDisabled}
-                    canAddRow={canAddRow && !isEditingDisabled}
-                    canRemoveRow={canRemoveRow && !isEditingDisabled}
-                    addRowFromFooter={addRowFromFooter}
-                    removeRowFromFooter={removeRowFromFooter}
-                    isCellFlagged={isCellFlagged}
-                    showRowControls={false}
-                  />
-                )}
-                {visibleTableErrors.length ? (
-                  <pre className="mt-3 whitespace-pre-wrap text-sm text-red-700">{visibleTableErrors.join('\n')}</pre>
-                ) : null}
+              <div className="flex min-h-0 min-w-0 flex-col">
+                <div className="min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto p-3">
+                  {table.status !== 'ready' && !useLegacyTopLevelLayout ? (
+                    <div className="rounded border border-yellow-300 bg-yellow-50 px-3 py-2 text-sm text-yellow-900">
+                      Table configuration unavailable for this review.
+                    </div>
+                  ) : (
+                    <MaximiseWindow openZIndex={55}>
+                      {({ toggle, isOpen }) => (
+                        <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+                          <TabularProjectCustomEditorTable
+                            headerColumns={headerColumns}
+                            rows={tableRows}
+                            showEmptyState={showEmptyTableState}
+                            tableActiveCell={tableActiveCell}
+                            onActiveCellChange={setTableActiveCell}
+                            disabled={isEditingDisabled}
+                            canAddRow={canAddRow && !isEditingDisabled}
+                            canRemoveRow={canRemoveRow && !isEditingDisabled}
+                            addRowFromFooter={addRowFromFooter}
+                            removeRowFromFooter={removeRowFromFooter}
+                            isCellFlagged={isCellFlagged}
+                            showRowControls={false}
+                            footerActions={
+                              <button
+                                type="button"
+                                className="inline-flex items-center gap-2 rounded border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-50"
+                                onClick={toggle}
+                              >
+                                {isOpen ? (
+                                  <FullScreenExitIcon className="h-4 w-4" />
+                                ) : (
+                                  <FullScreenEnterIcon className="h-4 w-4" />
+                                )}
+                                {isOpen ? 'Exit full screen' : 'Full screen'}
+                              </button>
+                            }
+                          />
+                        </div>
+                      )}
+                    </MaximiseWindow>
+                  )}
+                  {visibleTableErrors.length ? (
+                    <pre className="mt-3 whitespace-pre-wrap text-sm text-red-700">{visibleTableErrors.join('\n')}</pre>
+                  ) : null}
+                </div>
               </div>
             }
           />

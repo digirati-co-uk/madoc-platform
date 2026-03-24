@@ -41,6 +41,7 @@ import {
 import { useTabularCellFlags } from './use-tabular-cell-flags';
 import { useTabularEditorLayout } from './use-tabular-editor-layout';
 import { useTabularProjectCustomEditorState } from './use-tabular-project-custom-editor-state';
+import type { TabularEditorRowModel } from './tabular-project-custom-editor-table-model';
 
 type TabularProjectCustomEditorContentProps = {
   canvasId: number;
@@ -55,6 +56,20 @@ type TabularProjectCustomEditorContentProps = {
 
 const CONTRIBUTOR_NET_NUDGE_STEP = 0.25;
 const TABULAR_CONTRIBUTOR_BASE_ROW_COUNT = 5;
+
+function getRowRemovalWarning(row: TabularEditorRowModel, flaggedCells: Array<{ rowIndex: number }>): string | null {
+  const hasFlaggedCell = flaggedCells.some(flag => flag.rowIndex === row.rowIndex);
+  if (hasFlaggedCell) {
+    return 'Rows with flagged cells cannot be removed. Unflag flagged cells in this row first.';
+  }
+
+  const hasNonEmptyCell = row.cells.some(cell => typeof cell.value === 'string' && cell.value.trim().length > 0);
+  if (hasNonEmptyCell) {
+    return 'Rows can only be removed when empty. Clear all cell values first.';
+  }
+
+  return null;
+}
 
 function areNumberArraysEqual(left: number[], right: number[]) {
   if (left.length !== right.length) {
@@ -133,6 +148,7 @@ function TabularProjectCustomEditorContent({
   const seededBaseRowsRevisionRef = useRef<string | null>(null);
   const [netSyncError, setNetSyncError] = useState<string | null>(null);
   const [successModalState, setSuccessModalState] = useState<'saved' | 'submitted' | null>(null);
+  const [rowRemovalWarning, setRowRemovalWarning] = useState<string | null>(null);
 
   const isPersisting = lifecycle.phase === 'saving-draft' || lifecycle.phase === 'submitting';
   const isLoading = lifecycle.phase === 'loading' || lifecycle.phase === 'preparing';
@@ -355,6 +371,51 @@ function TabularProjectCustomEditorContent({
     });
   }, [canStartAnotherSubmission, currentRevisionId, deselectRevision, lifecycle, successModalState]);
 
+  const getTargetRowForRemoval = useCallback(() => {
+    const selectedRow = tableActiveCell?.row;
+    const selectedMatch =
+      typeof selectedRow === 'number' ? tableRows.find(row => row.rowIndex === selectedRow) : undefined;
+    return selectedMatch || tableRows[tableRows.length - 1];
+  }, [tableActiveCell, tableRows]);
+
+  const removeEmptyRowAndSyncFlags = useCallback(() => {
+    const targetRow = getTargetRowForRemoval();
+    if (!targetRow) {
+      return;
+    }
+
+    const warning = getRowRemovalWarning(targetRow, flaggedCells);
+    if (warning) {
+      setRowRemovalWarning(warning);
+      return;
+    }
+
+    setRowRemovalWarning(null);
+    removeRowAndSyncFlags();
+  }, [flaggedCells, getTargetRowForRemoval, removeRowAndSyncFlags]);
+
+  useEffect(() => {
+    if (!rowRemovalWarning) {
+      return;
+    }
+
+    const targetRow = getTargetRowForRemoval();
+    if (!targetRow) {
+      setRowRemovalWarning(null);
+      return;
+    }
+
+    const warning = getRowRemovalWarning(targetRow, flaggedCells);
+    if (!warning) {
+      setRowRemovalWarning(null);
+      return;
+    }
+
+    if (warning !== rowRemovalWarning) {
+      setRowRemovalWarning(warning);
+    }
+  }, [flaggedCells, getTargetRowForRemoval, rowRemovalWarning]);
+
   return (
     <div
       className="min-h-0 overflow-hidden"
@@ -461,6 +522,12 @@ function TabularProjectCustomEditorContent({
 
                       {isTableEditorReady ? (
                         <>
+                          {rowRemovalWarning ? (
+                            <div className="rounded border border-yellow-300 bg-yellow-50 p-2 text-sm text-yellow-900">
+                              {rowRemovalWarning}
+                            </div>
+                          ) : null}
+
                           <MaximiseWindow openZIndex={55}>
                             {({ toggle, isOpen }) => (
                               <div className="flex min-h-0 min-w-0 flex-1 flex-col">
@@ -489,7 +556,7 @@ function TabularProjectCustomEditorContent({
                                   canAddRow={canAddRow}
                                   canRemoveRow={canRemoveRow}
                                   addRowFromFooter={addRowFromFooter}
-                                  removeRowFromFooter={removeRowAndSyncFlags}
+                                  removeRowFromFooter={removeEmptyRowAndSyncFlags}
                                   isCellFlagged={isCellFlagged}
                                 />
                               </div>
