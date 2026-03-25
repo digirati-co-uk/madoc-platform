@@ -5,6 +5,7 @@ import {
   type RuntimeWithViewport,
 } from '@/frontend/admin/components/tabular/cast-a-net/FollowActiveCellOnCanvas';
 import type { NetConfig, TabularCellRef } from '@/frontend/shared/utility/tabular-types';
+import { resizeAtlasRuntime } from '@/frontend/shared/utility/resize-atlas-runtime';
 import { CanvasViewerButton } from '@/frontend/shared/atoms/CanvasViewerGrid';
 import { EditorContentViewer } from '@/frontend/shared/capture-models/new/EditorContent';
 import { ArrowDownIcon } from '@/frontend/shared/icons/ArrowDownIcon';
@@ -38,6 +39,7 @@ export function TabularProjectCustomEditorCanvas({
   const INITIAL_CANVAS_ZOOM_FACTOR = 0.3;
   const INITIAL_CANVAS_FALLBACK_ZOOM_STEPS = 8;
   const maxInitialZoomRetries = 20;
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const runtimeRef = useRef<RuntimeWithViewport | null>(null);
   const [runtimeTick, setRuntimeTick] = useState(0);
   const [zoomTrackingOverride, setZoomTrackingOverride] = useState<boolean | null>(null);
@@ -62,10 +64,38 @@ export function TabularProjectCustomEditorCanvas({
     ];
   }, [canvas, canvasId]);
 
-  const handleViewerCreated = useCallback((preset: { runtime?: RuntimeWithViewport | null }) => {
-    runtimeRef.current = preset.runtime ?? null;
-    setRuntimeTick(tick => tick + 1);
+  const getContainerSize = useCallback(() => {
+    const container = containerRef.current;
+    if (!container) {
+      return null;
+    }
+
+    const bounds = container.getBoundingClientRect();
+    const width = Math.round(bounds.width);
+    const height = Math.round(bounds.height);
+    if (width <= 0 || height <= 0) {
+      return null;
+    }
+
+    return { width, height };
   }, []);
+
+  const resizeRuntimeToSize = useCallback((nextSize: { width: number; height: number }) => {
+    resizeAtlasRuntime(runtimeRef.current, nextSize);
+  }, []);
+
+  const handleViewerCreated = useCallback(
+    (preset: { runtime?: RuntimeWithViewport | null }) => {
+      runtimeRef.current = preset.runtime ?? null;
+      setRuntimeTick(tick => tick + 1);
+
+      const size = getContainerSize();
+      if (size) {
+        resizeRuntimeToSize(size);
+      }
+    },
+    [getContainerSize, resizeRuntimeToSize]
+  );
 
   const cancelInitialZoomRetry = useCallback(() => {
     if (typeof window !== 'undefined' && initialZoomFrameRef.current != null) {
@@ -166,6 +196,46 @@ export function TabularProjectCustomEditorCanvas({
   }, [applyInitialZoom, cancelInitialZoomRetry, maxInitialZoomRetries]);
 
   useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    const container = containerRef.current;
+    if (!container) {
+      return;
+    }
+
+    const applyContainerSize = () => {
+      const size = getContainerSize();
+      if (size) {
+        resizeRuntimeToSize(size);
+      }
+    };
+
+    let frameHandle: number | null = null;
+    const observer = new ResizeObserver(() => {
+      if (frameHandle != null) {
+        window.cancelAnimationFrame(frameHandle);
+      }
+
+      frameHandle = window.requestAnimationFrame(() => {
+        applyContainerSize();
+        frameHandle = null;
+      });
+    });
+
+    observer.observe(container);
+    applyContainerSize();
+
+    return () => {
+      observer.disconnect();
+      if (frameHandle != null) {
+        window.cancelAnimationFrame(frameHandle);
+      }
+    };
+  }, [getContainerSize, resizeRuntimeToSize]);
+
+  useEffect(() => {
     if (!runtimeRef.current) {
       return;
     }
@@ -187,7 +257,10 @@ export function TabularProjectCustomEditorCanvas({
 
   return (
     <div className="h-full min-h-0 min-w-0 border-b border-gray-300 bg-gray-100 p-2">
-      <div className="relative h-full min-h-0 min-w-0 overflow-hidden rounded border border-gray-400 bg-white">
+      <div
+        ref={containerRef}
+        className="relative h-full min-h-0 min-w-0 overflow-hidden rounded border border-gray-400 bg-white"
+      >
         <TabularCanvasViewportControls
           onHome={goHome}
           onZoomOut={zoomOut}

@@ -8,6 +8,7 @@ import { OpacityIcon } from '../../../../shared/icons/OpacityIcon';
 import { TabularCanvasViewportControls } from '../../../../shared/components/TabularCanvasViewportControls';
 import { CanvasViewerButton } from '../../../../shared/atoms/CanvasViewerGrid';
 import { ArrowDownIcon } from '../../../../shared/icons/ArrowDownIcon';
+import { resizeAtlasRuntime } from '../../../../shared/utility/resize-atlas-runtime';
 import { NET_DIM_STEP, NET_MAX_DIM_OPACITY, clampDimOpacity, dimOpacityToPercent } from './utils';
 import './CastANetCanvas.css';
 
@@ -118,19 +119,7 @@ export const CastANetCanvas: React.FC<CastANetCanvasProps> = ({
 
   const resizeRuntimeToSize = useCallback((nextSize: { width: number; height: number }) => {
     const currentRuntime = runtime.current;
-    if (!currentRuntime) {
-      return;
-    }
-
-    if (typeof currentRuntime.updateRendererScreenPosition === 'function') {
-      currentRuntime.updateRendererScreenPosition();
-    }
-
-    if (currentRuntime.renderer?.resize) {
-      currentRuntime.renderer.resize(nextSize.width, nextSize.height);
-    }
-
-    currentRuntime.updateNextFrame?.();
+    resizeAtlasRuntime(currentRuntime, nextSize);
   }, []);
 
   const applyInitialZoom = useCallback(() => {

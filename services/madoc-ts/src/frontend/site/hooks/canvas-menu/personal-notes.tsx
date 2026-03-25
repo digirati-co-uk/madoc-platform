@@ -11,7 +11,7 @@ import { useUser } from '../../../shared/hooks/use-site';
 import { useSiteConfiguration } from '../../features/SiteConfigurationContext';
 import { useRouteContext } from '../use-route-context';
 import { CanvasMenuHook } from './types';
-import { StyledFormMultilineInputElement } from '../../../shared/capture-models/editor/atoms/StyledForm';
+import { StyledFormTextarea } from '../../../shared/capture-models/editor/atoms/StyledForm';
 import { parsePersonalNotePayload, serializePersonalNotePayload } from '../../../shared/utility/personal-note-payload';
 
 const NoteContainer = styledComponents.div`
@@ -63,10 +63,10 @@ export function usePersonalNotesMenu(): CanvasMenuHook {
       {data ? (
         <NoteContainer>
           <InputContainer fluid>
-            <StyledFormMultilineInputElement
+            <StyledFormTextarea
               data-cy="personal-notes"
               id="personal-notes"
-              minRows={10}
+              rows={10}
               value={newNote}
               onChange={e => setNewNote(e.target.value)}
               style={{ fontSize: '0.8em' }}
