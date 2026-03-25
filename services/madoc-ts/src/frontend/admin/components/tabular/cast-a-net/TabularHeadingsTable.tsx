@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { DataGrid, type Column, type DataGridHandle } from 'react-data-grid';
 import 'react-data-grid/lib/styles.css';
 import type { TabularValidationIssue } from './types';
@@ -7,6 +7,16 @@ import {
   TABULAR_GRID_HEADER_ROW_HEIGHT_PX,
   TABULAR_GRID_ROW_HEIGHT_PX,
 } from '../../../../shared/utility/tabular-grid-constants';
+import {
+  copyTabularCellValueToClipboard,
+  getInputCopyValue,
+  isTabularCopyShortcut,
+  shouldCopyWholeInputValue,
+} from '../../../../shared/utility/tabular-grid-clipboard';
+import {
+  getTabularGridKeyboardNavigation,
+  isForwardTabWithoutModifiers,
+} from '../../../../shared/utility/tabular-grid-keyboard-navigation';
 import { TabularDataGridStyles } from '../../../../shared/components/TabularDataGridStyles';
 import { scrollTabularGridCellIntoView } from '../../../../shared/utility/tabular-grid-scroll';
 
@@ -21,12 +31,22 @@ export type TabularHeadingsTableProps = {
 
   activeColumn?: number;
   onActiveColumnChange?: (index: number) => void;
+  canAddColumnFromKeyboard?: boolean;
+  onAddColumnFromKeyboard?: () => void;
 
   issues?: TabularValidationIssue[];
   disabled?: boolean;
 };
 
 type Row = { id: number };
+
+function getValidColumnIndex(columnKey: string, columnCount: number): number | null {
+  const index = Number.parseInt(columnKey.replace(/^c-/, ''), 10);
+  if (!Number.isFinite(index) || index < 0 || index >= columnCount) {
+    return null;
+  }
+  return index;
+}
 
 function HeaderInput(props: {
   index: number;
@@ -38,10 +58,24 @@ function HeaderInput(props: {
   onFocus?: () => void;
   setInputRef: (index: number, node: HTMLInputElement | null) => void;
   onNavigateToColumn: (index: number, caretPosition: 'start' | 'end') => void;
+  canAddColumnFromKeyboard: boolean;
+  onAddColumnFromKeyboard?: () => void;
   onChange: (next: string) => void;
 }) {
-  const { index, columnCount, value, disabled, hasError, title, onFocus, setInputRef, onNavigateToColumn, onChange } =
-    props;
+  const {
+    index,
+    columnCount,
+    value,
+    disabled,
+    hasError,
+    title,
+    onFocus,
+    setInputRef,
+    onNavigateToColumn,
+    canAddColumnFromKeyboard,
+    onAddColumnFromKeyboard,
+    onChange,
+  } = props;
 
   return (
     <input
@@ -54,32 +88,46 @@ function HeaderInput(props: {
         // Keep keyboard behavior controlled by the input, not the grid container.
         event.stopPropagation();
 
-        if (event.key === 'Tab') {
-          const nextIndex = index + (event.shiftKey ? -1 : 1);
-          if (nextIndex < 0 || nextIndex >= columnCount) {
-            return;
+        if (isTabularCopyShortcut(event)) {
+          const input = event.currentTarget;
+
+          if (shouldCopyWholeInputValue(input)) {
+            event.preventDefault();
+            void copyTabularCellValueToClipboard(getInputCopyValue(input));
           }
+          return;
+        }
 
+        const navigation = getTabularGridKeyboardNavigation({
+          key: event.key,
+          shiftKey: event.shiftKey,
+          altKey: event.altKey,
+          ctrlKey: event.ctrlKey,
+          metaKey: event.metaKey,
+          rowIndex: 0,
+          colIndex: index,
+          rowCount: 1,
+          colCount: columnCount,
+          inputType: event.currentTarget.type,
+          selectionStart: event.currentTarget.selectionStart,
+          selectionEnd: event.currentTarget.selectionEnd,
+          valueLength: event.currentTarget.value.length,
+          horizontalArrowBehavior: 'always',
+        });
+
+        if (navigation) {
           event.preventDefault();
-          onNavigateToColumn(nextIndex, event.shiftKey ? 'end' : 'start');
+          onNavigateToColumn(navigation.nextCol, navigation.caretPosition);
           return;
         }
 
-        if (event.altKey || event.ctrlKey || event.metaKey) {
-          return;
+        const isCreateColumnShortcut =
+          isForwardTabWithoutModifiers(event) &&
+          index === columnCount - 1;
+        if (isCreateColumnShortcut && canAddColumnFromKeyboard) {
+          event.preventDefault();
+          onAddColumnFromKeyboard?.();
         }
-        if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') {
-          return;
-        }
-
-        const moveToPrevious = event.key === 'ArrowLeft';
-        const nextIndex = index + (moveToPrevious ? -1 : 1);
-        if (nextIndex < 0 || nextIndex >= columnCount) {
-          return;
-        }
-
-        event.preventDefault();
-        onNavigateToColumn(nextIndex, moveToPrevious ? 'end' : 'start');
       }}
       disabled={disabled}
       aria-invalid={hasError ? 'true' : 'false'}
@@ -110,6 +158,8 @@ export function TabularHeadingsTable(props: TabularHeadingsTableProps) {
     visibleRows = 8,
     activeColumn = 0,
     onActiveColumnChange,
+    canAddColumnFromKeyboard = false,
+    onAddColumnFromKeyboard,
     issues = [],
     disabled = false,
   } = props;
@@ -132,6 +182,7 @@ export function TabularHeadingsTable(props: TabularHeadingsTableProps) {
   );
   const dataGridRef = useRef<DataGridHandle | null>(null);
   const headingInputRefs = useRef<Array<HTMLInputElement | null>>([]);
+  const pendingAddedColumnFocusIndexRef = useRef<number | null>(null);
 
   const setHeaderInputRef = useCallback((index: number, node: HTMLInputElement | null) => {
     headingInputRefs.current[index] = node;
@@ -155,6 +206,25 @@ export function TabularHeadingsTable(props: TabularHeadingsTableProps) {
     },
     [onActiveColumnChange]
   );
+
+  const requestAddColumnFromKeyboard = useCallback(() => {
+    if (disabled || !canAddColumnFromKeyboard || !onAddColumnFromKeyboard) {
+      return;
+    }
+
+    pendingAddedColumnFocusIndexRef.current = columns;
+    onAddColumnFromKeyboard();
+  }, [canAddColumnFromKeyboard, columns, disabled, onAddColumnFromKeyboard]);
+
+  useEffect(() => {
+    const pendingFocusIndex = pendingAddedColumnFocusIndexRef.current;
+    if (pendingFocusIndex === null || columns <= pendingFocusIndex) {
+      return;
+    }
+
+    pendingAddedColumnFocusIndexRef.current = null;
+    focusHeaderInput(pendingFocusIndex, 'start');
+  }, [columns, focusHeaderInput]);
 
   const gridColumns = useMemo<readonly Column<Row>[]>(() => {
     return Array.from({ length: columns }, (_, c) => {
@@ -195,6 +265,8 @@ export function TabularHeadingsTable(props: TabularHeadingsTableProps) {
               title={title}
               setInputRef={setHeaderInputRef}
               onNavigateToColumn={focusHeaderInput}
+              canAddColumnFromKeyboard={canAddColumnFromKeyboard}
+              onAddColumnFromKeyboard={requestAddColumnFromKeyboard}
               onFocus={() => onActiveColumnChange?.(c)}
               onChange={next => {
                 const copy = safeHeadings.slice();
@@ -223,8 +295,10 @@ export function TabularHeadingsTable(props: TabularHeadingsTableProps) {
     issuesByColumn,
     activeColumn,
     onActiveColumnChange,
+    canAddColumnFromKeyboard,
     setHeaderInputRef,
     focusHeaderInput,
+    requestAddColumnFromKeyboard,
     onChangeHeadings,
   ]);
 
@@ -257,16 +331,9 @@ export function TabularHeadingsTable(props: TabularHeadingsTableProps) {
             return;
           }
 
-          const sourceColumnIndex = Number.parseInt(sourceColumnKey.replace(/^c-/, ''), 10);
-          const targetColumnIndex = Number.parseInt(targetColumnKey.replace(/^c-/, ''), 10);
-
-          if (!Number.isFinite(sourceColumnIndex) || !Number.isFinite(targetColumnIndex)) {
-            return;
-          }
-          if (sourceColumnIndex < 0 || sourceColumnIndex >= columns) {
-            return;
-          }
-          if (targetColumnIndex < 0 || targetColumnIndex >= columns) {
+          const sourceColumnIndex = getValidColumnIndex(sourceColumnKey, columns);
+          const targetColumnIndex = getValidColumnIndex(targetColumnKey, columns);
+          if (sourceColumnIndex === null || targetColumnIndex === null) {
             return;
           }
 

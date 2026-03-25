@@ -23,6 +23,27 @@ type TabularGridKeyboardNavigationInput = {
   horizontalArrowBehavior?: 'at-edges' | 'always';
 };
 
+export type TabularGridKeyInput = Pick<
+  TabularGridKeyboardNavigationInput,
+  'key' | 'shiftKey' | 'altKey' | 'ctrlKey' | 'metaKey'
+>;
+
+const DIRECTIONAL_ARROW_KEYS = new Set(['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight']);
+
+function hasNonShiftModifier(
+  options: Pick<TabularGridKeyboardNavigationInput, 'altKey' | 'ctrlKey' | 'metaKey'>
+) {
+  return options.altKey || options.ctrlKey || options.metaKey;
+}
+
+export function isDirectionalArrowKey(key: string): boolean {
+  return DIRECTIONAL_ARROW_KEYS.has(key);
+}
+
+export function isForwardTabWithoutModifiers(options: TabularGridKeyInput): boolean {
+  return options.key === 'Tab' && !options.shiftKey && !hasNonShiftModifier(options);
+}
+
 function canNavigateHorizontally(options: TabularGridKeyboardNavigationInput, moveLeft: boolean): boolean {
   if (options.horizontalArrowBehavior === 'always') {
     return true;
@@ -54,7 +75,7 @@ function canNavigateHorizontally(options: TabularGridKeyboardNavigationInput, mo
 export function getTabularGridKeyboardNavigation(
   options: TabularGridKeyboardNavigationInput
 ): TabularGridKeyboardNavigation | null {
-  if (options.altKey || options.ctrlKey || options.metaKey) {
+  if (hasNonShiftModifier(options)) {
     return null;
   }
 

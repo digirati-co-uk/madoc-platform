@@ -8,7 +8,17 @@ import {
   TABULAR_GRID_HEADER_ROW_HEIGHT_PX,
   TABULAR_GRID_ROW_HEIGHT_PX,
 } from '@/frontend/shared/utility/tabular-grid-constants';
-import { getTabularGridKeyboardNavigation } from '@/frontend/shared/utility/tabular-grid-keyboard-navigation';
+import {
+  copyTabularCellValueToClipboard,
+  getInputCopyValue,
+  isTabularCopyShortcut,
+  shouldCopyWholeInputValue,
+} from '@/frontend/shared/utility/tabular-grid-clipboard';
+import {
+  getTabularGridKeyboardNavigation,
+  isDirectionalArrowKey,
+  isForwardTabWithoutModifiers,
+} from '@/frontend/shared/utility/tabular-grid-keyboard-navigation';
 import { TabularDataGridStyles } from '@/frontend/shared/components/TabularDataGridStyles';
 import { scrollTabularGridCellIntoView } from '@/frontend/shared/utility/tabular-grid-scroll';
 import FlagIcon from '@/frontend/shared/icons/FlagIcon';
@@ -42,6 +52,8 @@ type TabularGridRow = {
   rowPosition: number;
   row: TabularEditorRowModel;
 };
+
+const TABULAR_EDITOR_MIN_ROW_HEIGHT_PX = 60;
 
 function FlaggedCellBadge() {
   return (
@@ -185,7 +197,7 @@ export function TabularProjectCustomEditorTable({
   const footerJustifyClass =
     hasAnyRowControl && hasFooterActions ? 'justify-between' : hasFooterActions ? 'justify-end' : 'justify-center';
   const headerRowHeight = TABULAR_GRID_HEADER_ROW_HEIGHT_PX;
-  const rowHeight = Math.max(TABULAR_GRID_ROW_HEIGHT_PX, 60);
+  const rowHeight = Math.max(TABULAR_GRID_ROW_HEIGHT_PX, TABULAR_EDITOR_MIN_ROW_HEIGHT_PX);
   const tableScrollRef = useRef<HTMLDivElement | null>(null);
   const dataGridRef = useRef<DataGridHandle | null>(null);
   const shouldScrollToNewRowRef = useRef(false);
@@ -271,6 +283,16 @@ export function TabularProjectCustomEditorTable({
     return Math.max(TABULAR_COLUMN_MIN_WIDTH_PX, stretchedWidth);
   }, [headerColumns.length, tableViewportWidth]);
 
+  const requestRowAppendForKeyboard = useCallback(() => {
+    if (isAddRowDisabled) {
+      return false;
+    }
+
+    shouldScrollToNewRowRef.current = true;
+    addRowFromFooter();
+    return true;
+  }, [addRowFromFooter, isAddRowDisabled]);
+
   const gridColumns = useMemo<readonly Column<TabularGridRow>[]>(() => {
     return headerColumns.map((column, colIndex) => {
       return {
@@ -312,6 +334,17 @@ export function TabularProjectCustomEditorTable({
           const isFlagged = isCellFlagged(cell.rowIndex, cell.columnKey);
 
           const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+            if (isTabularCopyShortcut(event)) {
+              const input = event.currentTarget;
+              event.stopPropagation();
+
+              if (shouldCopyWholeInputValue(input)) {
+                event.preventDefault();
+                void copyTabularCellValueToClipboard(getInputCopyValue(input));
+              }
+              return;
+            }
+
             const navigation = getTabularGridKeyboardNavigation({
               key: event.key,
               shiftKey: event.shiftKey,
@@ -330,14 +363,18 @@ export function TabularProjectCustomEditorTable({
             });
 
             if (!navigation) {
-              const isDirectionalArrowKey =
-                event.key === 'ArrowUp' ||
-                event.key === 'ArrowDown' ||
-                event.key === 'ArrowLeft' ||
-                event.key === 'ArrowRight';
+              const isCreateRowShortcut =
+                isForwardTabWithoutModifiers(event) &&
+                row.rowPosition === gridRows.length - 1 &&
+                colIndex === headerColumns.length - 1;
+              if (isCreateRowShortcut && requestRowAppendForKeyboard()) {
+                event.preventDefault();
+                event.stopPropagation();
+                return;
+              }
 
               // Without this, react-data-grid can intercept the event and trap keyboard navigation.
-              if (isDirectionalArrowKey && !event.altKey && !event.ctrlKey && !event.metaKey) {
+              if (isDirectionalArrowKey(event.key) && !event.altKey && !event.ctrlKey && !event.metaKey) {
                 event.preventDefault();
                 event.stopPropagation();
               }
@@ -387,6 +424,7 @@ export function TabularProjectCustomEditorTable({
     headerColumns,
     isCellFlagged,
     onActiveCellChange,
+    requestRowAppendForKeyboard,
     tableActiveCell,
   ]);
 
@@ -434,13 +472,8 @@ export function TabularProjectCustomEditorTable({
   }, [gridRows, tableActiveCell]);
 
   const handleAddRowFromFooter = useCallback(() => {
-    if (isAddRowDisabled) {
-      return;
-    }
-
-    shouldScrollToNewRowRef.current = true;
-    addRowFromFooter();
-  }, [addRowFromFooter, isAddRowDisabled]);
+    requestRowAppendForKeyboard();
+  }, [requestRowAppendForKeyboard]);
 
   return (
     <div

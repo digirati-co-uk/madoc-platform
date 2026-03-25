@@ -76,6 +76,41 @@ function findCreatedFieldId(
   return created?.id;
 }
 
+function toFieldInstance(instance: BaseField | CaptureModel['document'] | undefined): BaseField | null {
+  if (!instance || isEntity(instance)) {
+    return null;
+  }
+  return instance as BaseField;
+}
+
+function findFirstFieldInstance(instances: Array<BaseField | CaptureModel['document']>): BaseField | undefined {
+  for (const instance of instances) {
+    const field = toFieldInstance(instance);
+    if (field) {
+      return field;
+    }
+  }
+  return undefined;
+}
+
+function findFieldByIdOrRevises(
+  instances: Array<BaseField | CaptureModel['document']>,
+  fieldId: string
+): BaseField | undefined {
+  for (const instance of instances) {
+    const field = toFieldInstance(instance);
+    if (!field) {
+      continue;
+    }
+
+    const revises = (field as BaseField & { revises?: string }).revises;
+    if (field.id === fieldId || revises === fieldId) {
+      return field;
+    }
+  }
+  return undefined;
+}
+
 export function getTableEditorSnapshot(
   store: Store<RevisionsModel>,
   tableProperty: string
@@ -110,19 +145,18 @@ export function getTableEditorSnapshot(
   for (const row of rows) {
     for (const property of Object.keys(row.properties || {})) {
       const instances = row.properties[property] as Array<BaseField | CaptureModel['document']>;
-      const first = instances[0];
-
-      if (!first || isEntity(first)) {
+      const firstField = findFirstFieldInstance(instances);
+      if (!firstField) {
         continue;
       }
 
       if (!columnMap.has(property)) {
         columnMap.set(property, {
           key: property,
-          label: first.label || property,
-          description: first.description,
-          fieldType: first.type,
-          required: !!first.required,
+          label: firstField.label || property,
+          description: firstField.description,
+          fieldType: firstField.type,
+          required: !!firstField.required,
         });
       }
     }
@@ -148,13 +182,14 @@ export function setTopLevelFieldValue(
   }
 
   const instances = getTopLevelPropertyList(document, property);
-  const target = instances.find(instance => instance.id === fieldId);
+  const target = findFieldByIdOrRevises(instances, fieldId);
 
-  if (!target || isEntity(target)) {
+  if (!target) {
     return { ok: false, error: `Top-level field \"${property}\" (${fieldId}) was not found.` };
   }
 
-  updateFieldByPath(store, [[property, fieldId]], value);
+  // Use the resolved field ID in case this field was forked in revision edit mode.
+  updateFieldByPath(store, [[property, target.id]], value);
   return { ok: true };
 }
 
@@ -186,7 +221,7 @@ export function setTableCellValue(options: {
 
   const rowPath = getTopLevelRowPath(tableProperty, row.id);
   const columnItems = (row.properties[columnKey] || []) as Array<BaseField | CaptureModel['document']>;
-  const existingField = columnItems.find(item => !isEntity(item)) as BaseField | undefined;
+  const existingField = findFirstFieldInstance(columnItems);
 
   if (existingField) {
     updateFieldByPath(store, [...rowPath, [columnKey, existingField.id]], value);
@@ -380,7 +415,7 @@ export function getTableCellReference(options: {
 
   const rowPath = getTopLevelRowPath(tableProperty, row.id);
   const list = (row.properties[columnKey] || []) as Array<BaseField | CaptureModel['document']>;
-  const field = list.find(item => !isEntity(item)) as BaseField | undefined;
+  const field = findFirstFieldInstance(list);
 
   return {
     columnKey,

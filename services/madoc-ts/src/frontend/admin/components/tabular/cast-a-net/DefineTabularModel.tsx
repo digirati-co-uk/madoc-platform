@@ -220,6 +220,8 @@ export function DefineTabularModel(props: {
 
   const canSaveModel = issues.length === 0;
   const isModelSaved = canSaveModel && safeSaved.length > 0 && safeSaved.every(Boolean);
+  const canAddColumns = !disabled && safeColumns < maxColumns;
+  const canRemoveColumns = !disabled && safeColumns > minColumns;
 
   const payload = useMemo(
     () =>
@@ -335,7 +337,7 @@ export function DefineTabularModel(props: {
   };
 
   const addColumn = () => {
-    if (safeColumns >= maxColumns) {
+    if (!canAddColumns) {
       return;
     }
     shouldScrollToNewColumnRef.current = true;
@@ -343,7 +345,7 @@ export function DefineTabularModel(props: {
     setColumns(safeColumns + 1);
   };
   const removeColumnAt = (columnIndex: number) => {
-    if (safeColumns <= minColumns) {
+    if (!canRemoveColumns) {
       return;
     }
 
@@ -538,6 +540,8 @@ export function DefineTabularModel(props: {
                   activeColumn={activeColumn}
                   onActiveColumnChange={setActiveColumn}
                   onColumnsReorder={reorderColumns}
+                  canAddColumnFromKeyboard={canAddColumns}
+                  onAddColumnFromKeyboard={addColumn}
                   issues={attemptedSave ? issues : []}
                   disabled={disabled}
                 />
@@ -548,7 +552,7 @@ export function DefineTabularModel(props: {
                   aria-label={t('Add column')}
                   title={t('Add column')}
                   onClick={addColumn}
-                  disabled={disabled || safeColumns >= maxColumns}
+                  disabled={!canAddColumns}
                 >
                   <AddIcon />
                 </button>
@@ -557,7 +561,7 @@ export function DefineTabularModel(props: {
                   aria-label={t('Remove last column')}
                   title={t('Remove last column')}
                   onClick={removeLastColumn}
-                  disabled={disabled || safeColumns <= minColumns}
+                  disabled={!canRemoveColumns}
                 >
                   <MinusIcon />
                 </button>
