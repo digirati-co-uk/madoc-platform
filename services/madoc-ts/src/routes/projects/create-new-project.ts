@@ -10,6 +10,9 @@ import { CreateProject } from '../../types/schemas/create-project';
 import { InternationalString } from '@iiif/presentation-3';
 import { ConflictError } from '../../utility/errors/conflict';
 import { iiifGetLabel } from '../../utility/iiif-get-label';
+import { assertValidTabularProjectTemplateConfig } from './validate-tabular-project-template-config';
+
+const TABULAR_PROJECT_TEMPLATE = 'tabular-project';
 
 const firstLang = (field: InternationalString) => {
   const keys = Object.keys(field);
@@ -28,8 +31,23 @@ export const createNewProject: RouteMiddleware<unknown, CreateProject> = async c
       : api.projectTemplates.getDefinition(template, siteId)
     : null;
   const setupFunctions = chosenTemplate?.setup;
+  const isTabularTemplate = template === TABULAR_PROJECT_TEMPLATE;
   const resolvedTemplateConfig =
-    template === 'tabular-project' ? template_config || template_options || null : template_config || null;
+    isTabularTemplate ? template_config || template_options || null : template_config || null;
+  const tabularConfigCandidate =
+    resolvedTemplateConfig && typeof resolvedTemplateConfig === 'object'
+      ? (resolvedTemplateConfig as { tabular?: { structure?: unknown } })
+      : null;
+  const shouldValidateTabularTemplateConfig =
+    isTabularTemplate &&
+    !!tabularConfigCandidate &&
+    !!tabularConfigCandidate.tabular &&
+    typeof tabularConfigCandidate.tabular === 'object' &&
+    typeof tabularConfigCandidate.tabular.structure !== 'undefined';
+
+  if (shouldValidateTabularTemplateConfig) {
+    assertValidTabularProjectTemplateConfig(resolvedTemplateConfig, { requireModel: false });
+  }
 
   if (template && !chosenTemplate) {
     throw new RequestError(`Invalid template ${template}.`);

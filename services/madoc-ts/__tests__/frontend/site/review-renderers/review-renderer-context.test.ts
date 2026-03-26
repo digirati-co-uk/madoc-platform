@@ -8,7 +8,11 @@ import {
   ReviewRendererContextProvider,
   useReviewRendererContext,
 } from '../../../../src/frontend/site/pages/tasks/review-renderers/review-renderer-context';
-import { getReviewRendererMode, ReviewRendererContextValue } from '../../../../src/frontend/site/pages/tasks/review-renderers/types';
+import {
+  getApproveDisabledReason,
+  getReviewRendererMode,
+  ReviewRendererContextValue,
+} from '../../../../src/frontend/site/pages/tasks/review-renderers/types';
 
 const ContextProbe: React.FC = () => {
   const context = useReviewRendererContext();
@@ -58,5 +62,11 @@ describe('review renderer context', () => {
   test('maps edit mode to renderer mode', () => {
     expect(getReviewRendererMode(true)).toBe('write');
     expect(getReviewRendererMode(false)).toBe('read');
+  });
+
+  test('formats approve disabled reason from blocking issue count', () => {
+    expect(getApproveDisabledReason(0)).toBeUndefined();
+    expect(getApproveDisabledReason(1)).toEqual('Resolve 1 blocking issue before approving.');
+    expect(getApproveDisabledReason(2)).toEqual('Resolve 2 blocking issues before approving.');
   });
 });

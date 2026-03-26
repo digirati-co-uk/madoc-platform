@@ -20,7 +20,8 @@ export const ApproveSubmission: React.FC<{
   allRevisionIds?: string[];
   reviewTaskId: string;
   project?: ProjectFull<any>;
-}> = ({ userTaskId, allUserTaskIds, allRevisionIds, reviewTaskId, onApprove, project }) => {
+  disabledReason?: string;
+}> = ({ userTaskId, onApprove, project, disabledReason }) => {
   const { acceptedRevision } = Revisions.useStoreState(state => {
     return {
       acceptedRevision: state.currentRevision,
@@ -30,49 +31,33 @@ export const ApproveSubmission: React.FC<{
   const api = useApi();
   const site = useSite();
   const { t } = useTranslation();
-  const revisionIdsToRemove = allRevisionIds?.filter(id => id && id !== acceptedRevision?.revision.id);
-  const userTaskIdsToRemove = allUserTaskIds?.filter(id => id && id !== userTaskId);
-  const approveAndRemoveApiCall = useCallback(() => {
-    if (acceptedRevision && revisionIdsToRemove && userTaskIdsToRemove) {
-      setIsLoading(true);
-      api
-        .reviewApproveAndRemoveSubmission({
-          userTaskIds: userTaskIdsToRemove,
-          reviewTaskId,
-          acceptedRevision,
-          revisionIdsToRemove,
-        })
-        .then(() => {
-          setIsLoading(false);
-          onApprove();
-        });
-    }
-  }, [acceptedRevision, api, onApprove, reviewTaskId, revisionIdsToRemove, userTaskIdsToRemove]);
+  const isApproveDisabled = loading || !!disabledReason;
 
   const approveApiCall = useCallback(() => {
-    if (acceptedRevision) {
-      const definition =
-        project && project.template ? api.projectTemplates.getDefinition(project.template, site.id) : null;
-
-      setIsLoading(true);
-      api.crowdsourcing
-        .reviewApproveSubmission({
-          revisionRequest: acceptedRevision,
-          userTaskId,
-          projectTemplate:
-            definition && project
-              ? {
-                  template: definition,
-                  config: project.template_config,
-                }
-              : undefined,
-        })
-        .then(async () => {
-          await onApprove();
-          setIsLoading(false);
-        });
+    if (disabledReason || !acceptedRevision) {
+      return;
     }
-  }, [acceptedRevision, api.crowdsourcing, api.projectTemplates, onApprove, project, site.id, userTaskId]);
+
+    const definition = project && project.template ? api.projectTemplates.getDefinition(project.template, site.id) : null;
+
+    setIsLoading(true);
+    api.crowdsourcing
+      .reviewApproveSubmission({
+        revisionRequest: acceptedRevision,
+        userTaskId,
+        projectTemplate:
+          definition && project
+            ? {
+                template: definition,
+                config: project.template_config,
+              }
+            : undefined,
+      })
+      .then(async () => {
+        await onApprove();
+        setIsLoading(false);
+      });
+  }, [acceptedRevision, api.crowdsourcing, api.projectTemplates, disabledReason, onApprove, project, site.id, userTaskId]);
 
   if (acceptedRevision?.revision.status === 'accepted') {
     return null;
@@ -83,11 +68,12 @@ export const ApproveSubmission: React.FC<{
       as={ModalButton}
       button={true}
       modalSize="sm"
-      disabled={loading}
+      disabled={isApproveDisabled}
       autoHeight={true}
-      title={t('Approve') || ''}
+      title={disabledReason || t('Approve') || ''}
       render={() => (
         <div>
+          {disabledReason ? <p>{disabledReason}</p> : null}
           <ul>
             <li>{t('The submission will be approved and all other submissions will remain')}</li>
           </ul>
@@ -97,6 +83,7 @@ export const ApproveSubmission: React.FC<{
         <ButtonRow>
           <Button
             data-cy="approve-submission"
+            disabled={isApproveDisabled}
             onClick={() => {
               approveApiCall();
               close();

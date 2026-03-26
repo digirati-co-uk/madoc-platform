@@ -38,6 +38,31 @@ export type ReviewDefaultControlsProps = {
 
 export type ReviewDefaultControlsComponent = React.FC<ReviewDefaultControlsProps>;
 
+export type ReviewBlockingIssueState = {
+  hasBlockingIssues: boolean;
+  blockingIssueCount: number;
+};
+
+export const EMPTY_REVIEW_BLOCKING_ISSUES: ReviewBlockingIssueState = {
+  hasBlockingIssues: false,
+  blockingIssueCount: 0,
+};
+
+export function toReviewBlockingIssueState(blockingIssueCount: number): ReviewBlockingIssueState {
+  return {
+    hasBlockingIssues: blockingIssueCount > 0,
+    blockingIssueCount,
+  };
+}
+
+export function getApproveDisabledReason(blockingIssueCount: number): string | undefined {
+  if (blockingIssueCount < 1) {
+    return undefined;
+  }
+
+  return `Resolve ${blockingIssueCount} blocking issue${blockingIssueCount === 1 ? '' : 's'} before approving.`;
+}
+
 export type CustomReviewRendererProps = {
   mode: ReviewRendererMode;
   subjectType: ReviewRendererSubjectType;
@@ -45,6 +70,7 @@ export type CustomReviewRendererProps = {
   saveControl?: React.ReactNode;
   controls?: React.ReactNode;
   DefaultControls: ReviewDefaultControlsComponent;
+  onBlockingIssuesChange?: (next: ReviewBlockingIssueState) => void;
 };
 
 export type CustomAdminPreviewRendererProps = {

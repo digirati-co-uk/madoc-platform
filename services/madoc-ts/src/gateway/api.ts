@@ -90,6 +90,7 @@ import { ResourceLinkRow } from '../database/queries/linking-queries';
 import { SearchIndexTask } from './tasks/search-index-task';
 import { JsonProjectTemplate, ProjectTemplate } from '../extensions/projects/types';
 import { ApiKey } from '../types/api-key';
+import { TabularProjectTemplateConfig } from '../types/tabular-project-template-config';
 
 export type ApiClientWithoutExtensions = Omit<
   ApiClient,
@@ -883,7 +884,10 @@ export class ApiClient {
     });
   }
 
-  async updateProjectTemplateConfig(id: string | number, template_config: any | null) {
+  async updateProjectTemplateConfig(
+    id: string | number,
+    template_config: TabularProjectTemplateConfig | Record<string, unknown> | null
+  ) {
     return this.request<any>(`/api/madoc/projects/${id}/template-config`, {
       method: 'PUT',
       body: {

@@ -5,7 +5,7 @@ export type CreateProject = {
   summary: InternationalString;
   slug: string;
   template?: string;
-  template_options?: any;
-  template_config?: any;
-  remote_template?: any | null;
+  template_options?: unknown;
+  template_config?: unknown;
+  remote_template?: unknown | null;
 };

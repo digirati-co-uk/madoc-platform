@@ -297,6 +297,7 @@ function ViewSingleReview({
   const CustomReviewRenderer = template?.components?.customReviewRenderer as
     | React.FC<CustomReviewRendererProps>
     | undefined;
+
   const [unassignUser] = useMutation(
     async () => {
       if (task) {
