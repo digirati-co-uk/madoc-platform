@@ -229,26 +229,33 @@ export function useTabularCellFlags({
     return cellFlags[getTabularCellFlagKey(tableActiveCell.row, activeCellColumnKey)]?.comment || '';
   }, [activeCellColumnKey, cellFlags, tableActiveCell]);
 
+  const onToggleCellFlag = useCallback(
+    (rowIndex: number, columnKey: string) => {
+      const key = getTabularCellFlagKey(rowIndex, columnKey);
+      const next = { ...cellFlags };
+
+      if (next[key]) {
+        delete next[key];
+      } else {
+        next[key] = {
+          rowIndex,
+          columnKey,
+          flaggedAt: new Date().toISOString(),
+        };
+      }
+
+      persistCellFlags(next);
+    },
+    [cellFlags, persistCellFlags]
+  );
+
   const onToggleActiveCellFlag = useCallback(() => {
     if (!tableActiveCell || !activeCellColumnKey) {
       return;
     }
 
-    const key = getTabularCellFlagKey(tableActiveCell.row, activeCellColumnKey);
-    const next = { ...cellFlags };
-
-    if (next[key]) {
-      delete next[key];
-    } else {
-      next[key] = {
-        rowIndex: tableActiveCell.row,
-        columnKey: activeCellColumnKey,
-        flaggedAt: new Date().toISOString(),
-      };
-    }
-
-    persistCellFlags(next);
-  }, [activeCellColumnKey, cellFlags, persistCellFlags, tableActiveCell]);
+    onToggleCellFlag(tableActiveCell.row, activeCellColumnKey);
+  }, [activeCellColumnKey, onToggleCellFlag, tableActiveCell]);
 
   const onRemoveFlag = useCallback(
     (rowIndex: number, columnKey: string) => {
@@ -339,6 +346,7 @@ export function useTabularCellFlags({
     activeCellComment,
     flaggedCells,
     isCellFlagged,
+    onToggleCellFlag,
     onToggleActiveCellFlag,
     onUpdateActiveCellComment,
     onFocusFlaggedCell,

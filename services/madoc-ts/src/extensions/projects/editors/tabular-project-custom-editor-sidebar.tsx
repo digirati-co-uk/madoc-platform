@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { EmptyState } from '@/frontend/shared/layout/EmptyState';
 import { LockIcon } from '@/frontend/shared/icons/LockIcon';
 import { ModelDocumentIcon } from '@/frontend/shared/icons/ModelDocumentIcon';
@@ -57,6 +57,7 @@ type HistoricalTabularFlagItem = {
 type TabularProjectCustomEditorSidebarProps = {
   isPanelOpen: boolean;
   onPanelOpenChange: (isOpen: boolean) => void;
+  flagPanelOpenRequestToken?: number;
   activeCell: TabularCellRef | null;
   activeCellColumnKey?: string;
   activeCellColumnLabel?: string;
@@ -344,6 +345,7 @@ function TabularSidebarFlagPanel({
 export function TabularProjectCustomEditorSidebar({
   isPanelOpen,
   onPanelOpenChange,
+  flagPanelOpenRequestToken,
   activeCell,
   activeCellColumnKey,
   activeCellColumnLabel,
@@ -524,6 +526,15 @@ export function TabularProjectCustomEditorSidebar({
   const activePanel = isPanelOpen ? resolvedActivePanel : null;
   const activePanelLabel = activePanel?.label || '';
   const activePanelContent = activePanel?.content || null;
+
+  useEffect(() => {
+    if (!flagPanelOpenRequestToken || flagPanelOpenRequestToken < 1) {
+      return;
+    }
+
+    setActivePanelId('flag-cell');
+    onPanelOpenChange(true);
+  }, [flagPanelOpenRequestToken, onPanelOpenChange]);
 
   return (
     <aside className="flex h-full min-h-0 min-w-0 overflow-hidden bg-white" style={{ height: '100%' }}>

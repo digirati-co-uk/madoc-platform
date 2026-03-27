@@ -42,6 +42,10 @@ type TabularProjectCustomEditorTableProps = {
   addRowFromFooter: () => void;
   removeRowFromFooter: () => void;
   isCellFlagged: (rowIndex: number, columnKey: string) => boolean;
+  enableCellFlagQuickActions?: boolean;
+  canToggleCellFlags?: boolean;
+  onToggleCellFlag?: (rowIndex: number, columnKey: string) => void;
+  onOpenCellReviewPanel?: (next: TabularCellRef) => void;
   containerClassName?: string;
   containerStyle?: React.CSSProperties;
 };
@@ -55,14 +59,43 @@ type TabularGridRow = {
 
 const TABULAR_EDITOR_MIN_ROW_HEIGHT_PX = 60;
 
-function FlaggedCellBadge() {
+type FlagCellButtonProps = {
+  isFlagged: boolean;
+  alwaysVisible: boolean;
+  disabled: boolean;
+  onToggle: () => void;
+};
+
+function FlagCellButton({ isFlagged, alwaysVisible, disabled, onToggle }: FlagCellButtonProps) {
+  const variantClasses = isFlagged
+    ? 'border-red-300 bg-red-100 text-red-700'
+    : 'border-slate-300 bg-white text-slate-600 hover:bg-slate-50';
+  const visibilityClasses = alwaysVisible
+    ? 'pointer-events-auto opacity-100'
+    : 'pointer-events-none opacity-0 group-hover:pointer-events-auto group-hover:opacity-100';
+
   return (
-    <span
-      className="absolute right-2 top-2 rounded border border-red-300 bg-red-100 px-1 text-[10px] font-semibold leading-4 text-red-700"
-      title="Flagged for review"
+    <button
+      type="button"
+      className={`absolute right-2 top-2 z-[1] inline-flex h-6 w-6 items-center justify-center rounded border text-xs transition ${variantClasses} ${visibilityClasses} disabled:cursor-not-allowed disabled:opacity-60`}
+      title={isFlagged ? 'Clear flag' : 'Flag cell for review'}
+      aria-label={isFlagged ? 'Clear flag' : 'Flag cell for review'}
+      disabled={disabled}
+      onMouseDown={event => {
+        event.preventDefault();
+        event.stopPropagation();
+      }}
+      onClick={event => {
+        event.preventDefault();
+        event.stopPropagation();
+        if (disabled) {
+          return;
+        }
+        onToggle();
+      }}
     >
       <FlagIcon className="h-3 w-3" />
-    </span>
+    </button>
   );
 }
 
@@ -83,6 +116,15 @@ type TabularGridCellInputProps = {
   onFocus: () => void;
   onKeyDown: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   isActiveCell: boolean;
+  isFlagged: boolean;
+};
+
+type TabularCellContextMenuState = {
+  x: number;
+  y: number;
+  rowIndex: number;
+  colIndex: number;
+  columnKey: string;
   isFlagged: boolean;
 };
 
@@ -187,6 +229,10 @@ export function TabularProjectCustomEditorTable({
   addRowFromFooter,
   removeRowFromFooter,
   isCellFlagged,
+  enableCellFlagQuickActions = false,
+  canToggleCellFlags = false,
+  onToggleCellFlag,
+  onOpenCellReviewPanel,
   containerClassName,
   containerStyle,
 }: TabularProjectCustomEditorTableProps) {
@@ -202,7 +248,51 @@ export function TabularProjectCustomEditorTable({
   const dataGridRef = useRef<DataGridHandle | null>(null);
   const shouldScrollToNewRowRef = useRef(false);
   const lastScrolledCellKeyRef = useRef<string | null>(null);
+  const contextMenuRef = useRef<HTMLDivElement | null>(null);
   const [tableViewportWidth, setTableViewportWidth] = useState(0);
+  const [cellContextMenu, setCellContextMenu] = useState<TabularCellContextMenuState | null>(null);
+  const closeCellContextMenu = useCallback(() => {
+    setCellContextMenu(null);
+  }, []);
+  const hasInlineFlagToggle = enableCellFlagQuickActions && !!onToggleCellFlag;
+  const hasCellContextActions = enableCellFlagQuickActions && (!!onToggleCellFlag || !!onOpenCellReviewPanel);
+
+  useEffect(() => {
+    if (!hasCellContextActions && cellContextMenu) {
+      closeCellContextMenu();
+    }
+  }, [cellContextMenu, closeCellContextMenu, hasCellContextActions]);
+
+  useEffect(() => {
+    if (!cellContextMenu || typeof window === 'undefined') {
+      return;
+    }
+
+    const handlePointerDown = (event: MouseEvent) => {
+      const target = event.target as Node | null;
+      if (target && contextMenuRef.current?.contains(target)) {
+        return;
+      }
+      closeCellContextMenu();
+    };
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        closeCellContextMenu();
+      }
+    };
+
+    const handleWindowChange = () => closeCellContextMenu();
+
+    window.addEventListener('mousedown', handlePointerDown);
+    window.addEventListener('keydown', handleEscape);
+    window.addEventListener('resize', handleWindowChange);
+    return () => {
+      window.removeEventListener('mousedown', handlePointerDown);
+      window.removeEventListener('keydown', handleEscape);
+      window.removeEventListener('resize', handleWindowChange);
+    };
+  }, [cellContextMenu, closeCellContextMenu]);
 
   useEffect(() => {
     const container = tableScrollRef.current;
@@ -293,6 +383,29 @@ export function TabularProjectCustomEditorTable({
     return true;
   }, [addRowFromFooter, isAddRowDisabled]);
 
+  const openCellContextMenu = useCallback(
+    (
+      event: React.MouseEvent<HTMLElement>,
+      rowIndex: number,
+      colIndex: number,
+      columnKey: string,
+      isFlagged: boolean
+    ) => {
+      event.preventDefault();
+      event.stopPropagation();
+      onActiveCellChange({ row: rowIndex, col: colIndex });
+      setCellContextMenu({
+        x: event.clientX,
+        y: event.clientY,
+        rowIndex,
+        colIndex,
+        columnKey,
+        isFlagged,
+      });
+    },
+    [onActiveCellChange]
+  );
+
   const gridColumns = useMemo<readonly Column<TabularGridRow>[]>(() => {
     return headerColumns.map((column, colIndex) => {
       return {
@@ -332,6 +445,8 @@ export function TabularProjectCustomEditorTable({
           const isActiveRow = tableActiveCell?.row === cell.rowIndex;
           const isActiveCell = isActiveRow && tableActiveCell?.col === colIndex;
           const isFlagged = isCellFlagged(cell.rowIndex, cell.columnKey);
+          const showFlagControl = hasInlineFlagToggle && (isFlagged || isActiveCell);
+          const canToggleThisCell = hasInlineFlagToggle && canToggleCellFlags && !disabled;
 
           const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
             if (isTabularCopyShortcut(event)) {
@@ -388,9 +503,16 @@ export function TabularProjectCustomEditorTable({
 
           return (
             <div
+              className="group"
               id={cell.cellElementId}
               onMouseDown={() => {
                 focusGridInput(row.rowPosition, colIndex, 'end');
+              }}
+              onContextMenu={event => {
+                if (!hasCellContextActions) {
+                  return;
+                }
+                openCellContextMenu(event, cell.rowIndex, colIndex, cell.columnKey, isFlagged);
               }}
               style={{
                 height: '100%',
@@ -399,7 +521,20 @@ export function TabularProjectCustomEditorTable({
                 background: isActiveCell ? '#def3e4' : isFlagged ? '#fef2f2' : isActiveRow ? '#f2fbf4' : '#fff',
               }}
             >
-              {isFlagged ? <FlaggedCellBadge /> : null}
+              {hasInlineFlagToggle ? (
+                <FlagCellButton
+                  isFlagged={isFlagged}
+                  alwaysVisible={showFlagControl}
+                  disabled={!canToggleThisCell}
+                  onToggle={() => {
+                    if (!onToggleCellFlag) {
+                      return;
+                    }
+                    onActiveCellChange({ row: cell.rowIndex, col: colIndex });
+                    onToggleCellFlag(cell.rowIndex, cell.columnKey);
+                  }}
+                />
+              ) : null}
               <TabularGridCellInput
                 inputId={cell.inputId}
                 value={cell.value}
@@ -417,13 +552,18 @@ export function TabularProjectCustomEditorTable({
       } satisfies Column<TabularGridRow>;
     });
   }, [
+    canToggleCellFlags,
     columnWidth,
     disabled,
+    hasCellContextActions,
+    hasInlineFlagToggle,
     focusGridInput,
     gridRows.length,
     headerColumns,
     isCellFlagged,
     onActiveCellChange,
+    onToggleCellFlag,
+    openCellContextMenu,
     requestRowAppendForKeyboard,
     tableActiveCell,
   ]);
@@ -478,7 +618,7 @@ export function TabularProjectCustomEditorTable({
   return (
     <div
       className={joinClasses(
-        'flex min-h-0 min-w-0 flex-col overflow-hidden rounded border border-[#d6d6d6] bg-white',
+        'relative flex min-h-0 min-w-0 flex-col overflow-hidden rounded border border-[#d6d6d6] bg-white',
         containerClassName
       )}
       style={containerStyle}
@@ -541,6 +681,46 @@ export function TabularProjectCustomEditorTable({
             </div>
           ) : null}
           {hasFooterActions ? <div className="flex items-center gap-2">{footerActions}</div> : null}
+        </div>
+      ) : null}
+      {cellContextMenu && hasCellContextActions ? (
+        <div
+          ref={contextMenuRef}
+          role="menu"
+          className="fixed z-[80] min-w-[220px] rounded-md border border-slate-200 bg-white p-1 shadow-lg"
+          style={{
+            left: cellContextMenu.x,
+            top: cellContextMenu.y,
+          }}
+        >
+          <button
+            type="button"
+            role="menuitem"
+            className="w-full rounded px-3 py-2 text-left text-sm text-slate-700 transition-colors hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-60"
+            disabled={disabled || !canToggleCellFlags || !onToggleCellFlag}
+            onClick={() => {
+              if (!onToggleCellFlag) {
+                return;
+              }
+              onToggleCellFlag(cellContextMenu.rowIndex, cellContextMenu.columnKey);
+              closeCellContextMenu();
+            }}
+          >
+            {cellContextMenu.isFlagged ? 'Clear flag' : 'Flag cell for review'}
+          </button>
+          {onOpenCellReviewPanel ? (
+            <button
+              type="button"
+              role="menuitem"
+              className="w-full rounded px-3 py-2 text-left text-sm text-slate-700 transition-colors hover:bg-slate-100"
+              onClick={() => {
+                onOpenCellReviewPanel({ row: cellContextMenu.rowIndex, col: cellContextMenu.colIndex });
+                closeCellContextMenu();
+              }}
+            >
+              Open Cell review panel
+            </button>
+          ) : null}
         </div>
       ) : null}
     </div>

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { NetConfig } from '@/frontend/shared/utility/tabular-types';
+import type { NetConfig, TabularCellRef } from '@/frontend/shared/utility/tabular-types';
 import { DynamicVaultContext } from '@/frontend/shared/capture-models/new/DynamicVaultContext';
 import { RevisionProviderWithFeatures } from '@/frontend/shared/capture-models/new/components/RevisionProviderWithFeatures';
 import { useCaptureModelEditorApi } from '@/frontend/shared/capture-models/new/hooks/use-capture-model-editor-api';
@@ -141,6 +141,7 @@ function TabularProjectCustomEditorContent({
   const table = useCaptureModelEditorApi({ tableProperty: 'rows' });
   const currentRevisionId = Revisions.useStoreState(state => state.currentRevisionId);
   const currentRevisionStatus = Revisions.useStoreState(state => state.currentRevision?.revision.status);
+  const currentRevisionReadMode = Revisions.useStoreState(state => state.currentRevisionReadMode);
   const createNewFieldInstance = Revisions.useStoreActions(actions => actions.createNewFieldInstance);
   const deselectRevision = Revisions.useStoreActions(actions => actions.deselectRevision);
   const removeInstance = Revisions.useStoreActions(actions => actions.removeInstance);
@@ -149,6 +150,7 @@ function TabularProjectCustomEditorContent({
   const [netSyncError, setNetSyncError] = useState<string | null>(null);
   const [successModalState, setSuccessModalState] = useState<'saved' | 'submitted' | null>(null);
   const [rowRemovalWarning, setRowRemovalWarning] = useState<string | null>(null);
+  const [flagPanelOpenRequestToken, setFlagPanelOpenRequestToken] = useState(0);
 
   const isPersisting = lifecycle.phase === 'saving-draft' || lifecycle.phase === 'submitting';
   const isLoading = lifecycle.phase === 'loading' || lifecycle.phase === 'preparing';
@@ -200,6 +202,7 @@ function TabularProjectCustomEditorContent({
     activeCellComment,
     flaggedCells,
     isCellFlagged,
+    onToggleCellFlag,
     onToggleActiveCellFlag,
     onUpdateActiveCellComment,
     onFocusFlaggedCell,
@@ -217,6 +220,12 @@ function TabularProjectCustomEditorContent({
     useLegacyTopLevelLayout,
     removeRowFromFooter,
   });
+
+  const canEditCurrentFlags =
+    canPersistFlags &&
+    !!currentRevisionId &&
+    (currentRevisionStatus === 'draft' || typeof currentRevisionStatus === 'undefined') &&
+    !currentRevisionReadMode;
 
   const isTableEditorReady =
     !isLoading && lifecycle.phase !== 'error' && (table.status === 'ready' || useLegacyTopLevelLayout);
@@ -394,6 +403,14 @@ function TabularProjectCustomEditorContent({
     removeRowAndSyncFlags();
   }, [flaggedCells, getTargetRowForRemoval, removeRowAndSyncFlags]);
 
+  const openCellReviewPanel = useCallback(
+    (nextCell: TabularCellRef) => {
+      setTableActiveCell(nextCell);
+      setFlagPanelOpenRequestToken(previous => previous + 1);
+    },
+    [setTableActiveCell]
+  );
+
   useEffect(() => {
     if (!rowRemovalWarning) {
       return;
@@ -439,6 +456,7 @@ function TabularProjectCustomEditorContent({
             <TabularProjectCustomEditorSidebar
               isPanelOpen={isSidebarPanelOpen}
               onPanelOpenChange={setIsSidebarPanelOpen}
+              flagPanelOpenRequestToken={flagPanelOpenRequestToken}
               activeCell={tableActiveCell}
               activeCellColumnKey={activeCellColumnKey}
               activeCellColumnLabel={activeCellColumnLabel}
@@ -557,6 +575,10 @@ function TabularProjectCustomEditorContent({
                                   addRowFromFooter={addRowFromFooter}
                                   removeRowFromFooter={removeEmptyRowAndSyncFlags}
                                   isCellFlagged={isCellFlagged}
+                                  enableCellFlagQuickActions
+                                  canToggleCellFlags={canEditCurrentFlags}
+                                  onToggleCellFlag={onToggleCellFlag}
+                                  onOpenCellReviewPanel={openCellReviewPanel}
                                 />
                               </div>
                             )}
