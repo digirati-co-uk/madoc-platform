@@ -50,7 +50,6 @@ type HistoricalTabularFlagItem = {
   rowIndex: number;
   columnKey: string;
   columnLabel: string;
-  isVisibleInTable: boolean;
   flaggedAt?: string;
   comment?: string;
 };
@@ -64,7 +63,6 @@ type TabularProjectCustomEditorSidebarProps = {
   activeCellIsFlagged: boolean;
   activeCellComment: string;
   flaggedCells: TabularFlaggedCellItem[];
-  visibleColumnKeys: string[];
   canPersistFlags: boolean;
   onToggleActiveCellFlag: () => void;
   onUpdateActiveCellComment: (nextComment: string) => void;
@@ -91,7 +89,6 @@ type TabularSidebarFlagPanelProps = Pick<
   canEditCurrentFlags: boolean;
   flagEditDisabledMessage?: string;
   historicalFlaggedCells: HistoricalTabularFlagItem[];
-  onFocusHistoricalFlaggedCell: (flag: HistoricalTabularFlagItem) => void;
 };
 
 function TabularSidebarEmptyPanel({ message }: { message: string }) {
@@ -137,10 +134,7 @@ function getFlagsField(document: CaptureModel['document']): BaseField | null {
   return flagsField || null;
 }
 
-function getHistoricalFlaggedCellsFromRevision(
-  revision: RevisionRequest,
-  visibleColumnKeys: Set<string>
-): HistoricalTabularFlagItem[] {
+function getHistoricalFlaggedCellsFromRevision(revision: RevisionRequest): HistoricalTabularFlagItem[] {
   const flagsField = getFlagsField(revision.document);
   if (!flagsField) {
     return [];
@@ -161,7 +155,6 @@ function getHistoricalFlaggedCellsFromRevision(
       rowIndex: flag.rowIndex,
       columnKey: flag.columnKey,
       columnLabel: formatColumnKey(flag.columnKey),
-      isVisibleInTable: visibleColumnKeys.has(flag.columnKey),
       flaggedAt: flag.flaggedAt,
       comment: flag.comment,
     }));
@@ -183,7 +176,6 @@ function TabularSidebarFlagPanel({
   onRemoveFlag,
   onClearAllFlags,
   historicalFlaggedCells,
-  onFocusHistoricalFlaggedCell,
 }: TabularSidebarFlagPanelProps) {
   const hasActiveCell = !!activeCell && !!activeCellColumnKey;
   const activeCellLabel = hasActiveCell
@@ -310,6 +302,7 @@ function TabularSidebarFlagPanel({
         <div className="text-xs font-semibold uppercase tracking-wide text-slate-600">
           Previously flagged ({historicalFlaggedCells.length})
         </div>
+        <div className="mt-2 text-xs text-slate-500">Previously flagged cells are shown for reference only.</div>
 
         {!historicalFlaggedCells.length ? (
           <div className="pt-4 text-sm text-slate-500">
@@ -339,16 +332,6 @@ function TabularSidebarFlagPanel({
                     ) : null}
                   </div>
                 </div>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  <button
-                    type="button"
-                    className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
-                    disabled={!flag.isVisibleInTable}
-                    onClick={() => onFocusHistoricalFlaggedCell(flag)}
-                  >
-                    Go to cell
-                  </button>
-                </div>
               </div>
             ))}
           </div>
@@ -367,7 +350,6 @@ export function TabularProjectCustomEditorSidebar({
   activeCellIsFlagged,
   activeCellComment,
   flaggedCells,
-  visibleColumnKeys,
   canPersistFlags,
   onToggleActiveCellFlag,
   onUpdateActiveCellComment,
@@ -408,8 +390,6 @@ export function TabularProjectCustomEditorSidebar({
 
     return 'This revision is read-only. You can still review current and previous flags below.';
   }, [canPersistFlags, currentRevisionId, currentRevisionReadMode, currentRevisionStatus]);
-  const visibleColumnKeySet = useMemo(() => new Set(visibleColumnKeys), [visibleColumnKeys]);
-
   const historicalFlaggedCells = useMemo(() => {
     const candidateRevisions = [
       ...revisionList.mySubmitted,
@@ -426,7 +406,7 @@ export function TabularProjectCustomEditorSidebar({
     }
 
     return Array.from(uniqueByRevision.values())
-      .flatMap(revision => getHistoricalFlaggedCellsFromRevision(revision, visibleColumnKeySet))
+      .flatMap(revision => getHistoricalFlaggedCellsFromRevision(revision))
       .sort((left, right) => {
         if (left.revisionTitle !== right.revisionTitle) {
           return left.revisionTitle.localeCompare(right.revisionTitle);
@@ -436,30 +416,7 @@ export function TabularProjectCustomEditorSidebar({
         }
         return left.columnKey.localeCompare(right.columnKey);
       });
-  }, [
-    currentRevisionId,
-    revisionList.myAcceptedRevisions,
-    revisionList.myRejected,
-    revisionList.mySubmitted,
-    visibleColumnKeySet,
-  ]);
-
-  const onFocusHistoricalFlaggedCell = useMemo(
-    () => (flag: HistoricalTabularFlagItem) => {
-      const focusCell = () => onFocusFlaggedCell(flag.rowIndex, flag.columnKey);
-
-      if (typeof window === 'undefined') {
-        focusCell();
-        return;
-      }
-
-      const retryDelays = [0, 60, 180, 360];
-      for (const delay of retryDelays) {
-        window.setTimeout(focusCell, delay);
-      }
-    },
-    [onFocusFlaggedCell]
-  );
+  }, [currentRevisionId, revisionList.myAcceptedRevisions, revisionList.myRejected, revisionList.mySubmitted]);
 
   const panels = useMemo<TabularSidebarPanel[]>(
     () => [
@@ -517,7 +474,6 @@ export function TabularProjectCustomEditorSidebar({
             onRemoveFlag={onRemoveFlag}
             onClearAllFlags={onClearAllFlags}
             historicalFlaggedCells={historicalFlaggedCells}
-            onFocusHistoricalFlaggedCell={onFocusHistoricalFlaggedCell}
           />
         ),
       },
@@ -557,7 +513,6 @@ export function TabularProjectCustomEditorSidebar({
       onRemoveFlag,
       onClearAllFlags,
       historicalFlaggedCells,
-      onFocusHistoricalFlaggedCell,
     ]
   );
 
