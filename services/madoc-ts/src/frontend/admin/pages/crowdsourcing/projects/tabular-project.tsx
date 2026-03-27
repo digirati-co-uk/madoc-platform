@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { useDefaultLocale, useSite, useSupportedLocales } from '@/frontend/shared/hooks/use-site';
 import { useApi } from '@/frontend/shared/hooks/use-api';
 import { WidePage } from '@/frontend/shared/layout/WidePage';
-import { AdminHeader } from '../../../molecules/AdminHeader';
 import { madocLazy } from '@/frontend/shared/utility/madoc-lazy';
 import 'iiif-browser/dist/index.css';
 import { TabularWizardHeader } from './tabular-project/components/TabularWizardHeader';
@@ -172,20 +171,6 @@ export const TabularProjectWizard: React.FC = () => {
 
   return (
     <>
-      <AdminHeader
-        breadcrumbs={[
-          { label: t('Site admin'), link: '/' },
-          { label: t('Projects'), link: '/projects' },
-          { label: t('Create project'), link: '/projects/create' },
-          { label: t('Tabular project'), link: '/projects/create/tabular-project', active: true },
-        ]}
-        title={t('Create tabular data project')}
-        subtitle={t(
-          'Build a tabular capture model to support transcribing data for your project, using a table structure'
-        )}
-        noMargin
-      />
-
       <TabularWizardHeader
         t={t}
         steps={controller.steps}

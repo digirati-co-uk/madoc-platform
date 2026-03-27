@@ -4,10 +4,14 @@ import { ModalButton } from '@/frontend/shared/components/Modal';
 import { TabularSplitView } from '@/frontend/shared/components/TabularSplitView';
 import { BrowserComponent } from '@/frontend/shared/utility/browser-component';
 import { Button, ButtonRow, TinyButton } from '@/frontend/shared/navigation/Button';
+import { PanIcon } from '@/frontend/shared/icons/PanIcon';
+import { LineIcon } from '@/frontend/shared/icons/LineIcon';
+import { CusorIcon } from '@/frontend/shared/icons/CursorIcon';
 import { TabularHeadingsTable } from '../../../../../components/tabular/cast-a-net/TabularHeadingsTable';
 import type { NetConfig } from '../../../../../components/tabular/cast-a-net/types';
 import { TABULAR_WIZARD_CAST_A_NET_ROWS } from '../constants';
 import type { CastANetStepComponentProps } from '../types';
+import CastNetIcon from '@/frontend/shared/icons/CastNetIcon';
 
 interface TabularProjectNetStepProps {
   t: TFunction;
@@ -62,22 +66,40 @@ export function TabularProjectNetStep(props: TabularProjectNetStepProps) {
             <div className="text-2xl font-light mb-1">{t('Cast a net')}</div>
             <hr />
             <div className="mt-1  pt-4">
-              <div className="rounded border border-[#ced8ff] bg-[#e8edff] p-3 text-sm leading-[1.35] text-[#1f2d5a]">
-                {t(
-                  'Align the tabular net so that it aligns with the table in the example image. Start by aligning the header (pink row) with the headings defined in the previous step.'
-                )}
-                <br />
-                <br />
-                {t('Use the non-editable table below as reference for your row and column layout.')}
-                <br />
-                <br />
-                {t('Hold ')}
-                <small>ALT+SHIFT</small> {t('to move the whole tabular net. ')}
-                {t('Hold ')}
-                <small>SHIFT</small>{' '}
-                {t(
-                  'to click and select multiple row(s) or multiple column(s). Once selected, click on one of the selected lines to move them together.'
-                )}
+              <div className="rounded border border-[#ced8ff] bg-[#e8edff] p-3 text-[#1f2d5a]">
+                <div className="grid gap-3 text-sm leading-[1.35]">
+                  <div>
+                    <div className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-[#3d4f88]">
+                      <CastNetIcon aria-hidden className="h-4 w-4" />
+                      {t('Align grid')}
+                    </div>
+                    <div className="mt-1">
+                      {t(
+                        'Align the grid to the table in your reference image. Match the pink header row to the headings from the previous step.'
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="border-t border-[#ced8ff] pt-2">
+                    <div className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-[#3d4f88]">
+                      <LineIcon aria-hidden className="h-3 w-3" />
+                      {t('Reference table')}
+                    </div>
+                    <div className="mt-1">{t('Use the table below as a read-only layout reference.')}</div>
+                  </div>
+
+                  <div className="border-t border-[#ced8ff] pt-2">
+                    <div className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-[#3d4f88]">
+                      <CusorIcon aria-hidden className="h-3 w-3" />
+                      {t('Keyboard shortcuts')}
+                    </div>
+                    <div className="mt-1">
+                      {t(
+                        'Hold ALT+SHIFT to move the full grid. Hold SHIFT to select multiple rows or columns, then drag one selected line to move them together.'
+                      )}
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
             <div className="flex flex-col items-start gap-2 my-2">
@@ -135,7 +157,7 @@ export function TabularProjectNetStep(props: TabularProjectNetStepProps) {
           />
         </div>
       ) : (
-        <div className="p-3 text-[13px]">{t('Select a reference canvas to use Cast a net.')}</div>
+        <div className="p-3 text-[13px]">{t('Select a reference canvas to start Cast a net.')}</div>
       )}
       <ButtonRow>
         <Button type="button" onClick={onCancel}>

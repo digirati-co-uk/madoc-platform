@@ -4,10 +4,11 @@ import { CanvasPanel, SimpleViewerProvider } from 'react-iiif-vault';
 import { CastANetOverlayAtlas } from './CastANetOverlayAtlas';
 import { buildCastANetStructure } from './CastANetStructure';
 import { FollowActiveCellOnCanvas, type RuntimeWithViewport } from './FollowActiveCellOnCanvas';
-import { OpacityIcon } from '../../../../shared/icons/OpacityIcon';
+import { OpacityIcon } from '@/frontend/shared/icons/OpacityIcon';
 import { TabularCanvasViewportControls } from '../../../../shared/components/TabularCanvasViewportControls';
 import { CanvasViewerButton } from '../../../../shared/atoms/CanvasViewerGrid';
 import { ArrowDownIcon } from '../../../../shared/icons/ArrowDownIcon';
+import { PanIcon } from '../../../../shared/icons/PanIcon';
 import { resizeAtlasRuntime } from '../../../../shared/utility/resize-atlas-runtime';
 import { NET_DIM_STEP, NET_MAX_DIM_OPACITY, clampDimOpacity, dimOpacityToPercent } from './utils';
 import './CastANetCanvas.css';
@@ -54,6 +55,7 @@ export const CastANetCanvas: React.FC<CastANetCanvasProps> = ({
   const runtime = useRef<RuntimeWithViewport | null>(null);
   const [internalDimOpacity, setInternalDimOpacity] = useState(0);
   const [runtimeTick, setRuntimeTick] = useState(0);
+  const [isPreviewZoomTrackingEnabled, setIsPreviewZoomTrackingEnabled] = useState(true);
   const [overlayRetryToken, setOverlayRetryToken] = useState(0);
   const overlayRetryCountRef = useRef(0);
   const missingOverlayTicksRef = useRef(0);
@@ -93,6 +95,13 @@ export const CastANetCanvas: React.FC<CastANetCanvasProps> = ({
     overlayRetryCountRef.current = 0;
     setOverlayRetryToken(0);
   }, [viewerBaseKey, canvasId, cancelInitialZoomRetry]);
+
+  useEffect(() => {
+    if (!previewOverlayOnly) {
+      return;
+    }
+    setIsPreviewZoomTrackingEnabled(true);
+  }, [previewOverlayOnly, viewerBaseKey]);
 
   useEffect(() => {
     return () => {
@@ -402,6 +411,20 @@ export const CastANetCanvas: React.FC<CastANetCanvasProps> = ({
         zoomOutDisabled={disabled}
         zoomInDisabled={disabled}
         className="!right-3 !top-3 !z-50"
+        leadingControls={
+          previewOverlayOnly ? (
+            <CanvasViewerButton
+              type="button"
+              onClick={() => setIsPreviewZoomTrackingEnabled(enabled => !enabled)}
+              data-active={isPreviewZoomTrackingEnabled}
+              aria-label="Toggle zoom tracking"
+              aria-pressed={isPreviewZoomTrackingEnabled}
+              title={isPreviewZoomTrackingEnabled ? 'Disable zoom tracking' : 'Enable zoom tracking'}
+            >
+              <PanIcon />
+            </CanvasViewerButton>
+          ) : undefined
+        }
       />
       {showVerticalNudgeControls && (onNudgeUp || onNudgeDown) ? (
         <div className="absolute left-3 top-3 z-50 flex flex-col gap-2">
@@ -441,7 +464,7 @@ export const CastANetCanvas: React.FC<CastANetCanvasProps> = ({
             runtimeTick={runtimeTick}
             value={value}
             activeCell={activeCell}
-            enabled={previewOverlayOnly && !!activeCell}
+            enabled={previewOverlayOnly && isPreviewZoomTrackingEnabled && !!activeCell}
           />
           <CanvasPanel.RenderCanvas>
             <CastANetOverlayAtlas

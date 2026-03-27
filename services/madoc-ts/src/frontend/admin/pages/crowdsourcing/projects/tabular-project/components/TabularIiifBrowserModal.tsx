@@ -88,18 +88,12 @@ export function TabularIiifBrowserModal(props: TabularIiifBrowserModalProps) {
         </button>
         {showCanvasHelp ? (
           <div id={canvasHelpPanelId} className="grid gap-1.5">
+            <div className="text-xs text-[#1f2d5a]/90">{t('1. Search by title or keyword in Madoc.')}</div>
+            <div className="text-xs text-[#1f2d5a]/90">{t('2. Paste a IIIF URI to open external content.')}</div>
             <div className="text-xs text-[#1f2d5a]/90">
-              {t('1. Use the browser bar to search in Madoc by title or keyword.')}
+              {t('3. Open a collection or manifest, then select a canvas.')}
             </div>
-            <div className="text-xs text-[#1f2d5a]/90">
-              {t('2. Use the browser bar to paste a IIIF URI for items outwith Madoc.')}
-            </div>
-            <div className="text-xs text-[#1f2d5a]/90">
-              {t('3. Double-click collections or manifests to navigate, then select a canvas.')}
-            </div>
-            <div className="text-xs text-[#1f2d5a]/90">
-              {t('4. Click "Use selected canvas" to confirm your choice.')}
-            </div>
+            <div className="text-xs text-[#1f2d5a]/90">{t('4. Click "Use selected canvas".')}</div>
           </div>
         ) : null}
       </div>

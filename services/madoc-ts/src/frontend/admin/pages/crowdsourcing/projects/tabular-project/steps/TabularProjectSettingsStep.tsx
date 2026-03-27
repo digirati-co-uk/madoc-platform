@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, type ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import type { TFunction } from 'i18next';
 import { ErrorMessage } from '@/frontend/shared/callouts/ErrorMessage';
 import { Button, ButtonRow, TinyButton } from '@/frontend/shared/navigation/Button';
@@ -23,8 +23,6 @@ interface TabularProjectSettingsStepProps {
   onCancel: () => void;
 }
 
-const URI_COPY_TIMEOUT = 1800;
-
 function compactUri(value: string) {
   const startLength = 30;
   const endLength = 20;
@@ -38,59 +36,35 @@ function compactUri(value: string) {
 
 function UriField(props: { label: string; value?: string; t: TFunction }) {
   const { label, value, t } = props;
-  const [copyState, setCopyState] = useState<'idle' | 'copied' | 'error'>('idle');
-
-  useEffect(() => {
-    if (copyState !== 'copied' || typeof window === 'undefined') {
-      return;
-    }
-
-    const timeout = window.setTimeout(() => setCopyState('idle'), URI_COPY_TIMEOUT);
-    return () => window.clearTimeout(timeout);
-  }, [copyState]);
-
-  const onCopy = useCallback(async () => {
-    if (!value) {
-      return;
-    }
-
-    if (typeof navigator === 'undefined' || !navigator.clipboard?.writeText) {
-      setCopyState('error');
-      return;
-    }
-
-    try {
-      await navigator.clipboard.writeText(value);
-      setCopyState('copied');
-    } catch {
-      setCopyState('error');
-    }
-  }, [value]);
 
   if (!value) {
     return null;
   }
 
+  const canOpenUri = /^https?:\/\//i.test(value);
+
   return (
     <div className="grid gap-1">
       <div className="text-[11px] font-semibold uppercase tracking-wide text-[#1f2d5a]/80">{label}</div>
-      <button
-        type="button"
-        onClick={onCopy}
-        title={value}
-        aria-label={t('Copy URI')}
-        className="group flex min-h-[30px] w-full items-center gap-2 rounded border border-[#cfd6e5] bg-white/95 px-2 py-1 text-left text-[11px] text-[#1f2d5a] hover:bg-white"
-      >
-        <span className="min-w-0 flex-1 truncate">{compactUri(value)}</span>
-        <span className="inline-flex h-5 w-5 items-center justify-center rounded border border-[#d4d6df] bg-white text-[#36507f] group-hover:bg-[#edf2ff]">
-          <LinkIcon className="text-[12px]" />
-        </span>
-      </button>
-      {copyState === 'copied' ? (
-        <div className="text-[10px] text-[#166534]">{t('Copied to clipboard')}</div>
-      ) : copyState === 'error' ? (
-        <div className="text-[10px] text-[#b91c1c]">{t('Clipboard unavailable. Copy manually.')}</div>
-      ) : null}
+      {canOpenUri ? (
+        <a
+          href={value}
+          target="_blank"
+          rel="noreferrer"
+          aria-label={t('Open URI')}
+          title={value}
+          className="group inline-flex min-w-0 w-full items-center gap-1.5 rounded border border-transparent px-1.5 py-1 text-[11px] font-medium text-[#2a4178] hover:border-[#d7deef] hover:bg-[#edf2ff]/70 hover:text-[#17306f] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#4265e9]"
+        >
+          <span className="min-w-0 truncate underline decoration-transparent underline-offset-2 group-hover:decoration-current">
+            {compactUri(value)}
+          </span>
+          <LinkIcon className="shrink-0 text-[13px] opacity-65 group-hover:opacity-100" />
+        </a>
+      ) : (
+        <div title={value} className="min-w-0 truncate text-[11px] text-[#1f2d5a]">
+          {compactUri(value)}
+        </div>
+      )}
     </div>
   );
 }
@@ -114,7 +88,7 @@ export function TabularProjectSettingsStep(props: TabularProjectSettingsStepProp
     onCancel,
   } = props;
   const showZoomTrackingHint = enableZoomTracking && !hasImage;
-  const zoomTrackingHint = t('Select a reference canvas to enable zoom tracking and Cast a net.');
+  const zoomTrackingHint = t('Select a reference canvas to continue with zoom tracking.');
   const canOpenCanvasUri = canvasId ? /^https?:\/\//i.test(canvasId) : false;
 
   return (
@@ -123,15 +97,10 @@ export function TabularProjectSettingsStep(props: TabularProjectSettingsStepProp
       <hr className="mb-4" />
 
       <div className="mb-6">
-        <div className="text-md mb-1">
-          {t('' + 'Select to enable the zoom tracking option for' + ' your tabular model')}
-        </div>
+        <div className="text-md mb-1">{t('Enable zoom tracking')}</div>
         <div className="text-sm w-[700px] mb-4 font-light">
           {t(
-            'Zoom tracking enables the application to support contributor users as they' +
-              ' navigate through the tabular data structure. The zoom tracking will  attempt to' +
-              ' move the image focus to reflect the user’s current location  in the table structure.' +
-              ' To provide this option to the user, casting a  grid on a reference image is necessary.'
+            "When enabled, the image follows the contributor's active cell. This requires a reference image and Cast a net setup."
           )}
         </div>
 
@@ -150,9 +119,7 @@ export function TabularProjectSettingsStep(props: TabularProjectSettingsStepProp
           {t('Reference image')} <small> {t('(optional)')}</small>
         </div>
         <div className="text-sm w-[700px] mb-4 font-light">
-          {t(
-            'Select an image from the content which will be used within this tabular data project to help guide configuration of the model in the next steps. Selecting an image from the content is is required when the zoom tracking selection is on; optional when zoom tracking is off.'
-          )}
+          {t('Choose one canvas to guide model setup. Required when zoom tracking is enabled.')}
         </div>
 
         {hasImage ? (
@@ -192,7 +159,7 @@ export function TabularProjectSettingsStep(props: TabularProjectSettingsStepProp
                 </div>
               </div>
               <div className="text-xs text-gray-700">
-                {t('Need a different canvas? Use Browse IIIF resources to select an alternative.')}
+                {t('Need a different canvas? Browse IIIF resources to choose another one.')}
               </div>
               <div>
                 <TinyButton onClick={onClearImageSelection}>{t('Clear selection')}</TinyButton>

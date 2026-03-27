@@ -1,4 +1,4 @@
-import type { ComponentType } from 'react';
+import { useCallback, useState, type ComponentType } from 'react';
 import type { TFunction } from 'i18next';
 import { BrowserComponent } from '@/frontend/shared/utility/browser-component';
 import { Button, ButtonRow } from '@/frontend/shared/navigation/Button';
@@ -8,6 +8,7 @@ interface DefineTabularModelComponentProps {
   value: DefineTabularModelValue;
   onChange: (next: DefineTabularModelValue) => void;
   onModelChange: (res: TabularModelChange) => void;
+  showValidationErrors?: boolean;
   manifestId?: string;
   canvasId?: string;
 }
@@ -18,7 +19,7 @@ interface TabularProjectModelStepProps {
   manifestId?: string;
   canvasId?: string;
   isModelValid: boolean;
-  modelSaved: boolean;
+  modelSaved?: boolean;
   onTabularModelChange: (next: DefineTabularModelValue) => void;
   onModelChange: (res: TabularModelChange) => void;
   onSave: () => void;
@@ -33,13 +34,20 @@ export function TabularProjectModelStep(props: TabularProjectModelStepProps) {
     manifestId,
     canvasId,
     isModelValid,
-    modelSaved,
     onTabularModelChange,
     onModelChange,
     onSave,
     onCancel,
     DefineTabularModelComponent,
   } = props;
+  const [showValidationErrors, setShowValidationErrors] = useState(false);
+  const saveAndContinue = useCallback(() => {
+    setShowValidationErrors(true);
+    if (!isModelValid) {
+      return;
+    }
+    onSave();
+  }, [isModelValid, onSave]);
 
   return (
     <div style={{ paddingBottom: 16 }}>
@@ -48,18 +56,17 @@ export function TabularProjectModelStep(props: TabularProjectModelStepProps) {
           value={tabularModel}
           onChange={onTabularModelChange}
           onModelChange={onModelChange}
+          showValidationErrors={showValidationErrors}
           manifestId={manifestId}
           canvasId={canvasId}
         />
       </BrowserComponent>
 
-      {!modelSaved ? <div className="mt-1 text-sm">{t('Save the model to continue.')}</div> : null}
-
       <ButtonRow>
         <Button type="button" onClick={onCancel}>
           {t('Cancel')}
         </Button>
-        <Button $primary disabled={!isModelValid || !modelSaved} onClick={onSave}>
+        <Button $primary onClick={saveAndContinue}>
           {t('Save and continue')}
         </Button>
       </ButtonRow>

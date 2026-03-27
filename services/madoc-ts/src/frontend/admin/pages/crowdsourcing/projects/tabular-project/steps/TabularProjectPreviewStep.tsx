@@ -4,11 +4,14 @@ import { ModalButton } from '@/frontend/shared/components/Modal';
 import { TabularSplitView } from '@/frontend/shared/components/TabularSplitView';
 import { Button, ButtonRow } from '@/frontend/shared/navigation/Button';
 import { BrowserComponent } from '@/frontend/shared/utility/browser-component';
-import { ArrowForwardIcon } from '@/frontend/shared/icons/ArrowForwardIcon';
 import { LinkIcon } from '@/frontend/shared/icons/LinkIcon';
+import ResizeHandleIcon from '@/frontend/shared/icons/ResizeHandleIcon';
+import { SettingsIcon } from '@/frontend/shared/icons/SettingsIcon';
 import { TabularPreviewTable } from '../../../../../components/tabular/cast-a-net/TabularPreviewTable';
 import type { NetConfig, TabularCellRef } from '@/frontend/shared/utility/tabular-types';
 import type { CastANetStepComponentProps } from '../types';
+import { PanIcon } from '@/frontend/shared/icons/PanIcon';
+import { ArrowDownIcon } from '@/frontend/shared/icons/ArrowDownIcon';
 
 const PREVIEW_NUDGE_STEP = 0.25;
 const CONTRIBUTOR_CANVAS_BACKGROUND = '#E4E7F0';
@@ -96,23 +99,13 @@ export function TabularProjectPreviewStep(props: TabularProjectPreviewStepProps)
           {shareUrl ? (
             <div className="my-3">
               <div className="flex items-center gap-2">
-                <a
-                  href={shareUrl}
-                  target="_blank"
+                <button
+                  onClick={onCopyShareLink}
                   rel="noreferrer"
-                  aria-label={t('Open shared outline in a new tab')}
+                  aria-label={t('copy project share link to clipboard')}
                   className="group inline-flex min-w-0 flex-1 items-center justify-center gap-1.5 rounded border border-[#9fb4e8] bg-[#edf2ff] px-2.5 py-1.5 text-xs font-semibold text-[#17306f] hover:bg-[#e2ebff] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#4265e9]"
                 >
-                  <span>{t('Open shared outline')}</span>
-                  <ArrowForwardIcon className="text-[13px] transition-transform group-hover:translate-x-0.5" />
-                </a>
-                <button
-                  type="button"
-                  onClick={onCopyShareLink}
-                  title={t('Copy share link')}
-                  className="inline-flex h-[30px] w-[30px] shrink-0 cursor-pointer items-center justify-center rounded border border-[#d4d6df] bg-white text-[#283452]"
-                >
-                  <LinkIcon className="text-[18px]" />
+                  <span>{t('Copy share link')}</span> <LinkIcon className="text-[18px]" />
                 </button>
               </div>
               {shareCopied === 'copied' ? (
@@ -126,19 +119,33 @@ export function TabularProjectPreviewStep(props: TabularProjectPreviewStepProps)
 
           <div className="mb-3 rounded border border-[#ced8ff] bg-[#e8edff] p-3 text-[#1f2d5a]">
             <div className="text-sm leading-[1.35]">
-              {t(
-                'Review all project details, capture model data, and cast-a-net contract before creating the project.'
-              )}
+              {t('Check your project details, model, and grid before creating the project.')}
             </div>
             {canTrackPreviewOnCanvas ? (
-              <div className="mt-2 border-t border-[#ced8ff] pt-2">
-                <div className="text-[11px] font-semibold uppercase tracking-wide text-[#3d4f88]">
-                  {t('Nudge actions')}
+              <div className="mt-2 grid gap-3 border-t border-[#ced8ff] pt-2">
+                <div>
+                  <div className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-[#3d4f88]">
+                    <div className="flex-col">
+                      <ArrowDownIcon aria-hidden className="h-3 w-3 transform rotate-180" />
+                      <ArrowDownIcon aria-hidden className="h-3 w-3" />
+                    </div>
+                    {t('Nudge actions')}
+                  </div>
+                  <div className="mt-1 text-sm leading-[1.35]">
+                    {t('Use Nudge to fine-tune row alignment. Saved nudges improve zoom tracking for contributors.')}
+                  </div>
                 </div>
-                <div className="mt-1 text-sm leading-[1.35]">
-                  {t(
-                    'Use the Nudge options to push the rows to align more correctly with the image. Any changes you make using the Nudge options will be saved, and used to help position the zoom tracking display for contributor users.'
-                  )}
+
+                <div>
+                  <div className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-[#3d4f88]">
+                    <PanIcon aria-hidden className="h-4 w-4" />
+                    {t('Zoom tracking toggle')}
+                  </div>
+                  <div className="mt-1 text-sm leading-[1.35]">
+                    {t(
+                      'Nudge controls appear only when Use zoom tracking is enabled. To change this, go back to Additional settings.'
+                    )}
+                  </div>
                 </div>
               </div>
             ) : null}

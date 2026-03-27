@@ -5,7 +5,6 @@ import type { DefineTabularModelValue, TabularFieldType, TabularModelChange, Tab
 import { buildTabularModelPayload, validateTabularModel } from './TabularModel';
 import { TabularHeadingsTable } from './TabularHeadingsTable';
 import { TabularColumnEditor } from './TabularColumnEditor';
-import { Button } from '@/frontend/shared/navigation/Button';
 import { TabularCanvasViewportControls } from '@/frontend/shared/components/TabularCanvasViewportControls';
 import { AddIcon } from '@/frontend/shared/icons/AddIcon';
 import { MinusIcon } from '@/frontend/shared/icons/MinusIcon';
@@ -123,6 +122,7 @@ export function DefineTabularModel(props: {
   value: DefineTabularModelValue;
   onChange: (next: DefineTabularModelValue) => void;
   onModelChange?: (res: TabularModelChange) => void;
+  showValidationErrors?: boolean;
   manifestId?: string;
   canvasId?: string;
   minColumns?: number;
@@ -138,6 +138,7 @@ export function DefineTabularModel(props: {
     value,
     onChange,
     onModelChange,
+    showValidationErrors = false,
     manifestId,
     canvasId,
     minColumns = 1,
@@ -159,7 +160,6 @@ export function DefineTabularModel(props: {
   const safePreviewRows = Math.max(minPreviewRows, Math.min(maxPreviewRows, Math.floor(requestedPreviewRows || 0)));
   const [activeColumn, setActiveColumn] = useState(0);
   const [imageHeight, setImageHeight] = useState(300);
-  const [attemptedSave, setAttemptedSave] = useState(false);
   const [isModelHelpExpanded, setIsModelHelpExpanded] = useState(false);
   const [isResizeHandleHover, setIsResizeHandleHover] = useState(false);
   const tableScrollRef = useRef<HTMLDivElement>(null);
@@ -218,8 +218,6 @@ export function DefineTabularModel(props: {
     [safeHeadings, safeColumns, safeFieldTypes, minColumns, maxColumns, maxHeadingLength]
   );
 
-  const canSaveModel = issues.length === 0;
-  const isModelSaved = canSaveModel && safeSaved.length > 0 && safeSaved.every(Boolean);
   const canAddColumns = !disabled && safeColumns < maxColumns;
   const canRemoveColumns = !disabled && safeColumns > minColumns;
 
@@ -317,25 +315,6 @@ export function DefineTabularModel(props: {
     });
   };
 
-  const saveModel = () => {
-    setAttemptedSave(true);
-    if (!canSaveModel) {
-      return;
-    }
-
-    const nextValue = {
-      ...value,
-      columns: safeColumns,
-      previewRows: safePreviewRows,
-      headings: safeHeadings,
-      fieldTypes: safeFieldTypes,
-      helpText: safeHelpText,
-      saved: buildSavedFlags(safeColumns, true),
-    };
-
-    onChange(nextValue);
-  };
-
   const addColumn = () => {
     if (!canAddColumns) {
       return;
@@ -422,7 +401,7 @@ export function DefineTabularModel(props: {
 
   return (
     <div className="flex w-full flex-col gap-3">
-      {attemptedSave && issues.length ? (
+      {showValidationErrors && issues.length ? (
         <div className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-[10px] text-[13px] text-rose-800">
           {topErrorMessage}
         </div>
@@ -446,21 +425,22 @@ export function DefineTabularModel(props: {
             </button>
             {isModelHelpExpanded ? (
               <div id="tabular-model-help" className="mt-2">
-                <ul className="list-disc space-y-1 pl-4 text-xs text-[#1f2d5a]">
-                  <li>{t('* indicates required fields.')}</li>
-                  <li>{t('Heading length up to {{maxHeadingLength}} characters.', { maxHeadingLength })}</li>
-                  <li>{t('Min columns {{minColumns}}, max columns {{maxColumns}}.', { minColumns, maxColumns })}</li>
-                  <li>{t('Each heading label must be unique in this tabular model.')}</li>
-                  <li>
-                    {t(
-                      'Remove column in heading metadata removes the selected column. The minus button beside the table removes the last column only.'
-                    )}
-                  </li>
-                </ul>
-                <div className="mt-2 text-sm">
-                  {t(
-                    'Click a cell to add a heading. Drag heading cells to reposition columns. Any non-empty cell is treated as a header cell in your capture model.'
-                  )}
+                <div className="grid gap-1">
+                  <ul className="list-disc space-y-1 pl-4 text-sm text-[#1f2d5a]">
+                    <li>{t('Headings are limited to {{maxHeadingLength}} characters.', { maxHeadingLength })}</li>
+                    <li>{t('Use between {{minColumns}} and {{maxColumns}} columns.', { minColumns, maxColumns })}</li>
+                    <li>{t('Each heading must be unique.')}</li>
+                  </ul>
+                </div>
+                <div className="mt-3 grid gap-1">
+                  <div className="text-[11px] font-semibold uppercase tracking-wide text-[#3d4f88]">
+                    {t('Editing and next steps')}
+                  </div>
+                  <ul className="list-disc space-y-1 pl-4 text-sm text-[#1f2d5a]">
+                    <li>{t('Click a header cell to edit it.')}</li>
+                    <li>{t('Drag header cells to reorder columns.')}</li>
+                    <li>{t('Next step: Cast a net to align this model to the table in your reference image.')}</li>
+                  </ul>
                 </div>
               </div>
             ) : null}
@@ -475,23 +455,15 @@ export function DefineTabularModel(props: {
                 helpText: safeHelpText[activeColumn] ?? '',
               }}
               disabled={disabled}
-              error={attemptedSave ? activeError : undefined}
+              error={showValidationErrors ? activeError : undefined}
               maxHeadingLength={maxHeadingLength}
               onChange={next => updateColumn(activeColumn, next)}
               onRemove={() => removeColumnAt(activeColumn)}
               removeDisabled={safeColumns <= minColumns}
             />
             <div className="mt-2 text-[11px] leading-4 text-slate-600">
-              {t(
-                'Remove column removes the selected column in the heading metadata. The minus button beside the table removes the last column only.'
-              )}
+              {t('Remove column deletes the selected column. The table minus button removes only the last column.')}
             </div>
-          </div>
-
-          <div className="mt-3 flex justify-start">
-            <Button $primary type="button" onClick={saveModel} disabled={disabled}>
-              {isModelSaved ? 'Model saved' : 'Save model'}
-            </Button>
           </div>
         </div>
 
@@ -542,7 +514,7 @@ export function DefineTabularModel(props: {
                   onColumnsReorder={reorderColumns}
                   canAddColumnFromKeyboard={canAddColumns}
                   onAddColumnFromKeyboard={addColumn}
-                  issues={attemptedSave ? issues : []}
+                  issues={showValidationErrors ? issues : []}
                   disabled={disabled}
                 />
               </div>

@@ -14,6 +14,7 @@ import {
   TABULAR_WIZARD_PREVIEW_SPLIT_GAP,
   TABULAR_WIZARD_PREVIEW_SPLIT_TOTAL_HEIGHT,
 } from '../constants';
+import { buildTabularModelPayload } from '../../../../../components/tabular/cast-a-net/TabularModel';
 import { buildTabularProjectSetupPayload } from '../../../../../components/tabular/cast-a-net/CastANetStructure';
 import type {
   DefineTabularModelValue,
@@ -78,6 +79,7 @@ const PREVIEW_CANVAS_MAX_HEIGHT =
 const MAX_MADOC_COLLECTION_HOME_PAGES = 20;
 const MAX_MADOC_MANIFEST_HOME_PAGES = 40;
 const IIIF_HOME_LOCAL_STORAGE_KEY = 'iiif-browser-tabular-project-v2';
+const TABULAR_DEFAULT_FIELD_TYPE = 'text-field';
 
 const buildEvenLinePositions = (count: number): number[] => {
   const safeCount = Math.max(1, Math.floor(count || 1));
@@ -538,14 +540,19 @@ export function useTabularProjectController(options: UseTabularProjectController
     setupPayload?.structure?.columnWidthsPctOfPage?.length &&
     setupPayload?.structure?.rowHeightsPctOfPage?.length
   );
+  const canFollowPreviewOnCanvas = Boolean(
+    hasImage &&
+    setupPayload?.structure?.columnWidthsPctOfPage?.length &&
+    setupPayload?.structure?.rowHeightsPctOfPage?.length
+  );
 
   const previewCanvasActiveCell = useMemo<TabularCellRef | null>(() => {
-    if (!canTrackPreviewOnCanvas) {
+    if (!canFollowPreviewOnCanvas) {
       return null;
     }
 
     return offsetTabularCellRef(previewActiveCell, previewRowOffset);
-  }, [canTrackPreviewOnCanvas, previewActiveCell, previewRowOffset]);
+  }, [canFollowPreviewOnCanvas, previewActiveCell, previewRowOffset]);
 
   const copyShareLink = useCallback(async () => {
     if (!shareUrl) {
@@ -604,9 +611,35 @@ export function useTabularProjectController(options: UseTabularProjectController
   const canRemovePreviewRow = previewTableRowCount > 1;
 
   const moveNextFromModel = useCallback(() => {
-    if (!isModelValid || !modelSaved) {
+    if (!isModelValid) {
       return;
     }
+
+    const nextColumns = Math.max(1, Math.floor(tabularModel.columns || tabularModel.headings?.length || 1));
+    const nextHeadings = Array.from({ length: nextColumns }, (_, index) => tabularModel.headings?.[index] ?? '');
+    const nextFieldTypes = Array.from(
+      { length: nextColumns },
+      (_, index) => tabularModel.fieldTypes?.[index] ?? TABULAR_DEFAULT_FIELD_TYPE
+    );
+    const nextHelpText = Array.from({ length: nextColumns }, (_, index) => tabularModel.helpText?.[index]);
+    const nextSavedFlags = Array.from({ length: nextColumns }, () => true);
+
+    setTabularModel(current => ({
+      ...current,
+      columns: nextColumns,
+      headings: nextHeadings,
+      fieldTypes: nextFieldTypes,
+      helpText: nextHelpText,
+      saved: nextSavedFlags,
+    }));
+
+    setTabularPayload(
+      buildTabularModelPayload(nextHeadings, {
+        fieldTypes: nextFieldTypes,
+        helpText: nextHelpText,
+        saved: nextSavedFlags,
+      })
+    );
 
     if (requiresNetStep) {
       setStep(STEP_NET);
@@ -614,7 +647,7 @@ export function useTabularProjectController(options: UseTabularProjectController
     }
 
     setStep(STEP_PREVIEW);
-  }, [isModelValid, modelSaved, requiresNetStep]);
+  }, [isModelValid, requiresNetStep, tabularModel]);
 
   useEffect(() => {
     if (isProjectCompleted) {
