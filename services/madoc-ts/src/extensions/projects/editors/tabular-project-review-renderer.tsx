@@ -7,11 +7,7 @@ import { FullScreenExitIcon } from '@/frontend/shared/icons/FullScreenExitIcon';
 import FlagIcon from '@/frontend/shared/icons/FlagIcon';
 import { MaximiseWindow } from '@/frontend/shared/layout/MaximiseWindow';
 import { useReviewRendererContext } from '@/frontend/site/pages/tasks/review-renderers/review-renderer-context';
-import {
-  EMPTY_REVIEW_BLOCKING_ISSUES,
-  toReviewBlockingIssueState,
-  type CustomReviewRendererProps,
-} from '@/frontend/site/pages/tasks/review-renderers/types';
+import { type CustomReviewRendererProps } from '@/frontend/site/pages/tasks/review-renderers/types';
 import { useTabularEditorLayout } from './use-tabular-editor-layout';
 import { TabularProjectCustomEditorCanvas } from './tabular-project-custom-editor-canvas';
 import { TabularProjectCustomEditorTable } from './tabular-project-custom-editor-table';
@@ -20,15 +16,10 @@ import {
   type TabularModelColumn,
   type TabularTemplateConfig,
 } from './tabular-project-custom-editor-utils';
-import {
-  detectTabularReviewIssues,
-  isFocusableTabularReviewIssue,
-  type TabularReviewIssue,
-} from './tabular-review-validation';
 import { useTabularCellFlags } from './use-tabular-cell-flags';
 import { useTabularProjectCustomEditorState } from './use-tabular-project-custom-editor-state';
 
-const MAX_BLOCKING_ISSUE_BADGE = 99;
+const MAX_FLAGGED_CELL_BADGE = 99;
 
 function getReviewFlaggedPanelStorageKey(taskId: string) {
   return `tabular-review-flagged-panel-open:${taskId}`;
@@ -140,37 +131,8 @@ function FlaggedCellCard({ flag, linkedCell, canUnflagCell, onFocusCell, onUnfla
   );
 }
 
-type BlockingIssueCardProps = {
-  issue: TabularReviewIssue;
-  onFocusIssue: () => void;
-};
-
-function BlockingIssueCard({ issue, onFocusIssue }: BlockingIssueCardProps) {
-  const canFocusCell = isFocusableTabularReviewIssue(issue);
-
-  if (canFocusCell) {
-    return (
-      <button
-        type="button"
-        className="w-full rounded border border-red-200 bg-red-50 px-3 py-2 text-left text-sm text-red-900 transition-colors hover:bg-red-100"
-        onClick={onFocusIssue}
-      >
-        <div className="font-semibold">{issue.message}</div>
-        <div className="mt-1 text-xs font-medium uppercase tracking-wide text-red-700">Jump to flagged cell</div>
-      </button>
-    );
-  }
-
-  return (
-    <div className="rounded border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-900">
-      <div className="font-semibold">{issue.message}</div>
-    </div>
-  );
-}
-
 export function TabularProjectReviewRenderer(props: CustomReviewRendererProps) {
   const review = useReviewRendererContext();
-  const onBlockingIssuesChange = props.onBlockingIssuesChange;
   const table = useCaptureModelEditorApi({ tableProperty: 'rows' });
   const createNewFieldInstance = Revisions.useStoreActions(actions => actions.createNewFieldInstance);
   const removeInstance = Revisions.useStoreActions(actions => actions.removeInstance);
@@ -218,7 +180,6 @@ export function TabularProjectReviewRenderer(props: CustomReviewRendererProps) {
     tableRows,
     showEmptyTableState,
     useLegacyTopLevelLayout,
-    visibleTableErrors,
     canAddRow,
     canRemoveRow,
     addRowFromFooter,
@@ -300,20 +261,7 @@ export function TabularProjectReviewRenderer(props: CustomReviewRendererProps) {
     [flaggedCells, getFlaggedCellPanelData]
   );
 
-  const blockingIssues = useMemo(
-    () =>
-      detectTabularReviewIssues({
-        visibleTableErrors,
-        flaggedCells: flaggedCellsForPanel.map(({ flag, canFocusCell }) => ({
-          ...flag,
-          canFocusCell,
-        })),
-      }),
-    [flaggedCellsForPanel, visibleTableErrors]
-  );
-  const blockingIssueCount = blockingIssues.length;
   const flaggedCellCount = flaggedCells.length;
-  const blockingIssueState = useMemo(() => toReviewBlockingIssueState(blockingIssueCount), [blockingIssueCount]);
 
   const focusFlaggedCell = useCallback(
     (rowIndex: number, colIndex: number, canFocusCell: boolean) => {
@@ -324,18 +272,6 @@ export function TabularProjectReviewRenderer(props: CustomReviewRendererProps) {
       setTableActiveCell({ row: rowIndex, col: colIndex });
     },
     [setTableActiveCell]
-  );
-
-  const focusBlockingIssue = useCallback(
-    (issue: TabularReviewIssue) => {
-      if (!isFocusableTabularReviewIssue(issue)) {
-        return;
-      }
-
-      const { colIndex, canFocusCell } = getFlaggedCellPanelData(issue.rowIndex, issue.columnKey);
-      focusFlaggedCell(issue.rowIndex, colIndex, canFocusCell);
-    },
-    [focusFlaggedCell, getFlaggedCellPanelData]
   );
 
   const unflagCell = useCallback(
@@ -369,25 +305,7 @@ export function TabularProjectReviewRenderer(props: CustomReviewRendererProps) {
     }
   }, [isFlaggedPanelOpen, reviewTaskId]);
 
-  useEffect(() => {
-    if (!onBlockingIssuesChange) {
-      return;
-    }
-
-    onBlockingIssuesChange(blockingIssueState);
-  }, [blockingIssueState, onBlockingIssuesChange]);
-
-  useEffect(() => {
-    if (!onBlockingIssuesChange) {
-      return;
-    }
-
-    return () => {
-      onBlockingIssuesChange(EMPTY_REVIEW_BLOCKING_ISSUES);
-    };
-  }, [onBlockingIssuesChange]);
-
-  const reviewChecksPanelLabel = `${isFlaggedPanelOpen ? 'Close' : 'Open'} review checks panel`;
+  const flaggedCellsPanelLabel = `${isFlaggedPanelOpen ? 'Close' : 'Open'} flagged cells panel`;
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
@@ -404,15 +322,13 @@ export function TabularProjectReviewRenderer(props: CustomReviewRendererProps) {
                 type="button"
                 className="relative flex h-10 w-10 items-center justify-center rounded border border-slate-300 bg-white text-slate-700 transition-colors hover:bg-slate-50"
                 onClick={() => setIsFlaggedPanelOpen(previous => !previous)}
-                aria-label={reviewChecksPanelLabel}
-                title={reviewChecksPanelLabel}
+                aria-label={flaggedCellsPanelLabel}
+                title={flaggedCellsPanelLabel}
               >
                 <FlagIcon className="h-4 w-4" />
-                {blockingIssueCount ? (
+                {flaggedCellCount ? (
                   <span className="absolute -right-1 -top-1 rounded border border-red-200 bg-red-100 px-1 text-[10px] font-semibold leading-4 text-red-700">
-                    {blockingIssueCount > MAX_BLOCKING_ISSUE_BADGE
-                      ? `${MAX_BLOCKING_ISSUE_BADGE}+`
-                      : blockingIssueCount}
+                    {flaggedCellCount > MAX_FLAGGED_CELL_BADGE ? `${MAX_FLAGGED_CELL_BADGE}+` : flaggedCellCount}
                   </span>
                 ) : null}
               </button>
@@ -421,51 +337,28 @@ export function TabularProjectReviewRenderer(props: CustomReviewRendererProps) {
             {isFlaggedPanelOpen ? (
               <div className="flex min-h-0 min-w-0 flex-1 flex-col">
                 <div className="border-b border-gray-300 px-4 py-3 text-sm font-semibold text-gray-900">
-                  Review checks
+                  Flagged cells
                 </div>
                 <div className="min-h-0 flex-1 overflow-y-auto p-3">
-                  <div>
-                    <div className="mb-2 text-sm font-semibold text-red-900">
-                      Blocking issues ({blockingIssueCount})
+                  <div className="mb-2 text-sm font-semibold text-gray-900">Flagged cells ({flaggedCellCount})</div>
+                  {flaggedCellsForPanel.length ? (
+                    <div className="space-y-2 rounded border border-red-300 bg-red-50 p-2">
+                      {flaggedCellsForPanel.map(({ flag, linkedCell, colIndex, canFocusCell }) => (
+                        <FlaggedCellCard
+                          key={flag.key}
+                          flag={flag}
+                          linkedCell={linkedCell}
+                          canUnflagCell={!isEditingDisabled}
+                          onFocusCell={() => focusFlaggedCell(flag.rowIndex, colIndex, canFocusCell)}
+                          onUnflagCell={() => unflagCell(flag)}
+                        />
+                      ))}
                     </div>
-                    {blockingIssueCount ? (
-                      <div className="space-y-2">
-                        {blockingIssues.map(issue => (
-                          <BlockingIssueCard
-                            key={issue.id}
-                            issue={issue}
-                            onFocusIssue={() => focusBlockingIssue(issue)}
-                          />
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="rounded border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-800">
-                        No blocking issues detected.
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="mt-4">
-                    <div className="mb-2 text-sm font-semibold text-gray-900">Flagged cells ({flaggedCellCount})</div>
-                    {flaggedCellsForPanel.length ? (
-                      <div className="space-y-2 rounded border border-red-300 bg-red-50 p-2">
-                        {flaggedCellsForPanel.map(({ flag, linkedCell, colIndex, canFocusCell }) => (
-                          <FlaggedCellCard
-                            key={flag.key}
-                            flag={flag}
-                            linkedCell={linkedCell}
-                            canUnflagCell={!isEditingDisabled}
-                            onFocusCell={() => focusFlaggedCell(flag.rowIndex, colIndex, canFocusCell)}
-                            onUnflagCell={() => unflagCell(flag)}
-                          />
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="rounded border border-gray-200 bg-white px-3 py-2 text-sm text-gray-500">
-                        No flagged cells in this document.
-                      </div>
-                    )}
-                  </div>
+                  ) : (
+                    <div className="rounded border border-gray-200 bg-white px-3 py-2 text-sm text-gray-500">
+                      No flagged cells in this document.
+                    </div>
+                  )}
                 </div>
               </div>
             ) : null}
