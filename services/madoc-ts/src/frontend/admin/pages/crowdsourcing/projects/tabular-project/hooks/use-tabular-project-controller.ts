@@ -143,6 +143,7 @@ export function useTabularProjectController(options: UseTabularProjectController
   });
   const [tabularPayload, setTabularPayload] = useState<TabularModelPayload | null>(null);
   const [isModelValid, setIsModelValid] = useState(false);
+  const [showModelValidationErrors, setShowModelValidationErrors] = useState(false);
 
   const [netConfig, setNetConfig] = useState<NetConfig>({
     rows: TABULAR_WIZARD_CAST_A_NET_ROWS,
@@ -644,9 +645,11 @@ export function useTabularProjectController(options: UseTabularProjectController
   const canRemovePreviewRow = previewTableRowCount > 1;
 
   const moveNextFromModel = useCallback(() => {
+    setShowModelValidationErrors(true);
     if (!isModelValid) {
       return;
     }
+    setShowModelValidationErrors(false);
 
     const nextColumns = Math.max(1, Math.floor(tabularModel.columns || tabularModel.headings?.length || 1));
     const nextHeadings = Array.from({ length: nextColumns }, (_, index) => tabularModel.headings?.[index] ?? '');
@@ -1009,6 +1012,7 @@ export function useTabularProjectController(options: UseTabularProjectController
     tabularModel,
     setTabularModel,
     isModelValid,
+    showModelValidationErrors,
     onModelChange,
     moveNextFromModel,
 

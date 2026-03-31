@@ -30,11 +30,12 @@ type TabularProjectCustomEditorTableProps = {
   rows: TabularEditorRowModel[];
   showEmptyState: boolean;
   showRowControls?: boolean;
+  rowControlsAlignment?: 'center' | 'start';
   showAddRowControl?: boolean;
   showRemoveRowControl?: boolean;
   addRowLabel?: string;
   removeRowLabel?: string;
-  footerActions?: React.ReactNode;
+  tableActions?: React.ReactNode;
   tableActiveCell: TabularCellRef | null;
   onActiveCellChange: (next: TabularCellRef | null) => void;
   disabled: boolean;
@@ -293,11 +294,12 @@ export function TabularProjectCustomEditorTable({
   rows,
   showEmptyState,
   showRowControls = true,
+  rowControlsAlignment = 'center',
   showAddRowControl = true,
   showRemoveRowControl = true,
   addRowLabel = 'Add new row +',
   removeRowLabel = 'Remove row -',
-  footerActions,
+  tableActions,
   tableActiveCell,
   onActiveCellChange,
   disabled,
@@ -316,9 +318,14 @@ export function TabularProjectCustomEditorTable({
   const isRemoveRowDisabled = disabled || !canRemoveRow;
   const isAddRowDisabled = disabled || !canAddRow;
   const hasAnyRowControl = showRowControls && (showAddRowControl || showRemoveRowControl);
-  const hasFooterActions = !!footerActions;
-  const footerJustifyClass =
-    hasAnyRowControl && hasFooterActions ? 'justify-between' : hasFooterActions ? 'justify-end' : 'justify-center';
+  const hasTableActions = !!tableActions;
+  const topBarJustifyClass = hasAnyRowControl && hasTableActions
+    ? 'justify-between'
+    : hasTableActions
+      ? 'justify-end'
+      : rowControlsAlignment === 'start'
+        ? 'justify-start'
+        : 'justify-center';
   const headerRowHeight = TABULAR_GRID_HEADER_ROW_HEIGHT_PX;
   const rowHeight = Math.max(TABULAR_GRID_ROW_HEIGHT_PX, 60);
   const tableScrollRef = useRef<HTMLDivElement | null>(null);
@@ -709,6 +716,41 @@ export function TabularProjectCustomEditorTable({
       style={containerStyle}
     >
       <TabularDataGridStyles scopeClassName="tabular-contributor-rdg" disableRowHover />
+      {hasAnyRowControl || hasTableActions ? (
+        <div
+          className={`sticky top-0 z-[2] flex flex-none items-center gap-2 border-b border-[#d6d6d6] bg-[#f1f5f9] px-3 py-2 ${topBarJustifyClass}`}
+        >
+          {hasAnyRowControl ? (
+            <div className="flex items-center justify-center gap-2">
+              {showRemoveRowControl ? (
+                <Button
+                  $error
+                  type="button"
+                  onClick={removeRowFromFooter}
+                  disabled={isRemoveRowDisabled}
+                  title="Remove row"
+                  className="!min-w-28 justify-center !px-3 !py-1.5 !text-sm !rounded-md font-semibold shadow-sm"
+                >
+                  {removeRowLabel}
+                </Button>
+              ) : null}
+              {showAddRowControl ? (
+                <Button
+                  $primary
+                  type="button"
+                  onClick={handleAddRowFromFooter}
+                  disabled={isAddRowDisabled}
+                  title="Add new row"
+                  className="!min-w-28 justify-center !px-3 !py-1.5 !text-sm !rounded-md font-semibold shadow-sm"
+                >
+                  {addRowLabel}
+                </Button>
+              ) : null}
+            </div>
+          ) : null}
+          {hasTableActions ? <div className="flex items-center gap-2">{tableActions}</div> : null}
+        </div>
+      ) : null}
       <div ref={tableScrollRef} className="min-h-0 min-w-0 flex-1 overflow-hidden">
         <DataGrid
           ref={dataGridRef}
@@ -731,41 +773,6 @@ export function TabularProjectCustomEditorTable({
       {showEmptyState ? (
         <div className="border-t border-[#d6d6d6] px-3 py-6 text-center text-sm text-gray-600">
           No rows yet. Use + to create the first row.
-        </div>
-      ) : null}
-      {hasAnyRowControl || hasFooterActions ? (
-        <div
-          className={`flex flex-none items-center gap-2 border-t border-[#d6d6d6] bg-[#f1f5f9] px-3 py-2 ${footerJustifyClass}`}
-        >
-          {hasAnyRowControl ? (
-            <div className="flex items-center justify-center gap-2">
-              {showRemoveRowControl ? (
-                <Button
-                  $error
-                  type="button"
-                  onClick={removeRowFromFooter}
-                  disabled={isRemoveRowDisabled}
-                  title="Remove row"
-                  className="!min-w-28 justify-center !px-3 !py-1 !text-xs !rounded-md font-semibold shadow-sm"
-                >
-                  {removeRowLabel}
-                </Button>
-              ) : null}
-              {showAddRowControl ? (
-                <Button
-                  $primary
-                  type="button"
-                  onClick={handleAddRowFromFooter}
-                  disabled={isAddRowDisabled}
-                  title="Add new row"
-                  className="!min-w-28 justify-center !px-3 !py-1 !text-xs !rounded-md font-semibold shadow-sm"
-                >
-                  {addRowLabel}
-                </Button>
-              ) : null}
-            </div>
-          ) : null}
-          {hasFooterActions ? <div className="flex items-center gap-2">{footerActions}</div> : null}
         </div>
       ) : null}
       {cellContextMenu && hasCellContextActions ? (

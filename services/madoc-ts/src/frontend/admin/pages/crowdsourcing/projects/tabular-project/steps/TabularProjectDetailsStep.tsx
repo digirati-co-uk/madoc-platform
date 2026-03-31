@@ -1,7 +1,6 @@
 import type { InternationalString } from '@iiif/presentation-3';
 import type { TFunction } from 'i18next';
 import { Input, InputContainer, InputLabel } from '@/frontend/shared/form/Input';
-import { Button, ButtonRow } from '@/frontend/shared/navigation/Button';
 import { MetadataEditor } from '../../../../../molecules/MetadataEditor';
 
 interface TabularProjectDetailsStepProps {
@@ -11,13 +10,10 @@ interface TabularProjectDetailsStepProps {
   slug: string;
   availableLanguages: string[];
   defaultLocale: string;
-  detailsDone: boolean;
   onLabelChange: (value: InternationalString) => void;
   onSummaryChange: (value: InternationalString) => void;
   onSlugFocus: () => void;
   onSlugChange: (value: string) => void;
-  onSave: () => void;
-  onCancel: () => void;
 }
 
 export function TabularProjectDetailsStep(props: TabularProjectDetailsStepProps) {
@@ -28,13 +24,10 @@ export function TabularProjectDetailsStep(props: TabularProjectDetailsStepProps)
     slug,
     availableLanguages,
     defaultLocale,
-    detailsDone,
     onLabelChange,
     onSummaryChange,
     onSlugFocus,
     onSlugChange,
-    onSave,
-    onCancel,
   } = props;
 
   const labelUsage = t('Used as the project title shown in listings and on the project page.');
@@ -101,15 +94,6 @@ export function TabularProjectDetailsStep(props: TabularProjectDetailsStepProps)
           id="slug"
         />
       </InputContainer>
-
-      <ButtonRow>
-        <Button type="button" onClick={onCancel}>
-          {t('Cancel')}
-        </Button>
-        <Button $primary disabled={!detailsDone} onClick={onSave}>
-          {t('Save and continue')}
-        </Button>
-      </ButtonRow>
     </>
   );
 }

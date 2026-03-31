@@ -163,6 +163,7 @@ export function TabularPreviewTable({
         rows={tableRows}
         showEmptyState={false}
         showRowControls={showRowControls}
+        rowControlsAlignment="start"
         showAddRowControl={showAddRowControl}
         showRemoveRowControl={showRemoveRowControl}
         addRowLabel={addRowLabel}

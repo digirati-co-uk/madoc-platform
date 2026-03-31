@@ -313,10 +313,7 @@ export function TabularProjectReviewRenderer(props: CustomReviewRendererProps) {
   );
   const blockingIssueCount = blockingIssues.length;
   const flaggedCellCount = flaggedCells.length;
-  const blockingIssueState = useMemo(
-    () => toReviewBlockingIssueState(blockingIssueCount),
-    [blockingIssueCount]
-  );
+  const blockingIssueState = useMemo(() => toReviewBlockingIssueState(blockingIssueCount), [blockingIssueCount]);
 
   const focusFlaggedCell = useCallback(
     (rowIndex: number, colIndex: number, canFocusCell: boolean) => {
@@ -413,7 +410,9 @@ export function TabularProjectReviewRenderer(props: CustomReviewRendererProps) {
                 <FlagIcon className="h-4 w-4" />
                 {blockingIssueCount ? (
                   <span className="absolute -right-1 -top-1 rounded border border-red-200 bg-red-100 px-1 text-[10px] font-semibold leading-4 text-red-700">
-                    {blockingIssueCount > MAX_BLOCKING_ISSUE_BADGE ? `${MAX_BLOCKING_ISSUE_BADGE}+` : blockingIssueCount}
+                    {blockingIssueCount > MAX_BLOCKING_ISSUE_BADGE
+                      ? `${MAX_BLOCKING_ISSUE_BADGE}+`
+                      : blockingIssueCount}
                   </span>
                 ) : null}
               </button>
@@ -421,14 +420,22 @@ export function TabularProjectReviewRenderer(props: CustomReviewRendererProps) {
 
             {isFlaggedPanelOpen ? (
               <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-                <div className="border-b border-gray-300 px-4 py-3 text-sm font-semibold text-gray-900">Review checks</div>
+                <div className="border-b border-gray-300 px-4 py-3 text-sm font-semibold text-gray-900">
+                  Review checks
+                </div>
                 <div className="min-h-0 flex-1 overflow-y-auto p-3">
                   <div>
-                    <div className="mb-2 text-sm font-semibold text-red-900">Blocking issues ({blockingIssueCount})</div>
+                    <div className="mb-2 text-sm font-semibold text-red-900">
+                      Blocking issues ({blockingIssueCount})
+                    </div>
                     {blockingIssueCount ? (
                       <div className="space-y-2">
                         {blockingIssues.map(issue => (
-                          <BlockingIssueCard key={issue.id} issue={issue} onFocusIssue={() => focusBlockingIssue(issue)} />
+                          <BlockingIssueCard
+                            key={issue.id}
+                            issue={issue}
+                            onFocusIssue={() => focusBlockingIssue(issue)}
+                          />
                         ))}
                       </div>
                     ) : (
@@ -516,7 +523,7 @@ export function TabularProjectReviewRenderer(props: CustomReviewRendererProps) {
                             removeRowFromFooter={removeRowFromFooter}
                             isCellFlagged={isCellFlagged}
                             showRowControls={false}
-                            footerActions={
+                            tableActions={
                               <button
                                 type="button"
                                 className="inline-flex items-center gap-2 rounded border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-50"
@@ -527,7 +534,7 @@ export function TabularProjectReviewRenderer(props: CustomReviewRendererProps) {
                                 ) : (
                                   <FullScreenEnterIcon className="h-4 w-4" />
                                 )}
-                                {isOpen ? 'Exit full screen' : 'Full screen'}
+                                {isOpen ? 'Exit full table' : 'View full table'}
                               </button>
                             }
                           />

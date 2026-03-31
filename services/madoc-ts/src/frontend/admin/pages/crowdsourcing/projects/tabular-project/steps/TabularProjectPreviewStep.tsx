@@ -2,14 +2,13 @@ import React, { ComponentType, ReactNode } from 'react';
 import type { TFunction } from 'i18next';
 import { ModalButton } from '@/frontend/shared/components/Modal';
 import { TabularSplitView } from '@/frontend/shared/components/TabularSplitView';
-import { Button, ButtonRow } from '@/frontend/shared/navigation/Button';
+import { Button } from '@/frontend/shared/navigation/Button';
 import { BrowserComponent } from '@/frontend/shared/utility/browser-component';
 import { LinkIcon } from '@/frontend/shared/icons/LinkIcon';
 import { TabularPreviewTable } from '../../../../../components/tabular/cast-a-net/TabularPreviewTable';
 import type { NetConfig, TabularCellRef } from '@/frontend/shared/utility/tabular-types';
 import type { CastANetStepComponentProps } from '../types';
-import { PanIcon } from '@/frontend/shared/icons/PanIcon';
-import { ArrowDownIcon } from '@/frontend/shared/icons/ArrowDownIcon';
+import { TabularCanvasControlsHelp } from '@/frontend/shared/components/TabularCanvasControlsHelp';
 
 const PREVIEW_NUDGE_STEP = 0.25;
 const CONTRIBUTOR_CANVAS_BACKGROUND = '#E4E7F0';
@@ -35,7 +34,6 @@ interface TabularProjectPreviewStepProps {
   previewActiveCell: TabularCellRef | null;
   previewTableHeight: number;
   isDividerHover: boolean;
-  canSave: boolean;
   iiifBrowser: ReactNode;
   onCopyShareLink: () => void;
   onNudgePreviewNet: (x: number, y: number) => void;
@@ -48,8 +46,6 @@ interface TabularProjectPreviewStepProps {
   canRemovePreviewRow: boolean;
   onAddRow: () => void;
   onRemoveRow: () => void;
-  onSave: () => void;
-  onCancel: () => void;
   CastANetComponent: ComponentType<CastANetStepComponentProps>;
 }
 
@@ -75,7 +71,6 @@ export function TabularProjectPreviewStep(props: TabularProjectPreviewStepProps)
     previewActiveCell,
     previewTableHeight,
     isDividerHover,
-    canSave,
     iiifBrowser,
     onCopyShareLink,
     onNudgePreviewNet,
@@ -88,8 +83,6 @@ export function TabularProjectPreviewStep(props: TabularProjectPreviewStepProps)
     canRemovePreviewRow,
     onAddRow,
     onRemoveRow,
-    onSave,
-    onCancel,
     CastANetComponent,
   } = props;
   const hasCrowdsourcingInstructions = !!crowdsourcingInstructions?.trim();
@@ -127,32 +120,7 @@ export function TabularProjectPreviewStep(props: TabularProjectPreviewStepProps)
               {t('Check your project details, model, and grid before creating the project.')}
             </div>
             {canTrackPreviewOnCanvas ? (
-              <div className="mt-2 grid gap-3 border-t border-[#ced8ff] pt-2">
-                <div>
-                  <div className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-[#3d4f88]">
-                    <div className="flex-col">
-                      <ArrowDownIcon aria-hidden className="h-3 w-3 transform rotate-180" />
-                      <ArrowDownIcon aria-hidden className="h-3 w-3" />
-                    </div>
-                    {t('Nudge actions')}
-                  </div>
-                  <div className="mt-1 text-sm leading-[1.35]">
-                    {t('Use Nudge to fine-tune row alignment. Saved nudges improve zoom tracking for contributors.')}
-                  </div>
-                </div>
-
-                <div>
-                  <div className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-[#3d4f88]">
-                    <PanIcon aria-hidden className="h-4 w-4" />
-                    {t('Zoom tracking toggle')}
-                  </div>
-                  <div className="mt-1 text-sm leading-[1.35]">
-                    {t(
-                      'Nudge controls appear only when Use zoom tracking is enabled. To change this, go back to Additional settings.'
-                    )}
-                  </div>
-                </div>
-              </div>
+              <TabularCanvasControlsHelp t={t} withTopDivider />
             ) : null}
           </div>
 
@@ -256,14 +224,6 @@ export function TabularProjectPreviewStep(props: TabularProjectPreviewStepProps)
           ) : null}
         </div>
       </div>
-      <ButtonRow>
-        <Button type="button" onClick={onCancel}>
-          {t('Cancel')}
-        </Button>
-        <Button $primary disabled={!canSave} onClick={onSave}>
-          {t('Save and continue')}
-        </Button>
-      </ButtonRow>
     </>
   );
 }

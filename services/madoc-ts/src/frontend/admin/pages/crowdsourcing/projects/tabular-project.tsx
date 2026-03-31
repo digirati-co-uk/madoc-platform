@@ -169,6 +169,48 @@ export const TabularProjectWizard: React.FC = () => {
     />
   );
 
+  const isCompleteStep = controller.step === stepIds.complete || controller.isProjectCompleted;
+  const showHeaderActions = !isCompleteStep;
+
+  const handleSaveAndContinue = () => {
+    switch (controller.step) {
+      case stepIds.details:
+        controller.saveDetailsStep();
+        return;
+      case stepIds.settings:
+        controller.saveSettingsStep();
+        return;
+      case stepIds.model:
+        controller.moveNextFromModel();
+        return;
+      case stepIds.net:
+        controller.saveNetStep();
+        return;
+      case stepIds.preview:
+        controller.savePreviewStep();
+        return;
+      default:
+        return;
+    }
+  };
+
+  const isSaveDisabled = (() => {
+    switch (controller.step) {
+      case stepIds.details:
+        return !controller.detailsDone;
+      case stepIds.settings:
+        return controller.enableZoomTracking && !controller.hasImage;
+      case stepIds.model:
+        return false;
+      case stepIds.net:
+        return false;
+      case stepIds.preview:
+        return !controller.createProjectPayload;
+      default:
+        return true;
+    }
+  })();
+
   return (
     <>
       <TabularWizardHeader
@@ -179,6 +221,10 @@ export const TabularProjectWizard: React.FC = () => {
         completeStepId={stepIds.complete}
         isProjectCompleted={controller.isProjectCompleted}
         onStepClick={controller.goToStep}
+        showActions={showHeaderActions}
+        onCancel={cancelSetup}
+        onSaveAndContinue={handleSaveAndContinue}
+        isSaveDisabled={isSaveDisabled}
       />
 
       <WidePage>
@@ -190,13 +236,10 @@ export const TabularProjectWizard: React.FC = () => {
             slug={controller.slug}
             availableLanguages={availableLanguages}
             defaultLocale={defaultLocale}
-            detailsDone={controller.detailsDone}
             onLabelChange={controller.setLabel}
             onSummaryChange={controller.setSummary}
             onSlugFocus={controller.disableAutoSlug}
             onSlugChange={controller.setSlug}
-            onSave={controller.saveDetailsStep}
-            onCancel={cancelSetup}
           />
         ) : null}
 
@@ -215,8 +258,6 @@ export const TabularProjectWizard: React.FC = () => {
             onEnableZoomTrackingChange={controller.setEnableZoomTracking}
             onClearImageSelection={controller.clearImageSelection}
             onRegisterBrowserClose={controller.setBrowserCloseHandler}
-            onSave={controller.saveSettingsStep}
-            onCancel={cancelSetup}
           />
         ) : null}
 
@@ -227,12 +268,10 @@ export const TabularProjectWizard: React.FC = () => {
             crowdsourcingInstructions={controller.crowdsourcingInstructions}
             manifestId={controller.manifestId}
             canvasId={controller.canvasId}
-            isModelValid={controller.isModelValid}
+            showValidationErrors={controller.showModelValidationErrors}
             onTabularModelChange={controller.setTabularModel}
             onCrowdsourcingInstructionsChange={controller.setCrowdsourcingInstructions}
             onModelChange={controller.onModelChange}
-            onSave={controller.moveNextFromModel}
-            onCancel={cancelSetup}
             DefineTabularModelComponent={DefineTabularModelLazy}
           />
         ) : null}
@@ -251,12 +290,10 @@ export const TabularProjectWizard: React.FC = () => {
             tooltips={controller.netTooltips}
             iiifBrowser={iiifBrowser}
             onNetConfigChange={controller.setNetConfig}
-            onSave={controller.saveNetStep}
             onClearImageSelection={controller.clearImageSelection}
             onRegisterBrowserClose={controller.setBrowserCloseHandler}
             onStartResize={controller.startCastANetResize}
             onDividerHoverChange={controller.setIsCastANetDividerHover}
-            onCancel={cancelSetup}
             CastANetComponent={CastANetLazy}
           />
         ) : null}
@@ -283,7 +320,6 @@ export const TabularProjectWizard: React.FC = () => {
             previewActiveCell={controller.previewActiveCell}
             previewTableHeight={controller.previewTableHeight}
             isDividerHover={controller.isCastANetDividerHover}
-            canSave={!!controller.createProjectPayload}
             iiifBrowser={iiifBrowser}
             onCopyShareLink={controller.copyShareLink}
             onNudgePreviewNet={controller.nudgePreviewNet}
@@ -296,8 +332,6 @@ export const TabularProjectWizard: React.FC = () => {
             canRemovePreviewRow={controller.canRemovePreviewRow}
             onAddRow={controller.addPreviewRow}
             onRemoveRow={controller.removePreviewRow}
-            onSave={controller.savePreviewStep}
-            onCancel={cancelSetup}
             CastANetComponent={CastANetLazy}
           />
         ) : null}

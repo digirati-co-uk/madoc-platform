@@ -18,7 +18,7 @@ interface TabularIiifBrowserModalProps {
 }
 
 export function TabularIiifBrowserModal(props: TabularIiifBrowserModalProps) {
-  const [showCanvasHelp, setShowCanvasHelp] = React.useState(true);
+  const [showCanvasHelp, setShowCanvasHelp] = React.useState(false);
   const {
     t,
     iiifHomeLoadError,

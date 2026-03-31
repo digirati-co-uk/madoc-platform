@@ -3,8 +3,7 @@ import type { TFunction } from 'i18next';
 import { ModalButton } from '@/frontend/shared/components/Modal';
 import { TabularSplitView } from '@/frontend/shared/components/TabularSplitView';
 import { BrowserComponent } from '@/frontend/shared/utility/browser-component';
-import { Button, ButtonRow, TinyButton } from '@/frontend/shared/navigation/Button';
-import { PanIcon } from '@/frontend/shared/icons/PanIcon';
+import { TinyButton } from '@/frontend/shared/navigation/Button';
 import { LineIcon } from '@/frontend/shared/icons/LineIcon';
 import { CusorIcon } from '@/frontend/shared/icons/CursorIcon';
 import { TabularHeadingsTable } from '../../../../../components/tabular/cast-a-net/TabularHeadingsTable';
@@ -26,12 +25,10 @@ interface TabularProjectNetStepProps {
   tooltips: string[];
   iiifBrowser: ReactNode;
   onNetConfigChange: (next: NetConfig) => void;
-  onSave: () => void;
   onClearImageSelection: () => void;
   onRegisterBrowserClose: (close?: () => void) => void;
   onStartResize: (event: React.MouseEvent<HTMLDivElement>) => void;
   onDividerHoverChange: (isHover: boolean) => void;
-  onCancel: () => void;
   CastANetComponent: ComponentType<CastANetStepComponentProps>;
 }
 
@@ -49,12 +46,10 @@ export function TabularProjectNetStep(props: TabularProjectNetStepProps) {
     tooltips,
     iiifBrowser,
     onNetConfigChange,
-    onSave,
     onClearImageSelection,
     onRegisterBrowserClose,
     onStartResize,
     onDividerHoverChange,
-    onCancel,
     CastANetComponent,
   } = props;
 
@@ -159,14 +154,6 @@ export function TabularProjectNetStep(props: TabularProjectNetStepProps) {
       ) : (
         <div className="p-3 text-[13px]">{t('Select a reference canvas to start Cast a net.')}</div>
       )}
-      <ButtonRow>
-        <Button type="button" onClick={onCancel}>
-          {t('Cancel')}
-        </Button>
-        <Button $primary onClick={onSave}>
-          {t('Save and continue')}
-        </Button>
-      </ButtonRow>
     </>
   );
 }

@@ -1,7 +1,7 @@
 import { type ReactNode } from 'react';
 import type { TFunction } from 'i18next';
 import { ErrorMessage } from '@/frontend/shared/callouts/ErrorMessage';
-import { Button, ButtonRow, TinyButton } from '@/frontend/shared/navigation/Button';
+import { Button, TinyButton } from '@/frontend/shared/navigation/Button';
 import { ModalButton } from '@/frontend/shared/components/Modal';
 import { LinkIcon } from '@/frontend/shared/icons/LinkIcon';
 
@@ -19,8 +19,6 @@ interface TabularProjectSettingsStepProps {
   onEnableZoomTrackingChange: (value: boolean) => void;
   onClearImageSelection: () => void;
   onRegisterBrowserClose: (close?: () => void) => void;
-  onSave: () => void;
-  onCancel: () => void;
 }
 
 function compactUri(value: string) {
@@ -84,8 +82,6 @@ export function TabularProjectSettingsStep(props: TabularProjectSettingsStepProp
     onEnableZoomTrackingChange,
     onClearImageSelection,
     onRegisterBrowserClose,
-    onSave,
-    onCancel,
   } = props;
   const showZoomTrackingHint = enableZoomTracking && !hasImage;
   const zoomTrackingHint = t('Select a reference canvas to continue with zoom tracking.');
@@ -194,15 +190,6 @@ export function TabularProjectSettingsStep(props: TabularProjectSettingsStepProp
           </div>
         )}
       </div>
-
-      <ButtonRow>
-        <Button type="button" onClick={onCancel}>
-          {t('Cancel')}
-        </Button>
-        <Button $primary disabled={enableZoomTracking && !hasImage} onClick={onSave}>
-          {t('Save and continue')}
-        </Button>
-      </ButtonRow>
     </>
   );
 }

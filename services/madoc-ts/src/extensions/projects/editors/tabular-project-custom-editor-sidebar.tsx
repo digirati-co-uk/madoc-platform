@@ -19,8 +19,17 @@ import type { TabularCellRef } from '@/frontend/shared/utility/tabular-types';
 import FlagIcon from '@/frontend/shared/icons/FlagIcon';
 import { parseTabularCellFlags, TABULAR_CELL_FLAGS_PROPERTY } from '@/frontend/shared/utility/tabular-cell-flags';
 import { TabularProjectContributionsPanel } from './tabular-project-contributions-panel';
+import { TabularCanvasControlsHelp } from '@/frontend/shared/components/TabularCanvasControlsHelp';
+import HelpIcon from '@/frontend/shared/icons/HelpIcon';
+import { useTranslation } from 'react-i18next';
 
-type TabularSidebarPanelId = 'metadata' | 'document' | 'my-contributions' | 'personal-notes' | 'flag-cell';
+type TabularSidebarPanelId =
+  | 'metadata'
+  | 'canvas-help'
+  | 'document'
+  | 'my-contributions'
+  | 'personal-notes'
+  | 'flag-cell';
 
 type TabularSidebarPanel = {
   id: TabularSidebarPanelId;
@@ -359,6 +368,7 @@ export function TabularProjectCustomEditorSidebar({
   onRemoveFlag,
   onClearAllFlags,
 }: TabularProjectCustomEditorSidebarProps) {
+  const { t } = useTranslation();
   const metadataPanel = useMetadataMenu();
   const documentPanel = useDocumentPanel();
   const myContributionsPanel = useRevisionPanel();
@@ -430,6 +440,18 @@ export function TabularProjectCustomEditorSidebar({
         isDisabled: metadataPanel.isDisabled,
       },
       {
+        id: 'canvas-help',
+        label: 'Canvas help',
+        icon: <HelpIcon />,
+        content: (
+          <div className="flex flex-col gap-4 p-4">
+            <div className="rounded border border-[#ced8ff] bg-[#e8edff] p-3 text-[#1f2d5a]">
+              <TabularCanvasControlsHelp t={t} />
+            </div>
+          </div>
+        ),
+      },
+      {
         id: 'document',
         label: documentPanel.label || 'Document',
         icon: documentPanel.icon || <ModelDocumentIcon />,
@@ -485,6 +507,7 @@ export function TabularProjectCustomEditorSidebar({
       metadataPanel.icon,
       metadataPanel.content,
       metadataPanel.isDisabled,
+      t,
       documentPanel.label,
       documentPanel.icon,
       documentPanel.content,
