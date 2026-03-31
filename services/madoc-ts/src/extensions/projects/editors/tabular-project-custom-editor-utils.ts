@@ -13,7 +13,10 @@ export type TabularModelColumn = {
   saved?: boolean;
 };
 
-export type TabularTemplateConfig = Pick<TabularProjectTemplateOptions, 'enableZoomTracking' | 'tabular'>;
+export type TabularTemplateConfig = Pick<
+  TabularProjectTemplateOptions,
+  'enableZoomTracking' | 'crowdsourcingInstructions' | 'tabular'
+>;
 export type TabularStructureConfig = NonNullable<NonNullable<TabularProjectTemplateOptions['tabular']>['structure']>;
 
 export type TabularColumnModel = {

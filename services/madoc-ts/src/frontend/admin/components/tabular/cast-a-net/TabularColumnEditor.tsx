@@ -72,11 +72,11 @@ export function TabularColumnEditor(props: {
         </div>
 
         <div style={{ display: 'grid', gap: 6 }}>
-          <StyledFormLabel>Tooltip (optional)</StyledFormLabel>
+          <StyledFormLabel>Selected column tooltip (optional)</StyledFormLabel>
           <StyledFormInputElement
             as="input"
             value={value.helpText ?? ''}
-            placeholder="Optional help text shown to users"
+            placeholder="Optional help text shown to users for this column"
             disabled={disabled}
             onChange={(e: any) => onChange({ ...value, helpText: e.target.value })}
           />

@@ -5,8 +5,6 @@ import { TabularSplitView } from '@/frontend/shared/components/TabularSplitView'
 import { Button, ButtonRow } from '@/frontend/shared/navigation/Button';
 import { BrowserComponent } from '@/frontend/shared/utility/browser-component';
 import { LinkIcon } from '@/frontend/shared/icons/LinkIcon';
-import ResizeHandleIcon from '@/frontend/shared/icons/ResizeHandleIcon';
-import { SettingsIcon } from '@/frontend/shared/icons/SettingsIcon';
 import { TabularPreviewTable } from '../../../../../components/tabular/cast-a-net/TabularPreviewTable';
 import type { NetConfig, TabularCellRef } from '@/frontend/shared/utility/tabular-types';
 import type { CastANetStepComponentProps } from '../types';
@@ -20,6 +18,7 @@ interface TabularProjectPreviewStepProps {
   t: TFunction;
   shareUrl: string;
   shareCopied: 'idle' | 'copied' | 'error';
+  crowdsourcingInstructions?: string;
   canTrackPreviewOnCanvas: boolean;
   hasImage: boolean;
   manifestId?: string;
@@ -57,6 +56,7 @@ export function TabularProjectPreviewStep(props: TabularProjectPreviewStepProps)
     t,
     shareUrl,
     shareCopied,
+    crowdsourcingInstructions,
     canTrackPreviewOnCanvas,
     hasImage,
     manifestId,
@@ -88,6 +88,7 @@ export function TabularProjectPreviewStep(props: TabularProjectPreviewStepProps)
     onCancel,
     CastANetComponent,
   } = props;
+  const hasCrowdsourcingInstructions = !!crowdsourcingInstructions?.trim();
 
   return (
     <>
@@ -150,6 +151,15 @@ export function TabularProjectPreviewStep(props: TabularProjectPreviewStepProps)
               </div>
             ) : null}
           </div>
+
+          {hasCrowdsourcingInstructions ? (
+            <div className="mb-3 rounded border border-[#ced8ff] bg-white p-3 text-[#1f2d5a]">
+              <div className="text-[11px] font-semibold uppercase tracking-wide text-[#3d4f88]">
+                {t('Contributor instructions')}
+              </div>
+              <div className="mt-2 whitespace-pre-wrap text-sm leading-[1.35]">{crowdsourcingInstructions}</div>
+            </div>
+          ) : null}
         </div>
 
         <div className={hasImage ? 'grid h-[760px] content-start gap-3 overflow-hidden' : 'grid content-start gap-3'}>

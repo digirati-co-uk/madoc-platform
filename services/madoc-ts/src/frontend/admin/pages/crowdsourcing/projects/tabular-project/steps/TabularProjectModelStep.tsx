@@ -8,6 +8,8 @@ interface DefineTabularModelComponentProps {
   value: DefineTabularModelValue;
   onChange: (next: DefineTabularModelValue) => void;
   onModelChange: (res: TabularModelChange) => void;
+  crowdsourcingInstructions?: string;
+  onCrowdsourcingInstructionsChange?: (next: string) => void;
   showValidationErrors?: boolean;
   manifestId?: string;
   canvasId?: string;
@@ -16,11 +18,12 @@ interface DefineTabularModelComponentProps {
 interface TabularProjectModelStepProps {
   t: TFunction;
   tabularModel: DefineTabularModelValue;
+  crowdsourcingInstructions: string;
   manifestId?: string;
   canvasId?: string;
   isModelValid: boolean;
-  modelSaved?: boolean;
   onTabularModelChange: (next: DefineTabularModelValue) => void;
+  onCrowdsourcingInstructionsChange: (next: string) => void;
   onModelChange: (res: TabularModelChange) => void;
   onSave: () => void;
   onCancel: () => void;
@@ -31,10 +34,12 @@ export function TabularProjectModelStep(props: TabularProjectModelStepProps) {
   const {
     t,
     tabularModel,
+    crowdsourcingInstructions,
     manifestId,
     canvasId,
     isModelValid,
     onTabularModelChange,
+    onCrowdsourcingInstructionsChange,
     onModelChange,
     onSave,
     onCancel,
@@ -56,6 +61,8 @@ export function TabularProjectModelStep(props: TabularProjectModelStepProps) {
           value={tabularModel}
           onChange={onTabularModelChange}
           onModelChange={onModelChange}
+          crowdsourcingInstructions={crowdsourcingInstructions}
+          onCrowdsourcingInstructionsChange={onCrowdsourcingInstructionsChange}
           showValidationErrors={showValidationErrors}
           manifestId={manifestId}
           canvasId={canvasId}

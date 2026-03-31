@@ -224,11 +224,12 @@ export const TabularProjectWizard: React.FC = () => {
           <TabularProjectModelStep
             t={t}
             tabularModel={controller.tabularModel}
+            crowdsourcingInstructions={controller.crowdsourcingInstructions}
             manifestId={controller.manifestId}
             canvasId={controller.canvasId}
             isModelValid={controller.isModelValid}
-            modelSaved={controller.modelSaved}
             onTabularModelChange={controller.setTabularModel}
+            onCrowdsourcingInstructionsChange={controller.setCrowdsourcingInstructions}
             onModelChange={controller.onModelChange}
             onSave={controller.moveNextFromModel}
             onCancel={cancelSetup}
@@ -265,6 +266,7 @@ export const TabularProjectWizard: React.FC = () => {
             t={t}
             shareUrl={controller.shareUrl}
             shareCopied={controller.shareCopied}
+            crowdsourcingInstructions={controller.crowdsourcingInstructions}
             canTrackPreviewOnCanvas={controller.canTrackPreviewOnCanvas}
             hasImage={controller.hasImage}
             manifestId={controller.manifestId}

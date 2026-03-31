@@ -53,6 +53,7 @@ export type TabularWizardSetup = {
 
 export type TabularProjectTemplateOptions = {
   enableZoomTracking?: boolean;
+  crowdsourcingInstructions?: string;
   iiif?: {
     manifestId?: string;
     canvasId?: string;
@@ -181,16 +182,28 @@ export const tabularProject: ProjectTemplate<TabularProjectTemplateOptions> = {
   setup: {
     defaults: {
       enableZoomTracking: false,
+      crowdsourcingInstructions: '',
       iiif: {},
       tabular: {},
     },
     async beforeForkDocument(doc, { options }) {
       const captureModelTemplate = getCaptureModelTemplateFromOptions(options);
-      if (!captureModelTemplate) {
-        return doc;
+      const nextDocument = captureModelTemplate ? captureModelShorthand(captureModelTemplate) : doc;
+      const instructions = options.crowdsourcingInstructions;
+      return instructions ? { ...nextDocument, instructions } : nextDocument;
+    },
+    async beforeForkStructure(fullModel, { options }) {
+      const instructions = options.crowdsourcingInstructions;
+      const structure = fullModel.structure;
+      if (!instructions || !structure?.items?.length) {
+        return structure;
       }
 
-      return captureModelShorthand(captureModelTemplate);
+      const [firstItem, ...remainingItems] = structure.items;
+      return {
+        ...structure,
+        items: [{ ...firstItem, instructions }, ...remainingItems],
+      };
     },
   },
   components: {

@@ -28,6 +28,7 @@ export type TabularOutlineSharePayload = {
   summary?: InternationalString;
   slug?: string;
   enableZoomTracking?: boolean;
+  crowdsourcingInstructions?: string;
   iiif?: {
     manifestId?: string;
     canvasId?: string;

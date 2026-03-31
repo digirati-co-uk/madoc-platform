@@ -122,6 +122,8 @@ export function DefineTabularModel(props: {
   value: DefineTabularModelValue;
   onChange: (next: DefineTabularModelValue) => void;
   onModelChange?: (res: TabularModelChange) => void;
+  crowdsourcingInstructions?: string;
+  onCrowdsourcingInstructionsChange?: (next: string) => void;
   showValidationErrors?: boolean;
   manifestId?: string;
   canvasId?: string;
@@ -138,6 +140,8 @@ export function DefineTabularModel(props: {
     value,
     onChange,
     onModelChange,
+    crowdsourcingInstructions = '',
+    onCrowdsourcingInstructionsChange,
     showValidationErrors = false,
     manifestId,
     canvasId,
@@ -445,6 +449,25 @@ export function DefineTabularModel(props: {
               </div>
             ) : null}
           </div>
+
+          {onCrowdsourcingInstructionsChange ? (
+            <div className="mt-3 rounded border border-[#ced8ff] bg-white p-3 text-[#1f2d5a]">
+              <div className="text-[11px] font-semibold uppercase tracking-wide text-[#3d4f88]">
+                {t('Crowdsourcing instructions')}
+              </div>
+              <div className="mt-1 text-xs">
+                {t('Applies to all rows and columns. Shown to contributors in the capture modal.')}
+              </div>
+              <textarea
+                className="mt-2 w-full rounded border border-[#cfd6e5] bg-white px-2 py-1.5 text-sm text-[#1f2d5a] focus:border-[#4265e9] focus:outline-none focus:ring-2 focus:ring-[#c7d4ff]"
+                rows={4}
+                value={crowdsourcingInstructions}
+                placeholder={t('Enter contributor instructions')}
+                disabled={disabled}
+                onChange={event => onCrowdsourcingInstructionsChange(event.currentTarget.value)}
+              />
+            </div>
+          ) : null}
 
           <div className="mt-3">
             <TabularColumnEditor

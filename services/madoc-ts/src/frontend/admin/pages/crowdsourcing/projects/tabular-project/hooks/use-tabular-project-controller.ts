@@ -125,6 +125,7 @@ export function useTabularProjectController(options: UseTabularProjectController
   const [autoSlug, setAutoSlug] = useState(true);
 
   const [enableZoomTracking, setEnableZoomTracking] = useState(false);
+  const [crowdsourcingInstructions, setCrowdsourcingInstructions] = useState('');
   const [manifestId, setManifestId] = useState<string | undefined>();
   const [canvasId, setCanvasId] = useState<string | undefined>();
   const [selectedCanvasLabel, setSelectedCanvasLabel] = useState<string | undefined>();
@@ -423,6 +424,10 @@ export function useTabularProjectController(options: UseTabularProjectController
       setEnableZoomTracking(shared.enableZoomTracking);
     }
 
+    if (typeof shared.crowdsourcingInstructions === 'string') {
+      setCrowdsourcingInstructions(shared.crowdsourcingInstructions);
+    }
+
     if (shared.iiif?.manifestId) {
       setManifestId(shared.iiif.manifestId);
     }
@@ -474,18 +479,29 @@ export function useTabularProjectController(options: UseTabularProjectController
     return buildTabularProjectSetupPayload(netConfig, tabularPayload);
   }, [netConfig, tabularPayload]);
 
+  const iiifSelection = useMemo(() => ({ manifestId, canvasId }), [manifestId, canvasId]);
+  const iiifSelectionForConfirmation = useMemo(
+    () => ({ manifestId: manifestId ?? null, canvasId: canvasId ?? null }),
+    [manifestId, canvasId]
+  );
+  const templateOptions = useMemo(
+    () => ({
+      enableZoomTracking,
+      crowdsourcingInstructions,
+      iiif: iiifSelection,
+    }),
+    [enableZoomTracking, crowdsourcingInstructions, iiifSelection]
+  );
+
   const projectDetailsForConfirmation = useMemo(
     () => ({
       label,
       summary,
       slug,
-      enableZoomTracking,
-      iiif: {
-        manifestId: manifestId ?? null,
-        canvasId: canvasId ?? null,
-      },
+      ...templateOptions,
+      iiif: iiifSelectionForConfirmation,
     }),
-    [label, summary, slug, enableZoomTracking, manifestId, canvasId]
+    [label, summary, slug, templateOptions, iiifSelectionForConfirmation]
   );
 
   const createProjectPayload = useMemo<CreateProject | null>(() => {
@@ -493,24 +509,18 @@ export function useTabularProjectController(options: UseTabularProjectController
       return null;
     }
 
+    const templateOptionsWithSetup = { ...templateOptions, tabular: setupPayload };
+
     return {
       label,
       summary,
       slug,
       template: 'tabular-project',
-      template_options: {
-        enableZoomTracking,
-        iiif: { manifestId, canvasId },
-        tabular: setupPayload,
-      },
-      template_config: {
-        enableZoomTracking,
-        iiif: { manifestId, canvasId },
-        tabular: setupPayload,
-      },
+      template_options: templateOptionsWithSetup,
+      template_config: { ...templateOptionsWithSetup },
       remote_template: null,
     };
-  }, [label, summary, slug, enableZoomTracking, manifestId, canvasId, setupPayload]);
+  }, [label, summary, slug, templateOptions, setupPayload]);
 
   const shareUrl = useMemo(() => {
     if (typeof window === 'undefined' || !setupPayload) {
@@ -521,8 +531,7 @@ export function useTabularProjectController(options: UseTabularProjectController
       label,
       summary,
       slug,
-      enableZoomTracking,
-      iiif: { manifestId, canvasId },
+      ...templateOptions,
       tabular: setupPayload,
     };
 
@@ -532,7 +541,7 @@ export function useTabularProjectController(options: UseTabularProjectController
     }
 
     return `${window.location.origin}${window.location.pathname}?outline=${encodeURIComponent(encoded)}`;
-  }, [label, summary, slug, enableZoomTracking, manifestId, canvasId, setupPayload]);
+  }, [label, summary, slug, templateOptions, setupPayload]);
 
   const canTrackPreviewOnCanvas = Boolean(
     enableZoomTracking &&
@@ -954,6 +963,8 @@ export function useTabularProjectController(options: UseTabularProjectController
 
     enableZoomTracking,
     setEnableZoomTracking,
+    crowdsourcingInstructions,
+    setCrowdsourcingInstructions,
     hasImage,
     manifestId,
     canvasId,
@@ -968,7 +979,6 @@ export function useTabularProjectController(options: UseTabularProjectController
     tabularModel,
     setTabularModel,
     isModelValid,
-    modelSaved,
     onModelChange,
     moveNextFromModel,
 

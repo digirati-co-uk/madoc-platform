@@ -42,6 +42,9 @@ import { useTabularCellFlags } from './use-tabular-cell-flags';
 import { useTabularEditorLayout } from './use-tabular-editor-layout';
 import { useTabularProjectCustomEditorState } from './use-tabular-project-custom-editor-state';
 import type { TabularEditorRowModel } from './tabular-project-custom-editor-table-model';
+import { useNavigation } from '@/frontend/shared/capture-models/editor/hooks/useNavigation';
+import { useModelTranslation } from '@/frontend/shared/capture-models/hooks/use-model-translation';
+import { useTranslation } from 'react-i18next';
 
 type TabularProjectCustomEditorContentProps = {
   canvasId: number;
@@ -52,10 +55,22 @@ type TabularProjectCustomEditorContentProps = {
   initialNetConfig: NetConfig | null;
   onNetConfigChange: (next: NetConfig) => void;
   templateConfig?: TabularTemplateConfig;
+  modelInstructions?: string;
+  templateInstructions?: string;
 };
 
 const CONTRIBUTOR_NET_NUDGE_STEP = 0.25;
 const TABULAR_CONTRIBUTOR_BASE_ROW_COUNT = 5;
+
+function getFirstNonEmptyText(values: Array<string | null | undefined>): string {
+  for (const value of values) {
+    const trimmed = (value || '').trim();
+    if (trimmed) {
+      return trimmed;
+    }
+  }
+  return '';
+}
 
 function getRowRemovalWarning(row: TabularEditorRowModel, flaggedCells: Array<{ rowIndex: number }>): string | null {
   const hasFlaggedCell = flaggedCells.some(flag => flag.rowIndex === row.rowIndex);
@@ -132,16 +147,24 @@ function TabularProjectCustomEditorContent({
   initialNetConfig,
   onNetConfigChange,
   templateConfig,
+  modelInstructions,
+  templateInstructions,
 }: TabularProjectCustomEditorContentProps) {
   const api = useApi();
   const currentUser = api.getIsServer() ? undefined : api.getCurrentUser();
   const isSiteAdmin = !!currentUser?.scope?.includes('site.admin');
   const lifecycle = useCaptureModelContributionLifecycle();
+  const [currentView] = useNavigation();
+  const { t } = useTranslation();
+  const { t: tModel } = useModelTranslation();
   const { projectId } = useRouteContext();
   const table = useCaptureModelEditorApi({ tableProperty: 'rows' });
   const currentRevisionId = Revisions.useStoreState(state => state.currentRevisionId);
   const currentRevisionStatus = Revisions.useStoreState(state => state.currentRevision?.revision.status);
   const currentRevisionReadMode = Revisions.useStoreState(state => state.currentRevisionReadMode);
+  const currentRevisionDocumentInstructions = Revisions.useStoreState(
+    state => state.currentRevision?.document.instructions
+  );
   const createNewFieldInstance = Revisions.useStoreActions(actions => actions.createNewFieldInstance);
   const deselectRevision = Revisions.useStoreActions(actions => actions.deselectRevision);
   const removeInstance = Revisions.useStoreActions(actions => actions.removeInstance);
@@ -151,6 +174,7 @@ function TabularProjectCustomEditorContent({
   const [successModalState, setSuccessModalState] = useState<'saved' | 'submitted' | null>(null);
   const [rowRemovalWarning, setRowRemovalWarning] = useState<string | null>(null);
   const [flagPanelOpenRequestToken, setFlagPanelOpenRequestToken] = useState(0);
+  const [areInstructionsExpanded, setAreInstructionsExpanded] = useState(true);
 
   const isPersisting = lifecycle.phase === 'saving-draft' || lifecycle.phase === 'submitting';
   const isLoading = lifecycle.phase === 'loading' || lifecycle.phase === 'preparing';
@@ -229,6 +253,17 @@ function TabularProjectCustomEditorContent({
 
   const isTableEditorReady =
     !isLoading && lifecycle.phase !== 'error' && (table.status === 'ready' || useLegacyTopLevelLayout);
+  const contributorInstructions = useMemo(() => {
+    const fromCurrentView =
+      currentView && currentView.type === 'model' ? currentView.instructions || currentView.description : undefined;
+    const resolvedInstructions = getFirstNonEmptyText([
+      fromCurrentView,
+      currentRevisionDocumentInstructions,
+      modelInstructions,
+      templateInstructions,
+    ]);
+    return resolvedInstructions ? tModel(resolvedInstructions) : '';
+  }, [currentRevisionDocumentInstructions, currentView, modelInstructions, tModel, templateInstructions]);
 
   useEffect(() => {
     sharedNetConfigRef.current = initialNetConfig;
@@ -512,10 +547,31 @@ function TabularProjectCustomEditorContent({
               bottomPanel={
                 <div className="flex min-h-0 min-w-0 flex-col">
                   <div className="min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto">
-                    <div className="flex h-full min-h-0 min-w-0 flex-col gap-4">
+                    <div className="flex h-full min-h-0 min-w-0 flex-col gap-2">
                       {!netConfig ? (
                         <div className="rounded border border-yellow-300 bg-yellow-50 p-2 text-sm">
                           No cast-a-net overlay is configured for this project.
+                        </div>
+                      ) : null}
+
+                      {contributorInstructions ? (
+                        <div className="overflow-hidden rounded border border-blue-300 bg-blue-100/80">
+                          <div className="flex items-center justify-between border-b border-blue-300 bg-blue-200/80 px-3 py-2 text-sm font-semibold text-slate-900">
+                            <span>{t('Instructions')}</span>
+                            <button
+                              type="button"
+                              className="text-xs font-medium text-slate-700 underline hover:text-slate-900"
+                              aria-expanded={areInstructionsExpanded}
+                              onClick={() => setAreInstructionsExpanded(isExpanded => !isExpanded)}
+                            >
+                              {areInstructionsExpanded ? t('Hide') : t('Show')}
+                            </button>
+                          </div>
+                          {areInstructionsExpanded ? (
+                            <div className="whitespace-pre-wrap px-3 py-2 text-sm text-slate-900">
+                              {contributorInstructions}
+                            </div>
+                          ) : null}
                         </div>
                       ) : null}
 
@@ -687,6 +743,8 @@ export function TabularProjectCustomEditor() {
           initialNetConfig={initialNetConfig}
           onNetConfigChange={next => setNetConfig(next)}
           templateConfig={templateConfig}
+          modelInstructions={captureModel?.document?.instructions}
+          templateInstructions={templateConfig?.crowdsourcingInstructions}
         />
       </RevisionProviderWithFeatures>
     </DynamicVaultContext>
