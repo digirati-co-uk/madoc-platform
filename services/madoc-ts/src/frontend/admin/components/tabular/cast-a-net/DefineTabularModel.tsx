@@ -32,57 +32,12 @@ function reorderArray<T>(items: T[], sourceIndex: number, targetIndex: number): 
 function ReferenceImagePanel(props: { manifestId: string; canvasId?: string; imageHeight: number }) {
   const { manifestId, canvasId, imageHeight } = props;
   const runtime = useRef<any>(null);
-  const initialZoomAppliedRef = useRef(false);
-  const initialZoomFrameRef = useRef<number | null>(null);
   const AnySimpleViewerProvider = SimpleViewerProvider as unknown as React.FC<any>;
   const viewerKey = `${manifestId}::${canvasId ?? ''}`;
-  const INITIAL_MODEL_CANVAS_ZOOM_FACTOR = 0.68;
 
   const goHome = () => runtime.current?.world?.goHome?.();
   const zoomIn = () => runtime.current?.world?.zoomIn?.();
   const zoomOut = () => runtime.current?.world?.zoomOut?.();
-
-  useEffect(() => {
-    initialZoomAppliedRef.current = false;
-    if (typeof window !== 'undefined' && initialZoomFrameRef.current !== null) {
-      window.cancelAnimationFrame(initialZoomFrameRef.current);
-      initialZoomFrameRef.current = null;
-    }
-
-    return () => {
-      if (typeof window !== 'undefined' && initialZoomFrameRef.current !== null) {
-        window.cancelAnimationFrame(initialZoomFrameRef.current);
-      }
-      initialZoomFrameRef.current = null;
-    };
-  }, [viewerKey]);
-
-  const applyInitialZoom = (currentRuntime: any) => {
-    if (!currentRuntime || initialZoomAppliedRef.current) {
-      return;
-    }
-
-    if (typeof currentRuntime.getViewport === 'function' && typeof currentRuntime.setViewport === 'function') {
-      const viewport = currentRuntime.getViewport();
-      if (viewport && viewport.width > 0 && viewport.height > 0) {
-        const nextWidth = viewport.width * INITIAL_MODEL_CANVAS_ZOOM_FACTOR;
-        const nextHeight = viewport.height * INITIAL_MODEL_CANVAS_ZOOM_FACTOR;
-        const nextX = viewport.x + (viewport.width - nextWidth) / 2;
-        const nextY = viewport.y;
-        currentRuntime.setViewport({
-          x: nextX,
-          y: nextY,
-          width: nextWidth,
-          height: nextHeight,
-        });
-      }
-    } else {
-      currentRuntime.world?.zoomIn?.();
-    }
-
-    currentRuntime.updateNextFrame?.();
-    initialZoomAppliedRef.current = true;
-  };
 
   return (
     <div className="overflow-hidden rounded-lg border border-[#e5e5e5] bg-white">
@@ -100,19 +55,9 @@ function ReferenceImagePanel(props: { manifestId: string; canvasId?: string; ima
             resizeHash={imageHeight}
             updateViewportTimeout={180}
             runtimeOptions={{ maxOverZoom: 5, visibilityRatio: 1, maxUnderZoom: 1 }}
+            homeCover="start"
             onCreated={(preset: any) => {
               runtime.current = preset.runtime;
-              if (typeof window !== 'undefined') {
-                if (initialZoomFrameRef.current !== null) {
-                  window.cancelAnimationFrame(initialZoomFrameRef.current);
-                }
-                initialZoomFrameRef.current = window.requestAnimationFrame(() => {
-                  applyInitialZoom(runtime.current);
-                  initialZoomFrameRef.current = null;
-                });
-              } else {
-                applyInitialZoom(runtime.current);
-              }
             }}
           >
             <CanvasPanel.RenderCanvas />

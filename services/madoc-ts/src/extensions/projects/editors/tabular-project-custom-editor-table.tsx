@@ -319,14 +319,15 @@ export function TabularProjectCustomEditorTable({
   const isAddRowDisabled = disabled || !canAddRow;
   const hasAnyRowControl = showRowControls && (showAddRowControl || showRemoveRowControl);
   const hasTableActions = !!tableActions;
-  const topBarJustifyClass = hasAnyRowControl && hasTableActions
-    ? 'justify-between'
-    : hasTableActions
-      ? 'justify-end'
-      : rowControlsAlignment === 'start'
-        ? 'justify-start'
-        : 'justify-center';
-  const headerRowHeight = TABULAR_GRID_HEADER_ROW_HEIGHT_PX;
+  const topBarJustifyClass =
+    hasAnyRowControl && hasTableActions
+      ? 'justify-between'
+      : hasTableActions
+        ? 'justify-end'
+        : rowControlsAlignment === 'start'
+          ? 'justify-start'
+          : 'justify-center';
+  const headerRowHeight = Math.max(TABULAR_GRID_HEADER_ROW_HEIGHT_PX, 60);
   const rowHeight = Math.max(TABULAR_GRID_ROW_HEIGHT_PX, 60);
   const tableScrollRef = useRef<HTMLDivElement | null>(null);
   const dataGridRef = useRef<DataGridHandle | null>(null);
@@ -516,11 +517,14 @@ export function TabularProjectCustomEditorTable({
                 color: '#283452',
                 display: 'grid',
                 alignContent: 'center',
-                padding: '8px 10px',
+                padding: '10px 12px',
                 textAlign: 'left',
+                whiteSpace: 'normal',
+                overflowWrap: 'anywhere',
+                wordBreak: 'break-word',
               }}
             >
-              <div style={{ fontSize: 13, fontWeight: 600 }}>{column.label}</div>
+              <div style={{ fontSize: 13, fontWeight: 600, lineHeight: 1.3 }}>{column.label}</div>
             </div>
           );
         },

@@ -10,8 +10,9 @@ export const ViewContentFetch: React.FC<{
   height?: number | string;
   onCreated?: (rt: Preset) => void;
   onPanInSketchMode?: () => void;
+  homeCover?: true | false | 'start' | 'end';
   children?: React.ReactNode;
-}> = ({ id, height, children, onCreated, onPanInSketchMode }) => {
+}> = ({ id, height, children, onCreated, onPanInSketchMode, homeCover }) => {
   const { data } = useApiCanvas(id);
 
   const canvas = useMemo(() => {
@@ -37,6 +38,7 @@ export const ViewContentFetch: React.FC<{
         canvas={canvas as any}
         onCreated={onCreated}
         onPanInSketchMode={onPanInSketchMode}
+        homeCover={homeCover}
       >
         {children}
       </ViewContent>

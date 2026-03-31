@@ -505,10 +505,6 @@ export function useTabularProjectController(options: UseTabularProjectController
   }, [netConfig, tabularPayload]);
 
   const iiifSelection = useMemo(() => ({ manifestId, canvasId }), [manifestId, canvasId]);
-  const iiifSelectionForConfirmation = useMemo(
-    () => ({ manifestId: manifestId ?? null, canvasId: canvasId ?? null }),
-    [manifestId, canvasId]
-  );
   const templateOptions = useMemo(
     () => ({
       enableZoomTracking,
@@ -516,17 +512,6 @@ export function useTabularProjectController(options: UseTabularProjectController
       iiif: iiifSelection,
     }),
     [enableZoomTracking, crowdsourcingInstructions, iiifSelection]
-  );
-
-  const projectDetailsForConfirmation = useMemo(
-    () => ({
-      label,
-      summary,
-      slug,
-      ...templateOptions,
-      iiif: iiifSelectionForConfirmation,
-    }),
-    [label, summary, slug, templateOptions, iiifSelectionForConfirmation]
   );
 
   const createProjectPayload = useMemo<CreateProject | null>(() => {
@@ -1063,9 +1048,6 @@ export function useTabularProjectController(options: UseTabularProjectController
     primaryLabel,
     primarySummary,
     configuredColumnCount,
-    projectDetailsForConfirmation,
-    setupPayload,
-    tabularPayload,
     createProjectPayload,
     isError,
     errorMessage: data?.error,

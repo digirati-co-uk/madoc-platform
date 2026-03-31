@@ -25,6 +25,7 @@ export type AtlasCustomOptions = {
   onCreateAtlas?: (preset: Preset) => void;
   controllerConfig?: PopmotionControllerConfig;
   backgroundColor?: string;
+  homeCover?: true | false | 'start' | 'end';
 };
 
 export interface AtlasViewerProps extends BaseContent {
@@ -64,7 +65,17 @@ const Canvas: React.FC<{
   unstable_webglRenderer?: boolean;
   controllerConfig?: PopmotionControllerConfig;
   annotationPopup?: React.ReactNode;
-}> = ({ isEditing, onDeselect, children, onCreated, unstable_webglRenderer, controllerConfig, annotationPopup }) => {
+  homeCover?: AtlasCustomOptions['homeCover'];
+}> = ({
+  isEditing,
+  onDeselect,
+  children,
+  onCreated,
+  unstable_webglRenderer,
+  controllerConfig,
+  annotationPopup,
+  homeCover,
+}) => {
   const canvas = useCanvas();
   const { data: service } = useImageService() as { data?: ImageService };
   const style = useAnnotationStyles();
@@ -81,6 +92,7 @@ const Canvas: React.FC<{
       unstable_webglRenderer={webglSupport() && unstable_webglRenderer}
       renderPreset={defaultPreset}
       runtimeOptions={runtimeOptions}
+      homeCover={homeCover}
       controllerConfig={controllerConfig}
       height="100%"
     >
@@ -161,6 +173,7 @@ export const AtlasViewer: React.FC<AtlasViewerProps> = props => {
           unstable_webglRenderer={props.options?.custom?.unstable_webglRenderer}
           controllerConfig={props.options?.custom?.controllerConfig}
           onCreated={props.options?.custom?.onCreateAtlas}
+          homeCover={props.options?.custom?.homeCover}
           isEditing={!!currentSelector}
           annotationPopup={annotationPopup}
           // onDeselect={() => {

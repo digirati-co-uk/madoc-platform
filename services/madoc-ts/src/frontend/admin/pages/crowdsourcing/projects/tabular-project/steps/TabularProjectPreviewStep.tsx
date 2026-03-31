@@ -119,10 +119,31 @@ export function TabularProjectPreviewStep(props: TabularProjectPreviewStepProps)
             <div className="text-sm leading-[1.35]">
               {t('Check your project details, model, and grid before creating the project.')}
             </div>
-            {canTrackPreviewOnCanvas ? (
-              <TabularCanvasControlsHelp t={t} withTopDivider />
-            ) : null}
+            {canTrackPreviewOnCanvas ? <TabularCanvasControlsHelp t={t} withTopDivider /> : null}
           </div>
+
+          {hasImage ? (
+            <div className="mb-3 rounded border border-[#ced8ff] bg-white p-3 text-[#1f2d5a]">
+              <div className="text-[11px] font-semibold uppercase tracking-wide text-[#3d4f88]">
+                {t('Reference image')}
+              </div>
+              <div className="mt-2 text-sm leading-[1.35]">{t('Need to change it? Select a different image.')}</div>
+              <div className="mt-2">
+                <ModalButton
+                  title={t('Browse IIIF resources')}
+                  modalSize="lg"
+                  allowResize={false}
+                  render={({ close }) => {
+                    onRegisterBrowserClose(close);
+
+                    return iiifBrowser;
+                  }}
+                >
+                  <Button>{t('Select a different image')}</Button>
+                </ModalButton>
+              </div>
+            </div>
+          ) : null}
 
           {hasCrowdsourcingInstructions ? (
             <div className="mb-3 rounded border border-[#ced8ff] bg-white p-3 text-[#1f2d5a]">

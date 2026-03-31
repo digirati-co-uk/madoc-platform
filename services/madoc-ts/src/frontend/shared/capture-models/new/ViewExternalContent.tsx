@@ -8,8 +8,9 @@ export const ViewExternalContent: React.FC<{
   height?: number | string;
   onCreated?: (runtime: Preset) => void;
   onPanInSketchMode?: () => void;
+  homeCover?: true | false | 'start' | 'end';
   children?: React.ReactNode;
-}> = ({ target, children, onCreated, onPanInSketchMode, height = 600 }) => {
+}> = ({ target, children, onCreated, onPanInSketchMode, homeCover, height = 600 }) => {
   const {
     project: { atlasBackground },
   } = useSiteConfiguration();
@@ -30,9 +31,10 @@ export const ViewExternalContent: React.FC<{
           onPanInSketchMode,
           onCreateAtlas: onCreated,
           backgroundColor: atlasBackground,
+          homeCover,
         },
       }),
-      [onPanInSketchMode, onCreated, children, height]
+      [onPanInSketchMode, onCreated, children, height, atlasBackground, homeCover]
     )
   );
 };

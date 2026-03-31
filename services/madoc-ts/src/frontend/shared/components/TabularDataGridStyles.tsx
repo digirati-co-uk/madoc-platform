@@ -20,6 +20,14 @@ export function TabularDataGridStyles({ scopeClassName, disableRowHover = false 
         }
         ${selector} .rdg-header-row .rdg-cell {
           padding: 0 !important;
+          white-space: normal !important;
+          text-overflow: clip !important;
+        }
+        ${selector} .rdg-header-row .rdg-cell > * {
+          white-space: normal !important;
+          overflow-wrap: anywhere;
+          word-break: break-word;
+          line-height: 1.3;
         }
         ${selector} .rdg-cell-drag-over {
           background: #e8edff !important;

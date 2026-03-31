@@ -5,7 +5,13 @@ export type TabularCopyShortcutKeyInput = {
   metaKey: boolean;
 };
 
-type CopyableInput = Pick<HTMLInputElement, 'type' | 'value' | 'checked' | 'selectionStart' | 'selectionEnd'>;
+type CopyableInput = {
+  type?: string;
+  value: string;
+  checked?: boolean;
+  selectionStart: number | null;
+  selectionEnd: number | null;
+};
 
 const CHECKBOX_COPY_TRUE = 'Yes';
 const CHECKBOX_COPY_FALSE = 'No';
@@ -15,7 +21,7 @@ export function isTabularCopyShortcut(options: TabularCopyShortcutKeyInput): boo
   return !options.altKey && (options.ctrlKey || options.metaKey) && options.key.toLowerCase() === 'c';
 }
 
-export function hasInputSelection(input: Pick<HTMLInputElement, 'selectionStart' | 'selectionEnd'>): boolean {
+export function hasInputSelection(input: Pick<CopyableInput, 'selectionStart' | 'selectionEnd'>): boolean {
   return (
     typeof input.selectionStart === 'number' &&
     typeof input.selectionEnd === 'number' &&
@@ -27,7 +33,7 @@ export function shouldCopyWholeInputValue(input: CopyableInput): boolean {
   return input.type === 'checkbox' || !hasInputSelection(input);
 }
 
-export function getInputCopyValue(input: Pick<HTMLInputElement, 'type' | 'value' | 'checked'>): string {
+export function getInputCopyValue(input: Pick<CopyableInput, 'type' | 'value' | 'checked'>): string {
   if (input.type === 'checkbox') {
     return input.checked ? CHECKBOX_COPY_TRUE : CHECKBOX_COPY_FALSE;
   }

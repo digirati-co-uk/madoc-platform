@@ -11,8 +11,9 @@ export const ViewContent: React.FC<{
   height?: number | string;
   onCreated?: (runtime: Preset) => void;
   onPanInSketchMode?: () => void;
+  homeCover?: true | false | 'start' | 'end';
   children?: React.ReactNode;
-}> = ({ target, canvas, height = 600, onCreated, onPanInSketchMode, children }) => {
+}> = ({ target, canvas, height = 600, onCreated, onPanInSketchMode, homeCover, children }) => {
   return useContentType(
     useMemo(() => {
       const fixedType = [];
@@ -39,6 +40,7 @@ export const ViewContent: React.FC<{
             onPanInSketchMode,
           },
           onCreateAtlas: onCreated,
+          homeCover,
           customFetcher: (mid: string) => {
             const canvasTarget: any = target.find((r: any) => r.type === 'Canvas');
             return {
@@ -50,7 +52,7 @@ export const ViewContent: React.FC<{
           },
         },
       }),
-      [onPanInSketchMode, height, canvas, target]
+      [onPanInSketchMode, onCreated, homeCover, height, canvas, target]
     ),
     children as any
   );

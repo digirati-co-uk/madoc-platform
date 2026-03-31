@@ -56,7 +56,7 @@ function HeaderInput(props: {
   hasError: boolean;
   title?: string;
   onFocus?: () => void;
-  setInputRef: (index: number, node: HTMLInputElement | null) => void;
+  setInputRef: (index: number, node: HTMLTextAreaElement | null) => void;
   onNavigateToColumn: (index: number, caretPosition: 'start' | 'end') => void;
   canAddColumnFromKeyboard: boolean;
   onAddColumnFromKeyboard?: () => void;
@@ -78,10 +78,11 @@ function HeaderInput(props: {
   } = props;
 
   return (
-    <input
+    <textarea
       ref={node => setInputRef(index, node)}
       value={value}
       placeholder="Click to add header"
+      rows={1}
       onFocus={onFocus}
       onChange={e => onChange(e.target.value)}
       onKeyDown={event => {
@@ -121,9 +122,7 @@ function HeaderInput(props: {
           return;
         }
 
-        const isCreateColumnShortcut =
-          isForwardTabWithoutModifiers(event) &&
-          index === columnCount - 1;
+        const isCreateColumnShortcut = isForwardTabWithoutModifiers(event) && index === columnCount - 1;
         if (isCreateColumnShortcut && canAddColumnFromKeyboard) {
           event.preventDefault();
           onAddColumnFromKeyboard?.();
@@ -138,10 +137,16 @@ function HeaderInput(props: {
         border: 'none',
         padding: '10px 12px',
         fontSize: 13,
+        lineHeight: 1.3,
         color: '#283452',
-        textAlign: 'center',
+        textAlign: 'left',
         outline: 'none',
         background: 'transparent',
+        resize: 'none',
+        whiteSpace: 'normal',
+        overflowWrap: 'anywhere',
+        wordBreak: 'break-word',
+        overflow: 'hidden',
         boxShadow: hasError ? 'inset 0 0 0 2px rgba(220, 38, 38, 0.5)' : undefined,
       }}
     />
@@ -181,10 +186,10 @@ export function TabularHeadingsTable(props: TabularHeadingsTableProps) {
     [visibleRows]
   );
   const dataGridRef = useRef<DataGridHandle | null>(null);
-  const headingInputRefs = useRef<Array<HTMLInputElement | null>>([]);
+  const headingInputRefs = useRef<Array<HTMLTextAreaElement | null>>([]);
   const pendingAddedColumnFocusIndexRef = useRef<number | null>(null);
 
-  const setHeaderInputRef = useCallback((index: number, node: HTMLInputElement | null) => {
+  const setHeaderInputRef = useCallback((index: number, node: HTMLTextAreaElement | null) => {
     headingInputRefs.current[index] = node;
   }, []);
 
@@ -302,7 +307,7 @@ export function TabularHeadingsTable(props: TabularHeadingsTableProps) {
     onChangeHeadings,
   ]);
 
-  const headerRowHeight = TABULAR_GRID_HEADER_ROW_HEIGHT_PX;
+  const headerRowHeight = Math.max(TABULAR_GRID_HEADER_ROW_HEIGHT_PX, 60);
   const rowHeight = TABULAR_GRID_ROW_HEIGHT_PX;
   const gridHeight = headerRowHeight + rowHeight * rows.length + 2;
   const minGridWidth = columns * TABULAR_COLUMN_MIN_WIDTH_PX + 2;

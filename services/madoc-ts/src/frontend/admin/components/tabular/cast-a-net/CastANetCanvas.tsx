@@ -59,15 +59,10 @@ export const CastANetCanvas: React.FC<CastANetCanvasProps> = ({
   const [overlayRetryToken, setOverlayRetryToken] = useState(0);
   const overlayRetryCountRef = useRef(0);
   const missingOverlayTicksRef = useRef(0);
-  const initialZoomAppliedRef = useRef(false);
-  const initialZoomRetryCountRef = useRef(0);
-  const initialZoomFrameRef = useRef<number | null>(null);
   const viewerBaseKey = `${manifestId}::${canvasId ?? ''}`;
   const maxOverlayRetries = 4;
-  const maxInitialZoomRetries = 20;
   const healthCheckIntervalMs = 500;
   const overlayMissingRetryTicks = 2;
-  const INITIAL_CANVAS_ZOOM_FACTOR = 0.76;
   const viewerName = useMemo(
     () => `cast-a-net::${previewOverlayOnly ? 'preview' : 'edit'}::${manifestId}::${canvasId ?? 'default'}`,
     [canvasId, manifestId, previewOverlayOnly]
@@ -79,22 +74,12 @@ export const CastANetCanvas: React.FC<CastANetCanvasProps> = ({
     }
   }, [dimOpacity]);
 
-  const cancelInitialZoomRetry = useCallback(() => {
-    if (typeof window !== 'undefined' && initialZoomFrameRef.current != null) {
-      window.cancelAnimationFrame(initialZoomFrameRef.current);
-    }
-    initialZoomFrameRef.current = null;
-  }, []);
-
   useEffect(() => {
     runtime.current = null;
-    initialZoomAppliedRef.current = false;
-    initialZoomRetryCountRef.current = 0;
-    cancelInitialZoomRetry();
     missingOverlayTicksRef.current = 0;
     overlayRetryCountRef.current = 0;
     setOverlayRetryToken(0);
-  }, [viewerBaseKey, canvasId, cancelInitialZoomRetry]);
+  }, [viewerBaseKey, canvasId]);
 
   useEffect(() => {
     if (!previewOverlayOnly) {
@@ -102,12 +87,6 @@ export const CastANetCanvas: React.FC<CastANetCanvasProps> = ({
     }
     setIsPreviewZoomTrackingEnabled(true);
   }, [previewOverlayOnly, viewerBaseKey]);
-
-  useEffect(() => {
-    return () => {
-      cancelInitialZoomRetry();
-    };
-  }, [cancelInitialZoomRetry]);
 
   const getContainerSize = useCallback(() => {
     const container = containerRef.current;
@@ -130,70 +109,6 @@ export const CastANetCanvas: React.FC<CastANetCanvasProps> = ({
     const currentRuntime = runtime.current;
     resizeAtlasRuntime(currentRuntime, nextSize);
   }, []);
-
-  const applyInitialZoom = useCallback(() => {
-    const currentRuntime = runtime.current;
-    if (!currentRuntime || initialZoomAppliedRef.current) {
-      return false;
-    }
-
-    if (typeof currentRuntime.getViewport === 'function' && typeof currentRuntime.setViewport === 'function') {
-      const viewport = currentRuntime.getViewport();
-      if (!viewport || viewport.width <= 0 || viewport.height <= 0) {
-        return false;
-      }
-
-      const nextWidth = viewport.width * INITIAL_CANVAS_ZOOM_FACTOR;
-      const nextHeight = viewport.height * INITIAL_CANVAS_ZOOM_FACTOR;
-      const nextX = viewport.x + (viewport.width - nextWidth) / 2;
-      const nextY = viewport.y;
-      currentRuntime.setViewport({
-        x: nextX,
-        y: nextY,
-        width: nextWidth,
-        height: nextHeight,
-      });
-    } else if (currentRuntime.world?.zoomIn) {
-      currentRuntime.world?.zoomIn?.();
-    } else {
-      return false;
-    }
-
-    currentRuntime.updateNextFrame?.();
-    initialZoomAppliedRef.current = true;
-    return true;
-  }, []);
-
-  const scheduleInitialZoom = useCallback(() => {
-    if (initialZoomAppliedRef.current) {
-      return;
-    }
-
-    if (typeof window === 'undefined') {
-      applyInitialZoom();
-      return;
-    }
-
-    cancelInitialZoomRetry();
-    initialZoomRetryCountRef.current = 0;
-
-    const attemptApply = () => {
-      if (applyInitialZoom()) {
-        initialZoomFrameRef.current = null;
-        return;
-      }
-
-      if (initialZoomRetryCountRef.current >= maxInitialZoomRetries) {
-        initialZoomFrameRef.current = null;
-        return;
-      }
-
-      initialZoomRetryCountRef.current += 1;
-      initialZoomFrameRef.current = window.requestAnimationFrame(attemptApply);
-    };
-
-    initialZoomFrameRef.current = window.requestAnimationFrame(attemptApply);
-  }, [applyInitialZoom, cancelInitialZoomRetry, maxInitialZoomRetries]);
 
   const remountOverlayLayer = useCallback(() => {
     if (previewOverlayOnly || overlayRetryCountRef.current >= maxOverlayRetries) {
@@ -449,6 +364,7 @@ export const CastANetCanvas: React.FC<CastANetCanvasProps> = ({
           resizeHash={height}
           updateViewportTimeout={180}
           runtimeOptions={{ maxOverZoom: 5, visibilityRatio: 1, maxUnderZoom: 1 }}
+          homeCover="start"
           onCreated={preset => {
             runtime.current = (preset.runtime as RuntimeWithViewport | null) ?? null;
             setRuntimeTick(tick => tick + 1);
@@ -456,7 +372,6 @@ export const CastANetCanvas: React.FC<CastANetCanvasProps> = ({
             if (size) {
               resizeRuntimeToSize(size);
             }
-            scheduleInitialZoom();
           }}
         >
           <FollowActiveCellOnCanvas

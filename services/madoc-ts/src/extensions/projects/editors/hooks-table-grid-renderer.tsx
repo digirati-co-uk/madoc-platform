@@ -432,6 +432,17 @@ export function HooksTableGridRenderer({ table, mode, disabled }: HooksTableGrid
             border-inline-end: 1px solid #d4d8df !important;
             border-block-end: 1px solid #d4d8df !important;
           }
+          .hooks-table-rdg .rdg-header-row .rdg-cell {
+            white-space: normal !important;
+            text-overflow: clip !important;
+            padding: 6px 8px !important;
+          }
+          .hooks-table-rdg .rdg-header-row .rdg-cell > * {
+            white-space: normal !important;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+            line-height: 1.3;
+          }
         `}
       </style>
       <DataGrid
@@ -441,7 +452,7 @@ export function HooksTableGridRenderer({ table, mode, disabled }: HooksTableGrid
         rowKeyGetter={row => row.id}
         enableVirtualization={false}
         rowHeight={52}
-        headerRowHeight={42}
+        headerRowHeight={52}
         style={{
           minHeight: 300,
           border: '1px solid #d4d8df',

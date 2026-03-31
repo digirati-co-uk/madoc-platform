@@ -1,13 +1,10 @@
-type AtlasViewport = {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-};
-
 type AtlasRuntimeLike = {
-  getViewport?: () => AtlasViewport | null | undefined;
-  setViewport?: (next: AtlasViewport) => void;
+  getRendererScreenPosition?: () =>
+    | {
+        width: number;
+        height: number;
+      }
+    | undefined;
   updateRendererScreenPosition?: () => void;
   updateNextFrame?: () => void;
   renderer?: {
@@ -20,21 +17,6 @@ type AtlasRuntimeLike = {
   };
 };
 
-function hasValidViewport(viewport: AtlasViewport | null | undefined): viewport is AtlasViewport {
-  if (!viewport) {
-    return false;
-  }
-
-  return (
-    Number.isFinite(viewport.x) &&
-    Number.isFinite(viewport.y) &&
-    Number.isFinite(viewport.width) &&
-    Number.isFinite(viewport.height) &&
-    viewport.width > 0 &&
-    viewport.height > 0
-  );
-}
-
 export function resizeAtlasRuntime(
   runtime: AtlasRuntimeLike | null | undefined,
   size: { width: number; height: number }
@@ -43,25 +25,36 @@ export function resizeAtlasRuntime(
     return;
   }
 
-  const canPreserveViewport = typeof runtime.getViewport === 'function' && typeof runtime.setViewport === 'function';
-  const viewportBeforeResize = canPreserveViewport ? runtime.getViewport() : null;
+  const previousRendererSize = runtime.getRendererScreenPosition?.();
+  const hasRuntimeResize = typeof runtime.resize === 'function';
+  const canUseFromToResize =
+    !!previousRendererSize &&
+    Number.isFinite(previousRendererSize.width) &&
+    Number.isFinite(previousRendererSize.height) &&
+    previousRendererSize.width > 0 &&
+    previousRendererSize.height > 0 &&
+    size.width > 0 &&
+    size.height > 0;
+
+  if (
+    canUseFromToResize &&
+    previousRendererSize &&
+    Math.abs(previousRendererSize.width - size.width) < 0.5 &&
+    Math.abs(previousRendererSize.height - size.height) < 0.5
+  ) {
+    return;
+  }
+
+  if (hasRuntimeResize) {
+    if (canUseFromToResize && previousRendererSize) {
+      runtime.resize(previousRendererSize.width, size.width, previousRendererSize.height, size.height);
+    } else {
+      runtime.resize(size.width, size.height);
+    }
+  } else if (runtime.renderer?.resize) {
+    runtime.renderer.resize(size.width, size.height);
+  }
 
   runtime.updateRendererScreenPosition?.();
-
-  if (runtime.renderer?.resize) {
-    runtime.renderer.resize(size.width, size.height);
-  } else if (typeof runtime.resize === 'function') {
-    runtime.resize(size.width, size.height);
-  }
-
-  if (canPreserveViewport && hasValidViewport(viewportBeforeResize)) {
-    runtime.setViewport({
-      x: viewportBeforeResize.x,
-      y: viewportBeforeResize.y,
-      width: viewportBeforeResize.width,
-      height: viewportBeforeResize.height,
-    });
-  }
-
   runtime.updateNextFrame?.();
 }
