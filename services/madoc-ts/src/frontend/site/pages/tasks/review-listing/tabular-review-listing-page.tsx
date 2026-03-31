@@ -4,12 +4,16 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { SubjectSnippet } from '../../../../../extensions/tasks/resolvers/subject-resolver';
 import { CrowdsourcingTask } from '../../../../../gateway/tasks/crowdsourcing-task';
 import { SimpleStatus } from '../../../../shared/atoms/SimpleStatus';
+import { isEntity } from '../../../../shared/capture-models/helpers/is-entity';
+import type { BaseField } from '../../../../shared/capture-models/types/field-types';
 import { DisplayBreadcrumbs } from '../../../blocks/Breadcrumbs';
 import { LocaleString } from '../../../../shared/components/LocaleString';
+import { useApi } from '../../../../shared/hooks/use-api';
 import { useInfiniteData } from '../../../../shared/hooks/use-data';
 import { useLocationQuery } from '../../../../shared/hooks/use-location-query';
 import { SimpleTable } from '../../../../shared/layout/SimpleTable';
 import { HrefLink } from '../../../../shared/utility/href-link';
+import { parseTabularCellFlags, TABULAR_CELL_FLAGS_PROPERTY } from '../../../../shared/utility/tabular-cell-flags';
 import { useRelativeLinks } from '../../../hooks/use-relative-links';
 import { useTaskMetadata } from '../../../hooks/use-task-metadata';
 import { Button, ButtonRow } from '../../../../shared/navigation/Button';
@@ -28,9 +32,39 @@ const REVIEW_STATUS_MAP: Record<string, number> = {
   changes_requested: 4,
 };
 
+function isBaseField(value: unknown): value is BaseField {
+  return !!value && typeof value === 'object' && !isEntity(value) && 'value' in value;
+}
+
+function getFirstField(values: unknown[]): BaseField | null {
+  const maybeField = values.find(isBaseField);
+  return maybeField || null;
+}
+
+async function getTabularFlaggedCellCount(api: ReturnType<typeof useApi>, revisionId: string): Promise<number> {
+  try {
+    const revisionRequest = await api.crowdsourcing.getCaptureModelRevision(revisionId);
+    const rawFlags = revisionRequest.document.properties[TABULAR_CELL_FLAGS_PROPERTY];
+
+    if (!Array.isArray(rawFlags)) {
+      return 0;
+    }
+
+    const flagsField = getFirstField(rawFlags);
+    if (!flagsField) {
+      return 0;
+    }
+
+    return Object.keys(parseTabularCellFlags(flagsField.value)).length;
+  } catch {
+    return 0;
+  }
+}
+
 export function TabularReviewListingPage() {
   const { t } = useTranslation();
   const params = useParams<{ taskId?: string; slug?: string }>();
+  const api = useApi();
   const projectId = params.slug;
   const createLink = useRelativeLinks();
   const navigate = useNavigate();
@@ -89,6 +123,86 @@ export function TabularReviewListingPage() {
 
   const selectedStatusKey =
     status && Object.entries(REVIEW_STATUS_MAP).find(([, value]) => String(value) === String(status))?.[0];
+  const isFlaggedSort = sort_by.startsWith('flagged_cells:');
+  const flaggedSortDirection = sort_by.includes('flagged_cells:asc') ? 'asc' : 'desc';
+
+  const taskRows = React.useMemo(
+    () =>
+      pages
+        ? pages.flatMap(data =>
+            (data.tasks || []).map((task: CrowdsourcingTask) => ({ task, page: data.pagination.page }))
+          )
+        : [],
+    [pages]
+  );
+
+  const revisionIds = React.useMemo(
+    () =>
+      Array.from(
+        new Set(
+          taskRows
+            .map(row => row.task.state.revisionId)
+            .filter((value): value is string => typeof value === 'string' && value.length > 0)
+        )
+      ),
+    [taskRows]
+  );
+
+  const [flaggedCountsByRevision, setFlaggedCountsByRevision] = React.useState<Record<string, number>>({});
+  const missingRevisionIds = React.useMemo(
+    () => revisionIds.filter(revisionId => typeof flaggedCountsByRevision[revisionId] !== 'number'),
+    [flaggedCountsByRevision, revisionIds]
+  );
+
+  React.useEffect(() => {
+    if (!missingRevisionIds.length) {
+      return;
+    }
+
+    let isActive = true;
+
+    void Promise.all(
+      missingRevisionIds.map(
+        async revisionId => [revisionId, await getTabularFlaggedCellCount(api, revisionId)] as const
+      )
+    ).then(entries => {
+      if (!isActive) {
+        return;
+      }
+
+      setFlaggedCountsByRevision(previous => {
+        const next = { ...previous };
+        for (const [revisionId, count] of entries) {
+          next[revisionId] = count;
+        }
+        return next;
+      });
+    });
+
+    return () => {
+      isActive = false;
+    };
+  }, [api, missingRevisionIds]);
+
+  const sortedTaskRows = React.useMemo(() => {
+    if (!isFlaggedSort || missingRevisionIds.length) {
+      return taskRows;
+    }
+
+    const defaultOrder = new Map(taskRows.map((row, index) => [row.task.id, index]));
+    return [...taskRows].sort((left, right) => {
+      const leftRevisionId = left.task.state.revisionId;
+      const rightRevisionId = right.task.state.revisionId;
+      const leftCount = leftRevisionId ? flaggedCountsByRevision[leftRevisionId] || 0 : 0;
+      const rightCount = rightRevisionId ? flaggedCountsByRevision[rightRevisionId] || 0 : 0;
+
+      if (leftCount !== rightCount) {
+        return flaggedSortDirection === 'asc' ? leftCount - rightCount : rightCount - leftCount;
+      }
+
+      return (defaultOrder.get(left.task.id) || 0) - (defaultOrder.get(right.task.id) || 0);
+    });
+  }, [flaggedCountsByRevision, flaggedSortDirection, isFlaggedSort, missingRevisionIds.length, taskRows]);
 
   return (
     <RefetchProvider refetch={refetch}>
@@ -156,7 +270,7 @@ export function TabularReviewListingPage() {
             <SimpleTable.Table style={{ tableLayout: 'fixed', width: '100%' }}>
               <thead>
                 <SimpleTable.Row style={{ height: 47 }}>
-                  <SimpleTable.Header style={{ width: '30%' }}>
+                  <SimpleTable.Header style={{ width: '26%' }}>
                     <HrefLink
                       href={getSortLink('subject')}
                       style={{ color: '#111', display: 'inline-flex', gap: '0.4em' }}
@@ -164,7 +278,7 @@ export function TabularReviewListingPage() {
                       Manifest <Chevron />
                     </HrefLink>
                   </SimpleTable.Header>
-                  <SimpleTable.Header style={{ width: '24%' }}>
+                  <SimpleTable.Header style={{ width: '22%' }}>
                     <HrefLink
                       href={getSortLink('subject_parent')}
                       style={{ color: '#111', display: 'inline-flex', gap: '0.4em' }}
@@ -172,7 +286,7 @@ export function TabularReviewListingPage() {
                       Canvas <Chevron />
                     </HrefLink>
                   </SimpleTable.Header>
-                  <SimpleTable.Header style={{ width: '16%' }}>
+                  <SimpleTable.Header style={{ width: '14%' }}>
                     <HrefLink
                       href={getSortLink('modified_at')}
                       style={{ color: '#111', display: 'inline-flex', gap: '0.4em' }}
@@ -180,7 +294,15 @@ export function TabularReviewListingPage() {
                       Modified <Chevron />
                     </HrefLink>
                   </SimpleTable.Header>
-                  <SimpleTable.Header style={{ width: '14%' }}>
+                  <SimpleTable.Header style={{ width: '10%' }}>
+                    <HrefLink
+                      href={getSortLink('flagged_cells')}
+                      style={{ color: '#111', display: 'inline-flex', gap: '0.4em' }}
+                    >
+                      Flagged <Chevron />
+                    </HrefLink>
+                  </SimpleTable.Header>
+                  <SimpleTable.Header style={{ width: '13%' }}>
                     <HrefLink
                       href={getSortLink('status')}
                       style={{ color: '#111', display: 'inline-flex', gap: '0.4em' }}
@@ -188,7 +310,7 @@ export function TabularReviewListingPage() {
                       Status <Chevron />
                     </HrefLink>
                   </SimpleTable.Header>
-                  <SimpleTable.Header style={{ width: '16%' }}>
+                  <SimpleTable.Header style={{ width: '15%' }}>
                     <HrefLink
                       href={getSortLink('assignee_id')}
                       style={{ color: '#111', display: 'inline-flex', gap: '0.4em' }}
@@ -199,18 +321,17 @@ export function TabularReviewListingPage() {
                 </SimpleTable.Row>
               </thead>
               <tbody {...(containerProps as any)}>
-                {pages.map(data =>
-                  (data.tasks || []).map((task: CrowdsourcingTask, index: number) => (
-                    <TabularReviewTableRow
-                      key={task.id}
-                      index={index}
-                      task={task}
-                      page={data.pagination.page}
-                      active={task.id === params.taskId}
-                      hideManifests={hideManifests}
-                    />
-                  ))
-                )}
+                {sortedTaskRows.map(({ task, page }, index: number) => (
+                  <TabularReviewTableRow
+                    key={task.id}
+                    index={index}
+                    task={task}
+                    page={page}
+                    active={task.id === params.taskId}
+                    hideManifests={hideManifests}
+                    flaggedCellCount={task.state.revisionId ? flaggedCountsByRevision[task.state.revisionId] : 0}
+                  />
+                ))}
               </tbody>
             </SimpleTable.Table>
             <Button
@@ -233,12 +354,14 @@ function TabularReviewTableRow({
   page,
   index,
   hideManifests,
+  flaggedCellCount,
 }: {
   task: CrowdsourcingTask;
   active?: boolean;
   page?: number;
   index: number;
   hideManifests?: boolean;
+  flaggedCellCount?: number;
 }) {
   const query = useLocationQuery();
   const createLink = useRelativeLinks({ subRoute: 'reviews' });
@@ -268,22 +391,25 @@ function TabularReviewTableRow({
         );
       }}
     >
-      <SimpleTable.Cell style={{ width: '30%', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+      <SimpleTable.Cell style={{ width: '26%', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
         {metadata.subject && metadata.subject.type === 'manifest' ? (
           <LocaleString>{metadata.subject.label}</LocaleString>
         ) : metadata.subject?.parent ? (
           <LocaleString>{metadata.subject.parent.label}</LocaleString>
         ) : null}
       </SimpleTable.Cell>
-      <SimpleTable.Cell style={{ width: '24%', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+      <SimpleTable.Cell style={{ width: '22%', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
         {metadata.subject && metadata.subject.type !== 'manifest' && metadata.subject.label ? (
           <LocaleString>{metadata.subject.label}</LocaleString>
         ) : null}
       </SimpleTable.Cell>
-      <SimpleTable.Cell style={{ width: '16%' }}>
+      <SimpleTable.Cell style={{ width: '14%' }}>
         {task.modified_at ? <>{new Date(task.modified_at).toLocaleDateString()}</> : null}
       </SimpleTable.Cell>
-      <SimpleTable.Cell style={{ width: '14%' }}>
+      <SimpleTable.Cell style={{ width: '10%' }}>
+        {typeof flaggedCellCount === 'number' ? flaggedCellCount : task.state.revisionId ? '...' : 0}
+      </SimpleTable.Cell>
+      <SimpleTable.Cell style={{ width: '13%' }}>
         <SimpleStatus
           onClick={event => {
             event.stopPropagation();
@@ -294,7 +420,7 @@ function TabularReviewTableRow({
         />
       </SimpleTable.Cell>
       <SimpleTable.Cell
-        style={{ width: '16%' }}
+        style={{ width: '15%' }}
         onClick={event => {
           if (!task.assignee) {
             return;

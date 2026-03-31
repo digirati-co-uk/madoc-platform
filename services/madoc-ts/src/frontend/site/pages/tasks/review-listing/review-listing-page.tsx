@@ -86,7 +86,10 @@ const HeaderLink = styled.a`
   svg {
     fill: #555555;
     vertical-align: middle;
-    transition: background-color 0.2s, height 0.3s, transform 0.5s;
+    transition:
+      background-color 0.2s,
+      height 0.3s,
+      transform 0.5s;
     transition-timing-function: ease-in-out;
     height: 2px;
     width: 16px;
@@ -601,6 +604,11 @@ serverRendererFor(ReviewListingPage, {
   getData: async (key, vars, api) => {
     const slug = vars.projectSlug;
     const project = slug ? await api.getProject(slug) : undefined;
+    const query = { ...vars.query };
+
+    if (typeof query.sort_by === 'string' && query.sort_by.startsWith('flagged_cells:')) {
+      delete query.sort_by;
+    }
 
     return api.getTasks(vars.page, {
       all_tasks: !project?.task_id,
@@ -608,7 +616,7 @@ serverRendererFor(ReviewListingPage, {
       root_task_id: project?.task_id,
       per_page: 20,
       detail: true,
-      ...vars.query,
+      ...query,
     });
   },
 });
