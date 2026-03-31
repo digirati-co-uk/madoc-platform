@@ -14,6 +14,7 @@ type TabularColumnConfig = {
   type?: string;
   fieldType?: string;
   helpText?: string;
+  dropdownOptionsText?: string;
   saved?: boolean;
 };
 
@@ -21,6 +22,7 @@ type TabularCaptureModelField = {
   type?: string;
   label?: string;
   description?: string;
+  options?: Array<{ value?: string; text?: string; label?: string }>;
 };
 
 type TabularCaptureModelTemplate = {

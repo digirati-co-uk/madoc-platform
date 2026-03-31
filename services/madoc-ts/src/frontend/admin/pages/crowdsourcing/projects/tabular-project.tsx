@@ -276,6 +276,8 @@ export const TabularProjectWizard: React.FC = () => {
             previewCanvasActiveCell={controller.previewCanvasActiveCell}
             previewColumns={controller.previewColumns}
             previewTooltips={controller.previewTooltips}
+            previewFieldTypes={controller.previewFieldTypes}
+            previewDropdownOptionsText={controller.previewDropdownOptionsText}
             previewTableRowCount={controller.previewTableRowCount}
             previewRows={controller.previewRows}
             previewActiveCell={controller.previewActiveCell}

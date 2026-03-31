@@ -1,10 +1,11 @@
 import type { Collection as IIIFCollection, InternationalString } from '@iiif/presentation-3';
-import type {
-  DefineTabularModelValue,
-  NetConfig,
-  TabularModelPayload,
-  TabularProjectSetupPayload,
+import {
+  type DefineTabularModelValue,
+  type NetConfig,
+  type TabularModelPayload,
+  type TabularProjectSetupPayload,
 } from '../../../../components/tabular/cast-a-net/types';
+import { stringifyTabularDropdownOptions } from '../../../../components/tabular/cast-a-net/TabularModel';
 import {
   clampToRange as clampToRangeShared,
   netConfigFromSharedStructure as netConfigFromSharedStructureShared,
@@ -612,6 +613,20 @@ export const tabularModelValueFromSharedPayload = (payload: TabularModelPayload)
       (_, index) => payload.columns[index]?.type ?? payload.columns[index]?.fieldType
     ),
     helpText: Array.from({ length: columns }, (_, index) => payload.columns[index]?.helpText ?? ''),
+    dropdownOptionsText: Array.from({ length: columns }, (_, index) => {
+      const column = payload.columns[index];
+      if (column?.dropdownOptionsText) {
+        return column.dropdownOptionsText;
+      }
+
+      const fieldType = column?.type ?? column?.fieldType;
+      const term = column?.id;
+      if (fieldType !== 'dropdown-field' || !term) {
+        return '';
+      }
+
+      return stringifyTabularDropdownOptions(payload.captureModelFields?.[term]?.options);
+    }),
     saved: Array.from({ length: columns }, (_, index) => payload.columns[index]?.saved ?? true),
   };
 };

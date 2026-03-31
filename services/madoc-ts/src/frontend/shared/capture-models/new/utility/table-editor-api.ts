@@ -11,6 +11,7 @@ export type TableColumn = {
   label: string;
   description?: string;
   fieldType?: string;
+  options?: Array<{ value?: string; text?: string; label?: string }>;
   required?: boolean;
 };
 
@@ -156,6 +157,8 @@ export function getTableEditorSnapshot(
           label: firstField.label || property,
           description: firstField.description,
           fieldType: firstField.type,
+          options: (firstField as BaseField & { options?: Array<{ value?: string; text?: string; label?: string }> })
+            .options,
           required: !!firstField.required,
         });
       }

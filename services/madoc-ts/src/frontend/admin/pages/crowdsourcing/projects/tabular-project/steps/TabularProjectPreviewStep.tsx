@@ -28,6 +28,8 @@ interface TabularProjectPreviewStepProps {
   previewCanvasActiveCell: TabularCellRef | null;
   previewColumns: string[];
   previewTooltips: string[];
+  previewFieldTypes: string[];
+  previewDropdownOptionsText: string[];
   previewTableRowCount: number;
   previewRows: string[][];
   previewActiveCell: TabularCellRef | null;
@@ -66,6 +68,8 @@ export function TabularProjectPreviewStep(props: TabularProjectPreviewStepProps)
     previewCanvasActiveCell,
     previewColumns,
     previewTooltips,
+    previewFieldTypes,
+    previewDropdownOptionsText,
     previewTableRowCount,
     previewRows,
     previewActiveCell,
@@ -92,7 +96,7 @@ export function TabularProjectPreviewStep(props: TabularProjectPreviewStepProps)
 
   return (
     <>
-      <div className="grid grid-cols-[280px_minmax(0,1fr)] items-stretch gap-4">
+      <div className="grid grid-cols-[320px_minmax(0,1fr)] items-stretch gap-4">
         <div className="rounded border border-[#d6d6d6] bg-[#f4f4f4] p-3">
           <div className="text-2xl font-light mb-1">{t('Preview')}</div>
           <hr />
@@ -195,6 +199,8 @@ export function TabularProjectPreviewStep(props: TabularProjectPreviewStepProps)
                 <TabularPreviewTable
                   headings={previewColumns}
                   tooltips={previewTooltips}
+                  fieldTypes={previewFieldTypes}
+                  dropdownOptionsText={previewDropdownOptionsText}
                   rows={previewTableRowCount}
                   values={previewRows}
                   onChange={onPreviewRowsChange}
@@ -233,6 +239,8 @@ export function TabularProjectPreviewStep(props: TabularProjectPreviewStepProps)
             <TabularPreviewTable
               headings={previewColumns}
               tooltips={previewTooltips}
+              fieldTypes={previewFieldTypes}
+              dropdownOptionsText={previewDropdownOptionsText}
               rows={previewTableRowCount}
               values={previewRows}
               onChange={onPreviewRowsChange}

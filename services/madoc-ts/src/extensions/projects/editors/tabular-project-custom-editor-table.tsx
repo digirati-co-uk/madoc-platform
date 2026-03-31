@@ -21,6 +21,7 @@ import {
 } from '@/frontend/shared/utility/tabular-grid-keyboard-navigation';
 import { TabularDataGridStyles } from '@/frontend/shared/components/TabularDataGridStyles';
 import { scrollTabularGridCellIntoView } from '@/frontend/shared/utility/tabular-grid-scroll';
+import { formatDateFieldInput, isValidDateFieldValue } from '@/frontend/shared/utility/date-field-format';
 import FlagIcon from '@/frontend/shared/icons/FlagIcon';
 import type { TabularEditorHeaderModel, TabularEditorRowModel } from './tabular-project-custom-editor-table-model';
 
@@ -56,8 +57,6 @@ type TabularGridRow = {
   rowPosition: number;
   row: TabularEditorRowModel;
 };
-
-const TABULAR_EDITOR_MIN_ROW_HEIGHT_PX = 60;
 
 type FlagCellButtonProps = {
   isFlagged: boolean;
@@ -111,10 +110,11 @@ type TabularGridCellInputProps = {
   inputId: string;
   value: unknown;
   fieldType?: string;
+  fieldOptions?: Array<{ value: string; text: string; label?: string }>;
   disabled: boolean;
   onChange: (nextValue: unknown) => void;
   onFocus: () => void;
-  onKeyDown: (event: React.KeyboardEvent<HTMLInputElement>) => void;
+  onKeyDown: (event: React.KeyboardEvent<HTMLInputElement | HTMLSelectElement>) => void;
   isActiveCell: boolean;
   isFlagged: boolean;
 };
@@ -128,8 +128,17 @@ type TabularCellContextMenuState = {
   isFlagged: boolean;
 };
 
+function getDropdownDisplayText(
+  options: Array<{ value: string; text: string; label?: string }>,
+  selectedValue: string
+): string {
+  const selectedOption = options.find(option => option.value === selectedValue);
+  return selectedOption?.text || selectedOption?.label || selectedValue;
+}
+
 function TabularGridCellInput(options: TabularGridCellInputProps) {
-  const { inputId, value, fieldType, disabled, onChange, onFocus, onKeyDown, isActiveCell, isFlagged } = options;
+  const { inputId, value, fieldType, fieldOptions, disabled, onChange, onFocus, onKeyDown, isActiveCell, isFlagged } =
+    options;
   const [optimisticTextValue, setOptimisticTextValue] = useState<string>(() => toTextValue(value));
   const [optimisticCheckedValue, setOptimisticCheckedValue] = useState<boolean>(() => !!value);
 
@@ -139,16 +148,39 @@ function TabularGridCellInput(options: TabularGridCellInputProps) {
       ? 'border-red-300 bg-red-50'
       : 'border-transparent bg-transparent';
 
+  const isCheckboxField = fieldType === 'checkbox-field';
+  const isDateField = fieldType === 'date-field';
+  const isDropdownField = fieldType === 'dropdown-field';
+  const isInvalidDateValue = isDateField && !isValidDateFieldValue(optimisticTextValue);
+  const invalidDateClasses = isInvalidDateValue ? 'border-red-400 bg-red-50' : undefined;
+  const dropdownOptions = fieldOptions ?? [];
+  const displayTextValue = isDropdownField
+    ? getDropdownDisplayText(dropdownOptions, optimisticTextValue)
+    : optimisticTextValue;
+
   useEffect(() => {
-    if (fieldType === 'checkbox-field') {
+    if (isCheckboxField) {
       setOptimisticCheckedValue(!!value);
       return;
     }
 
-    setOptimisticTextValue(toTextValue(value));
-  }, [fieldType, inputId, value]);
+    const nextTextValue = toTextValue(value);
+    setOptimisticTextValue(isDateField ? formatDateFieldInput(nextTextValue) : nextTextValue);
+  }, [inputId, isCheckboxField, isDateField, value]);
 
-  if (fieldType === 'checkbox-field') {
+  const commitTextValue = (nextTextValue: string) => {
+    setOptimisticTextValue(nextTextValue);
+    onChange(nextTextValue);
+  };
+  const handleTextInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (disabled) {
+      return;
+    }
+    const nextRawValue = event.currentTarget.value;
+    commitTextValue(isDateField ? formatDateFieldInput(nextRawValue) : nextRawValue);
+  };
+
+  if (isCheckboxField) {
     return (
       <div className={`flex h-full items-center justify-center rounded border px-2 py-1 ${inputContainerClass}`}>
         <input
@@ -182,9 +214,60 @@ function TabularGridCellInput(options: TabularGridCellInputProps) {
           wordBreak: 'break-word',
           overflow: 'hidden',
         }}
-        title={optimisticTextValue || undefined}
+        title={displayTextValue || undefined}
       >
-        {optimisticTextValue || '\u00A0'}
+        {displayTextValue || '\u00A0'}
+      </div>
+    );
+  }
+
+  if (isDropdownField) {
+    return (
+      <select
+        id={inputId}
+        className={`h-full w-full rounded border px-2 py-1 text-sm outline-none ${inputContainerClass}`}
+        value={optimisticTextValue}
+        disabled={disabled}
+        aria-disabled={disabled}
+        onFocus={onFocus}
+        onClick={onFocus}
+        onKeyDown={onKeyDown}
+        onChange={event => {
+          if (disabled) {
+            return;
+          }
+          commitTextValue(event.currentTarget.value);
+        }}
+      >
+        <option value="">Select option</option>
+        {dropdownOptions.map(option => (
+          <option key={`${inputId}-${option.value}`} value={option.value}>
+            {option.text || option.label || option.value}
+          </option>
+        ))}
+      </select>
+    );
+  }
+
+  if (isDateField) {
+    return (
+      <div
+        className={`flex h-full w-full flex-col rounded border px-2 py-1 ${inputContainerClass} ${invalidDateClasses || ''}`}
+      >
+        <input
+          id={inputId}
+          type="text"
+          className="w-full border-0 bg-transparent p-0 text-sm leading-5 outline-none"
+          value={optimisticTextValue}
+          readOnly={disabled}
+          aria-readonly={disabled}
+          aria-invalid={isInvalidDateValue ? 'true' : 'false'}
+          placeholder="DD-MM-YYYY"
+          onFocus={onFocus}
+          onClick={onFocus}
+          onKeyDown={onKeyDown}
+          onChange={handleTextInputChange}
+        />
       </div>
     );
   }
@@ -192,6 +275,7 @@ function TabularGridCellInput(options: TabularGridCellInputProps) {
   return (
     <input
       id={inputId}
+      type="text"
       className={`h-full w-full rounded border px-2 py-1 text-sm outline-none ${inputContainerClass}`}
       value={optimisticTextValue}
       readOnly={disabled}
@@ -199,14 +283,7 @@ function TabularGridCellInput(options: TabularGridCellInputProps) {
       onFocus={onFocus}
       onClick={onFocus}
       onKeyDown={onKeyDown}
-      onChange={event => {
-        if (disabled) {
-          return;
-        }
-        const nextValue = event.currentTarget.value;
-        setOptimisticTextValue(nextValue);
-        onChange(nextValue);
-      }}
+      onChange={handleTextInputChange}
     />
   );
 }
@@ -243,7 +320,7 @@ export function TabularProjectCustomEditorTable({
   const footerJustifyClass =
     hasAnyRowControl && hasFooterActions ? 'justify-between' : hasFooterActions ? 'justify-end' : 'justify-center';
   const headerRowHeight = TABULAR_GRID_HEADER_ROW_HEIGHT_PX;
-  const rowHeight = Math.max(TABULAR_GRID_ROW_HEIGHT_PX, TABULAR_EDITOR_MIN_ROW_HEIGHT_PX);
+  const rowHeight = Math.max(TABULAR_GRID_ROW_HEIGHT_PX, 60);
   const tableScrollRef = useRef<HTMLDivElement | null>(null);
   const dataGridRef = useRef<DataGridHandle | null>(null);
   const shouldScrollToNewRowRef = useRef(false);
@@ -344,13 +421,17 @@ export function TabularProjectCustomEditorTable({
       });
       if (typeof window !== 'undefined') {
         window.requestAnimationFrame(() => {
-          const input = document.getElementById(targetCell.inputId) as HTMLInputElement | null;
+          const input = document.getElementById(targetCell.inputId) as HTMLInputElement | HTMLSelectElement | null;
           if (!input) {
             return;
           }
 
           input.focus();
-          if (input.type !== 'checkbox' && typeof input.setSelectionRange === 'function') {
+          if (
+            input instanceof HTMLInputElement &&
+            input.type !== 'checkbox' &&
+            typeof input.setSelectionRange === 'function'
+          ) {
             const caret = caretPosition === 'start' ? 0 : input.value.length;
             input.setSelectionRange(caret, caret);
           }
@@ -448,13 +529,19 @@ export function TabularProjectCustomEditorTable({
           const showFlagControl = hasInlineFlagToggle && (isFlagged || isActiveCell);
           const canToggleThisCell = hasInlineFlagToggle && canToggleCellFlags && !disabled;
 
-          const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-            if (isTabularCopyShortcut(event)) {
-              const input = event.currentTarget;
+          const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement | HTMLSelectElement>) => {
+            const target = event.currentTarget;
+            const stopKeyboardEvent = () => {
+              event.preventDefault();
+              event.stopPropagation();
+            };
+
+            if (target instanceof HTMLInputElement && isTabularCopyShortcut(event)) {
+              const input = target;
               event.stopPropagation();
 
               if (shouldCopyWholeInputValue(input)) {
-                event.preventDefault();
+                stopKeyboardEvent();
                 void copyTabularCellValueToClipboard(getInputCopyValue(input));
               }
               return;
@@ -470,10 +557,10 @@ export function TabularProjectCustomEditorTable({
               colIndex,
               rowCount: gridRows.length,
               colCount: headerColumns.length,
-              inputType: event.currentTarget.type,
-              selectionStart: event.currentTarget.selectionStart,
-              selectionEnd: event.currentTarget.selectionEnd,
-              valueLength: event.currentTarget.value.length,
+              inputType: target.type,
+              selectionStart: target instanceof HTMLInputElement ? target.selectionStart : null,
+              selectionEnd: target instanceof HTMLInputElement ? target.selectionEnd : null,
+              valueLength: target.value.length,
               horizontalArrowBehavior: 'always',
             });
 
@@ -483,21 +570,18 @@ export function TabularProjectCustomEditorTable({
                 row.rowPosition === gridRows.length - 1 &&
                 colIndex === headerColumns.length - 1;
               if (isCreateRowShortcut && requestRowAppendForKeyboard()) {
-                event.preventDefault();
-                event.stopPropagation();
+                stopKeyboardEvent();
                 return;
               }
 
               // Without this, react-data-grid can intercept the event and trap keyboard navigation.
               if (isDirectionalArrowKey(event.key) && !event.altKey && !event.ctrlKey && !event.metaKey) {
-                event.preventDefault();
-                event.stopPropagation();
+                stopKeyboardEvent();
               }
               return;
             }
 
-            event.preventDefault();
-            event.stopPropagation();
+            stopKeyboardEvent();
             focusGridInput(navigation.nextRow, navigation.nextCol, navigation.caretPosition);
           };
 
@@ -539,6 +623,7 @@ export function TabularProjectCustomEditorTable({
                 inputId={cell.inputId}
                 value={cell.value}
                 fieldType={cell.fieldType}
+                fieldOptions={cell.fieldOptions}
                 disabled={disabled}
                 onFocus={() => onActiveCellChange({ row: cell.rowIndex, col: colIndex })}
                 onKeyDown={handleKeyDown}

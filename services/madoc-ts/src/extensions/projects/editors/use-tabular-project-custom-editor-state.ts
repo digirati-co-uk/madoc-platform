@@ -7,6 +7,7 @@ import {
   getTabularCellElementId,
   isHiddenFieldType,
   isTabularSystemProperty,
+  normalizeTabularDropdownOptions,
   type TabularModelColumn,
 } from './tabular-project-custom-editor-utils';
 import type { TabularEditorHeaderModel, TabularEditorRowModel } from './tabular-project-custom-editor-table-model';
@@ -245,6 +246,17 @@ export function useTabularProjectCustomEditorState({
     () => new Map(visibleColumns.map(column => [column.key, column])),
     [visibleColumns]
   );
+  const resolvedFieldOptionsByColumn = useMemo(
+    () =>
+      new Map(
+        visibleColumns.map(column => {
+          const normalizedColumnOptions = normalizeTabularDropdownOptions(column.options);
+          const fallbackOptions = columnModel.fieldOptions.get(column.key);
+          return [column.key, normalizedColumnOptions.length > 0 ? normalizedColumnOptions : fallbackOptions] as const;
+        })
+      ),
+    [columnModel.fieldOptions, visibleColumns]
+  );
 
   const headerColumns = useMemo<TabularEditorHeaderModel[]>(() => {
     return visibleColumnKeys.map(columnKey => {
@@ -273,6 +285,7 @@ export function useTabularProjectCustomEditorState({
             colIndex,
             columnKey,
             fieldType: columnModel.hints.get(columnKey),
+            fieldOptions: columnModel.fieldOptions.get(columnKey),
             value: field?.value,
             cellElementId: getTabularCellElementId(rowIndex, columnKey, true),
             inputId: `tabular-legacy-row-${rowIndex}-${columnKey}`,
@@ -300,6 +313,7 @@ export function useTabularProjectCustomEditorState({
           colIndex,
           columnKey: column.key,
           fieldType: columnModel.hints.get(column.key) || column.fieldType,
+          fieldOptions: resolvedFieldOptionsByColumn.get(column.key),
           value: cell?.value,
           cellElementId: getTabularCellElementId(row.rowIndex, column.key, false),
           inputId: `tabular-row-${row.rowIndex}-${column.key}`,
@@ -308,11 +322,13 @@ export function useTabularProjectCustomEditorState({
       }),
     }));
   }, [
+    columnModel.fieldOptions,
     columnModel.hints,
     createLegacyField,
     legacyColumnKeys,
     legacyMutableRowCount,
     rowMutationTick,
+    resolvedFieldOptionsByColumn,
     table.rows,
     table.topLevelFields,
     useLegacyTopLevelLayout,

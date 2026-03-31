@@ -10,6 +10,7 @@ export type TabularEditorCellModel = {
   colIndex: number;
   columnKey: string;
   fieldType?: string;
+  fieldOptions?: Array<{ value: string; text: string; label?: string }>;
   value: unknown;
   cellElementId: string;
   inputId: string;

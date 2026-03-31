@@ -1,7 +1,12 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CanvasPanel, SimpleViewerProvider } from 'react-iiif-vault';
-import type { DefineTabularModelValue, TabularFieldType, TabularModelChange, TabularValidationIssue } from './types';
+import {
+  type TabularColumnEditorValue,
+  type DefineTabularModelValue,
+  type TabularModelChange,
+  type TabularValidationIssue,
+} from './types';
 import { buildTabularModelPayload, validateTabularModel } from './TabularModel';
 import { TabularHeadingsTable } from './TabularHeadingsTable';
 import { TabularColumnEditor } from './TabularColumnEditor';
@@ -158,7 +163,6 @@ export function DefineTabularModel(props: {
 
   const requestedColumns = value.columns > 0 ? value.columns : defaultColumns;
   const requestedPreviewRows = value.previewRows > 0 ? value.previewRows : defaultPreviewRows;
-  const defaultFieldType = 'text-field' as TabularFieldType;
 
   const safeColumns = Math.max(minColumns, Math.min(maxColumns, Math.floor(requestedColumns || 0)));
   const safePreviewRows = Math.max(minPreviewRows, Math.min(maxPreviewRows, Math.floor(requestedPreviewRows || 0)));
@@ -176,13 +180,17 @@ export function DefineTabularModel(props: {
   );
 
   const safeFieldTypes = useMemo(
-    () => Array.from({ length: safeColumns }, () => defaultFieldType),
-    [safeColumns, defaultFieldType]
+    () => Array.from({ length: safeColumns }, (_, i) => value.fieldTypes?.[i] ?? 'text-field'),
+    [safeColumns, value.fieldTypes]
   );
 
   const safeHelpText = useMemo(
     () => Array.from({ length: safeColumns }, (_, i) => value.helpText?.[i]),
     [safeColumns, value.helpText]
+  );
+  const safeDropdownOptionsText = useMemo(
+    () => Array.from({ length: safeColumns }, (_, i) => value.dropdownOptionsText?.[i] ?? ''),
+    [safeColumns, value.dropdownOptionsText]
   );
 
   const safeSaved = useMemo(
@@ -191,6 +199,25 @@ export function DefineTabularModel(props: {
   );
 
   const buildSavedFlags = (length: number, saved: boolean) => Array.from({ length }, () => saved);
+  const applyModelUpdate = (
+    nextColumns: number,
+    nextPreviewRows: number,
+    nextHeadings: string[],
+    nextFieldTypes: (string | undefined)[],
+    nextHelpText: (string | undefined)[],
+    nextDropdownOptionsText: (string | undefined)[]
+  ) => {
+    onChange({
+      ...value,
+      columns: nextColumns,
+      previewRows: nextPreviewRows,
+      headings: nextHeadings,
+      fieldTypes: nextFieldTypes,
+      helpText: nextHelpText,
+      dropdownOptionsText: nextDropdownOptionsText,
+      saved: buildSavedFlags(nextColumns, false),
+    });
+  };
 
   useEffect(() => {
     if (activeColumn > safeColumns - 1) {
@@ -230,9 +257,10 @@ export function DefineTabularModel(props: {
       buildTabularModelPayload(safeHeadings, {
         fieldTypes: safeFieldTypes,
         helpText: safeHelpText,
+        dropdownOptionsText: safeDropdownOptionsText,
         saved: safeSaved,
       }),
-    [safeHeadings, safeFieldTypes, safeHelpText, safeSaved]
+    [safeHeadings, safeFieldTypes, safeHelpText, safeDropdownOptionsText, safeSaved]
   );
 
   useEffect(() => {
@@ -288,35 +316,28 @@ export function DefineTabularModel(props: {
 
   const setColumns = (nextCols: number) => {
     const n = Math.max(minColumns, Math.min(maxColumns, Math.floor(nextCols)));
-    onChange({
-      ...value,
-      columns: n,
-      previewRows: safePreviewRows,
-      headings: Array.from({ length: n }, (_, i) => safeHeadings[i] ?? ''),
-      fieldTypes: Array.from({ length: n }, (_, i) => safeFieldTypes[i] ?? defaultFieldType),
-      helpText: Array.from({ length: n }, (_, i) => safeHelpText[i]),
-      saved: buildSavedFlags(n, false),
-    });
+    applyModelUpdate(
+      n,
+      safePreviewRows,
+      Array.from({ length: n }, (_, i) => safeHeadings[i] ?? ''),
+      Array.from({ length: n }, (_, i) => safeFieldTypes[i] ?? 'text-field'),
+      Array.from({ length: n }, (_, i) => safeHelpText[i]),
+      Array.from({ length: n }, (_, i) => safeDropdownOptionsText[i] ?? '')
+    );
   };
 
-  const updateColumn = (index: number, next: { heading: string; fieldType?: TabularFieldType; helpText?: string }) => {
+  const updateColumn = (index: number, next: TabularColumnEditorValue) => {
     const headings = safeHeadings.slice();
     const fieldTypes = safeFieldTypes.slice();
     const helpText = safeHelpText.slice();
+    const dropdownOptionsText = safeDropdownOptionsText.slice();
 
     headings[index] = next.heading;
-    fieldTypes[index] = defaultFieldType;
+    fieldTypes[index] = next.fieldType ?? fieldTypes[index] ?? 'text-field';
     helpText[index] = next.helpText;
+    dropdownOptionsText[index] = next.dropdownOptionsText ?? '';
 
-    onChange({
-      ...value,
-      columns: safeColumns,
-      previewRows: 4,
-      headings,
-      fieldTypes,
-      helpText,
-      saved: buildSavedFlags(safeColumns, false),
-    });
+    applyModelUpdate(safeColumns, tableVisibleRows, headings, fieldTypes, helpText, dropdownOptionsText);
   };
 
   const addColumn = () => {
@@ -336,16 +357,9 @@ export function DefineTabularModel(props: {
     const headings = safeHeadings.filter((_, index) => index !== columnIndex);
     const fieldTypes = safeFieldTypes.filter((_, index) => index !== columnIndex);
     const helpText = safeHelpText.filter((_, index) => index !== columnIndex);
+    const dropdownOptionsText = safeDropdownOptionsText.filter((_, index) => index !== columnIndex);
 
-    onChange({
-      ...value,
-      columns: nextColumns,
-      previewRows: safePreviewRows,
-      headings,
-      fieldTypes,
-      helpText,
-      saved: buildSavedFlags(nextColumns, false),
-    });
+    applyModelUpdate(nextColumns, safePreviewRows, headings, fieldTypes, helpText, dropdownOptionsText);
     setActiveColumn(Math.min(columnIndex, nextColumns - 1));
   };
   const reorderColumns = (sourceColumnIndex: number, targetColumnIndex: number) => {
@@ -366,15 +380,14 @@ export function DefineTabularModel(props: {
     );
     const nextActiveColumn = orderedColumns.indexOf(activeColumn);
 
-    onChange({
-      ...value,
-      columns: safeColumns,
-      previewRows: tableVisibleRows,
-      headings: reorderArray(safeHeadings, sourceColumnIndex, targetColumnIndex),
-      fieldTypes: reorderArray(safeFieldTypes, sourceColumnIndex, targetColumnIndex),
-      helpText: reorderArray(safeHelpText, sourceColumnIndex, targetColumnIndex),
-      saved: buildSavedFlags(safeColumns, false),
-    });
+    applyModelUpdate(
+      safeColumns,
+      tableVisibleRows,
+      reorderArray(safeHeadings, sourceColumnIndex, targetColumnIndex),
+      reorderArray(safeFieldTypes, sourceColumnIndex, targetColumnIndex),
+      reorderArray(safeHelpText, sourceColumnIndex, targetColumnIndex),
+      reorderArray(safeDropdownOptionsText, sourceColumnIndex, targetColumnIndex)
+    );
 
     if (nextActiveColumn !== -1) {
       setActiveColumn(nextActiveColumn);
@@ -411,7 +424,7 @@ export function DefineTabularModel(props: {
         </div>
       ) : null}
 
-      <div className="grid grid-cols-[280px_minmax(0,1fr)] items-stretch gap-4">
+      <div className="grid grid-cols-[320px_minmax(0,1fr)] items-stretch gap-4">
         <div className="rounded border border-[#d6d6d6] bg-[#f4f4f4] p-3">
           <div className="mb-1 text-2xl font-light">{t('Tabular document')}</div>
           <div className="mt-3 rounded border border-[#ced8ff] bg-[#e8edff] p-3 text-[#1f2d5a]">
@@ -476,6 +489,7 @@ export function DefineTabularModel(props: {
                 heading: safeHeadings[activeColumn] ?? '',
                 fieldType: safeFieldTypes[activeColumn],
                 helpText: safeHelpText[activeColumn] ?? '',
+                dropdownOptionsText: safeDropdownOptionsText[activeColumn] ?? '',
               }}
               disabled={disabled}
               error={showValidationErrors ? activeError : undefined}
@@ -522,15 +536,14 @@ export function DefineTabularModel(props: {
                   headings={safeHeadings}
                   tooltips={safeHelpText}
                   onChangeHeadings={next =>
-                    onChange({
-                      ...value,
-                      columns: safeColumns,
-                      previewRows: tableVisibleRows,
-                      headings: next,
-                      fieldTypes: safeFieldTypes,
-                      helpText: safeHelpText,
-                      saved: buildSavedFlags(safeColumns, false),
-                    })
+                    applyModelUpdate(
+                      safeColumns,
+                      tableVisibleRows,
+                      next,
+                      safeFieldTypes,
+                      safeHelpText,
+                      safeDropdownOptionsText
+                    )
                   }
                   activeColumn={activeColumn}
                   onActiveColumnChange={setActiveColumn}

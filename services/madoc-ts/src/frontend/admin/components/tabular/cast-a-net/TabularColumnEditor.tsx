@@ -1,16 +1,21 @@
 import React, { useContext, useMemo } from 'react';
-import type { TabularColumnEditorValue, TabularFieldPlugin } from './types';
+import {
+  type TabularColumnEditorValue,
+  type TabularFieldPlugin,
+} from './types';
 import { PluginContext } from '../../../../shared/capture-models/plugin-api/context';
 import { Segment } from '../../../../shared/capture-models/editor/atoms/Segment';
+import { ChooseFieldButton } from '../../../../shared/capture-models/editor/components/ChooseFieldButton/ChooseFieldButton';
 import {
   StyledForm,
   StyledFormLabel,
   StyledFormInputElement,
-} from '../../../../shared/capture-models/editor/atoms/StyledForm';
+  StyledFormTextarea,
+} from '@/frontend/shared/capture-models/editor/atoms/StyledForm';
 import { TinyButton } from '@/frontend/shared/navigation/Button';
 import { DeleteForeverIcon } from '@/frontend/shared/icons/DeleteForeverIcon';
 
-const TEXT_FIELD_TYPE = 'text-field';
+const supportedFieldTypes = ['text-field', 'dropdown-field', 'date-field'];
 
 export function TabularColumnEditor(props: {
   index: number;
@@ -26,15 +31,42 @@ export function TabularColumnEditor(props: {
   const { fields } = useContext(PluginContext);
 
   const availableFieldTypes = useMemo(
-    () => Object.values(fields).filter(Boolean) as Array<TabularFieldPlugin>,
+    () =>
+      Object.values(fields).filter(
+        (field): field is TabularFieldPlugin => !!field && supportedFieldTypes.includes(field.type)
+      ),
     [fields]
   );
-
-  const textFieldType = useMemo(
-    () => availableFieldTypes.find(field => field.type === TEXT_FIELD_TYPE),
+  const fieldTypeOptions = useMemo(
+    () =>
+      availableFieldTypes.length
+        ? availableFieldTypes
+        : ([
+            { type: 'text-field', label: 'Text field', description: 'Simple text field' },
+            {
+              type: 'dropdown-field',
+              label: 'Dropdown field',
+              description: 'Simple list of static values',
+            },
+            { type: 'date-field', label: 'Date field', description: 'Typed date (DD-MM-YYYY)' },
+          ] as TabularFieldPlugin[]),
     [availableFieldTypes]
   );
-  const typeLabel = textFieldType?.label ?? 'Text';
+
+  const selectedFieldType = useMemo(
+    () =>
+      fieldTypeOptions.find(field => field.type === value.fieldType) ||
+      fieldTypeOptions.find(field => field.type === 'text-field'),
+    [fieldTypeOptions, value.fieldType]
+  );
+  const selectedType = selectedFieldType?.type || 'text-field';
+  const isDropdownSelected = selectedType === 'dropdown-field';
+  const updateColumn = (nextValue: Partial<TabularColumnEditorValue>) => {
+    onChange({
+      ...value,
+      ...nextValue,
+    });
+  };
 
   return (
     <Segment style={{ borderTopColor: 'lightcoral' }}>
@@ -52,7 +84,7 @@ export function TabularColumnEditor(props: {
             disabled={disabled}
             maxLength={maxHeadingLength}
             aria-invalid={error ? 'true' : 'false'}
-            onChange={(e: any) => onChange({ ...value, heading: e.target.value })}
+            onChange={(event: any) => updateColumn({ heading: event.target.value })}
             style={{
               boxShadow: error ? '0 0 0 2px rgba(220, 38, 38, 0.25)' : undefined,
             }}
@@ -64,21 +96,39 @@ export function TabularColumnEditor(props: {
         <div style={{ display: 'grid', gap: 6, minWidth: 0 }}>
           <StyledFormLabel>Field type *</StyledFormLabel>
           <div style={{ width: '100%', maxWidth: '100%', minWidth: 0, overflow: 'hidden' }}>
-            <StyledFormInputElement as="input" value={typeLabel} readOnly disabled />
+            <ChooseFieldButton
+              key={`tabular-column-field-type-${props.index}`}
+              fieldType={selectedType}
+              allowedFieldTypes={supportedFieldTypes}
+              onChange={next => updateColumn({ fieldType: next || 'text-field' })}
+            />
             <div style={{ marginTop: 6, fontSize: 12, opacity: 0.75 }}>
-              {textFieldType?.description ?? 'Field type is fixed to Text for tabular projects.'}
+              {selectedFieldType?.description ?? 'Select the field type for this column.'}
             </div>
           </div>
         </div>
 
+        {isDropdownSelected ? (
+          <div style={{ display: 'grid', gap: 6 }}>
+            <StyledFormLabel>Dropdown options (value,label one per line)</StyledFormLabel>
+            <StyledFormTextarea
+              rows={4}
+              value={value.dropdownOptionsText ?? ''}
+              placeholder=""
+              disabled={disabled}
+              onChange={(event: any) => updateColumn({ dropdownOptionsText: event.target.value })}
+            />
+          </div>
+        ) : null}
+
         <div style={{ display: 'grid', gap: 6 }}>
-          <StyledFormLabel>Selected column tooltip (optional)</StyledFormLabel>
+          <StyledFormLabel>Tooltip (optional)</StyledFormLabel>
           <StyledFormInputElement
             as="input"
             value={value.helpText ?? ''}
             placeholder="Optional help text shown to users for this column"
             disabled={disabled}
-            onChange={(e: any) => onChange({ ...value, helpText: e.target.value })}
+            onChange={(event: any) => updateColumn({ helpText: event.target.value })}
           />
         </div>
 

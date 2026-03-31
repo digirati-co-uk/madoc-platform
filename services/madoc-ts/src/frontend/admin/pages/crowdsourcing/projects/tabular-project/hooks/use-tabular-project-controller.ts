@@ -14,14 +14,14 @@ import {
   TABULAR_WIZARD_PREVIEW_SPLIT_GAP,
   TABULAR_WIZARD_PREVIEW_SPLIT_TOTAL_HEIGHT,
 } from '../constants';
-import { buildTabularModelPayload } from '../../../../../components/tabular/cast-a-net/TabularModel';
+import { buildTabularModelPayload, stringifyTabularDropdownOptions } from '../../../../../components/tabular/cast-a-net/TabularModel';
 import { buildTabularProjectSetupPayload } from '../../../../../components/tabular/cast-a-net/CastANetStructure';
-import type {
-  DefineTabularModelValue,
-  NetConfig,
-  TabularCellRef,
-  TabularModelChange,
-  TabularModelPayload,
+import {
+  type DefineTabularModelValue,
+  type NetConfig,
+  type TabularCellRef,
+  type TabularModelChange,
+  type TabularModelPayload,
 } from '../../../../../components/tabular/cast-a-net/types';
 import type {
   IiifHistoryItem,
@@ -79,7 +79,6 @@ const PREVIEW_CANVAS_MAX_HEIGHT =
 const MAX_MADOC_COLLECTION_HOME_PAGES = 20;
 const MAX_MADOC_MANIFEST_HOME_PAGES = 40;
 const IIIF_HOME_LOCAL_STORAGE_KEY = 'iiif-browser-tabular-project-v2';
-const TABULAR_DEFAULT_FIELD_TYPE = 'text-field';
 
 const buildEvenLinePositions = (count: number): number[] => {
   const safeCount = Math.max(1, Math.floor(count || 1));
@@ -236,7 +235,7 @@ export function useTabularProjectController(options: UseTabularProjectController
       const shouldResetCols = colsChanged || colPositionCountChanged;
       const shouldResetRows = rowsChanged || rowPositionCountChanged;
 
-      if (!colsChanged && !rowsChanged && !shouldResetCols && !shouldResetRows) {
+      if (!shouldResetCols && !shouldResetRows) {
         return prev;
       }
 
@@ -265,6 +264,31 @@ export function useTabularProjectController(options: UseTabularProjectController
         ? tabularPayload.columns.map(column => column.helpText || '')
         : Array.from({ length: modelColumnCount }, (_, index) => tabularModel.helpText?.[index] ?? ''),
     [tabularPayload, modelColumnCount, tabularModel.helpText]
+  );
+  const previewFieldTypes = useMemo(
+    () =>
+      tabularPayload?.columns?.length
+        ? tabularPayload.columns.map(column => column.type || column.fieldType || 'text-field')
+        : Array.from(
+            { length: modelColumnCount },
+            (_, index) => tabularModel.fieldTypes?.[index] ?? 'text-field'
+          ),
+    [tabularPayload, modelColumnCount, tabularModel.fieldTypes]
+  );
+  const previewDropdownOptionsText = useMemo(
+    () =>
+      tabularPayload?.columns?.length
+        ? tabularPayload.columns.map(column => {
+            if (column.dropdownOptionsText) {
+              return column.dropdownOptionsText;
+            }
+
+            return column.id
+              ? stringifyTabularDropdownOptions(tabularPayload.captureModelFields?.[column.id]?.options)
+              : '';
+          })
+        : Array.from({ length: modelColumnCount }, (_, index) => tabularModel.dropdownOptionsText?.[index] ?? ''),
+    [tabularPayload, modelColumnCount, tabularModel.dropdownOptionsText]
   );
 
   const netHeadings = useMemo(
@@ -628,9 +652,13 @@ export function useTabularProjectController(options: UseTabularProjectController
     const nextHeadings = Array.from({ length: nextColumns }, (_, index) => tabularModel.headings?.[index] ?? '');
     const nextFieldTypes = Array.from(
       { length: nextColumns },
-      (_, index) => tabularModel.fieldTypes?.[index] ?? TABULAR_DEFAULT_FIELD_TYPE
+      (_, index) => tabularModel.fieldTypes?.[index] ?? 'text-field'
     );
     const nextHelpText = Array.from({ length: nextColumns }, (_, index) => tabularModel.helpText?.[index]);
+    const nextDropdownOptionsText = Array.from(
+      { length: nextColumns },
+      (_, index) => tabularModel.dropdownOptionsText?.[index] ?? ''
+    );
     const nextSavedFlags = Array.from({ length: nextColumns }, () => true);
 
     setTabularModel(current => ({
@@ -639,6 +667,7 @@ export function useTabularProjectController(options: UseTabularProjectController
       headings: nextHeadings,
       fieldTypes: nextFieldTypes,
       helpText: nextHelpText,
+      dropdownOptionsText: nextDropdownOptionsText,
       saved: nextSavedFlags,
     }));
 
@@ -646,6 +675,7 @@ export function useTabularProjectController(options: UseTabularProjectController
       buildTabularModelPayload(nextHeadings, {
         fieldTypes: nextFieldTypes,
         helpText: nextHelpText,
+        dropdownOptionsText: nextDropdownOptionsText,
         saved: nextSavedFlags,
       })
     );
@@ -1003,6 +1033,8 @@ export function useTabularProjectController(options: UseTabularProjectController
     previewCanvasActiveCell,
     previewColumns,
     previewTooltips,
+    previewFieldTypes,
+    previewDropdownOptionsText,
     previewTableRowCount,
     previewRows,
     setPreviewRows,

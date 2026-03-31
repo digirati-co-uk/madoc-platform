@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from 'react';
-import type { TabularCellRef } from './types';
+import { type TabularCellRef } from './types';
 import { TabularProjectCustomEditorTable } from '@/extensions/projects/editors/tabular-project-custom-editor-table';
+import { parseTabularDropdownOptionsText } from './TabularModel';
 import type {
   TabularEditorHeaderModel,
   TabularEditorRowModel,
@@ -11,6 +12,8 @@ export type TabularPreviewTableProps = {
   tooltips?: (string | undefined)[];
   rows: number;
   values: string[][];
+  fieldTypes?: (string | undefined)[];
+  dropdownOptionsText?: (string | undefined)[];
   onChange: (next: string[][]) => void;
   activeCell: TabularCellRef | null;
   onActiveCellChange: (next: TabularCellRef | null) => void;
@@ -41,6 +44,8 @@ export function TabularPreviewTable({
   tooltips = [],
   rows,
   values,
+  fieldTypes = [],
+  dropdownOptionsText = [],
   onChange,
   activeCell,
   onActiveCellChange,
@@ -68,6 +73,20 @@ export function TabularPreviewTable({
   const safeTooltips = useMemo(
     () => Array.from({ length: safeColumns }, (_, index) => (tooltips[index] || '').trim()),
     [tooltips, safeColumns]
+  );
+  const safeFieldTypes = useMemo(
+    () => Array.from({ length: safeColumns }, (_, index) => fieldTypes[index] ?? 'text-field'),
+    [fieldTypes, safeColumns]
+  );
+  const safeDropdownOptionsByColumn = useMemo(
+    () =>
+      Array.from({ length: safeColumns }, (_unused, colIndex) => {
+        if (safeFieldTypes[colIndex] !== 'dropdown-field') {
+          return [];
+        }
+        return parseTabularDropdownOptionsText(dropdownOptionsText[colIndex]);
+      }),
+    [dropdownOptionsText, safeColumns, safeFieldTypes]
   );
 
   const safeValues = useMemo(
@@ -111,7 +130,8 @@ export function TabularPreviewTable({
             rowIndex,
             colIndex,
             columnKey,
-            fieldType: 'text-field',
+            fieldType: safeFieldTypes[colIndex] ?? 'text-field',
+            fieldOptions: safeDropdownOptionsByColumn[colIndex],
             value,
             cellElementId: getPreviewCellElementId(rowIndex, colIndex),
             inputId: getPreviewInputId(rowIndex, colIndex),
@@ -119,7 +139,7 @@ export function TabularPreviewTable({
           };
         }),
       })),
-    [safeColumns, safeRows, safeValues, updateCell]
+    [safeColumns, safeDropdownOptionsByColumn, safeFieldTypes, safeRows, safeValues, updateCell]
   );
 
   const hasFixedHeight = typeof containerHeight !== 'undefined';

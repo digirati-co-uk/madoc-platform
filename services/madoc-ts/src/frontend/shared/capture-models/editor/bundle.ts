@@ -12,6 +12,7 @@ import './input-types/TaggedTextField';
 import './input-types/TextField';
 import './input-types/ColorField';
 import './input-types/BorderField';
+import './input-types/DateField';
 
 // Default selectors
 import './selector-types/BoxSelector';

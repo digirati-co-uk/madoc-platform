@@ -61,7 +61,7 @@ export function TabularProjectNetStep(props: TabularProjectNetStepProps) {
   return (
     <>
       {requiresNetStep ? (
-        <div className="grid grid-cols-[280px_minmax(0,1fr)] items-stretch gap-4">
+        <div className="grid grid-cols-[320px_minmax(0,1fr)] items-stretch gap-4">
           <div className="rounded border border-[#d6d6d6] bg-[#f4f4f4] p-3">
             <div className="text-2xl font-light mb-1">{t('Cast a net')}</div>
             <hr />

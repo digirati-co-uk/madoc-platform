@@ -90,13 +90,21 @@ export type TabularColumn = {
   type?: TabularFieldType;
   fieldType?: TabularFieldType;
   helpText?: string;
+  dropdownOptionsText?: string;
   saved?: boolean;
+};
+
+export type TabularDropdownOption = {
+  value: string;
+  text: string;
+  label?: string;
 };
 
 export type TabularCaptureModelField = {
   type: string;
   label: string;
   description?: string;
+  options?: TabularDropdownOption[];
 };
 
 export type TabularCaptureModelFields = Record<string, TabularCaptureModelField>;
@@ -133,6 +141,7 @@ export type TabularValidationIssue = {
 export type TabularColumnMeta = {
   fieldTypes?: (TabularFieldType | undefined)[];
   helpText?: (string | undefined)[];
+  dropdownOptionsText?: (string | undefined)[];
   saved?: (boolean | undefined)[];
 };
 
@@ -148,6 +157,7 @@ export type DefineTabularModelValue = {
   headings: string[];
   fieldTypes?: (TabularFieldType | undefined)[];
   helpText?: (string | undefined)[];
+  dropdownOptionsText?: (string | undefined)[];
   saved?: (boolean | undefined)[];
 };
 
@@ -155,6 +165,7 @@ export type TabularColumnEditorValue = {
   heading: string;
   fieldType?: TabularFieldType;
   helpText?: string;
+  dropdownOptionsText?: string;
 };
 
 export type TabularFieldPlugin = {

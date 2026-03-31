@@ -1,35 +1,81 @@
-import type {
-  TabularCaptureModelField,
-  TabularCaptureModelFields,
-  TabularCaptureModelTemplate,
-  TabularColumn,
-  TabularColumnMeta,
-  TabularFieldType,
-  TabularModelPayload,
-  TabularValidationIssue,
+import {
+  type TabularCaptureModelField,
+  type TabularCaptureModelFields,
+  type TabularCaptureModelTemplate,
+  type TabularColumn,
+  type TabularColumnMeta,
+  type TabularDropdownOption,
+  type TabularFieldType,
+  type TabularModelPayload,
+  type TabularValidationIssue,
 } from './types';
 import { slugifyColumnId } from './utils';
 import {
   TABULAR_CELL_FLAGS_PROPERTY,
   createTabularCellFlagsCaptureModelField,
-} from '../../../../shared/utility/tabular-cell-flags';
+} from '@/frontend/shared/utility/tabular-cell-flags';
 
 export { slugifyColumnId };
+
+export function parseTabularDropdownOptionsText(optionsText?: string): TabularDropdownOption[] {
+  if (!optionsText?.trim()) {
+    return [];
+  }
+
+  return optionsText
+    .split('\n')
+    .map(line => line.trim())
+    .filter(Boolean)
+    .map(line => {
+      const [rawValue, rawText, rawLabel] = line.split(',');
+      const value = (rawValue ?? '').trim();
+      const text = (rawText ?? '').trim() || value;
+      const resolvedValue = value || text;
+      if (!resolvedValue) {
+        return null;
+      }
+
+      const label = (rawLabel ?? '').trim() || undefined;
+      return {
+        value: resolvedValue,
+        text: text || resolvedValue,
+        ...(label ? { label } : {}),
+      };
+    })
+    .filter((option): option is TabularDropdownOption => option !== null);
+}
+
+export function stringifyTabularDropdownOptions(options?: TabularDropdownOption[]): string {
+  return (options || []).map(option => `${option.value},${option.text || option.value}`).join('\n');
+}
+
+function getMetaValue<T>(values: (T | undefined)[] | undefined, index: number): T | undefined {
+  return values?.[index];
+}
+
+function getTabularColumnType(column: Pick<TabularColumn, 'type' | 'fieldType'>): string {
+  return (column.type || column.fieldType || '').trim();
+}
 
 export function buildTabularModelPayload(headings: string[], meta?: TabularColumnMeta): TabularModelPayload {
   const used = new Set<string>();
 
   const columns: TabularColumn[] = headings.map((raw, idx) => {
     const label = (raw ?? '').trim();
+    const fieldType = getMetaValue(meta?.fieldTypes, idx);
+    const helpText = getMetaValue(meta?.helpText, idx);
+    const dropdownOptionsText = getMetaValue(meta?.dropdownOptionsText, idx);
+    const saved = getMetaValue(meta?.saved, idx);
 
     if (!label) {
       return {
         id: '',
         label: '',
-        type: meta?.fieldTypes?.[idx],
-        fieldType: meta?.fieldTypes?.[idx],
-        helpText: meta?.helpText?.[idx],
-        saved: meta?.saved?.[idx],
+        type: fieldType,
+        fieldType,
+        helpText,
+        dropdownOptionsText,
+        saved,
       };
     }
 
@@ -46,10 +92,11 @@ export function buildTabularModelPayload(headings: string[], meta?: TabularColum
     return {
       id,
       label,
-      type: meta?.fieldTypes?.[idx],
-      fieldType: meta?.fieldTypes?.[idx],
-      helpText: meta?.helpText?.[idx],
-      saved: meta?.saved?.[idx],
+      type: fieldType,
+      fieldType,
+      helpText,
+      dropdownOptionsText,
+      saved,
     };
   });
 
@@ -62,7 +109,7 @@ export function buildTabularModelPayload(headings: string[], meta?: TabularColum
 
     const term = (column.id || '').trim();
     const label = (column.label || '').trim();
-    const type = (column.type || column.fieldType || '').trim();
+    const type = getTabularColumnType(column);
     const description = (column.helpText || '').trim();
 
     if (!term || !label || !type) {
@@ -76,6 +123,9 @@ export function buildTabularModelPayload(headings: string[], meta?: TabularColum
 
     if (description) {
       field.description = description;
+    }
+    if (type === 'dropdown-field') {
+      field.options = parseTabularDropdownOptionsText(column.dropdownOptionsText);
     }
 
     captureModelFields[term] = field;
