@@ -25,6 +25,7 @@ type ProjectModelEditorType = {
   data: {
     captureModel: CaptureModel;
     template?: string;
+    templateConfig?: ProjectFull['template_config'];
     annotationTheme?: ProjectFull['annotationTheme'];
     style_id?: ProjectFull['style_id'];
   };
@@ -138,10 +139,12 @@ export const ProjectModelEditor: UniversalComponent<ProjectModelEditorType> = cr
   },
   {
     getData: async (key, { id }, api) => {
-      const { capture_model_id, template, annotationTheme, style_id } = await api.getProject(id);
+      const project = await api.getProject(id);
+      const { capture_model_id, template, template_config, annotationTheme, style_id } = project;
 
       return {
         template,
+        templateConfig: template_config,
         captureModel: await api.crowdsourcing.getCaptureModel(capture_model_id),
         annotationTheme,
         style_id,

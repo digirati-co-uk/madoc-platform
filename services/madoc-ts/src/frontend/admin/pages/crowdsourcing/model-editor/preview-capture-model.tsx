@@ -14,6 +14,7 @@ import { BrowserComponent } from '../../../../shared/utility/browser-component';
 import { ViewContentFetch } from '../../../molecules/ViewContentFetch';
 import { ProjectModelEditor } from '../projects/project-model-editor';
 import { CustomAdminPreviewRendererProps, getReviewRendererMode } from '../../../../site/pages/tasks/review-renderers/types';
+import { TabularProjectModelPreview } from './TabularProjectModelPreview';
 
 export const PreviewCaptureModel: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -29,6 +30,16 @@ export const PreviewCaptureModel: React.FC = () => {
   const template = useProjectTemplate(data.template);
   const CustomAdminPreviewRenderer = template?.components
     ?.customAdminPreviewRenderer as React.FC<CustomAdminPreviewRendererProps> | undefined;
+  const isTabularProject = data.template === 'tabular-project';
+
+  if (isTabularProject) {
+    return (
+      <VaultProvider>
+        <h3>Preview</h3>
+        <TabularProjectModelPreview projectId={id} templateConfig={data.templateConfig} />
+      </VaultProvider>
+    );
+  }
 
   return (
     <VaultProvider>
