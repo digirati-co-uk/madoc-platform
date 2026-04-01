@@ -10,6 +10,7 @@ import './input-types/HTMLField';
 import './input-types/InternationalField';
 import './input-types/TaggedTextField';
 import './input-types/TextField';
+import './input-types/ReadOnlyField';
 import './input-types/ColorField';
 import './input-types/BorderField';
 import './input-types/DateField';

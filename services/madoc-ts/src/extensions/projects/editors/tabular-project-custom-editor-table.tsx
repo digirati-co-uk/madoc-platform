@@ -127,6 +127,7 @@ type TabularCellContextMenuState = {
   colIndex: number;
   columnKey: string;
   isFlagged: boolean;
+  canToggleFlag: boolean;
 };
 
 function getDropdownDisplayText(
@@ -143,21 +144,29 @@ function TabularGridCellInput(options: TabularGridCellInputProps) {
   const [optimisticTextValue, setOptimisticTextValue] = useState<string>(() => toTextValue(value));
   const [optimisticCheckedValue, setOptimisticCheckedValue] = useState<boolean>(() => !!value);
 
-  const inputContainerClass = isActiveCell
-    ? 'border-[#34a853] bg-[#def3e4]'
-    : isFlagged
-      ? 'border-red-300 bg-red-50'
-      : 'border-transparent bg-transparent';
-
   const isCheckboxField = fieldType === 'checkbox-field';
   const isDateField = fieldType === 'date-field';
   const isDropdownField = fieldType === 'dropdown-field';
+  const isReadOnlyField = fieldType === 'read-only-field';
+  const showReadOnlyTooltip = isReadOnlyField && isActiveCell;
+  const showReadOnlyBadge = isReadOnlyField && !isActiveCell;
   const isInvalidDateValue = isDateField && !isValidDateFieldValue(optimisticTextValue);
   const invalidDateClasses = isInvalidDateValue ? 'border-red-400 bg-red-50' : undefined;
   const dropdownOptions = fieldOptions ?? [];
   const displayTextValue = isDropdownField
     ? getDropdownDisplayText(dropdownOptions, optimisticTextValue)
     : optimisticTextValue;
+  const inputContainerClass = isReadOnlyField
+    ? isFlagged
+      ? 'border-red-300 bg-red-50 cursor-not-allowed'
+      : isActiveCell
+        ? 'border-amber-400 bg-amber-50 cursor-not-allowed'
+        : 'border-amber-200 bg-amber-50 cursor-not-allowed'
+    : isActiveCell
+      ? 'border-[#34a853] bg-[#def3e4]'
+      : isFlagged
+        ? 'border-red-300 bg-red-50'
+        : 'border-transparent bg-transparent';
 
   useEffect(() => {
     if (isCheckboxField) {
@@ -174,7 +183,7 @@ function TabularGridCellInput(options: TabularGridCellInputProps) {
     onChange(nextTextValue);
   };
   const handleTextInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (disabled) {
+    if (disabled || isReadOnlyField) {
       return;
     }
     const nextRawValue = event.currentTarget.value;
@@ -208,15 +217,24 @@ function TabularGridCellInput(options: TabularGridCellInputProps) {
   if (!isActiveCell) {
     return (
       <div
-        className={`h-full w-full rounded border px-2 py-1 text-sm leading-5 ${inputContainerClass}`}
+        className={`relative h-full w-full rounded border px-2 py-1 text-sm leading-5 ${inputContainerClass}`}
         style={{
           whiteSpace: 'normal',
           overflowWrap: 'anywhere',
           wordBreak: 'break-word',
           overflow: 'hidden',
+          paddingRight: showReadOnlyBadge ? 64 : undefined,
         }}
-        title={displayTextValue || undefined}
+        title={isReadOnlyField ? 'Read-only field' : displayTextValue || undefined}
       >
+        {showReadOnlyBadge ? (
+          <span
+            className="pointer-events-none absolute right-2 top-2 inline-flex rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-700"
+            aria-hidden="true"
+          >
+            Read only
+          </span>
+        ) : null}
         {displayTextValue || '\u00A0'}
       </div>
     );
@@ -252,40 +270,64 @@ function TabularGridCellInput(options: TabularGridCellInputProps) {
 
   if (isDateField) {
     return (
-      <div
-        className={`flex h-full w-full flex-col rounded border px-2 py-1 ${inputContainerClass} ${invalidDateClasses || ''}`}
-      >
-        <input
-          id={inputId}
-          type="text"
-          className="w-full border-0 bg-transparent p-0 text-sm leading-5 outline-none"
-          value={optimisticTextValue}
-          readOnly={disabled}
-          aria-readonly={disabled}
-          aria-invalid={isInvalidDateValue ? 'true' : 'false'}
-          placeholder="DD-MM-YYYY"
-          onFocus={onFocus}
-          onClick={onFocus}
-          onKeyDown={onKeyDown}
-          onChange={handleTextInputChange}
-        />
+      <div className="relative h-full w-full">
+        {showReadOnlyTooltip ? (
+          <div
+            className="pointer-events-none absolute -top-7 right-0 z-[2] whitespace-nowrap rounded bg-slate-800 px-2 py-1 text-[11px] font-medium text-white shadow"
+            role="status"
+            aria-live="polite"
+          >
+            Read only
+          </div>
+        ) : null}
+        <div
+          className={`flex h-full w-full flex-col rounded border px-2 py-1 ${inputContainerClass} ${invalidDateClasses || ''}`}
+        >
+          <input
+            id={inputId}
+            type="text"
+            className="w-full border-0 bg-transparent p-0 text-sm leading-5 outline-none"
+            value={optimisticTextValue}
+            readOnly={disabled || isReadOnlyField}
+            aria-readonly={disabled || isReadOnlyField}
+            aria-invalid={isInvalidDateValue ? 'true' : 'false'}
+            placeholder="DD-MM-YYYY"
+            title={isReadOnlyField ? 'Read-only field' : undefined}
+            onFocus={onFocus}
+            onClick={onFocus}
+            onKeyDown={onKeyDown}
+            onChange={handleTextInputChange}
+          />
+        </div>
       </div>
     );
   }
 
   return (
-    <input
-      id={inputId}
-      type="text"
-      className={`h-full w-full rounded border px-2 py-1 text-sm outline-none ${inputContainerClass}`}
-      value={optimisticTextValue}
-      readOnly={disabled}
-      aria-readonly={disabled}
-      onFocus={onFocus}
-      onClick={onFocus}
-      onKeyDown={onKeyDown}
-      onChange={handleTextInputChange}
-    />
+    <div className="relative h-full w-full">
+      {showReadOnlyTooltip ? (
+        <div
+          className="pointer-events-none absolute -top-7 right-0 z-[2] whitespace-nowrap rounded bg-slate-800 px-2 py-1 text-[11px] font-medium text-white shadow"
+          role="status"
+          aria-live="polite"
+        >
+          Read only
+        </div>
+      ) : null}
+      <input
+        id={inputId}
+        type="text"
+        className={`h-full w-full rounded border px-2 py-1 text-sm outline-none ${inputContainerClass}`}
+        value={optimisticTextValue}
+        readOnly={disabled || isReadOnlyField}
+        aria-readonly={disabled || isReadOnlyField}
+        title={isReadOnlyField ? 'Read-only field' : undefined}
+        onFocus={onFocus}
+        onClick={onFocus}
+        onKeyDown={onKeyDown}
+        onChange={handleTextInputChange}
+      />
+    </div>
   );
 }
 
@@ -478,7 +520,8 @@ export function TabularProjectCustomEditorTable({
       rowIndex: number,
       colIndex: number,
       columnKey: string,
-      isFlagged: boolean
+      isFlagged: boolean,
+      canToggleFlag: boolean
     ) => {
       event.preventDefault();
       event.stopPropagation();
@@ -490,6 +533,7 @@ export function TabularProjectCustomEditorTable({
         colIndex,
         columnKey,
         isFlagged,
+        canToggleFlag,
       });
     },
     [onActiveCellChange]
@@ -536,9 +580,13 @@ export function TabularProjectCustomEditorTable({
 
           const isActiveRow = tableActiveCell?.row === cell.rowIndex;
           const isActiveCell = isActiveRow && tableActiveCell?.col === colIndex;
-          const isFlagged = isCellFlagged(cell.rowIndex, cell.columnKey);
-          const showFlagControl = hasInlineFlagToggle && (isFlagged || isActiveCell);
-          const canToggleThisCell = hasInlineFlagToggle && canToggleCellFlags && !disabled;
+          const isReadOnlyCell = cell.fieldType === 'read-only-field';
+          const canCellBeFlagged = !isReadOnlyCell;
+          const isFlagged = canCellBeFlagged ? isCellFlagged(cell.rowIndex, cell.columnKey) : false;
+          const canToggleThisCell = hasInlineFlagToggle && canToggleCellFlags && !disabled && canCellBeFlagged;
+          const showFlagControl = canToggleThisCell && (isFlagged || isActiveCell);
+          const canToggleFromContextMenu = !!onToggleCellFlag && canToggleCellFlags && !disabled && !isReadOnlyCell;
+          const hasContextMenuForCell = !!onOpenCellReviewPanel || canToggleFromContextMenu;
 
           const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement | HTMLSelectElement>) => {
             const target = event.currentTarget;
@@ -604,10 +652,17 @@ export function TabularProjectCustomEditorTable({
                 focusGridInput(row.rowPosition, colIndex, 'end');
               }}
               onContextMenu={event => {
-                if (!hasCellContextActions) {
+                if (!hasCellContextActions || !hasContextMenuForCell) {
                   return;
                 }
-                openCellContextMenu(event, cell.rowIndex, colIndex, cell.columnKey, isFlagged);
+                openCellContextMenu(
+                  event,
+                  cell.rowIndex,
+                  colIndex,
+                  cell.columnKey,
+                  isFlagged,
+                  canToggleFromContextMenu
+                );
               }}
               style={{
                 height: '100%',
@@ -616,7 +671,7 @@ export function TabularProjectCustomEditorTable({
                 background: isActiveCell ? '#def3e4' : isFlagged ? '#fef2f2' : isActiveRow ? '#f2fbf4' : '#fff',
               }}
             >
-              {hasInlineFlagToggle ? (
+              {hasInlineFlagToggle && canToggleThisCell ? (
                 <FlagCellButton
                   isFlagged={isFlagged}
                   alwaysVisible={showFlagControl}
@@ -658,6 +713,7 @@ export function TabularProjectCustomEditorTable({
     headerColumns,
     isCellFlagged,
     onActiveCellChange,
+    onOpenCellReviewPanel,
     onToggleCellFlag,
     openCellContextMenu,
     requestRowAppendForKeyboard,
@@ -789,21 +845,23 @@ export function TabularProjectCustomEditorTable({
             top: cellContextMenu.y,
           }}
         >
-          <button
-            type="button"
-            role="menuitem"
-            className="w-full rounded px-3 py-2 text-left text-sm text-slate-700 transition-colors hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-60"
-            disabled={disabled || !canToggleCellFlags || !onToggleCellFlag}
-            onClick={() => {
-              if (!onToggleCellFlag) {
-                return;
-              }
-              onToggleCellFlag(cellContextMenu.rowIndex, cellContextMenu.columnKey);
-              closeCellContextMenu();
-            }}
-          >
-            {cellContextMenu.isFlagged ? 'Clear flag' : 'Flag cell for review'}
-          </button>
+          {cellContextMenu.canToggleFlag ? (
+            <button
+              type="button"
+              role="menuitem"
+              className="w-full rounded px-3 py-2 text-left text-sm text-slate-700 transition-colors hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-60"
+              disabled={disabled || !canToggleCellFlags || !onToggleCellFlag}
+              onClick={() => {
+                if (!onToggleCellFlag) {
+                  return;
+                }
+                onToggleCellFlag(cellContextMenu.rowIndex, cellContextMenu.columnKey);
+                closeCellContextMenu();
+              }}
+            >
+              {cellContextMenu.isFlagged ? 'Clear flag' : 'Flag cell for review'}
+            </button>
+          ) : null}
           {onOpenCellReviewPanel ? (
             <button
               type="button"

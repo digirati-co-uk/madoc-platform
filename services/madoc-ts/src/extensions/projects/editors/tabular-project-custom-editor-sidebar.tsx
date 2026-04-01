@@ -70,6 +70,7 @@ type TabularProjectCustomEditorSidebarProps = {
   activeCell: TabularCellRef | null;
   activeCellColumnKey?: string;
   activeCellColumnLabel?: string;
+  activeCellIsReadOnlyField?: boolean;
   activeCellIsFlagged: boolean;
   activeCellComment: string;
   flaggedCells: TabularFlaggedCellItem[];
@@ -86,6 +87,7 @@ type TabularSidebarFlagPanelProps = Pick<
   | 'activeCell'
   | 'activeCellColumnKey'
   | 'activeCellColumnLabel'
+  | 'activeCellIsReadOnlyField'
   | 'activeCellIsFlagged'
   | 'activeCellComment'
   | 'flaggedCells'
@@ -174,6 +176,7 @@ function TabularSidebarFlagPanel({
   activeCell,
   activeCellColumnKey,
   activeCellColumnLabel,
+  activeCellIsReadOnlyField = false,
   activeCellIsFlagged,
   activeCellComment,
   flaggedCells,
@@ -191,6 +194,15 @@ function TabularSidebarFlagPanel({
   const activeCellLabel = hasActiveCell
     ? `Row ${activeCell.row + 1}, ${activeCellColumnLabel || activeCellColumnKey}`
     : 'Select a cell in the table to flag it.';
+  const canFlagSelectedCell = hasActiveCell && !activeCellIsReadOnlyField;
+  const canEditSelectedCellFlags = canFlagSelectedCell && canEditCurrentFlags;
+  const selectedCellFlagMessage = !hasActiveCell
+    ? undefined
+    : activeCellIsReadOnlyField
+      ? 'Read-only cells cannot be flagged.'
+      : !canEditCurrentFlags
+        ? flagEditDisabledMessage
+        : undefined;
   const flagButtonClasses = [
     'inline-flex h-10 w-12 items-center justify-center rounded-md border text-sm transition-colors disabled:cursor-not-allowed disabled:opacity-50',
     activeCellIsFlagged
@@ -213,7 +225,7 @@ function TabularSidebarFlagPanel({
           <button
             type="button"
             className={flagButtonClasses}
-            disabled={!hasActiveCell || !canEditCurrentFlags}
+            disabled={!canEditSelectedCellFlags}
             onClick={onToggleActiveCellFlag}
           >
             <FlagIcon />
@@ -236,14 +248,14 @@ function TabularSidebarFlagPanel({
             placeholder={
               activeCellIsFlagged ? 'Add optional context for reviewers.' : 'Add a note to create a flag for this cell.'
             }
-            disabled={!hasActiveCell || !canEditCurrentFlags}
+            disabled={!canEditSelectedCellFlags}
             value={activeCellComment}
             onChange={event => onUpdateActiveCellComment(event.target.value)}
           />
         </div>
-        {!canEditCurrentFlags && flagEditDisabledMessage ? (
+        {selectedCellFlagMessage ? (
           <div className="mt-3 rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
-            {flagEditDisabledMessage}
+            {selectedCellFlagMessage}
           </div>
         ) : null}
       </div>
@@ -358,6 +370,7 @@ export function TabularProjectCustomEditorSidebar({
   activeCell,
   activeCellColumnKey,
   activeCellColumnLabel,
+  activeCellIsReadOnlyField,
   activeCellIsFlagged,
   activeCellComment,
   flaggedCells,
@@ -486,6 +499,7 @@ export function TabularProjectCustomEditorSidebar({
             activeCell={activeCell}
             activeCellColumnKey={activeCellColumnKey}
             activeCellColumnLabel={activeCellColumnLabel}
+            activeCellIsReadOnlyField={activeCellIsReadOnlyField}
             activeCellIsFlagged={activeCellIsFlagged}
             activeCellComment={activeCellComment}
             flaggedCells={flaggedCells}
@@ -526,6 +540,7 @@ export function TabularProjectCustomEditorSidebar({
       activeCell,
       activeCellColumnKey,
       activeCellColumnLabel,
+      activeCellIsReadOnlyField,
       activeCellIsFlagged,
       activeCellComment,
       flaggedCells,

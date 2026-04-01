@@ -10,6 +10,7 @@ import { CanvasViewerButton } from '../../../../shared/atoms/CanvasViewerGrid';
 import { ArrowDownIcon } from '../../../../shared/icons/ArrowDownIcon';
 import { PanIcon } from '../../../../shared/icons/PanIcon';
 import { resizeAtlasRuntime } from '../../../../shared/utility/resize-atlas-runtime';
+import { goHomeToTabularHeadings, setTabularHeadingsHomePosition } from '../../../../shared/utility/tabular-heading-home';
 import { NET_DIM_STEP, NET_MAX_DIM_OPACITY, clampDimOpacity, dimOpacityToPercent } from './utils';
 import './CastANetCanvas.css';
 
@@ -245,7 +246,15 @@ export const CastANetCanvas: React.FC<CastANetCanvasProps> = ({
     );
   }, [value, blankColumnIndexes, onStructureChange]);
 
-  const goHome = () => runtime.current?.world?.goHome?.();
+  useEffect(() => {
+    setTabularHeadingsHomePosition(runtime.current, value);
+  }, [value]);
+
+  const goHome = () => {
+    if (!goHomeToTabularHeadings(runtime.current, value)) {
+      runtime.current?.world?.goHome?.();
+    }
+  };
   const zoomIn = () => runtime.current?.world?.zoomIn?.();
   const zoomOut = () => runtime.current?.world?.zoomOut?.();
   const zoomFromWheel = useCallback(
@@ -372,6 +381,7 @@ export const CastANetCanvas: React.FC<CastANetCanvasProps> = ({
             if (size) {
               resizeRuntimeToSize(size);
             }
+            setTabularHeadingsHomePosition(runtime.current, value);
           }}
         >
           <FollowActiveCellOnCanvas

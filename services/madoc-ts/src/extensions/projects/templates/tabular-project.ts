@@ -197,7 +197,7 @@ export const tabularProject: ProjectTemplate<TabularProjectTemplateOptions> = {
     async beforeForkStructure(fullModel, { options }) {
       const instructions = options.crowdsourcingInstructions;
       const structure = fullModel.structure;
-      if (!instructions || !structure?.items?.length) {
+      if (!instructions || !structure || structure.type !== 'choice' || !structure.items.length) {
         return structure;
       }
 

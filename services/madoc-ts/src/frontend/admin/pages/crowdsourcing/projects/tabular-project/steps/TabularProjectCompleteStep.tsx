@@ -84,7 +84,9 @@ export function TabularProjectCompleteStep(props: TabularProjectCompleteStepProp
               <div className="mt-1 grid gap-1 pl-4">
                 {labelEntries.map(entry => (
                   <div key={`label-${entry.locale}`} className="grid grid-cols-[56px_minmax(0,1fr)] gap-2">
-                    <div className="text-[11px] font-semibold uppercase tracking-wide text-[#3d4f88]">{entry.locale}</div>
+                    <div className="text-[11px] font-semibold uppercase tracking-wide text-[#3d4f88]">
+                      {entry.locale}
+                    </div>
                     <div>{entry.text || t('None')}</div>
                   </div>
                 ))}
@@ -95,7 +97,9 @@ export function TabularProjectCompleteStep(props: TabularProjectCompleteStepProp
               <div className="mt-1 grid gap-1 pl-4">
                 {summaryEntries.map(entry => (
                   <div key={`description-${entry.locale}`} className="grid grid-cols-[56px_minmax(0,1fr)] gap-2">
-                    <div className="text-[11px] font-semibold uppercase tracking-wide text-[#3d4f88]">{entry.locale}</div>
+                    <div className="text-[11px] font-semibold uppercase tracking-wide text-[#3d4f88]">
+                      {entry.locale}
+                    </div>
                     <div>{entry.text || t('None')}</div>
                   </div>
                 ))}

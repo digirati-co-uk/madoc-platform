@@ -5,6 +5,10 @@ import {
   type RuntimeWithViewport,
 } from '@/frontend/admin/components/tabular/cast-a-net/FollowActiveCellOnCanvas';
 import type { NetConfig, TabularCellRef } from '@/frontend/shared/utility/tabular-types';
+import {
+  goHomeToTabularHeadings,
+  setTabularHeadingsHomePosition,
+} from '@/frontend/shared/utility/tabular-heading-home';
 import { resizeAtlasRuntime } from '@/frontend/shared/utility/resize-atlas-runtime';
 import { CanvasViewerButton } from '@/frontend/shared/atoms/CanvasViewerGrid';
 import { EditorContentViewer } from '@/frontend/shared/capture-models/new/EditorContent';
@@ -40,9 +44,10 @@ export function TabularProjectCustomEditorCanvas({
   const runtimeRef = useRef<RuntimeWithViewport | null>(null);
   const [runtimeTick, setRuntimeTick] = useState(0);
   const [zoomTrackingOverride, setZoomTrackingOverride] = useState<boolean | null>(null);
+  const showZoomTrackingUi = zoomTrackingDefaultEnabled && !!netConfig;
   const isZoomTrackingEnabled = useMemo(
-    () => zoomTrackingOverride ?? zoomTrackingDefaultEnabled,
-    [zoomTrackingDefaultEnabled, zoomTrackingOverride]
+    () => (showZoomTrackingUi ? (zoomTrackingOverride ?? zoomTrackingDefaultEnabled) : false),
+    [showZoomTrackingUi, zoomTrackingDefaultEnabled, zoomTrackingOverride]
   );
   const viewerTarget = useMemo(() => {
     if (!canvas) {
@@ -87,13 +92,19 @@ export function TabularProjectCustomEditorCanvas({
       if (size) {
         resizeRuntimeToSize(size);
       }
+
+      setTabularHeadingsHomePosition(runtimeRef.current, netConfig);
     },
-    [getContainerSize, resizeRuntimeToSize]
+    [getContainerSize, netConfig, resizeRuntimeToSize]
   );
 
   useEffect(() => {
     runtimeRef.current = null;
   }, [canvasId]);
+
+  useEffect(() => {
+    setTabularHeadingsHomePosition(runtimeRef.current, netConfig);
+  }, [netConfig]);
 
   useEffect(() => {
     if (typeof window === 'undefined') {
@@ -136,7 +147,9 @@ export function TabularProjectCustomEditorCanvas({
   }, [getContainerSize, resizeRuntimeToSize]);
 
   function goHome() {
-    runtimeRef.current?.world?.goHome?.();
+    if (!goHomeToTabularHeadings(runtimeRef.current, netConfig)) {
+      runtimeRef.current?.world?.goHome?.();
+    }
   }
 
   function zoomOut() {
@@ -162,20 +175,22 @@ export function TabularProjectCustomEditorCanvas({
           zoomInDisabled={!runtimeRef.current}
           style={{ top: 12, right: 12, zIndex: 50 }}
           leadingControls={
-            <CanvasViewerButton
-              type="button"
-              onClick={() => setZoomTrackingOverride(!isZoomTrackingEnabled)}
-              disabled={!netConfig}
-              data-active={isZoomTrackingEnabled}
-              aria-label="Toggle zoom tracking"
-              aria-pressed={isZoomTrackingEnabled}
-              title={isZoomTrackingEnabled ? 'Disable zoom tracking' : 'Enable zoom tracking'}
-            >
-              <PanIcon />
-            </CanvasViewerButton>
+            showZoomTrackingUi ? (
+              <CanvasViewerButton
+                type="button"
+                onClick={() => setZoomTrackingOverride(!isZoomTrackingEnabled)}
+                disabled={!netConfig}
+                data-active={isZoomTrackingEnabled}
+                aria-label="Toggle zoom tracking"
+                aria-pressed={isZoomTrackingEnabled}
+                title={isZoomTrackingEnabled ? 'Disable zoom tracking' : 'Enable zoom tracking'}
+              >
+                <PanIcon />
+              </CanvasViewerButton>
+            ) : null
           }
         />
-        {showVerticalNudgeControls && (onNudgeUp || onNudgeDown) ? (
+        {showZoomTrackingUi && showVerticalNudgeControls && (onNudgeUp || onNudgeDown) ? (
           <div
             style={{
               position: 'absolute',
@@ -213,7 +228,7 @@ export function TabularProjectCustomEditorCanvas({
           homeCover="start"
           onCreated={handleViewerCreated as any}
         >
-          {netConfig ? (
+          {netConfig && showZoomTrackingUi ? (
             <>
               <FollowActiveCellOnCanvas
                 runtimeRef={runtimeRef}

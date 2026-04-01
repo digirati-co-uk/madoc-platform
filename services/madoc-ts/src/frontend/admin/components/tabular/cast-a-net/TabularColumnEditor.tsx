@@ -15,7 +15,7 @@ import {
 import { TinyButton } from '@/frontend/shared/navigation/Button';
 import { DeleteForeverIcon } from '@/frontend/shared/icons/DeleteForeverIcon';
 
-const supportedFieldTypes = ['text-field', 'dropdown-field', 'date-field'];
+const supportedFieldTypes = ['text-field', 'dropdown-field', 'date-field', 'read-only-field'];
 
 export function TabularColumnEditor(props: {
   index: number;
@@ -49,6 +49,11 @@ export function TabularColumnEditor(props: {
               description: 'Simple list of static values',
             },
             { type: 'date-field', label: 'Date field', description: 'Typed date (DD-MM-YYYY)' },
+            {
+              type: 'read-only-field',
+              label: 'Read-only field',
+              description: 'Displays text but cannot be edited by contributors',
+            },
           ] as TabularFieldPlugin[]),
     [availableFieldTypes]
   );

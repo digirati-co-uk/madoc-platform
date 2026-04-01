@@ -245,6 +245,33 @@ function TabularProjectCustomEditorContent({
     removeRowFromFooter,
   });
 
+  const activeCellIsReadOnlyField = useMemo(() => {
+    if (!tableActiveCell) {
+      return false;
+    }
+
+    const activeRow = tableRows.find(row => row.rowIndex === tableActiveCell.row);
+    const activeCell = activeRow?.cells[tableActiveCell.col];
+    return activeCell?.fieldType === 'read-only-field';
+  }, [tableActiveCell, tableRows]);
+
+  const onToggleActiveCellFlagIfEditable = useCallback(() => {
+    if (activeCellIsReadOnlyField) {
+      return;
+    }
+    onToggleActiveCellFlag();
+  }, [activeCellIsReadOnlyField, onToggleActiveCellFlag]);
+
+  const onUpdateActiveCellCommentIfEditable = useCallback(
+    (nextComment: string) => {
+      if (activeCellIsReadOnlyField) {
+        return;
+      }
+      onUpdateActiveCellComment(nextComment);
+    },
+    [activeCellIsReadOnlyField, onUpdateActiveCellComment]
+  );
+
   const canEditCurrentFlags =
     canPersistFlags &&
     !!currentRevisionId &&
@@ -495,12 +522,13 @@ function TabularProjectCustomEditorContent({
               activeCell={tableActiveCell}
               activeCellColumnKey={activeCellColumnKey}
               activeCellColumnLabel={activeCellColumnLabel}
+              activeCellIsReadOnlyField={activeCellIsReadOnlyField}
               activeCellIsFlagged={activeCellIsFlagged}
               activeCellComment={activeCellComment}
               flaggedCells={flaggedCells}
               canPersistFlags={canPersistFlags}
-              onToggleActiveCellFlag={onToggleActiveCellFlag}
-              onUpdateActiveCellComment={onUpdateActiveCellComment}
+              onToggleActiveCellFlag={onToggleActiveCellFlagIfEditable}
+              onUpdateActiveCellComment={onUpdateActiveCellCommentIfEditable}
               onFocusFlaggedCell={onFocusFlaggedCell}
               onRemoveFlag={onRemoveFlag}
               onClearAllFlags={onClearAllFlags}
@@ -553,7 +581,7 @@ function TabularProjectCustomEditorContent({
                   netConfig={netConfig}
                   activeCell={overlayActiveCell}
                   zoomTrackingDefaultEnabled={zoomTrackingDefaultEnabled}
-                  showVerticalNudgeControls={!!netConfig}
+                  showVerticalNudgeControls={zoomTrackingDefaultEnabled && !!netConfig}
                   onNudgeUp={() => nudgeNetVertical(-CONTRIBUTOR_NET_NUDGE_STEP)}
                   onNudgeDown={() => nudgeNetVertical(CONTRIBUTOR_NET_NUDGE_STEP)}
                   nudgeDisabled={isPersisting || isBlocked}
