@@ -4,6 +4,7 @@ import { ApiClient } from '../../gateway/api';
 import { CrowdsourcingReview } from '../../gateway/tasks/crowdsourcing-review';
 import { CrowdsourcingTask } from '../../gateway/tasks/crowdsourcing-task';
 import { getSiteFromTask } from '../../utility/get-site-from-task';
+import { hasTabularFlaggedCells } from '../../utility/tabular-flags';
 import { BaseAutomation } from '../utils/BaseAutomation';
 import { ManualAction, ManualActions } from '../utils/ManualActions';
 import { TaskAutomation } from '../utils/TaskAutomation';
@@ -77,21 +78,26 @@ export class AutomaticReviewBot extends BaseAutomation implements ManualActions,
     );
     log(`Found ${ready.length} task(s) to approve`);
     for (const item of ready) {
-      // 4. Mark each as approved
-      log(`Approving [${item.id}] `);
-
       const revisionId = item.state.revisionId;
       if (!revisionId || !item.id) {
         log(`No revision Id found on task<${item.id}> - skipping...`);
         continue;
       }
 
+      const acceptedRevision = await this.api.crowdsourcing.getCaptureModelRevision(revisionId);
+      if (hasTabularFlaggedCells(acceptedRevision)) {
+        log(`Skipping [${item.id}] - submission has flagged cells`);
+        continue;
+      }
+
+      // 4. Mark each as approved
+      log(`Approving [${item.id}] `);
+
       const siteId = getSiteFromTask(task);
       const template = (project as any).template;
       const definition =
         siteId && project && template ? this.api.projectTemplates.getDefinition(template, siteId) : null;
 
-      const acceptedRevision = await this.api.crowdsourcing.getCaptureModelRevision(revisionId);
       await this.api.reviewApproveSubmission({
         revisionRequest: acceptedRevision,
         userTaskId: item.id,

@@ -196,6 +196,9 @@ Primary transitions:
   - Applied to parent task state in `create-resource-claim.ts`; used in completion logic in `crowdsourcing-task.ts`
 - `reviewOptions.enableAutoReview`
   - Used by `automation/bots/AutomaticReviewBot.ts`
+- Tabular flagged-cell guard during auto-review
+  - `assign-review.ts` pre-checks linked submissions for `__tabularCellFlags` and, when flags exist, excludes automated reviewers from assignment so flagged reviews go to the human reviewer path.
+  - `automation/bots/AutomaticReviewBot.ts` also skips auto-approval when flagged cells are present, preventing edge-case approvals for already-bot-assigned review tasks.
 - `reviewOptions.allowMerging`
   - Used by review UI (`preview-crowdsourcing-task.tsx`)
 
