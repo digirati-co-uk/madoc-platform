@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CanvasPanel, SimpleViewerProvider } from 'react-iiif-vault';
 import {
@@ -13,6 +13,7 @@ import { TabularColumnEditor } from './TabularColumnEditor';
 import { TabularCanvasViewportControls } from '@/frontend/shared/components/TabularCanvasViewportControls';
 import { AddIcon } from '@/frontend/shared/icons/AddIcon';
 import { MinusIcon } from '@/frontend/shared/icons/MinusIcon';
+import { resizeAtlasRuntime } from '@/frontend/shared/utility/resize-atlas-runtime';
 
 function reorderArray<T>(items: T[], sourceIndex: number, targetIndex: number): T[] {
   if (sourceIndex === targetIndex) {
@@ -31,9 +32,108 @@ function reorderArray<T>(items: T[], sourceIndex: number, targetIndex: number): 
 
 function ReferenceImagePanel(props: { manifestId: string; canvasId?: string; imageHeight: number }) {
   const { manifestId, canvasId, imageHeight } = props;
-  const runtime = useRef<any>(null);
+  const runtime = useRef<{
+    getViewport?: () =>
+      | {
+          x: number;
+          y: number;
+          width: number;
+          height: number;
+        }
+      | null
+      | undefined;
+    setViewport?: (next: { x: number; y: number; width: number; height: number }) => void;
+    getRendererScreenPosition?: () =>
+      | {
+          width: number;
+          height: number;
+        }
+      | undefined;
+    updateRendererScreenPosition?: () => void;
+    updateControllerPosition?: () => void;
+    updateNextFrame?: () => void;
+    renderer?: {
+      resize?: (width?: number, height?: number) => void;
+    };
+    resize?: {
+      (): void;
+      (width?: number, height?: number): void;
+      (fromWidth: number, toWidth: number, fromHeight: number, toHeight: number): void;
+    };
+    world?: {
+      width?: number;
+      height?: number;
+      goHome?: () => void;
+      zoomIn?: () => void;
+      zoomOut?: () => void;
+    };
+  } | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const AnySimpleViewerProvider = SimpleViewerProvider as unknown as React.FC<any>;
   const viewerKey = `${manifestId}::${canvasId ?? ''}`;
+
+  const getContainerSize = useCallback(() => {
+    const container = containerRef.current;
+    if (!container) {
+      return null;
+    }
+
+    const rect = container.getBoundingClientRect();
+    const width = Math.round(rect.width);
+    const height = Math.round(rect.height);
+
+    if (width <= 0 || height <= 0) {
+      return null;
+    }
+
+    return { width, height };
+  }, []);
+
+  const resizeRuntimeToContainer = useCallback(() => {
+    const size = getContainerSize();
+    if (!size) {
+      return;
+    }
+
+    resizeAtlasRuntime(runtime.current, size);
+  }, [getContainerSize]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    const container = containerRef.current;
+    if (!container) {
+      return;
+    }
+
+    const applyResize = () => {
+      resizeRuntimeToContainer();
+    };
+
+    let frameHandle: number | null = null;
+    const observer = new ResizeObserver(() => {
+      if (frameHandle != null) {
+        window.cancelAnimationFrame(frameHandle);
+      }
+
+      frameHandle = window.requestAnimationFrame(() => {
+        applyResize();
+        frameHandle = null;
+      });
+    });
+
+    observer.observe(container);
+    applyResize();
+
+    return () => {
+      observer.disconnect();
+      if (frameHandle != null) {
+        window.cancelAnimationFrame(frameHandle);
+      }
+    };
+  }, [resizeRuntimeToContainer]);
 
   const goHome = () => runtime.current?.world?.goHome?.();
   const zoomIn = () => runtime.current?.world?.zoomIn?.();
@@ -41,7 +141,7 @@ function ReferenceImagePanel(props: { manifestId: string; canvasId?: string; ima
 
   return (
     <div className="overflow-hidden rounded-lg border border-[#e5e5e5] bg-white">
-      <div className="relative bg-white" style={{ height: imageHeight }}>
+      <div ref={containerRef} className="relative bg-white" style={{ height: imageHeight }}>
         <TabularCanvasViewportControls
           onHome={goHome}
           onZoomOut={zoomOut}
@@ -56,8 +156,9 @@ function ReferenceImagePanel(props: { manifestId: string; canvasId?: string; ima
             updateViewportTimeout={180}
             runtimeOptions={{ maxOverZoom: 5, visibilityRatio: 1, maxUnderZoom: 1 }}
             homeCover="start"
-            onCreated={(preset: any) => {
-              runtime.current = preset.runtime;
+            onCreated={(preset: { runtime?: typeof runtime.current }) => {
+              runtime.current = preset.runtime ?? null;
+              resizeRuntimeToContainer();
             }}
           >
             <CanvasPanel.RenderCanvas />

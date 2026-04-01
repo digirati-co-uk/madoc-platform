@@ -132,10 +132,17 @@ export function resizeAtlasRuntime(
         const worldWidth = runtime.world?.width;
         const worldHeight = runtime.world?.height;
         if (isPositiveNumber(worldWidth) && isPositiveNumber(worldHeight)) {
-          const maxX = Math.max(0, worldWidth - nextViewportWidth);
-          const maxY = Math.max(0, worldHeight - nextViewportHeight);
-          nextX = clamp(nextX, 0, maxX);
-          nextY = clamp(nextY, 0, maxY);
+          if (nextViewportWidth > worldWidth) {
+            nextX = (worldWidth - nextViewportWidth) / 2;
+          } else {
+            nextX = clamp(nextX, 0, worldWidth - nextViewportWidth);
+          }
+
+          if (nextViewportHeight > worldHeight) {
+            nextY = (worldHeight - nextViewportHeight) / 2;
+          } else {
+            nextY = clamp(nextY, 0, worldHeight - nextViewportHeight);
+          }
         }
 
         runtime.setViewport({
