@@ -22,7 +22,9 @@ function createCanSee(me?: boolean, siteRole?: string, scope?: string[]) {
     }
 
     if (visibility === 'staff') {
-      return scope.includes('site.admin') || siteRole === 'reviewer' || siteRole === 'admin';
+      return (
+        scope.includes('site.admin') || siteRole === 'trusted-user' || siteRole === 'reviewer' || siteRole === 'admin'
+      );
     }
 
     return false;
@@ -39,7 +41,7 @@ export const siteUserProfile: RouteMiddleware = async context => {
   // User "information" based on their preferences
   const protectedUser = await context.siteManager.getUserById(context.params.id);
   const protectedSiteUser = await context.siteManager.getSiteUserById(context.params.id, site.id);
-  const canSee = createCanSee(protectedUser.id === requestingUser?.id, requestingUser?.role, scope);
+  const canSee = createCanSee(protectedUser.id === requestingUser?.id, requestingUser?.site_role, scope);
   const requested = await context.siteManager.requestUserDetails(context.params.id, id, site.id);
   const config = await context.siteManager.getSystemConfig(false);
   const model = captureModelShorthandText(config.userProfileModel || '', {
@@ -100,7 +102,12 @@ export const siteUserProfile: RouteMiddleware = async context => {
     ]);
 
     statistics.crowdsourcing = crowdsourcing;
-    if (protectedUser.role === 'reviewer' || protectedUser.role === 'admin' || scope?.includes('site.admin')) {
+    if (
+      protectedSiteUser.site_role === 'trusted-user' ||
+      protectedSiteUser.site_role === 'reviewer' ||
+      protectedSiteUser.site_role === 'admin' ||
+      scope?.includes('site.admin')
+    ) {
       statistics.reviews = reviews;
     }
   }

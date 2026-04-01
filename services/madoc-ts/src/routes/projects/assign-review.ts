@@ -45,7 +45,7 @@ export const assignReview: RouteMiddleware<{ id: string }, { task_id: string }> 
     const includeAdmins = project.config.adminsAreReviewers;
 
     // 1. Find all reviewers
-    const users = await context.siteManager.getUsersByRoles(siteId, ['reviewer'], !!includeAdmins);
+    const users = await context.siteManager.getUsersByRoles(siteId, ['trusted-user', 'reviewer'], !!includeAdmins);
 
     if (users.length) {
       // 2. Choose one at random.

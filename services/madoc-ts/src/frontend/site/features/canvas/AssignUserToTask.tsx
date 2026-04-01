@@ -92,7 +92,7 @@ export const AssignTaskToUser: React.FC<AssignCanvasToUserProps> = props => {
             <UserAutocomplete
               clearable
               initialQuery
-              roles={['admin', 'reviewer', 'limited-reviewer', 'transcriber', 'limited-transcriber']}
+              roles={['admin', 'trusted-user', 'reviewer', 'limited-reviewer', 'transcriber', 'limited-transcriber']}
               value={selectedUser}
               updateValue={user => {
                 const alreadyAssigned = user ? assignees.find(u => u.id === `urn:madoc:user:${user.id}`) : undefined;

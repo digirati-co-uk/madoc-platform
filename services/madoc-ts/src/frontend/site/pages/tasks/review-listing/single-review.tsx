@@ -276,15 +276,15 @@ function ViewSingleReview({
   const [isEditing, setIsEditing] = useState(false);
   // const isLocked = props.lockedTasks && props.lockedTasks.indexOf(props.task.id) !== -1;
   const user = useCurrentUser(true);
+  const scope = user?.scope || [];
 
-  const limitedReviewer =
-    user && user.scope && user.scope.indexOf('models.revision') !== -1 && user.scope.indexOf('models.create') === -1;
+  const limitedReviewer = scope.indexOf('models.revision') !== -1 && scope.indexOf('models.create') === -1;
   const reviewer =
-    user &&
-    user.scope &&
-    (user.scope.indexOf('models.revision') !== -1 ||
-      user.scope.indexOf('site.admin') !== -1 ||
-      user.scope.indexOf('models.admin') !== -1);
+    scope.indexOf('models.revision') !== -1 ||
+    scope.indexOf('site.admin') !== -1 ||
+    scope.indexOf('models.admin') !== -1;
+  const canManageReviewOutcomes =
+    scope.indexOf('site.admin') !== -1 || scope.indexOf('tasks.admin') !== -1 || scope.indexOf('models.admin') !== -1;
 
   const canReview = limitedReviewer ? review?.assignee?.id === user.user?.id : reviewer;
   const isDone = task?.status === 3;
@@ -498,17 +498,23 @@ function ViewSingleReview({
             </div>
           ) : null}
 
+          {!canManageReviewOutcomes ? (
+            <ReviewActionMessage>
+              {t('Only site admins can unassign tasks or force tasks into review.')}
+            </ReviewActionMessage>
+          ) : null}
+
           <ButtonRow $center>
-            <Button onClick={() => unassignUser()}>{t('Unassign from user')}</Button>
-            {task.state.revisionId ? (
+            {canManageReviewOutcomes ? <Button onClick={() => unassignUser()}>{t('Unassign from user')}</Button> : null}
+            {task.state.revisionId && canManageReviewOutcomes ? (
               <>
                 <Button onClick={() => manualReview()}>{t('Manually put into review')}</Button>
-                {editLink ? (
-                  <Button as={HrefLink} href={editLink}>
-                    {t('View submission')}
-                  </Button>
-                ) : null}
               </>
+            ) : null}
+            {task.state.revisionId && editLink ? (
+              <Button as={HrefLink} href={editLink}>
+                {t('View submission')}
+              </Button>
             ) : null}
           </ButtonRow>
         </EmptyState>

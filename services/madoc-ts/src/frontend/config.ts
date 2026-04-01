@@ -1,5 +1,6 @@
 export const siteRoles = [
   { label: 'Admin', value: 'admin' },
+  { label: 'Trusted user', value: 'trusted-user' },
   { label: 'Reviewer', value: 'reviewer' },
   { label: 'Limited reviewer', value: 'limited-reviewer' },
   { label: 'Transcriber', value: 'transcriber' },
