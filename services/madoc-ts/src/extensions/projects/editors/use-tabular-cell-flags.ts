@@ -301,10 +301,14 @@ export function useTabularCellFlags({
   }, [activeCellColumnKey, onToggleCellFlag, tableActiveCell]);
 
   const onConvertFlagToNote = useCallback(
-    (rowIndex: number, columnKey: string) => {
+    (rowIndex: number, columnKey: string, noteComment?: string) => {
       const key = getTabularCellFlagKey(rowIndex, columnKey);
       const current = cellFlags[key];
       if (!isTabularCellFlagged(current)) {
+        return;
+      }
+      const resolvedComment = (typeof noteComment === 'string' ? noteComment : current.comment || '').trim();
+      if (!resolvedComment) {
         return;
       }
 
@@ -313,6 +317,7 @@ export function useTabularCellFlags({
         [key]: {
           ...current,
           status: 'note',
+          comment: resolvedComment,
         },
       });
     },

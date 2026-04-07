@@ -39,8 +39,7 @@ export const ApproveSubmission: React.FC<{
 
     return getTabularFlaggedCellCount(acceptedRevision);
   }, [acceptedRevision]);
-  const unresolvedFlagsDisabledReason =
-    unresolvedFlaggedCellCount > 0 ? getTabularApprovalBlockedMessage(unresolvedFlaggedCellCount) : undefined;
+  const unresolvedFlagsDisabledReason = unresolvedFlaggedCellCount > 0 ? getTabularApprovalBlockedMessage() : undefined;
   const resolvedDisabledReason = disabledReason || unresolvedFlagsDisabledReason;
   const isApproveDisabled = loading || !!resolvedDisabledReason;
 

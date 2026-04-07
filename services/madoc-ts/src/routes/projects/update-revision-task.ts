@@ -62,7 +62,7 @@ export const updateRevisionTask: RouteMiddleware<{ taskId: string; task: any }> 
       const revisionRequest = await userApi.crowdsourcing.getCaptureModelRevision(revisionId);
       const flaggedCellCount = getTabularFlaggedCellCount(revisionRequest);
       if (flaggedCellCount > 0) {
-        throw new RequestError(getTabularApprovalBlockedMessage(flaggedCellCount));
+        throw new RequestError(getTabularApprovalBlockedMessage());
       }
     }
   }

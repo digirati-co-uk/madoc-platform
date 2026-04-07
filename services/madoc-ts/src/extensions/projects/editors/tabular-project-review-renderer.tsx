@@ -10,6 +10,7 @@ import { resolveTabularZoomTrackingEnabled } from '@/frontend/shared/utility/tab
 import { useModelPageConfiguration } from '@/frontend/site/hooks/use-model-page-configuration';
 import { useReviewRendererContext } from '@/frontend/site/pages/tasks/review-renderers/review-renderer-context';
 import { type CustomReviewRendererProps } from '@/frontend/site/pages/tasks/review-renderers/types';
+import { getTabularApprovalBlockedMessage } from '../../../utility/tabular-flags';
 import { useTabularEditorLayout } from './use-tabular-editor-layout';
 import { TabularProjectCustomEditorCanvas } from './tabular-project-custom-editor-canvas';
 import { TabularProjectCustomEditorTable } from './tabular-project-custom-editor-table';
@@ -75,7 +76,7 @@ type FlaggedCellCardProps = {
   linkedCell?: ReviewLinkedCell;
   canResolveFlag: boolean;
   onFocusCell: () => void;
-  onConvertToNote: () => void;
+  onConvertToNote: (noteComment: string) => void;
   onDeleteFlag: () => void;
 };
 
@@ -89,6 +90,12 @@ function FlaggedCellCard({
 }: FlaggedCellCardProps) {
   const linkedValue = toEditableTextValue(linkedCell?.value);
   const hasLinkedValue = linkedValue.trim().length > 0;
+  const [noteComment, setNoteComment] = useState(flag.comment || '');
+  const trimmedNoteComment = noteComment.trim();
+
+  useEffect(() => {
+    setNoteComment(flag.comment || '');
+  }, [flag.comment, flag.key]);
 
   return (
     <div className="rounded border border-gray-300 bg-white">
@@ -119,7 +126,15 @@ function FlaggedCellCard({
           <div className="text-slate-500">This flagged cell is no longer available in the current table view.</div>
         )}
 
-        {flag.comment ? (
+        {canResolveFlag ? (
+          <textarea
+            rows={3}
+            className="w-full rounded border border-red-200 bg-red-50 px-2 py-1 text-sm text-red-900 placeholder:text-red-400"
+            placeholder="Add a note before saving."
+            value={noteComment}
+            onChange={event => setNoteComment(event.currentTarget.value)}
+          />
+        ) : flag.comment ? (
           <div className="whitespace-pre-wrap break-all rounded border border-red-200 bg-red-50 px-2 py-1 text-red-800">
             {flag.comment}
           </div>
@@ -130,7 +145,8 @@ function FlaggedCellCard({
             <button
               type="button"
               className="rounded border border-slate-300 bg-white px-2 py-1 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-50"
-              onClick={onConvertToNote}
+              disabled={!trimmedNoteComment}
+              onClick={() => onConvertToNote(trimmedNoteComment)}
             >
               Save as note
             </button>
@@ -285,6 +301,7 @@ export function TabularProjectReviewRenderer(props: CustomReviewRendererProps) {
   );
 
   const flaggedCellCount = flaggedCells.length;
+  const unresolvedFlagsApproveMessage = flaggedCellCount > 0 ? getTabularApprovalBlockedMessage() : undefined;
 
   const focusFlaggedCell = useCallback(
     (rowIndex: number, colIndex: number, canFocusCell: boolean) => {
@@ -309,12 +326,12 @@ export function TabularProjectReviewRenderer(props: CustomReviewRendererProps) {
   );
 
   const convertFlagToNote = useCallback(
-    (flag: ReviewFlaggedCellItem) => {
+    (flag: ReviewFlaggedCellItem, noteComment: string) => {
       if (isEditingDisabled) {
         return;
       }
 
-      onConvertFlagToNote(flag.rowIndex, flag.columnKey);
+      onConvertFlagToNote(flag.rowIndex, flag.columnKey, noteComment);
     },
     [isEditingDisabled, onConvertFlagToNote]
   );
@@ -344,6 +361,11 @@ export function TabularProjectReviewRenderer(props: CustomReviewRendererProps) {
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       {props.controls || <props.DefaultControls />}
+      {unresolvedFlagsApproveMessage ? (
+        <div className="mx-3 mb-3 mt-3 rounded border border-blue-300 bg-blue-50 px-3 py-2 text-sm text-blue-900">
+          {unresolvedFlagsApproveMessage}
+        </div>
+      ) : null}
       <div className="flex min-h-0 min-w-0 flex-1 overflow-hidden border-t border-gray-300 bg-white">
         <aside
           className={`shrink-0 border-r border-gray-300 bg-gray-50 transition-[width] duration-200 ease-in-out ${
@@ -384,7 +406,7 @@ export function TabularProjectReviewRenderer(props: CustomReviewRendererProps) {
                           linkedCell={linkedCell}
                           canResolveFlag={!isEditingDisabled}
                           onFocusCell={() => focusFlaggedCell(flag.rowIndex, colIndex, canFocusCell)}
-                          onConvertToNote={() => convertFlagToNote(flag)}
+                          onConvertToNote={noteComment => convertFlagToNote(flag, noteComment)}
                           onDeleteFlag={() => unflagCell(flag)}
                         />
                       ))}

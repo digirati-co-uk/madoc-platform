@@ -27,7 +27,7 @@ export const updateRevisionApi: RouteMiddleware<{ id: string }, RevisionRequest>
   if (isAcceptingRevision) {
     const flaggedCellCount = getTabularFlaggedCellCount(revisionRequest);
     if (flaggedCellCount > 0) {
-      throw new RequestError(getTabularApprovalBlockedMessage(flaggedCellCount));
+      throw new RequestError(getTabularApprovalBlockedMessage());
     }
   }
 

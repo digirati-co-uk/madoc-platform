@@ -6,9 +6,6 @@ import {
   TABULAR_CELL_FLAGS_PROPERTY,
 } from '../frontend/shared/utility/tabular-cell-flags';
 
-const FLAGGED_CELL_SINGULAR = 'cell';
-const FLAGGED_CELL_PLURAL = 'cells';
-
 function isBaseField(value: unknown): value is BaseField {
   return !!value && typeof value === 'object' && !Array.isArray(value) && 'value' in value;
 }
@@ -36,7 +33,6 @@ export function hasTabularFlaggedCells(revisionRequest: RevisionRequest): boolea
   return getTabularFlaggedCellCount(revisionRequest) > 0;
 }
 
-export function getTabularApprovalBlockedMessage(flaggedCellCount: number): string {
-  const label = flaggedCellCount === 1 ? FLAGGED_CELL_SINGULAR : FLAGGED_CELL_PLURAL;
-  return `Resolve ${flaggedCellCount} flagged ${label} before approving this submission.`;
+export function getTabularApprovalBlockedMessage(): string {
+  return 'Resolve flagged cells before approving this submission.';
 }
