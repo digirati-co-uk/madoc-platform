@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { ProjectFull } from '../../../../../types/project-full';
 import { Revisions } from '../../../../shared/capture-models/editor/stores/revisions';
 import { useTranslation } from 'react-i18next';
@@ -12,6 +12,7 @@ import {
 import { ModalButton } from '../../../../shared/components/Modal';
 import { Button, ButtonRow } from '../../../../shared/navigation/Button';
 import CheckCircleIcon from '../../../../shared/icons/CheckCircleIcon';
+import { getTabularApprovalBlockedMessage, getTabularFlaggedCellCount } from '../../../../../utility/tabular-flags';
 
 export const ApproveSubmission: React.FC<{
   onApprove: () => void;
@@ -31,14 +32,25 @@ export const ApproveSubmission: React.FC<{
   const api = useApi();
   const site = useSite();
   const { t } = useTranslation();
-  const isApproveDisabled = loading || !!disabledReason;
+  const unresolvedFlaggedCellCount = useMemo(() => {
+    if (!acceptedRevision) {
+      return 0;
+    }
+
+    return getTabularFlaggedCellCount(acceptedRevision);
+  }, [acceptedRevision]);
+  const unresolvedFlagsDisabledReason =
+    unresolvedFlaggedCellCount > 0 ? getTabularApprovalBlockedMessage(unresolvedFlaggedCellCount) : undefined;
+  const resolvedDisabledReason = disabledReason || unresolvedFlagsDisabledReason;
+  const isApproveDisabled = loading || !!resolvedDisabledReason;
 
   const approveApiCall = useCallback(() => {
-    if (disabledReason || !acceptedRevision) {
+    if (resolvedDisabledReason || !acceptedRevision) {
       return;
     }
 
-    const definition = project && project.template ? api.projectTemplates.getDefinition(project.template, site.id) : null;
+    const definition =
+      project && project.template ? api.projectTemplates.getDefinition(project.template, site.id) : null;
 
     setIsLoading(true);
     api.crowdsourcing
@@ -57,7 +69,16 @@ export const ApproveSubmission: React.FC<{
         await onApprove();
         setIsLoading(false);
       });
-  }, [acceptedRevision, api.crowdsourcing, api.projectTemplates, disabledReason, onApprove, project, site.id, userTaskId]);
+  }, [
+    acceptedRevision,
+    api.crowdsourcing,
+    api.projectTemplates,
+    onApprove,
+    project,
+    resolvedDisabledReason,
+    site.id,
+    userTaskId,
+  ]);
 
   if (acceptedRevision?.revision.status === 'accepted') {
     return null;
@@ -70,10 +91,10 @@ export const ApproveSubmission: React.FC<{
       modalSize="sm"
       disabled={isApproveDisabled}
       autoHeight={true}
-      title={disabledReason || t('Approve') || ''}
+      title={resolvedDisabledReason || t('Approve') || ''}
       render={() => (
         <div>
-          {disabledReason ? <p>{disabledReason}</p> : null}
+          {resolvedDisabledReason ? <p>{resolvedDisabledReason}</p> : null}
           <ul>
             <li>{t('The submission will be approved and all other submissions will remain')}</li>
           </ul>

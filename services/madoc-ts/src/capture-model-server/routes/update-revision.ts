@@ -5,6 +5,7 @@ import { RequestError } from '../../utility/errors/request-error';
 import { userCan } from '../../utility/user-can';
 import { userWithScope } from '../../utility/user-with-scope';
 import { sanitizeTabularRevisionRequestForSave } from '../../frontend/shared/utility/sanitize-tabular-revision-request';
+import { getTabularApprovalBlockedMessage, getTabularFlaggedCellCount } from '../../utility/tabular-flags';
 import { migrateModel } from '../migration/migrate-model';
 
 export const updateRevisionApi: RouteMiddleware<{ id: string }, RevisionRequest> = async (context, next) => {
@@ -20,6 +21,14 @@ export const updateRevisionApi: RouteMiddleware<{ id: string }, RevisionRequest>
 
   if (!revisionRequest.author) {
     revisionRequest.author = { id: userUrn, type: 'Person' };
+  }
+
+  const isAcceptingRevision = revisionRequest.revision.status === 'accepted' || !!revisionRequest.revision.approved;
+  if (isAcceptingRevision) {
+    const flaggedCellCount = getTabularFlaggedCellCount(revisionRequest);
+    if (flaggedCellCount > 0) {
+      throw new RequestError(getTabularApprovalBlockedMessage(flaggedCellCount));
+    }
   }
 
   await migrateModel(revisionRequest.captureModelId, { id, siteId }, context.captureModels);

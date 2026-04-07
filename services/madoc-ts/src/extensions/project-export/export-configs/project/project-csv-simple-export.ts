@@ -2,6 +2,13 @@ import { parseModelTarget } from '../../../../utility/parse-model-target';
 import { ExportFile } from '../../server-export';
 import type { ExportConfig, ExportDataOptions, ExportFileDefinition, SupportedExportResource } from '../../types';
 import { getValue } from '@iiif/helpers';
+import {
+  isTabularCellFlagged,
+  parseTabularCellFlags,
+  sortTabularCellFlags,
+  TABULAR_CELL_FLAGS_PROPERTY,
+  type TabularCellFlag,
+} from '../../../../frontend/shared/utility/tabular-cell-flags';
 
 const labelCache: {
   manifestLabels: Record<string, { label?: string; uri?: string }>;
@@ -15,6 +22,30 @@ const missingUriLogged = {
   manifest: new Set<string>(),
   canvas: new Set<string>(),
 };
+
+function formatTabularCellReview(flag: TabularCellFlag): string {
+  const base = `row ${flag.rowIndex + 1}, column ${flag.columnKey}`;
+  const comment = typeof flag.comment === 'string' ? flag.comment.trim() : '';
+  return comment ? `${base}: ${comment}` : base;
+}
+
+function getTabularCellReviewColumns(value: unknown): {
+  tabular_flag_count: number;
+  tabular_note_count: number;
+  tabular_flags: string;
+  tabular_notes: string;
+} {
+  const allReviews = sortTabularCellFlags(parseTabularCellFlags(value));
+  const flags = allReviews.filter(flag => isTabularCellFlagged(flag));
+  const notes = allReviews.filter(flag => !isTabularCellFlagged(flag));
+
+  return {
+    tabular_flag_count: flags.length,
+    tabular_note_count: notes.length,
+    tabular_flags: flags.map(formatTabularCellReview).join(' | '),
+    tabular_notes: notes.map(formatTabularCellReview).join(' | '),
+  };
+}
 
 async function fetchLabels(api: any, manifestIds: number[], canvasIds: number[]) {
   const uniqueManifestIds = Array.from(new Set(manifestIds.filter(id => id !== undefined)));
@@ -220,7 +251,12 @@ export const projectCsvSimpleExport: ExportConfig = {
 
         if (record.__fields) {
           for (const field of record.__fields) {
-            newRecord[field] = findBest(record[field])?.value;
+            const value = findBest(record[field])?.value;
+            if (field === TABULAR_CELL_FLAGS_PROPERTY) {
+              Object.assign(newRecord, getTabularCellReviewColumns(value));
+              continue;
+            }
+            newRecord[field] = value;
           }
 
           const target = parseModelTarget(record.target);

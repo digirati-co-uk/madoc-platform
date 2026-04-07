@@ -38,11 +38,15 @@ Explain how export configurations are registered and executed so new export type
 - Add a new export config type
 - Adjust export file naming or metadata
 - Update export configuration editor model
+- For tabular project CSV exports, normalize `__tabularCellFlags` into readable note/flag columns rather than raw JSON payload strings.
+- For tabular contributions CSV exports, normalize `__tabularCellFlags` rows into readable `contribution_data` plus dedicated tabular flag/note columns.
+- For tabular canvas model exports (`format=json`), include a derived `tabular_cell_reviews` object with explicit `flags` and `notes` arrays.
 
 ## Pitfalls
 - Registering an export config without adding it to the extension constructor
 - Returning file definitions with invalid paths or content types
 - Mismatching supported resource types and contexts
+- Zip exports can fail if a plan produces zero files; zip finalization should handle a missing temp directory and mark the task as `empty` instead of throwing.
 
 ## Suggested Checks
 - Run an export for each supported resource type

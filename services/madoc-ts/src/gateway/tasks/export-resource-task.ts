@@ -127,6 +127,26 @@ function getSubRequestOutput(output: ExportResourceRequest['output']): ExportRes
   return { type: 'none' };
 }
 
+async function directoryHasFiles(directory: string): Promise<boolean> {
+  if (!existsSync(directory)) {
+    return false;
+  }
+
+  const entries = await fs.readdir(directory, { withFileTypes: true });
+  for (const entry of entries) {
+    if (entry.isFile()) {
+      return true;
+    }
+    if (entry.isDirectory()) {
+      if (await directoryHasFiles(join(directory, entry.name))) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
 export const jobHandler = async (name: string, taskId: string, api: ApiClient) => {
   switch (name) {
     case 'created': {
@@ -361,18 +381,31 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
           const tempDir = join(EXPORT_PATH, request.output.options.tempDir);
           const zip = new AdmZip();
           const folderPath = basename(request.output.fileName, '.zip');
-          // if (existsSync(tempDir)) {
-          // try {
-          zip.addLocalFolder(tempDir, folderPath);
+          if (await directoryHasFiles(tempDir)) {
+            zip.addLocalFolder(tempDir, folderPath);
+          } else {
+            await api.updateTask(task.id, {
+              state: {
+                ...(task.state || {}),
+                empty: true,
+              },
+            });
+
+            // Keep the zip readable in desktop unzip tools.
+            zip.addFile(
+              `${folderPath}/README.txt`,
+              Buffer.from(
+                'No files were generated for this export.\n\nThe selected export options may not have matched any data for the selected resources.\n',
+                'utf-8'
+              )
+            );
+          }
+
           await new Promise(resolve => zip.writeZip(outputFile, resolve));
-          // } catch (e) {
-          //   // No zip.
-          //   await api.updateTask(task.id, { state: { empty: true } });
-          // }
 
           try {
-            if (tempDir) {
-              await fs.rmdir(tempDir, { recursive: true });
+            if (tempDir && existsSync(tempDir)) {
+              await fs.rm(tempDir, { recursive: true, force: true });
             }
           } catch (e) {
             // ignore error.
