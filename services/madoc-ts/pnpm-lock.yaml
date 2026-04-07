@@ -21,7 +21,7 @@ overrides:
   react-dnd-multi-backend: ^9.0.0
   dnd-multi-backend: 9.0.0
   '@iiif/helpers': ^1.5.8
-  iiif-browser: 2.1.0-next.8fd86ae
+  iiif-browser: 2.1.1
   html-entities: 1.4.0
   formik: ^2.2.9
   react: 19.2.4
@@ -227,8 +227,8 @@ importers:
         specifier: ^3.1.1
         version: 3.1.3
       iiif-browser:
-        specifier: 2.1.0-next.8fd86ae
-        version: 2.1.0-next.8fd86ae(@types/react@19.2.13)(immer@9.0.21)(react-reconciler@0.33.0(react@19.2.4))
+        specifier: 2.1.1
+        version: 2.1.1(@types/react@19.2.13)(immer@9.0.21)(react-reconciler@0.33.0(react@19.2.4))
       immer:
         specifier: ^9
         version: 9.0.21
@@ -6388,8 +6388,8 @@ packages:
     resolution: {integrity: sha512-Hs59xBNfUIunMFgWAbGX5cq6893IbWg4KnrjbYwX3tx0ztorVgTDA6B2sxf8ejHJ4wz8BqGUMYlnzNBer5NvGg==}
     engines: {node: '>= 4'}
 
-  iiif-browser@2.1.0-next.8fd86ae:
-    resolution: {integrity: sha512-sZ6EHYFydj2pGF2QbEpJDdcyUYKJxWTnOv+JXAt5sSYeDvf1u8y4T05Py5fm1/07tI73sQ0fC6WPo96RYC2FPA==}
+  iiif-browser@2.1.1:
+    resolution: {integrity: sha512-HMe8mlN2rNxbEOCcaywzJaT3OGWHEGi5YzFriabtUsWRghJK5D7CGIm3IWsp1nPrd7L1NLtbccFMbgHKGLBdWQ==}
     engines: {node: '>=18.14.1'}
 
   imagesloaded@4.1.4:
@@ -17164,7 +17164,7 @@ snapshots:
 
   ignore@7.0.5: {}
 
-  iiif-browser@2.1.0-next.8fd86ae(@types/react@19.2.13)(immer@9.0.21)(react-reconciler@0.33.0(react@19.2.4)):
+  iiif-browser@2.1.1(@types/react@19.2.13)(immer@9.0.21)(react-reconciler@0.33.0(react@19.2.4)):
     dependencies:
       '@atlas-viewer/atlas': 3.1.1(react-dom@19.2.4(react@19.2.4))(react-reconciler@0.33.0(react@19.2.4))(react@19.2.4)
       '@iiif/helpers': 1.5.8(@iiif/parser@2.2.9)

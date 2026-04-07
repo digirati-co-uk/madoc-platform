@@ -4,10 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import { useSiteConfiguration } from '../../site/features/SiteConfigurationContext';
 import { SearchIcon } from '../icons/SearchIcon';
-import {
-  resolveTypesenseHitPrimaryLink,
-  useTypesenseSiteAutocomplete,
-} from '../hooks/use-typesense-site-autocomplete';
+import { resolveTypesenseHitPrimaryLink, useTypesenseSiteAutocomplete } from '../hooks/use-typesense-site-autocomplete';
 
 export const GlobalSearch: React.FC = () => {
   const navigate = useNavigate();
@@ -16,7 +13,11 @@ export const GlobalSearch: React.FC = () => {
   const { t } = useTranslation();
   const { project } = useSiteConfiguration();
   const showSearch = !project.headerOptions?.hideSearchBar;
-  const { available: typesenseAvailable, suggestions, isLoadingSuggestions } = useTypesenseSiteAutocomplete(query, {
+  const {
+    available: typesenseAvailable,
+    suggestions,
+    isLoadingSuggestions,
+  } = useTypesenseSiteAutocomplete(query, {
     enabled: showSearch,
     limit: 8,
   });
@@ -83,7 +84,9 @@ export const GlobalSearch: React.FC = () => {
                   setIsFocused(false);
                 }}
               >
-                <div className="text-sm font-medium text-slate-800 truncate">{suggestion.resource_label || 'Untitled'}</div>
+                <div className="text-sm font-medium text-slate-800 truncate">
+                  {suggestion.resource_label || 'Untitled'}
+                </div>
                 <div className="text-xs text-slate-500 truncate">
                   {suggestion.resource_type || 'Resource'}
                   {suggestion.resource_id ? ` | ${suggestion.resource_id}` : ''}

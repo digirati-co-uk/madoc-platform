@@ -840,9 +840,11 @@ export function useTabularProjectController(options: UseTabularProjectController
         maxExternalResults: 20,
       },
       typesense: {
+        //
+        apiKey: 'xyz',
         host: window.location.hostname,
-        port: `/s/${siteSlug}/madoc/api/typesense`,
-        protocol: window.location.protocol.replace(':', ''),
+        // port: Number(window.location.port || (window.location.protocol === 'https:' ? '443' : '80')),
+        protocol: window.location.protocol.replace(':', '') as 'http' | 'https',
         path: `/s/${siteSlug}/madoc/api/typesense`,
         collection: `madoc_site_${siteId}`,
         searchParams: {
