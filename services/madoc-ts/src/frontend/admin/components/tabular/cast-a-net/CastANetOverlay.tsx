@@ -9,12 +9,18 @@ import {
 import type { NetConfig, TabularCellRef } from './types';
 import { useCastANetOverlayDrag } from './use-cast-a-net-overlay-drag';
 import { useCastANetOverlayGeometry } from './use-cast-a-net-overlay-geometry';
+import { parseColor } from '../../../../../utility/color';
+import {
+  TABULAR_OVERLAY_DEFAULT_COLORS,
+  type TabularOverlayColors,
+} from '../../../../shared/utility/tabular-project-config';
 
 type CastANetOverlayProps = {
   value: NetConfig;
   onChange: (next: NetConfig) => void;
   disabled?: boolean;
   activeCell?: TabularCellRef | null;
+  overlayColors?: TabularOverlayColors;
   previewOverlayOnly?: boolean;
   onOverlayWheel?: (deltaY: number) => void;
 };
@@ -37,11 +43,20 @@ const toggleLineSelection = (indexes: number[], index: number, max: number) => {
   return sanitiseLineIndexes(Array.from(selection), max);
 };
 
+const DEFAULT_COLOR_FALLBACK = { r: 0, g: 0, b: 0, a: 1 };
+
+const parseOverlayColor = (value: string | undefined, fallbackHex: string) =>
+  parseColor(value || fallbackHex, parseColor(fallbackHex, DEFAULT_COLOR_FALLBACK));
+
+const asRgba = (color: { r: number; g: number; b: number }, alpha: number) =>
+  `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha})`;
+
 export function CastANetOverlay({
   value,
   onChange,
   disabled = false,
   activeCell,
+  overlayColors,
   previewOverlayOnly = false,
   onOverlayWheel,
 }: CastANetOverlayProps) {
@@ -105,6 +120,26 @@ export function CastANetOverlay({
     colPositions: effectiveColPositions,
   });
   const showInteractiveNet = !previewOverlayOnly;
+  const headerOverlayColor = useMemo(
+    () => parseOverlayColor(overlayColors?.header, TABULAR_OVERLAY_DEFAULT_COLORS.header),
+    [overlayColors?.header]
+  );
+  const rowOverlayColor = useMemo(
+    () => parseOverlayColor(overlayColors?.row, TABULAR_OVERLAY_DEFAULT_COLORS.row),
+    [overlayColors?.row]
+  );
+  const cellOverlayColor = useMemo(
+    () => parseOverlayColor(overlayColors?.cell, TABULAR_OVERLAY_DEFAULT_COLORS.cell),
+    [overlayColors?.cell]
+  );
+  const headerFillColor = asRgba(headerOverlayColor, previewOverlayOnly ? 0.35 : 0.25);
+  const headerStrokeColor = asRgba(headerOverlayColor, previewOverlayOnly ? 0.75 : 0.55);
+  const headerColumnStrokeColor = asRgba(headerOverlayColor, 0.9);
+  const activeRowFillColor = asRgba(rowOverlayColor, previewOverlayOnly ? 0.34 : 0.24);
+  const activeRowStrokeColor = asRgba(rowOverlayColor, previewOverlayOnly ? 0.82 : 0.65);
+  const activeCellFillColor = asRgba(cellOverlayColor, previewOverlayOnly ? 0.26 : 0.16);
+  const activeCellStrokeColor = asRgba(cellOverlayColor, previewOverlayOnly ? 0.92 : 0.8);
+
   const handleWheel = useCallback(
     (event: ReactWheelEvent<SVGElement>) => {
       event.preventDefault();
@@ -204,7 +239,6 @@ export function CastANetOverlay({
 
   const headerStart = rowStops[0];
   const headerEnd = rowStops[1];
-
   const header = useMemo(() => {
     if (headerStart == null || headerEnd == null) {
       return null;
@@ -219,20 +253,13 @@ export function CastANetOverlay({
 
     return (
       <>
-        <rect
-          x={netLeft}
-          y={top}
-          width={value.width}
-          height={height}
-          fill={previewOverlayOnly ? 'rgba(255, 105, 180, 0.35)' : 'rgba(255, 105, 180, 0.25)'}
-          pointerEvents="none"
-        />
+        <rect x={netLeft} y={top} width={value.width} height={height} fill={headerFillColor} pointerEvents="none" />
         <line
           x1={netLeft}
           y1={bottom}
           x2={netRight}
           y2={bottom}
-          stroke={previewOverlayOnly ? 'rgba(255, 105, 180, 0.75)' : 'rgba(255, 105, 180, 0.55)'}
+          stroke={headerStrokeColor}
           strokeWidth={2}
           vectorEffect="non-scaling-stroke"
           pointerEvents="none"
@@ -248,7 +275,7 @@ export function CastANetOverlay({
                   y1={top}
                   x2={x}
                   y2={bottom}
-                  stroke="rgba(74, 100, 225, 0.9)"
+                  stroke={headerColumnStrokeColor}
                   strokeWidth={2}
                   vectorEffect="non-scaling-stroke"
                   pointerEvents="none"
@@ -262,9 +289,11 @@ export function CastANetOverlay({
     colStops,
     headerEnd,
     headerStart,
+    headerColumnStrokeColor,
+    headerFillColor,
+    headerStrokeColor,
     netLeft,
     netRight,
-    previewOverlayOnly,
     showInteractiveNet,
     toCanvasX,
     toCanvasY,
@@ -303,7 +332,7 @@ export function CastANetOverlay({
           y={rowTop}
           width={value.width}
           height={rowHeight}
-          fill={previewOverlayOnly ? 'rgba(54, 179, 126, 0.34)' : 'rgba(54, 179, 126, 0.24)'}
+          fill={activeRowFillColor}
           pointerEvents="none"
         />
         <line
@@ -311,7 +340,7 @@ export function CastANetOverlay({
           y1={rowTop}
           x2={netRight}
           y2={rowTop}
-          stroke={previewOverlayOnly ? 'rgba(22, 140, 83, 0.82)' : 'rgba(22, 140, 83, 0.65)'}
+          stroke={activeRowStrokeColor}
           strokeWidth={2}
           vectorEffect="non-scaling-stroke"
           pointerEvents="none"
@@ -321,7 +350,7 @@ export function CastANetOverlay({
           y1={rowBottom}
           x2={netRight}
           y2={rowBottom}
-          stroke={previewOverlayOnly ? 'rgba(22, 140, 83, 0.82)' : 'rgba(22, 140, 83, 0.65)'}
+          stroke={activeRowStrokeColor}
           strokeWidth={2}
           vectorEffect="non-scaling-stroke"
           pointerEvents="none"
@@ -331,8 +360,8 @@ export function CastANetOverlay({
           y={rowTop}
           width={cellWidth}
           height={rowHeight}
-          fill={previewOverlayOnly ? 'rgba(54, 179, 126, 0.26)' : 'rgba(54, 179, 126, 0.16)'}
-          stroke={previewOverlayOnly ? 'rgba(22, 140, 83, 0.92)' : 'rgba(22, 140, 83, 0.8)'}
+          fill={activeCellFillColor}
+          stroke={activeCellStrokeColor}
           strokeWidth={2}
           vectorEffect="non-scaling-stroke"
           pointerEvents="none"
@@ -345,7 +374,10 @@ export function CastANetOverlay({
     getProjectedRowBounds,
     netLeft,
     netRight,
-    previewOverlayOnly,
+    activeCellFillColor,
+    activeCellStrokeColor,
+    activeRowFillColor,
+    activeRowStrokeColor,
     toCanvasX,
     toCanvasY,
     value.width,

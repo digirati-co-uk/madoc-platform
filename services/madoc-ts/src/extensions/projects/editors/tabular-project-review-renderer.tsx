@@ -6,6 +6,8 @@ import { FullScreenEnterIcon } from '@/frontend/shared/icons/FullScreenEnterIcon
 import { FullScreenExitIcon } from '@/frontend/shared/icons/FullScreenExitIcon';
 import FlagIcon from '@/frontend/shared/icons/FlagIcon';
 import { MaximiseWindow } from '@/frontend/shared/layout/MaximiseWindow';
+import { resolveTabularZoomTrackingEnabled } from '@/frontend/shared/utility/tabular-project-config';
+import { useModelPageConfiguration } from '@/frontend/site/hooks/use-model-page-configuration';
 import { useReviewRendererContext } from '@/frontend/site/pages/tasks/review-renderers/review-renderer-context';
 import { type CustomReviewRendererProps } from '@/frontend/site/pages/tasks/review-renderers/types';
 import { useTabularEditorLayout } from './use-tabular-editor-layout';
@@ -133,6 +135,7 @@ function FlaggedCellCard({ flag, linkedCell, canUnflagCell, onFocusCell, onUnfla
 
 export function TabularProjectReviewRenderer(props: CustomReviewRendererProps) {
   const review = useReviewRendererContext();
+  const { enableZoomTracking, disableZoomTrackingOverlay = false } = useModelPageConfiguration();
   const table = useCaptureModelEditorApi({ tableProperty: 'rows' });
   const createNewFieldInstance = Revisions.useStoreActions(actions => actions.createNewFieldInstance);
   const removeInstance = Revisions.useStoreActions(actions => actions.removeInstance);
@@ -156,6 +159,11 @@ export function TabularProjectReviewRenderer(props: CustomReviewRendererProps) {
   const canvasId = fallbackCanvasId;
   const reviewTaskId = review.task?.id ? String(review.task.id) : undefined;
   const isEditingDisabled = props.mode !== 'write';
+  const zoomTrackingUiEnabled = resolveTabularZoomTrackingEnabled({
+    enableZoomTracking,
+    disableZoomTrackingOverlay,
+    defaultEnabled: templateConfig?.enableZoomTracking !== false,
+  });
   const [isFlaggedPanelOpen, setIsFlaggedPanelOpen] = useState(() => getStoredFlaggedPanelState(reviewTaskId));
 
   const {
@@ -383,7 +391,7 @@ export function TabularProjectReviewRenderer(props: CustomReviewRendererProps) {
                     canvasId={canvasId}
                     netConfig={netConfig}
                     activeCell={overlayActiveCell}
-                    zoomTrackingDefaultEnabled={templateConfig?.enableZoomTracking !== false}
+                    zoomTrackingDefaultEnabled={zoomTrackingUiEnabled}
                   />
                 ) : (
                   <div className="flex h-full items-center justify-center bg-gray-100 text-sm text-gray-600">

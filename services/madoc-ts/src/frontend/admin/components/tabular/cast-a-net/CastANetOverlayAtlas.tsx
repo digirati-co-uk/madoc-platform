@@ -4,12 +4,14 @@ import { useCanvas } from 'react-iiif-vault';
 import type { NetConfig, TabularCellRef } from './types';
 import { clampDimOpacity } from './utils';
 import { CastANetOverlay } from './CastANetOverlay';
+import type { TabularOverlayColors } from '../../../../shared/utility/tabular-project-config';
 
 type CastANetOverlayAtlasProps = {
   value: NetConfig;
   onChange: (next: NetConfig) => void;
   disabled?: boolean;
   activeCell?: TabularCellRef | null;
+  overlayColors?: TabularOverlayColors;
   dimOpacity?: number;
   previewOverlayOnly?: boolean;
   onOverlayWheel?: (deltaY: number) => void;
@@ -20,6 +22,7 @@ export function CastANetOverlayAtlas({
   onChange,
   disabled,
   activeCell,
+  overlayColors,
   dimOpacity = 0,
   previewOverlayOnly,
   onOverlayWheel,
@@ -51,6 +54,7 @@ export function CastANetOverlayAtlas({
           onChange={onChange}
           disabled={disabled}
           activeCell={activeCell}
+          overlayColors={overlayColors}
           previewOverlayOnly={previewOverlayOnly}
           onOverlayWheel={onOverlayWheel}
         />

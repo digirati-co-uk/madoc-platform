@@ -1,5 +1,31 @@
 import { ProjectConfiguration, ProjectConfigurationNEW } from '../../../types/schemas/project-configuration';
 import { BaseField } from '../capture-models/types/field-types';
+import { parseTabularRowCount, TABULAR_OVERLAY_DEFAULT_COLORS } from '../utility/tabular-project-config';
+
+export type ProjectConfigTemplate = {
+  [_key in keyof Partial<ProjectConfigurationNEW>]: string | (Partial<BaseField> & any);
+};
+
+const TABULAR_OVERLAY_COLOR_FIELDS = {
+  tabularHeaderOverlayColor: {
+    label: 'Canvas overlay color: header row',
+    description: 'Color used to highlight the header row overlay.',
+    type: 'color-field',
+    defaultValue: TABULAR_OVERLAY_DEFAULT_COLORS.header,
+  },
+  tabularActiveRowOverlayColor: {
+    label: 'Canvas overlay color: highlighted row',
+    description: 'Color used for the highlighted row overlay.',
+    type: 'color-field',
+    defaultValue: TABULAR_OVERLAY_DEFAULT_COLORS.row,
+  },
+  tabularActiveCellOverlayColor: {
+    label: 'Canvas overlay color: highlighted cell',
+    description: 'Color used for the highlighted cell overlay.',
+    type: 'color-field',
+    defaultValue: TABULAR_OVERLAY_DEFAULT_COLORS.cell,
+  },
+} as const;
 
 export function postProcessConfiguration(config: Partial<ProjectConfiguration>): ProjectConfiguration {
   if (config.revisionApprovalsRequired) {
@@ -10,11 +36,21 @@ export function postProcessConfiguration(config: Partial<ProjectConfiguration>):
     config.maxContributionsPerResource = false;
   }
 
+  const tabularDefaultRowCount = (config as any).tabularDefaultRowCount;
+  if (tabularDefaultRowCount === '') {
+    delete (config as any).tabularDefaultRowCount;
+  } else if (typeof tabularDefaultRowCount !== 'undefined') {
+    const parsedRowCount = parseTabularRowCount(tabularDefaultRowCount);
+    if (typeof parsedRowCount === 'number') {
+      (config as any).tabularDefaultRowCount = parsedRowCount;
+    }
+  }
+
   return config as any;
 }
 
 export const siteConfigurationModel: {
-  [key in keyof ProjectConfiguration]: string | (Partial<BaseField> & any);
+  [_key in keyof ProjectConfiguration]: string | (Partial<BaseField> & any);
 } = {
   allowCollectionNavigation: {
     label: 'Collection navigation',
@@ -258,6 +294,7 @@ export const siteConfigurationModel: {
     label: 'Contribution page',
     description: 'View options for the contributions page',
     type: 'checkbox-list-field',
+    allowMultiple: false,
     options: [
       {
         label: 'Fixed transcription bar',
@@ -509,9 +546,7 @@ export const siteConfigurationModel: {
   },
 };
 
-export const NonProjectOptions: {
-  [key in keyof Partial<ProjectConfigurationNEW>]: string | (Partial<BaseField> & any);
-} = {
+export const NonProjectOptions: ProjectConfigTemplate = {
   headerOptions: {
     label: 'Global site navigation',
     description: 'View options for the global site navigation',
@@ -554,9 +589,7 @@ export const NonProjectOptions: {
   },
 };
 
-export const ProjectConfigInterface: {
-  [key in keyof Partial<ProjectConfigurationNEW>]: string | (Partial<BaseField> & any);
-} = {
+export const ProjectConfigInterface: ProjectConfigTemplate = {
   projectPageOptions: {
     label: 'Project page options',
     description: 'UI customisations for the default page blocks on the project page',
@@ -705,9 +738,7 @@ export const ProjectConfigInterface: {
   },
 };
 
-export const ProjectConfigSearch: {
-  [key in keyof Partial<ProjectConfigurationNEW>]: string | (Partial<BaseField> & any);
-} = {
+export const ProjectConfigSearch: ProjectConfigTemplate = {
   navigation: {
     label: 'Navigation',
     description: '',
@@ -763,17 +794,56 @@ export const ProjectConfigSearch: {
   },
 };
 
-export const ProjectConfigContributions: {
-  [key in keyof Partial<ProjectConfigurationNEW>]: string | (Partial<BaseField> & any);
-} = {
+const CONTRIBUTION_MODE_OPTIONS = [
+  { value: 'annotation', text: 'Annotation mode (default)' },
+  { value: 'transcription', text: 'Transcription mode' },
+];
+
+const CLAIM_GRANULARITY_OPTIONS = [
+  { value: 'canvas', text: 'Canvas' },
+  { value: 'manifest', text: 'Manifest' },
+];
+
+const ASSIGNING_CANVAS_OPTIONS = [
+  {
+    label: 'Prioritise canvases sequentially',
+    value: 'priorityRandomness',
+  },
+  {
+    label: 'Randomly assign canvas to a user',
+    value: 'randomlyAssignCanvas',
+  },
+];
+
+const SUBMISSION_OPTIONS = [
+  {
+    label: 'Disable preview popup (direct submit)',
+    value: 'disablePreview',
+  },
+  {
+    label: 'Disable next canvas prompt after submission',
+    value: 'disableNextCanvas',
+  },
+  {
+    label: 'Prevent submissions after expiry (existing canvases)',
+    value: 'preventContributionAfterManifestUnassign',
+  },
+  {
+    label: 'Prevent contribution after submission',
+    value: 'preventContributionAfterSubmission',
+  },
+  {
+    label: 'Prevent contribution after rejection',
+    value: 'preventContributionAfterRejection',
+  },
+];
+
+const sharedProjectContributionFields = {
   contributionMode: {
     label: 'Contribution mode',
     description: 'This changes many aspects of how contributions work. (default = annotation)',
     type: 'dropdown-field',
-    options: [
-      { value: 'annotation', text: 'Annotation mode (default)' },
-      { value: 'transcription', text: 'Transcription mode' },
-    ],
+    options: CONTRIBUTION_MODE_OPTIONS,
   },
   maxContributionsPerResource: {
     label: 'Contributors per resource',
@@ -781,10 +851,6 @@ export const ProjectConfigContributions: {
   },
   preventMultipleUserSubmissionsPerResource: {
     label: 'Only one submission per user, per resource',
-    type: 'checkbox-field',
-  },
-  showRandomManifestAfterSubmission: {
-    label: 'Show random manifest button after last canvas submission',
     type: 'checkbox-field',
   },
   forkMode: {
@@ -798,82 +864,22 @@ export const ProjectConfigContributions: {
     label: 'Claim granularity',
     description: 'When a user claims something to work on, should they receive a single image or the whole manifest',
     type: 'dropdown-field',
-    options: [
-      { value: 'canvas', text: 'Canvas' },
-      // Disabled option.
-      { value: 'manifest', text: 'Manifest' },
-    ],
+    options: CLAIM_GRANULARITY_OPTIONS,
   },
   assigningCanvas: {
     label: 'Assigning a canvas',
     description: '',
     type: 'checkbox-list-field',
-    options: [
-      {
-        label: 'Prioritise canvases sequentially',
-        value: 'priorityRandomness',
-      },
-      {
-        label: 'Randomly assign canvas to a user',
-        value: 'randomlyAssignCanvas',
-      },
-    ],
+    options: ASSIGNING_CANVAS_OPTIONS,
   },
   randomCanvas: {
     label: 'Randomly select canvas when randomly selecting resource',
     type: 'checkbox-field',
     inlineLabel: 'Randomly select canvas',
   },
-  defaultEditorOrientation: {
-    label: 'Default editor orientation',
-    description:
-      'When a user makes a contribution they will see the form either to the right of (horizontal) or below the image (vertical). The user can still change this if they want.',
-    type: 'dropdown-field',
-    options: [
-      { value: 'vertical', text: 'Vertical (under)' },
-      { value: 'horizontal', text: 'Horizontal (to the right) ' },
-    ],
-  },
-  modelPageOptions: {
-    label: 'Contribution Panel',
-    description: 'View options for the contributions pnnel',
-    type: 'checkbox-list-field',
-    options: [
-      {
-        label: 'Hide viewer controls (zoom + home)',
-        value: 'hideViewerControls',
-      },
-      {
-        label: 'Enable rotation of images',
-        value: 'enableRotation',
-      },
-      {
-        label: 'Fixed transcription bar',
-        value: 'fixedTranscriptionBar',
-      },
-      {
-        label: 'Disable save for later button',
-        value: 'disableSaveForLater',
-      },
-      {
-        label: 'Enable autosave',
-        value: 'enableAutoSave',
-      },
-      {
-        label: 'Enable tooltip descriptions',
-        value: 'enableTooltipDescriptions',
-      },
-      {
-        label: 'Allow personal notes',
-        description: 'allow users to take personal notes only visible to themselves on canvases in a project',
-        value: 'allowPersonalNotes',
-      },
-      {
-        label: 'Enable split view',
-        value: 'enableSplitView',
-      },
-    ],
-  },
+};
+
+const sharedProjectContributionTailFields = {
   contributionWarningTime: {
     label: 'Contribution warning time',
     description:
@@ -894,74 +900,178 @@ export const ProjectConfigContributions: {
     label: 'Submission process',
     description: '',
     type: 'checkbox-list-field',
+    options: SUBMISSION_OPTIONS,
+  },
+};
+
+const HIDE_VIEWER_CONTROLS_MODEL_OPTION = {
+  label: 'Hide viewer controls (zoom + home)',
+  value: 'hideViewerControls',
+};
+
+const ENABLE_ROTATION_MODEL_OPTION = {
+  label: 'Enable rotation of images',
+  value: 'enableRotation',
+};
+
+const DISABLE_SAVE_FOR_LATER_MODEL_OPTION = {
+  label: 'Disable save for later button',
+  value: 'disableSaveForLater',
+};
+
+const ENABLE_TOOLTIP_DESCRIPTIONS_MODEL_OPTION = {
+  label: 'Enable tooltip descriptions',
+  value: 'enableTooltipDescriptions',
+};
+
+const genericAllowPersonalNotesModelOption = {
+  label: 'Allow personal notes',
+  description: 'allow users to take personal notes only visible to themselves on canvases in a project',
+  value: 'allowPersonalNotes',
+};
+
+const tabularAllowPersonalNotesModelOption = {
+  label: 'Allow personal notes',
+  description: 'Allow users to take personal notes visible only to themselves.',
+  value: 'allowPersonalNotes',
+};
+
+const genericContributionModelPageOptions = [
+  HIDE_VIEWER_CONTROLS_MODEL_OPTION,
+  ENABLE_ROTATION_MODEL_OPTION,
+  {
+    label: 'Fixed transcription bar',
+    value: 'fixedTranscriptionBar',
+  },
+  DISABLE_SAVE_FOR_LATER_MODEL_OPTION,
+  {
+    label: 'Enable autosave',
+    value: 'enableAutoSave',
+  },
+  ENABLE_TOOLTIP_DESCRIPTIONS_MODEL_OPTION,
+  genericAllowPersonalNotesModelOption,
+  {
+    label: 'Enable split view',
+    value: 'enableSplitView',
+  },
+];
+
+const tabularContributionModelPageOptions = [
+  {
+    ...HIDE_VIEWER_CONTROLS_MODEL_OPTION,
+    label: 'Hide viewer controls (home + zoom)',
+    description: 'Hide the Home and Zoom buttons in the canvas toolbar.',
+  },
+  {
+    ...ENABLE_ROTATION_MODEL_OPTION,
+    description: 'Show the rotate control in the canvas toolbar.',
+  },
+  {
+    ...DISABLE_SAVE_FOR_LATER_MODEL_OPTION,
+    description: 'Remove the Save for later button from the submission bar.',
+  },
+  {
+    ...ENABLE_TOOLTIP_DESCRIPTIONS_MODEL_OPTION,
+    description: 'Show column descriptions as tooltips in the table header.',
+  },
+  tabularAllowPersonalNotesModelOption,
+  {
+    label: 'Enable cell flagging',
+    description: 'Allow contributors to flag cells and add comments that can be turned into notes by reviewers.',
+    value: 'enableCellFlagging',
+  },
+  {
+    label: 'Enable zoom tracking/overlay',
+    description: 'Keep the active table cell aligned with the canvas via the overlay.',
+    value: 'enableZoomTracking',
+  },
+  {
+    label: 'Hide zoom tracking toggle control',
+    description: 'Hide the toolbar toggle and keep zoom tracking enabled.',
+    value: 'hideZoomTrackingToggle',
+  },
+  {
+    label: 'Hide zoom tracking nudge controls',
+    description: 'Hide the up/down nudge controls for adjusting overlay alignment.',
+    value: 'hideZoomTrackingNudgeControls',
+  },
+];
+
+const annotationVisibilityOptions = [
+  { value: 'when-open', text: 'Show when panel is open' },
+  { value: 'highlighted', text: 'Only show if highlighted' },
+  { value: 'always', text: 'Always show' },
+];
+
+export const ProjectConfigContributions: ProjectConfigTemplate = {
+  ...sharedProjectContributionFields,
+  showRandomManifestAfterSubmission: {
+    label: 'Show random manifest button after last canvas submission',
+    type: 'checkbox-field',
+  },
+  defaultEditorOrientation: {
+    label: 'Default editor orientation',
+    description:
+      'When a user makes a contribution they will see the form either to the right of (horizontal) or below the image (vertical). The user can still change this if they want.',
+    type: 'dropdown-field',
     options: [
-      {
-        label: 'Disable preview popup (direct submit)',
-        value: 'disablePreview',
-      },
-      {
-        label: 'Disable next canvas prompt after submission',
-        value: 'disableNextCanvas',
-      },
-      {
-        label: 'Prevent submissions after expiry (existing canvases)',
-        value: 'preventContributionAfterManifestUnassign',
-      },
-      {
-        label: 'Prevent contribution after submission',
-        value: 'preventContributionAfterSubmission',
-      },
-      {
-        label: 'Prevent contribution after rejection',
-        value: 'preventContributionAfterRejection',
-      },
+      { value: 'vertical', text: 'Vertical (under)' },
+      { value: 'horizontal', text: 'Horizontal (to the right) ' },
     ],
   },
+  modelPageOptions: {
+    label: 'Contribution Panel',
+    description: 'View options for the contributions pnnel',
+    type: 'checkbox-list-field',
+    allowMultiple: false,
+    options: genericContributionModelPageOptions,
+  },
+  ...sharedProjectContributionTailFields,
   modelPageShowAnnotations: {
     label: 'Contribution page annotations',
     description: 'Decide when annotations are shown when a user is on the contributing page',
     type: 'dropdown-field',
-    options: [
-      { value: 'when-open', text: 'Show when panel is open' },
-      { value: 'highlighted', text: 'Only show if highlighted' },
-      { value: 'always', text: 'Always show' },
-    ],
+    options: annotationVisibilityOptions,
   },
   modelPageShowDocument: {
     label: 'Contribution page document regions',
     description: 'Decide when document regions are shown when a user is on the contributing page',
     type: 'dropdown-field',
-    options: [
-      { value: 'when-open', text: 'Show when panel is open' },
-      { value: 'highlighted', text: 'Only show if highlighted' },
-      { value: 'always', text: 'Always show' },
-    ],
+    options: annotationVisibilityOptions,
   },
   canvasPageShowAnnotations: {
     label: 'Canvas page annotations',
     description: 'Decide when annotations are shown on the canvas page',
     type: 'dropdown-field',
-    options: [
-      { value: 'when-open', text: 'Show when panel is open' },
-      { value: 'highlighted', text: 'Only show if highlighted' },
-      { value: 'always', text: 'Always show' },
-    ],
+    options: annotationVisibilityOptions,
   },
   canvasPageShowDocument: {
     label: 'Canvas page document regions',
     description: 'Decide when document regions are shown on the canvas page',
     type: 'dropdown-field',
-    options: [
-      { value: 'when-open', text: 'Show when panel is open' },
-      { value: 'highlighted', text: 'Only show if highlighted' },
-      { value: 'always', text: 'Always show' },
-    ],
+    options: annotationVisibilityOptions,
   },
 };
 
-export const ProjectConfigReview: {
-  [key in keyof Partial<ProjectConfigurationNEW>]: string | (Partial<BaseField> & any);
-} = {
+export const ProjectConfigContributionsTabular: ProjectConfigTemplate = {
+  ...sharedProjectContributionFields,
+  modelPageOptions: {
+    label: 'Contribution panel',
+    description: 'View options for the tabular contribution panel',
+    type: 'checkbox-list-field',
+    allowMultiple: false,
+    options: tabularContributionModelPageOptions,
+  },
+  tabularDefaultRowCount: {
+    label: 'Default number of table rows',
+    description: 'Number of empty rows to pre-fill for new tabular draft revisions.',
+    type: 'text-field',
+  },
+  ...TABULAR_OVERLAY_COLOR_FIELDS,
+  ...sharedProjectContributionTailFields,
+};
+
+export const ProjectConfigReview: ProjectConfigTemplate = {
   randomlyAssignReviewer: {
     label: 'When assigning a reviewer',
     type: 'checkbox-field',
@@ -1007,9 +1117,7 @@ export const ProjectConfigReview: {
   },
 };
 
-export const ProjectConfigOther: {
-  [key in keyof Partial<ProjectConfigurationNEW>]: string | (Partial<BaseField> & any);
-} = {
+export const ProjectConfigOther: ProjectConfigTemplate = {
   activityStreams: {
     label: 'Activity streams',
     description: 'Below are the enabled activity streams. When you enable them, only new activity will be recorded.',

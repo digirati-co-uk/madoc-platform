@@ -75,6 +75,7 @@ type TabularProjectCustomEditorSidebarProps = {
   activeCellComment: string;
   flaggedCells: TabularFlaggedCellItem[];
   canPersistFlags: boolean;
+  enableCellFlagging?: boolean;
   onToggleActiveCellFlag: () => void;
   onUpdateActiveCellComment: (nextComment: string) => void;
   onFocusFlaggedCell: (rowIndex: number, columnKey: string) => void;
@@ -375,6 +376,7 @@ export function TabularProjectCustomEditorSidebar({
   activeCellComment,
   flaggedCells,
   canPersistFlags,
+  enableCellFlagging = true,
   onToggleActiveCellFlag,
   onUpdateActiveCellComment,
   onFocusFlaggedCell,
@@ -493,6 +495,7 @@ export function TabularProjectCustomEditorSidebar({
         id: 'flag-cell',
         label: 'Cell review',
         icon: <FlagIcon />,
+        isHidden: !enableCellFlagging,
         notifications: flaggedCells.length + historicalFlaggedCells.length || undefined,
         content: (
           <TabularSidebarFlagPanel
@@ -545,6 +548,7 @@ export function TabularProjectCustomEditorSidebar({
       activeCellComment,
       flaggedCells,
       canPersistFlags,
+      enableCellFlagging,
       canEditCurrentFlags,
       flagEditDisabledMessage,
       onToggleActiveCellFlag,
@@ -566,13 +570,17 @@ export function TabularProjectCustomEditorSidebar({
   const activePanelContent = activePanel?.content || null;
 
   useEffect(() => {
+    if (!enableCellFlagging) {
+      return;
+    }
+
     if (!flagPanelOpenRequestToken || flagPanelOpenRequestToken < 1) {
       return;
     }
 
     setActivePanelId('flag-cell');
     onPanelOpenChange(true);
-  }, [flagPanelOpenRequestToken, onPanelOpenChange]);
+  }, [enableCellFlagging, flagPanelOpenRequestToken, onPanelOpenChange]);
 
   return (
     <aside className="flex h-full min-h-0 min-w-0 overflow-hidden bg-white" style={{ height: '100%' }}>

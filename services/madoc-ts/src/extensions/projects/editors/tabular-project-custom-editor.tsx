@@ -16,8 +16,11 @@ import {
 } from '@/frontend/shared/layout/LayoutContainer';
 import { MaximiseWindow } from '@/frontend/shared/layout/MaximiseWindow';
 import { Button, ButtonRow } from '@/frontend/shared/navigation/Button';
+import { useSiteConfiguration } from '@/frontend/site/features/SiteConfigurationContext';
 import { useCanvasModel } from '@/frontend/site/hooks/use-canvas-model';
+import { useCanvasUserTasks } from '@/frontend/site/hooks/use-canvas-user-tasks';
 import { useCaptureModelContributionLifecycle } from '@/frontend/site/hooks/use-capture-model-contribution-lifecycle';
+import { useModelPageConfiguration } from '@/frontend/site/hooks/use-model-page-configuration';
 import { useProject } from '@/frontend/site/hooks/use-project';
 import { useRouteContext } from '@/frontend/site/hooks/use-route-context';
 import type { CanvasFull } from '@/types/canvas-full';
@@ -45,6 +48,11 @@ import type { TabularEditorRowModel } from './tabular-project-custom-editor-tabl
 import { useNavigation } from '@/frontend/shared/capture-models/editor/hooks/useNavigation';
 import { useModelTranslation } from '@/frontend/shared/capture-models/hooks/use-model-translation';
 import { useTranslation } from 'react-i18next';
+import {
+  getTabularOverlayColors,
+  parseTabularRowCountOrDefault,
+  resolveTabularZoomTrackingEnabled,
+} from '@/frontend/shared/utility/tabular-project-config';
 
 type TabularProjectCustomEditorContentProps = {
   canvasId: number;
@@ -60,7 +68,10 @@ type TabularProjectCustomEditorContentProps = {
 };
 
 const CONTRIBUTOR_NET_NUDGE_STEP = 0.25;
-const TABULAR_CONTRIBUTOR_BASE_ROW_COUNT = 5;
+const ROW_HAS_FLAGS_WARNING = 'Rows with flagged cells cannot be removed. Unflag flagged cells in this row first.';
+const ROW_HAS_VALUES_WARNING = 'Rows can only be removed when empty. Clear all cell values first.';
+const EXPIRED_CLAIM_BLOCKED_REASON =
+  'This canvas claim has expired and this project does not allow further submissions after expiry.';
 
 function getFirstNonEmptyText(values: Array<string | null | undefined>): string {
   for (const value of values) {
@@ -72,18 +83,43 @@ function getFirstNonEmptyText(values: Array<string | null | undefined>): string 
   return '';
 }
 
-function getRowRemovalWarning(row: TabularEditorRowModel, flaggedCells: Array<{ rowIndex: number }>): string | null {
-  const hasFlaggedCell = flaggedCells.some(flag => flag.rowIndex === row.rowIndex);
-  if (hasFlaggedCell) {
-    return 'Rows with flagged cells cannot be removed. Unflag flagged cells in this row first.';
+function getRowRemovalWarning(
+  row: TabularEditorRowModel,
+  flaggedCells: Array<{ rowIndex: number }>,
+  enforceFlagCheck = true
+): string | null {
+  if (enforceFlagCheck) {
+    const hasFlaggedCell = flaggedCells.some(flag => flag.rowIndex === row.rowIndex);
+    if (hasFlaggedCell) {
+      return ROW_HAS_FLAGS_WARNING;
+    }
   }
 
   const hasNonEmptyCell = row.cells.some(cell => typeof cell.value === 'string' && cell.value.trim().length > 0);
   if (hasNonEmptyCell) {
-    return 'Rows can only be removed when empty. Clear all cell values first.';
+    return ROW_HAS_VALUES_WARNING;
   }
 
   return null;
+}
+
+function getContributionTaskState(tasks?: Array<{ type?: string; status?: number }>) {
+  let hasExpired = false;
+  let hasActive = false;
+
+  for (const task of tasks || []) {
+    if (task.type !== 'crowdsourcing-task') {
+      continue;
+    }
+
+    if (task.status === -1) {
+      hasExpired = true;
+    } else {
+      hasActive = true;
+    }
+  }
+
+  return { hasExpired, hasActive };
 }
 
 function areNumberArraysEqual(left: number[], right: number[]) {
@@ -153,7 +189,24 @@ function TabularProjectCustomEditorContent({
   const api = useApi();
   const currentUser = api.getIsServer() ? undefined : api.getCurrentUser();
   const isSiteAdmin = !!currentUser?.scope?.includes('site.admin');
+  const {
+    enableRotation = false,
+    hideViewerControls = false,
+    disableSaveForLater = false,
+    enableTooltipDescriptions = false,
+    enableCellFlagging = true,
+    enableZoomTracking,
+    hideZoomTrackingToggle = false,
+    hideZoomTrackingNudgeControls = false,
+    hideNudgeControls = false,
+    disableZoomTrackingOverlay = false,
+    disablePreview = false,
+    disableNextCanvas = false,
+    preventContributionAfterManifestUnassign = false,
+  } = useModelPageConfiguration();
+  const config = useSiteConfiguration();
   const lifecycle = useCaptureModelContributionLifecycle();
+  const { userTasks } = useCanvasUserTasks();
   const [currentView] = useNavigation();
   const { t } = useTranslation();
   const { t: tModel } = useModelTranslation();
@@ -175,14 +228,29 @@ function TabularProjectCustomEditorContent({
   const [rowRemovalWarning, setRowRemovalWarning] = useState<string | null>(null);
   const [flagPanelOpenRequestToken, setFlagPanelOpenRequestToken] = useState(0);
   const [areInstructionsExpanded, setAreInstructionsExpanded] = useState(true);
+  const cellFlaggingEnabled = enableCellFlagging !== false;
+  const tabularBaseRowCount = useMemo(
+    () => parseTabularRowCountOrDefault(config.project?.tabularDefaultRowCount),
+    [config.project?.tabularDefaultRowCount]
+  );
+  const tabularOverlayColors = useMemo(() => getTabularOverlayColors(config.project), [config.project]);
+  const zoomTrackingUiEnabled = resolveTabularZoomTrackingEnabled({
+    enableZoomTracking,
+    disableZoomTrackingOverlay,
+    defaultEnabled: zoomTrackingDefaultEnabled,
+  });
+  const hideZoomTrackingNudgeControlsResolved = hideZoomTrackingNudgeControls || hideNudgeControls;
 
   const isPersisting = lifecycle.phase === 'saving-draft' || lifecycle.phase === 'submitting';
   const isLoading = lifecycle.phase === 'loading' || lifecycle.phase === 'preparing';
-  const isBlocked = lifecycle.phase === 'blocked';
+  const contributionTaskState = useMemo(() => getContributionTaskState(userTasks), [userTasks]);
+  const blockedAfterExpiry =
+    preventContributionAfterManifestUnassign && contributionTaskState.hasExpired && !contributionTaskState.hasActive;
+  const isBlocked = lifecycle.phase === 'blocked' || blockedAfterExpiry;
   const isSubmittedRevision = currentRevisionStatus === 'submitted';
   const isEditingDisabled = isBlocked || isPersisting || isSubmittedRevision;
   const canStartAnotherSubmission =
-    !lifecycle.preventFurtherSubmission && lifecycle.canContribute && lifecycle.canUserSubmit;
+    !lifecycle.preventFurtherSubmission && lifecycle.canContribute && lifecycle.canUserSubmit && !blockedAfterExpiry;
   const {
     widthB,
     refs,
@@ -254,29 +322,35 @@ function TabularProjectCustomEditorContent({
     const activeCell = activeRow?.cells[tableActiveCell.col];
     return activeCell?.fieldType === 'read-only-field';
   }, [tableActiveCell, tableRows]);
+  const canEditActiveCellFlags = cellFlaggingEnabled && !activeCellIsReadOnlyField;
 
   const onToggleActiveCellFlagIfEditable = useCallback(() => {
-    if (activeCellIsReadOnlyField) {
+    if (!canEditActiveCellFlags) {
       return;
     }
+
     onToggleActiveCellFlag();
-  }, [activeCellIsReadOnlyField, onToggleActiveCellFlag]);
+  }, [canEditActiveCellFlags, onToggleActiveCellFlag]);
 
   const onUpdateActiveCellCommentIfEditable = useCallback(
     (nextComment: string) => {
-      if (activeCellIsReadOnlyField) {
+      if (!canEditActiveCellFlags) {
         return;
       }
+
       onUpdateActiveCellComment(nextComment);
     },
-    [activeCellIsReadOnlyField, onUpdateActiveCellComment]
+    [canEditActiveCellFlags, onUpdateActiveCellComment]
   );
 
   const canEditCurrentFlags =
+    cellFlaggingEnabled &&
     canPersistFlags &&
     !!currentRevisionId &&
     (currentRevisionStatus === 'draft' || typeof currentRevisionStatus === 'undefined') &&
     !currentRevisionReadMode;
+  const canPersistCellFlags = canPersistFlags && cellFlaggingEnabled;
+  const blockedReason = blockedAfterExpiry ? EXPIRED_CLAIM_BLOCKED_REASON : getBlockedReason(lifecycle);
 
   const isTableEditorReady =
     !isLoading && lifecycle.phase !== 'error' && (table.status === 'ready' || useLegacyTopLevelLayout);
@@ -311,7 +385,7 @@ function TabularProjectCustomEditorContent({
     }
 
     const currentRowCount = useLegacyTopLevelLayout ? tableRows.length : table.rowCount;
-    const rowsToAdd = TABULAR_CONTRIBUTOR_BASE_ROW_COUNT - currentRowCount;
+    const rowsToAdd = tabularBaseRowCount - currentRowCount;
 
     if (rowsToAdd > 0) {
       if (!canAddRow) {
@@ -332,6 +406,7 @@ function TabularProjectCustomEditorContent({
     lifecycle.revisionId,
     table.rowCount,
     tableRows.length,
+    tabularBaseRowCount,
     useLegacyTopLevelLayout,
   ]);
 
@@ -419,6 +494,13 @@ function TabularProjectCustomEditorContent({
       return;
     }
 
+    if (!disablePreview && typeof window !== 'undefined') {
+      const shouldSubmit = window.confirm('Submit this contribution now? You will not be able to edit it afterwards.');
+      if (!shouldSubmit) {
+        return;
+      }
+    }
+
     try {
       await syncSharedNetConfig();
       await lifecycle.submit();
@@ -455,7 +537,7 @@ function TabularProjectCustomEditorContent({
       return;
     }
 
-    const warning = getRowRemovalWarning(targetRow, flaggedCells);
+    const warning = getRowRemovalWarning(targetRow, flaggedCells, cellFlaggingEnabled);
     if (warning) {
       setRowRemovalWarning(warning);
       return;
@@ -463,7 +545,7 @@ function TabularProjectCustomEditorContent({
 
     setRowRemovalWarning(null);
     removeRowAndSyncFlags();
-  }, [flaggedCells, getTargetRowForRemoval, removeRowAndSyncFlags]);
+  }, [cellFlaggingEnabled, flaggedCells, getTargetRowForRemoval, removeRowAndSyncFlags]);
 
   const openCellReviewPanel = useCallback(
     (nextCell: TabularCellRef) => {
@@ -484,7 +566,7 @@ function TabularProjectCustomEditorContent({
       return;
     }
 
-    const warning = getRowRemovalWarning(targetRow, flaggedCells);
+    const warning = getRowRemovalWarning(targetRow, flaggedCells, cellFlaggingEnabled);
     if (!warning) {
       setRowRemovalWarning(null);
       return;
@@ -493,7 +575,7 @@ function TabularProjectCustomEditorContent({
     if (warning !== rowRemovalWarning) {
       setRowRemovalWarning(warning);
     }
-  }, [flaggedCells, getTargetRowForRemoval, rowRemovalWarning]);
+  }, [cellFlaggingEnabled, flaggedCells, getTargetRowForRemoval, rowRemovalWarning]);
 
   return (
     <div
@@ -526,7 +608,8 @@ function TabularProjectCustomEditorContent({
               activeCellIsFlagged={activeCellIsFlagged}
               activeCellComment={activeCellComment}
               flaggedCells={flaggedCells}
-              canPersistFlags={canPersistFlags}
+              canPersistFlags={canPersistCellFlags}
+              enableCellFlagging={cellFlaggingEnabled}
               onToggleActiveCellFlag={onToggleActiveCellFlagIfEditable}
               onUpdateActiveCellComment={onUpdateActiveCellCommentIfEditable}
               onFocusFlaggedCell={onFocusFlaggedCell}
@@ -557,9 +640,11 @@ function TabularProjectCustomEditorContent({
             {isTableEditorReady ? (
               <div className="border-b border-gray-300 bg-gray-100 px-3 py-2">
                 <ButtonRow $noMargin>
-                  <Button onClick={onSaveForLater} disabled={isEditingDisabled}>
-                    {isPersisting && lifecycle.phase === 'saving-draft' ? 'Saving...' : 'Save for later'}
-                  </Button>
+                  {!disableSaveForLater ? (
+                    <Button onClick={onSaveForLater} disabled={isEditingDisabled}>
+                      {isPersisting && lifecycle.phase === 'saving-draft' ? 'Saving...' : 'Save for later'}
+                    </Button>
+                  ) : null}
                   <Button $primary onClick={onSubmit} disabled={isEditingDisabled}>
                     {isPersisting && lifecycle.phase === 'submitting' ? 'Submitting...' : 'Submit'}
                   </Button>
@@ -580,8 +665,13 @@ function TabularProjectCustomEditorContent({
                   canvas={canvas}
                   netConfig={netConfig}
                   activeCell={overlayActiveCell}
-                  zoomTrackingDefaultEnabled={zoomTrackingDefaultEnabled}
-                  showVerticalNudgeControls={zoomTrackingDefaultEnabled && !!netConfig}
+                  hideViewerControls={hideViewerControls}
+                  enableRotation={enableRotation}
+                  zoomTrackingDefaultEnabled={zoomTrackingUiEnabled}
+                  hideZoomTrackingToggle={hideZoomTrackingToggle}
+                  hideZoomTrackingNudgeControls={hideZoomTrackingNudgeControlsResolved}
+                  overlayColors={tabularOverlayColors}
+                  showVerticalNudgeControls={zoomTrackingUiEnabled && !!netConfig}
                   onNudgeUp={() => nudgeNetVertical(-CONTRIBUTOR_NET_NUDGE_STEP)}
                   onNudgeDown={() => nudgeNetVertical(CONTRIBUTOR_NET_NUDGE_STEP)}
                   nudgeDisabled={isPersisting || isBlocked}
@@ -623,7 +713,7 @@ function TabularProjectCustomEditorContent({
                         isError={lifecycle.phase === 'error'}
                         lastErrorMessage={lifecycle.lastError?.message}
                         isBlocked={isBlocked}
-                        blockedReason={getBlockedReason(lifecycle)}
+                        blockedReason={blockedReason}
                         showTableUnavailable={
                           !isLoading &&
                           lifecycle.phase !== 'error' &&
@@ -651,6 +741,7 @@ function TabularProjectCustomEditorContent({
                                   headerColumns={headerColumns}
                                   rows={tableRows}
                                   showEmptyState={showEmptyTableState}
+                                  showHeaderTooltips={enableTooltipDescriptions}
                                   showRowControls={!isOpen}
                                   tableActions={
                                     <button
@@ -674,10 +765,10 @@ function TabularProjectCustomEditorContent({
                                   addRowFromFooter={addRowFromFooter}
                                   removeRowFromFooter={removeEmptyRowAndSyncFlags}
                                   isCellFlagged={isCellFlagged}
-                                  enableCellFlagQuickActions
+                                  enableCellFlagQuickActions={cellFlaggingEnabled}
                                   canToggleCellFlags={canEditCurrentFlags}
-                                  onToggleCellFlag={onToggleCellFlag}
-                                  onOpenCellReviewPanel={openCellReviewPanel}
+                                  onToggleCellFlag={cellFlaggingEnabled ? onToggleCellFlag : undefined}
+                                  onOpenCellReviewPanel={cellFlaggingEnabled ? openCellReviewPanel : undefined}
                                 />
                               </div>
                             )}
@@ -717,7 +808,7 @@ function TabularProjectCustomEditorContent({
       {successModalState ? (
         <ContributionSuccessModal
           mode={successModalState}
-          nextImageHref={lifecycle.nextCanvas.next?.href}
+          nextImageHref={disableNextCanvas ? undefined : lifecycle.nextCanvas.next?.href}
           showContinueWorking={successModalState !== 'submitted' || canStartAnotherSubmission}
           onContinueWorking={onContinueAfterSuccess}
           onClose={() => setSuccessModalState(null)}

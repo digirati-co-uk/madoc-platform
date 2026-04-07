@@ -50,6 +50,7 @@ type TabularProjectCustomEditorTableProps = {
   onOpenCellReviewPanel?: (next: TabularCellRef) => void;
   containerClassName?: string;
   containerStyle?: React.CSSProperties;
+  showHeaderTooltips?: boolean;
 };
 
 type TabularGridRow = {
@@ -356,6 +357,7 @@ export function TabularProjectCustomEditorTable({
   onOpenCellReviewPanel,
   containerClassName,
   containerStyle,
+  showHeaderTooltips = false,
 }: TabularProjectCustomEditorTableProps) {
   const isRemoveRowDisabled = disabled || !canRemoveRow;
   const isAddRowDisabled = disabled || !canAddRow;
@@ -549,7 +551,7 @@ export function TabularProjectCustomEditorTable({
         resizable: false,
         renderHeaderCell: () => {
           const isActiveColumn = tableActiveCell?.col === colIndex;
-          const tooltip = column.description?.trim() || undefined;
+          const tooltip = showHeaderTooltips ? column.description?.trim() || undefined : undefined;
 
           return (
             <div
@@ -717,6 +719,7 @@ export function TabularProjectCustomEditorTable({
     onToggleCellFlag,
     openCellContextMenu,
     requestRowAppendForKeyboard,
+    showHeaderTooltips,
     tableActiveCell,
   ]);
 

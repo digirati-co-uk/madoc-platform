@@ -1,4 +1,20 @@
-export type ProjectConfiguration = {
+type TabularProjectConfigurationFields = {
+  tabularDefaultRowCount?: number | string;
+  tabularHeaderOverlayColor?: string;
+  tabularActiveRowOverlayColor?: string;
+  tabularActiveCellOverlayColor?: string;
+};
+
+type TabularModelPageOptions = {
+  enableCellFlagging?: boolean;
+  enableZoomTracking?: boolean;
+  hideZoomTrackingToggle?: boolean;
+  hideZoomTrackingNudgeControls?: boolean;
+  hideNudgeControls?: boolean;
+  disableZoomTrackingOverlay?: boolean;
+};
+
+export type ProjectConfiguration = TabularProjectConfigurationFields & {
   _version?: 1;
   _source?: {
     siteConfig: Array<{ property: string; original: any; override: any }>;
@@ -49,7 +65,7 @@ export type ProjectConfiguration = {
   canvasPageShowAnnotations?: 'always' | 'when-open' | 'highlighted';
   canvasPageShowDocument?: 'always' | 'when-open' | 'highlighted';
 
-  modelPageOptions?: {
+  modelPageOptions?: TabularModelPageOptions & {
     fixedTranscriptionBar?: boolean;
     preventContributionAfterRejection?: boolean;
     preventContributionAfterSubmission?: boolean;
@@ -116,7 +132,7 @@ export type ProjectConfiguration = {
   };
 };
 
-export type ProjectConfigurationNEW = {
+export type ProjectConfigurationNEW = TabularProjectConfigurationFields & {
   _version: 2;
   _source?: {
     siteConfig: Array<{ property: string; original: any; override: any }>;
@@ -201,8 +217,7 @@ export type ProjectConfigurationNEW = {
   };
   randomCanvas?: boolean;
   defaultEditorOrientation: 'vertical' | 'horizontal';
-
-  modelPageOptions?: {
+  modelPageOptions?: TabularModelPageOptions & {
     hideViewerControls?: boolean;
     enableRotation?: boolean;
     fixedTranscriptionBar?: boolean;

@@ -1,6 +1,10 @@
 import React from 'react';
 import { captureModelShorthand } from '../../../frontend/shared/capture-models/helpers/capture-model-shorthand';
 import type { TabularRowOffsetAdjustment } from '../../../frontend/shared/utility/tabular-types';
+import {
+  TABULAR_DEFAULT_ROW_COUNT,
+  TABULAR_OVERLAY_DEFAULT_COLORS,
+} from '../../../frontend/shared/utility/tabular-project-config';
 import type { CustomReviewRendererProps } from '../../../frontend/site/pages/tasks/review-renderers/types';
 import {
   TABULAR_CELL_FLAGS_PROPERTY,
@@ -161,9 +165,15 @@ export const tabularProject: ProjectTemplate<TabularProjectTemplateOptions> = {
       maxContributionsPerResource: false,
       allowSubmissionsWhenCanvasComplete: false,
       modelPageOptions: {
-        enableSplitView: true,
         enableTooltipDescriptions: true,
+        enableCellFlagging: true,
+        hideZoomTrackingToggle: false,
+        hideZoomTrackingNudgeControls: false,
       },
+      tabularDefaultRowCount: TABULAR_DEFAULT_ROW_COUNT,
+      tabularHeaderOverlayColor: TABULAR_OVERLAY_DEFAULT_COLORS.header,
+      tabularActiveRowOverlayColor: TABULAR_OVERLAY_DEFAULT_COLORS.row,
+      tabularActiveCellOverlayColor: TABULAR_OVERLAY_DEFAULT_COLORS.cell,
     },
     immutable: [
       'claimGranularity',
