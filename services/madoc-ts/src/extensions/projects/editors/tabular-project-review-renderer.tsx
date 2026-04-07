@@ -73,12 +73,20 @@ type ReviewLinkedCell = {
 type FlaggedCellCardProps = {
   flag: ReviewFlaggedCellItem;
   linkedCell?: ReviewLinkedCell;
-  canUnflagCell: boolean;
+  canResolveFlag: boolean;
   onFocusCell: () => void;
-  onUnflagCell: () => void;
+  onConvertToNote: () => void;
+  onDeleteFlag: () => void;
 };
 
-function FlaggedCellCard({ flag, linkedCell, canUnflagCell, onFocusCell, onUnflagCell }: FlaggedCellCardProps) {
+function FlaggedCellCard({
+  flag,
+  linkedCell,
+  canResolveFlag,
+  onFocusCell,
+  onConvertToNote,
+  onDeleteFlag,
+}: FlaggedCellCardProps) {
   const linkedValue = toEditableTextValue(linkedCell?.value);
   const hasLinkedValue = linkedValue.trim().length > 0;
 
@@ -117,14 +125,21 @@ function FlaggedCellCard({ flag, linkedCell, canUnflagCell, onFocusCell, onUnfla
           </div>
         ) : null}
 
-        {canUnflagCell ? (
-          <div className="pt-1">
+        {canResolveFlag ? (
+          <div className="flex flex-wrap gap-2 pt-1">
             <button
               type="button"
               className="rounded border border-slate-300 bg-white px-2 py-1 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-50"
-              onClick={onUnflagCell}
+              onClick={onConvertToNote}
             >
-              Unflag cell
+              Save as note
+            </button>
+            <button
+              type="button"
+              className="rounded border border-slate-300 bg-white px-2 py-1 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-50"
+              onClick={onDeleteFlag}
+            >
+              Delete flag
             </button>
           </div>
         ) : null}
@@ -200,7 +215,7 @@ export function TabularProjectReviewRenderer(props: CustomReviewRendererProps) {
     removeInstance,
   });
 
-  const { flaggedCells, isCellFlagged, onRemoveFlag } = useTabularCellFlags({
+  const { flaggedCells, isCellFlagged, isCellNoted, onRemoveFlag, onConvertFlagToNote } = useTabularCellFlags({
     table,
     projectId: review.project?.id,
     canvasId,
@@ -293,6 +308,17 @@ export function TabularProjectReviewRenderer(props: CustomReviewRendererProps) {
     [isEditingDisabled, onRemoveFlag]
   );
 
+  const convertFlagToNote = useCallback(
+    (flag: ReviewFlaggedCellItem) => {
+      if (isEditingDisabled) {
+        return;
+      }
+
+      onConvertFlagToNote(flag.rowIndex, flag.columnKey);
+    },
+    [isEditingDisabled, onConvertFlagToNote]
+  );
+
   useEffect(() => {
     setIsFlaggedPanelOpen(getStoredFlaggedPanelState(reviewTaskId));
   }, [reviewTaskId]);
@@ -356,9 +382,10 @@ export function TabularProjectReviewRenderer(props: CustomReviewRendererProps) {
                           key={flag.key}
                           flag={flag}
                           linkedCell={linkedCell}
-                          canUnflagCell={!isEditingDisabled}
+                          canResolveFlag={!isEditingDisabled}
                           onFocusCell={() => focusFlaggedCell(flag.rowIndex, colIndex, canFocusCell)}
-                          onUnflagCell={() => unflagCell(flag)}
+                          onConvertToNote={() => convertFlagToNote(flag)}
+                          onDeleteFlag={() => unflagCell(flag)}
                         />
                       ))}
                     </div>
@@ -423,6 +450,7 @@ export function TabularProjectReviewRenderer(props: CustomReviewRendererProps) {
                             addRowFromFooter={addRowFromFooter}
                             removeRowFromFooter={removeRowFromFooter}
                             isCellFlagged={isCellFlagged}
+                            isCellNoted={isCellNoted}
                             showRowControls={false}
                             tableActions={
                               <button

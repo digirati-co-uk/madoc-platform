@@ -1,6 +1,10 @@
 import type { BaseField } from '../frontend/shared/capture-models/types/field-types';
 import type { RevisionRequest } from '../frontend/shared/capture-models/types/revision-request';
-import { parseTabularCellFlags, TABULAR_CELL_FLAGS_PROPERTY } from '../frontend/shared/utility/tabular-cell-flags';
+import {
+  isTabularCellFlagged,
+  parseTabularCellFlags,
+  TABULAR_CELL_FLAGS_PROPERTY,
+} from '../frontend/shared/utility/tabular-cell-flags';
 
 function isBaseField(value: unknown): value is BaseField {
   return !!value && typeof value === 'object' && !Array.isArray(value) && 'value' in value;
@@ -22,10 +26,9 @@ export function getTabularFlaggedCellCount(revisionRequest: RevisionRequest): nu
     return 0;
   }
 
-  return Object.keys(parseTabularCellFlags(flagsField.value)).length;
+  return Object.values(parseTabularCellFlags(flagsField.value)).filter(flag => isTabularCellFlagged(flag)).length;
 }
 
 export function hasTabularFlaggedCells(revisionRequest: RevisionRequest): boolean {
   return getTabularFlaggedCellCount(revisionRequest) > 0;
 }
-

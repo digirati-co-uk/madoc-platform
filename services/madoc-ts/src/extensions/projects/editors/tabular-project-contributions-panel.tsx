@@ -7,6 +7,7 @@ import type { BaseField } from '@/frontend/shared/capture-models/types/field-typ
 import type { RevisionRequest } from '@/frontend/shared/capture-models/types/revision-request';
 import { EmptyState } from '@/frontend/shared/layout/EmptyState';
 import {
+  isTabularCellFlagged,
   parseTabularCellFlags,
   TABULAR_CELL_FLAGS_PROPERTY,
   type TabularCellFlag,
@@ -18,11 +19,27 @@ type TabularPreviewRow = {
   rowIndex: number;
   cells: Array<{ label: string; value: string }>;
   flags: TabularCellFlag[];
+  notes: TabularCellFlag[];
 };
+
+type TabularCellReviewsByRow = { flags: TabularCellFlag[]; notes: TabularCellFlag[] };
+
+const EMPTY_ROW_VALUES_LINE = 'No row values.';
+const EMPTY_ROW_VALUES_MESSAGE = 'No row values yet.';
+const FLAGGED_CELLS_LINE = 'Flagged cells:';
+const NOTE_PREFIX = 'Note:';
 
 function formatColumnKey(columnKey: string): string {
   const normalized = columnKey.replace(/[_-]+/g, ' ').trim();
   return normalized || columnKey;
+}
+
+function sortFlagsByColumnKey(flags: TabularCellFlag[]): TabularCellFlag[] {
+  return [...flags].sort((left, right) => left.columnKey.localeCompare(right.columnKey));
+}
+
+function createEmptyCellReviewsByRow(): TabularCellReviewsByRow {
+  return { flags: [], notes: [] };
 }
 
 function normalizePreviewValue(value: unknown): string | null {
@@ -59,8 +76,8 @@ function getFirstField(values: Array<CaptureModel['document'] | BaseField>): Bas
   return maybeField || null;
 }
 
-function getFlagByRowIndex(document: CaptureModel['document']): Map<number, TabularCellFlag[]> {
-  const byRowIndex = new Map<number, TabularCellFlag[]>();
+function getCellReviewsByRowIndex(document: CaptureModel['document']): Map<number, TabularCellReviewsByRow> {
+  const byRowIndex = new Map<number, TabularCellReviewsByRow>();
   const rawFlags = document.properties[TABULAR_CELL_FLAGS_PROPERTY];
 
   if (!Array.isArray(rawFlags)) {
@@ -73,8 +90,12 @@ function getFlagByRowIndex(document: CaptureModel['document']): Map<number, Tabu
   }
 
   for (const flag of Object.values(parseTabularCellFlags(flagsField.value))) {
-    const existing = byRowIndex.get(flag.rowIndex) || [];
-    existing.push(flag);
+    const existing = byRowIndex.get(flag.rowIndex) || createEmptyCellReviewsByRow();
+    if (isTabularCellFlagged(flag)) {
+      existing.flags.push(flag);
+    } else {
+      existing.notes.push(flag);
+    }
     byRowIndex.set(flag.rowIndex, existing);
   }
 
@@ -108,6 +129,7 @@ function getEntityRows(document: CaptureModel['document']): TabularPreviewRow[] 
       return [{ label: field.label?.trim() || formatColumnKey(columnKey), value }];
     }),
     flags: [],
+    notes: [],
   }));
 }
 
@@ -140,24 +162,30 @@ function getTopLevelRows(document: CaptureModel['document']): TabularPreviewRow[
       return [{ label: maybeField.label?.trim() || formatColumnKey(columnKey), value }];
     }),
     flags: [],
+    notes: [],
   }));
 }
 
-function withFlagRows(rows: TabularPreviewRow[], flagsByRow: Map<number, TabularCellFlag[]>): TabularPreviewRow[] {
+function withCellReviewRows(
+  rows: TabularPreviewRow[],
+  reviewsByRow: Map<number, TabularCellReviewsByRow>
+): TabularPreviewRow[] {
   const mergedRows = rows.map(row => ({
     ...row,
-    flags: (flagsByRow.get(row.rowIndex) || []).sort((left, right) => left.columnKey.localeCompare(right.columnKey)),
+    flags: sortFlagsByColumnKey(reviewsByRow.get(row.rowIndex)?.flags || []),
+    notes: sortFlagsByColumnKey(reviewsByRow.get(row.rowIndex)?.notes || []),
   }));
   const knownRows = new Set(mergedRows.map(row => row.rowIndex));
 
-  for (const [rowIndex, flags] of flagsByRow.entries()) {
+  for (const [rowIndex, reviews] of reviewsByRow.entries()) {
     if (knownRows.has(rowIndex)) {
       continue;
     }
     mergedRows.push({
       rowIndex,
       cells: [],
-      flags: flags.sort((left, right) => left.columnKey.localeCompare(right.columnKey)),
+      flags: sortFlagsByColumnKey(reviews.flags),
+      notes: sortFlagsByColumnKey(reviews.notes),
     });
   }
 
@@ -165,11 +193,19 @@ function withFlagRows(rows: TabularPreviewRow[], flagsByRow: Map<number, Tabular
 }
 
 function toPreviewField(documentId: string, revisionId: string, row: TabularPreviewRow): BaseField {
-  const valuesLine = row.cells.length
-    ? row.cells.map(cell => `${cell.label}: [${cell.value}]`).join('  ')
-    : 'No row values.';
+  const notedCells = row.notes.map(note => {
+    const noteComment = note.comment?.trim() ? note.comment.trim() : '';
+    return {
+      label: formatColumnKey(note.columnKey),
+      value: noteComment ? `${NOTE_PREFIX} ${noteComment}` : NOTE_PREFIX,
+    };
+  });
+  const previewCells = [...row.cells, ...notedCells];
+  const valuesLine = previewCells.length
+    ? previewCells.map(cell => `${cell.label}: [${cell.value}]`).join('  ')
+    : EMPTY_ROW_VALUES_LINE;
   const flagsLine = row.flags.length
-    ? ['Flagged cells:', ...row.flags.map(flag => `- ${formatColumnKey(flag.columnKey)}`)].join('\n')
+    ? [FLAGGED_CELLS_LINE, ...row.flags.map(flag => `- ${formatColumnKey(flag.columnKey)}`)].join('\n')
     : null;
 
   return {
@@ -185,10 +221,12 @@ function createContributionPreviewDocument(
   document: CaptureModel['document'],
   revisionId: string
 ): CaptureModel['document'] {
-  const flagsByRow = getFlagByRowIndex(document);
+  const reviewsByRow = getCellReviewsByRowIndex(document);
   const rows = getEntityRows(document);
   const resolvedRows = rows.length ? rows : getTopLevelRows(document);
-  const previewRows = withFlagRows(resolvedRows, flagsByRow).filter(row => row.cells.length || row.flags.length);
+  const previewRows = withCellReviewRows(resolvedRows, reviewsByRow).filter(
+    row => row.cells.length || row.flags.length || row.notes.length
+  );
 
   if (!previewRows.length) {
     return {
@@ -200,7 +238,7 @@ function createContributionPreviewDocument(
             type: 'text-field',
             label: 'Row 1',
             revision: revisionId,
-            value: 'No row values yet.',
+            value: EMPTY_ROW_VALUES_MESSAGE,
           },
         ],
       },

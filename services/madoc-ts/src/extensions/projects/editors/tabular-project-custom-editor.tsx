@@ -291,9 +291,11 @@ function TabularProjectCustomEditorContent({
     activeCellColumnKey,
     activeCellColumnLabel,
     activeCellIsFlagged,
+    activeCellIsNoted,
     activeCellComment,
     flaggedCells,
     isCellFlagged,
+    isCellNoted,
     onToggleCellFlag,
     onToggleActiveCellFlag,
     onUpdateActiveCellComment,
@@ -606,6 +608,7 @@ function TabularProjectCustomEditorContent({
               activeCellColumnLabel={activeCellColumnLabel}
               activeCellIsReadOnlyField={activeCellIsReadOnlyField}
               activeCellIsFlagged={activeCellIsFlagged}
+              activeCellIsNoted={activeCellIsNoted}
               activeCellComment={activeCellComment}
               flaggedCells={flaggedCells}
               canPersistFlags={canPersistCellFlags}
@@ -765,6 +768,7 @@ function TabularProjectCustomEditorContent({
                                   addRowFromFooter={addRowFromFooter}
                                   removeRowFromFooter={removeEmptyRowAndSyncFlags}
                                   isCellFlagged={isCellFlagged}
+                                  isCellNoted={isCellNoted}
                                   enableCellFlagQuickActions={cellFlaggingEnabled}
                                   canToggleCellFlags={canEditCurrentFlags}
                                   onToggleCellFlag={cellFlaggingEnabled ? onToggleCellFlag : undefined}

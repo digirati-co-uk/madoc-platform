@@ -149,13 +149,13 @@ const ReviewDropdownContainer = styledComponents.div`
   position: relative;
   max-width: 150px;
   align-self: end;
-  z-index: 2000;
+  z-index: 30;
 `;
 
 const ReviewDropdownPopup = styledComponents.div<{ $visible?: boolean }>`
   background: #ffffff;
   border: 1px solid #3498db;
-  z-index: 2001;
+  z-index: 31;
   border-radius: 4px;
   position: absolute;
   display: none;
@@ -367,7 +367,17 @@ function ViewSingleReview({
   };
 
   const DefaultReviewControls: ReviewDefaultControlsComponent = () => {
-    return review && !wasRejected && canReview ? (
+    if (!review || wasRejected || !canReview) {
+      return !isDone || !wasRejected ? (
+        <ReviewActionMessage>{t('You do not have the correct permissions to review this task')}</ReviewActionMessage>
+      ) : null;
+    }
+
+    if (isDone) {
+      return <ReviewActionMessage>{t('This review is complete')}</ReviewActionMessage>;
+    }
+
+    return (
       <ReviewActions>
         <RejectSubmission
           userTaskId={task.id}
@@ -401,9 +411,7 @@ function ViewSingleReview({
           reviewTaskId={review.id}
         />
       </ReviewActions>
-    ) : !isDone || !wasRejected ? (
-      <ReviewActionMessage>{t('You do not have the correct permissions to review this task')}</ReviewActionMessage>
-    ) : null;
+    );
   };
 
   const backToReviewListButton = (

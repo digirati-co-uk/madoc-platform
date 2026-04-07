@@ -13,7 +13,11 @@ import { useInfiniteData } from '../../../../shared/hooks/use-data';
 import { useLocationQuery } from '../../../../shared/hooks/use-location-query';
 import { SimpleTable } from '../../../../shared/layout/SimpleTable';
 import { HrefLink } from '../../../../shared/utility/href-link';
-import { parseTabularCellFlags, TABULAR_CELL_FLAGS_PROPERTY } from '../../../../shared/utility/tabular-cell-flags';
+import {
+  isTabularCellFlagged,
+  parseTabularCellFlags,
+  TABULAR_CELL_FLAGS_PROPERTY,
+} from '../../../../shared/utility/tabular-cell-flags';
 import { useRelativeLinks } from '../../../hooks/use-relative-links';
 import { useTaskMetadata } from '../../../hooks/use-task-metadata';
 import { Button, ButtonRow } from '../../../../shared/navigation/Button';
@@ -55,7 +59,7 @@ async function getTabularFlaggedCellCount(api: ReturnType<typeof useApi>, revisi
       return 0;
     }
 
-    return Object.keys(parseTabularCellFlags(flagsField.value)).length;
+    return Object.values(parseTabularCellFlags(flagsField.value)).filter(flag => isTabularCellFlagged(flag)).length;
   } catch {
     return 0;
   }

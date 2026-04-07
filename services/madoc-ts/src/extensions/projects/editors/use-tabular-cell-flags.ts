@@ -6,6 +6,8 @@ import {
   TABULAR_CELL_FLAGS_PROPERTY,
   areTabularCellFlagsEqual,
   getTabularCellFlagKey,
+  isTabularCellFlagged,
+  isTabularCellNote,
   parseTabularCellFlags,
   serializeTabularCellFlags,
   shiftTabularCellFlagsAfterRowRemoval,
@@ -17,7 +19,7 @@ import {
 } from '@/frontend/shared/utility/personal-note-payload';
 import type { TabularCellRef } from '@/frontend/shared/utility/tabular-types';
 import { getTabularCellElementId } from './tabular-project-custom-editor-utils';
-import type { TabularFlaggedCellItem } from './tabular-project-custom-editor-sidebar';
+import type { TabularCellReviewItem } from './tabular-project-custom-editor-sidebar';
 import type { TabularEditorHeaderModel } from './tabular-project-custom-editor-table-model';
 
 type UseTabularCellFlagsOptions = {
@@ -186,22 +188,35 @@ export function useTabularCellFlags({
     return columnLabelsByKey.get(activeCellColumnKey) || activeCellColumnKey;
   }, [activeCellColumnKey, columnLabelsByKey]);
 
-  const activeCellIsFlagged = useMemo(() => {
-    if (!tableActiveCell || !activeCellColumnKey) {
-      return false;
-    }
-    return !!cellFlags[getTabularCellFlagKey(tableActiveCell.row, activeCellColumnKey)];
-  }, [activeCellColumnKey, cellFlags, tableActiveCell]);
-
-  const isCellFlagged = useCallback(
-    (rowIndex: number, columnKey: string) => {
-      return !!cellFlags[getTabularCellFlagKey(rowIndex, columnKey)];
-    },
+  const getCellFlag = useCallback(
+    (rowIndex: number, columnKey: string) => cellFlags[getTabularCellFlagKey(rowIndex, columnKey)],
     [cellFlags]
   );
 
-  const flaggedCells = useMemo<TabularFlaggedCellItem[]>(() => {
+  const activeCellFlag = useMemo(() => {
+    if (!tableActiveCell || !activeCellColumnKey) {
+      return undefined;
+    }
+    return getCellFlag(tableActiveCell.row, activeCellColumnKey);
+  }, [activeCellColumnKey, getCellFlag, tableActiveCell]);
+
+  const activeCellIsFlagged = useMemo(() => isTabularCellFlagged(activeCellFlag), [activeCellFlag]);
+
+  const activeCellIsNoted = useMemo(() => isTabularCellNote(activeCellFlag), [activeCellFlag]);
+
+  const isCellFlagged = useCallback(
+    (rowIndex: number, columnKey: string) => isTabularCellFlagged(getCellFlag(rowIndex, columnKey)),
+    [getCellFlag]
+  );
+
+  const isCellNoted = useCallback(
+    (rowIndex: number, columnKey: string) => isTabularCellNote(getCellFlag(rowIndex, columnKey)),
+    [getCellFlag]
+  );
+
+  const flaggedCells = useMemo<TabularCellReviewItem[]>(() => {
     return Object.values(cellFlags)
+      .filter(flag => isTabularCellFlagged(flag))
       .sort((a, b) => {
         if (a.rowIndex !== b.rowIndex) {
           return a.rowIndex - b.rowIndex;
@@ -221,30 +236,58 @@ export function useTabularCellFlags({
       });
   }, [cellFlags, columnLabelsByKey, visibleColumnKeys]);
 
-  const activeCellComment = useMemo(() => {
-    if (!tableActiveCell || !activeCellColumnKey) {
-      return '';
-    }
+  const activeCellComment = activeCellFlag?.comment || '';
 
-    return cellFlags[getTabularCellFlagKey(tableActiveCell.row, activeCellColumnKey)]?.comment || '';
-  }, [activeCellColumnKey, cellFlags, tableActiveCell]);
+  const onRemoveFlag = useCallback(
+    (rowIndex: number, columnKey: string) => {
+      const key = getTabularCellFlagKey(rowIndex, columnKey);
+      const current = cellFlags[key];
+      if (!isTabularCellFlagged(current)) {
+        return;
+      }
+
+      const next = { ...cellFlags };
+      delete next[key];
+      persistCellFlags(next);
+    },
+    [cellFlags, persistCellFlags]
+  );
 
   const onToggleCellFlag = useCallback(
     (rowIndex: number, columnKey: string) => {
       const key = getTabularCellFlagKey(rowIndex, columnKey);
-      const next = { ...cellFlags };
+      const current = cellFlags[key];
 
-      if (next[key]) {
+      if (isTabularCellFlagged(current)) {
+        const hasComment = !!current?.comment?.trim();
+        if (hasComment) {
+          persistCellFlags({
+            ...cellFlags,
+            [key]: {
+              ...current,
+              status: 'note',
+              comment: current.comment?.trim(),
+            },
+          });
+          return;
+        }
+
+        const next = { ...cellFlags };
         delete next[key];
-      } else {
-        next[key] = {
-          rowIndex,
-          columnKey,
-          flaggedAt: new Date().toISOString(),
-        };
+        persistCellFlags(next);
+        return;
       }
 
-      persistCellFlags(next);
+      persistCellFlags({
+        ...cellFlags,
+        [key]: {
+          ...(current || {}),
+          rowIndex,
+          columnKey,
+          flaggedAt: current?.flaggedAt || new Date().toISOString(),
+          status: 'flag',
+        },
+      });
     },
     [cellFlags, persistCellFlags]
   );
@@ -257,23 +300,35 @@ export function useTabularCellFlags({
     onToggleCellFlag(tableActiveCell.row, activeCellColumnKey);
   }, [activeCellColumnKey, onToggleCellFlag, tableActiveCell]);
 
-  const onRemoveFlag = useCallback(
+  const onConvertFlagToNote = useCallback(
     (rowIndex: number, columnKey: string) => {
       const key = getTabularCellFlagKey(rowIndex, columnKey);
-      if (!cellFlags[key]) {
+      const current = cellFlags[key];
+      if (!isTabularCellFlagged(current)) {
         return;
       }
 
-      const next = { ...cellFlags };
-      delete next[key];
-      persistCellFlags(next);
+      persistCellFlags({
+        ...cellFlags,
+        [key]: {
+          ...current,
+          status: 'note',
+        },
+      });
     },
     [cellFlags, persistCellFlags]
   );
 
   const onClearAllFlags = useCallback(() => {
-    persistCellFlags({});
-  }, [persistCellFlags]);
+    const next: TabularCellFlagMap = {};
+    for (const item of Object.values(cellFlags)) {
+      if (!isTabularCellNote(item)) {
+        continue;
+      }
+      next[getTabularCellFlagKey(item.rowIndex, item.columnKey)] = item;
+    }
+    persistCellFlags(next);
+  }, [cellFlags, persistCellFlags]);
 
   const onUpdateActiveCellComment = useCallback(
     (nextComment: string) => {
@@ -296,6 +351,7 @@ export function useTabularCellFlags({
             rowIndex: tableActiveCell.row,
             columnKey: activeCellColumnKey,
             flaggedAt: new Date().toISOString(),
+            status: 'flag' as const,
           }),
           comment: hasMeaningfulComment ? nextComment : undefined,
         },
@@ -343,14 +399,17 @@ export function useTabularCellFlags({
     activeCellColumnKey,
     activeCellColumnLabel,
     activeCellIsFlagged,
+    activeCellIsNoted,
     activeCellComment,
     flaggedCells,
     isCellFlagged,
+    isCellNoted,
     onToggleCellFlag,
     onToggleActiveCellFlag,
     onUpdateActiveCellComment,
     onFocusFlaggedCell,
     onRemoveFlag,
+    onConvertFlagToNote,
     onClearAllFlags,
     removeRowAndSyncFlags,
   };

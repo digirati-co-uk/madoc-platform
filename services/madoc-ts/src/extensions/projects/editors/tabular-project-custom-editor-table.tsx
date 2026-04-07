@@ -44,6 +44,7 @@ type TabularProjectCustomEditorTableProps = {
   addRowFromFooter: () => void;
   removeRowFromFooter: () => void;
   isCellFlagged: (rowIndex: number, columnKey: string) => boolean;
+  isCellNoted: (rowIndex: number, columnKey: string) => boolean;
   enableCellFlagQuickActions?: boolean;
   canToggleCellFlags?: boolean;
   onToggleCellFlag?: (rowIndex: number, columnKey: string) => void;
@@ -62,15 +63,102 @@ type TabularGridRow = {
 
 type FlagCellButtonProps = {
   isFlagged: boolean;
+  isNoted: boolean;
   alwaysVisible: boolean;
   disabled: boolean;
   onToggle: () => void;
 };
 
-function FlagCellButton({ isFlagged, alwaysVisible, disabled, onToggle }: FlagCellButtonProps) {
-  const variantClasses = isFlagged
-    ? 'border-red-300 bg-red-100 text-red-700'
-    : 'border-slate-300 bg-white text-slate-600 hover:bg-slate-50';
+const FLAG_LABEL_DEFAULT = 'Flag cell for review';
+const FLAG_LABEL_NOTED = 'Mark as needs review';
+const FLAG_LABEL_FLAGGED = 'Clear flag';
+const CELL_BACKGROUND_COLORS = {
+  active: '#def3e4',
+  activeRow: '#f2fbf4',
+  flagged: '#fef2f2',
+  noted: '#eff6ff',
+  default: '#fff',
+} as const;
+
+function getFlagToggleLabel(isFlagged: boolean, isNoted: boolean): string {
+  if (isFlagged) {
+    return FLAG_LABEL_FLAGGED;
+  }
+
+  if (isNoted) {
+    return FLAG_LABEL_NOTED;
+  }
+
+  return FLAG_LABEL_DEFAULT;
+}
+
+function getFlagButtonVariantClasses(isFlagged: boolean, isNoted: boolean): string {
+  if (isFlagged) {
+    return 'border-red-300 bg-red-100 text-red-700';
+  }
+
+  if (isNoted) {
+    return 'border-blue-300 bg-blue-100 text-blue-700';
+  }
+
+  return 'border-slate-300 bg-white text-slate-600 hover:bg-slate-50';
+}
+
+function getInputContainerClass(
+  isReadOnlyField: boolean,
+  isActiveCell: boolean,
+  isFlagged: boolean,
+  isNoted: boolean
+): string {
+  if (isReadOnlyField) {
+    return isFlagged || isNoted || isActiveCell
+      ? 'border-slate-400 bg-slate-100 cursor-not-allowed'
+      : 'border-slate-300 bg-slate-100 cursor-not-allowed';
+  }
+
+  if (isActiveCell) {
+    return 'border-[#34a853] bg-[#def3e4]';
+  }
+
+  if (isFlagged) {
+    return 'border-red-300 bg-red-50';
+  }
+
+  if (isNoted) {
+    return 'border-blue-300 bg-blue-50';
+  }
+
+  return 'border-transparent bg-transparent';
+}
+
+function getCellBackgroundColor(
+  isActiveCell: boolean,
+  isFlagged: boolean,
+  isNoted: boolean,
+  isActiveRow: boolean
+): string {
+  if (isActiveCell) {
+    return CELL_BACKGROUND_COLORS.active;
+  }
+
+  if (isFlagged) {
+    return CELL_BACKGROUND_COLORS.flagged;
+  }
+
+  if (isNoted) {
+    return CELL_BACKGROUND_COLORS.noted;
+  }
+
+  if (isActiveRow) {
+    return CELL_BACKGROUND_COLORS.activeRow;
+  }
+
+  return CELL_BACKGROUND_COLORS.default;
+}
+
+function FlagCellButton({ isFlagged, isNoted, alwaysVisible, disabled, onToggle }: FlagCellButtonProps) {
+  const variantClasses = getFlagButtonVariantClasses(isFlagged, isNoted);
+  const buttonLabel = getFlagToggleLabel(isFlagged, isNoted);
   const visibilityClasses = alwaysVisible
     ? 'pointer-events-auto opacity-100'
     : 'pointer-events-none opacity-0 group-hover:pointer-events-auto group-hover:opacity-100';
@@ -79,8 +167,8 @@ function FlagCellButton({ isFlagged, alwaysVisible, disabled, onToggle }: FlagCe
     <button
       type="button"
       className={`absolute right-2 top-2 z-[1] inline-flex h-6 w-6 items-center justify-center rounded border text-xs transition ${variantClasses} ${visibilityClasses} disabled:cursor-not-allowed disabled:opacity-60`}
-      title={isFlagged ? 'Clear flag' : 'Flag cell for review'}
-      aria-label={isFlagged ? 'Clear flag' : 'Flag cell for review'}
+      title={buttonLabel}
+      aria-label={buttonLabel}
       disabled={disabled}
       onMouseDown={event => {
         event.preventDefault();
@@ -119,6 +207,7 @@ type TabularGridCellInputProps = {
   onKeyDown: (event: React.KeyboardEvent<HTMLInputElement | HTMLSelectElement>) => void;
   isActiveCell: boolean;
   isFlagged: boolean;
+  isNoted: boolean;
 };
 
 type TabularCellContextMenuState = {
@@ -128,6 +217,7 @@ type TabularCellContextMenuState = {
   colIndex: number;
   columnKey: string;
   isFlagged: boolean;
+  isNoted: boolean;
   canToggleFlag: boolean;
 };
 
@@ -140,8 +230,19 @@ function getDropdownDisplayText(
 }
 
 function TabularGridCellInput(options: TabularGridCellInputProps) {
-  const { inputId, value, fieldType, fieldOptions, disabled, onChange, onFocus, onKeyDown, isActiveCell, isFlagged } =
-    options;
+  const {
+    inputId,
+    value,
+    fieldType,
+    fieldOptions,
+    disabled,
+    onChange,
+    onFocus,
+    onKeyDown,
+    isActiveCell,
+    isFlagged,
+    isNoted,
+  } = options;
   const [optimisticTextValue, setOptimisticTextValue] = useState<string>(() => toTextValue(value));
   const [optimisticCheckedValue, setOptimisticCheckedValue] = useState<boolean>(() => !!value);
 
@@ -157,17 +258,7 @@ function TabularGridCellInput(options: TabularGridCellInputProps) {
   const displayTextValue = isDropdownField
     ? getDropdownDisplayText(dropdownOptions, optimisticTextValue)
     : optimisticTextValue;
-  const inputContainerClass = isReadOnlyField
-    ? isFlagged
-      ? 'border-red-300 bg-red-50 cursor-not-allowed'
-      : isActiveCell
-        ? 'border-amber-400 bg-amber-50 cursor-not-allowed'
-        : 'border-amber-200 bg-amber-50 cursor-not-allowed'
-    : isActiveCell
-      ? 'border-[#34a853] bg-[#def3e4]'
-      : isFlagged
-        ? 'border-red-300 bg-red-50'
-        : 'border-transparent bg-transparent';
+  const inputContainerClass = getInputContainerClass(isReadOnlyField, isActiveCell, isFlagged, isNoted);
 
   useEffect(() => {
     if (isCheckboxField) {
@@ -230,7 +321,7 @@ function TabularGridCellInput(options: TabularGridCellInputProps) {
       >
         {showReadOnlyBadge ? (
           <span
-            className="pointer-events-none absolute right-2 top-2 inline-flex rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-700"
+            className="pointer-events-none absolute right-2 top-2 inline-flex rounded bg-slate-200 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-700"
             aria-hidden="true"
           >
             Read only
@@ -351,6 +442,7 @@ export function TabularProjectCustomEditorTable({
   addRowFromFooter,
   removeRowFromFooter,
   isCellFlagged,
+  isCellNoted,
   enableCellFlagQuickActions = false,
   canToggleCellFlags = false,
   onToggleCellFlag,
@@ -523,6 +615,7 @@ export function TabularProjectCustomEditorTable({
       colIndex: number,
       columnKey: string,
       isFlagged: boolean,
+      isNoted: boolean,
       canToggleFlag: boolean
     ) => {
       event.preventDefault();
@@ -535,6 +628,7 @@ export function TabularProjectCustomEditorTable({
         colIndex,
         columnKey,
         isFlagged,
+        isNoted,
         canToggleFlag,
       });
     },
@@ -585,8 +679,9 @@ export function TabularProjectCustomEditorTable({
           const isReadOnlyCell = cell.fieldType === 'read-only-field';
           const canCellBeFlagged = !isReadOnlyCell;
           const isFlagged = canCellBeFlagged ? isCellFlagged(cell.rowIndex, cell.columnKey) : false;
+          const isNoted = !isFlagged && canCellBeFlagged ? isCellNoted(cell.rowIndex, cell.columnKey) : false;
           const canToggleThisCell = hasInlineFlagToggle && canToggleCellFlags && !disabled && canCellBeFlagged;
-          const showFlagControl = canToggleThisCell && (isFlagged || isActiveCell);
+          const showFlagControl = canToggleThisCell && (isFlagged || isNoted || isActiveCell);
           const canToggleFromContextMenu = !!onToggleCellFlag && canToggleCellFlags && !disabled && !isReadOnlyCell;
           const hasContextMenuForCell = !!onOpenCellReviewPanel || canToggleFromContextMenu;
 
@@ -663,6 +758,7 @@ export function TabularProjectCustomEditorTable({
                   colIndex,
                   cell.columnKey,
                   isFlagged,
+                  isNoted,
                   canToggleFromContextMenu
                 );
               }}
@@ -670,12 +766,13 @@ export function TabularProjectCustomEditorTable({
                 height: '100%',
                 padding: 4,
                 position: 'relative',
-                background: isActiveCell ? '#def3e4' : isFlagged ? '#fef2f2' : isActiveRow ? '#f2fbf4' : '#fff',
+                background: getCellBackgroundColor(isActiveCell, isFlagged, isNoted, isActiveRow),
               }}
             >
               {hasInlineFlagToggle && canToggleThisCell ? (
                 <FlagCellButton
                   isFlagged={isFlagged}
+                  isNoted={isNoted}
                   alwaysVisible={showFlagControl}
                   disabled={!canToggleThisCell}
                   onToggle={() => {
@@ -697,6 +794,7 @@ export function TabularProjectCustomEditorTable({
                 onKeyDown={handleKeyDown}
                 isActiveCell={isActiveCell}
                 isFlagged={isFlagged}
+                isNoted={isNoted}
                 onChange={cell.onChange}
               />
             </div>
@@ -714,6 +812,7 @@ export function TabularProjectCustomEditorTable({
     gridRows.length,
     headerColumns,
     isCellFlagged,
+    isCellNoted,
     onActiveCellChange,
     onOpenCellReviewPanel,
     onToggleCellFlag,
@@ -862,7 +961,7 @@ export function TabularProjectCustomEditorTable({
                 closeCellContextMenu();
               }}
             >
-              {cellContextMenu.isFlagged ? 'Clear flag' : 'Flag cell for review'}
+              {getFlagToggleLabel(cellContextMenu.isFlagged, cellContextMenu.isNoted)}
             </button>
           ) : null}
           {onOpenCellReviewPanel ? (

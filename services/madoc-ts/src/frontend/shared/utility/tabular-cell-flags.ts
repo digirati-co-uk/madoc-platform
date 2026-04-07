@@ -1,9 +1,12 @@
 export const TABULAR_CELL_FLAGS_PROPERTY = '__tabularCellFlags';
 
+export type TabularCellReviewStatus = 'flag' | 'note';
+
 export type TabularCellFlag = {
   rowIndex: number;
   columnKey: string;
   flaggedAt: string;
+  status?: TabularCellReviewStatus;
   comment?: string;
 };
 
@@ -15,6 +18,7 @@ type TabularCellFlagsPayload = {
 };
 
 const LEGACY_FLAGGED_AT_FALLBACK = '1970-01-01T00:00:00.000Z';
+const DEFAULT_TABULAR_CELL_REVIEW_STATUS: TabularCellReviewStatus = 'flag';
 const TABULAR_CELL_FLAGS_CAPTURE_MODEL_FIELD = {
   type: 'text-field',
   label: 'Cell flags',
@@ -35,6 +39,14 @@ function toInteger(value: unknown): number | null {
   }
 
   return null;
+}
+
+function toTabularCellReviewStatus(value: unknown): TabularCellReviewStatus {
+  if (value === 'note') {
+    return 'note';
+  }
+
+  return DEFAULT_TABULAR_CELL_REVIEW_STATUS;
 }
 
 function fromLegacyKey(key: string): { rowIndex: number; columnKey: string } | null {
@@ -70,6 +82,7 @@ function toFlag(value: unknown): TabularCellFlag | null {
     columnKey,
     flaggedAt:
       typeof value.flaggedAt === 'string' && value.flaggedAt.trim() ? value.flaggedAt : LEGACY_FLAGGED_AT_FALLBACK,
+    status: toTabularCellReviewStatus(value.status),
     comment: typeof value.comment === 'string' && value.comment.trim() ? value.comment : undefined,
   };
 }
@@ -93,6 +106,24 @@ function toPayloadCandidate(value: unknown): unknown {
 
 export function getTabularCellFlagKey(rowIndex: number, columnKey: string): string {
   return `${rowIndex}:${columnKey}`;
+}
+
+export function getTabularCellReviewStatus(flag: Pick<TabularCellFlag, 'status'> | undefined): TabularCellReviewStatus {
+  return toTabularCellReviewStatus(flag?.status);
+}
+
+export function isTabularCellFlagged(flag: Pick<TabularCellFlag, 'status'> | undefined): boolean {
+  if (!flag) {
+    return false;
+  }
+  return getTabularCellReviewStatus(flag) === 'flag';
+}
+
+export function isTabularCellNote(flag: Pick<TabularCellFlag, 'status'> | undefined): boolean {
+  if (!flag) {
+    return false;
+  }
+  return getTabularCellReviewStatus(flag) === 'note';
 }
 
 export function createTabularCellFlagsCaptureModelField() {
@@ -124,6 +155,7 @@ export function areTabularCellFlagsEqual(left: TabularCellFlagMap, right: Tabula
       leftFlag.rowIndex !== rightFlag.rowIndex ||
       leftFlag.columnKey !== rightFlag.columnKey ||
       leftFlag.flaggedAt !== rightFlag.flaggedAt ||
+      getTabularCellReviewStatus(leftFlag) !== getTabularCellReviewStatus(rightFlag) ||
       leftFlag.comment !== rightFlag.comment
     ) {
       return false;
@@ -176,6 +208,7 @@ export function parseTabularCellFlags(value: unknown): TabularCellFlagMap {
         rowIndex: parsedKey.rowIndex,
         columnKey: parsedKey.columnKey,
         flaggedAt: LEGACY_FLAGGED_AT_FALLBACK,
+        status: DEFAULT_TABULAR_CELL_REVIEW_STATUS,
       });
     }
   }

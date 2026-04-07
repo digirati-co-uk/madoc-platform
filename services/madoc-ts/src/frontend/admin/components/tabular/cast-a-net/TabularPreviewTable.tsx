@@ -176,6 +176,7 @@ export function TabularPreviewTable({
         addRowFromFooter={() => onAddRow?.()}
         removeRowFromFooter={() => onRemoveRow?.()}
         isCellFlagged={() => false}
+        isCellNoted={() => false}
         containerClassName={hasFixedHeight ? 'h-full flex-1' : undefined}
         containerStyle={{ width: '100%', minHeight: 0 }}
       />

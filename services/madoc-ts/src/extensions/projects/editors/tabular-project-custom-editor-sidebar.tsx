@@ -9,15 +9,9 @@ import { useDocumentPanel } from '@/frontend/site/hooks/canvas-menu/document-pan
 import { useMetadataMenu } from '@/frontend/site/hooks/canvas-menu/metadata-panel';
 import { usePersonalNotesMenu } from '@/frontend/site/hooks/canvas-menu/personal-notes';
 import { useRevisionPanel } from '@/frontend/site/hooks/canvas-menu/revision-panel';
-import { useRevisionList } from '@/frontend/shared/capture-models/new/hooks/use-revision-list';
 import { Revisions } from '@/frontend/shared/capture-models/editor/stores/revisions';
-import type { RevisionRequest } from '@/frontend/shared/capture-models/types/revision-request';
-import type { CaptureModel } from '@/frontend/shared/capture-models/types/capture-model';
-import type { BaseField } from '@/frontend/shared/capture-models/types/field-types';
-import { isEntity } from '@/frontend/shared/capture-models/helpers/is-entity';
 import type { TabularCellRef } from '@/frontend/shared/utility/tabular-types';
 import FlagIcon from '@/frontend/shared/icons/FlagIcon';
-import { parseTabularCellFlags, TABULAR_CELL_FLAGS_PROPERTY } from '@/frontend/shared/utility/tabular-cell-flags';
 import { TabularProjectContributionsPanel } from './tabular-project-contributions-panel';
 import { TabularCanvasControlsHelp } from '@/frontend/shared/components/TabularCanvasControlsHelp';
 import HelpIcon from '@/frontend/shared/icons/HelpIcon';
@@ -41,24 +35,12 @@ type TabularSidebarPanel = {
   notifications?: number;
 };
 
-export type TabularFlaggedCellItem = {
+export type TabularCellReviewItem = {
   key: string;
   rowIndex: number;
   columnKey: string;
   columnLabel: string;
   isVisibleInTable: boolean;
-  flaggedAt?: string;
-  comment?: string;
-};
-
-type HistoricalTabularFlagItem = {
-  key: string;
-  revisionId: string;
-  revisionTitle: string;
-  revisionStatus?: RevisionRequest['revision']['status'];
-  rowIndex: number;
-  columnKey: string;
-  columnLabel: string;
   flaggedAt?: string;
   comment?: string;
 };
@@ -72,8 +54,9 @@ type TabularProjectCustomEditorSidebarProps = {
   activeCellColumnLabel?: string;
   activeCellIsReadOnlyField?: boolean;
   activeCellIsFlagged: boolean;
+  activeCellIsNoted: boolean;
   activeCellComment: string;
-  flaggedCells: TabularFlaggedCellItem[];
+  flaggedCells: TabularCellReviewItem[];
   canPersistFlags: boolean;
   enableCellFlagging?: boolean;
   onToggleActiveCellFlag: () => void;
@@ -90,6 +73,7 @@ type TabularSidebarFlagPanelProps = Pick<
   | 'activeCellColumnLabel'
   | 'activeCellIsReadOnlyField'
   | 'activeCellIsFlagged'
+  | 'activeCellIsNoted'
   | 'activeCellComment'
   | 'flaggedCells'
   | 'canPersistFlags'
@@ -101,16 +85,10 @@ type TabularSidebarFlagPanelProps = Pick<
 > & {
   canEditCurrentFlags: boolean;
   flagEditDisabledMessage?: string;
-  historicalFlaggedCells: HistoricalTabularFlagItem[];
 };
 
 function TabularSidebarEmptyPanel({ message }: { message: string }) {
   return <EmptyState>{message}</EmptyState>;
-}
-
-function formatColumnKey(columnKey: string): string {
-  const normalized = columnKey.replace(/[_-]+/g, ' ').trim();
-  return normalized || columnKey;
 }
 
 function formatFlaggedAt(flaggedAt?: string): string | null {
@@ -126,51 +104,28 @@ function formatFlaggedAt(flaggedAt?: string): string | null {
   return asDate.toLocaleString();
 }
 
-function getRevisionTitle(revision: RevisionRequest): string {
-  if (revision.revision.label === 'Default') {
-    return revision.document.label || 'Untitled revision';
+function getFlagButtonLabel(activeCellIsFlagged: boolean, activeCellIsNoted: boolean): string {
+  if (activeCellIsFlagged) {
+    return 'Clear flag';
   }
 
-  const explicitLabel = revision.revision.label?.trim();
-  return explicitLabel || revision.document.label || 'Untitled revision';
+  if (activeCellIsNoted) {
+    return 'Mark as needs review';
+  }
+
+  return 'Flag as unclear / needs review';
 }
 
-function getFlagsField(document: CaptureModel['document']): BaseField | null {
-  const tabularFlags = document.properties[TABULAR_CELL_FLAGS_PROPERTY];
-  if (!Array.isArray(tabularFlags)) {
-    return null;
+function getCommentPlaceholder(activeCellIsFlagged: boolean, activeCellIsNoted: boolean): string {
+  if (activeCellIsFlagged) {
+    return 'Add optional context for reviewers.';
   }
 
-  const flagsField = (tabularFlags as Array<CaptureModel['document'] | BaseField>).find(
-    (item): item is BaseField => !isEntity(item)
-  );
-  return flagsField || null;
-}
-
-function getHistoricalFlaggedCellsFromRevision(revision: RevisionRequest): HistoricalTabularFlagItem[] {
-  const flagsField = getFlagsField(revision.document);
-  if (!flagsField) {
-    return [];
+  if (activeCellIsNoted) {
+    return 'Add context for this note.';
   }
 
-  return Object.values(parseTabularCellFlags(flagsField.value))
-    .sort((left, right) => {
-      if (left.rowIndex !== right.rowIndex) {
-        return left.rowIndex - right.rowIndex;
-      }
-      return left.columnKey.localeCompare(right.columnKey);
-    })
-    .map(flag => ({
-      key: `${revision.revision.id}:${flag.rowIndex}:${flag.columnKey}`,
-      revisionId: revision.revision.id,
-      revisionTitle: getRevisionTitle(revision),
-      revisionStatus: revision.revision.status,
-      rowIndex: flag.rowIndex,
-      columnKey: flag.columnKey,
-      columnLabel: formatColumnKey(flag.columnKey),
-      flaggedAt: flag.flaggedAt,
-      comment: flag.comment,
-    }));
+  return 'Add a note to create a flag for this cell.';
 }
 
 function TabularSidebarFlagPanel({
@@ -179,6 +134,7 @@ function TabularSidebarFlagPanel({
   activeCellColumnLabel,
   activeCellIsReadOnlyField = false,
   activeCellIsFlagged,
+  activeCellIsNoted,
   activeCellComment,
   flaggedCells,
   canPersistFlags,
@@ -189,7 +145,6 @@ function TabularSidebarFlagPanel({
   onFocusFlaggedCell,
   onRemoveFlag,
   onClearAllFlags,
-  historicalFlaggedCells,
 }: TabularSidebarFlagPanelProps) {
   const hasActiveCell = !!activeCell && !!activeCellColumnKey;
   const activeCellLabel = hasActiveCell
@@ -208,9 +163,10 @@ function TabularSidebarFlagPanel({
     'inline-flex h-10 w-12 items-center justify-center rounded-md border text-sm transition-colors disabled:cursor-not-allowed disabled:opacity-50',
     activeCellIsFlagged
       ? 'border-red-400 bg-red-100 text-red-700'
-      : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-50',
+      : activeCellIsNoted
+        ? 'border-blue-400 bg-blue-100 text-blue-700'
+        : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-50',
   ].join(' ');
-
   return (
     <div className="flex flex-col gap-5 p-5">
       {!canPersistFlags ? (
@@ -232,7 +188,7 @@ function TabularSidebarFlagPanel({
             <FlagIcon />
           </button>
           <p className="text-xs font-medium text-slate-700">
-            {activeCellIsFlagged ? 'Clear flag' : 'Flag as unclear / needs review'}
+            {getFlagButtonLabel(activeCellIsFlagged, activeCellIsNoted)}
           </p>
         </div>
         <div className="mt-4">
@@ -240,15 +196,13 @@ function TabularSidebarFlagPanel({
             className="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-600"
             htmlFor="tabular-cell-flag-comment"
           >
-            Reviewer note
+            Cell comment
           </label>
           <textarea
             id="tabular-cell-flag-comment"
             rows={4}
             className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 disabled:cursor-not-allowed disabled:bg-slate-100"
-            placeholder={
-              activeCellIsFlagged ? 'Add optional context for reviewers.' : 'Add a note to create a flag for this cell.'
-            }
+            placeholder={getCommentPlaceholder(activeCellIsFlagged, activeCellIsNoted)}
             disabled={!canEditSelectedCellFlags}
             value={activeCellComment}
             onChange={event => onUpdateActiveCellComment(event.target.value)}
@@ -280,83 +234,49 @@ function TabularSidebarFlagPanel({
           <div className="pt-4 text-sm text-slate-500">No flagged cells yet.</div>
         ) : (
           <div className="mt-4 flex flex-col gap-3 pr-1">
-            {flaggedCells.map(flag => (
-              <div key={flag.key} className="rounded-md border border-slate-200 bg-white p-3 shadow-sm">
-                <div className="flex items-start gap-2">
-                  <div className="mt-0.5 h-8 w-1 shrink-0 rounded bg-red-500" />
-                  <div className="min-w-0 flex-1">
-                    <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">Current revision</div>
-                    <div className="mt-1 text-sm font-semibold text-slate-900">
-                      Row {flag.rowIndex + 1}, {flag.columnLabel}
+            {flaggedCells.map(flag => {
+              const flaggedAtLabel = formatFlaggedAt(flag.flaggedAt);
+
+              return (
+                <div key={flag.key} className="rounded-md border border-slate-200 bg-white p-3 shadow-sm">
+                  <div className="flex items-start gap-2">
+                    <div className="mt-0.5 h-8 w-1 shrink-0 rounded bg-red-500" />
+                    <div className="min-w-0 flex-1">
+                      <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                        Current revision
+                      </div>
+                      <div className="mt-1 text-sm font-semibold text-slate-900">
+                        Row {flag.rowIndex + 1}, {flag.columnLabel}
+                      </div>
+                      {flag.comment ? (
+                        <div className="mt-1 whitespace-pre-wrap text-sm text-slate-700">{flag.comment}</div>
+                      ) : null}
+                      {flaggedAtLabel ? (
+                        <div className="mt-1 text-xs text-slate-500">Flagged {flaggedAtLabel}</div>
+                      ) : null}
                     </div>
-                    {flag.comment ? (
-                      <div className="mt-1 whitespace-pre-wrap text-sm text-slate-700">{flag.comment}</div>
-                    ) : null}
-                    {formatFlaggedAt(flag.flaggedAt) ? (
-                      <div className="mt-1 text-xs text-slate-500">Flagged {formatFlaggedAt(flag.flaggedAt)}</div>
-                    ) : null}
+                  </div>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+                      disabled={!flag.isVisibleInTable}
+                      onClick={() => onFocusFlaggedCell(flag.rowIndex, flag.columnKey)}
+                    >
+                      Go to cell
+                    </button>
+                    <button
+                      type="button"
+                      className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+                      disabled={!canEditCurrentFlags}
+                      onClick={() => onRemoveFlag(flag.rowIndex, flag.columnKey)}
+                    >
+                      Clear
+                    </button>
                   </div>
                 </div>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  <button
-                    type="button"
-                    className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
-                    disabled={!flag.isVisibleInTable}
-                    onClick={() => onFocusFlaggedCell(flag.rowIndex, flag.columnKey)}
-                  >
-                    Go to cell
-                  </button>
-                  <button
-                    type="button"
-                    className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
-                    disabled={!canEditCurrentFlags}
-                    onClick={() => onRemoveFlag(flag.rowIndex, flag.columnKey)}
-                  >
-                    Clear
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
-      <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-        <div className="text-xs font-semibold uppercase tracking-wide text-slate-600">
-          Previously flagged ({historicalFlaggedCells.length})
-        </div>
-        <div className="mt-2 text-xs text-slate-500">Previously flagged cells are shown for reference only.</div>
-
-        {!historicalFlaggedCells.length ? (
-          <div className="pt-4 text-sm text-slate-500">
-            No previous flagged cells in submitted/approved/rejected revisions.
-          </div>
-        ) : (
-          <div className="mt-4 flex flex-col gap-3 pr-1">
-            {historicalFlaggedCells.map(flag => (
-              <div key={flag.key} className="rounded-md border border-slate-200 bg-white p-3 shadow-sm">
-                <div className="flex items-start gap-2">
-                  <div className="mt-0.5 h-8 w-1 shrink-0 rounded bg-red-400" />
-                  <div className="min-w-0 flex-1">
-                    <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                      {flag.revisionTitle}
-                    </div>
-                    <div className="mt-1 text-sm font-semibold text-slate-900">
-                      Row {flag.rowIndex + 1}, {flag.columnLabel}
-                    </div>
-                    {flag.revisionStatus ? (
-                      <div className="mt-1 text-xs text-slate-500">Status: {flag.revisionStatus}</div>
-                    ) : null}
-                    {flag.comment ? (
-                      <div className="mt-1 whitespace-pre-wrap text-sm text-slate-700">{flag.comment}</div>
-                    ) : null}
-                    {formatFlaggedAt(flag.flaggedAt) ? (
-                      <div className="mt-1 text-xs text-slate-500">Flagged {formatFlaggedAt(flag.flaggedAt)}</div>
-                    ) : null}
-                  </div>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
@@ -373,6 +293,7 @@ export function TabularProjectCustomEditorSidebar({
   activeCellColumnLabel,
   activeCellIsReadOnlyField,
   activeCellIsFlagged,
+  activeCellIsNoted,
   activeCellComment,
   flaggedCells,
   canPersistFlags,
@@ -388,7 +309,6 @@ export function TabularProjectCustomEditorSidebar({
   const documentPanel = useDocumentPanel();
   const myContributionsPanel = useRevisionPanel();
   const personalNotesPanel = usePersonalNotesMenu();
-  const revisionList = useRevisionList({ filterCurrentView: false });
   const currentRevisionId = Revisions.useStoreState(state => state.currentRevisionId || undefined);
   const currentRevisionStatus = Revisions.useStoreState(state => state.currentRevision?.revision.status);
   const currentRevisionReadMode = Revisions.useStoreState(state => state.currentRevisionReadMode);
@@ -417,34 +337,6 @@ export function TabularProjectCustomEditorSidebar({
 
     return 'This revision is read-only. You can still review current and previous flags below.';
   }, [canPersistFlags, currentRevisionId, currentRevisionReadMode, currentRevisionStatus]);
-  const historicalFlaggedCells = useMemo(() => {
-    const candidateRevisions = [
-      ...revisionList.mySubmitted,
-      ...revisionList.myRejected,
-      ...revisionList.myAcceptedRevisions,
-    ];
-    const uniqueByRevision = new Map<string, RevisionRequest>();
-
-    for (const revision of candidateRevisions) {
-      if (revision.revision.id === currentRevisionId) {
-        continue;
-      }
-      uniqueByRevision.set(revision.revision.id, revision);
-    }
-
-    return Array.from(uniqueByRevision.values())
-      .flatMap(revision => getHistoricalFlaggedCellsFromRevision(revision))
-      .sort((left, right) => {
-        if (left.revisionTitle !== right.revisionTitle) {
-          return left.revisionTitle.localeCompare(right.revisionTitle);
-        }
-        if (left.rowIndex !== right.rowIndex) {
-          return left.rowIndex - right.rowIndex;
-        }
-        return left.columnKey.localeCompare(right.columnKey);
-      });
-  }, [currentRevisionId, revisionList.myAcceptedRevisions, revisionList.myRejected, revisionList.mySubmitted]);
-
   const panels = useMemo<TabularSidebarPanel[]>(
     () => [
       {
@@ -496,7 +388,7 @@ export function TabularProjectCustomEditorSidebar({
         label: 'Cell review',
         icon: <FlagIcon />,
         isHidden: !enableCellFlagging,
-        notifications: flaggedCells.length + historicalFlaggedCells.length || undefined,
+        notifications: flaggedCells.length || undefined,
         content: (
           <TabularSidebarFlagPanel
             activeCell={activeCell}
@@ -504,6 +396,7 @@ export function TabularProjectCustomEditorSidebar({
             activeCellColumnLabel={activeCellColumnLabel}
             activeCellIsReadOnlyField={activeCellIsReadOnlyField}
             activeCellIsFlagged={activeCellIsFlagged}
+            activeCellIsNoted={activeCellIsNoted}
             activeCellComment={activeCellComment}
             flaggedCells={flaggedCells}
             canPersistFlags={canPersistFlags}
@@ -514,7 +407,6 @@ export function TabularProjectCustomEditorSidebar({
             onFocusFlaggedCell={onFocusFlaggedCell}
             onRemoveFlag={onRemoveFlag}
             onClearAllFlags={onClearAllFlags}
-            historicalFlaggedCells={historicalFlaggedCells}
           />
         ),
       },
@@ -545,6 +437,7 @@ export function TabularProjectCustomEditorSidebar({
       activeCellColumnLabel,
       activeCellIsReadOnlyField,
       activeCellIsFlagged,
+      activeCellIsNoted,
       activeCellComment,
       flaggedCells,
       canPersistFlags,
@@ -556,7 +449,6 @@ export function TabularProjectCustomEditorSidebar({
       onFocusFlaggedCell,
       onRemoveFlag,
       onClearAllFlags,
-      historicalFlaggedCells,
     ]
   );
 

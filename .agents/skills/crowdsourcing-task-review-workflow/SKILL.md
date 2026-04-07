@@ -51,7 +51,7 @@ Provide a reliable map of how contribution tasks and review tasks are created, t
 - Manifest-vs-canvas contribution model: `claimGranularity` and `shadow.showCaptureModelOnManifest`.
 - Review creation on submission: first submit creates review task, subsequent submits reuse existing active review.
 - Reviewer selection: random reviewer, manual reviewer, or admin fallback.
-- Flagged-cell guard: `assign-review.ts` checks linked submission revisions for tabular flags before assignment, and `AutomaticReviewBot.ts` also skips flagged submissions as a safety net.
+- Flagged-cell guard: `assign-review.ts` checks linked submission revisions for unresolved tabular markers (`status = "flag"`) before assignment, and `AutomaticReviewBot.ts` also skips submissions with unresolved flags as a safety net. Tabular markers with `status = "note"` are informational and do not block assignment/auto-review.
 
 ## Settings With Real Runtime Effect
 Treat these as first-class when debugging behavior:
