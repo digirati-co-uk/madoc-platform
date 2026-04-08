@@ -1,432 +1,483 @@
 {
-  "type": "object",
-  "properties": {
-    "_version": {
-      "type": "number",
-      "enum": [
-        1
-      ]
-    },
-    "_source": {
+  "allOf": [
+    {
       "type": "object",
       "properties": {
-        "siteConfig": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "property": {
-                "type": "string"
-              },
-              "original": {},
-              "override": {}
+        "tabularDefaultRowCount": {
+          "type": [
+            "string",
+            "number"
+          ]
+        },
+        "tabularHeaderOverlayColor": {
+          "type": "string"
+        },
+        "tabularActiveRowOverlayColor": {
+          "type": "string"
+        },
+        "tabularActiveCellOverlayColor": {
+          "type": "string"
+        }
+      }
+    },
+    {
+      "type": "object",
+      "properties": {
+        "_version": {
+          "type": "number",
+          "enum": [
+            1
+          ]
+        },
+        "_source": {
+          "type": "object",
+          "properties": {
+            "siteConfig": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "property": {
+                    "type": "string"
+                  },
+                  "original": {},
+                  "override": {}
+                },
+                "required": [
+                  "original",
+                  "override",
+                  "property"
+                ]
+              }
             },
-            "required": [
-              "original",
-              "override",
-              "property"
-            ]
+            "staticConfig": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "property": {
+                    "type": "string"
+                  },
+                  "original": {},
+                  "override": {}
+                },
+                "required": [
+                  "original",
+                  "override",
+                  "property"
+                ]
+              }
+            }
+          },
+          "required": [
+            "siteConfig",
+            "staticConfig"
+          ]
+        },
+        "allowCollectionNavigation": {
+          "type": "boolean"
+        },
+        "allowManifestNavigation": {
+          "type": "boolean"
+        },
+        "allowCanvasNavigation": {
+          "type": "boolean"
+        },
+        "claimGranularity": {
+          "enum": [
+            "canvas",
+            "manifest"
+          ],
+          "type": "string"
+        },
+        "maxContributionsPerResource": {
+          "anyOf": [
+            {
+              "enum": [
+                false
+              ],
+              "type": "boolean"
+            },
+            {
+              "type": "number"
+            }
+          ]
+        },
+        "revisionApprovalsRequired": {
+          "type": "number"
+        },
+        "allowSubmissionsWhenCanvasComplete": {
+          "type": "boolean"
+        },
+        "randomlyAssignReviewer": {
+          "type": "boolean"
+        },
+        "manuallyAssignedReviewer": {
+          "type": "number"
+        },
+        "adminsAreReviewers": {
+          "type": "boolean"
+        },
+        "hideCompletedResources": {
+          "type": "boolean"
+        },
+        "contributionWarningTime": {
+          "anyOf": [
+            {
+              "enum": [
+                false
+              ],
+              "type": "boolean"
+            },
+            {
+              "type": "number"
+            }
+          ]
+        },
+        "randomlyAssignCanvas": {
+          "type": "boolean"
+        },
+        "priorityRandomness": {
+          "type": "boolean"
+        },
+        "randomCanvas": {
+          "type": "boolean"
+        },
+        "skipAutomaticOCRImport": {
+          "type": "boolean"
+        },
+        "allowPersonalNotes": {
+          "type": "boolean"
+        },
+        "defaultEditorOrientation": {
+          "enum": [
+            "horizontal",
+            "vertical"
+          ],
+          "type": "string"
+        },
+        "skipManifestListingPage": {
+          "type": "boolean"
+        },
+        "hideStatistics": {
+          "type": "boolean"
+        },
+        "hideProjectCollectionNavigation": {
+          "type": "boolean"
+        },
+        "hideProjectManifestNavigation": {
+          "type": "boolean"
+        },
+        "searchStrategy": {
+          "type": "string",
+          "enum": [
+            "string"
+          ]
+        },
+        "hideManifestMetadataOnCanvas": {
+          "type": "boolean"
+        },
+        "hideCanvasThumbnailNavigation": {
+          "type": "boolean"
+        },
+        "showSearchFacetCount": {
+          "type": "boolean"
+        },
+        "miradorCanvasPage": {
+          "type": "boolean"
+        },
+        "universalViewerCanvasPage": {
+          "type": "boolean"
+        },
+        "contributionMode": {
+          "enum": [
+            "annotation",
+            "transcription"
+          ],
+          "type": "string"
+        },
+        "atlasBackground": {
+          "type": "string"
+        },
+        "forkMode": {
+          "type": "boolean"
+        },
+        "searchOptions": {
+          "type": "object",
+          "properties": {
+            "nonLatinFulltext": {
+              "type": "boolean"
+            },
+            "searchMultipleFields": {
+              "type": "boolean"
+            },
+            "onlyShowManifests": {
+              "type": "boolean"
+            }
           }
         },
-        "staticConfig": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "property": {
-                "type": "string"
-              },
-              "original": {},
-              "override": {}
+        "shortExpiryTime": {
+          "type": "string"
+        },
+        "longExpiryTime": {
+          "type": "string"
+        },
+        "modelPageShowAnnotations": {
+          "enum": [
+            "always",
+            "highlighted",
+            "when-open"
+          ],
+          "type": "string"
+        },
+        "modelPageShowDocument": {
+          "enum": [
+            "always",
+            "highlighted",
+            "when-open"
+          ],
+          "type": "string"
+        },
+        "canvasPageShowAnnotations": {
+          "enum": [
+            "always",
+            "highlighted",
+            "when-open"
+          ],
+          "type": "string"
+        },
+        "canvasPageShowDocument": {
+          "enum": [
+            "always",
+            "highlighted",
+            "when-open"
+          ],
+          "type": "string"
+        },
+        "modelPageOptions": {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "enableCellFlagging": {
+                  "type": "boolean"
+                },
+                "enableZoomTracking": {
+                  "type": "boolean"
+                },
+                "hideZoomTrackingToggle": {
+                  "type": "boolean"
+                },
+                "hideZoomTrackingNudgeControls": {
+                  "type": "boolean"
+                },
+                "hideNudgeControls": {
+                  "type": "boolean"
+                },
+                "disableZoomTrackingOverlay": {
+                  "type": "boolean"
+                }
+              }
             },
-            "required": [
-              "original",
-              "override",
-              "property"
-            ]
+            {
+              "type": "object",
+              "properties": {
+                "fixedTranscriptionBar": {
+                  "type": "boolean"
+                },
+                "preventContributionAfterRejection": {
+                  "type": "boolean"
+                },
+                "preventContributionAfterSubmission": {
+                  "type": "boolean"
+                },
+                "preventMultipleUserSubmissionsPerResource": {
+                  "type": "boolean"
+                },
+                "showRandomManifestAfterSubmission": {
+                  "type": "boolean"
+                },
+                "preventContributionAfterManifestUnassign": {
+                  "type": "boolean"
+                },
+                "hideViewerControls": {
+                  "type": "boolean"
+                },
+                "disableSaveForLater": {
+                  "type": "boolean"
+                },
+                "disablePreview": {
+                  "type": "boolean"
+                },
+                "disableNextCanvas": {
+                  "type": "boolean"
+                },
+                "enableRotation": {
+                  "type": "boolean"
+                },
+                "enableAutoSave": {
+                  "type": "boolean"
+                },
+                "enableTooltipDescriptions": {
+                  "type": "boolean"
+                },
+                "enableSplitView": {
+                  "type": "boolean"
+                }
+              }
+            }
+          ]
+        },
+        "projectPageOptions": {
+          "type": "object",
+          "properties": {
+            "hideStartContributing": {
+              "type": "boolean"
+            },
+            "hideSearchButton": {
+              "type": "boolean"
+            },
+            "hideRandomManifest": {
+              "type": "boolean"
+            },
+            "hideRandomCanvas": {
+              "type": "boolean"
+            }
+          }
+        },
+        "reviewOptions": {
+          "type": "object",
+          "properties": {
+            "allowMerging": {
+              "type": "boolean"
+            },
+            "enableAutoReview": {
+              "type": "boolean"
+            }
+          }
+        },
+        "manifestPageOptions": {
+          "type": "object",
+          "properties": {
+            "hideStartContributing": {
+              "type": "boolean"
+            },
+            "hideOpenInMirador": {
+              "type": "boolean"
+            },
+            "hideOpenInTheseus": {
+              "type": "boolean"
+            },
+            "hideSearchButton": {
+              "type": "boolean"
+            },
+            "hideRandomCanvas": {
+              "type": "boolean"
+            },
+            "generatePDF": {
+              "type": "boolean"
+            },
+            "hideFilterImages": {
+              "type": "boolean"
+            },
+            "directModelPage": {
+              "type": "boolean"
+            },
+            "showIIIFLogo": {
+              "type": "boolean"
+            },
+            "coveredImages": {
+              "type": "boolean"
+            },
+            "rectangularImages": {
+              "type": "boolean"
+            },
+            "hideCanvasLabels": {
+              "type": "boolean"
+            }
+          }
+        },
+        "headerOptions": {
+          "type": "object",
+          "properties": {
+            "hideSiteTitle": {
+              "type": "boolean"
+            },
+            "hideProjectsLink": {
+              "type": "boolean"
+            },
+            "hideCollectionsLink": {
+              "type": "boolean"
+            },
+            "hideDashboardLink": {
+              "type": "boolean"
+            },
+            "hidePageNavLinks": {
+              "type": "boolean"
+            },
+            "showReviews": {
+              "type": "boolean"
+            },
+            "hideSearchBar": {
+              "type": "boolean"
+            }
+          }
+        },
+        "activityStreams": {
+          "type": "object",
+          "properties": {
+            "manifest": {
+              "type": "boolean"
+            },
+            "canvas": {
+              "type": "boolean"
+            },
+            "curated": {
+              "type": "boolean"
+            },
+            "published": {
+              "type": "boolean"
+            }
+          }
+        },
+        "metadataSuggestions": {
+          "type": "object",
+          "properties": {
+            "manifest": {
+              "type": "boolean"
+            },
+            "collection": {
+              "type": "boolean"
+            },
+            "canvas": {
+              "type": "boolean"
+            }
+          }
+        },
+        "shadow": {
+          "type": "object",
+          "properties": {
+            "showCaptureModelOnManifest": {
+              "type": "boolean"
+            }
           }
         }
       },
       "required": [
-        "siteConfig",
-        "staticConfig"
+        "adminsAreReviewers",
+        "allowCanvasNavigation",
+        "allowCollectionNavigation",
+        "allowManifestNavigation",
+        "allowSubmissionsWhenCanvasComplete",
+        "claimGranularity",
+        "contributionWarningTime",
+        "defaultEditorOrientation",
+        "hideCompletedResources",
+        "maxContributionsPerResource",
+        "randomlyAssignReviewer",
+        "revisionApprovalsRequired"
       ]
-    },
-    "allowCollectionNavigation": {
-      "type": "boolean"
-    },
-    "allowManifestNavigation": {
-      "type": "boolean"
-    },
-    "allowCanvasNavigation": {
-      "type": "boolean"
-    },
-    "claimGranularity": {
-      "enum": [
-        "canvas",
-        "manifest"
-      ],
-      "type": "string"
-    },
-    "maxContributionsPerResource": {
-      "anyOf": [
-        {
-          "enum": [
-            false
-          ],
-          "type": "boolean"
-        },
-        {
-          "type": "number"
-        }
-      ]
-    },
-    "revisionApprovalsRequired": {
-      "type": "number"
-    },
-    "allowSubmissionsWhenCanvasComplete": {
-      "type": "boolean"
-    },
-    "randomlyAssignReviewer": {
-      "type": "boolean"
-    },
-    "manuallyAssignedReviewer": {
-      "type": "number"
-    },
-    "adminsAreReviewers": {
-      "type": "boolean"
-    },
-    "hideCompletedResources": {
-      "type": "boolean"
-    },
-    "contributionWarningTime": {
-      "anyOf": [
-        {
-          "enum": [
-            false
-          ],
-          "type": "boolean"
-        },
-        {
-          "type": "number"
-        }
-      ]
-    },
-    "randomlyAssignCanvas": {
-      "type": "boolean"
-    },
-    "priorityRandomness": {
-      "type": "boolean"
-    },
-    "randomCanvas": {
-      "type": "boolean"
-    },
-    "skipAutomaticOCRImport": {
-      "type": "boolean"
-    },
-    "allowPersonalNotes": {
-      "type": "boolean"
-    },
-    "defaultEditorOrientation": {
-      "enum": [
-        "horizontal",
-        "vertical"
-      ],
-      "type": "string"
-    },
-    "skipManifestListingPage": {
-      "type": "boolean"
-    },
-    "hideStatistics": {
-      "type": "boolean"
-    },
-    "hideProjectCollectionNavigation": {
-      "type": "boolean"
-    },
-    "hideProjectManifestNavigation": {
-      "type": "boolean"
-    },
-    "searchStrategy": {
-      "type": "string",
-      "enum": [
-        "string"
-      ]
-    },
-    "hideManifestMetadataOnCanvas": {
-      "type": "boolean"
-    },
-    "hideCanvasThumbnailNavigation": {
-      "type": "boolean"
-    },
-    "showSearchFacetCount": {
-      "type": "boolean"
-    },
-    "miradorCanvasPage": {
-      "type": "boolean"
-    },
-    "universalViewerCanvasPage": {
-      "type": "boolean"
-    },
-    "contributionMode": {
-      "enum": [
-        "annotation",
-        "transcription"
-      ],
-      "type": "string"
-    },
-    "atlasBackground": {
-      "type": "string"
-    },
-    "forkMode": {
-      "type": "boolean"
-    },
-    "searchOptions": {
-      "type": "object",
-      "properties": {
-        "nonLatinFulltext": {
-          "type": "boolean"
-        },
-        "searchMultipleFields": {
-          "type": "boolean"
-        },
-        "onlyShowManifests": {
-          "type": "boolean"
-        }
-      }
-    },
-    "shortExpiryTime": {
-      "type": "string"
-    },
-    "longExpiryTime": {
-      "type": "string"
-    },
-    "modelPageShowAnnotations": {
-      "enum": [
-        "always",
-        "highlighted",
-        "when-open"
-      ],
-      "type": "string"
-    },
-    "modelPageShowDocument": {
-      "enum": [
-        "always",
-        "highlighted",
-        "when-open"
-      ],
-      "type": "string"
-    },
-    "canvasPageShowAnnotations": {
-      "enum": [
-        "always",
-        "highlighted",
-        "when-open"
-      ],
-      "type": "string"
-    },
-    "canvasPageShowDocument": {
-      "enum": [
-        "always",
-        "highlighted",
-        "when-open"
-      ],
-      "type": "string"
-    },
-    "modelPageOptions": {
-      "type": "object",
-      "properties": {
-        "fixedTranscriptionBar": {
-          "type": "boolean"
-        },
-        "preventContributionAfterRejection": {
-          "type": "boolean"
-        },
-        "preventContributionAfterSubmission": {
-          "type": "boolean"
-        },
-        "preventMultipleUserSubmissionsPerResource": {
-          "type": "boolean"
-        },
-        "showRandomManifestAfterSubmission": {
-          "type": "boolean"
-        },
-        "preventContributionAfterManifestUnassign": {
-          "type": "boolean"
-        },
-        "hideViewerControls": {
-          "type": "boolean"
-        },
-        "disableSaveForLater": {
-          "type": "boolean"
-        },
-        "disablePreview": {
-          "type": "boolean"
-        },
-        "disableNextCanvas": {
-          "type": "boolean"
-        },
-        "enableRotation": {
-          "type": "boolean"
-        },
-        "enableAutoSave": {
-          "type": "boolean"
-        },
-        "enableTooltipDescriptions": {
-          "type": "boolean"
-        },
-        "enableSplitView": {
-          "type": "boolean"
-        }
-      }
-    },
-    "projectPageOptions": {
-      "type": "object",
-      "properties": {
-        "hideStartContributing": {
-          "type": "boolean"
-        },
-        "hideSearchButton": {
-          "type": "boolean"
-        },
-        "hideRandomManifest": {
-          "type": "boolean"
-        },
-        "hideRandomCanvas": {
-          "type": "boolean"
-        }
-      }
-    },
-    "reviewOptions": {
-      "type": "object",
-      "properties": {
-        "allowMerging": {
-          "type": "boolean"
-        },
-        "enableAutoReview": {
-          "type": "boolean"
-        }
-      }
-    },
-    "manifestPageOptions": {
-      "type": "object",
-      "properties": {
-        "hideStartContributing": {
-          "type": "boolean"
-        },
-        "hideOpenInMirador": {
-          "type": "boolean"
-        },
-        "hideOpenInTheseus": {
-          "type": "boolean"
-        },
-        "hideSearchButton": {
-          "type": "boolean"
-        },
-        "hideRandomCanvas": {
-          "type": "boolean"
-        },
-        "generatePDF": {
-          "type": "boolean"
-        },
-        "hideFilterImages": {
-          "type": "boolean"
-        },
-        "directModelPage": {
-          "type": "boolean"
-        },
-        "showIIIFLogo": {
-          "type": "boolean"
-        },
-        "coveredImages": {
-          "type": "boolean"
-        },
-        "rectangularImages": {
-          "type": "boolean"
-        },
-        "hideCanvasLabels": {
-          "type": "boolean"
-        }
-      }
-    },
-    "headerOptions": {
-      "type": "object",
-      "properties": {
-        "hideSiteTitle": {
-          "type": "boolean"
-        },
-        "hideProjectsLink": {
-          "type": "boolean"
-        },
-        "hideCollectionsLink": {
-          "type": "boolean"
-        },
-        "hideDashboardLink": {
-          "type": "boolean"
-        },
-        "hidePageNavLinks": {
-          "type": "boolean"
-        },
-        "showReviews": {
-          "type": "boolean"
-        },
-        "hideSearchBar": {
-          "type": "boolean"
-        }
-      }
-    },
-    "activityStreams": {
-      "type": "object",
-      "properties": {
-        "manifest": {
-          "type": "boolean"
-        },
-        "canvas": {
-          "type": "boolean"
-        },
-        "curated": {
-          "type": "boolean"
-        },
-        "published": {
-          "type": "boolean"
-        }
-      }
-    },
-    "metadataSuggestions": {
-      "type": "object",
-      "properties": {
-        "manifest": {
-          "type": "boolean"
-        },
-        "collection": {
-          "type": "boolean"
-        },
-        "canvas": {
-          "type": "boolean"
-        }
-      }
-    },
-    "shadow": {
-      "type": "object",
-      "properties": {
-        "showCaptureModelOnManifest": {
-          "type": "boolean"
-        }
-      }
     }
-  },
-  "required": [
-    "adminsAreReviewers",
-    "allowCanvasNavigation",
-    "allowCollectionNavigation",
-    "allowManifestNavigation",
-    "allowSubmissionsWhenCanvasComplete",
-    "claimGranularity",
-    "contributionWarningTime",
-    "defaultEditorOrientation",
-    "hideCompletedResources",
-    "maxContributionsPerResource",
-    "randomlyAssignReviewer",
-    "revisionApprovalsRequired"
   ],
   "$schema": "http://json-schema.org/draft-07/schema#"
 }

@@ -45,6 +45,8 @@ Also check `docker-compose.test.yml` when dealing with test-only services or ove
 The frontend assets are bind-mounted, so rebuilds must be triggered even when containers are already running. However there is a vite server
 so during development frontend ONLY fixes should be fine.
 
+`madoc-ts-vite` keeps its image-baked `package.json`, `pnpm-lock.yaml`, and `node_modules` aligned on purpose. After dependency changes, rebuild the `madoc-ts-vite` image instead of relying on bind-mounted manifest files.
+
 - Rebuild production frontend bundle: `docker compose exec madoc-ts pnpm run build:frontend`.
 - Rebuild server-side bundles: `docker compose exec madoc-ts pnpm run build:vite`.
 - Vite dev server is provided by `madoc-ts-vite` (ports 3088/3089); restart it if needed: `docker compose restart madoc-ts-vite`.

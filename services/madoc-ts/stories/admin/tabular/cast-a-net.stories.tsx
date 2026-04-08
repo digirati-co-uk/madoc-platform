@@ -180,7 +180,7 @@ const CombinedStory: React.FC = () => {
           {/* Viewer layer */}
           <div style={{ position: 'absolute', inset: 0, zIndex: 1 }}>
             <CanvasPanel.Viewer
-              runtimeOptions={{ maxOverZoom: 5, visibilityRatio: 1, maxUnderZoom: 1 }}
+              runtimeOptions={{ maxOverZoom: 5, visibilityRatio: 0.7, maxUnderZoom: 1 }}
               onCreated={(preset: any) => setRuntime(preset.runtime)}
             >
               <CanvasPanel.RenderCanvas>
