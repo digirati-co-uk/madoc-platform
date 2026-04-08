@@ -22,7 +22,7 @@ import { RotateIcon } from '../icons/RotateIcon';
 import { useModelPageConfiguration } from '../../site/hooks/use-model-page-configuration';
 import { PolygonSelectorProps } from '../capture-models/editor/selector-types/PolygonSelector/PolygonSelector';
 
-const runtimeOptions = { maxOverZoom: 5 };
+const runtimeOptions = { maxOverZoom: 5, visibilityRatio: 0.7 };
 const defaultPreset = ['default-preset', { runtimeOptions }] as any;
 
 export const SimpleAtlasViewer = React.forwardRef<

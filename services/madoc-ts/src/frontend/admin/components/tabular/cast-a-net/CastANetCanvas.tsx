@@ -10,7 +10,10 @@ import { CanvasViewerButton } from '../../../../shared/atoms/CanvasViewerGrid';
 import { ArrowDownIcon } from '../../../../shared/icons/ArrowDownIcon';
 import { PanIcon } from '../../../../shared/icons/PanIcon';
 import { resizeAtlasRuntime } from '../../../../shared/utility/resize-atlas-runtime';
-import { goHomeToTabularHeadings, setTabularHeadingsHomePosition } from '../../../../shared/utility/tabular-heading-home';
+import {
+  goHomeToTabularHeadings,
+  setTabularHeadingsHomePosition,
+} from '../../../../shared/utility/tabular-heading-home';
 import { NET_DIM_STEP, NET_MAX_DIM_OPACITY, clampDimOpacity, dimOpacityToPercent } from './utils';
 import './CastANetCanvas.css';
 
@@ -372,7 +375,7 @@ export const CastANetCanvas: React.FC<CastANetCanvasProps> = ({
           height={height}
           resizeHash={height}
           updateViewportTimeout={180}
-          runtimeOptions={{ maxOverZoom: 5, visibilityRatio: 1, maxUnderZoom: 1 }}
+          runtimeOptions={{ maxOverZoom: 5, visibilityRatio: 0.7, maxUnderZoom: 1 }}
           homeCover="start"
           onCreated={preset => {
             runtime.current = (preset.runtime as RuntimeWithViewport | null) ?? null;

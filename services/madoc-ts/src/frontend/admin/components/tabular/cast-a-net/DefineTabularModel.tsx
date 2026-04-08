@@ -154,7 +154,7 @@ function ReferenceImagePanel(props: { manifestId: string; canvasId?: string; ima
             height={imageHeight}
             resizeHash={imageHeight}
             updateViewportTimeout={180}
-            runtimeOptions={{ maxOverZoom: 5, visibilityRatio: 1, maxUnderZoom: 1 }}
+            runtimeOptions={{ maxOverZoom: 5, visibilityRatio: 0.7, maxUnderZoom: 1 }}
             homeCover="start"
             onCreated={(preset: { runtime?: typeof runtime.current }) => {
               runtime.current = preset.runtime ?? null;
