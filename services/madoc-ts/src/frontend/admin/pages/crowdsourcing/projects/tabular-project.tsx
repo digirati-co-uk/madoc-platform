@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useBeforeUnload, useNavigate } from 'react-router-dom';
 import { useDefaultLocale, useSite, useSupportedLocales } from '@/frontend/shared/hooks/use-site';
 import { useApi } from '@/frontend/shared/hooks/use-api';
 import { WidePage } from '@/frontend/shared/layout/WidePage';
@@ -30,6 +30,14 @@ const CastANetLazy = madocLazy(async () => {
 });
 
 const LEAVE_SETUP_MESSAGE = 'are you sure you want to leave? Your tabular project will not be saved.';
+const LEAVE_GUARD_STATE_KEY = '__tabularProjectLeaveGuard';
+
+function getHistoryStateObject(state: unknown): Record<string, unknown> {
+  if (state && typeof state === 'object' && !Array.isArray(state)) {
+    return state as Record<string, unknown>;
+  }
+  return {};
+}
 
 export const TabularProjectWizard: React.FC = () => {
   const api = useApi();
@@ -47,7 +55,6 @@ export const TabularProjectWizard: React.FC = () => {
   });
   const { stepIds } = controller;
   const shouldWarnOnLeave = !controller.isProjectCompleted;
-  const isUndoingPopNavigationRef = React.useRef(false);
 
   const confirmLeaveSetup = React.useCallback(() => window.confirm(LEAVE_SETUP_MESSAGE), []);
 
@@ -57,23 +64,35 @@ export const TabularProjectWizard: React.FC = () => {
     }
   }, [confirmLeaveSetup, navigate, shouldWarnOnLeave]);
 
-  React.useEffect(() => {
-    if (!shouldWarnOnLeave) {
-      return;
-    }
-    const onBeforeUnload = (event: BeforeUnloadEvent) => {
-      event.preventDefault();
-      event.returnValue = LEAVE_SETUP_MESSAGE;
-    };
-    window.addEventListener('beforeunload', onBeforeUnload);
-    return () => {
-      window.removeEventListener('beforeunload', onBeforeUnload);
-    };
-  }, [shouldWarnOnLeave]);
+  useBeforeUnload(
+    React.useCallback(
+      event => {
+        if (!shouldWarnOnLeave) {
+          return;
+        }
+        event.preventDefault();
+        event.returnValue = LEAVE_SETUP_MESSAGE;
+      },
+      [shouldWarnOnLeave]
+    )
+  );
 
   React.useEffect(() => {
     if (!shouldWarnOnLeave) {
       return;
+    }
+
+    const wizardUrl = window.location.href;
+    const initialHistoryState = getHistoryStateObject(window.history.state);
+    if (!initialHistoryState[LEAVE_GUARD_STATE_KEY]) {
+      window.history.pushState(
+        {
+          ...initialHistoryState,
+          [LEAVE_GUARD_STATE_KEY]: true,
+        },
+        '',
+        wizardUrl
+      );
     }
 
     const onDocumentClick = (event: MouseEvent) => {
@@ -122,30 +141,36 @@ export const TabularProjectWizard: React.FC = () => {
       }
     };
 
-    document.addEventListener('click', onDocumentClick, true);
-    return () => {
-      document.removeEventListener('click', onDocumentClick, true);
-    };
-  }, [confirmLeaveSetup, shouldWarnOnLeave]);
-
-  React.useEffect(() => {
-    if (!shouldWarnOnLeave) {
-      return;
-    }
-
     const onPopState = () => {
-      if (isUndoingPopNavigationRef.current) {
-        isUndoingPopNavigationRef.current = false;
+      const currentHistoryState = getHistoryStateObject(window.history.state);
+      const isOnGuardEntry = Boolean(currentHistoryState[LEAVE_GUARD_STATE_KEY]);
+
+      if (!confirmLeaveSetup()) {
+        if (!isOnGuardEntry) {
+          window.history.pushState(
+            {
+              ...currentHistoryState,
+              [LEAVE_GUARD_STATE_KEY]: true,
+            },
+            '',
+            wizardUrl
+          );
+        }
         return;
       }
-      if (!confirmLeaveSetup()) {
-        isUndoingPopNavigationRef.current = true;
-        window.history.go(1);
+
+      // We first land on the non-guard entry. Confirming should continue one more step back.
+      if (!isOnGuardEntry) {
+        window.removeEventListener('popstate', onPopState);
+        window.history.back();
       }
     };
 
+    document.addEventListener('click', onDocumentClick, true);
     window.addEventListener('popstate', onPopState);
+
     return () => {
+      document.removeEventListener('click', onDocumentClick, true);
       window.removeEventListener('popstate', onPopState);
     };
   }, [confirmLeaveSetup, shouldWarnOnLeave]);
