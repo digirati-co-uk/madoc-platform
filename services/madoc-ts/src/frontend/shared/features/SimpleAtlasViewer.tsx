@@ -154,7 +154,7 @@ export const SimpleAtlasViewer = React.forwardRef<
               <CanvasPanel.Viewer
                 renderPreset={defaultPreset}
                 runtimeOptions={runtimeOptions}
-                key={canvas.id}
+                // key={canvas.id}
                 onCreated={preset => void (runtime.current = preset.runtime)}
               >
                 <CanvasContext canvas={canvas.id}>

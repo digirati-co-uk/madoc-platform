@@ -1,0 +1,24 @@
+{
+  "type": "object",
+  "properties": {
+    "enableCellFlagging": {
+      "type": "boolean"
+    },
+    "enableZoomTracking": {
+      "type": "boolean"
+    },
+    "hideZoomTrackingToggle": {
+      "type": "boolean"
+    },
+    "hideZoomTrackingNudgeControls": {
+      "type": "boolean"
+    },
+    "hideNudgeControls": {
+      "type": "boolean"
+    },
+    "disableZoomTrackingOverlay": {
+      "type": "boolean"
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

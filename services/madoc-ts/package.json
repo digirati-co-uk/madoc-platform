@@ -39,11 +39,12 @@
   "browserslist": "> 0.25%, not dead",
   "overrides": {
     "pnpm": {
-      "iiif-browser": "2.1.1"
+      "iiif-browser": "2.1.1",
+      "@atlas-viewer/atlas": "https://pkg.pr.new/@atlas-viewer/atlas@c3c23c0"
     }
   },
   "resolutions": {
-    "@atlas-viewer/atlas": "3.1.1",
+    "@atlas-viewer/atlas": "https://pkg.pr.new/@atlas-viewer/atlas@c3c23c0",
     "@babel/core": "^7.29.0",
     "@babel/runtime": "^7.28.6",
     "@babel/generator": "^7.29.0",
@@ -71,7 +72,7 @@
     "immer": "^9"
   },
   "dependencies": {
-    "@atlas-viewer/atlas": "3.1.1",
+    "@atlas-viewer/atlas": "https://pkg.pr.new/@atlas-viewer/atlas@c3c23c0",
     "@atlas-viewer/iiif-image-api": "^2.2.2",
     "@babel/runtime": "^7.28.6",
     "@cap.js/server": "^3.0.0",
