@@ -80,7 +80,10 @@ export function TabularProjectCompleteStep(props: TabularProjectCompleteStepProp
       <strong>{title}:</strong>
       <div className="mt-1 grid gap-1 pl-4">
         {entries.map(entry => (
-          <div key={`${keyPrefix}-${entry.locale}-${entry.index}`} className="grid grid-cols-[56px_minmax(0,1fr)] gap-2">
+          <div
+            key={`${keyPrefix}-${entry.locale}-${entry.index}`}
+            className="grid grid-cols-[56px_minmax(0,1fr)] gap-2"
+          >
             <div className="text-[11px] font-semibold uppercase tracking-wide text-[#3d4f88]">{entry.locale}</div>
             <div>{entry.text || t('None')}</div>
           </div>
@@ -112,7 +115,7 @@ export function TabularProjectCompleteStep(props: TabularProjectCompleteStepProp
               <strong>{t('Slug')}:</strong> {slug}
             </div>
             <div>
-              <strong>{t('Zoom tracking')}:</strong> {enableZoomTracking ? t('Enabled') : t('Disabled')}
+              <strong>{t('Table row tracking')}:</strong> {enableZoomTracking ? t('Enabled') : t('Disabled')}
             </div>
             <div>
               <strong>{t('Rows')}:</strong> {configuredRowCount}

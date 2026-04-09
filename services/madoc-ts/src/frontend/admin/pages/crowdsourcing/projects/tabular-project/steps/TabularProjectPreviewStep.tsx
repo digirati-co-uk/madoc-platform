@@ -208,7 +208,7 @@ export function TabularProjectPreviewStep(props: TabularProjectPreviewStepProps)
           ) : (
             <div className="grid min-h-[180px] place-items-center rounded border border-[#d6d6d6] bg-[#fafbff] text-[13px]">
               <div className="grid justify-items-center gap-[10px] text-center">
-                <div className="text-[#41506f]">{t('Select a reference image to preview zoom tracking.')}</div>
+                <div className="text-[#41506f]">{t('Select a reference image to preview table row tracking.')}</div>
                 <ModalButton
                   title={t('Browse IIIF resources')}
                   modalSize="lg"

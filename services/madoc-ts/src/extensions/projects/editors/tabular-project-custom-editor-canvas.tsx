@@ -263,9 +263,9 @@ export function TabularProjectCustomEditorCanvas({
                   onClick={() => setZoomTrackingOverride(!isZoomTrackingEnabled)}
                   disabled={!netConfig}
                   data-active={isZoomTrackingEnabled}
-                  aria-label="Toggle zoom tracking"
+                  aria-label="Toggle table row tracking"
                   aria-pressed={isZoomTrackingEnabled}
-                  title={isZoomTrackingEnabled ? 'Disable zoom tracking' : 'Enable zoom tracking'}
+                  title={isZoomTrackingEnabled ? 'Disable table row tracking' : 'Enable table row tracking'}
                 >
                   <PanIcon />
                 </CanvasViewerButton>
@@ -289,7 +289,7 @@ export function TabularProjectCustomEditorCanvas({
               type="button"
               onClick={onNudgeUp}
               disabled={nudgeDisabled || !onNudgeUp}
-              title="Nudge zoom tracking up"
+              title="Nudge table row tracking up"
             >
               <ArrowDownIcon style={{ transform: 'rotate(180deg)', fill: 'currentColor' }} />
             </CanvasViewerButton>
@@ -297,7 +297,7 @@ export function TabularProjectCustomEditorCanvas({
               type="button"
               onClick={onNudgeDown}
               disabled={nudgeDisabled || !onNudgeDown}
-              title="Nudge zoom tracking down"
+              title="Nudge table row tracking down"
             >
               <ArrowDownIcon style={{ fill: 'currentColor' }} />
             </CanvasViewerButton>
@@ -306,7 +306,7 @@ export function TabularProjectCustomEditorCanvas({
         {isOSD ? (
           <>
             <InfoMessage style={{ lineHeight: '3.4em', position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10 }}>
-              Zoom tracking is disabled while rotating.
+              Table row tracking is disabled while rotating.
               <Button style={{ margin: '0.8em' }} onClick={resetRotationMode}>
                 Reset
               </Button>

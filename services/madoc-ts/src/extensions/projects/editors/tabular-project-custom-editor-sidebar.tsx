@@ -348,12 +348,40 @@ export function TabularProjectCustomEditorSidebar({
       },
       {
         id: 'canvas-help',
-        label: 'Canvas help',
+        label: 'Data Input Help',
         icon: <HelpIcon />,
         content: (
           <div className="flex flex-col gap-4 p-4">
             <div className="rounded border border-[#ced8ff] bg-[#e8edff] p-3 text-[#1f2d5a]">
               <TabularCanvasControlsHelp t={t} />
+            </div>
+            <div className="rounded border border-[#ced8ff] bg-[#e8edff] p-3 text-[#1f2d5a]">
+              <h3 className="text-[11px] font-semibold uppercase tracking-wide text-[#3d4f88]">
+                {t('Entering data in the table form')}
+              </h3>
+              <ol className="mt-2 list-decimal space-y-2 pl-4 text-sm leading-[1.35]">
+                <li>
+                  {t('Select a cell, then use Tab to move forward and Shift+Tab to move backward through the row.')}
+                </li>
+                <li>
+                  {t(
+                    'Use the arrow keys to move between cells: left and right move across columns, up and down move between rows.'
+                  )}
+                </li>
+                <li>
+                  {t(
+                    'To copy, press Ctrl+C (or Cmd+C on Mac). If no text is selected, the whole current cell value is copied.'
+                  )}
+                </li>
+                <li>
+                  {t('To paste, select the destination cell and press Ctrl+V (or Cmd+V on Mac).')}
+                </li>
+                <li>
+                  {t(
+                    'From the final cell in the final row, pressing Tab attempts to create a new row. You can also use the Add new row control when it is available.'
+                  )}
+                </li>
+              </ol>
             </div>
           </div>
         ),

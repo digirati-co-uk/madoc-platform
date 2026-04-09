@@ -23,6 +23,7 @@ import { useCaptureModelContributionLifecycle } from '@/frontend/site/hooks/use-
 import { useModelPageConfiguration } from '@/frontend/site/hooks/use-model-page-configuration';
 import { useProject } from '@/frontend/site/hooks/use-project';
 import { useRouteContext } from '@/frontend/site/hooks/use-route-context';
+import { useLocationQuery } from '@/frontend/shared/hooks/use-location-query';
 import type { CanvasFull } from '@/types/canvas-full';
 import { FullScreenEnterIcon } from '@/frontend/shared/icons/FullScreenEnterIcon';
 import { FullScreenExitIcon } from '@/frontend/shared/icons/FullScreenExitIcon';
@@ -487,7 +488,7 @@ function TabularProjectCustomEditorContent({
       setNetSyncError(null);
     } catch {
       // Keep submission working even when user cannot update project-level config.
-      setNetSyncError('Could not sync zoom tracking coordinates for other contributors.');
+      setNetSyncError('Could not sync table row tracking coordinates for other contributors.');
     }
   }, [api, isSiteAdmin, netConfig, projectId, templateConfig]);
 
@@ -824,6 +825,7 @@ function TabularProjectCustomEditorContent({
 
 export function TabularProjectCustomEditor() {
   const { canvasId } = useRouteContext();
+  const { revision } = useLocationQuery<{ revision?: string }>();
   const { data: project } = useProject();
   const templateConfig = project?.template_config as TabularTemplateConfig | undefined;
   const tabularStructure = templateConfig?.tabular?.structure;
@@ -845,6 +847,7 @@ export function TabularProjectCustomEditor() {
     <DynamicVaultContext canvasId={canvasId}>
       <RevisionProviderWithFeatures
         captureModel={captureModel}
+        revision={revision}
         features={{
           autosave: false,
           autoSelectingRevision: true,

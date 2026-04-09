@@ -84,6 +84,32 @@ const buildEvenLinePositions = (count: number): number[] => {
   return Array.from({ length: safeCount - 1 }, (_, index) => step * (index + 1));
 };
 
+const normalizeSingleValuePerLanguage = (
+  input: InternationalString | undefined,
+  defaultLocale: string
+): InternationalString => {
+  if (!input) {
+    return { [defaultLocale]: [''] };
+  }
+
+  const normalized: InternationalString = {};
+  for (const [language, value] of Object.entries(input)) {
+    const parts = (Array.isArray(value) ? value : [value])
+      .map(part => (typeof part === 'string' ? part.trim() : ''))
+      .filter(Boolean);
+
+    if (parts.length) {
+      normalized[language] = [parts[0]];
+    }
+  }
+
+  if (Object.keys(normalized).length) {
+    return normalized;
+  }
+
+  return { [defaultLocale]: [''] };
+};
+
 export const TABULAR_PROJECT_STEP_IDS = {
   details: STEP_DETAILS,
   settings: STEP_SETTINGS,
@@ -112,8 +138,8 @@ export function useTabularProjectController(options: UseTabularProjectController
 
   const [step, setStep] = useState(STEP_DETAILS);
   const [maxReachedStep, setMaxReachedStep] = useState(STEP_DETAILS);
-  const [label, setLabel] = useState<InternationalString>({ [defaultLocale]: [''] });
-  const [summary, setSummary] = useState<InternationalString>({ [defaultLocale]: [''] });
+  const [label, setLabelState] = useState<InternationalString>({ [defaultLocale]: [''] });
+  const [summary, setSummaryState] = useState<InternationalString>({ [defaultLocale]: [''] });
   const [slug, setSlugState] = useState('');
   const [autoSlug, setAutoSlug] = useState(true);
   const [detailsError, setDetailsError] = useState<string | null>(null);
@@ -157,6 +183,20 @@ export function useTabularProjectController(options: UseTabularProjectController
     setSlugState(value);
     setDetailsError(null);
   }, []);
+
+  const setLabel = useCallback(
+    (value: InternationalString) => {
+      setLabelState(normalizeSingleValuePerLanguage(value, defaultLocale));
+    },
+    [defaultLocale]
+  );
+
+  const setSummary = useCallback(
+    (value: InternationalString) => {
+      setSummaryState(normalizeSingleValuePerLanguage(value, defaultLocale));
+    },
+    [defaultLocale]
+  );
 
   const { height: castANetHeight, startResize: startCastANetResize } = useResizableHeight(520, {
     min: 280,

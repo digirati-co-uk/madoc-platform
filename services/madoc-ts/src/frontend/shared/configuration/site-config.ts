@@ -981,17 +981,17 @@ const tabularContributionModelPageOptions = [
     value: 'enableCellFlagging',
   },
   {
-    label: 'Enable zoom tracking/overlay',
+    label: 'Enable table row tracking/overlay',
     description: 'Keep the active table cell aligned with the canvas via the overlay.',
     value: 'enableZoomTracking',
   },
   {
-    label: 'Hide zoom tracking toggle control',
-    description: 'Hide the toolbar toggle and keep zoom tracking enabled.',
+    label: 'Hide table row tracking toggle control',
+    description: 'Hide the toolbar toggle and keep table row tracking enabled.',
     value: 'hideZoomTrackingToggle',
   },
   {
-    label: 'Hide zoom tracking nudge controls',
+    label: 'Hide table row tracking nudge controls',
     description: 'Hide the up/down nudge controls for adjusting overlay alignment.',
     value: 'hideZoomTrackingNudgeControls',
   },

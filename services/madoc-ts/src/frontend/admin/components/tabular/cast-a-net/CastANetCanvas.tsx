@@ -344,9 +344,9 @@ export const CastANetCanvas: React.FC<CastANetCanvasProps> = ({
               type="button"
               onClick={() => setIsPreviewZoomTrackingEnabled(enabled => !enabled)}
               data-active={isPreviewZoomTrackingEnabled}
-              aria-label="Toggle zoom tracking"
+              aria-label="Toggle table row tracking"
               aria-pressed={isPreviewZoomTrackingEnabled}
-              title={isPreviewZoomTrackingEnabled ? 'Disable zoom tracking' : 'Enable zoom tracking'}
+              title={isPreviewZoomTrackingEnabled ? 'Disable table row tracking' : 'Enable table row tracking'}
             >
               <PanIcon />
             </CanvasViewerButton>

@@ -504,7 +504,7 @@ export function DefineTabularModel(props: {
                     <li>{t('Drag header cells to reorder columns.')}</li>
                     <li>
                       {t(
-                        'Next step: Draw table grid to align this model to the table in your reference image (only if zoom tracking is required).'
+                        'Next step: Draw table grid to align this model to the table in your reference image (only if table row tracking is required).'
                       )}
                     </li>
                   </ul>

@@ -84,7 +84,7 @@ export function TabularProjectSettingsStep(props: TabularProjectSettingsStepProp
     onRegisterBrowserClose,
   } = props;
   const showZoomTrackingHint = enableZoomTracking && !hasImage;
-  const zoomTrackingHint = t('Select a reference canvas to continue with zoom tracking.');
+  const zoomTrackingHint = t('Select a reference canvas to continue with table row tracking.');
   const canOpenCanvasUri = canvasId ? /^https?:\/\//i.test(canvasId) : false;
 
   return (
@@ -93,7 +93,7 @@ export function TabularProjectSettingsStep(props: TabularProjectSettingsStepProp
       <hr className="mb-4" />
 
       <div className="mb-6">
-        <div className="text-md mb-1">{t('Enable zoom tracking')}</div>
+        <div className="text-md mb-1">{t('Enable table row tracking')}</div>
         <div className="text-sm w-[700px] mb-4 font-light">
           {t(
             "When enabled, the image follows the contributor's active cell. This requires a reference image and Draw table grid setup."
@@ -106,7 +106,7 @@ export function TabularProjectSettingsStep(props: TabularProjectSettingsStepProp
             checked={enableZoomTracking}
             onChange={event => onEnableZoomTrackingChange(event.currentTarget.checked)}
           />
-          <span className="text-sm font-medium">{t('Use zoom tracking')}</span>
+          <span className="text-sm font-medium">{t('Use table row tracking')}</span>
         </label>
       </div>
 
@@ -115,7 +115,7 @@ export function TabularProjectSettingsStep(props: TabularProjectSettingsStepProp
           {t('Reference image')} <small> {t('(optional)')}</small>
         </div>
         <div className="text-sm w-[700px] mb-4 font-light">
-          {t('Choose one canvas to guide model setup. Required when zoom tracking is enabled.')}
+          {t('Choose one canvas to guide model setup. Required when table row tracking is enabled.')}
         </div>
 
         {hasImage ? (

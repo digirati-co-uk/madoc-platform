@@ -9,11 +9,7 @@ type TabularCanvasControlsHelpProps = {
   className?: string;
 };
 
-export function TabularCanvasControlsHelp({
-  t,
-  withTopDivider = false,
-  className,
-}: TabularCanvasControlsHelpProps) {
+export function TabularCanvasControlsHelp({ t, withTopDivider = false, className }: TabularCanvasControlsHelpProps) {
   const containerClassName = withTopDivider ? 'mt-2 grid gap-3 border-t border-[#ced8ff] pt-2' : 'grid gap-3';
 
   return (
@@ -27,17 +23,19 @@ export function TabularCanvasControlsHelp({
           {t('Nudge actions')}
         </div>
         <div className="mt-1 text-sm leading-[1.35]">
-          {t('Use Nudge to fine-tune row alignment. Saved nudges improve zoom tracking for contributors.')}
+          {t('Use Nudge to fine-tune row alignment. Saved nudges improve table row tracking for contributors.')}
         </div>
       </div>
 
       <div>
         <div className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-[#3d4f88]">
           <PanIcon aria-hidden className="h-4 w-4" />
-          {t('Zoom tracking toggle')}
+          {t('Table row tracking toggle')}
         </div>
         <div className="mt-1 text-sm leading-[1.35]">
-          {t('Nudge controls appear only when Use zoom tracking is enabled. To change this, go back to Additional settings.')}
+          {t(
+            'Nudge controls appear only when Use table row tracking is enabled. To change this, go back to Additional settings.'
+          )}
         </div>
       </div>
     </div>
