@@ -15,7 +15,6 @@ const STRUCTURE_PATH = `${TABULAR_PATH}.structure`;
 const MODEL_PATH = `${TABULAR_PATH}.model`;
 
 const PERCENT_RANGE = { min: 0, max: 100 };
-const OFFSET_RANGE = { min: -100, max: 100 };
 
 function isObject(value: unknown): value is Record<string, unknown> {
   return !!value && typeof value === 'object' && !Array.isArray(value);
@@ -114,7 +113,7 @@ function assertRowOffsetAdjustments(value: unknown, path: string) {
     const entry = value[index];
     assertRecord(entry, entryPath);
     assertInteger(entry.startRow, `${entryPath}.startRow`, { min: 0 });
-    assertFiniteNumber(entry.offsetPctOfPage, `${entryPath}.offsetPctOfPage`, OFFSET_RANGE);
+    assertFiniteNumber(entry.offsetPctOfPage, `${entryPath}.offsetPctOfPage`, { min: -100, max: 100 });
   }
 }
 

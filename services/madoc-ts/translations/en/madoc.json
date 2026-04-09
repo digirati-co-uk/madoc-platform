@@ -163,7 +163,7 @@
   "Card border": "Card border",
   "Card text color": "Card text color",
   "Carousel": "Carousel",
-  "Cast a net": "Cast a net",
+  "Draw table grid": "Draw table grid",
   "Center": "Center",
   "Change avatar": "Change avatar",
   "Change password": "Change password",
@@ -1296,5 +1296,4 @@
   "{{feature}} is an experimental feature": "{{feature}} is an experimental feature",
   "{{page}} of {{count}}": "{{page}} of {{count}}",
   "{{page}} of {{count}}_plural": "{{page}} of {{count}}"
-}page}} of {{count}}"
 }

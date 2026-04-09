@@ -1,5 +1,6 @@
 import type { InternationalString } from '@iiif/presentation-3';
 import type { TFunction } from 'i18next';
+import { ErrorMessage } from '@/frontend/shared/callouts/ErrorMessage';
 import { Input, InputContainer, InputLabel } from '@/frontend/shared/form/Input';
 import { MetadataEditor } from '../../../../../molecules/MetadataEditor';
 
@@ -14,6 +15,7 @@ interface TabularProjectDetailsStepProps {
   onSummaryChange: (value: InternationalString) => void;
   onSlugFocus: () => void;
   onSlugChange: (value: string) => void;
+  slugError?: string | null;
 }
 
 export function TabularProjectDetailsStep(props: TabularProjectDetailsStepProps) {
@@ -28,11 +30,12 @@ export function TabularProjectDetailsStep(props: TabularProjectDetailsStepProps)
     onSummaryChange,
     onSlugFocus,
     onSlugChange,
+    slugError,
   } = props;
 
   const labelUsage = t('Used as the project title shown in listings and on the project page.');
   const descriptionUsage = t('Used as the project summary shown to contributors before they start work.');
-  const slugUsage = t('Used in the project URL. Keep it short and unique for this site.');
+  const slugUsage = t('Used in the project URL. This must be unique for this site.');
 
   const TooltipHint = (tooltipProps: { text: string }) => {
     return (
@@ -93,6 +96,7 @@ export function TabularProjectDetailsStep(props: TabularProjectDetailsStepProps)
           }}
           id="slug"
         />
+        {slugError ? <ErrorMessage $small>{slugError}</ErrorMessage> : null}
       </InputContainer>
     </>
   );

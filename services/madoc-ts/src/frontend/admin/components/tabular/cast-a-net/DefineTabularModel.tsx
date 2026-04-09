@@ -502,7 +502,11 @@ export function DefineTabularModel(props: {
                   <ul className="list-disc space-y-1 pl-4 text-sm text-[#1f2d5a]">
                     <li>{t('Click a header cell to edit it.')}</li>
                     <li>{t('Drag header cells to reorder columns.')}</li>
-                    <li>{t('Next step: Cast a net to align this model to the table in your reference image.')}</li>
+                    <li>
+                      {t(
+                        'Next step: Draw table grid to align this model to the table in your reference image (only if zoom tracking is required).'
+                      )}
+                    </li>
                   </ul>
                 </div>
               </div>

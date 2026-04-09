@@ -14,7 +14,10 @@ import {
   TABULAR_WIZARD_PREVIEW_SPLIT_GAP,
   TABULAR_WIZARD_PREVIEW_SPLIT_TOTAL_HEIGHT,
 } from '../constants';
-import { buildTabularModelPayload, stringifyTabularDropdownOptions } from '../../../../../components/tabular/cast-a-net/TabularModel';
+import {
+  buildTabularModelPayload,
+  stringifyTabularDropdownOptions,
+} from '../../../../../components/tabular/cast-a-net/TabularModel';
 import { buildTabularProjectSetupPayload } from '../../../../../components/tabular/cast-a-net/CastANetStructure';
 import {
   type DefineTabularModelValue,
@@ -62,12 +65,6 @@ const STEP_NET = 3;
 const STEP_PREVIEW = 4;
 const STEP_COMPLETE = 5;
 
-const CAST_A_NET_DEFAULT_HEIGHT = 520;
-const CAST_A_NET_MIN_HEIGHT = 280;
-
-const SHARE_COPY_TIMEOUT = 1800;
-
-const PREVIEW_CANVAS_HEIGHT = 420;
 const PREVIEW_CANVAS_MIN_HEIGHT = 280;
 const PREVIEW_TABLE_MIN_HEIGHT = 180;
 const PREVIEW_CANVAS_MAX_HEIGHT =
@@ -75,10 +72,7 @@ const PREVIEW_CANVAS_MAX_HEIGHT =
   TABULAR_WIZARD_PREVIEW_SPLIT_DIVIDER_HEIGHT -
   PREVIEW_TABLE_MIN_HEIGHT -
   TABULAR_WIZARD_PREVIEW_SPLIT_GAP * 2;
-
-const MAX_MADOC_COLLECTION_HOME_PAGES = 20;
-const MAX_MADOC_MANIFEST_HOME_PAGES = 40;
-const IIIF_HOME_LOCAL_STORAGE_KEY = 'iiif-browser-tabular-project-v2';
+const MAX_EXTERNAL_SEARCH_RESULTS = 20;
 
 const buildEvenLinePositions = (count: number): number[] => {
   const safeCount = Math.max(1, Math.floor(count || 1));
@@ -120,8 +114,10 @@ export function useTabularProjectController(options: UseTabularProjectController
   const [maxReachedStep, setMaxReachedStep] = useState(STEP_DETAILS);
   const [label, setLabel] = useState<InternationalString>({ [defaultLocale]: [''] });
   const [summary, setSummary] = useState<InternationalString>({ [defaultLocale]: [''] });
-  const [slug, setSlug] = useState('');
+  const [slug, setSlugState] = useState('');
   const [autoSlug, setAutoSlug] = useState(true);
+  const [detailsError, setDetailsError] = useState<string | null>(null);
+  const [isCheckingDetails, setIsCheckingDetails] = useState(false);
 
   const [enableZoomTracking, setEnableZoomTracking] = useState(false);
   const [crowdsourcingInstructions, setCrowdsourcingInstructions] = useState('');
@@ -157,13 +153,18 @@ export function useTabularProjectController(options: UseTabularProjectController
     rowOffsetAdjustments: [],
   });
 
-  const { height: castANetHeight, startResize: startCastANetResize } = useResizableHeight(CAST_A_NET_DEFAULT_HEIGHT, {
-    min: CAST_A_NET_MIN_HEIGHT,
+  const setSlug = useCallback((value: string) => {
+    setSlugState(value);
+    setDetailsError(null);
+  }, []);
+
+  const { height: castANetHeight, startResize: startCastANetResize } = useResizableHeight(520, {
+    min: 280,
     max: 760,
   });
 
   const { height: previewCanvasHeight, startResize: startPreviewResize } = useResizableHeight(
-    clampToRange(PREVIEW_CANVAS_HEIGHT, PREVIEW_CANVAS_MIN_HEIGHT, PREVIEW_CANVAS_MAX_HEIGHT),
+    clampToRange(420, PREVIEW_CANVAS_MIN_HEIGHT, PREVIEW_CANVAS_MAX_HEIGHT),
     {
       min: PREVIEW_CANVAS_MIN_HEIGHT,
       max: PREVIEW_CANVAS_MAX_HEIGHT,
@@ -218,7 +219,7 @@ export function useTabularProjectController(options: UseTabularProjectController
       const textLabel = getPreferredIntlValue(label, defaultLocale);
       setSlug(slugify(textLabel, { lower: true }));
     }
-  }, [autoSlug, label, defaultLocale]);
+  }, [autoSlug, label, defaultLocale, setSlug]);
 
   useEffect(() => {
     if (!modelSaved) {
@@ -270,10 +271,7 @@ export function useTabularProjectController(options: UseTabularProjectController
     () =>
       tabularPayload?.columns?.length
         ? tabularPayload.columns.map(column => column.type || column.fieldType || 'text-field')
-        : Array.from(
-            { length: modelColumnCount },
-            (_, index) => tabularModel.fieldTypes?.[index] ?? 'text-field'
-          ),
+        : Array.from({ length: modelColumnCount }, (_, index) => tabularModel.fieldTypes?.[index] ?? 'text-field'),
     [tabularPayload, modelColumnCount, tabularModel.fieldTypes]
   );
   const previewDropdownOptionsText = useMemo(
@@ -335,7 +333,7 @@ export function useTabularProjectController(options: UseTabularProjectController
       return;
     }
 
-    const timeout = window.setTimeout(() => setShareCopied('idle'), SHARE_COPY_TIMEOUT);
+    const timeout = window.setTimeout(() => setShareCopied('idle'), 1800);
     return () => window.clearTimeout(timeout);
   }, [shareCopied]);
 
@@ -354,7 +352,7 @@ export function useTabularProjectController(options: UseTabularProjectController
         let collectionPage = 1;
         let collectionTotalPages = 1;
 
-        while (collectionPage <= collectionTotalPages && collectionPage <= MAX_MADOC_COLLECTION_HOME_PAGES) {
+        while (collectionPage <= collectionTotalPages && collectionPage <= 20) {
           const response = await api.getCollections(collectionPage);
           allCollections.push(
             ...response.collections.map(collection => ({
@@ -371,7 +369,7 @@ export function useTabularProjectController(options: UseTabularProjectController
         let manifestPage = 1;
         let manifestTotalPages = 1;
 
-        while (manifestPage <= manifestTotalPages && manifestPage <= MAX_MADOC_MANIFEST_HOME_PAGES) {
+        while (manifestPage <= manifestTotalPages && manifestPage <= 40) {
           const response = await api.getManifests(manifestPage);
           allManifests.push(
             ...response.manifests.map(manifest => ({
@@ -477,7 +475,7 @@ export function useTabularProjectController(options: UseTabularProjectController
     if (shared.tabular?.model) {
       setStep(STEP_PREVIEW);
     }
-  }, [didLoadSharedOutline, t]);
+  }, [didLoadSharedOutline, setSlug, t]);
 
   const clearImageSelection = useCallback(() => {
     setManifestId(undefined);
@@ -691,7 +689,7 @@ export function useTabularProjectController(options: UseTabularProjectController
       { id: STEP_DETAILS, label: t('Project details') },
       { id: STEP_SETTINGS, label: t('Additional settings') },
       { id: STEP_MODEL, label: t('Define tabular model') },
-      { id: STEP_NET, label: t('Cast a net'), disabled: !requiresNetStep },
+      { id: STEP_NET, label: t('Draw table grid'), disabled: !requiresNetStep },
       { id: STEP_PREVIEW, label: t('Preview') },
       { id: STEP_COMPLETE, label: t('Complete') },
     ],
@@ -809,7 +807,7 @@ export function useTabularProjectController(options: UseTabularProjectController
     return {
       saveToLocalStorage: false,
       restoreFromLocalStorage: false,
-      localStorageKey: IIIF_HOME_LOCAL_STORAGE_KEY,
+      localStorageKey: 'iiif-browser-tabular-project-v2',
       initialHistory,
       initialHistoryCursor: 0,
       seedCollections: iiifHomeCollection ? [iiifHomeCollection] : [],
@@ -837,7 +835,7 @@ export function useTabularProjectController(options: UseTabularProjectController
       enableExternal: true,
       combination: {
         mode: 'externalFirst',
-        maxExternalResults: 20,
+        maxExternalResults: MAX_EXTERNAL_SEARCH_RESULTS,
       },
       typesense: {
         //
@@ -849,7 +847,7 @@ export function useTabularProjectController(options: UseTabularProjectController
         collection: `madoc_site_${siteId}`,
         searchParams: {
           query_by: 'resource_label,search_text,metadata_label,metadata_pairs',
-          per_page: 20,
+          per_page: MAX_EXTERNAL_SEARCH_RESULTS,
         },
         mapHitToResult(hit) {
           const doc = hit.document;
@@ -883,9 +881,9 @@ export function useTabularProjectController(options: UseTabularProjectController
           };
         },
       },
-      externalSectionLabel: slug ? 'Madoc search results' : 'Madoc search results',
+      externalSectionLabel: 'Madoc search results',
     };
-  }, [siteSlug, slug, siteId]);
+  }, [siteSlug, siteId]);
 
   const uiOptions: IIIFBrowserProps['ui'] = useMemo(
     () => ({
@@ -935,10 +933,68 @@ export function useTabularProjectController(options: UseTabularProjectController
     setIsModelValid(res.isValid);
   }, []);
 
-  const saveDetailsStep = useCallback(() => {
+  const saveDetailsStep = useCallback(async () => {
+    if (isCheckingDetails) {
+      return;
+    }
+
     reset();
-    setStep(STEP_SETTINGS);
-  }, [reset]);
+    const nextSlug = slug.trim();
+
+    if (!nextSlug) {
+      setDetailsError(t('Slug is required.'));
+      return;
+    }
+
+    if (nextSlug !== slug) {
+      setSlug(nextSlug);
+    }
+
+    setDetailsError(null);
+    setIsCheckingDetails(true);
+
+    try {
+      let existingProject: { id?: number | string } | null = null;
+
+      if (/^\d+$/.test(nextSlug)) {
+        let page = 1;
+        let totalPages = 1;
+
+        while (page <= totalPages && page <= 500) {
+          const response = await api.getProjects(page);
+          const found = response.projects.find(project => project.slug === nextSlug);
+          if (found) {
+            existingProject = found;
+            break;
+          }
+
+          totalPages = Math.max(1, response.pagination.totalPages || 1);
+          page += 1;
+        }
+      } else {
+        try {
+          existingProject = (await api.getProject(nextSlug, { published: false })) || null;
+        } catch (error) {
+          if (
+            !(typeof error === 'object' && error && 'status' in error && (error as { status?: unknown }).status === 404)
+          ) {
+            throw error;
+          }
+        }
+      }
+
+      if (existingProject?.id) {
+        setDetailsError(t('Slug is already used. Project slugs must be unique per site, please select an alternative value.'));
+        return;
+      }
+
+      setStep(STEP_SETTINGS);
+    } catch (error) {
+      setDetailsError(getErrorMessage(error, t('Unable to validate slug right now. Please try again.')));
+    } finally {
+      setIsCheckingDetails(false);
+    }
+  }, [api, isCheckingDetails, reset, setSlug, slug, t]);
 
   const saveSettingsStep = useCallback(() => {
     reset();
@@ -979,6 +1035,8 @@ export function useTabularProjectController(options: UseTabularProjectController
     setSlug,
     disableAutoSlug: () => setAutoSlug(false),
     detailsDone,
+    detailsError,
+    isCheckingDetails,
     saveDetailsStep,
 
     enableZoomTracking,

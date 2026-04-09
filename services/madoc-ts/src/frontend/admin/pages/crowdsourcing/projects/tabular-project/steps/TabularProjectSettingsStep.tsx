@@ -96,7 +96,7 @@ export function TabularProjectSettingsStep(props: TabularProjectSettingsStepProp
         <div className="text-md mb-1">{t('Enable zoom tracking')}</div>
         <div className="text-sm w-[700px] mb-4 font-light">
           {t(
-            "When enabled, the image follows the contributor's active cell. This requires a reference image and Cast a net setup."
+            "When enabled, the image follows the contributor's active cell. This requires a reference image and Draw table grid setup."
           )}
         </div>
 

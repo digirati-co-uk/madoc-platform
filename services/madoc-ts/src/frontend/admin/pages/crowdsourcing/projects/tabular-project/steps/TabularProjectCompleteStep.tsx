@@ -26,17 +26,31 @@ interface TabularProjectCompleteStepProps {
 }
 
 const getIntlEntries = (value: InternationalString, preferredLocale: string) => {
-  const entries = Object.entries(value).map(([locale, parts]) => ({ locale, text: parts.join(' ').trim() }));
+  const entries = Object.entries(value).flatMap(([locale, parts]) => {
+    const values = Array.isArray(parts) ? parts : [];
+    if (!values.length) {
+      return [{ locale, text: '', index: 0 }];
+    }
+
+    return values.map((part, index) => ({ locale, text: String(part || '').trim(), index }));
+  });
+
   if (!entries.length) {
-    return preferredLocale ? [{ locale: preferredLocale, text: '' }] : [];
+    return preferredLocale ? [{ locale: preferredLocale, text: '', index: 0 }] : [];
   }
 
-  const preferredEntry = entries.find(entry => entry.locale === preferredLocale);
-  const otherEntries = entries
-    .filter(entry => entry.locale !== preferredLocale)
-    .sort((a, b) => a.locale.localeCompare(b.locale));
-
-  return preferredEntry ? [preferredEntry, ...otherEntries] : otherEntries;
+  return entries.sort((a, b) => {
+    if (a.locale === preferredLocale && b.locale !== preferredLocale) {
+      return -1;
+    }
+    if (b.locale === preferredLocale && a.locale !== preferredLocale) {
+      return 1;
+    }
+    if (a.locale !== b.locale) {
+      return a.locale.localeCompare(b.locale);
+    }
+    return a.index - b.index;
+  });
 };
 
 export function TabularProjectCompleteStep(props: TabularProjectCompleteStepProps) {
@@ -61,13 +75,26 @@ export function TabularProjectCompleteStep(props: TabularProjectCompleteStepProp
   const hasCrowdsourcingInstructions = !!crowdsourcingInstructions?.trim();
   const labelEntries = getIntlEntries(label, defaultLocale);
   const summaryEntries = getIntlEntries(summary, defaultLocale);
+  const renderIntlField = (keyPrefix: string, title: string, entries: ReturnType<typeof getIntlEntries>) => (
+    <div>
+      <strong>{title}:</strong>
+      <div className="mt-1 grid gap-1 pl-4">
+        {entries.map(entry => (
+          <div key={`${keyPrefix}-${entry.locale}-${entry.index}`} className="grid grid-cols-[56px_minmax(0,1fr)] gap-2">
+            <div className="text-[11px] font-semibold uppercase tracking-wide text-[#3d4f88]">{entry.locale}</div>
+            <div>{entry.text || t('None')}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 
   return (
     <>
       <div className="text-2xl font-light mb-1">{t('Complete')}</div>
       {isProjectCompleted ? (
         <>
-          <SuccessMessage $banner>{t('Project completed.')}</SuccessMessage>
+          <SuccessMessage $banner>{t('Tabular data project setup is now complete.')}</SuccessMessage>
           {createdProjectPath ? (
             <ButtonRow>
               <Button $primary as={HrefLink} href={createdProjectPath}>
@@ -79,32 +106,8 @@ export function TabularProjectCompleteStep(props: TabularProjectCompleteStepProp
       ) : (
         <>
           <div className="mb-3 grid gap-1.5 rounded border border-[#d6d6d6] bg-[#f9fafc] p-3 text-sm">
-            <div>
-              <strong>{t('Label')}:</strong>
-              <div className="mt-1 grid gap-1 pl-4">
-                {labelEntries.map(entry => (
-                  <div key={`label-${entry.locale}`} className="grid grid-cols-[56px_minmax(0,1fr)] gap-2">
-                    <div className="text-[11px] font-semibold uppercase tracking-wide text-[#3d4f88]">
-                      {entry.locale}
-                    </div>
-                    <div>{entry.text || t('None')}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div>
-              <strong>{t('Description')}:</strong>
-              <div className="mt-1 grid gap-1 pl-4">
-                {summaryEntries.map(entry => (
-                  <div key={`description-${entry.locale}`} className="grid grid-cols-[56px_minmax(0,1fr)] gap-2">
-                    <div className="text-[11px] font-semibold uppercase tracking-wide text-[#3d4f88]">
-                      {entry.locale}
-                    </div>
-                    <div>{entry.text || t('None')}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            {renderIntlField('label', t('Label'), labelEntries)}
+            {renderIntlField('description', t('Description'), summaryEntries)}
             <div>
               <strong>{t('Slug')}:</strong> {slug}
             </div>

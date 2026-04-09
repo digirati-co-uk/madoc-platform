@@ -58,7 +58,7 @@ export function TabularProjectNetStep(props: TabularProjectNetStepProps) {
       {requiresNetStep ? (
         <div className="grid grid-cols-[320px_minmax(0,1fr)] items-stretch gap-4">
           <div className="rounded border border-[#d6d6d6] bg-[#f4f4f4] p-3">
-            <div className="text-2xl font-light mb-1">{t('Cast a net')}</div>
+            <div className="text-2xl font-light mb-1">{t('Draw table grid')}</div>
             <hr />
             <div className="mt-1  pt-4">
               <div className="rounded border border-[#ced8ff] bg-[#e8edff] p-3 text-[#1f2d5a]">
@@ -141,7 +141,7 @@ export function TabularProjectNetStep(props: TabularProjectNetStepProps) {
                   headings={headings}
                   tooltips={tooltips}
                   onChangeHeadings={() => {
-                    // Intentionally read-only in Cast a net step.
+                    // Intentionally read-only in Draw table grid step.
                   }}
                   activeColumn={-1}
                   issues={[]}
@@ -152,7 +152,7 @@ export function TabularProjectNetStep(props: TabularProjectNetStepProps) {
           />
         </div>
       ) : (
-        <div className="p-3 text-[13px]">{t('Select a reference canvas to start Cast a net.')}</div>
+        <div className="p-3 text-[13px]">{t('Select a reference canvas to start Draw table grid.')}</div>
       )}
     </>
   );

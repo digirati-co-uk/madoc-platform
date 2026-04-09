@@ -200,7 +200,7 @@ export const TabularProjectWizard: React.FC = () => {
   const handleSaveAndContinue = () => {
     switch (controller.step) {
       case stepIds.details:
-        controller.saveDetailsStep();
+        void controller.saveDetailsStep();
         return;
       case stepIds.settings:
         controller.saveSettingsStep();
@@ -222,7 +222,7 @@ export const TabularProjectWizard: React.FC = () => {
   const isSaveDisabled = (() => {
     switch (controller.step) {
       case stepIds.details:
-        return !controller.detailsDone;
+        return !controller.detailsDone || controller.isCheckingDetails;
       case stepIds.settings:
         return controller.enableZoomTracking && !controller.hasImage;
       case stepIds.model:
@@ -265,6 +265,7 @@ export const TabularProjectWizard: React.FC = () => {
             onSummaryChange={controller.setSummary}
             onSlugFocus={controller.disableAutoSlug}
             onSlugChange={controller.setSlug}
+            slugError={controller.detailsError}
           />
         ) : null}
 
