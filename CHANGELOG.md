@@ -5,7 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.2.11...main)
+## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.3.0...main)
+
+<!--
+
+### Added
+
+### Changed
+
+### Fixed
+
+### Removed
+
+-->
+
+## [v2.3.0](https://github.com/digirati-co-uk/madoc-platform/compare/v2.2.11...v2.3.0)
 
 <!--
 
@@ -21,27 +35,52 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Added a new `config-service` Node service with scoped configuration APIs, schema validation, Docker support, and tests.
-- Added a new admin "Queue status" page for BullMQ queue visibility.
-- Added uploads to project pages.
+- Added a new `tabular-project` template with a guided setup wizard for project details, contributor settings, model design, cast-a-net grid alignment, preview, and completion.
+- Added a tabular contributor and review experience with split-view canvas/table editing, full-table mode, reference-image row tracking, flagged-cell panels, and flagged-cell counts in review lists.
+- Added per-cell tabular flagging with comments, reviewer note conversion, and new dropdown, date, and read-only tabular column types.
+- Added Typesense-backed site search with instant results, metadata facets, global-search autocomplete, and an admin playground for validating the live index.
+- Added a global BullMQ queue inspector with live queue counts, sampled jobs, PM2 worker visibility, ETA tracking, and actions to resume the queue or cancel queued search-index work.
+- Added a new `config-service` Node service with scoped configuration APIs, schema validation, version history, Docker support, and tests.
+- Added project-template import from URL, URN, or uploaded JSON, plus duplicate and shareable tabular setup flows.
+- Added image upload support in markdown page blocks.
 - Added back the SVG site theme.
-- Added internal agent skill docs and technical debt planning documents.
+- Added a `trusted-user` site role for reviewer assignment and protected profile visibility workflows.
+- Added a public site root IIIF collection endpoint and `madoc:id` fields in exported IIIF collections, manifests, and canvases.
+- Added optional debug timing output for JSON/API responses and source manifest builds when debug mode is requested.
 
 ### Changed
 
 - Upgraded core frontend and tooling dependencies across `madoc-ts` (including React 19, React Router 7, TypeScript/ESLint/Storybook updates, and related package migrations).
 - Replaced deprecated drag/drop and select dependencies with maintained alternatives.
-- Updated Docker and CI workflows to support dependency/tooling changes and the new config service build.
-- Updated internal request routing/subrequest handling.
-- Updated page block behavior and renderer/PM2 runtime configuration.
+- Reworked tabular project creation into a validated setup workflow and improved admin project pages with better setup summaries, duplicate flows, and clearer configuration help text.
+- Changed tabular contribution and review lifecycles to support clearer draft and continue-working states, in-context reviewer corrections, and unresolved-flag handoff to human review.
+- Changed search indexing to a Typesense-first pipeline with richer manifest and canvas documents, while site search now falls back to the legacy UI when Typesense is disabled or unavailable.
+- Changed full reindex behavior to clear older top-level search-index tasks before queueing a fresh run.
+- Updated internal request routing, subrequest handling, SSR, and static-page rendering to use in-process requests and a shared streamed document renderer.
+- Improved IIIF export compatibility so collections serialize as collections, collection items use the correct routes, source canvas IDs are preserved where available, and exported manifests return better CORS headers.
+- Public collection browsing now defaults to published-only items, while admins can explicitly request unpublished results.
+- Replaced the legacy HTML editor with a newer rich-text editor and improved inline capture-model editing for nested content.
+- Mirador pages now load via the hosted Mirador embed instead of the old bundled viewer.
+- Updated Docker, CI, and PM2 runtime configuration to support dependency changes and the new config service build.
 
 ### Fixed
 
-- Fixed site collections showing unpublished manifests.
-- Fixed metadata facet editor behavior.
-- Fixed autocomplete integration issues.
-- Fixed project page download behavior.
-- Fixed box and polygon selector behavior.
+- Fixed site collections and collection APIs exposing unpublished manifests to public users.
+- Fixed metadata facet editor drag-and-drop behavior after the dependency migration.
+- Fixed autocomplete integration issues, including stale cached entity suggestions and user autocomplete selection/reset behavior.
+- Fixed project page download and file preview behavior.
+- Fixed personal notes rendering and save-state flicker.
+- Fixed markdown block editing and rendering after the React 19 migration.
+- Fixed box and polygon selector behavior, including drawing and editing stability, marker styling, and region editing flow.
+- Fixed atlas and viewer resize handling so canvas position and zoom are preserved more reliably while resizing or editing.
+- Fixed logout so it clears all site-scoped JWT cookies and only allows safe relative redirects.
+- Fixed API authentication, service-token signing, and expired-token refresh behavior after the crypto-stack upgrade.
+- Fixed tabular approval so submissions with unresolved flagged cells cannot be approved.
+- Fixed tabular row and flag persistence, export sanitization, and historical flag compatibility so flags and comments stay aligned across row edits, old payloads, and CSV exports.
+- Fixed tabular editor and review UX issues including keyboard navigation, copy/paste, layout and sidebar behavior, fullscreen table handling, leave-page warnings, and row/column interaction glitches.
+- Fixed cast-a-net alignment issues including initial load failures, drag/resize edge cases, overlap problems, zoom-tracking drift, and post-edit synchronization.
+- Fixed search cleanup so unpublished manifests and canvases are removed from Typesense results instead of lingering as stale hits.
+- Fixed IIIF export and embed access with improved serialization compatibility and private-network-friendly CORS responses.
 - Fixed dependency compatibility regressions from the upgrade work (including `react-is` and lockfile issues).
 
 ## [v2.2.11](https://github.com/digirati-co-uk/madoc-platform/compare/v2.2.10...v2.2.11)
