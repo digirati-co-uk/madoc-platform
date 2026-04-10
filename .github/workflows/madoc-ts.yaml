@@ -56,7 +56,7 @@ jobs:
             ${{ runner.os }}-pnpm-madoc-ts-
 
       - working-directory: services/madoc-ts
-        run: pnpm install --no-lockfile
+        run: pnpm install --frozen-lockfile
 
       - uses: actions/cache@v4
         with:
