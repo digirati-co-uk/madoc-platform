@@ -109,9 +109,19 @@ export type TabularCaptureModelField = {
 
 export type TabularCaptureModelFields = Record<string, TabularCaptureModelField>;
 
+export type TabularNestedEntityMetadata = {
+  label: string;
+  allowMultiple?: boolean;
+};
+
 export type TabularCaptureModelTemplate = {
   __entity__?: { label: string };
-  [term: string]: TabularCaptureModelField | { label: string } | undefined;
+  __nested__?: Record<string, TabularNestedEntityMetadata>;
+  [term: string]:
+    | TabularCaptureModelField
+    | { label: string }
+    | Record<string, TabularNestedEntityMetadata>
+    | undefined;
 };
 
 export type TabularModelPayload = {

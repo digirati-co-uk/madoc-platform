@@ -13,7 +13,7 @@ import { slugifyColumnId } from './utils';
 import {
   TABULAR_CELL_FLAGS_PROPERTY,
   createTabularCellFlagsCaptureModelField,
-} from '@/frontend/shared/utility/tabular-cell-flags';
+} from '../../../../shared/utility/tabular-cell-flags';
 
 export { slugifyColumnId };
 
@@ -131,9 +131,22 @@ export function buildTabularModelPayload(headings: string[], meta?: TabularColum
     captureModelFields[term] = field;
   }
 
+  const rowCaptureModelFields = Object.entries(captureModelFields).reduce<TabularCaptureModelTemplate>(
+    (acc, [term, field]) => {
+      acc[`rows.${term}`] = field;
+      return acc;
+    },
+    {}
+  );
+
   const captureModelTemplate: TabularCaptureModelTemplate = {
-    __entity__: { label: 'Tabular row' },
-    ...captureModelFields,
+    __nested__: {
+      rows: {
+        label: 'Tabular row',
+        allowMultiple: true,
+      },
+    },
+    ...rowCaptureModelFields,
     [TABULAR_CELL_FLAGS_PROPERTY]: createTabularCellFlagsCaptureModelField(),
   };
 

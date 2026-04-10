@@ -29,9 +29,19 @@ type TabularCaptureModelField = {
   options?: Array<{ value?: string; text?: string; label?: string }>;
 };
 
+type TabularNestedEntityConfig = {
+  label: string;
+  allowMultiple?: boolean;
+};
+
 type TabularCaptureModelTemplate = {
   __entity__?: { label: string };
-  [term: string]: TabularCaptureModelField | { label: string } | undefined;
+  __nested__?: Record<string, TabularNestedEntityConfig>;
+  [term: string]:
+    | TabularCaptureModelField
+    | { label: string }
+    | Record<string, TabularNestedEntityConfig>
+    | undefined;
 };
 
 export type TabularWizardSetup = {
@@ -68,13 +78,79 @@ export type TabularProjectTemplateOptions = {
 };
 
 const fallbackCaptureModelTemplate = {
-  __entity__: { label: 'Tabular row' },
-  value: {
+  __nested__: {
+    rows: {
+      label: 'Tabular row',
+      allowMultiple: true,
+    },
+  },
+  'rows.value': {
     type: 'text-field',
     label: 'Value',
   },
   [TABULAR_CELL_FLAGS_PROPERTY]: createTabularCellFlagsCaptureModelField(),
 };
+
+function isObjectLike(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function isTabularCaptureModelField(value: unknown): value is TabularCaptureModelField {
+  return isObjectLike(value) && typeof value.type === 'string';
+}
+
+function normalizeTabularCaptureModelTemplate(template: TabularCaptureModelTemplate): TabularCaptureModelTemplate {
+  const hasRowsEntity = isObjectLike(template.__nested__) && isObjectLike(template.__nested__.rows);
+
+  if (hasRowsEntity) {
+    return template;
+  }
+
+  const legacyRowLabel = isObjectLike(template.__entity__) && typeof template.__entity__.label === 'string'
+    ? template.__entity__.label.trim() || 'Tabular row'
+    : 'Tabular row';
+  const nestedConfig = isObjectLike(template.__nested__)
+    ? (template.__nested__ as Record<string, TabularNestedEntityConfig>)
+    : {};
+  const existingRowsConfig: TabularNestedEntityConfig =
+    isObjectLike(nestedConfig.rows) && typeof nestedConfig.rows.label === 'string'
+      ? {
+          label: nestedConfig.rows.label.trim() || legacyRowLabel,
+          ...(typeof nestedConfig.rows.allowMultiple === 'boolean'
+            ? { allowMultiple: nestedConfig.rows.allowMultiple }
+            : {}),
+        }
+      : { label: legacyRowLabel };
+  const normalizedTemplate: TabularCaptureModelTemplate = {
+    __nested__: {
+      ...nestedConfig,
+      rows: {
+        ...existingRowsConfig,
+        allowMultiple: true,
+      },
+    },
+  };
+
+  for (const [key, value] of Object.entries(template)) {
+    if (key === '__entity__' || key === '__nested__') {
+      continue;
+    }
+
+    if (key.startsWith('__') || key.startsWith('rows.')) {
+      normalizedTemplate[key] = value as TabularCaptureModelTemplate[string];
+      continue;
+    }
+
+    if (isTabularCaptureModelField(value)) {
+      normalizedTemplate[`rows.${key}`] = value;
+      continue;
+    }
+
+    normalizedTemplate[key] = value as TabularCaptureModelTemplate[string];
+  }
+
+  return normalizedTemplate;
+}
 
 const getCaptureModelTemplateFromOptions = (options: TabularProjectTemplateOptions) => {
   const template = options.tabular?.model?.captureModelTemplate;
@@ -82,12 +158,13 @@ const getCaptureModelTemplateFromOptions = (options: TabularProjectTemplateOptio
     return null;
   }
 
-  const fieldKeys = Object.keys(template).filter(key => !key.startsWith('__'));
+  const normalizedTemplate = normalizeTabularCaptureModelTemplate(template);
+  const fieldKeys = Object.keys(normalizedTemplate).filter(key => !key.startsWith('__'));
   if (!fieldKeys.length) {
     return null;
   }
 
-  return template;
+  return normalizedTemplate;
 };
 
 const TabularProjectCustomEditorLazy = React.lazy(async () => {

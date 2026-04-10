@@ -61,7 +61,6 @@ export const AutocompleteField: FieldComponent<AutocompleteFieldProps> = props =
     props.value ? [typeof props.value === 'string' ? { uri: props.value, label: 'unknown' } : props.value] : []
   );
   const [isLoading, setIsLoading] = useState(false);
-  const [hasFetched, setHasFetched] = useState(false);
   const [error, setError] = useState('');
   const api = useOptionalApi();
   const pendingFetch = useRef<AbortController>(undefined);
@@ -89,11 +88,6 @@ export const AutocompleteField: FieldComponent<AutocompleteFieldProps> = props =
   const onSearchChange = useCallback(
     (value: string | undefined) => {
       if (value || props.requestInitial) {
-        if (hasFetched && props.dataSource.indexOf('%') === -1) {
-          setIsLoading(false);
-          return;
-        }
-
         if (pendingFetch.current) {
           pendingFetch.current.abort();
         }
@@ -122,7 +116,6 @@ export const AutocompleteField: FieldComponent<AutocompleteFieldProps> = props =
             pendingFetch.current = undefined;
             setOptions(items.completions);
             setIsLoading(false);
-            setHasFetched(true);
             setError('');
           })
           .catch(e => {
@@ -134,7 +127,7 @@ export const AutocompleteField: FieldComponent<AutocompleteFieldProps> = props =
           });
       }
     },
-    [props.requestInitial, props.dataSource, hasFetched, api, t]
+    [props.requestInitial, props.dataSource, api, t]
   );
 
   useEffect(() => {
