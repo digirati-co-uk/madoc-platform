@@ -231,17 +231,18 @@ export function TabularProjectReviewRenderer(props: CustomReviewRendererProps) {
     removeInstance,
   });
 
-  const { flaggedCells, isCellFlagged, isCellNoted, onRemoveFlag, onConvertFlagToNote } = useTabularCellFlags({
-    table,
-    projectId: review.project?.id,
-    canvasId,
-    visibleColumnKeys,
-    headerColumns,
-    tableActiveCell,
-    setTableActiveCell,
-    useLegacyTopLevelLayout,
-    removeRowFromFooter,
-  });
+  const { flaggedCells, isCellFlagged, isCellNoted, onRemoveFlag, onConvertFlagToNote, onFocusFlaggedCell } =
+    useTabularCellFlags({
+      table,
+      projectId: review.project?.id,
+      canvasId,
+      visibleColumnKeys,
+      headerColumns,
+      tableActiveCell,
+      setTableActiveCell,
+      useLegacyTopLevelLayout,
+      removeRowFromFooter,
+    });
 
   useEffect(() => {
     if (tableActiveCell) {
@@ -267,28 +268,17 @@ export function TabularProjectReviewRenderer(props: CustomReviewRendererProps) {
     return next;
   }, [tableRows]);
 
-  const visibleColumnIndexByKey = useMemo(() => {
-    const next = new Map<string, number>();
-    for (const [index, columnKey] of visibleColumnKeys.entries()) {
-      next.set(columnKey, index);
-    }
-    return next;
-  }, [visibleColumnKeys]);
-
   const getFlaggedCellPanelData = useCallback(
     (rowIndex: number, columnKey: string) => {
       const row = tableRowsByRowIndex.get(rowIndex);
-      const colIndex = visibleColumnIndexByKey.get(columnKey) ?? -1;
-      const linkedCellByIndex = row && colIndex >= 0 ? row.cells[colIndex] : undefined;
-      const linkedCellByKey = row?.cells.find(cell => cell.columnKey === columnKey);
+      const linkedCell = row?.cells.find(cell => cell.columnKey === columnKey);
 
       return {
-        colIndex,
-        linkedCell: linkedCellByKey || linkedCellByIndex,
-        canFocusCell: !!linkedCellByIndex,
+        linkedCell,
+        canFocusCell: !!linkedCell,
       };
     },
-    [tableRowsByRowIndex, visibleColumnIndexByKey]
+    [tableRowsByRowIndex]
   );
 
   const flaggedCellsForPanel = useMemo(
@@ -304,14 +294,14 @@ export function TabularProjectReviewRenderer(props: CustomReviewRendererProps) {
   const unresolvedFlagsApproveMessage = flaggedCellCount > 0 ? getTabularApprovalBlockedMessage() : undefined;
 
   const focusFlaggedCell = useCallback(
-    (rowIndex: number, colIndex: number, canFocusCell: boolean) => {
+    (rowIndex: number, columnKey: string, canFocusCell: boolean) => {
       if (!canFocusCell) {
         return;
       }
 
-      setTableActiveCell({ row: rowIndex, col: colIndex });
+      onFocusFlaggedCell(rowIndex, columnKey);
     },
-    [setTableActiveCell]
+    [onFocusFlaggedCell]
   );
 
   const unflagCell = useCallback(
@@ -399,13 +389,13 @@ export function TabularProjectReviewRenderer(props: CustomReviewRendererProps) {
                   <div className="mb-2 text-sm font-semibold text-gray-900">Flagged cells ({flaggedCellCount})</div>
                   {flaggedCellsForPanel.length ? (
                     <div className="space-y-2 rounded border border-red-300 bg-red-50 p-2">
-                      {flaggedCellsForPanel.map(({ flag, linkedCell, colIndex, canFocusCell }) => (
+                      {flaggedCellsForPanel.map(({ flag, linkedCell, canFocusCell }) => (
                         <FlaggedCellCard
                           key={flag.key}
                           flag={flag}
                           linkedCell={linkedCell}
                           canResolveFlag={!isEditingDisabled}
-                          onFocusCell={() => focusFlaggedCell(flag.rowIndex, colIndex, canFocusCell)}
+                          onFocusCell={() => focusFlaggedCell(flag.rowIndex, flag.columnKey, canFocusCell)}
                           onConvertToNote={noteComment => convertFlagToNote(flag, noteComment)}
                           onDeleteFlag={() => unflagCell(flag)}
                         />
