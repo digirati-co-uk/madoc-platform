@@ -559,8 +559,20 @@ export const createIiifHomeHistoryItem = (homeCollection: IIIFCollection): IiifH
 
 export const encodeOutlinePayload = (payload: TabularOutlineSharePayload) => {
   try {
-    if (typeof window === 'undefined') return '';
-    return window.btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
+    const normalizedPayload = unescape(encodeURIComponent(JSON.stringify(payload)));
+
+    if (typeof globalThis.btoa === 'function') {
+      return globalThis.btoa(normalizedPayload);
+    }
+
+    const bufferLike = (
+      globalThis as { Buffer?: { from(input: string, encoding?: string): { toString(encoding?: string): string } } }
+    ).Buffer;
+    if (bufferLike?.from) {
+      return bufferLike.from(normalizedPayload, 'binary').toString('base64');
+    }
+
+    return '';
   } catch {
     return '';
   }
@@ -568,8 +580,22 @@ export const encodeOutlinePayload = (payload: TabularOutlineSharePayload) => {
 
 export const decodeOutlinePayload = (raw: string): TabularOutlineSharePayload | null => {
   try {
-    if (typeof window === 'undefined') return null;
-    const decoded = decodeURIComponent(escape(window.atob(raw)));
+    let decodedRaw = '';
+    if (typeof globalThis.atob === 'function') {
+      decodedRaw = globalThis.atob(raw);
+    } else {
+      const bufferLike = (
+        globalThis as {
+          Buffer?: { from(input: string, encoding?: string): { toString(encoding?: string): string } };
+        }
+      ).Buffer;
+      if (!bufferLike?.from) {
+        return null;
+      }
+      decodedRaw = bufferLike.from(raw, 'base64').toString('binary');
+    }
+
+    const decoded = decodeURIComponent(escape(decodedRaw));
     return JSON.parse(decoded) as TabularOutlineSharePayload;
   } catch {
     return null;

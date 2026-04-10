@@ -459,7 +459,9 @@ export function useTabularProjectController(options: UseTabularProjectController
 
     setDidLoadSharedOutline(true);
 
-    const outlineValue = new URLSearchParams(window.location.search).get('outline');
+    const searchParams = new URLSearchParams(window.location.search);
+    const outlineValue = searchParams.get('outline');
+    const isDuplicateFlow = searchParams.get('duplicate') === '1';
     if (!outlineValue) {
       return;
     }
@@ -471,7 +473,9 @@ export function useTabularProjectController(options: UseTabularProjectController
     }
 
     if (shared.label) {
-      setLabel(shared.label);
+      if (!isDuplicateFlow) {
+        setLabel(shared.label);
+      }
     }
 
     if (shared.summary) {
@@ -479,8 +483,10 @@ export function useTabularProjectController(options: UseTabularProjectController
     }
 
     if (typeof shared.slug === 'string') {
-      setSlug(shared.slug);
-      setAutoSlug(false);
+      if (!isDuplicateFlow) {
+        setSlug(shared.slug);
+        setAutoSlug(false);
+      }
     }
 
     if (typeof shared.enableZoomTracking === 'boolean') {
@@ -513,9 +519,9 @@ export function useTabularProjectController(options: UseTabularProjectController
     }
 
     if (shared.tabular?.model) {
-      setStep(STEP_PREVIEW);
+      setStep(isDuplicateFlow ? STEP_DETAILS : STEP_PREVIEW);
     }
-  }, [didLoadSharedOutline, setSlug, t]);
+  }, [didLoadSharedOutline, setLabel, setSlug, setSummary, t]);
 
   const clearImageSelection = useCallback(() => {
     setManifestId(undefined);
@@ -1024,7 +1030,9 @@ export function useTabularProjectController(options: UseTabularProjectController
       }
 
       if (existingProject?.id) {
-        setDetailsError(t('Slug is already used. Project slugs must be unique per site, please select an alternative value.'));
+        setDetailsError(
+          t('Slug is already used. Project slugs must be unique per site, please select an alternative value.')
+        );
         return;
       }
 

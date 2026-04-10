@@ -1,16 +1,84 @@
 import { Outlet } from 'react-router-dom';
-import { useProjectTemplate } from '../../../../shared/hooks/use-project-template';
-import { useSite } from '../../../../shared/hooks/use-site';
-import { HrefLink } from '../../../../shared/utility/href-link';
-import { UniversalComponent } from '../../../../types';
+import { useProjectTemplate } from '@/frontend/shared/hooks/use-project-template';
+import { useSite } from '@/frontend/shared/hooks/use-site';
+import { HrefLink } from '@/frontend//shared/utility/href-link';
+import { UniversalComponent } from '@/frontend/types';
 import React from 'react';
-import { LocaleString } from '../../../../shared/components/LocaleString';
+import { LocaleString } from '@/frontend/shared/components/LocaleString';
 import { AdminHeader } from '../../../molecules/AdminHeader';
-import { WidePage } from '../../../../shared/layout/WidePage';
+import { WidePage } from '@/frontend/shared/layout/WidePage';
 import { useTranslation } from 'react-i18next';
-import { useData } from '../../../../shared/hooks/use-data';
-import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
-import { Button } from '../../../../shared/navigation/Button';
+import { useData } from '@/frontend/shared/hooks/use-data';
+import { createUniversalComponent } from '@/frontend/shared/utility/create-universal-component';
+import { Button } from '@/frontend/shared/navigation/Button';
+import type { TabularOutlineSharePayload } from './tabular-project/types';
+
+const DEFAULT_DUPLICATE_URL = (id: string | number) => `/projects/create/remote?template=urn:madoc:project:${id}`;
+
+function isObjectRecord(value: unknown): value is Record<string, unknown> {
+  return !!value && typeof value === 'object' && !Array.isArray(value);
+}
+
+function encodeOutlinePayloadForUrl(payload: TabularOutlineSharePayload) {
+  try {
+    const normalizedPayload = unescape(encodeURIComponent(JSON.stringify(payload)));
+
+    if (typeof globalThis.btoa === 'function') {
+      return globalThis.btoa(normalizedPayload);
+    }
+
+    const bufferLike = (
+      globalThis as { Buffer?: { from(input: string, encoding?: string): { toString(encoding?: string): string } } }
+    ).Buffer;
+    if (bufferLike?.from) {
+      return bufferLike.from(normalizedPayload, 'binary').toString('base64');
+    }
+
+    return '';
+  } catch {
+    return '';
+  }
+}
+
+function isTabularProject(project: { template?: string; template_config?: unknown } | undefined) {
+  const hasTabularTemplateConfig =
+    !!project?.template_config && typeof project.template_config === 'object' && 'tabular' in project.template_config;
+  return project?.template === 'tabular-project' || hasTabularTemplateConfig;
+}
+
+function buildTabularDuplicateUrl(project: { id?: number | string; summary?: unknown; template_config?: unknown }) {
+  const templateConfig = isObjectRecord(project.template_config) ? project.template_config : null;
+  const outlinePayload: TabularOutlineSharePayload = {};
+
+  if (isObjectRecord(project.summary)) {
+    outlinePayload.summary = project.summary as TabularOutlineSharePayload['summary'];
+  }
+
+  if (templateConfig) {
+    if (typeof templateConfig.enableZoomTracking === 'boolean') {
+      outlinePayload.enableZoomTracking = templateConfig.enableZoomTracking;
+    }
+
+    if (typeof templateConfig.crowdsourcingInstructions === 'string') {
+      outlinePayload.crowdsourcingInstructions = templateConfig.crowdsourcingInstructions;
+    }
+
+    if (isObjectRecord(templateConfig.iiif)) {
+      outlinePayload.iiif = templateConfig.iiif as TabularOutlineSharePayload['iiif'];
+    }
+
+    if (isObjectRecord(templateConfig.tabular)) {
+      outlinePayload.tabular = templateConfig.tabular as TabularOutlineSharePayload['tabular'];
+    }
+  }
+
+  const encodedOutline = encodeOutlinePayloadForUrl(outlinePayload);
+  if (!encodedOutline) {
+    return '/projects/create/tabular-project?duplicate=1';
+  }
+
+  return `/projects/create/tabular-project?duplicate=1&outline=${encodeURIComponent(encodedOutline)}`;
+}
 
 type ProjectType = {
   params: { id: string };
@@ -25,6 +93,9 @@ export const Project: UniversalComponent<ProjectType> = createUniversalComponent
     const { data, status } = useData(Project);
     const { slug } = useSite();
     const projectTemplate = useProjectTemplate(data?.template);
+    const tabularProject = isTabularProject(data);
+    const duplicateProjectUrl =
+      data?.id && tabularProject ? buildTabularDuplicateUrl(data) : data?.id ? DEFAULT_DUPLICATE_URL(data.id) : '#';
 
     const configFrozen = !!projectTemplate?.configuration?.frozen;
     const noModel = !!projectTemplate?.configuration?.captureModels?.noCaptureModel;
@@ -63,10 +134,7 @@ export const Project: UniversalComponent<ProjectType> = createUniversalComponent
               {projectTemplate && projectTemplate.type !== 'custom' ? (
                 <div>
                   <strong>{projectTemplate.metadata.label}</strong> |{' '}
-                  <HrefLink href={`/projects/create/remote?template=urn:madoc:project:${data.id}`}>
-                    Duplicate project →
-                  </HrefLink>{' '}
-                  |{' '}
+                  <HrefLink href={duplicateProjectUrl}>Duplicate project →</HrefLink> |{' '}
                   <HrefLink href={`/projects/create/${projectTemplate.type}`}>
                     Create new project using this template →
                   </HrefLink>
@@ -74,9 +142,7 @@ export const Project: UniversalComponent<ProjectType> = createUniversalComponent
               ) : (
                 <div>
                   <strong>{t('Canvas annotation project')}</strong> |{' '}
-                  <HrefLink href={`/projects/create/remote?template=urn:madoc:project:${data.id}`}>
-                    Duplicate project →
-                  </HrefLink>
+                  <HrefLink href={duplicateProjectUrl}>Duplicate project →</HrefLink>
                 </div>
               )}
             </>
