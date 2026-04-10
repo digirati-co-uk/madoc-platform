@@ -16,7 +16,7 @@ export const EditPageMetadataButton: React.FC<{ onUpdate?: (page: SitePage) => v
   const api = useApi();
   const { data } = useStaticData(PageLoader);
   const page = data?.page;
-  const newPage = useRef<CreateNormalPageRequest>();
+  const newPage = useRef<CreateNormalPageRequest>(undefined);
 
   const [updatePage] = useMutation(async () => {
     if (page && newPage.current) {

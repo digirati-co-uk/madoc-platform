@@ -36,7 +36,7 @@ export async function deleteCanvas(canvasId: number, siteId: number, connection:
     siteApi.deleteCaptureModel(captureModel.id);
   });
 
-  if (fullyDelete && deletionSummary.search.indexed && deletionSummary.search.id) {
+  if (deletionSummary.search.indexed && deletionSummary.search.id) {
     await siteApi.searchDeleteIIIF(deletionSummary.search.id);
   }
 

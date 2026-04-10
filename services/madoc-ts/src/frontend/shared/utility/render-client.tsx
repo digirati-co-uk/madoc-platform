@@ -1,14 +1,13 @@
 import cookies from 'browser-cookies';
+import './react-dom-legacy-shim';
 import { DndProvider } from 'react-dnd';
-// @ts-ignore
-import MultiBackend from 'react-dnd-multi-backend';
-// @ts-ignore
-import HTML5toTouch from 'react-dnd-multi-backend/dist/cjs/HTML5toTouch';
+import { MultiBackend } from 'react-dnd-multi-backend';
+import { HTML5toTouch } from 'rdndmb-html5-to-touch';
 import { ReactQueryCacheProvider, ReactQueryConfig, ReactQueryConfigProvider } from 'react-query';
 import { Hydrate } from 'react-query/hydration';
 import { ThemeProvider } from 'styled-components';
 import { createBackend } from '../../../middleware/i18n/i18next.client';
-import { render } from 'react-dom';
+import { createRoot, hydrateRoot } from 'react-dom/client';
 import { I18nextProvider } from 'react-i18next';
 import { BrowserRouter, RouteObject } from 'react-router-dom';
 import { api } from '../../../gateway/api.browser';
@@ -27,6 +26,7 @@ import { queryConfig } from './query-config';
 import { ReactQueryDevtools } from 'react-query-devtools';
 import { ScrollTop } from './scroll-top';
 import '../required-modules';
+import { DevApiDebugPanel } from '../components/DevApiDebugPanel';
 
 export async function renderClient(
   Component: React.FC<any>,
@@ -41,7 +41,7 @@ export async function renderClient(
   const dehydratedState = dehydratedStateEl ? JSON.parse(dehydratedStateEl.innerText) : {};
   const dehydratedSite = dehydratedSiteEl ? JSON.parse(dehydratedSiteEl.innerText) : {};
 
-  // @ts-ignore
+  // @ts-expect-error umami is injected at runtime.
   window.umami = {
     trackEvent: () => {
       // no-op
@@ -66,7 +66,7 @@ export async function renderClient(
         const module = new Function(`
           return (function(require, module, exports) {
             ${code};
-            
+
             return exports;
           })(this.require, this.module, this.exports);
         `);
@@ -105,13 +105,19 @@ export async function renderClient(
   const localisations = dehydratedSite.locales as Array<{ label: string; code: string }>;
   const supportedLocales = localisations.map(local => local.code);
   const defaultLocale = dehydratedSite.defaultLocale || 'en';
+  const globalAdminDebugEnabled =
+    (process.env.MADOC_ENABLE_API_DEBUG_PANEL === 'true' || process.env.MADOC_ENABLE_API_DEBUG_PANEL === '1') &&
+    dehydratedSite?.user?.role === 'global_admin';
+  const showApiDebugPanel = process.env.NODE_ENV === 'development' || globalAdminDebugEnabled;
+
+  api.setRuntimeDebugEnabled(showApiDebugPanel);
 
   if (component && (jwt || !requireJwt)) {
     createBackend(slug, jwt, supportedLocales, defaultLocale).then(([t, i18n]) => {
       const propScript = document.getElementById('react-data');
       const { basename }: any = propScript ? JSON.parse(propScript.innerText) : {};
 
-      render(
+      const app = (
         <ReactQueryConfigProvider
           config={{
             ...queryConfig,
@@ -129,7 +135,7 @@ export async function renderClient(
                   <ScrollTop />
                   <DndProvider backend={MultiBackend} options={HTML5toTouch}>
                     <ThemeProvider theme={defaultTheme}>
-                      <ErrorBoundary onError={error => <ErrorPage error={error} />}>
+                      <ErrorBoundary onError={error => <ErrorPage error={error} user={dehydratedSite.user} />}>
                         <Suspense fallback={<Spinner />}>
                           <Component
                             jwt={jwt}
@@ -149,6 +155,7 @@ export async function renderClient(
                             systemConfig={dehydratedSite.systemConfig}
                           />
                         </Suspense>
+                        {showApiDebugPanel ? <DevApiDebugPanel api={api} /> : null}
                         {process.env.NODE_ENV === 'development' ? <ReactQueryDevtools /> : null}
                       </ErrorBoundary>
                     </ThemeProvider>
@@ -157,9 +164,15 @@ export async function renderClient(
               </I18nextProvider>
             </Hydrate>
           </ReactQueryCacheProvider>
-        </ReactQueryConfigProvider>,
-        component
+        </ReactQueryConfigProvider>
       );
+
+      if (component.hasChildNodes()) {
+        hydrateRoot(component, app);
+      } else {
+        const root = createRoot(component);
+        root.render(app);
+      }
 
       component.classList.add('react-loaded');
     });

@@ -11,6 +11,7 @@ export const Choice: React.FC<{
   onChoice: (id: string) => void;
   choice: { items: any[] };
   revisions?: Record<string, RevisionRequest[]>;
+  children?: React.ReactNode;
 }> = ({ choice, onChoice, showBackButton, onBackButton, revisions, children }) => {
   const { t } = useTranslation();
 

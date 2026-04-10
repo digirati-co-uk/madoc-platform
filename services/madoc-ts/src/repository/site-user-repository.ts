@@ -1592,7 +1592,7 @@ export class SiteUserRepository extends BaseRepository {
   }
 
   async refreshExpiredToken(token: string, refreshWindow: number) {
-    const response = verifySignedToken(token, true);
+    const response = await verifySignedToken(token, true);
     if (!response) {
       throw new NotFound();
     }

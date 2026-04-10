@@ -7,10 +7,12 @@ import { BrowserComponent } from '../../shared/utility/browser-component';
 
 export const ViewContentFetch: React.FC<{
   id: number;
-  height?: number;
+  height?: number | string;
   onCreated?: (rt: Preset) => void;
   onPanInSketchMode?: () => void;
-}> = ({ id, height, children, onCreated, onPanInSketchMode }) => {
+  homeCover?: true | false | 'start' | 'end';
+  children?: React.ReactNode;
+}> = ({ id, height, children, onCreated, onPanInSketchMode, homeCover }) => {
   const { data } = useApiCanvas(id);
 
   const canvas = useMemo(() => {
@@ -36,6 +38,7 @@ export const ViewContentFetch: React.FC<{
         canvas={canvas as any}
         onCreated={onCreated}
         onPanInSketchMode={onPanInSketchMode}
+        homeCover={homeCover}
       >
         {children}
       </ViewContent>

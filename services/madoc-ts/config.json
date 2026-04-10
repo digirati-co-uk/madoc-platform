@@ -98,6 +98,15 @@
   },
   "permissions": {
     "admin": ["site.admin", "tasks.admin", "models.admin"],
+    "trusted-user": [
+      "tasks.create",
+      "tasks.progress",
+      "models.revision",
+      "models.create",
+      "models.contribute",
+      "models.view_published",
+      "site.view"
+    ],
     "reviewer": [
       "tasks.create",
       "tasks.progress",

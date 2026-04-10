@@ -20,7 +20,7 @@ export function useTranslationWrapper(
 
   const customT = useCallback(
     (...args: any[]) => {
-      return <span>{t.apply(t, args as any)}</span>;
+      return <span>{t.apply(t, args as any) as any}</span>;
     },
     [t]
   );

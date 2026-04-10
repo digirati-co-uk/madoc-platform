@@ -1,50 +1,41 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useMemo } from 'react';
 import { PluginContext } from '../../../plugin-api/context';
 import { Dropdown } from '../../atoms/Dropdown';
 
 type Props = {
   onChange: (term?: string) => void;
   fieldType?: string;
+  allowedFieldTypes?: string[];
 };
 
-// - Choose type select
-// - Choose label
-// - Choose term / JSON property
-
-export const ChooseFieldButton: React.FC<Props> = ({ onChange, fieldType }) => {
+export const ChooseFieldButton: React.FC<Props> = ({ onChange, fieldType, allowedFieldTypes }) => {
   const { fields } = useContext(PluginContext);
-  const textSelector = fields['text-field'];
-  const [value, setValue] = useState(fieldType || (textSelector ? 'text-field' : undefined));
-
-  useEffect(() => {
-    onChange(value);
-    // Adding onChange here results in infinite loop
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value]);
+  const options = useMemo(
+    () =>
+      Object.values(fields)
+        .filter((field): field is { type: string; label: string } => !!field)
+        .filter(field => !allowedFieldTypes || allowedFieldTypes.includes(field.type))
+        .map(field => ({
+          key: field.type,
+          value: field.type,
+          text: field.label,
+          label: field.type,
+        })),
+    [allowedFieldTypes, fields]
+  );
+  const fallbackType = options.find(option => option.value === 'text-field')?.value || options[0]?.value;
+  const selectedValue = options.find(option => option.value === fieldType)?.value || fallbackType;
 
   return (
     <Dropdown
       placeholder="Select input"
       fluid
       selection
-      value={value}
+      value={selectedValue}
       onChange={v => {
-        setValue(v || '');
+        onChange(v || fallbackType || undefined);
       }}
-      options={
-        Object.values(fields)
-          .map(field =>
-            field
-              ? {
-                  key: field.type,
-                  value: field.type,
-                  text: field.label,
-                  label: field.type,
-                }
-              : null
-          )
-          .filter(e => e !== null) as any[]
-      }
+      options={options}
     />
   );
 };

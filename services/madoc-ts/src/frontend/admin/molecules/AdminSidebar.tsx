@@ -60,7 +60,8 @@ export const AdminSidebar: React.FC = () => {
         pathname.startsWith('/configure') ||
         pathname.startsWith('/system') ||
         pathname.startsWith('/site') ||
-        pathname.startsWith('/enrichment/search-indexing'),
+        pathname.startsWith('/enrichment/search-indexing') ||
+        pathname.startsWith('/enrichment/typesense-playground'),
       isLocalisation: pathname.startsWith('/i18n'),
       isMedia: pathname.startsWith('/media'),
       isSiteGlobal: pathname.startsWith('/global'),
@@ -182,6 +183,9 @@ export const AdminSidebar: React.FC = () => {
             <AdminMenuSubItem as={HrefLink} href="/enrichment/search-indexing">
               {t('Site search indexing')}
             </AdminMenuSubItem>
+            <AdminMenuSubItem as={HrefLink} href="/enrichment/typesense-playground">
+              {t('Typesense playground')}
+            </AdminMenuSubItem>
             {isGlobalAdmin ? (
               <AdminMenuSubItem as={HrefLink} href="/system/themes">
                 {t('Themes')}
@@ -237,6 +241,9 @@ export const AdminSidebar: React.FC = () => {
               </AdminMenuSubItem>
               <AdminMenuSubItem as={HrefLink} href="/global/status">
                 {t('System status')}
+              </AdminMenuSubItem>
+              <AdminMenuSubItem as={HrefLink} href="/global/queue">
+                {t('Queue inspector')}
               </AdminMenuSubItem>
               <AdminMenuSubItem as={HrefLink} href="/global/api-keys">
                 {t('API keys')}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Madoc TS Media Extensions"
+  short_description: "Media upload and metadata flows"
+  default_prompt: "Use $extensions-media to update media upload or thumbnail behavior."

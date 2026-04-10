@@ -1,0 +1,4 @@
+interface:
+  display_name: "Madoc TS Types & Schemas"
+  short_description: "Shared contracts and schemas"
+  default_prompt: "Use $types-schemas to update shared types or schemas."

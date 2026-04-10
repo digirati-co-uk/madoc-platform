@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import Editor, { theme } from 'rich-markdown-editor';
 import styled from 'styled-components';
 import { captureModelShorthand } from '../../../frontend/shared/capture-models/helpers/capture-model-shorthand';
@@ -14,7 +14,8 @@ const MarkdownEditorWrapper = styled.div`
 `;
 
 const MarkdownEditor: PageBlockEditor = props => {
-  const [value, setValue] = useState<string>(props.block.static_data.markdown || '');
+  const initialValue = useMemo(() => props.block.static_data?.markdown || '', [props.block.static_data?.markdown]);
+  const [value, setValue] = useState<string>(initialValue);
   const api = useApi();
   // const searchLink = async (term: string): Promise<SearchResult[]> => {
   //   return [
@@ -37,14 +38,15 @@ const MarkdownEditor: PageBlockEditor = props => {
       <MarkdownEditorWrapper>
         <Editor
           // onSearchLink={term => searchLink(term)}
-          defaultValue={value}
+          defaultValue={initialValue}
           uploadImage={uploadMedia}
           onChange={newValue => {
-            const md = newValue();
+            const md = typeof newValue === 'function' ? newValue() : '';
             setValue(md);
             props.onChange({
               ...props.block,
               static_data: {
+                ...(props.block.static_data || {}),
                 markdown: md,
               },
             });
@@ -60,12 +62,13 @@ const MarkdownEditor: PageBlockEditor = props => {
       </MarkdownEditorWrapper>
       <ModalFooter>
         <Button
-          disabled={value === props.block.static_data.markdown}
+          disabled={value === (props.block.static_data?.markdown || '')}
           $primary
           onClick={() =>
             props.onSave({
               ...props.block,
               static_data: {
+                ...(props.block.static_data || {}),
                 markdown: value,
               },
             })

@@ -1,0 +1,18 @@
+services:
+  workspace:
+    image: mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm
+    init: true
+    command: sleep infinity
+    working_dir: /workspaces/madoc-platform
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - devcontainer-pnpm-store:/home/vscode/.local/share/pnpm/store
+      - devcontainer-commandhistory:/commandhistory
+    environment:
+      - PNPM_HOME=/home/vscode/.local/share/pnpm
+      - HISTFILE=/commandhistory/.bash_history
+      - SHELL=/bin/zsh
+
+volumes:
+  devcontainer-pnpm-store:
+  devcontainer-commandhistory:

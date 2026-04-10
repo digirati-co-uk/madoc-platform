@@ -1,18 +1,22 @@
 import * as React from 'react';
-import { expect } from '@storybook/jest';
+import { expect } from 'storybook/test';
 import { CaptureModelTestHarness } from './CaptureModelTestHarness';
-import { within, userEvent } from '@storybook/testing-library';
+import { within, userEvent } from 'storybook/test';
 // @ts-ignore
 import fixture from '../../../fixtures/01-basic/01-single-field.json';
 export default { title: 'Capture model interactions / Basic model interaction', component: CaptureModelTestHarness };
 
-export const StaticModelViewer = CaptureModelTestHarness.story({
-  captureModel: fixture,
-});
+export const StaticModelViewer = {
+  args: {
+    captureModel: fixture,
+  },
+};
 
-export const TestVisualRendering = CaptureModelTestHarness.story({
-  captureModel: fixture,
-});
+export const TestVisualRendering = {
+  args: {
+    captureModel: fixture,
+  },
+};
 
 TestVisualRendering.play = async args => {
   const canvas = within(args.canvasElement);

@@ -2,11 +2,9 @@ import { ImageService } from '@iiif/presentation-3';
 import React from 'react';
 import { webglSupport } from '../../../../utility/webgl-support';
 import { AnnotationStyleProvider, useAnnotationStyles } from '../../../AnnotationStyleContext';
-import { getRevisionFieldFromPath } from '../../../helpers/get-revision-field-from-path';
-import { EditorSlots } from '../../../new/components/EditorSlots';
 import { BaseContent, ContentOptions } from '../../../types/content-types';
 import { Revisions } from '../../stores/revisions/index';
-import { useAllSelectors, useCurrentSelector, useSelectorActions } from '../../stores/selectors/selector-hooks';
+import { useAllSelectors, useCurrentSelector } from '../../stores/selectors/selector-hooks';
 import {
   useExternalManifest,
   CanvasContext,
@@ -14,9 +12,12 @@ import {
   useImageService,
   VaultProvider,
   CanvasPanel,
+  AtlasStoreProvider,
 } from 'react-iiif-vault';
 import { Preset, PopmotionControllerConfig } from '@atlas-viewer/atlas';
 import { ImageServiceContext } from './Atlas.helpers';
+import { Button } from '../../atoms/Button';
+import { useTranslation } from 'react-i18next';
 
 export type AtlasCustomOptions = {
   unstable_webglRenderer?: boolean;
@@ -24,6 +25,7 @@ export type AtlasCustomOptions = {
   onCreateAtlas?: (preset: Preset) => void;
   controllerConfig?: PopmotionControllerConfig;
   backgroundColor?: string;
+  homeCover?: true | false | 'start' | 'end';
 };
 
 export interface AtlasViewerProps extends BaseContent {
@@ -40,13 +42,40 @@ export interface AtlasViewerProps extends BaseContent {
 const runtimeOptions = { maxOverZoom: 5 };
 const defaultPreset = ['default-preset', { runtimeOptions }] as any;
 
+const AtlasAnnotationConfirm: React.FC<{ onConfirm: () => void }> = ({ onConfirm }) => {
+  const { t } = useTranslation();
+
+  return (
+    <Button
+      primary
+      size="small"
+      onClick={() => {
+        onConfirm();
+      }}
+    >
+      {t('confirm')}
+    </Button>
+  );
+};
+
 const Canvas: React.FC<{
   isEditing?: boolean;
   onDeselect?: () => void;
   onCreated?: (ctx: any) => void;
   unstable_webglRenderer?: boolean;
   controllerConfig?: PopmotionControllerConfig;
-}> = ({ isEditing, onDeselect, children, onCreated, unstable_webglRenderer, controllerConfig }) => {
+  annotationPopup?: React.ReactNode;
+  homeCover?: AtlasCustomOptions['homeCover'];
+}> = ({
+  isEditing,
+  onDeselect,
+  children,
+  onCreated,
+  unstable_webglRenderer,
+  controllerConfig,
+  annotationPopup,
+  homeCover,
+}) => {
   const canvas = useCanvas();
   const { data: service } = useImageService() as { data?: ImageService };
   const style = useAnnotationStyles();
@@ -63,6 +92,7 @@ const Canvas: React.FC<{
       unstable_webglRenderer={webglSupport() && unstable_webglRenderer}
       renderPreset={defaultPreset}
       runtimeOptions={runtimeOptions}
+      homeCover={homeCover}
       controllerConfig={controllerConfig}
       height="100%"
     >
@@ -77,7 +107,7 @@ const Canvas: React.FC<{
         <AnnotationStyleProvider theme={style}>
           <CanvasContext canvas={canvas.id}>
             <ImageServiceContext value={service}>
-              <CanvasPanel.RenderCanvas />
+              <CanvasPanel.RenderCanvas annotationPopup={annotationPopup} />
               <world-object id={`${canvas.id}/annotations`} x={0} y={0} height={canvas.height} width={canvas.width}>
                 {children}
               </world-object>
@@ -92,6 +122,15 @@ const Canvas: React.FC<{
 export const AtlasViewer: React.FC<AtlasViewerProps> = props => {
   const { isLoaded } = useExternalManifest(props.state.manifestId);
   const currentSelector = useCurrentSelector('atlas', undefined);
+  const currentSelectorId = Revisions.useStoreState(s => s.selector.currentSelectorId);
+  const clearSelector = Revisions.useStoreActions(a => a.clearSelector);
+  const currentSelectorType = Revisions.useStoreState(s =>
+    currentSelectorId ? s.resolvedSelectors.find(({ id }) => id === currentSelectorId)?.type : null
+  );
+  const annotationPopup =
+    currentSelectorType === 'polygon-selector' || currentSelectorType === 'box-selector' ? (
+      <AtlasAnnotationConfirm onConfirm={clearSelector} />
+    ) : undefined;
   const selectorVisibility = {
     adjacentSelectors: true,
     topLevelSelectors: true,
@@ -134,7 +173,9 @@ export const AtlasViewer: React.FC<AtlasViewerProps> = props => {
           unstable_webglRenderer={props.options?.custom?.unstable_webglRenderer}
           controllerConfig={props.options?.custom?.controllerConfig}
           onCreated={props.options?.custom?.onCreateAtlas}
+          homeCover={props.options?.custom?.homeCover}
           isEditing={!!currentSelector}
+          annotationPopup={annotationPopup}
           // onDeselect={() => {
           //   if (currentSelector) {
           //     actions.clearSelector();
@@ -157,9 +198,11 @@ const WrappedViewer: React.FC<AtlasViewerProps> = props => {
       : undefined;
 
   return (
-    <VaultProvider vaultOptions={customFetcher ? ({ customFetcher } as any) : undefined}>
-      <AtlasViewer {...props}>{props.children}</AtlasViewer>
-    </VaultProvider>
+    <AtlasStoreProvider>
+      <VaultProvider vaultOptions={customFetcher ? ({ customFetcher } as any) : undefined}>
+        <AtlasViewer {...props}>{props.children}</AtlasViewer>
+      </VaultProvider>
+    </AtlasStoreProvider>
   );
 };
 

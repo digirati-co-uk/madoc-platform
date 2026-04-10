@@ -24,7 +24,7 @@ export const EntityInstance: React.FC<EntityInstanceProps> = ({ selectorId, read
   useEffect(() => componentWillUnmount, [componentWillUnmount]);
 
   const updateSelector = useCallback(
-    state => {
+    (state: any) => {
       if (selector) {
         updateSelectorValue({ selectorId: selector.id, state });
       }

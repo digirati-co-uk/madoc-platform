@@ -20,7 +20,7 @@ export const SegmentationFieldInstance: React.FC<{
   const selector = useFieldSelector(field);
 
   const updateSelector = useCallback(
-    state => {
+    (state: any) => {
       if (field && field.selector) {
         updateSelectorValue({ selectorId: field.selector.id, state });
       }

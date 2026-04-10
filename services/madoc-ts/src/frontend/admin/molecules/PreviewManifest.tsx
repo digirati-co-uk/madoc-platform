@@ -47,7 +47,7 @@ export const PreviewManifest: React.FC<{
 
   useVaultEffect(
     vault => {
-      vault.loadManifest(props.id).then(man => {
+      vault.loadManifest(props.id).then((man: any) => {
         if (man?.type !== 'Manifest') {
           setError('Invalid manifest');
           if (props.setInvalid) {

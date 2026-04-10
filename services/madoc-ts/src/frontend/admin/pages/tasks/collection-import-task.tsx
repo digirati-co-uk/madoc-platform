@@ -8,7 +8,7 @@ import { useApi } from '../../../shared/hooks/use-api';
 import { CollectionSnippet } from '../../../shared/features/CollectionSnippet';
 import { CollapsibleTaskList } from '../../molecules/CollapsibleTaskList';
 
-export const CollectionImportTask: React.FC<{ task: ImportManifestTask; statusBar?: JSX.Element }> = ({
+export const CollectionImportTask: React.FC<{ task: ImportManifestTask; statusBar?: React.ReactNode }> = ({
   task,
   statusBar,
 }) => {

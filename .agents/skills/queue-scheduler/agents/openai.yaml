@@ -1,0 +1,4 @@
+interface:
+  display_name: "Madoc TS Queue Scheduler"
+  short_description: "BullMQ worker and scheduler"
+  default_prompt: "Use $queue-scheduler to update queue worker or scheduler behavior."

@@ -7,7 +7,8 @@ export default {
   component: CaptureModelTestHarness,
 };
 
-export const IDAMVPAlbuquerqueIndianSchoolYearbooksAndRelatedEphemera1931193237 = CaptureModelTestHarness.story({
+export const IDAMVPAlbuquerqueIndianSchoolYearbooksAndRelatedEphemera1931193237 = {
+  args: {
   captureModel: fieldoverwritten,
   target: {
     manifestUri:
@@ -18,4 +19,5 @@ export const IDAMVPAlbuquerqueIndianSchoolYearbooksAndRelatedEphemera1931193237 
   revision: 'cf355b2d-926f-4ac4-a525-9a812883ddde',
   errorMessage: `When two users start a contribution and one is submitted and another saved for draft, if in both contributions a field had no value and the reviewer adds a value the draft
   contribution inherits that value. Doesnt seem to affect if the value exists in the draft first`,
-});
+  },
+};

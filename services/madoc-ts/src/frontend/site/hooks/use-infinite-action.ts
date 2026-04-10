@@ -12,7 +12,7 @@ export function useInfiniteAction({
   isFetchingMore?: false | 'next' | 'previous';
   container?: any;
 }) {
-  const loadMoreButton = useRef<any>();
+  const loadMoreButton = useRef<any>(undefined);
 
   useBrowserLayoutEffect(() => {
     if (loadMoreButton.current) {

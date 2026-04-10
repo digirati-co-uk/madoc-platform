@@ -153,6 +153,9 @@ export const Homepage: UniversalComponent<HomepageType> = createUniversalCompone
                   <Link to="/enrichment/search-indexing">{t('Site search indexing')}</Link>
                 </li>
                 <li>
+                  <Link to="/enrichment/typesense-playground">{t('Typesense playground')}</Link>
+                </li>
+                <li>
                   <Link to="/site/permissions">{t('Site permissions')}</Link>
                 </li>
                 <li>
@@ -173,6 +176,9 @@ export const Homepage: UniversalComponent<HomepageType> = createUniversalCompone
                   </li>
                   <li>
                     <Link to="/global/status">{t('System status')}</Link>
+                  </li>
+                  <li>
+                    <Link to="/global/queue">{t('Queue inspector')}</Link>
                   </li>
                   <li>
                     <Link to="/global/config">{t('Global config')}</Link>

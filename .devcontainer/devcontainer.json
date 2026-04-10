@@ -1,0 +1,92 @@
+{
+  "name": "Madoc Platform",
+  "dockerComposeFile": [
+    "../docker-compose.yml",
+    "docker-compose.devcontainer.yml"
+  ],
+  "service": "workspace",
+  "workspaceFolder": "/workspaces/madoc-platform",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/madoc-platform,type=bind,consistency=cached",
+  "runServices": [
+    "shared-postgres",
+    "gateway-redis",
+    "typesense",
+    "tasks-api",
+    "model-api",
+    "config-service",
+    "storage-api",
+    "madoc-ts-vite",
+    "madoc-ts",
+    "search",
+    "okra",
+    "gateway"
+  ],
+  "shutdownAction": "stopCompose",
+  "remoteUser": "vscode",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {},
+    "ghcr.io/devcontainers/features/git-lfs:1": {},
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  "postCreateCommand": "bash .devcontainer/post-create.sh",
+  "postStartCommand": "bash .devcontainer/post-start.sh",
+  "forwardPorts": [443, 8888, 3088, 3089, 5400, 8108],
+  "portsAttributes": {
+    "443": {
+      "label": "Madoc Gateway (HTTPS)",
+      "onAutoForward": "notify"
+    },
+    "8888": {
+      "label": "Madoc Gateway (HTTP)",
+      "onAutoForward": "notify"
+    },
+    "3088": {
+      "label": "Madoc Vite",
+      "onAutoForward": "silent"
+    },
+    "3089": {
+      "label": "Madoc Vite HMR",
+      "onAutoForward": "silent"
+    },
+    "5400": {
+      "label": "Shared Postgres",
+      "onAutoForward": "silent"
+    },
+    "8108": {
+      "label": "Typesense",
+      "onAutoForward": "silent"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "zsh",
+        "editor.formatOnSave": true,
+        "eslint.workingDirectories": [
+          {
+            "directory": "services/madoc-ts",
+            "changeProcessCWD": true
+          },
+          {
+            "directory": "services/config-service",
+            "changeProcessCWD": true
+          }
+        ],
+        "files.watcherExclude": {
+          "**/.pnpm-store/**": true,
+          "**/var/shared-database/**": true,
+          "**/var/typesense/**": true,
+          "**/node_modules/**": true
+        }
+      },
+      "extensions": [
+        "ms-azuretools.vscode-docker",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "redhat.vscode-yaml",
+        "mikestead.dotenv",
+        "orta.vscode-jest"
+      ]
+    }
+  }
+}

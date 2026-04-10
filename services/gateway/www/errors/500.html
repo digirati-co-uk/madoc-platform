@@ -2,13 +2,356 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport"
-        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Server error</title>
+  <title>Temporary server issue</title>
+  <style>
+    :root {
+      --ink: #112638;
+      --ink-soft: #3b5264;
+      --accent: #1f8f76;
+      --accent-soft: #e8f6f2;
+      --surface: #ffffff;
+      --surface-shadow: rgba(12, 41, 58, 0.16);
+      --bg-a: #f2f7fb;
+      --bg-b: #fdf4e9;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+      color: var(--ink);
+      background: radial-gradient(circle at 15% 15%, #dceffc 0%, var(--bg-a) 35%, transparent 65%),
+                  radial-gradient(circle at 85% 0%, #ffe3c5 0%, var(--bg-b) 40%, transparent 65%),
+                  linear-gradient(140deg, #f7fbff 0%, #fffaf2 100%);
+    }
+
+    .page {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    .panel {
+      width: 100%;
+      max-width: 640px;
+      background: var(--surface);
+      border: 1px solid rgba(17, 38, 56, 0.09);
+      border-radius: 20px;
+      padding: 32px 28px;
+      box-shadow: 0 20px 55px var(--surface-shadow);
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: var(--accent-soft);
+      padding: 8px 12px;
+      border-radius: 999px;
+      margin-bottom: 18px;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--accent);
+      animation: pulse 1.4s ease-in-out infinite;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(1.8rem, 4vw, 2.4rem);
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+    }
+
+    p {
+      margin: 0;
+      color: var(--ink-soft);
+      line-height: 1.5;
+      font-size: 1rem;
+    }
+
+    .actions {
+      margin-top: 24px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .admin-tools {
+      margin-top: 22px;
+      border-top: 1px solid rgba(17, 38, 56, 0.11);
+      padding-top: 16px;
+      display: none;
+    }
+
+    .admin-label {
+      margin: 0 0 10px;
+      color: var(--ink-soft);
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    .admin-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .admin-link {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 12px;
+      border-radius: 8px;
+      text-decoration: none;
+      border: 1px solid rgba(17, 38, 56, 0.16);
+      background: #f7fafc;
+      color: var(--ink);
+      font-size: 0.92rem;
+      font-weight: 600;
+      transition: border-color 120ms ease, background 120ms ease;
+    }
+
+    .admin-link:hover {
+      border-color: rgba(17, 38, 56, 0.28);
+      background: #eef4f8;
+    }
+
+    .button {
+      appearance: none;
+      border: 0;
+      background: var(--accent);
+      color: #fff;
+      font: inherit;
+      font-weight: 700;
+      font-size: 0.95rem;
+      border-radius: 10px;
+      padding: 11px 16px;
+      cursor: pointer;
+      transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease;
+      box-shadow: 0 10px 24px rgba(31, 143, 118, 0.25);
+    }
+
+    .button:hover {
+      background: #157761;
+      transform: translateY(-1px);
+    }
+
+    .button:active {
+      transform: translateY(0);
+    }
+
+    .retry-note {
+      font-size: 0.92rem;
+      color: var(--ink-soft);
+    }
+
+    .countdown {
+      color: var(--ink);
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(0.9);
+        opacity: 0.5;
+      }
+      50% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .panel {
+        padding: 24px 20px;
+      }
+    }
+  </style>
 </head>
 <body>
-  Something went wrong.
-  <script>setTimeout(function() { window.location.reload() }, 2000);</script>
+  <main class="page">
+    <section class="panel" role="alert" aria-live="polite">
+      <p class="status"><span class="dot" aria-hidden="true"></span>Temporary issue</p>
+      <h1>Something went wrong.</h1>
+      <p>
+        We could not complete your request right now. This page will try again automatically in
+        <span id="countdown" class="countdown">8</span> seconds.
+      </p>
+      <div class="actions">
+        <button class="button" id="reload-now" type="button">Try again now</button>
+        <span class="retry-note">If this keeps happening, wait a moment and retry.</span>
+      </div>
+      <div class="admin-tools" id="admin-tools">
+        <p class="admin-label">Admin links from this URL</p>
+        <div class="admin-links" id="admin-links"></div>
+      </div>
+    </section>
+  </main>
+  <script>
+    (function () {
+      function parseSegments(pathname) {
+        return pathname.split('/').filter(Boolean).map(function (segment) {
+          try {
+            return decodeURIComponent(segment);
+          } catch (e) {
+            return segment;
+          }
+        });
+      }
+
+      function getValueAfter(segments, key) {
+        var index = segments.indexOf(key);
+        if (index === -1 || !segments[index + 1]) {
+          return null;
+        }
+        return segments[index + 1];
+      }
+
+      function getAdminRoot(pathname) {
+        var slugMatch = pathname.match(/^\/s\/([^/]+)/);
+        if (slugMatch) {
+          return '/s/' + slugMatch[1] + '/admin';
+        }
+        if (pathname.indexOf('/admin') === 0) {
+          return '/admin';
+        }
+        return '';
+      }
+
+      function getCookie(name) {
+        var value = '; ' + document.cookie;
+        var parts = value.split('; ' + name + '=');
+        if (parts.length === 2) {
+          return parts.pop().split(';').shift();
+        }
+        return null;
+      }
+
+      function decodeJwtPayload(token) {
+        if (!token) {
+          return null;
+        }
+        var parts = token.split('.');
+        if (parts.length < 2) {
+          return null;
+        }
+        try {
+          var payload = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+          while (payload.length % 4) {
+            payload += '=';
+          }
+          return JSON.parse(window.atob(payload));
+        } catch (e) {
+          return null;
+        }
+      }
+
+      function isAdminUser(pathname) {
+        var slugMatch = pathname.match(/^\/s\/([^/]+)/);
+        if (!slugMatch) {
+          return pathname.indexOf('/admin') === 0;
+        }
+        var token = getCookie('madoc/' + slugMatch[1]);
+        var payload = decodeJwtPayload(token);
+        if (!payload) {
+          return false;
+        }
+        var scope = payload.scope || [];
+        return (
+          payload.role === 'global_admin' ||
+          payload.site_role === 'admin' ||
+          scope.indexOf('site.admin') !== -1 ||
+          scope.indexOf('tasks.admin') !== -1
+        );
+      }
+
+      function buildAdminLinks(pathname) {
+        var segments = parseSegments(pathname);
+        var collectionId = getValueAfter(segments, 'collections');
+        var manifestId = getValueAfter(segments, 'manifests');
+        var canvasId = getValueAfter(segments, 'canvases') || getValueAfter(segments, 'c');
+        var adminRoot = getAdminRoot(pathname);
+        var links = [];
+        if (collectionId) {
+          links.push({ label: 'Collection ' + collectionId, href: adminRoot + '/collections/' + collectionId });
+        }
+        if (manifestId) {
+          links.push({ label: 'Manifest ' + manifestId, href: adminRoot + '/manifests/' + manifestId });
+        }
+        if (canvasId) {
+          links.push({
+            label: 'Canvas ' + canvasId,
+            href: manifestId
+              ? adminRoot + '/manifests/' + manifestId + '/canvases/' + canvasId
+              : adminRoot + '/canvases/' + canvasId
+          });
+        }
+        return links;
+      }
+
+      function renderAdminLinks(pathname) {
+        var adminTools = document.getElementById('admin-tools');
+        var adminLinks = document.getElementById('admin-links');
+        if (!adminTools || !adminLinks || !isAdminUser(pathname)) {
+          return;
+        }
+        var links = buildAdminLinks(pathname);
+        if (!links.length) {
+          return;
+        }
+        for (var i = 0; i < links.length; i++) {
+          var link = links[i];
+          var a = document.createElement('a');
+          a.className = 'admin-link';
+          a.href = link.href;
+          a.textContent = link.label;
+          adminLinks.appendChild(a);
+        }
+        adminTools.style.display = 'block';
+      }
+
+      var currentPath = window.location.pathname;
+      renderAdminLinks(currentPath);
+
+      var secondsLeft = 8;
+      var countdown = document.getElementById('countdown');
+      var button = document.getElementById('reload-now');
+      var timer = setInterval(function () {
+        secondsLeft = secondsLeft - 1;
+        if (countdown) {
+          countdown.textContent = String(Math.max(secondsLeft, 0));
+        }
+        if (secondsLeft <= 0) {
+          clearInterval(timer);
+          window.location.reload();
+        }
+      }, 1000);
+
+      if (button) {
+        button.addEventListener('click', function () {
+          clearInterval(timer);
+          window.location.reload();
+        });
+      }
+    })();
+  </script>
 </body>
 </html>

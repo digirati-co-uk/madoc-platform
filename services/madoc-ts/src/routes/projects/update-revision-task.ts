@@ -4,6 +4,22 @@ import { RouteMiddleware } from '../../types/route-middleware';
 import { CrowdsourcingTask } from '../../gateway/tasks/crowdsourcing-task';
 import { userCan } from '../../utility/user-can';
 import { extractIdFromUrn } from '../../utility/parse-urn';
+import { getTabularApprovalBlockedMessage, getTabularFlaggedCellCount } from '../../utility/tabular-flags';
+import { RequestError } from '../../utility/errors/request-error';
+
+const APPROVED_TASK_STATUS = 3;
+
+function toTaskStatus(value: unknown): number | null {
+  if (typeof value === 'number' && Number.isFinite(value)) {
+    return Math.trunc(value);
+  }
+
+  if (typeof value === 'string' && /^\d+$/.test(value)) {
+    return Number(value);
+  }
+
+  return null;
+}
 
 export const updateRevisionTask: RouteMiddleware<{ taskId: string; task: any }> = async context => {
   const { siteId } = userWithScope(context, ['models.contribute', 'models.revision']);
@@ -35,6 +51,20 @@ export const updateRevisionTask: RouteMiddleware<{ taskId: string; task: any }> 
     task.type !== 'crowdsourcing-canvas-task'
   ) {
     throw new Error(`Task could not be updated, not a valid task`);
+  }
+
+  const nextStatus = toTaskStatus(taskBody.status);
+  const isApprovingTask =
+    task.type === 'crowdsourcing-task' && nextStatus === APPROVED_TASK_STATUS && task.status !== APPROVED_TASK_STATUS;
+  if (isApprovingTask) {
+    const revisionId = taskBody.state?.revisionId || task.state?.revisionId;
+    if (typeof revisionId === 'string' && revisionId.length > 0) {
+      const revisionRequest = await userApi.crowdsourcing.getCaptureModelRevision(revisionId);
+      const flaggedCellCount = getTabularFlaggedCellCount(revisionRequest);
+      if (flaggedCellCount > 0) {
+        throw new RequestError(getTabularApprovalBlockedMessage());
+      }
+    }
   }
 
   if (limitedReviewer) {

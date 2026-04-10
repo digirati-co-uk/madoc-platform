@@ -35,6 +35,7 @@ import { ProjectSearchIndex } from './pages/crowdsourcing/projects/project-searc
 import { ProjectStreams } from './pages/crowdsourcing/projects/project-streams';
 import { OcrListPage } from './pages/enrichment/ocr/ocr-list';
 import { SearchIndexingPage } from './pages/enrichment/search-indexing';
+import { TypesensePlaygroundPage } from './pages/enrichment/typesense-playground';
 import { ExportSite } from './pages/export/export-site';
 import { CreateSite } from './pages/global/create-site';
 import { CreateUser } from './pages/global/create-user';
@@ -80,6 +81,7 @@ import { ActivityStreams } from './pages/sites/activity-streams';
 import { ViewExternalPlugin } from './pages/system/external-plugin';
 import { KeyRegen } from './pages/system/key-regen';
 import { ListApiKeys } from './pages/system/list-api-keys';
+import { QueueStatus } from './pages/system/queue-status';
 import { SystemStatus } from './pages/system/system-status';
 import { ListThemes } from './pages/system/themes/list-themes';
 import { CreateWebhook } from './pages/system/webhooks/create-webhook';
@@ -452,6 +454,10 @@ export const routes: RouteObject[] = [
     path: '/enrichment/search-indexing',
     element: <SearchIndexingPage />,
   },
+  {
+    path: '/enrichment/typesense-playground',
+    element: <TypesensePlaygroundPage />,
+  },
 
   // Export
   {
@@ -572,6 +578,10 @@ export const routes: RouteObject[] = [
   {
     path: '/global/status',
     element: <SystemStatus />,
+  },
+  {
+    path: '/global/queue',
+    element: <QueueStatus />,
   },
   {
     path: '/global/config',

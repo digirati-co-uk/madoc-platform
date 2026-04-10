@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
-import styled from 'styled-components';
+import styledComponents from 'styled-components';
 import { Button } from '../../../shared/navigation/Button';
 import { InputContainer } from '../../../shared/form/Input';
 import { LockIcon } from '../../../shared/icons/LockIcon';
@@ -11,9 +11,10 @@ import { useUser } from '../../../shared/hooks/use-site';
 import { useSiteConfiguration } from '../../features/SiteConfigurationContext';
 import { useRouteContext } from '../use-route-context';
 import { CanvasMenuHook } from './types';
-import { StyledFormMultilineInputElement } from '../../../shared/capture-models/editor/atoms/StyledForm';
+import { StyledFormTextarea } from '../../../shared/capture-models/editor/atoms/StyledForm';
+import { parsePersonalNotePayload, serializePersonalNotePayload } from '../../../shared/utility/personal-note-payload';
 
-const NoteContainer = styled.div`
+const NoteContainer = styledComponents.div`
   padding: 1em;
 `;
 
@@ -25,34 +26,47 @@ export function usePersonalNotesMenu(): CanvasMenuHook {
   const [newNote, setNewNote] = useState('');
   const api = useApi();
 
-  const enabled = config.project.allowPersonalNotes || false;
+  const modelPageOptions = config.project.modelPageOptions as { allowPersonalNotes?: boolean } | undefined;
+  const enabled = config.project.allowPersonalNotes || modelPageOptions?.allowPersonalNotes || false;
 
   const { data, refetch } = apiHooks.getPersonalNote(() =>
     canvasId && projectId && user ? [projectId, canvasId] : undefined
   );
 
+  const parsedNote = useMemo(() => parsePersonalNotePayload(data?.note), [data?.note]);
+
   const [saveNote, saveNoteStatus] = useMutation(async (newNoteValue: string) => {
     if (projectId && canvasId) {
-      await api.updatePersonalNote(projectId, canvasId, newNoteValue);
+      const latest = await api.getPersonalNote(projectId, canvasId);
+      const latestPayload = parsePersonalNotePayload(latest.note);
+
+      await api.updatePersonalNote(
+        projectId,
+        canvasId,
+        serializePersonalNotePayload({
+          note: newNoteValue,
+          tabularCellFlags: latestPayload.tabularCellFlags,
+        })
+      );
       await refetch();
     }
   });
 
   useEffect(() => {
-    if (data) {
-      setNewNote(data.note);
+    if (typeof data?.note === 'string') {
+      setNewNote(parsedNote.note);
     }
-  }, [data]);
+  }, [data?.note, parsedNote.note]);
 
   const content = (
     <>
       {data ? (
         <NoteContainer>
           <InputContainer fluid>
-            <StyledFormMultilineInputElement
+            <StyledFormTextarea
               data-cy="personal-notes"
               id="personal-notes"
-              minRows={10}
+              rows={10}
               value={newNote}
               onChange={e => setNewNote(e.target.value)}
               style={{ fontSize: '0.8em' }}
@@ -60,10 +74,10 @@ export function usePersonalNotesMenu(): CanvasMenuHook {
           </InputContainer>
           <Button
             $primary
-            disabled={saveNoteStatus.isLoading || newNote === data.note}
+            disabled={saveNoteStatus.isLoading || newNote === parsedNote.note}
             onClick={() => saveNote(newNote)}
           >
-            {newNote === data.note ? t('Saved') : t('Save')}
+            {newNote === parsedNote.note ? t('Saved') : t('Save')}
           </Button>
         </NoteContainer>
       ) : null}
@@ -75,7 +89,7 @@ export function usePersonalNotesMenu(): CanvasMenuHook {
     label: t('Personal notes'),
     icon: <LockIcon />,
     isLoaded: !!data,
-    notifications: data && data.note ? 1 : undefined,
+    notifications: parsedNote.note ? 1 : undefined,
     isHidden: !(user && enabled),
     content,
   };

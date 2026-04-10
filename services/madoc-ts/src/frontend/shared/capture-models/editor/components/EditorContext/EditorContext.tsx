@@ -14,8 +14,8 @@ const ChangeObserver: React.FC<{
   const doc = DocumentStore.useStore();
   const struct = StructureStore.useStore();
 
-  const lastStructure = useRef<CaptureModel['structure']>();
-  const lastDocument = useRef<CaptureModel['document']>();
+  const lastStructure = useRef<CaptureModel['structure']>(undefined);
+  const lastDocument = useRef<CaptureModel['document']>(undefined);
 
   const [onDocumentChange] = useDebouncedCallback(props.onDocumentChange, 300, {
     trailing: true,

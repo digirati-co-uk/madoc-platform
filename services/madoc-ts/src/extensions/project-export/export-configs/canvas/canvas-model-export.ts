@@ -1,6 +1,52 @@
 import { parseUrn } from '../../../../utility/parse-urn';
 import { ExportFile } from '../../server-export';
 import { ExportConfig } from '../../types';
+import {
+  isTabularCellFlagged,
+  parseTabularCellFlags,
+  sortTabularCellFlags,
+  TABULAR_CELL_FLAGS_PROPERTY,
+  type TabularCellFlag,
+} from '../../../../frontend/shared/utility/tabular-cell-flags';
+
+type NormalizedTabularCellReview = {
+  row: number;
+  column: string;
+  comment?: string;
+};
+
+function toNormalizedReview(flag: TabularCellFlag): NormalizedTabularCellReview {
+  const trimmedComment = typeof flag.comment === 'string' ? flag.comment.trim() : '';
+  return {
+    row: flag.rowIndex + 1,
+    column: flag.columnKey,
+    ...(trimmedComment ? { comment: trimmedComment } : {}),
+  };
+}
+
+function withNormalizedTabularCellReviews(model: any, format: string) {
+  if (format !== 'json') {
+    return model;
+  }
+
+  if (!Object.prototype.hasOwnProperty.call(model, TABULAR_CELL_FLAGS_PROPERTY)) {
+    return model;
+  }
+
+  const reviews = sortTabularCellFlags(parseTabularCellFlags(model[TABULAR_CELL_FLAGS_PROPERTY]));
+  const flags = reviews.filter(flag => isTabularCellFlagged(flag)).map(toNormalizedReview);
+  const notes = reviews.filter(flag => !isTabularCellFlagged(flag)).map(toNormalizedReview);
+
+  return {
+    ...model,
+    tabular_cell_reviews: {
+      flag_count: flags.length,
+      note_count: notes.length,
+      flags,
+      notes,
+    },
+  };
+}
 
 export const canvasModelExport: ExportConfig = {
   type: 'canvas-model-export',
@@ -61,17 +107,18 @@ export const canvasModelExport: ExportConfig = {
 
   async exportData(subject, options) {
     const project = options.config && options.config.project_id ? parseUrn(options.config.project_id.uri) : undefined;
+    const format = options.config?.format || 'json';
 
     const resp = await options.api.getSiteCanvasPublishedModels(subject.id, {
       project_id: project?.id,
-      format: options.config?.format || 'json',
+      format,
       reviews: !!options.config?.reviews,
     });
 
     // @todo it would be better if getSiteCanvasPublishedModels returned a project-id if known.
     return resp.models.map((model: any) =>
       ExportFile.json(
-        model,
+        withNormalizedTabularCellReviews(model, format),
         `/manifests/${options.subjectParent?.id}/models/${project?.id || model.projectId || 'unknown'}/${options.config
           ?.format || 'json'}/${subject.id}.json`,
         true

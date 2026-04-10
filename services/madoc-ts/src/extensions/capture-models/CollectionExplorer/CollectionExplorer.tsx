@@ -1,6 +1,6 @@
 import { InternationalString } from '@iiif/presentation-3';
 import React, { useState } from 'react';
-import { Select } from 'react-functional-select';
+import { Select } from '../../../frontend/shared/form/FunctionalSelect';
 import { useTranslation } from 'react-i18next';
 import { Tag } from '../../../frontend/shared/capture-models/editor/atoms/Tag';
 import { LocaleString } from '../../../frontend/shared/components/LocaleString';
@@ -12,6 +12,7 @@ export interface CollectionExplorerProps {
   type: string;
   disabled?: boolean;
   value: { id: number; label: InternationalString } | null;
+  children?: React.ReactNode;
 }
 
 function renderOptionLabel(option: any) {
@@ -51,16 +52,13 @@ export function CollectionExplorer({
             primary: '#005cc5',
           },
           control: {
-            boxShadow: '0 0 0 0',
             focusedBorderColor: '#005cc5',
-            selectedBgColor: '#005cc5',
             backgroundColor: '#fff',
             borderRadius: '3px',
           },
         }}
         initialValue={value}
         isSearchable
-        async={true}
         placeholder={t('Search collections')}
         options={searchResults}
         isDisabled={disabled}

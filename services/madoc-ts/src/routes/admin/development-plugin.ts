@@ -31,7 +31,7 @@ export const developmentPlugin: RouteMiddleware<unknown, { pluginId: string }> =
     throw new RequestError('Plugin is not in development mode');
   }
 
-  const token = createLimitedSignedToken({
+  const token = await createLimitedSignedToken({
     name: plugin.name,
     identifier: plugin.id,
     data: {

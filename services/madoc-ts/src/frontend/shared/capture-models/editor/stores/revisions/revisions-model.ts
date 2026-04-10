@@ -153,7 +153,13 @@ export type RevisionsModel = {
   // Field instances (for allowMultiple=true)
   createNewFieldInstance: Action<
     RevisionsModel,
-    { path: Array<[string, string]>; revisionId?: string; property: string }
+    {
+      path: Array<[string, string]>;
+      revisionId?: string;
+      property: string;
+      withId?: string;
+      multipleOverride?: boolean;
+    }
   >;
   createNewEntityInstance: Action<
     RevisionsModel,

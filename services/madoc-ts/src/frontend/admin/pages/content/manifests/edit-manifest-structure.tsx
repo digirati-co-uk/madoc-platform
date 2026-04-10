@@ -11,7 +11,6 @@ import { useApi } from '../../../../shared/hooks/use-api';
 import { useParams } from 'react-router-dom';
 import { Button, SmallButton, TinyButton } from '../../../../shared/navigation/Button';
 import { ReorderTable, ReorderTableRow } from '../../../../shared/atoms/ReorderTable';
-import { resetServerContext } from 'react-beautiful-dnd';
 import { TableActions, TableContainer, TableRow, TableRowLabel } from '../../../../shared/layout/Table';
 import { Heading3 } from '../../../../shared/typography/Heading3';
 import { useReorderItems } from '../../../hooks/use-reorder-items';
@@ -226,8 +225,6 @@ export const EditManifestStructure: UniversalComponent<EditManifestStructureType
         return ['manifest-structure', { id: Number(params.id) }];
       },
       getData: async (key, vars, api) => {
-        resetServerContext();
-
         return await api.getManifestStructure(vars.id);
       },
     }

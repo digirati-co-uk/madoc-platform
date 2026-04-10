@@ -1,12 +1,14 @@
 import { AnnotationPage } from '@iiif/presentation-3';
 import { Vault } from '@iiif/helpers/vault';
 import { sql } from 'slonik';
+import type { Context } from 'koa';
 import { deprecationGetItemsJson } from '../../deprecations/01-local-source-canvas';
 import { gatewayHost } from '../../gateway/api.server';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { IIIFBuilder } from '@iiif/builder';
 import { NotFound } from '../../utility/errors/not-found';
-import { createMetadataReducer } from '../../utility/iiif-metadata';
+import { createMetadataReducer, mapMetadata } from '../../utility/iiif-metadata';
+import { getMetadata } from '../../utility/iiif-database-helpers';
 import cache from 'memory-cache';
 
 type IIIFExportRow = {
@@ -71,18 +73,143 @@ type IIIFExportRow = {
       }
   );
 
+const defaultCorsAllowHeaders = 'Accept, Content-Type, Authorization, Cache-Control, Pragma, X-Requested-With';
+const madocIdTypes = new Set(['collection', 'manifest', 'canvas']);
+
+function normaliseIiifType(type: unknown) {
+  if (typeof type !== 'string') {
+    return undefined;
+  }
+  const lowered = type.toLowerCase();
+  const split = lowered.split(':');
+  return split[split.length - 1];
+}
+
+function injectMadocIds(payload: any, madocIdsByResourceId: Map<string, number>) {
+  if (!payload || typeof payload !== 'object') {
+    return;
+  }
+
+  const visited = new Set<any>();
+  const queue = [payload];
+
+  while (queue.length) {
+    const current = queue.shift();
+    if (!current || typeof current !== 'object' || visited.has(current)) {
+      continue;
+    }
+    visited.add(current);
+
+    if (!Array.isArray(current)) {
+      const resourceId = typeof current.id === 'string' ? current.id : undefined;
+      const iiifType = normaliseIiifType(current.type);
+      if (resourceId && iiifType && madocIdTypes.has(iiifType)) {
+        const madocId = madocIdsByResourceId.get(resourceId);
+        if (typeof madocId === 'number') {
+          current['madoc:id'] = madocId;
+        }
+      }
+
+      for (const value of Object.values(current)) {
+        if (value && typeof value === 'object') {
+          queue.push(value);
+        }
+      }
+      continue;
+    }
+
+    for (const item of current) {
+      if (item && typeof item === 'object') {
+        queue.push(item);
+      }
+    }
+  }
+}
+
+function setManifestCorsHeaders(context: Context) {
+  const requestOrigin = context.get('Origin') || '';
+  const allowOrigin = requestOrigin || '*';
+  const requestedHeaders = context.get('Access-Control-Request-Headers');
+  const requestedPrivateNetwork = context.get('Access-Control-Request-Private-Network');
+  const identitySeed = `${process.env.MADOC_INSTALLATION_CODE || 'madoc'}:${context.hostname}`.toLowerCase();
+  const identityHex = Buffer.from(identitySeed, 'utf8').toString('hex').padEnd(12, '0').slice(0, 12);
+  const privateNetworkAccessId = identityHex.match(/.{1,2}/g)?.join(':') || '00:00:00:00:00:00';
+  const privateNetworkAccessName = identitySeed.replace(/[^a-z0-9_.-]/g, '-').slice(0, 248) || 'madoc-local';
+
+  context.set('Access-Control-Allow-Origin', allowOrigin);
+  context.set('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  context.set('Access-Control-Allow-Headers', requestedHeaders || defaultCorsAllowHeaders);
+  context.set('Access-Control-Max-Age', '86400');
+  context.set('Cross-Origin-Resource-Policy', 'cross-origin');
+  context.set('Private-Network-Access-ID', privateNetworkAccessId);
+  context.set('Private-Network-Access-Name', privateNetworkAccessName);
+  context.vary('Origin');
+  context.vary('Access-Control-Request-Headers');
+  context.vary('Access-Control-Request-Private-Network');
+
+  if (requestOrigin) {
+    context.set('Access-Control-Allow-Credentials', 'true');
+  }
+
+  if (requestedPrivateNetwork === 'true' || !!requestOrigin) {
+    context.set('Access-Control-Allow-Private-Network', 'true');
+  }
+}
+
+export const siteManifestBuildOptions: RouteMiddleware<{
+  slug: string;
+  id: string;
+  version: string;
+  projectSlug?: string;
+}> = async context => {
+  setManifestCorsHeaders(context as unknown as Context);
+  context.status = 204;
+};
+
 export const siteManifestBuild: RouteMiddleware<{
   slug: string;
   id: string;
   version: string;
   projectSlug?: string;
 }> = async context => {
+  const version = context.params.version;
+  const debugParam = context.query.debug;
+  const debugValue = Array.isArray(debugParam) ? debugParam[0] : debugParam;
+  const debugEnabled =
+    version === 'source' &&
+    debugValue !== undefined &&
+    debugValue !== null &&
+    `${debugValue}`.toLowerCase() !== 'false' &&
+    `${debugValue}` !== '0';
+  const requestStart = process.hrtime.bigint();
+  const debugSteps: Array<{ step: string; durationMs: number }> = [];
+  const captureStep = (step: string, start: bigint) => {
+    if (!debugEnabled) {
+      return;
+    }
+    const durationMs = Number(process.hrtime.bigint() - start) / 1_000_000;
+    debugSteps.push({ step, durationMs: Number(durationMs.toFixed(2)) });
+  };
+  const addDebugReport = (output: any) => {
+    if (!debugEnabled) {
+      return;
+    }
+    const totalMs = Number(process.hrtime.bigint() - requestStart) / 1_000_000;
+    output.debug = {
+      steps: debugSteps,
+      totalMs: Number(totalMs.toFixed(2)),
+    };
+  };
+
   const cacheKey = `build-manifest-${context.params.slug}-${context.params.id}-${context.params.version}-${context.params.projectSlug}`;
+  const cacheLookupStart = process.hrtime.bigint();
   const cached = cache.get(cacheKey);
-  const noCacheHeader = context.get('Cache-Control');
-  if (cached && !noCacheHeader.includes('no-cache')) {
-    // Cache control.
-    context.set('Access-Control-Allow-Origin', '*');
+  captureStep('cache_lookup', cacheLookupStart);
+  const noCacheHeader = (context.get('Cache-Control') || '').toLowerCase();
+
+  setManifestCorsHeaders(context as unknown as Context);
+
+  if (!debugEnabled && cached && !noCacheHeader.includes('no-cache')) {
     context.set('Cache-Control', 'public, max-age=3600');
     context.set('X-Cache', 'HIT');
     context.response.body = cached;
@@ -90,6 +217,10 @@ export const siteManifestBuild: RouteMiddleware<{
   }
 
   const updateCache = (data: any) => {
+    if (debugEnabled) {
+      context.set('Cache-Control', 'no-store');
+      return;
+    }
     cache.put(cacheKey, data, 60 * 60 * 24);
     context.set('Cache-Control', 'public, max-age=3600');
   };
@@ -99,13 +230,14 @@ export const siteManifestBuild: RouteMiddleware<{
   const site = context.state.site;
   const siteSlug = context.params.slug;
   const manifestId = Number(context.params.id);
-  const version = context.params.version;
   const projectSlug = context.params.projectSlug;
 
   const baseUrl = `${gatewayHost}/s/${siteSlug}`;
+  const madocIdsByResourceId = new Map<string, number>();
 
+  const rowsQueryStart = process.hrtime.bigint();
   const rows = await context.connection.any(sql<IIIFExportRow>`
-      select 
+      select
         -- Derived.
         derived_manifest.resource_id as derived__id,
         -- IIIF
@@ -141,7 +273,7 @@ export const siteManifestBuild: RouteMiddleware<{
         linking.motivation as linking__motivation,
         linking.format as linking__format,
         linking.properties as linking__properties
-         
+
       from iiif_derived_resource derived_manifest
       -- get the list of canvases
       left join iiif_derived_resource_items manifest_items on derived_manifest.resource_id = manifest_items.resource_id and manifest_items.site_id = ${site.id}
@@ -151,10 +283,11 @@ export const siteManifestBuild: RouteMiddleware<{
       left join iiif_metadata metadata on iiif.id = metadata.resource_id and metadata.site_id = ${site.id}
       -- get linking
       left join iiif_linking linking on iiif.id = linking.resource_id and linking.site_id = ${site.id}
-      
+
       where derived_manifest.resource_id = ${manifestId}
         and derived_manifest.site_id = ${site.id}
   `);
+  captureStep('db_query', rowsQueryStart);
 
   function reduceIIIFExportRows(items: readonly IIIFExportRow[]) {
     const reducer = createMetadataReducer(r => ({ id: r.resource_id }));
@@ -276,10 +409,13 @@ export const siteManifestBuild: RouteMiddleware<{
     return state;
   }
 
+  const reduceRowsStart = process.hrtime.bigint();
   const table = reduceIIIFExportRows(rows);
+  captureStep('reduce_rows', reduceRowsStart);
   const manifestRow = table.Resource[manifestId];
 
   // Shim for canvases.
+  const canvasShimStart = process.hrtime.bigint();
   for (const canvas of Object.values(table.Resource)) {
     if (canvas.type === 'canvas') {
       if (!canvas.items) {
@@ -301,6 +437,7 @@ export const siteManifestBuild: RouteMiddleware<{
       }
     }
   }
+  captureStep('canvas_items_shim', canvasShimStart);
 
   const configOptions = {
     includeSearchService: false, // The search service doesn't appear to be working.
@@ -319,7 +456,9 @@ export const siteManifestBuild: RouteMiddleware<{
       collectionRow.source && useSourceIds
         ? collectionRow.source
         : `${baseUrl}/madoc/api/collections/${manifestId}/export/${version}`;
+    madocIdsByResourceId.set(newCollectionId, collectionRow.id);
 
+    const buildCollectionStart = process.hrtime.bigint();
     const newCollection = builder.createCollection(newCollectionId, collection => {
       const collectionMetadata = table.Metadata[collectionRow.id] || {};
       //
@@ -334,7 +473,8 @@ export const siteManifestBuild: RouteMiddleware<{
           const newManifestId =
             itemRow.source && useSourceIds
               ? itemRow.source
-              : `${baseUrl}/madoc/api/manifests/${itemRow.id}/export/${version}`;
+              : `${baseUrl}/madoc/api/${itemRow.type}s/${itemRow.id}/export/${version}`;
+          madocIdsByResourceId.set(newManifestId, itemRow.id);
           const fn: 'createManifest' =
             itemRow.type === 'collection' ? ('createCollection' as 'createManifest') : 'createManifest';
           collection[fn](newManifestId, manifest => {
@@ -375,9 +515,11 @@ export const siteManifestBuild: RouteMiddleware<{
         });
       }
     });
+    captureStep('build_collection', buildCollectionStart);
 
     switch (version) {
       case 'normalized':
+        injectMadocIds(vault.getState().iiif, madocIdsByResourceId);
         context.response.body = {
           collectionId: newCollection.id,
           madocId: collectionRow.id,
@@ -386,19 +528,22 @@ export const siteManifestBuild: RouteMiddleware<{
         break;
       case '3.0':
       case 'source': {
-        context.set('Access-Control-Allow-Origin', '*');
         context.response.status = 200;
-        const collectionJson: any = builder.toPresentation3({ id: newCollection.id, type: 'Manifest' });
+        const serializeCollectionStart = process.hrtime.bigint();
+        const collectionJson: any = builder.toPresentation3({ id: newCollection.id, type: 'Collection' });
         collectionJson['@context'] = 'http://iiif.io/api/presentation/3/context.json';
+        injectMadocIds(collectionJson, madocIdsByResourceId);
+        captureStep('serialize_source', serializeCollectionStart);
+        addDebugReport(collectionJson);
         context.response.body = collectionJson;
         updateCache(collectionJson);
         return;
       }
       case '2.1': {
-        context.set('Access-Control-Allow-Origin', '*');
         context.response.status = 200;
-        const collectionJson: any = builder.toPresentation2({ id: newCollection.id, type: 'Manifest' });
+        const collectionJson: any = builder.toPresentation2({ id: newCollection.id, type: 'Collection' });
         collectionJson['@context'] = 'http://iiif.io/api/presentation/2/context.json';
+        injectMadocIds(collectionJson, madocIdsByResourceId);
         context.response.body = collectionJson;
         updateCache(collectionJson);
         return;
@@ -419,7 +564,9 @@ export const siteManifestBuild: RouteMiddleware<{
     manifestRow.source && useSourceIds
       ? manifestRow.source
       : `${baseUrl}/madoc/api/manifests/${manifestId}/export/${version}`;
+  madocIdsByResourceId.set(newManifestId, manifestRow.id);
 
+  const buildManifestStart = process.hrtime.bigint();
   const newManifest = builder.createManifest(newManifestId, manifest => {
     const manifestMetadata = table.Metadata[manifestRow.id] || {};
     const manifestLinking = Object.values(table.Linking[manifestRow.id] || {});
@@ -524,7 +671,11 @@ export const siteManifestBuild: RouteMiddleware<{
       .map(c => table.Resource[c.id]);
 
     for (const canvasRow of canvases) {
-      const newCanvasId = canvasRow.source && useSourceIds ? canvasRow.source : `${manifest.id}/c${canvasRow.id}`;
+      // const newCanvasId = canvasRow.source && useSourceIds ? canvasRow.source : `${manifest.id}/c${canvasRow.id}`;
+      const newCanvasId = canvasRow.source; // Removed due to IIIF compatibility.
+      if (newCanvasId) {
+        madocIdsByResourceId.set(newCanvasId, canvasRow.id);
+      }
       manifest.createCanvas(newCanvasId, canvas => {
         const canvasMetadata = table.Metadata[canvasRow.id] || {};
         const canvasLinking = Object.values(table.Linking[canvasRow.id] || {});
@@ -651,9 +802,11 @@ export const siteManifestBuild: RouteMiddleware<{
       });
     }
   });
+  captureStep('build_manifest', buildManifestStart);
 
   switch (version) {
     case 'normalized':
+      injectMadocIds(vault.getState().iiif, madocIdsByResourceId);
       context.response.body = {
         manifestId: newManifest.id,
         madocId: manifestRow.id,
@@ -662,19 +815,22 @@ export const siteManifestBuild: RouteMiddleware<{
       break;
     case '3.0':
     case 'source': {
-      context.set('Access-Control-Allow-Origin', '*');
       context.response.status = 200;
+      const serializeManifestStart = process.hrtime.bigint();
       const manifestJson: any = builder.toPresentation3({ id: newManifest.id, type: 'Manifest' });
       manifestJson['@context'] = 'http://iiif.io/api/presentation/3/context.json';
+      injectMadocIds(manifestJson, madocIdsByResourceId);
+      captureStep('serialize_source', serializeManifestStart);
+      addDebugReport(manifestJson);
       context.response.body = manifestJson;
       updateCache(manifestJson);
       return;
     }
     case '2.1': {
-      context.set('Access-Control-Allow-Origin', '*');
       context.response.status = 200;
       const manifestJson: any = builder.toPresentation2({ id: newManifest.id, type: 'Manifest' });
       manifestJson['@context'] = 'http://iiif.io/api/presentation/2/context.json';
+      injectMadocIds(manifestJson, madocIdsByResourceId);
       context.response.body = manifestJson;
       updateCache(manifestJson);
       return;
@@ -683,4 +839,205 @@ export const siteManifestBuild: RouteMiddleware<{
       context.status = 404;
       return;
   }
+};
+
+type RootCollectionRow = {
+  resource_id: number;
+  resource_type: 'collection' | 'project';
+  thumbnail?: string;
+  key: string;
+  value: string;
+  language: string;
+  source: string;
+};
+
+export const siteRootCollectionOptions: RouteMiddleware<{
+  slug: string;
+}> = async context => {
+  setManifestCorsHeaders(context as unknown as Context);
+  context.status = 204;
+};
+
+export const siteRootCollection: RouteMiddleware<{
+  slug: string;
+}> = async context => {
+  const siteSlug = context.params.slug;
+  const userId = context.state.jwt ? context.state.jwt.user.id : undefined;
+  const isAdmin = context.state.jwt ? context.state.jwt.scope.indexOf('site.admin') !== -1 : false;
+  const site =
+    context.state.site ||
+    (siteSlug ? await context.siteManager.getCachedSiteIdBySlug(siteSlug, userId, isAdmin) : undefined);
+
+  if (!site) {
+    throw new NotFound('Site not found');
+  }
+
+  const siteId = site.id;
+  const baseUrl = `${gatewayHost}/s/${siteSlug}`;
+
+  const cacheKey = `root-collection-${siteSlug}`;
+  const cached = cache.get(cacheKey);
+  const noCacheHeader = (context.get('Cache-Control') || '').toLowerCase();
+
+  setManifestCorsHeaders(context as unknown as Context);
+
+  if (cached && !noCacheHeader.includes('no-cache')) {
+    context.set('Cache-Control', 'public, max-age=3600');
+    context.set('X-Cache', 'HIT');
+    context.response.body = cached;
+    return;
+  }
+
+  // Query all published collections (non-flat, top-level style)
+  const collectionsQuery = sql<{ resource_id: number; resource_type: 'collection'; thumbnail: string | null }>`
+    select
+      cidr.resource_id as resource_id,
+      'collection'::text as resource_type,
+      coalesce(
+        ir.default_thumbnail,
+        ir.placeholder_image,
+        manifest_thumbnail(${siteId}, collection_manifest.item_id)
+      ) as thumbnail
+    from iiif_derived_resource cidr
+    left join iiif_resource ir on cidr.resource_id = ir.id
+    left join lateral (
+      select im.item_id
+      from iiif_derived_resource_items im
+      left join iiif_resource mir on mir.id = im.item_id
+      where im.resource_id = cidr.resource_id
+        and im.site_id = ${siteId}
+        and mir.type = 'manifest'
+      order by im.item_index
+      limit 1
+    ) collection_manifest on true
+    where cidr.resource_type = 'collection'
+      and cidr.site_id = ${siteId}
+      and cidr.flat = false
+      and cidr.published = true
+    order by cidr.resource_id desc
+  `;
+
+  // Query all published projects
+  const projectsQuery = sql<{ resource_id: number; resource_type: 'project'; thumbnail: string | null }>`
+    select
+      iiif_project.collection_id as resource_id,
+      'project'::text as resource_type,
+      coalesce(
+        ir.default_thumbnail,
+        ir.placeholder_image,
+        manifest_thumbnail(${siteId}, project_manifest.item_id)
+      ) as thumbnail
+    from iiif_project
+    left join iiif_resource ir on iiif_project.collection_id = ir.id
+    left join lateral (
+      select im.item_id
+      from iiif_derived_resource_items im
+      left join iiif_resource mir on mir.id = im.item_id
+      where im.resource_id = iiif_project.collection_id
+        and im.site_id = ${siteId}
+        and mir.type = 'manifest'
+      order by im.item_index
+      limit 1
+    ) project_manifest on true
+    where iiif_project.site_id = ${siteId}
+      and (iiif_project.status = 1 or iiif_project.status = 2)
+    order by iiif_project.id desc
+  `;
+
+  // Get collections with metadata
+  const collectionRows = await context.connection.any(
+    getMetadata<{ resource_id: number; resource_type: 'collection'; thumbnail: string | null }, RootCollectionRow>(
+      collectionsQuery,
+      siteId,
+      ['label', 'summary']
+    )
+  );
+
+  // Get projects with metadata (using project's collection_id for metadata)
+  const projectRows = await context.connection.any(
+    getMetadata<{ resource_id: number; resource_type: 'project'; thumbnail: string | null }, RootCollectionRow>(
+      projectsQuery,
+      siteId,
+      ['label', 'summary']
+    )
+  );
+
+  // Map metadata for collections
+  const collections = mapMetadata<{ label?: any; summary?: any }, RootCollectionRow>(collectionRows, row => ({
+    id: row.resource_id,
+    type: 'collection' as const,
+    thumbnail: row.thumbnail,
+  }));
+
+  // Map metadata for projects
+  const projects = mapMetadata<{ label?: any; summary?: any }, RootCollectionRow>(projectRows, row => ({
+    id: row.resource_id,
+    type: 'project' as const,
+    thumbnail: row.thumbnail,
+  }));
+
+  // Build the root collection using IIIFBuilder
+  const vault = new Vault();
+  const builder = new IIIFBuilder(vault as any);
+  const madocIdsByResourceId = new Map<string, number>();
+
+  const rootCollectionId = `${baseUrl}/madoc/api/collections/root`;
+
+  const rootCollection = builder.createCollection(rootCollectionId, collection => {
+    collection.setLabel({ en: [site.title || 'Root Collection'] });
+    collection.setSummary({ en: [site.summary || 'All collections and projects on this site'] });
+
+    // Add collections as items
+    for (const coll of collections) {
+      const collectionItemId = `${baseUrl}/madoc/api/collections/${coll.id}/export/3.0`;
+      madocIdsByResourceId.set(collectionItemId, coll.id);
+
+      collection.createCollection(collectionItemId, item => {
+        if (coll.label) {
+          item.setLabel(coll.label);
+        }
+        if (coll.summary) {
+          item.setSummary(coll.summary);
+        }
+        if (coll.thumbnail) {
+          item.addThumbnail({
+            id: coll.thumbnail,
+            type: 'Image',
+            format: 'image/jpeg',
+          });
+        }
+      });
+    }
+
+    // Add projects as collections (since projects have collection_ids)
+    for (const proj of projects) {
+      const projectCollectionId = `${baseUrl}/madoc/api/collections/${proj.id}/export/3.0`;
+      madocIdsByResourceId.set(projectCollectionId, proj.id);
+
+      collection.createCollection(projectCollectionId, item => {
+        if (proj.label) {
+          item.setLabel(proj.label);
+        }
+        if (proj.summary) {
+          item.setSummary(proj.summary);
+        }
+        if (proj.thumbnail) {
+          item.addThumbnail({
+            id: proj.thumbnail,
+            type: 'Image',
+            format: 'image/jpeg',
+          });
+        }
+      });
+    }
+  });
+
+  context.response.status = 200;
+  const collectionJson: any = builder.toPresentation3({ id: rootCollection.id, type: 'Collection' });
+  collectionJson['@context'] = 'http://iiif.io/api/presentation/3/context.json';
+  injectMadocIds(collectionJson, madocIdsByResourceId);
+
+  cache.put(cacheKey, collectionJson, 60 * 60 * 24);
+  context.set('Cache-Control', 'public, max-age=3600');
+  context.response.body = collectionJson;
 };

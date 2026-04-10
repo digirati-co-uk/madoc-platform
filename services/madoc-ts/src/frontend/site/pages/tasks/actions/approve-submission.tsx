@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { ProjectFull } from '../../../../../types/project-full';
 import { Revisions } from '../../../../shared/capture-models/editor/stores/revisions';
 import { useTranslation } from 'react-i18next';
@@ -12,6 +12,7 @@ import {
 import { ModalButton } from '../../../../shared/components/Modal';
 import { Button, ButtonRow } from '../../../../shared/navigation/Button';
 import CheckCircleIcon from '../../../../shared/icons/CheckCircleIcon';
+import { getTabularApprovalBlockedMessage, getTabularFlaggedCellCount } from '../../../../../utility/tabular-flags';
 
 export const ApproveSubmission: React.FC<{
   onApprove: () => void;
@@ -20,7 +21,8 @@ export const ApproveSubmission: React.FC<{
   allRevisionIds?: string[];
   reviewTaskId: string;
   project?: ProjectFull<any>;
-}> = ({ userTaskId, allUserTaskIds, allRevisionIds, reviewTaskId, onApprove, project }) => {
+  disabledReason?: string;
+}> = ({ userTaskId, onApprove, project, disabledReason }) => {
   const { acceptedRevision } = Revisions.useStoreState(state => {
     return {
       acceptedRevision: state.currentRevision,
@@ -30,49 +32,52 @@ export const ApproveSubmission: React.FC<{
   const api = useApi();
   const site = useSite();
   const { t } = useTranslation();
-  const revisionIdsToRemove = allRevisionIds?.filter(id => id && id !== acceptedRevision?.revision.id);
-  const userTaskIdsToRemove = allUserTaskIds?.filter(id => id && id !== userTaskId);
-  const approveAndRemoveApiCall = useCallback(() => {
-    if (acceptedRevision && revisionIdsToRemove && userTaskIdsToRemove) {
-      setIsLoading(true);
-      api
-        .reviewApproveAndRemoveSubmission({
-          userTaskIds: userTaskIdsToRemove,
-          reviewTaskId,
-          acceptedRevision,
-          revisionIdsToRemove,
-        })
-        .then(() => {
-          setIsLoading(false);
-          onApprove();
-        });
+  const unresolvedFlaggedCellCount = useMemo(() => {
+    if (!acceptedRevision) {
+      return 0;
     }
-  }, [acceptedRevision, api, onApprove, reviewTaskId, revisionIdsToRemove, userTaskIdsToRemove]);
+
+    return getTabularFlaggedCellCount(acceptedRevision);
+  }, [acceptedRevision]);
+  const unresolvedFlagsDisabledReason = unresolvedFlaggedCellCount > 0 ? getTabularApprovalBlockedMessage() : undefined;
+  const resolvedDisabledReason = disabledReason || unresolvedFlagsDisabledReason;
+  const isApproveDisabled = loading || !!resolvedDisabledReason;
 
   const approveApiCall = useCallback(() => {
-    if (acceptedRevision) {
-      const definition =
-        project && project.template ? api.projectTemplates.getDefinition(project.template, site.id) : null;
-
-      setIsLoading(true);
-      api.crowdsourcing
-        .reviewApproveSubmission({
-          revisionRequest: acceptedRevision,
-          userTaskId,
-          projectTemplate:
-            definition && project
-              ? {
-                  template: definition,
-                  config: project.template_config,
-                }
-              : undefined,
-        })
-        .then(async () => {
-          await onApprove();
-          setIsLoading(false);
-        });
+    if (resolvedDisabledReason || !acceptedRevision) {
+      return;
     }
-  }, [acceptedRevision, api.crowdsourcing, api.projectTemplates, onApprove, project, site.id, userTaskId]);
+
+    const definition =
+      project && project.template ? api.projectTemplates.getDefinition(project.template, site.id) : null;
+
+    setIsLoading(true);
+    api.crowdsourcing
+      .reviewApproveSubmission({
+        revisionRequest: acceptedRevision,
+        userTaskId,
+        projectTemplate:
+          definition && project
+            ? {
+                template: definition,
+                config: project.template_config,
+              }
+            : undefined,
+      })
+      .then(async () => {
+        await onApprove();
+        setIsLoading(false);
+      });
+  }, [
+    acceptedRevision,
+    api.crowdsourcing,
+    api.projectTemplates,
+    onApprove,
+    project,
+    resolvedDisabledReason,
+    site.id,
+    userTaskId,
+  ]);
 
   if (acceptedRevision?.revision.status === 'accepted') {
     return null;
@@ -83,11 +88,12 @@ export const ApproveSubmission: React.FC<{
       as={ModalButton}
       button={true}
       modalSize="sm"
-      disabled={loading}
+      disabled={isApproveDisabled}
       autoHeight={true}
-      title={t('Approve') || ''}
+      title={resolvedDisabledReason || t('Approve') || ''}
       render={() => (
         <div>
+          {resolvedDisabledReason ? <p>{resolvedDisabledReason}</p> : null}
           <ul>
             <li>{t('The submission will be approved and all other submissions will remain')}</li>
           </ul>
@@ -97,6 +103,7 @@ export const ApproveSubmission: React.FC<{
         <ButtonRow>
           <Button
             data-cy="approve-submission"
+            disabled={isApproveDisabled}
             onClick={() => {
               approveApiCall();
               close();

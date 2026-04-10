@@ -9,6 +9,7 @@ import {
 import { useAdminLayout } from '../components/AdminMenu';
 import {
   ProjectConfigContributions,
+  ProjectConfigTemplate,
   ProjectConfigInterface,
   ProjectConfigOther,
   ProjectConfigReview,
@@ -29,6 +30,7 @@ interface EditProjectConfigurationProps {
   updateKey: any;
   configuration: ProjectConfigurationNEW;
   immutableFields?: string[];
+  contributionsTemplate?: ProjectConfigTemplate;
   old?: boolean;
   onSave: (config: ProjectConfigurationNEW) => Promise<void>;
 }
@@ -43,6 +45,7 @@ export function EditProjectConfiguration(props: EditProjectConfigurationProps) {
 
   const { scrollToTop } = useAdminLayout();
   const projectConfiguration = props.configuration;
+  const contributionsTemplate = props.contributionsTemplate ?? ProjectConfigContributions;
   const { t } = useTranslation();
   const [didSave, setDidSave] = useShortMessage();
 
@@ -127,7 +130,7 @@ export function EditProjectConfiguration(props: EditProjectConfigurationProps) {
             ref={contributionsRef}
             immutableFields={props.immutableFields}
             data={projectConfiguration}
-            template={ProjectConfigContributions}
+            template={contributionsTemplate}
           />
         </AccordionItem>
 

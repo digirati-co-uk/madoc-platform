@@ -1,5 +1,6 @@
 import react from '@vitejs/plugin-react';
 import { readFileSync } from 'fs';
+import path from 'path';
 
 const pkg = JSON.parse(readFileSync('./package.json').toString());
 
@@ -65,10 +66,7 @@ export function createConfig(name, entry) {
     clearScreen: false,
     resolve: {
       dedupe: DEDUPE,
-      alias: {
-        'react-iiif-vault': 'react-iiif-vault/react17',
-        'react-dom/client': 'react-dom',
-      },
+      alias: [{ find: /^@\//, replacement: `${path.resolve(process.cwd(), 'src')}/` }],
     },
     build: {
       dedupe: DEDUPE,
@@ -83,6 +81,16 @@ export function createConfig(name, entry) {
       minify: false,
       sourcemap: true,
       rollupOptions: {
+        onwarn(warning, warn) {
+          if (
+            warning.code === 'MODULE_LEVEL_DIRECTIVE' &&
+            typeof warning.message === 'string' &&
+            warning.message.includes('"use client"')
+          ) {
+            return;
+          }
+          warn(warning);
+        },
         external: [
           // Node + missing deps.
           'pm2',
@@ -97,6 +105,10 @@ export function createConfig(name, entry) {
           'whatwg-url',
           'zlib',
           'util',
+          'assert',
+          'async_hooks',
+          'node:assert',
+          'node:async_hooks',
           'debug',
           'csv-stringify',
           ...Object.keys(pkg.dependencies),
@@ -114,10 +126,13 @@ export function createConfig(name, entry) {
               },
             },
     },
+    esbuild: {
+      jsx: 'automatic',
+      jsxSideEffects: false,
+    },
     plugins: [
       react({
-        jsxRuntime: 'classic',
-        jsxPure: true,
+        jsxRuntime: 'automatic',
       }),
     ],
   });

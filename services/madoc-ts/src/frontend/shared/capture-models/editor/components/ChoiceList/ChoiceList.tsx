@@ -4,7 +4,7 @@ import { Button } from '../../atoms/Button';
 import { List, ListContent, ListDescription, ListHeader, ListItem } from '../../atoms/List';
 import { Folder } from '@styled-icons/entypo/Folder';
 import { List as ListIcon } from '@styled-icons/entypo/List';
-import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 import { Tag } from '../../atoms/Tag';
 import { useTranslation } from 'react-i18next';
 

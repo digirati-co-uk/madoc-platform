@@ -18,7 +18,7 @@ export function useCaptureModelVisualSettings() {
   return useContext(CaptureModelVisualSettingsContext);
 }
 
-export const CaptureModelVisualSettingsProvider: FC<Partial<CaptureModelVisualSettings>> = ({ children, ...props }) => {
+export const CaptureModelVisualSettingsProvider: FC<Partial<CaptureModelVisualSettings> & { children?: React.ReactNode }> = ({ children, ...props }) => {
   const config = useMemo(() => {
     return {
       ...defaults,

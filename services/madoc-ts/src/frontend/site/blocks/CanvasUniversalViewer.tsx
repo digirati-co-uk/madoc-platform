@@ -16,7 +16,7 @@ export const CanvasUniversalViewer: React.FC = () => {
   const { data } = useManifestStructure(context.manifest);
   const canvasIndex = data?.ids.indexOf(canvasResponse?.canvas?.id as any);
   const canvas = canvasResponse?.canvas;
-  const lastCanvasUrl = useRef<string>();
+  const lastCanvasUrl = useRef<string>(undefined);
   const canvasUrl = canvas?.source_id;
   const navigate = useNavigate();
   const createLink = useRelativeLinks();

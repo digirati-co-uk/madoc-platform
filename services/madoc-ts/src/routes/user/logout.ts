@@ -1,32 +1,37 @@
-import fetch from 'node-fetch';
 import { RouteMiddleware } from '../../types/route-middleware';
 
 export const logout: RouteMiddleware<{ slug: string }> = async context => {
-  const jwt = context.state.jwt;
-  if (jwt && jwt.user.id) {
-    const siteCookies = context.cookies.get('madoc-sites');
-    if (!siteCookies) {
-      return;
-    }
-    const sites = siteCookies.split(',');
-    const cookieName = context.externalConfig.cookieName || 'madoc';
-    // // Get user sites
-    // Unset cookies.
-    for (const site of sites) {
-      const domain = `/s/${site}`;
-      context.cookies.set(`${cookieName}/${site}`, '', {
-        path: domain,
-        signed: true,
-        expires: new Date(Date.parse('0')),
-        overwrite: true,
-      });
-    }
+  const cookieName = context.externalConfig.cookieName || 'madoc';
+  const siteCookies = context.cookies.get('madoc-sites');
+  const sites = siteCookies
+    ? siteCookies
+        .split(',')
+        .map(site => site.trim())
+        .filter(Boolean)
+    : [context.params.slug];
+
+  // Unset per-site JWT cookies.
+  for (const site of sites) {
+    const domain = `/s/${site}`;
+    context.cookies.set(`${cookieName}/${site}`, '', {
+      path: domain,
+      signed: true,
+      expires: new Date(Date.parse('0')),
+      overwrite: true,
+    });
   }
 
-  if (context.query.redirect && !context.query.redirect.startsWith('/')) {
-    context.query.redirect = '';
-  }
+  // Unset the site index cookie too, so we don't keep stale site ids around.
+  context.cookies.set('madoc-sites', '', {
+    path: '/',
+    signed: true,
+    expires: new Date(Date.parse('0')),
+    overwrite: true,
+  });
+
+  const requestedRedirect = Array.isArray(context.query.redirect) ? context.query.redirect[0] : context.query.redirect;
+  const safeRedirect = requestedRedirect && requestedRedirect.startsWith('/') ? requestedRedirect : '';
 
   // Redirect to site homepage.
-  context.response.redirect(context.query.redirect || `/s/${context.params.slug}`);
+  context.response.redirect(safeRedirect || `/s/${context.params.slug}`);
 };

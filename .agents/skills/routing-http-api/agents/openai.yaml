@@ -1,0 +1,4 @@
+interface:
+  display_name: "Madoc TS Routing & API"
+  short_description: "Route layout, handlers, and conventions"
+  default_prompt: "Use -http-api to trace or add routes in services/madoc-ts."

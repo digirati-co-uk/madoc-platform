@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ThemeProvider } from 'styled-components';
 import { Link } from 'react-router-dom';
 import { defaultTheme } from '../../../shared/capture-models/editor/themes';
+import { Revisions } from '../../../shared/capture-models/editor/stores/revisions';
 import { Button } from '../../../shared/navigation/Button';
 import { EditorSlots } from '../../../shared/capture-models/new/components/EditorSlots';
 import { RevisionProviderWithFeatures } from '../../../shared/capture-models/new/components/RevisionProviderWithFeatures';
@@ -12,7 +13,9 @@ import '../../../shared/capture-models/editor/input-types/HTMLField';
 
 import { CrowdsourcingTask } from '../../../../gateway/tasks/crowdsourcing-task';
 import { HrefLink } from '../../../shared/utility/href-link';
+import { createTabularContributionPreviewDocument } from '../../../shared/utility/tabular-contribution-preview';
 import { useCrowdsourcingTaskDetails } from '../../hooks/use-crowdsourcing-task-details';
+import { RevisionList } from '../../features/tasks/RevisionList';
 import { TaskContext } from '../loaders/task-loader';
 import { WarningMessage } from '../../../shared/callouts/WarningMessage';
 import { SuccessMessage } from '../../../shared/callouts/SuccessMessage';
@@ -20,6 +23,30 @@ import { ErrorMessage } from '../../../shared/callouts/ErrorMessage';
 import { CrowdsourcingTaskManifest } from './crowdsourcing-task-manifest';
 import { useApiTask } from '../../../shared/hooks/use-api-task';
 import { useSiteConfiguration } from '../../features/SiteConfigurationContext';
+
+const TabularTaskPreviewSubmission: React.FC = () => {
+  const currentRevision = Revisions.useStoreState(state => state.currentRevision);
+  const previewRevision = useMemo(() => {
+    if (!currentRevision || !currentRevision.document) {
+      return null;
+    }
+
+    return {
+      ...currentRevision,
+      document: createTabularContributionPreviewDocument(currentRevision.document, currentRevision.revision.id),
+    };
+  }, [currentRevision]);
+
+  if (!previewRevision) {
+    return null;
+  }
+
+  return (
+    <div style={{ padding: '0 .5em' }}>
+      <RevisionList revisions={[previewRevision]} />
+    </div>
+  );
+};
 
 const ViewCrowdSourcingTask: React.FC<TaskContext<CrowdsourcingTask>> = ({ task, parentTask }) => {
   const { t } = useTranslation();
@@ -44,6 +71,7 @@ const ViewCrowdSourcingTask: React.FC<TaskContext<CrowdsourcingTask>> = ({ task,
 
   const isParentComplete = !config.project.allowSubmissionsWhenCanvasComplete && parentTaskData?.status === 3;
   const isDraft = task.status === 1;
+  const isTabularProject = project?.template === 'tabular-project';
 
   if (!isCanvas && !showCaptureModelOnManifest) {
     return (
@@ -72,8 +100,11 @@ const ViewCrowdSourcingTask: React.FC<TaskContext<CrowdsourcingTask>> = ({ task,
           </SuccessMessage>
         ) : null}
         {isComplete ? <SuccessMessage $banner>{t('This task is complete.')}</SuccessMessage> : null}
-        {isDraft && isParentComplete ?
-            <WarningMessage $banner>{t('This tasks parent is complete, you can no longer edit or submit this task')}</WarningMessage> : null}
+        {isDraft && isParentComplete ? (
+          <WarningMessage $banner>
+            {t('This tasks parent is complete, you can no longer edit or submit this task')}
+          </WarningMessage>
+        ) : null}
         {wasRejected ? (
           <ErrorMessage $banner>
             {t('This contribution was rejected. You can make another contribution from the')}{' '}
@@ -96,7 +127,10 @@ const ViewCrowdSourcingTask: React.FC<TaskContext<CrowdsourcingTask>> = ({ task,
             captureModel={captureModel}
             slotConfig={{
               editor: { allowEditing: false },
-              components: { SubmitButton: SimpleSaveButton },
+              components: {
+                SubmitButton: SimpleSaveButton,
+                ...(isTabularProject ? { PreviewSubmission: TabularTaskPreviewSubmission } : {}),
+              },
             }}
           >
             <EditorSlots.PreviewSubmission />

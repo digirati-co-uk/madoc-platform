@@ -25,7 +25,7 @@ export const ViewCrowdsourcingReview: React.FC<TaskContext<CrowdsourcingReview>>
 
     return (
       <>
-        <CrowdsourcingManifestReview task={task as any} />;
+        <CrowdsourcingManifestReview task={task as any} />
       </>
     );
   }

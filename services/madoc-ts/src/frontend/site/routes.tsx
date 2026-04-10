@@ -522,12 +522,12 @@ export function createRoutes(Components: RouteComponents): CreateRouteType {
         },
         {
           path: '/projects/:slug/reviews',
-          element: <Components.ReviewListingPage />,
+          element: <Components.ProjectReviewListingPage />,
           exact: true,
         },
         {
           path: '/projects/:slug/reviews/:taskId',
-          element: <Components.ReviewListingPage />,
+          element: <Components.ProjectReviewListingPage />,
           children: [
             {
               path: '/projects/:slug/reviews/:taskId',
@@ -638,7 +638,7 @@ export function createRoutes(Components: RouteComponents): CreateRouteType {
     {
       path: '/search',
       exact: true,
-      element: <Components.Search />,
+      element: <Components.TypesenseSearch />,
     },
     {
       path: '/dashboard',

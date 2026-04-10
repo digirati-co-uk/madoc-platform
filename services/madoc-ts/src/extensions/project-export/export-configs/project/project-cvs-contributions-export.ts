@@ -1,10 +1,64 @@
 import { parseModelTarget } from '../../../../utility/parse-model-target';
 import { ExportFile } from '../../server-export';
 import { ExportConfig, ExportDataOptions, ExportFileDefinition, SupportedExportResource } from '../../types';
-import { getValue } from '@iiif/helpers/i18n';
+import { getValue } from '@iiif/helpers';
+import {
+  isTabularCellFlagged,
+  parseTabularCellFlags,
+  sortTabularCellFlags,
+  TABULAR_CELL_FLAGS_PROPERTY,
+  type TabularCellFlag,
+} from '../../../../frontend/shared/utility/tabular-cell-flags';
 
 type CachedTarget = { label?: string; uri?: string };
 type CachedManifest = { label?: string; uri?: string };
+type TabularContributionNormalization = {
+  tabular_flag_count: number | null;
+  tabular_note_count: number | null;
+  tabular_flags: string | null;
+  tabular_notes: string | null;
+  normalizedContributionData: string | null;
+};
+
+function formatTabularCellReview(flag: TabularCellFlag): string {
+  const base = `row ${flag.rowIndex + 1}, column ${flag.columnKey}`;
+  const comment = typeof flag.comment === 'string' ? flag.comment.trim() : '';
+  return comment ? `${base}: ${comment}` : base;
+}
+
+function getTabularContributionNormalization(fieldKey: unknown, value: unknown): TabularContributionNormalization {
+  if (fieldKey !== TABULAR_CELL_FLAGS_PROPERTY) {
+    return {
+      tabular_flag_count: null,
+      tabular_note_count: null,
+      tabular_flags: null,
+      tabular_notes: null,
+      normalizedContributionData: null,
+    };
+  }
+
+  const reviews = sortTabularCellFlags(parseTabularCellFlags(value));
+  const flags = reviews.filter(flag => isTabularCellFlagged(flag)).map(formatTabularCellReview);
+  const notes = reviews.filter(flag => !isTabularCellFlagged(flag)).map(formatTabularCellReview);
+
+  const tabular_flags = flags.length ? flags.join(' | ') : null;
+  const tabular_notes = notes.length ? notes.join(' | ') : null;
+
+  const normalizedContributionData = [
+    tabular_flags ? `flags: ${tabular_flags}` : '',
+    tabular_notes ? `notes: ${tabular_notes}` : '',
+  ]
+    .filter(Boolean)
+    .join(' || ');
+
+  return {
+    tabular_flag_count: flags.length,
+    tabular_note_count: notes.length,
+    tabular_flags,
+    tabular_notes,
+    normalizedContributionData: normalizedContributionData || 'none',
+  };
+}
 
 function toModelTargetInput(target: unknown): any[] {
   if (target == null) return [];
@@ -43,7 +97,6 @@ function extractOriginalUri(resource: any): string | undefined {
     'iiifId',
     'iiif_id',
     'iiifUri',
-    'iiif_uri',
     'iiif_uri',
     'uri',
     'url',
@@ -177,7 +230,7 @@ async function fetchTargets(api: any, manifestIds: number[], canvasIds: number[]
       const uri =
         typeof response?.manifest?.source === 'string' && response.manifest.source.trim()
           ? response.manifest.source
-          : extractOriginalUri(manifest) ?? extractOriginalUri(response);
+          : (extractOriginalUri(manifest) ?? extractOriginalUri(response));
 
       cache.manifests[id.toString()] = {
         label: getValue(manifest.label),
@@ -283,6 +336,7 @@ export const projectCsvContributionsExport: ExportConfig = {
 
     const rows = allPublished.map(item => {
       const t = safeParseModelTarget((item as any).target);
+      const tabular = getTabularContributionNormalization(item.key, (item as any).value);
 
       const manifestInternalId = t.manifest?.id;
       const canvasInternalId = t.canvas?.id;
@@ -301,6 +355,9 @@ export const projectCsvContributionsExport: ExportConfig = {
         madoc_contribution_id: item.id ?? null,
 
         contribution_data: (() => {
+          if (tabular.normalizedContributionData !== null) {
+            return tabular.normalizedContributionData;
+          }
           if (typeof (item as any).value === 'string') return (item as any).value;
           try {
             return JSON.stringify((item as any).value);
@@ -308,6 +365,10 @@ export const projectCsvContributionsExport: ExportConfig = {
             return String((item as any).value);
           }
         })(),
+        tabular_flag_count: tabular.tabular_flag_count,
+        tabular_note_count: tabular.tabular_note_count,
+        tabular_flags: tabular.tabular_flags,
+        tabular_notes: tabular.tabular_notes,
         capture_model_number: item.model_id ?? null,
 
         status: getContributionStatus(item) ?? (statusFilter !== 'all' ? statusFilter : null),

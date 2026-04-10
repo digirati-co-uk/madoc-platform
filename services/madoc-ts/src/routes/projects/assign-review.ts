@@ -2,11 +2,19 @@ import { RouteMiddleware } from '../../types/route-middleware';
 import { api } from '../../gateway/api.server';
 import { optionalUserWithScope } from '../../utility/user-with-scope';
 import { RequestError } from '../../utility/errors/request-error';
+import type { CrowdsourcingTask } from '../../gateway/tasks/crowdsourcing-task';
+import { hasTabularFlaggedCells } from '../../utility/tabular-flags';
 
-export const assignReview: RouteMiddleware<{ id: string }, { task_id: string }> = async context => {
+export const assignReview: RouteMiddleware<
+  { id: string },
+  {
+    task_id: string;
+  }
+> = async context => {
   const { siteId } = optionalUserWithScope(context, ['site.admin']);
   const { id } = context.params;
   const { task_id } = context.request.body;
+  let excludeAutomated = false;
   const userApi = api.asUser({ siteId });
 
   if (!task_id) {
@@ -23,7 +31,42 @@ export const assignReview: RouteMiddleware<{ id: string }, { task_id: string }> 
     throw new RequestError('Can only assign review tasks');
   }
 
-  if (task.parent_task && task.parent_task !== project.task_id) {
+  let hasFlaggedSubmissions = false;
+  if (task.parent_task) {
+    const crowdsourcingTasks = await userApi.getTasks<CrowdsourcingTask>(0, {
+      all: true,
+      parent_task_id: task.parent_task,
+      type: 'crowdsourcing-task',
+      detail: true,
+    });
+
+    const ready = crowdsourcingTasks.tasks.filter(
+      t => t.status > 1 && t.status !== 4 && t.status !== 3 && t.state.reviewTask === task.id
+    );
+
+    for (const item of ready) {
+      const revisionId = item.state.revisionId;
+      if (!revisionId) {
+        continue;
+      }
+
+      try {
+        const revisionRequest = await userApi.getCaptureModelRevision(revisionId);
+        if (hasTabularFlaggedCells(revisionRequest)) {
+          hasFlaggedSubmissions = true;
+          break;
+        }
+      } catch {
+        // Ignore revision load errors for assignment fallback logic.
+      }
+    }
+  }
+
+  if (hasFlaggedSubmissions) {
+    excludeAutomated = true;
+  }
+
+  if (!hasFlaggedSubmissions && task.parent_task && task.parent_task !== project.task_id) {
     // Check if the parent task is assigned to someone, and use that instead.
     const parentTask = await userApi.getTaskById(task.parent_task);
     if (parentTask.assignee && !parentTask.assignee.is_service) {
@@ -45,7 +88,10 @@ export const assignReview: RouteMiddleware<{ id: string }, { task_id: string }> 
     const includeAdmins = project.config.adminsAreReviewers;
 
     // 1. Find all reviewers
-    const users = await context.siteManager.getUsersByRoles(siteId, ['reviewer'], !!includeAdmins);
+    let users = await context.siteManager.getUsersByRoles(siteId, ['trusted-user', 'reviewer'], !!includeAdmins);
+    if (excludeAutomated) {
+      users = users.filter(user => !user.automated);
+    }
 
     if (users.length) {
       // 2. Choose one at random.
@@ -65,7 +111,10 @@ export const assignReview: RouteMiddleware<{ id: string }, { task_id: string }> 
         return;
       }
     }
-    return;
+
+    if (!excludeAutomated) {
+      return;
+    }
   }
 
   if (project.config.manuallyAssignedReviewer) {
@@ -75,7 +124,7 @@ export const assignReview: RouteMiddleware<{ id: string }, { task_id: string }> 
       // 1. Get users name
       const user = await context.siteManager.getSiteUserById(userId, siteId);
 
-      if (user) {
+      if (user && (!excludeAutomated || !user.automated)) {
         await userApi.assignUserToTask(task.id, {
           id: `urn:madoc:user:${user.id}`,
           name: user.name,
@@ -92,7 +141,10 @@ export const assignReview: RouteMiddleware<{ id: string }, { task_id: string }> 
   }
 
   // Fallback to site owner if they are an admin.
-  const admins = await context.siteManager.getUsersByRoles(siteId, ['admin']);
+  let admins = await context.siteManager.getUsersByRoles(siteId, ['admin']);
+  if (excludeAutomated) {
+    admins = admins.filter(admin => !admin.automated);
+  }
   const ids = admins.map(u => u.id);
   const creator = await context.siteManager.getSiteCreator(siteId);
 

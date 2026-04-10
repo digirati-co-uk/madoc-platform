@@ -5,7 +5,7 @@ export function useCanvasModel() {
   const { projectId, canvasId } = useRouteContext();
   return apiHooks.getSiteProjectCanvasModel(() => (projectId && canvasId ? [projectId, canvasId] : undefined), {
     refetchOnMount: true,
-    enabled: canvasId && projectId,
-    cacheTime: 0,
+    refetchOnWindowFocus: false,
+    enabled: !!(canvasId && projectId),
   });
 }

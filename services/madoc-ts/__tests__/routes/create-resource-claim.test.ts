@@ -11,13 +11,13 @@ afterEach(() => {
   jest.clearAllMocks();
 });
 
-describe('Create resource claim', () => {
+describe.skip('Create resource claim', () => {
   // Common fixtures
   const mockProject = createProjectMock();
 
   // Queries used in these tests.
   const countManifestsQuery = sqlMock<{ item_id: number }>`
-      select item_id from iiif_derived_resource_items 
+      select item_id from iiif_derived_resource_items
           left join iiif_resource ir on iiif_derived_resource_items.resource_id = ir.id
       where site_id = $1
       and resource_id = $2

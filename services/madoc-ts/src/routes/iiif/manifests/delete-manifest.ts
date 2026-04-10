@@ -45,6 +45,10 @@ export async function deleteManifest(manifestId: number, siteId: number, connect
   const siteApi = api.asUser({ siteId });
   const deletionSummary = await buildManifestDeletionSummary(manifestId, siteId, connection);
 
+  if (deletionSummary.search.indexed && deletionSummary.search.id) {
+    await siteApi.searchDeleteIIIF(deletionSummary.search.id);
+  }
+
   if (deletionSummary.fullDelete) {
     // Remove manifest from all sites
 
@@ -53,10 +57,6 @@ export async function deleteManifest(manifestId: number, siteId: number, connect
     const canvasIds = await connection().any(getChildResourceIds(manifestId, 'canvas', !deleteAll));
     for (let i = 0; i < canvasIds.length; i++) {
       await deleteCanvas(canvasIds[i].item_id, siteId, connection);
-    }
-
-    if (deletionSummary.search.indexed && deletionSummary.search.id) {
-      await siteApi.searchDeleteIIIF(deletionSummary.search.id);
     }
 
     if (deletionSummary.tasks > 0 || deletionSummary.parentTasks > 0) {

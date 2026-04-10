@@ -21,15 +21,17 @@ export const ModalButton: React.FC<{
   button?: boolean;
   as?: any;
   onClose?: () => void;
-  render: (opts: { close: () => void }) => JSX.Element | null;
-  renderFooter?: (opts: { close: () => void }) => JSX.Element;
+  render: (opts: { close: () => void }) => React.ReactNode | null;
+  renderFooter?: (opts: { close: () => void }) => React.ReactNode;
   className?: string;
   autoHeight?: boolean;
   footerAlignRight?: boolean;
   modalSize?: 'lg' | 'md' | 'sm';
+  allowResize?: boolean;
   disabled?: boolean;
   openByDefault?: boolean;
   style?: any;
+  children?: React.ReactNode;
 
   onKeyDown?: (e: React.KeyboardEvent<HTMLAnchorElement>) => void;
   tabIndex?: number;
@@ -46,6 +48,7 @@ export const ModalButton: React.FC<{
     renderFooter,
     onClose,
     modalSize,
+    allowResize = true,
     autoHeight,
     footerAlignRight,
     children,
@@ -57,10 +60,10 @@ export const ModalButton: React.FC<{
   },
   ref
 ) {
-  const portalEl = useRef<HTMLElement>();
+  const portalEl = useRef<HTMLElement>(undefined);
   const [ready, setIsReady] = useState(false);
   const [expanded, setIsExpanded] = useState(false);
-  const containerRef = useRef<any>();
+  const containerRef = useRef<any>(undefined);
 
   useBrowserLayoutEffect(() => {
     const element = document.createElement('div');
@@ -106,7 +109,7 @@ export const ModalButton: React.FC<{
                 <InnerModalContainer $expanded={expanded} size={modalSize} data-cy="modal">
                   <ModalHeader>
                     <ModalHeaderTitle>{title}</ModalHeaderTitle>
-                    <ModalResizeIcon onClick={() => setIsExpanded(e => !e)} />
+                    {allowResize ? <ModalResizeIcon onClick={() => setIsExpanded(e => !e)} /> : null}
                     <ModalCloseIcon onClick={closeModal} />
                   </ModalHeader>
                   <BrowserComponent fallback={<Spinner />}>

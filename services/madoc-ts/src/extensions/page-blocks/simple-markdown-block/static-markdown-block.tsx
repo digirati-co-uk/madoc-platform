@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import styled, { createGlobalStyle, css, ThemeProvider } from 'styled-components';
+import styled, { createGlobalStyle, css } from 'styled-components';
 
 import { renderToHtml, theme as defaultTheme } from 'rich-markdown-editor';
 
@@ -33,7 +33,7 @@ const StyledEditor = styled('div')<{
     }
 
     .ProseMirror-selectednode {
-      outline: 2px solid ${props.readOnly ? 'transparent' : props.theme.selected};
+      outline: 2px solid ${props.readOnly ? 'transparent' : theme.selected};
     }
 
     h1,
@@ -59,7 +59,7 @@ const StyledEditor = styled('div')<{
 
     .template-placeholder {
       &:hover {
-        border-bottom: 1px dotted ${props.readOnly ? props.theme.placeholder : props.theme.textSecondary};
+        border-bottom: 1px dotted ${props.readOnly ? theme.placeholder : theme.textSecondary};
       }
     }
 
@@ -91,7 +91,7 @@ const StyledEditor = styled('div')<{
 
     table {
       .selectedCell {
-        background: ${props.readOnly ? 'inherit' : props.theme.tableSelectedBackground};
+        background: ${props.readOnly ? 'inherit' : theme.tableSelectedBackground};
       }
       .grip-column {
         display: ${props.readOnly ? 'none' : 'block'};

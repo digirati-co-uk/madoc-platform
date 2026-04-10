@@ -1,6 +1,6 @@
 import { stringify } from 'query-string';
 import invariant from 'tiny-invariant';
-import { CompletionItem } from '../../frontend/shared/capture-models/editor/input-types/AutocompleteField/AutocompleteField';
+import type { CompletionItem } from '../../frontend/shared/capture-models/editor/input-types/AutocompleteField/AutocompleteField';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { TermConfigurationRequest } from '../../types/term-configurations';
 import { getValueDotNotation } from '../../utility/iiif-metadata';

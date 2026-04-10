@@ -14,38 +14,40 @@ function errorResponse(res: ServerResponse) {
 }
 
 const requestListener: RequestListener = (req, res) => {
-  if (req.method !== 'POST') {
-    res.writeHead(404);
+  void (async () => {
+    if (req.method !== 'POST') {
+      res.writeHead(404);
+      res.end();
+      return;
+    }
+
+    const header = req.headers.authorization;
+    if (!header) {
+      return errorResponse(res);
+    }
+
+    const parts = (header || '').split(' ');
+
+    if (parts.length !== 2) {
+      return errorResponse(res);
+    }
+
+    const scheme = parts[0];
+    const token = parts[1];
+
+    if (!/^Bearer$/i.test(scheme)) {
+      return errorResponse(res);
+    }
+
+    const verified = await verifySignedToken(token);
+
+    if (!verified) {
+      return errorResponse(res);
+    }
+
+    res.writeHead(200);
     res.end();
-    return;
-  }
-
-  const header = req.headers.authorization;
-  if (!header) {
-    return errorResponse(res);
-  }
-
-  const parts = (header || '').split(' ');
-
-  if (parts.length !== 2) {
-    return errorResponse(res);
-  }
-
-  const scheme = parts[0];
-  const token = parts[1];
-
-  if (!/^Bearer$/i.test(scheme)) {
-    return errorResponse(res);
-  }
-
-  const verified = verifySignedToken(token);
-
-  if (!verified) {
-    return errorResponse(res);
-  }
-
-  res.writeHead(200);
-  res.end();
+  })().catch(() => errorResponse(res));
 };
 
 const server = createServer(requestListener);

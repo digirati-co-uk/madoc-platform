@@ -5,6 +5,7 @@ import { BackToChoicesButton } from '../../../../shared/capture-models/new/compo
 import { EditorSlots } from '../../../../shared/capture-models/new/components/EditorSlots';
 import { RevisionProviderWithFeatures } from '../../../../shared/capture-models/new/components/RevisionProviderWithFeatures';
 import { useApi } from '../../../../shared/hooks/use-api';
+import { useProjectTemplate } from '../../../../shared/hooks/use-project-template';
 import { ContentExplorer } from '../../../../shared/features/ContentExplorer';
 import { useData } from '../../../../shared/hooks/use-data';
 import { Button, ButtonRow, TinyButton } from '../../../../shared/navigation/Button';
@@ -12,6 +13,8 @@ import '../../../../shared/capture-models/refinements';
 import { BrowserComponent } from '../../../../shared/utility/browser-component';
 import { ViewContentFetch } from '../../../molecules/ViewContentFetch';
 import { ProjectModelEditor } from '../projects/project-model-editor';
+import { CustomAdminPreviewRendererProps, getReviewRendererMode } from '../../../../site/pages/tasks/review-renderers/types';
+import { TabularProjectModelPreview } from './TabularProjectModelPreview';
 
 export const PreviewCaptureModel: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -24,6 +27,19 @@ export const PreviewCaptureModel: React.FC = () => {
   }
 
   const { captureModel, annotationTheme } = data;
+  const template = useProjectTemplate(data.template);
+  const CustomAdminPreviewRenderer = template?.components
+    ?.customAdminPreviewRenderer as React.FC<CustomAdminPreviewRendererProps> | undefined;
+  const isTabularProject = data.template === 'tabular-project';
+
+  if (isTabularProject) {
+    return (
+      <VaultProvider>
+        <h3>Preview</h3>
+        <TabularProjectModelPreview projectId={id} templateConfig={data.templateConfig} />
+      </VaultProvider>
+    );
+  }
 
   return (
     <VaultProvider>
@@ -42,35 +58,65 @@ export const PreviewCaptureModel: React.FC = () => {
         captureModel={{ ...captureModel }}
         annotationTheme={annotationTheme as any}
       >
-        <div style={{ display: 'flex', flexDirection: 'row' }}>
-          <div style={{ width: '67%' }}>
-            <ContentExplorer
-              projectId={id}
-              renderChoice={(canvasId, reset) => (
-                <BrowserComponent fallback={<>Loading</>}>
-                  <div>
-                    <ViewContentFetch id={canvasId} />
-                    <br />
-                    <TinyButton onClick={reset}>Select different image</TinyButton>
+        {CustomAdminPreviewRenderer && !api.getIsServer() ? (
+          <ContentExplorer
+            projectId={id}
+            renderChoice={(canvasId, reset) => (
+              <CustomAdminPreviewRenderer
+                mode={getReviewRendererMode(!preview)}
+                subjectType="canvas"
+                viewer={
+                  <BrowserComponent fallback={<>Loading</>}>
+                    <div>
+                      <ViewContentFetch id={canvasId} />
+                      <br />
+                      <TinyButton onClick={reset}>Select different image</TinyButton>
+                    </div>
+                  </BrowserComponent>
+                }
+                controls={
+                  <div style={{ padding: '1em 1em 0 1em', fontSize: '13px' }}>
+                    <BackToChoicesButton />
+                    <ButtonRow>
+                      <Button onClick={() => setPreview(p => !p)}>{preview ? 'Edit mode' : 'Preview mode'}</Button>
+                    </ButtonRow>
                   </div>
-                </BrowserComponent>
-              )}
-            />
-          </div>
-          <div style={{ width: '33%', padding: '0 1em' }}>
-            {api.getIsServer() ? null : (
-              <>
-                <div style={{ padding: '1em 1em 0 1em', fontSize: '13px' }}>
-                  <BackToChoicesButton />
-                  {preview ? <EditorSlots.PreviewSubmission /> : <EditorSlots.TopLevelEditor />}
-                  <ButtonRow>
-                    <Button onClick={() => setPreview(p => !p)}>{preview ? 'Edit mode' : 'Preview mode'}</Button>
-                  </ButtonRow>
-                </div>
-              </>
+                }
+                saveControl={preview ? <EditorSlots.PreviewSubmission /> : <EditorSlots.TopLevelEditor />}
+              />
             )}
+          />
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'row' }}>
+            <div style={{ width: '67%' }}>
+              <ContentExplorer
+                projectId={id}
+                renderChoice={(canvasId, reset) => (
+                  <BrowserComponent fallback={<>Loading</>}>
+                    <div>
+                      <ViewContentFetch id={canvasId} />
+                      <br />
+                      <TinyButton onClick={reset}>Select different image</TinyButton>
+                    </div>
+                  </BrowserComponent>
+                )}
+              />
+            </div>
+            <div style={{ width: '33%', padding: '0 1em' }}>
+              {api.getIsServer() ? null : (
+                <>
+                  <div style={{ padding: '1em 1em 0 1em', fontSize: '13px' }}>
+                    <BackToChoicesButton />
+                    {preview ? <EditorSlots.PreviewSubmission /> : <EditorSlots.TopLevelEditor />}
+                    <ButtonRow>
+                      <Button onClick={() => setPreview(p => !p)}>{preview ? 'Edit mode' : 'Preview mode'}</Button>
+                    </ButtonRow>
+                  </div>
+                </>
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </RevisionProviderWithFeatures>
     </VaultProvider>
   );

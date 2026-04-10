@@ -1,4 +1,4 @@
-import { BoxStyle } from '@atlas-viewer/atlas';
+import type { BoxStyle } from '@atlas-viewer/atlas';
 
 export interface AnnotationStyles {
   id: number;

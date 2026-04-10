@@ -5,7 +5,7 @@ on:
     branches: ['main']
     tags: ['v*']
   pull_request:
-    branches: ['main', 'feature/v2.1']
+    branches: ['main', 'feature/v2.1', 'feature/2026-dependencies']
     paths:
       - ".github/workflows/madoc-ts-docker.yaml"
       - "services/madoc-ts/src/**"
@@ -14,7 +14,6 @@ on:
       - "services/madoc-ts/schemas/**"
       - "services/madoc-ts/themes/**"
       - "services/madoc-ts/package.json"
-      - "services/madoc-ts/yarn.lock"
       - "services/madoc-ts/Dockerfile"
       - "services/madoc-ts/ecosystem.config.js"
       - "services/madoc-ts/webpack.config.js"

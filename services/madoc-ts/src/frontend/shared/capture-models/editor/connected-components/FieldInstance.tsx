@@ -26,7 +26,7 @@ export const FieldInstance: React.FC<{
   }, 100);
 
   const updateSelector = useCallback(
-    state => {
+    (state: any) => {
       if (field && field.selector) {
         updateSelectorValue({ selectorId: field.selector.id, state });
       }

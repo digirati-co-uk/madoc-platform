@@ -1,0 +1,5 @@
+{
+  "run": true,
+  "ocr_engine": "Tesseract",
+  "language": "English"
+}

@@ -57,7 +57,7 @@ export const AssignTask: React.FC<{ task: BaseTask; afterAssign?: () => void | P
           <UserAutocomplete
             clearable
             initialQuery
-            roles={['admin', 'reviewer', 'limited-reviewer', 'transcriber', 'limited-transcriber']}
+            roles={['admin', 'trusted-user', 'reviewer', 'limited-reviewer', 'transcriber', 'limited-transcriber']}
             value={selectedUser}
             updateValue={user => {
               setSelectedUser(user);

@@ -19,7 +19,7 @@ export function useBoxSelector(
   { generatePreview }: { generatePreview?: (s?: BoxSelectorProps['state']) => string | undefined } = {}
 ) {
   const { controller, isHighlighted, onClick, onHover } = useSelectorEvents(id);
-  const lastPreview = useRef<string | undefined>();
+  const lastPreview = useRef<string | undefined>(undefined);
   const styles = useAnnotationStyles();
   const style =
     isHighlighted && bucket === 'currentLevel' ? styles.highlighted : styles[bucket || 'hidden'] || styles.hidden;

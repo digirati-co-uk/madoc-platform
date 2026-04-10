@@ -15,6 +15,9 @@ export type RoundedCardProps = {
   onClick?: any;
   onRemove?: () => void;
   removeMessage?: string;
+  children?: React.ReactNode;
+  shadow?: boolean;
+  smallPadding?: boolean;
 };
 
 const CardLabel = styled.label`
@@ -31,16 +34,23 @@ const CardBody = styled.div`
   color: #000;
 `;
 
-const CardWrapper = styled.article<{ size: CardSize; interactive: boolean }>`
+const CardWrapper = styled.article<{ size: CardSize; interactive: boolean; $shadow?: boolean; $smallPadding?: boolean }>`
   position: relative;
   box-sizing: border-box;
   background: #fff;
-  padding: ${props => getCard(props, 'padding')};
+  padding: ${props => props.$smallPadding ? '8px' : getCard(props, 'padding')};
   border-radius: 5px;
   margin-bottom: ${props => getCard(props, 'margin')};
   //box-shadow: ${props => getTheme(props).card.shadow};
   border: 1px solid #ddd;
   z-index: 10;
+
+  ${props =>
+    props.$shadow &&
+    css`
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    `}
+
   ${props =>
     props.interactive &&
     css`
@@ -128,9 +138,11 @@ export const RoundedCard: React.FC<RoundedCardProps> = ({
   interactive = !!onClick,
   children,
   image,
+  shadow,
+  smallPadding,
 }) => {
   return (
-    <CardWrapper interactive={interactive} size={size} onClick={onClick}>
+    <CardWrapper interactive={interactive} size={size} onClick={onClick} $shadow={shadow} $smallPadding={smallPadding}>
       {onRemove ? (
         <ConfirmButton
           defaultButton

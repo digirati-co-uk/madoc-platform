@@ -23,9 +23,11 @@ export type EditorContentVariations = {
   explorerReset?: boolean;
   canvasUri?: string;
   manifestUri?: string;
-  height?: number;
+  height?: number | string;
   onCreated?: (preset: Preset) => void;
   onPanInSketchMode?: () => void;
+  homeCover?: true | false | 'start' | 'end';
+  children?: React.ReactNode;
 };
 
 export const EditorContentViewer: React.FC<EditorContentVariations> = ({
@@ -41,6 +43,7 @@ export const EditorContentViewer: React.FC<EditorContentVariations> = ({
   children,
   onCreated,
   onPanInSketchMode,
+  homeCover,
 }) => {
   const { t } = useTranslation();
 
@@ -73,6 +76,7 @@ export const EditorContentViewer: React.FC<EditorContentVariations> = ({
         height={height}
         onCreated={onCreated}
         onPanInSketchMode={onPanInSketchMode}
+        homeCover={homeCover}
       >
         {children}
       </ViewContent>
@@ -85,6 +89,7 @@ export const EditorContentViewer: React.FC<EditorContentVariations> = ({
         onCreated={onCreated}
         height={height}
         onPanInSketchMode={onPanInSketchMode}
+        homeCover={homeCover}
         target={[
           { type: 'Canvas', id: canvasUri },
           { type: 'Manifest', id: manifestUri },
@@ -103,6 +108,7 @@ export const EditorContentViewer: React.FC<EditorContentVariations> = ({
           height={height}
           onCreated={onCreated}
           onPanInSketchMode={onPanInSketchMode}
+          homeCover={homeCover}
         >
           {children}
         </ViewContentFetch>
@@ -120,6 +126,7 @@ export const EditorContentViewer: React.FC<EditorContentVariations> = ({
           height={height}
           onCreated={onCreated}
           onPanInSketchMode={onPanInSketchMode}
+          homeCover={homeCover}
         >
           {children}
         </ViewContentFetch>

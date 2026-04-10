@@ -1,0 +1,4 @@
+interface:
+  display_name: "Madoc TS SSR Pipeline"
+  short_description: "SSR render, templates, and dev HMR"
+  default_prompt: "Use -pipeline to trace or change Madoc TS SSR rendering."

@@ -1,5 +1,5 @@
 import { Request } from 'koa';
-import { CompletionItem } from '../../frontend/shared/capture-models/editor/input-types/AutocompleteField/AutocompleteField';
+import type { CompletionItem } from '../../frontend/shared/capture-models/editor/input-types/AutocompleteField/AutocompleteField';
 import { ApiClientWithoutExtensions } from '../../gateway/api';
 import { RequestError } from '../../utility/errors/request-error';
 import { wikidataSource } from './sources/wikidata-source';

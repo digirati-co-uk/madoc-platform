@@ -8,9 +8,9 @@ import {
 import { UpdateResourceDetailsRequest } from '../database/queries/update-resource-details';
 import { CrowdsourcingApi } from '../extensions/capture-models/crowdsourcing-api';
 import { ConfigInjectionExtension } from '../extensions/capture-models/ConfigInjection/ConfigInjection.extension';
-import { ConfigInjectionSettings } from '../extensions/capture-models/ConfigInjection/types';
+import type { ConfigInjectionSettings } from '../extensions/capture-models/ConfigInjection/types';
+import type { CaptureModelExtension } from '../extensions/capture-models/extension';
 import { DynamicDataSourcesExtension } from '../extensions/capture-models/DynamicDataSources/DynamicDataSources.extension';
-import { CaptureModelExtension } from '../extensions/capture-models/extension';
 import { Paragraphs } from '../extensions/capture-models/Paragraphs/Paragraphs.extension';
 import { plainTextSource } from '../extensions/capture-models/DynamicDataSources/sources/Plaintext.source';
 import { ExtensionManager } from '../extensions/extension-manager';
@@ -25,25 +25,26 @@ import { SiteManagerExtension } from '../extensions/site-manager/extension';
 import { SystemExtension } from '../extensions/system/extension';
 import { TaskExtension } from '../extensions/tasks/extension';
 import { ThemeExtension } from '../extensions/themes/extension';
-import { CompletionItem } from '../frontend/shared/capture-models/editor/input-types/AutocompleteField/AutocompleteField';
-import { CaptureModel } from '../frontend/shared/capture-models/types/capture-model';
-import { BaseField } from '../frontend/shared/capture-models/types/field-types';
-import { RevisionRequest } from '../frontend/shared/capture-models/types/revision-request';
-import { FacetConfig } from '../frontend/shared/features/MetadataFacetEditor';
-import { GetLocalisationResponse, ListLocalisationsResponse } from '../routes/admin/localisation';
+import type { CompletionItem } from '../frontend/shared/capture-models/editor/input-types/AutocompleteField/AutocompleteField';
+import type { CaptureModel } from '../frontend/shared/capture-models/types/capture-model';
+import type { BaseField } from '../frontend/shared/capture-models/types/field-types';
+import type { RevisionRequest } from '../frontend/shared/capture-models/types/revision-request';
+import type { FacetConfig } from '../frontend/shared/features/MetadataFacetEditor';
+import type { GetLocalisationResponse, ListLocalisationsResponse } from '../routes/admin/localisation';
 import { UpdateManifestDetailsRequest } from '../routes/iiif/manifests/update-manifest-details';
-import { AnnotationStyles } from '../types/annotation-styles';
+import type { AnnotationStyles } from '../types/annotation-styles';
 import {
   CanvasDeletionSummary,
   ManifestDeletionSummary,
   ProjectDeletionSummary,
   CollectionDeletionSummary,
 } from '../types/deletion-summary';
-import { PublicUserProfile, Site, SiteUser, User, UserInformationRequest } from '../extensions/site-manager/types';
+import { PublicUserProfile, Site, SiteUser, UserInformationRequest } from '../extensions/site-manager/types';
 import { ProjectManifestTasks } from '../types/manifest-tasks';
 import { NoteListResponse } from '../types/personal-notes';
 import { Pm2Status } from '../types/pm2';
 import { ProjectFeedback, ProjectMember, ProjectUpdate } from '../types/projects';
+import { BullMqCancelSearchIndexResult, BullMqResumeQueueResult, BullMqSnapshot } from '../types/bullmq-status';
 import { ResourceLinkResponse } from '../types/schemas/linking';
 import { ProjectConfiguration } from '../types/schemas/project-configuration';
 import { SearchIngestRequest, SearchResponse, SearchQuery } from '../types/search';
@@ -89,6 +90,7 @@ import { ResourceLinkRow } from '../database/queries/linking-queries';
 import { SearchIndexTask } from './tasks/search-index-task';
 import { JsonProjectTemplate, ProjectTemplate } from '../extensions/projects/types';
 import { ApiKey } from '../types/api-key';
+import { TabularProjectTemplateConfig } from '../types/tabular-project-template-config';
 
 export type ApiClientWithoutExtensions = Omit<
   ApiClient,
@@ -104,6 +106,65 @@ export type ApiClientWithoutExtensions = Omit<
   | 'cloneCaptureModel'
 >;
 
+type ApiDebugRequestInfo = {
+  method?: string;
+  path?: string;
+  route?: string | null;
+  status?: number;
+  totalMs?: number;
+};
+
+type ApiDebugMiddlewareInfo = {
+  name: string;
+  totalMs: number;
+  selfMs: number;
+  downstreamMs: number;
+};
+
+type ApiDebugStepInfo = {
+  step: string;
+  durationMs: number;
+};
+
+export type ApiDebugPayload = {
+  request?: ApiDebugRequestInfo;
+  middleware?: ApiDebugMiddlewareInfo[];
+  steps?: ApiDebugStepInfo[];
+  totalMs?: number;
+};
+
+export type ApiDebugRequestLog = {
+  id: number;
+  method: string;
+  endpoint: string;
+  endpointWithDebug: string;
+  status: number;
+  startedAt: number;
+  endedAt: number;
+  durationMs: number;
+  pagePath?: string;
+  debug?: ApiDebugPayload;
+};
+
+function isObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null;
+}
+
+function getSearchQueryEndpoint() {
+  return '/api/madoc/search';
+}
+
+function getMadocSearchBasePath() {
+  return '/api/madoc/search';
+}
+
+function getTypesenseProxyBasePath(siteSlug?: string) {
+  if (siteSlug) {
+    return `/s/${siteSlug}/madoc/api/typesense`;
+  }
+  return '/api/madoc/typesense';
+}
+
 export class ApiClient {
   private readonly gateway: string;
   private readonly isServer: boolean;
@@ -114,6 +175,10 @@ export class ApiClient {
   private jwt?: string;
   private readonly jwtFunction?: () => string;
   private errorRecoveryHandlers: Array<() => void> = [];
+  private debugRequestHandlers: Array<(request: ApiDebugRequestLog) => void> = [];
+  private debugRequests: ApiDebugRequestLog[] = [];
+  private debugRequestCounter = 0;
+  private runtimeDebugEnabled = false;
   private isDown = false;
   private currentUser?: { scope: string[]; user: { id: string; name?: string } };
   // Public.
@@ -276,6 +341,115 @@ export class ApiClient {
     };
   }
 
+  onDebugRequest(func: (request: ApiDebugRequestLog) => void) {
+    if (this.debugRequestHandlers.indexOf(func) === -1) {
+      this.debugRequestHandlers.push(func);
+    }
+    return () => {
+      this.debugRequestHandlers = this.debugRequestHandlers.filter(handler => handler !== func);
+    };
+  }
+
+  getDebugRequests() {
+    return [...this.debugRequests];
+  }
+
+  clearDebugRequests() {
+    this.debugRequests = [];
+  }
+
+  setRuntimeDebugEnabled(enabled: boolean) {
+    this.runtimeDebugEnabled = enabled;
+
+    if (!enabled) {
+      this.clearDebugRequests();
+    }
+  }
+
+  private isRequestDebugEnabled() {
+    return process.env.NODE_ENV === 'development' || this.runtimeDebugEnabled;
+  }
+
+  private appendDebugQuery(endpoint: string) {
+    if (!this.isRequestDebugEnabled()) {
+      return endpoint;
+    }
+
+    const [endpointWithoutHash, hash = ''] = endpoint.split('#');
+    const [pathName, queryString = ''] = endpointWithoutHash.split('?');
+    const params = new URLSearchParams(queryString);
+    if (!params.has('debug')) {
+      params.set('debug', 'true');
+    }
+    const encodedQueryString = params.toString();
+
+    return `${pathName}${encodedQueryString ? `?${encodedQueryString}` : ''}${hash ? `#${hash}` : ''}`;
+  }
+
+  private getPagePath() {
+    if (this.isServer) {
+      return undefined;
+    }
+    return `${window.location.pathname}${window.location.search}`;
+  }
+
+  private getResponseDebug(data: unknown): ApiDebugPayload | undefined {
+    if (!isObject(data) || !isObject(data.debug)) {
+      return undefined;
+    }
+
+    const debug = data.debug as Record<string, unknown>;
+    const mappedDebug: ApiDebugPayload = {};
+
+    if (isObject(debug.request)) {
+      const request = debug.request;
+      mappedDebug.request = {
+        method: typeof request.method === 'string' ? request.method : undefined,
+        path: typeof request.path === 'string' ? request.path : undefined,
+        route: typeof request.route === 'string' ? request.route : request.route === null ? null : undefined,
+        status: typeof request.status === 'number' ? request.status : undefined,
+        totalMs: typeof request.totalMs === 'number' ? request.totalMs : undefined,
+      };
+    }
+
+    if (Array.isArray(debug.middleware)) {
+      mappedDebug.middleware = debug.middleware
+        .filter(item => isObject(item))
+        .map(item => ({
+          name: typeof item.name === 'string' ? item.name : 'unknown',
+          totalMs: typeof item.totalMs === 'number' ? item.totalMs : 0,
+          selfMs: typeof item.selfMs === 'number' ? item.selfMs : 0,
+          downstreamMs: typeof item.downstreamMs === 'number' ? item.downstreamMs : 0,
+        }));
+    }
+
+    if (Array.isArray(debug.steps)) {
+      mappedDebug.steps = debug.steps
+        .filter(item => isObject(item))
+        .map(item => ({
+          step: typeof item.step === 'string' ? item.step : 'unknown',
+          durationMs: typeof item.durationMs === 'number' ? item.durationMs : 0,
+        }));
+    }
+
+    if (typeof debug.totalMs === 'number') {
+      mappedDebug.totalMs = debug.totalMs;
+    }
+
+    return mappedDebug;
+  }
+
+  private recordDebugRequest(request: ApiDebugRequestLog) {
+    if (!this.isRequestDebugEnabled()) {
+      return;
+    }
+
+    this.debugRequests.push(request);
+    for (const handler of this.debugRequestHandlers) {
+      handler(request);
+    }
+  }
+
   async wrapTask<After, Task extends BaseTask = BaseTask>(
     target: Promise<Task>,
     after: (task: Task) => After | Promise<After>,
@@ -387,13 +561,17 @@ export class ApiClient {
       allow404?: boolean;
     } = {}
   ): Promise<Return> {
+    const startedAt = Date.now();
+    const pagePath = this.getPagePath();
+    const endpointWithDebug = this.appendDebugQuery(endpoint);
+
     if (!publicRequest && !jwt) {
-      console.log(`Not authorised to ${method} ${endpoint}`);
+      console.log(`Not authorised to ${method} ${endpointWithDebug}`);
 
       throw new ApiError('Not authorised');
     }
 
-    const response = await this.fetcher<Return>(this.gateway, endpoint, {
+    const response = await this.fetcher<Return>(this.gateway, endpointWithDebug, {
       method,
       body,
       jwt: jwt,
@@ -404,6 +582,20 @@ export class ApiClient {
       headers,
       raw,
       formData,
+    });
+    const endedAt = Date.now();
+
+    this.recordDebugRequest({
+      id: this.debugRequestCounter++,
+      method,
+      endpoint,
+      endpointWithDebug,
+      status: response.status,
+      startedAt,
+      endedAt,
+      durationMs: endedAt - startedAt,
+      pagePath,
+      debug: this.getResponseDebug(response.data),
     });
 
     if (response.error) {
@@ -428,7 +620,8 @@ export class ApiClient {
         const match = window.location.pathname.match(/s\/([^/]+)\//);
         if (match) {
           const [, slug] = match;
-          const newTokenResponse = await fetchJson<{ token: string }>(this.gateway, `/s/${slug}/auth/refresh`, {
+          const refreshEndpoint = this.appendDebugQuery(`/s/${slug}/auth/refresh`);
+          const newTokenResponse = await fetchJson<{ token: string }>(this.gateway, refreshEndpoint, {
             method: 'POST',
             body: {
               token: jwt,
@@ -513,7 +706,7 @@ export class ApiClient {
     options?: { siteSlug?: string },
     withExtensions?: boolean
   ): ApiClientWithoutExtensions {
-    return new ApiClient({
+    const userApi = new ApiClient({
       gateway: this.gateway,
       jwt: this.getJwt(),
       asUser: user,
@@ -521,6 +714,9 @@ export class ApiClient {
       publicSiteSlug: options && options.siteSlug ? options.siteSlug : this.publicSiteSlug,
       withoutExtensions: !withExtensions,
     });
+    userApi.setRuntimeDebugEnabled(this.runtimeDebugEnabled);
+
+    return userApi;
   }
 
   async asUserWithExtensions<T = void>(
@@ -566,6 +762,26 @@ export class ApiClient {
 
   async pm2Restart(service: 'auth' | 'queue' | 'madoc' | 'scheduler') {
     return this.request<{ success: true }>(`/api/madoc/pm2/restart/${service}`, { method: 'POST' });
+  }
+
+  async getQueueStatus(options: { limit?: number; includeCompleted?: boolean } = {}) {
+    const query = stringify({
+      limit: options.limit,
+      include_completed: options.includeCompleted,
+    });
+    return this.request<BullMqSnapshot>(`/api/madoc/queue/status${query ? `?${query}` : ''}`);
+  }
+
+  async cancelSearchIndexQueue() {
+    return this.request<BullMqCancelSearchIndexResult>(`/api/madoc/queue/cancel-search-index`, {
+      method: 'POST',
+    });
+  }
+
+  async resumeQueue() {
+    return this.request<BullMqResumeQueueResult>(`/api/madoc/queue/resume`, {
+      method: 'POST',
+    });
   }
 
   async getMetadataKeys() {
@@ -668,6 +884,18 @@ export class ApiClient {
       method: 'PUT',
       body: {
         metadata,
+      },
+    });
+  }
+
+  async updateProjectTemplateConfig(
+    id: string | number,
+    template_config: TabularProjectTemplateConfig | Record<string, unknown> | null
+  ) {
+    return this.request<any>(`/api/madoc/projects/${id}/template-config`, {
+      method: 'PUT',
+      body: {
+        template_config,
       },
     });
   }
@@ -979,7 +1207,7 @@ export class ApiClient {
         facets: [],
       };
     return await this.request<SearchResponse>(
-      `/api/search/search?${stringify({ fulltext: searchTerm, page: pageQuery, facetType, facetValue })}`
+      `${getSearchQueryEndpoint()}?${stringify({ fulltext: searchTerm, page: pageQuery, facetType, facetValue })}`
     );
   }
 
@@ -1096,10 +1324,20 @@ export class ApiClient {
     });
   }
 
-  async getCollectionById(id: number, page = 0, type?: 'manifest' | 'collection', excluded?: number[]) {
+  async getCollectionById(
+    id: number,
+    page = 0,
+    type?: 'manifest' | 'collection',
+    excluded?: number[],
+    onlyPublished?: boolean
+  ) {
     if (excluded && excluded.length) {
       return this.request<CollectionFull>(
-        `/api/madoc/iiif/collections-bulk/${id}${page || type ? `?${stringify({ type, page })}` : ''}`,
+        `/api/madoc/iiif/collections-bulk/${id}${
+          page || type || typeof onlyPublished !== 'undefined'
+            ? `?${stringify({ type, page, published: onlyPublished })}`
+            : ''
+        }`,
         {
           body: {
             excluded,
@@ -1110,7 +1348,11 @@ export class ApiClient {
     }
 
     return this.request<CollectionFull>(
-      `/api/madoc/iiif/collections/${id}${page || type || excluded ? `?${stringify({ type, page, excluded })}` : ''}`
+      `/api/madoc/iiif/collections/${id}${
+        page || type || excluded || typeof onlyPublished !== 'undefined'
+          ? `?${stringify({ type, page, excluded, published: onlyPublished })}`
+          : ''
+      }`
     );
   }
 
@@ -2105,21 +2347,59 @@ export class ApiClient {
 
   // Search API
   async searchQuery(query: SearchQuery, page = 1, madoc_id?: string) {
-    return this.request<SearchResponse>(`/api/search/search?${stringify({ page, madoc_id })}`, {
+    return this.request<SearchResponse>(`${getSearchQueryEndpoint()}?${stringify({ page, madoc_id })}`, {
       method: 'POST',
       body: query,
     });
   }
+
+  async getTypesenseStatus() {
+    const basePath = getTypesenseProxyBasePath(this.getSiteSlug());
+    return this.request<{
+      available: boolean;
+      collection: string;
+      reason?: string;
+    }>(`${basePath}/status`, {
+      method: 'GET',
+      publicRequest: !!this.getSiteSlug(),
+    });
+  }
+
+  async typesenseSearch(params: Record<string, any>, { method = 'POST' }: { method?: 'GET' | 'POST' } = {}) {
+    const basePath = getTypesenseProxyBasePath(this.getSiteSlug());
+    if (method === 'GET') {
+      return this.request(`${basePath}?${stringify(params || {})}`, {
+        method: 'GET',
+        publicRequest: !!this.getSiteSlug(),
+      });
+    }
+
+    return this.request(`${basePath}`, {
+      method: 'POST',
+      body: params || {},
+      publicRequest: !!this.getSiteSlug(),
+    });
+  }
+
+  async typesenseMultiSearch(payload: { searches: Array<Record<string, any>>; [key: string]: any }) {
+    const basePath = getTypesenseProxyBasePath(this.getSiteSlug());
+    return this.request(`${basePath}/multi_search`, {
+      method: 'POST',
+      body: payload,
+      publicRequest: !!this.getSiteSlug(),
+    });
+  }
+
   // can be used for both canvases and manifests
   async searchIngest(resource: SearchIngestRequest) {
-    return this.request<SearchIndexTask>(`/api/search/iiif`, {
+    return this.request<SearchIndexTask>(`${getMadocSearchBasePath()}/iiif`, {
       method: 'POST',
       body: resource,
     });
   }
 
   async searchReIngest(resource: SearchIngestRequest) {
-    return this.request<SearchIndexTask>(`/api/search/iiif/${resource.id}`, {
+    return this.request<SearchIndexTask>(`${getMadocSearchBasePath()}/iiif/${resource.id}`, {
       method: 'PUT',
       body: resource,
     });
@@ -2187,67 +2467,67 @@ export class ApiClient {
       return this.request<SearchIndexTask>(`/api/madoc/iiif/manifests/${id}/index`, {
         method: 'POST',
       });
-    } catch (err) {
+    } catch {
       // no-op this will fail silently.
       return undefined;
     }
   }
 
   async getIndexedManifestById(madoc_id: string) {
-    return this.request<SearchResponse>(`/api/search/search?${stringify({ madoc_id })}`, {
+    return this.request<SearchResponse>(`${getSearchQueryEndpoint()}?${stringify({ madoc_id })}`, {
       method: 'GET',
     });
   }
 
   async searchListIndexables() {
-    return this.request(`/api/search/indexables`);
+    return this.request(`${getMadocSearchBasePath()}/indexables`);
   }
 
   async searchGetIndexable(id: number) {
-    return this.request(`/api/search/indexables/${id}`);
+    return this.request(`${getMadocSearchBasePath()}/indexables/${id}`);
   }
 
   async searchListModels(query?: { iiif__madoc_id?: string }) {
-    return this.request(`/api/search/model?${query ? stringify(query) : ''}`);
+    return this.request(`${getMadocSearchBasePath()}/model?${query ? stringify(query) : ''}`);
   }
 
   async searchGetModel(id: number) {
-    return this.request(`/api/search/model/${id}`);
+    return this.request(`${getMadocSearchBasePath()}/model/${id}`);
   }
 
   async searchListIIIF() {
-    return this.request(`/api/search/iiif`);
+    return this.request(`${getMadocSearchBasePath()}/iiif`);
   }
 
   async searchGetIIIF(id: string) {
     try {
-      return this.request(`/api/search/iiif/${id}`, { allow404: true });
-    } catch (err) {
-      console.log('caught error?', err);
+      return this.request(`${getMadocSearchBasePath()}/iiif/${id}`, { allow404: true });
+    } catch {
+      console.log('caught error?');
       return undefined;
     }
   }
 
   async searchDeleteIIIF(id: string) {
     try {
-      return this.request(`/api/search/iiif/${id}`, {
+      return this.request(`${getMadocSearchBasePath()}/iiif/${id}`, {
         method: 'DELETE',
       });
-    } catch (err) {
+    } catch {
       return undefined;
     }
   }
 
   async searchListContexts() {
-    return this.request(`/api/search/contexts`);
+    return this.request(`${getMadocSearchBasePath()}/contexts`);
   }
 
   async searchGetContext(id: string) {
-    return this.request(`/api/search/contexts/${id}`);
+    return this.request(`${getMadocSearchBasePath()}/contexts/${id}`);
   }
 
   async indexRawSearchIndexable(indexable: SearchIndexable) {
-    return this.request(`/api/search/indexables`, {
+    return this.request(`${getMadocSearchBasePath()}/indexables`, {
       method: 'POST',
       body: indexable,
     });
@@ -2258,13 +2538,13 @@ export class ApiClient {
       await this.request<SearchIndexTask>(`/api/madoc/iiif/canvases/${id}/index`, {
         method: 'POST',
       });
-    } catch (err) {
+    } catch {
       // no-op this will fail silently.
     }
   }
 
   async getIndexedCanvasById(madoc_id: string) {
-    return this.request<SearchResponse>(`/api/search/search?${stringify({ madoc_id })}`, {
+    return this.request<SearchResponse>(`${getSearchQueryEndpoint()}?${stringify({ madoc_id })}`, {
       method: 'GET',
     });
   }

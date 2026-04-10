@@ -3,7 +3,6 @@ import { UniversalComponent } from '../../../../types';
 import { ItemStructureList } from '../../../../../types/schemas/item-structure-list';
 import { useApi } from '../../../../shared/hooks/use-api';
 import { useParams } from 'react-router-dom';
-import { resetServerContext } from 'react-beautiful-dnd';
 import { CollectionEditorStructure } from '../../../molecules/CollectionStructureEditor';
 import { useData } from '../../../../shared/hooks/use-data';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
@@ -41,8 +40,6 @@ export const EditCollectionStructure: UniversalComponent<EditCollectionStructure
       return ['collection-structure', { id: Number(params.id) }];
     },
     getData: async (key, vars, api) => {
-      resetServerContext();
-
       return await api.getCollectionStructure(vars.id);
     },
   }

@@ -138,6 +138,7 @@ export const Stepper: React.FC<{
   description: string;
   onClickDescription?: () => void;
   open?: boolean;
+  children?: React.ReactNode
 }> = ({ title, onClickDescription, description, status, open, children }) => {
   return (
     <StepContainer>

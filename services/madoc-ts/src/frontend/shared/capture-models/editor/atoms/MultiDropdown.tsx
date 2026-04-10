@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
-import { Select } from 'react-functional-select';
+import { Select } from '../../../form/FunctionalSelect';
 import { DropdownOption, renderOptionLabel } from './Dropdown';
 
 export type MultiDropdownProps = {

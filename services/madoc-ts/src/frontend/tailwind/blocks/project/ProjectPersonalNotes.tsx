@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { blockEditorFor } from '../../../../extensions/page-blocks/block-editor-for';
 import { apiHooks } from '../../../shared/hooks/use-api-query';
 import { LocaleString, useRouteContext } from '../../../shared/plugins/public-api';
+import { parsePersonalNotePayload } from '../../../shared/utility/personal-note-payload';
 import { HrefLink } from '../../../shared/utility/href-link';
 import { ResultTitle } from '../../../site/features/search/SearchResults';
 import { useProject } from '../../../site/hooks/use-project';
@@ -24,6 +25,7 @@ export function ProjectPersonalNotes({ toDisplay = 3 }: { toDisplay?: number }) 
       <h3 className="text-xl font-semibold mb-4">{t('Personal notes')}</h3>
       <div className="">
         {data.notes.map((note, index) => {
+          const personalNote = parsePersonalNotePayload(note.note);
           const link = note.parentResource
             ? createLink({ canvasId: note.resource.id, manifestId: note.parentResource.id })
             : createLink({ manifestId: note.resource.id });
@@ -53,7 +55,7 @@ export function ProjectPersonalNotes({ toDisplay = 3 }: { toDisplay?: number }) 
                       )}
                     </h4>
 
-                    <div className="whitespace-pre-wrap">{note.note}</div>
+                    <div className="whitespace-pre-wrap">{personalNote.note}</div>
                   </div>
                 </div>
               </div>

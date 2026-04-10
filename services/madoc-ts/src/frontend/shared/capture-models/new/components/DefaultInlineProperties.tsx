@@ -2,10 +2,12 @@ import React from 'react';
 import { FieldHeader } from '../../editor/components/FieldHeader/FieldHeader';
 import { useModelTranslation } from '../../hooks/use-model-translation';
 import { useInlineProperties } from '../hooks/use-inline-properties';
+import { useTwoLevelInlineMode } from '../hooks/use-two-level-inline-mode';
 import { EditorRenderingConfig, useSlotContext } from './EditorSlots';
 
 export const DefaultInlineProperties: EditorRenderingConfig['InlineProperties'] = props => {
   const { t: tModel } = useModelTranslation();
+  const twoLevelInlineMode = useTwoLevelInlineMode();
   const [renderProperties, { type, isEmpty, showTitle }] = useInlineProperties(props.property, {
     canInlineField: props.canInlineField,
     disableRemoving: props.disableRemoving,
@@ -25,9 +27,13 @@ export const DefaultInlineProperties: EditorRenderingConfig['InlineProperties'] 
           description={props.description ? tModel(props.description) : undefined}
         />
       ) : null}
-      <Slots.ManagePropertyList property={props.property} type={type}>
-        {renderProperties()}
-      </Slots.ManagePropertyList>
+      {twoLevelInlineMode ? (
+        renderProperties()
+      ) : (
+        <Slots.ManagePropertyList property={props.property} type={type}>
+          {renderProperties()}
+        </Slots.ManagePropertyList>
+      )}
     </>
   );
 };

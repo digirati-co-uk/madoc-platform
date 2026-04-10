@@ -2,7 +2,6 @@ import { InputShape } from 'polygon-editor';
 import { ViewSelector } from '../../../_components/ViewDocument/components/ViewSelector';
 import { BaseSelector, SelectorTypeProps } from '../../../types/selector-types';
 import { useTranslation } from 'react-i18next';
-import { satisfies } from 'semver';
 import { Button } from '../../atoms/Button';
 import { ButtonRow } from '../../../../navigation/Button';
 

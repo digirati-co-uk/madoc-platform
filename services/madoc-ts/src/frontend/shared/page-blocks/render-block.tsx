@@ -13,7 +13,7 @@ type RenderBlockProps = {
   onUpdateBlock?: (id: number) => void;
 };
 
-export const RenderBlock: React.FC<RenderBlockProps> = props => {
+export function RenderBlock(props: RenderBlockProps) {
   const api = useApi();
   const site = useSite();
 
@@ -36,5 +36,5 @@ export const RenderBlock: React.FC<RenderBlockProps> = props => {
     );
   }
 
-  return blockContents;
-};
+  return blockContents as any;
+}

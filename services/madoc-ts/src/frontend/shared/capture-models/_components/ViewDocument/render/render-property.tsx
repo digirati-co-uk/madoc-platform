@@ -1,5 +1,4 @@
 import React from 'react';
-import { isRef } from 'react-dnd/lib/utils/isRef';
 import { filterRevises } from '../../../helpers/filter-revises';
 import { isEntityList } from '../../../helpers/is-entity';
 import { CaptureModel } from '../../../types/capture-model';

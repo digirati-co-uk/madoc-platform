@@ -34,16 +34,16 @@ const Modal = styled.div`
   border-radius: 4px;
 `;
 
-export const ConfirmButton: React.FC<{ message: string; defaultButton?: boolean; onClick: () => void }> = ({
+export const ConfirmButton: React.FC<{ children?: React.ReactNode; message: string; defaultButton?: boolean; onClick: () => void }> = ({
   message,
   defaultButton,
   onClick,
   children,
 }) => {
   const { t } = useTranslation();
-  const portalEl = useRef<HTMLElement>();
+  const portalEl = useRef<HTMLElement | undefined>(undefined);
   const [ready, setIsReady] = useState(false);
-  const containerRef = useRef<any>();
+  const containerRef = useRef<any>(undefined);
 
   useBrowserLayoutEffect(() => {
     const element = document.createElement('div');

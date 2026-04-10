@@ -1,12 +1,21 @@
-FROM node:18-bullseye as build
+# syntax=docker/dockerfile:1.6
+ARG NODE_VERSION=22
+FROM node:${NODE_VERSION}-bullseye as base
+
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+
+RUN corepack enable
+
+FROM base as build
 
 WORKDIR /home/node/app
 
 COPY ./package.json /home/node/app/package.json
-COPY ./yarn.lock /home/node/app/yarn.lock
+COPY ./pnpm-lock.yaml /home/node/app/pnpm-lock.yaml
 COPY ./npm /home/node/app/npm
 
-RUN yarn install --no-interactive --frozen-lockfile
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile --prod=false
 
 # These may not be required.
 COPY ./tsconfig.json /home/node/app/tsconfig.json
@@ -24,24 +33,24 @@ COPY ./tailwind.config.js /home/node/app/tailwind.config.js
 
 ENV NODE_ENV=production
 
-RUN yarn generate-schema
-RUN yarn build:vite-producer
-RUN yarn build:vite-auth
-RUN yarn build:vite-scheduler
-RUN yarn build:frontend
-RUN yarn build:vite-server
+RUN pnpm run generate-schema
+RUN pnpm run build:vite-producer
+RUN pnpm run build:vite-auth
+RUN pnpm run build:vite-scheduler
+RUN pnpm run build:frontend
+RUN pnpm run build:vite-server
 
-FROM node:18-bullseye as modules
+FROM base as modules
 
 WORKDIR /home/node/app
 
 COPY --from=build /home/node/app/package.json /home/node/app/package.json
-COPY --from=build /home/node/app/yarn.lock /home/node/app/yarn.lock
+COPY --from=build /home/node/app/pnpm-lock.yaml /home/node/app/pnpm-lock.yaml
 COPY --from=build /home/node/app/npm /home/node/app/npm
 
-RUN yarn install --no-interactive --frozen-lockfile --production=true
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile
 
-FROM node:18-bullseye
+FROM node:${NODE_VERSION}-slim
 
 ARG BUILD_TIME='unknown'
 ARG BUILD_VERSION='unknown'
@@ -49,10 +58,9 @@ ARG BUILD_REVISION='unknown'
 
 WORKDIR /home/node/app
 
-RUN npm install -g pm2@5
+RUN npm install -g pm2@5.4
 
 COPY --from=build /home/node/app/package.json /home/node/app/package.json
-COPY --from=build /home/node/app/yarn.lock /home/node/app/yarn.lock
 COPY --from=modules /home/node/app/node_modules /home/node/app/node_modules
 COPY --from=build /home/node/app/dist /home/node/app/dist
 COPY ./ecosystem.config.cjs /home/node/app/ecosystem.config.cjs
@@ -95,4 +103,3 @@ COPY ./schemas /home/node/app/schemas
 COPY ./entrypoint /home/node/app/entrypoint
 
 CMD ["pm2-runtime", "start", "./ecosystem.config.cjs"]
-

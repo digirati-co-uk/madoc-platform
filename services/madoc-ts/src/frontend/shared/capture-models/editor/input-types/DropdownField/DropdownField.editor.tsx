@@ -48,13 +48,13 @@ const DropdownFieldEditor: React.FC<Props> = props => {
       </StyledFormField>
       <StyledFormField>
         <StyledFormLabel>
-          <Field as={StyledCheckbox} type="checkbox" name="clearable" defaultValue={props.clearable} required={false} />
+          <Field as={StyledCheckbox} type="checkbox" name="clearable" required={false} />
           Allow clearing of selection
         </StyledFormLabel>
       </StyledFormField>
       <StyledFormField>
         <StyledFormLabel>
-          <Field as={StyledCheckbox} type="checkbox" name="inline" defaultValue={props.inline} required={false} />
+          <Field as={StyledCheckbox} type="checkbox" name="inline" required={false} />
           Use inline variant
         </StyledFormLabel>
       </StyledFormField>

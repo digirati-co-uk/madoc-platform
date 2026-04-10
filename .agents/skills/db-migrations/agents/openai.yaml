@@ -1,0 +1,4 @@
+interface:
+  display_name: "Madoc TS DB Migrations"
+  short_description: "Slonik migration workflow"
+  default_prompt: "Use $db-migrations to add or run database migrations."

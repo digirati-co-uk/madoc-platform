@@ -1,0 +1,4 @@
+interface:
+  display_name: "Madoc TS Tasks & Automation"
+  short_description: "Bots, task events, and task extensions"
+  default_prompt: "Use -automation to trace task automation and bot behavior in services/madoc-ts."

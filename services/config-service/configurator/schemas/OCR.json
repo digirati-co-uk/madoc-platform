@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "description": "Schema for OCR config objects POSTed to the service.",
+  "title": "OCR service config schema",
+  "type": "object",
+  "properties": {
+    "language": {
+      "type": "string"
+    },
+    "ocr_engine": {
+      "type": "string"
+    },
+    "run": {
+      "type": "boolean"
+    }
+  },
+  "required": ["run", "ocr_engine", "language"]
+}

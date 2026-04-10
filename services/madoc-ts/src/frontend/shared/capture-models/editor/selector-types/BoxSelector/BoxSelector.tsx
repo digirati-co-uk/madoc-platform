@@ -16,10 +16,6 @@ export interface BoxSelectorProps extends BaseSelector {
   };
 }
 
-type BoxSelectorPreview = {
-  thumbnail: string;
-};
-
 const SelectorButton = styled(CardButton)`
   margin-bottom: 0;
   margin-top: 10px;
@@ -89,7 +85,12 @@ export const BoxSelector: SelectorComponent<BoxSelectorProps> = ({
                 <SelectorButton
                   inline={true}
                   size="small"
-                  onClick={() => updateSelector(null)}
+                  onClick={() => {
+                    updateSelector(null);
+                    if (clearSelector) {
+                      clearSelector();
+                    }
+                  }}
                   style={{ marginRight: 10 }}
                 >
                   {t('discard selection')}

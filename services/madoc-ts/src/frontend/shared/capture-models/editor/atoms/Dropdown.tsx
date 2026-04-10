@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
-import { Select } from 'react-functional-select';
+import { Select } from '../../../form/FunctionalSelect';
 import { Tag } from './Tag';
 
 export type DropdownOption = {
@@ -47,11 +47,12 @@ export const Dropdown: React.FC<DropdownProps> = ({
   options,
   onChange,
 }) => {
-  const onOptionChange = useCallback((option: DropdownOption | null): void => {
-    onChange(option ? option.value : undefined);
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const onOptionChange = useCallback(
+    (option: DropdownOption | null): void => {
+      onChange(option ? option.value : undefined);
+    },
+    [onChange]
+  );
 
   const initialValue = useMemo(() => {
     return options.find(item => item.value === value);

@@ -12,6 +12,7 @@ import { SlotMappingRequest } from '../../types/schemas/site-page';
 
 export type JsonProjectTemplate = {
   type: string; // Required unique type used to register and index.
+  template_config?: any | null;
   metadata: {
     label: string;
     description: string;
@@ -28,6 +29,11 @@ export type JsonProjectTemplate = {
     defaults?: Partial<ProjectConfiguration>;
     immutable?: Array<keyof ProjectConfiguration>;
     frozen?: boolean;
+    // Editor shown on the frontend to the user.
+    editor?: {
+      type: string;
+      options?: any;
+    };
     captureModels?: ModelEditorConfig;
     tasks?: {
       generateOnCreate?: boolean;
@@ -65,7 +71,7 @@ export type ModelDefinition<Options = any> =
 export type ProjectTemplate<
   Options extends Record<string, any> = any,
   RevSession extends Record<string, any> = any,
-  CustomConfig extends Record<string, any> = any
+  CustomConfig extends Record<string, any> = any,
 > = JsonProjectTemplate & {
   // Unknown parameters.
   setup?: ModelDefinition<Options> & {
@@ -160,6 +166,8 @@ export type ProjectTemplate<
   }>;
   components?: {
     customEditor?: React.FC<any>;
+    customReviewRenderer?: React.FC<any>;
+    customAdminPreviewRenderer?: React.FC<any>;
   };
   source?: { type: string; id?: string; name: string };
 };

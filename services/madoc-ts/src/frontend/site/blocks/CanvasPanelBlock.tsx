@@ -1,4 +1,3 @@
-import React, { DetailedHTMLProps } from 'react';
 import { Helmet as _Helmet } from 'react-helmet';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 
@@ -13,12 +12,20 @@ interface CanvasPanelBlockProps {
 }
 
 declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      'canvas-panel': DetailedHTMLProps<any, any>;
+  // eslint-disable-next-line @typescript-eslint/no-namespace
+  namespace React {
+    // eslint-disable-next-line @typescript-eslint/no-namespace
+    namespace JSX {
+      interface IntrinsicElements {
+        'canvas-panel': React.DetailedHTMLProps<
+          { height?: string | number; width?: string | number } & React.HTMLAttributes<HTMLElement>,
+          HTMLElement
+        >;
+      }
     }
   }
 }
+
 
 export function CanvasPanelBlock(props: CanvasPanelBlockProps) {
   const width = props.width || undefined;

@@ -119,9 +119,10 @@ export const sitePublishedModels: RouteMiddleware<{ slug: string; id: string }> 
     canvas: resp.source,
   };
 
-  if (version === '3.0' || version === '2.1') {
-    defaultOptions.canvas = `${gatewayHost}/s/${site.slug}/madoc/api/manifests/${manifestId}/export/${version}/c${resp.id}`;
-  }
+  // Removed for compatibility
+  // if (version === '3.0' || version === '2.1') {
+  //   defaultOptions.canvas = `${gatewayHost}/s/${site.slug}/madoc/api/manifests/${manifestId}/export/${version}/c${resp.id}`;
+  // }
 
   // Set cors.
   context.set('Access-Control-Allow-Origin', '*');

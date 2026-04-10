@@ -1,4 +1,6 @@
+import { router as activityStreamRoutes } from './activity-streams/router';
 import { getAuthRoutes } from './auth';
+import { router as captureModelRoutes } from './capture-model-server/router';
 import {
   awardBadge,
   createBadge,
@@ -10,9 +12,46 @@ import {
   removeAwardedBadge,
   updateBadge,
 } from './routes/admin/badges';
+import { cancelSearchIndex } from './routes/admin/cancel-search-index';
 import { deleteApiKey } from './routes/admin/delete-api-key';
+import { deleteInvalidUsers } from './routes/admin/delete-invalid-users';
+import {
+  assignUserToDelegatedRequest,
+  createDelegatedRequest,
+  delegatedRequest,
+} from './routes/admin/deletegated-request';
+import { acceptNewDevelopmentBundle, developmentPlugin } from './routes/admin/development-plugin';
+import { generateApiKey } from './routes/admin/generate-api-key';
+import { getMetadataKeys } from './routes/admin/get-metadata-keys';
+import { getMetadataValues } from './routes/admin/get-metadata-values';
+import { getModelConfiguration } from './routes/admin/get-model-configuration';
 import { keyRegenerate } from './routes/admin/key-regenerate';
 import { listApiKeys } from './routes/admin/list-api-keys';
+import { listJobs, runJob } from './routes/admin/list-jobs';
+import {
+  extractLocalesFromContent,
+  getLocalisation,
+  listLocalisations,
+  updateLanguagePreferences,
+  updateLocalisation,
+} from './routes/admin/localisation';
+import { getMetadataConfiguration, updateMetadataConfiguration } from './routes/admin/metadata-configuration';
+import {
+  disablePlugin,
+  enablePlugin,
+  getPlugin,
+  getPluginDependencies,
+  installPlugin,
+  installRemotePlugin,
+  listPlugins,
+  uninstallPlugin,
+  viewRemotePlugin,
+} from './routes/admin/plugins';
+import { pm2RestartAuth, pm2RestartMadoc, pm2RestartQueue, pm2RestartScheduler, pm2Status } from './routes/admin/pm2';
+import { queueStatus } from './routes/admin/queue-status';
+import { resumeQueue } from './routes/admin/resume-queue';
+import { getSiteDetails } from './routes/admin/site-details';
+import { getSiteScopes, saveSiteScopes } from './routes/admin/site-scopes';
 import {
   createTermConfiguration,
   deleteTermConfiguration,
@@ -21,18 +60,138 @@ import {
   updateTermConfiguration,
 } from './routes/admin/term-configurations';
 import { acceptTerms, createTerms, deleteTerms, getLatestTerms, getTermsById, listTerms } from './routes/admin/terms';
+import {
+  disableTheme,
+  enableTheme,
+  installTheme,
+  listThemes,
+  serveThemeAsset,
+  uninstallTheme,
+} from './routes/admin/themes';
+import { updateModelConfiguration } from './routes/admin/update-model-configuration';
+import { updateSiteConfiguration } from './routes/admin/update-site-configuration';
 import { getProjectAnnotationStyle } from './routes/annotation-styles/get-project-annotation-style';
 import { annotationStyles } from './routes/annotation-styles/index';
+import { frontendBundles } from './routes/assets/frontend-bundles';
+import { pluginBundles } from './routes/assets/plugin-bundles';
+import { createBlock } from './routes/content/create-block';
+import { createPage } from './routes/content/create-page';
+import { createSlot } from './routes/content/create-slot';
+import { deleteBlock } from './routes/content/delete-block';
+import { deletePage } from './routes/content/delete-page';
+import { deleteSlot } from './routes/content/delete-slot';
+import { getBlock } from './routes/content/get-block';
+import { getPage } from './routes/content/get-page';
+import { getSlot } from './routes/content/get-slot';
+import { linkAutocomplete } from './routes/content/link-autocomplete';
+import { getAllPages } from './routes/content/list-pages';
+import { resolveSlots } from './routes/content/resolve-slots';
+import { updateBlock } from './routes/content/update-block';
+import { updatePage } from './routes/content/update-page';
+import { updateSlot } from './routes/content/update-slot';
+import { updateSlotStructure } from './routes/content/update-slot-structure';
+import { adminFrontend } from './routes/frontend/admin-frontend';
+import { siteFrontend } from './routes/frontend/site-frontend';
+import { activateUser } from './routes/global/activate-user';
+import { authenticateApi } from './routes/global/api-authentication';
+import { createSite } from './routes/global/create-site';
+import { createUser } from './routes/global/create-user';
+import { deactivateUser } from './routes/global/deactivate-user';
+import { deleteUser } from './routes/global/delete-user';
+import { getSystemConfig } from './routes/global/get-system-config';
+import { getUser } from './routes/global/get-user';
+import { listAllSites } from './routes/global/list-all-sites';
+import { listAllUsers } from './routes/global/list-all-users';
+import { resetPassword } from './routes/global/reset-password';
 import { searchAllUsers } from './routes/global/search-all-users';
 import { systemCheck } from './routes/global/system-check';
+import { updateSystemConfig } from './routes/global/update-system-config';
+import { updateUser } from './routes/global/update-user';
+import { createCanvas } from './routes/iiif/canvases/create-canvas';
+import { deleteCanvasEndpoint } from './routes/iiif/canvases/delete-canvas';
+import { deleteCanvasSummary } from './routes/iiif/canvases/delete-canvas-summary';
+import { getCanvas } from './routes/iiif/canvases/get-canvas';
+import { getCanvasManifests } from './routes/iiif/canvases/get-canvas-manifests';
+import { getCanvasMetadata } from './routes/iiif/canvases/get-canvas-metadata';
+import { getCanvasPlaintext } from './routes/iiif/canvases/get-canvas-plaintext';
+import { getCanvasReference } from './routes/iiif/canvases/get-canvas-reference';
+import { listCanvases } from './routes/iiif/canvases/list-canvases';
 import { updateCanvasDetails } from './routes/iiif/canvases/update-canvas-details';
+import { createCollection } from './routes/iiif/collections/create-collection';
+import { deleteCollectionEndpoint } from './routes/iiif/collections/delete-collection';
+import { getCollectionDeletionSummary } from './routes/iiif/collections/delete-collection-summary';
+import { getCollection } from './routes/iiif/collections/get-collection';
+import { getCollectionAutocomplete } from './routes/iiif/collections/get-collection-autocomplete';
+import { getCollectionMetadata } from './routes/iiif/collections/get-collection-metadata';
+import { getCollectionProjects } from './routes/iiif/collections/get-collection-projects';
+import { getCollectionStructure } from './routes/iiif/collections/get-collection-structure';
+import { getFlatCollectionStatistics } from './routes/iiif/collections/get-flat-collection-statistics';
+import { listCollections } from './routes/iiif/collections/list-collections';
+import { publishCollection } from './routes/iiif/collections/publish-collection';
+import { updateCollectionStructure } from './routes/iiif/collections/update-collection-structure';
+import { addLinking } from './routes/iiif/linking/add-linking';
+import { convertLinking } from './routes/iiif/linking/convert-linking';
+import { deleteLinking } from './routes/iiif/linking/delete-linking';
+import { getLinking } from './routes/iiif/linking/get-linking';
+import { getParentLinking } from './routes/iiif/linking/get-parent-linking';
+import { updateLinking } from './routes/iiif/linking/update-linking';
+import { createManifest } from './routes/iiif/manifests/create-manifest';
+import { deleteManifestEndpoint } from './routes/iiif/manifests/delete-manifest';
+import { deleteManifestSummary } from './routes/iiif/manifests/delete-manifest-summary';
+import { getManifest } from './routes/iiif/manifests/get-manifest';
+import { getManifestAutocomplete } from './routes/iiif/manifests/get-manifest-autocomplete';
+import { getManifestCollections } from './routes/iiif/manifests/get-manifest-collections';
+import { getManifestMetadata } from './routes/iiif/manifests/get-manifest-metadata';
+import { getManifestProjects } from './routes/iiif/manifests/get-manifest-projects';
+import { getManifestStructure } from './routes/iiif/manifests/get-manifest-structure';
+import { listManifests } from './routes/iiif/manifests/list-manifests';
+import { publishManifest } from './routes/iiif/manifests/publish-manifest';
+import { searchManifest } from './routes/iiif/manifests/search-manifest';
 import { updateManifestDetails } from './routes/iiif/manifests/update-manifest-details';
+import { updateManifestStructure } from './routes/iiif/manifests/update-manifest-structure';
+import { statistics } from './routes/iiif/statistics';
+import { updateMetadata } from './routes/iiif/update-metadata';
+import { importBulkManifests, importCollection, importManifest, importManifestOcr } from './routes/iiif-import/import';
+import { getLocale, saveMissingLocale } from './routes/locales';
+import { createInvitation } from './routes/manage-site/create-invitation';
+import { deleteInvitation } from './routes/manage-site/delete-invitation';
+import { deleteUserSiteRole } from './routes/manage-site/delete-user-site-role';
 import { getAutomatedUsers } from './routes/manage-site/get-automated-users';
+import { getInvitation } from './routes/manage-site/get-invitation';
+import { getSiteUsers } from './routes/manage-site/get-site-users';
+import { listInvitations } from './routes/manage-site/list-invitations';
+import { updateInvitation } from './routes/manage-site/update-invitation';
+import { updateSiteDetails } from './routes/manage-site/update-site-details';
+import { updateUserSiteRole } from './routes/manage-site/update-user-site-role';
+import { createMedia } from './routes/media/create-media';
+import { deleteMedia } from './routes/media/delete-media';
+import { generateThumbnails } from './routes/media/generate-thumbnails';
+import { getMedia } from './routes/media/get-media';
+import { listMedia } from './routes/media/list-media';
+import { ping } from './routes/ping';
+import { assignRandomResource } from './routes/projects/assign-random-resource';
+import { assignReview } from './routes/projects/assign-review';
+import { createNewProject } from './routes/projects/create-new-project';
 import { createProjectExport } from './routes/projects/create-project-export';
+import { createResourceClaim, prepareResourceClaim } from './routes/projects/create-resource-claim';
+import { deleteProjectCaptureModel } from './routes/projects/delete-project-capture-model';
+import { deleteProjectSummary } from './routes/projects/delete-project-summary';
+import { deleteResourceClaim } from './routes/projects/delete-resource-claim';
+import { deleteProjectEndpoint } from './routes/projects/deleteProject';
+import { exportProjectTemplate } from './routes/projects/export-project-template';
+import { getAllProjectNotes } from './routes/projects/get-all-project-notes';
+import { getProject } from './routes/projects/get-project';
 import { getProjectFromTask } from './routes/projects/get-project-from-task';
+import { getProjectMetadata } from './routes/projects/get-project-metadata';
+import { getProjectModel } from './routes/projects/get-project-model';
+import { getProjectNote } from './routes/projects/get-project-note';
 import { getProjectRawData } from './routes/projects/get-project-raw-data';
+import { getProjectStructure } from './routes/projects/get-project-structure';
+import { getProjectTask } from './routes/projects/get-project-task';
 import { listProjectEmails } from './routes/projects/list-project-emails';
 import { listProjectModelEntityAutocomplete } from './routes/projects/list-project-model-entity-autocomplete';
+import { listProjects } from './routes/projects/list-projects';
+import { listProjectsAutocomplete } from './routes/projects/list-projects-autocomplete';
 import { addProjectFeedback, listProjectFeedback, removeProjectFeedback } from './routes/projects/project-feedback';
 import {
   addProjectMember,
@@ -48,136 +207,86 @@ import {
   updateProjectUpdate,
 } from './routes/projects/project-updates';
 import { svgFromCrowdsourcingTask } from './routes/projects/svg-from-crowdsourcing-task';
+import { updateCuratedFeed } from './routes/projects/update-curated-feed';
 import { updateProjectAnnotationStyle } from './routes/projects/update-project-annotation-style';
 import { updateProjectBanner } from './routes/projects/update-project-banner';
 import { updateProjectDuration } from './routes/projects/update-project-duration';
-import { siteRoot } from './routes/root';
-import {
-  assignUserToDelegatedRequest,
-  createDelegatedRequest,
-  delegatedRequest,
-} from './routes/admin/deletegated-request';
-import { acceptNewDevelopmentBundle, developmentPlugin } from './routes/admin/development-plugin';
-import { getMetadataKeys } from './routes/admin/get-metadata-keys';
-import { getMetadataValues } from './routes/admin/get-metadata-values';
-import { getModelConfiguration } from './routes/admin/get-model-configuration';
-import { getSystemConfig } from './routes/global/get-system-config';
-import { getUser } from './routes/global/get-user';
-import { listAllUsers } from './routes/global/list-all-users';
-import { resetPassword } from './routes/global/reset-password';
-import { updateSystemConfig } from './routes/global/update-system-config';
-import { updateUser } from './routes/global/update-user';
-import { activateUser } from './routes/global/activate-user';
-import { createInvitation } from './routes/manage-site/create-invitation';
-import { createSite } from './routes/global/create-site';
-import { createUser } from './routes/global/create-user';
-import { deactivateUser } from './routes/global/deactivate-user';
-import { deleteInvitation } from './routes/manage-site/delete-invitation';
-import { deleteUser } from './routes/global/delete-user';
-import { deleteUserSiteRole } from './routes/manage-site/delete-user-site-role';
-import { getInvitation } from './routes/manage-site/get-invitation';
-import { getSiteUsers } from './routes/manage-site/get-site-users';
-import { listJobs, runJob } from './routes/admin/list-jobs';
-import {
-  extractLocalesFromContent,
-  getLocalisation,
-  listLocalisations,
-  updateLanguagePreferences,
-  updateLocalisation,
-} from './routes/admin/localisation';
-import { listAllSites } from './routes/global/list-all-sites';
-import { getMetadataConfiguration, updateMetadataConfiguration } from './routes/admin/metadata-configuration';
-import {
-  disablePlugin,
-  enablePlugin,
-  getPlugin,
-  getPluginDependencies,
-  installPlugin,
-  installRemotePlugin,
-  listPlugins,
-  uninstallPlugin,
-  viewRemotePlugin,
-} from './routes/admin/plugins';
-import { pm2RestartAuth, pm2RestartMadoc, pm2RestartQueue, pm2RestartScheduler, pm2Status } from './routes/admin/pm2';
-import { getSiteDetails } from './routes/admin/site-details';
-import {
-  disableTheme,
-  enableTheme,
-  installTheme,
-  listThemes,
-  serveThemeAsset,
-  uninstallTheme,
-} from './routes/admin/themes';
-import { updateModelConfiguration } from './routes/admin/update-model-configuration';
-import { updateSiteConfiguration } from './routes/admin/update-site-configuration';
-import { createBlock } from './routes/content/create-block';
-import { createPage } from './routes/content/create-page';
-import { createSlot } from './routes/content/create-slot';
-import { deleteBlock } from './routes/content/delete-block';
-import { deletePage } from './routes/content/delete-page';
-import { deleteSlot } from './routes/content/delete-slot';
-import { getBlock } from './routes/content/get-block';
-import { getPage } from './routes/content/get-page';
-import { linkAutocomplete } from './routes/content/link-autocomplete';
-import { resolveSlots } from './routes/content/resolve-slots';
-import { getCanvasReference } from './routes/iiif/canvases/get-canvas-reference';
-import { listInvitations } from './routes/manage-site/list-invitations';
-import { updateInvitation } from './routes/manage-site/update-invitation';
-import { updateSiteDetails } from './routes/manage-site/update-site-details';
-import { updateUserSiteRole } from './routes/manage-site/update-user-site-role';
-import { getAllProjectNotes } from './routes/projects/get-all-project-notes';
-import { siteCompletions } from './routes/site/site-completions';
-import { siteDetails } from './routes/site/site-details';
-import { deleteManifestSummary } from './routes/iiif/manifests/delete-manifest-summary';
-import { siteManifestBuild } from './routes/site/site-manifest-build';
-import { createMedia } from './routes/media/create-media';
-import { deleteMedia } from './routes/media/delete-media';
-import { generateThumbnails } from './routes/media/generate-thumbnails';
-import { getMedia } from './routes/media/get-media';
-import { listMedia } from './routes/media/list-media';
-import { deleteResourceClaim } from './routes/projects/delete-resource-claim';
-import { getProjectNote } from './routes/projects/get-project-note';
-import { updateCuratedFeed } from './routes/projects/update-curated-feed';
+import { updateProjectMetadata } from './routes/projects/update-project-metadata';
 import { updateProjectNote } from './routes/projects/update-project-note';
+import { updateProjectStatus } from './routes/projects/update-project-status';
+import { updateProjectTemplateConfig } from './routes/projects/update-project-template-config';
+import { updateResourceClaim } from './routes/projects/update-resource-claim';
+import { siteRoot } from './routes/root';
+import { batchIndex } from './routes/search/batch-index';
+import { getFacetConfiguration, updateFacetConfiguration } from './routes/search/facet-configuration';
 import { fullReindex } from './routes/search/full-reindex';
+import { indexCanvas } from './routes/search/index-canvas';
+import { indexManifest } from './routes/search/index-manifest';
+import { typesenseGetContext, typesenseListContexts } from './routes/search/typesense-contexts';
+import {
+  typesenseDeleteIIIF,
+  typesenseGetIIIF,
+  typesenseIngestIIIF,
+  typesenseListIIIF,
+} from './routes/search/typesense-iiif';
+import {
+  typesenseGetIndexable,
+  typesenseGetModel,
+  typesenseIndexRawIndexable,
+  typesenseIngestModelIndexables,
+  typesenseListIndexables,
+  typesenseListModels,
+} from './routes/search/typesense-indexables';
+import { typesenseProxyMultiSearch, typesenseProxySearch, typesenseProxyStatus } from './routes/search/typesense-proxy';
+import { typesenseQuery } from './routes/search/typesense-query';
+import { siteCanvas } from './routes/site/site-canvas';
+import { siteCanvasModels } from './routes/site/site-canvas-models';
 import { siteCanvasSource } from './routes/site/site-canvas-reference';
+import { siteCanvasTasks } from './routes/site/site-canvas-tasks';
+import { captchaChallenge, captchaRedeem } from './routes/site/site-captcha';
+import { siteCollection } from './routes/site/site-collection';
+import { siteCollections } from './routes/site/site-collections';
+import { siteCompletions } from './routes/site/site-completions';
+import { siteConfiguration } from './routes/site/site-configuration';
+import { siteDetails } from './routes/site/site-details';
+import { siteListProjectAssigneeStats } from './routes/site/site-list-project-assignee-stats';
+import { siteManifest } from './routes/site/site-manifest';
+import {
+  siteManifestBuild,
+  siteManifestBuildOptions,
+  siteRootCollection,
+  siteRootCollectionOptions,
+} from './routes/site/site-manifest-build';
 import { siteManifestModels } from './routes/site/site-manifest-models';
+import { getSiteManifestStructure } from './routes/site/site-manifest-structure';
+import { siteManifestTasks } from './routes/site/site-manifest-tasks';
+import { siteManifests } from './routes/site/site-manifests';
 import { siteMetadata } from './routes/site/site-metadata';
 import { siteModelConfiguration } from './routes/site/site-model-configuration';
 import { sitePageNavigation } from './routes/site/site-page-navigation';
-import { getSlot } from './routes/content/get-slot';
-import { getAllPages } from './routes/content/list-pages';
-import { updateBlock } from './routes/content/update-block';
-import { updatePage } from './routes/content/update-page';
-import { updateSlot } from './routes/content/update-slot';
-import { updateSlotStructure } from './routes/content/update-slot-structure';
-import { getCanvasPlaintext } from './routes/iiif/canvases/get-canvas-plaintext';
-import { publishCollection } from './routes/iiif/collections/publish-collection';
-import { publishManifest } from './routes/iiif/manifests/publish-manifest';
-import { batchIndex } from './routes/search/batch-index';
-import { getFacetConfiguration, updateFacetConfiguration } from './routes/search/facet-configuration';
-import { siteConfiguration } from './routes/site/site-configuration';
-import { convertLinking } from './routes/iiif/linking/convert-linking';
-import { getParentLinking } from './routes/iiif/linking/get-parent-linking';
-import { indexManifest } from './routes/search/index-manifest';
-import { updateProjectStatus } from './routes/projects/update-project-status';
-import { siteManifestTasks } from './routes/site/site-manifest-tasks';
 import { getStaticPage, sitePages } from './routes/site/site-pages';
-import { listProjectsAutocomplete } from './routes/projects/list-projects-autocomplete';
+import { siteProject } from './routes/site/site-project';
 import { siteProjectMembers } from './routes/site/site-project-members';
 import { siteProjectRecent } from './routes/site/site-project-recent';
 import { siteProjectUpdates } from './routes/site/site-project-updates';
+import { siteProjects } from './routes/site/site-projects';
+import { sitePublishedModels } from './routes/site/site-published-models';
+import { siteSearch } from './routes/site/site-search';
 import { siteTaskMetadata } from './routes/site/site-task-metadata';
 import { termListProxy } from './routes/site/site-term-proxy';
 import { siteTerms } from './routes/site/site-terms';
+import { siteTopic } from './routes/site/site-topic';
+import { siteTopicType } from './routes/site/site-topic-type';
+import { siteTopicTypes } from './routes/site/site-topic-types';
 import { siteUserAutocomplete } from './routes/site/site-user-autocomplete';
 import { siteUserImage } from './routes/site/site-user-image';
 import { siteUserProfile } from './routes/site/site-user-profile';
-import { saveUserSettings } from './routes/user/save-user-settings';
-import { userSettingsModel } from './routes/user/user-settings-model';
+import { userDetails } from './routes/user/details';
 import { forgotPassword } from './routes/user/forgot-password';
 import { getSiteUser } from './routes/user/get-site-user';
+import { loginPage } from './routes/user/login';
 import { loginRefresh } from './routes/user/login-refresh';
+import { logout } from './routes/user/logout';
 import {
   clearAllNotifications,
   clearNotification,
@@ -187,99 +296,16 @@ import {
   readAllNotifications,
   readNotification,
 } from './routes/user/notifications';
+import { refreshToken } from './routes/user/refresh';
 import { registerPage } from './routes/user/register';
 import { resetPasswordPage } from './routes/user/reset-password';
+import { saveUserSettings } from './routes/user/save-user-settings';
 import { updatePassword } from './routes/user/update-password';
 import { updateProfilePage } from './routes/user/update-profile';
 import { userAutocomplete } from './routes/user/user-autocomplete';
+import { userSettingsModel } from './routes/user/user-settings-model';
 import { TypedRouter } from './utility/typed-router';
-import { ping } from './routes/ping';
-import { importBulkManifests, importCollection, importManifest, importManifestOcr } from './routes/iiif-import/import';
-import { loginPage } from './routes/user/login';
-import { getSiteScopes, saveSiteScopes } from './routes/admin/site-scopes';
-import { logout } from './routes/user/logout';
-import { frontendBundles } from './routes/assets/frontend-bundles';
-import { pluginBundles } from './routes/assets/plugin-bundles';
-import { adminFrontend } from './routes/frontend/admin-frontend';
-import { siteFrontend } from './routes/frontend/site-frontend';
-import { createCollection } from './routes/iiif/collections/create-collection';
-import { deleteCollectionEndpoint } from './routes/iiif/collections/delete-collection';
-import { getCollection } from './routes/iiif/collections/get-collection';
-import { getCollectionStructure } from './routes/iiif/collections/get-collection-structure';
-import { getCollectionMetadata } from './routes/iiif/collections/get-collection-metadata';
-import { listCollections } from './routes/iiif/collections/list-collections';
-import { updateCollectionStructure } from './routes/iiif/collections/update-collection-structure';
-import { listManifests } from './routes/iiif/manifests/list-manifests';
-import { createManifest } from './routes/iiif/manifests/create-manifest';
-import { getManifest } from './routes/iiif/manifests/get-manifest';
-import { deleteManifestEndpoint } from './routes/iiif/manifests/delete-manifest';
-import { getManifestMetadata } from './routes/iiif/manifests/get-manifest-metadata';
-import { listCanvases } from './routes/iiif/canvases/list-canvases';
-import { createCanvas } from './routes/iiif/canvases/create-canvas';
-import { getCanvas } from './routes/iiif/canvases/get-canvas';
-import { getCanvasMetadata } from './routes/iiif/canvases/get-canvas-metadata';
-import { indexCanvas } from './routes/search/index-canvas';
-import { updateManifestStructure } from './routes/iiif/manifests/update-manifest-structure';
-import { getManifestStructure } from './routes/iiif/manifests/get-manifest-structure';
-import { getLocale, saveMissingLocale } from './routes/locales';
-import { updateMetadata } from './routes/iiif/update-metadata';
-import { getManifestAutocomplete } from './routes/iiif/manifests/get-manifest-autocomplete';
-import { getCollectionAutocomplete } from './routes/iiif/collections/get-collection-autocomplete';
-import { refreshToken } from './routes/user/refresh';
-import { createNewProject } from './routes/projects/create-new-project';
-import { listProjects } from './routes/projects/list-projects';
-import { getProject } from './routes/projects/get-project';
-import { getProjectMetadata } from './routes/projects/get-project-metadata';
-import { updateProjectMetadata } from './routes/projects/update-project-metadata';
-import { getProjectStructure } from './routes/projects/get-project-structure';
-import { getCollectionProjects } from './routes/iiif/collections/get-collection-projects';
-import { getManifestProjects } from './routes/iiif/manifests/get-manifest-projects';
-import { siteCollections } from './routes/site/site-collections';
-import { siteCollection } from './routes/site/site-collection';
-import { siteCanvas } from './routes/site/site-canvas';
-import { siteManifest } from './routes/site/site-manifest';
-import { siteManifests } from './routes/site/site-manifests';
-import { siteProject } from './routes/site/site-project';
-import { siteProjects } from './routes/site/site-projects';
-import { siteSearch } from './routes/site/site-search';
-import { siteTopic } from './routes/site/site-topic';
-import { siteTopicType } from './routes/site/site-topic-type';
-import { siteTopicTypes } from './routes/site/site-topic-types';
-import { createResourceClaim, prepareResourceClaim } from './routes/projects/create-resource-claim';
-import { statistics } from './routes/iiif/statistics';
-import { getCanvasManifests } from './routes/iiif/canvases/get-canvas-manifests';
-import { getManifestCollections } from './routes/iiif/manifests/get-manifest-collections';
-import { getFlatCollectionStatistics } from './routes/iiif/collections/get-flat-collection-statistics';
-import { updateResourceClaim } from './routes/projects/update-resource-claim';
-import { getSiteManifestStructure } from './routes/site/site-manifest-structure';
-import { userDetails } from './routes/user/details';
-import { sitePublishedModels } from './routes/site/site-published-models';
-import { addLinking } from './routes/iiif/linking/add-linking';
-import { deleteLinking } from './routes/iiif/linking/delete-linking';
-import { updateLinking } from './routes/iiif/linking/update-linking';
-import { getLinking } from './routes/iiif/linking/get-linking';
-import { searchManifest } from './routes/iiif/manifests/search-manifest';
-import { assignReview } from './routes/projects/assign-review';
-import { getProjectModel } from './routes/projects/get-project-model';
-import { siteCanvasModels } from './routes/site/site-canvas-models';
-import { siteCanvasTasks } from './routes/site/site-canvas-tasks';
-import { getProjectTask } from './routes/projects/get-project-task';
-import { assignRandomResource } from './routes/projects/assign-random-resource';
-import { router as activityStreamRoutes } from './activity-streams/router';
 import { router as webhookRoutes } from './webhooks/router';
-import { router as captureModelRoutes } from './capture-model-server/router';
-import { getCollectionDeletionSummary } from './routes/iiif/collections/delete-collection-summary';
-import { deleteCanvasSummary } from './routes/iiif/canvases/delete-canvas-summary';
-import { deleteProjectSummary } from './routes/projects/delete-project-summary';
-import { deleteCanvasEndpoint } from './routes/iiif/canvases/delete-canvas';
-import { deleteProjectEndpoint } from './routes/projects/deleteProject';
-import { exportProjectTemplate } from './routes/projects/export-project-template';
-import { generateApiKey } from './routes/admin/generate-api-key';
-import { authenticateApi } from './routes/global/api-authentication';
-import { siteListProjectAssigneeStats } from './routes/site/site-list-project-assignee-stats';
-import { deleteProjectCaptureModel } from './routes/projects/delete-project-capture-model';
-import { deleteInvalidUsers } from './routes/admin/delete-invalid-users';
-import { captchaChallenge, captchaRedeem } from './routes/site/site-captcha';
 
 export const router = new TypedRouter({
   // Normal route
@@ -291,6 +317,9 @@ export const router = new TypedRouter({
   'pm2-restart-queue': [TypedRouter.POST, '/api/madoc/pm2/restart/queue', pm2RestartQueue],
   'pm2-restart-madoc': [TypedRouter.POST, '/api/madoc/pm2/restart/madoc', pm2RestartMadoc],
   'pm2-restart-scheduler': [TypedRouter.POST, '/api/madoc/pm2/restart/scheduler', pm2RestartScheduler],
+  'queue-status': [TypedRouter.GET, '/api/madoc/queue/status', queueStatus],
+  'queue-cancel-search-index': [TypedRouter.POST, '/api/madoc/queue/cancel-search-index', cancelSearchIndex],
+  'queue-resume': [TypedRouter.POST, '/api/madoc/queue/resume', resumeQueue],
   'cron-jobs': [TypedRouter.GET, '/api/madoc/cron/jobs', listJobs],
   'run-cron-jobs': [TypedRouter.POST, '/api/madoc/cron/jobs/:jobId/run', runJob],
   'regenerate-keys': [TypedRouter.POST, '/api/madoc/system/key-regen', keyRegenerate],
@@ -368,6 +397,55 @@ export const router = new TypedRouter({
     '/api/madoc/configuration/search-facets',
     updateFacetConfiguration,
   ],
+  'madoc-search-query': [TypedRouter.POST, '/api/madoc/search', typesenseQuery],
+  'madoc-search-query-get': [TypedRouter.GET, '/api/madoc/search', typesenseQuery],
+  'madoc-search-index-iiif': [TypedRouter.POST, '/api/madoc/search/iiif', typesenseIngestIIIF],
+  'madoc-search-reindex-iiif': [TypedRouter.PUT, '/api/madoc/search/iiif/:id', typesenseIngestIIIF],
+  'madoc-search-list-iiif': [TypedRouter.GET, '/api/madoc/search/iiif', typesenseListIIIF],
+  'madoc-search-get-iiif': [TypedRouter.GET, '/api/madoc/search/iiif/:id', typesenseGetIIIF],
+  'madoc-search-delete-iiif': [TypedRouter.DELETE, '/api/madoc/search/iiif/:id', typesenseDeleteIIIF],
+  'madoc-search-index-model': [TypedRouter.POST, '/api/madoc/search/model', typesenseIngestModelIndexables],
+  'madoc-search-list-model': [TypedRouter.GET, '/api/madoc/search/model', typesenseListModels],
+  'madoc-search-get-model': [TypedRouter.GET, '/api/madoc/search/model/:id', typesenseGetModel],
+  'madoc-search-index-indexable': [TypedRouter.POST, '/api/madoc/search/indexables', typesenseIndexRawIndexable],
+  'madoc-search-list-indexable': [TypedRouter.GET, '/api/madoc/search/indexables', typesenseListIndexables],
+  'madoc-search-get-indexable': [TypedRouter.GET, '/api/madoc/search/indexables/:id', typesenseGetIndexable],
+  'madoc-search-list-contexts': [TypedRouter.GET, '/api/madoc/search/contexts', typesenseListContexts],
+  'madoc-search-get-context': [TypedRouter.GET, '/api/madoc/search/contexts/:id', typesenseGetContext],
+  'madoc-typesense-status': [TypedRouter.GET, '/api/madoc/typesense/status', typesenseProxyStatus],
+  'madoc-typesense-search-get': [TypedRouter.GET, '/api/madoc/typesense', typesenseProxySearch],
+  'madoc-typesense-search-post': [TypedRouter.POST, '/api/madoc/typesense', typesenseProxySearch],
+  'madoc-typesense-multi-search-post': [
+    TypedRouter.POST,
+    '/api/madoc/typesense/multi_search',
+    typesenseProxyMultiSearch,
+  ],
+  'site-typesense-status': [TypedRouter.GET, '/s/:slug/madoc/api/typesense/status', typesenseProxyStatus],
+  'site-typesense-search-get': [TypedRouter.GET, '/s/:slug/madoc/api/typesense', typesenseProxySearch],
+  'site-typesense-search-get-paths': [
+    TypedRouter.GET,
+    '/s/:slug/madoc/api/typesense/collections/:collection/documents/search',
+    typesenseProxySearch,
+  ],
+  'site-typesense-search-post': [TypedRouter.POST, '/s/:slug/madoc/api/typesense', typesenseProxySearch],
+  'site-typesense-multi-search-post': [
+    TypedRouter.POST,
+    '/s/:slug/madoc/api/typesense/multi_search',
+    typesenseProxyMultiSearch,
+  ],
+  'search-index-iiif': [TypedRouter.POST, '/api/search/iiif', typesenseIngestIIIF],
+  'search-reindex-iiif': [TypedRouter.PUT, '/api/search/iiif/:id', typesenseIngestIIIF],
+  'search-list-iiif': [TypedRouter.GET, '/api/search/iiif', typesenseListIIIF],
+  'search-get-iiif': [TypedRouter.GET, '/api/search/iiif/:id', typesenseGetIIIF],
+  'search-delete-iiif': [TypedRouter.DELETE, '/api/search/iiif/:id', typesenseDeleteIIIF],
+  'search-index-model': [TypedRouter.POST, '/api/search/model', typesenseIngestModelIndexables],
+  'search-list-model': [TypedRouter.GET, '/api/search/model', typesenseListModels],
+  'search-get-model': [TypedRouter.GET, '/api/search/model/:id', typesenseGetModel],
+  'search-index-indexable': [TypedRouter.POST, '/api/search/indexables', typesenseIndexRawIndexable],
+  'search-list-indexable': [TypedRouter.GET, '/api/search/indexables', typesenseListIndexables],
+  'search-get-indexable': [TypedRouter.GET, '/api/search/indexables/:id', typesenseGetIndexable],
+  'search-list-contexts': [TypedRouter.GET, '/api/search/contexts', typesenseListContexts],
+  'search-get-context': [TypedRouter.GET, '/api/search/contexts/:id', typesenseGetContext],
   'update-metadata-configuration': [TypedRouter.POST, '/api/madoc/configuration/metadata', updateMetadataConfiguration],
   'site-details': [TypedRouter.GET, '/api/madoc/site/:siteId/details', getSiteDetails],
 
@@ -545,6 +623,11 @@ export const router = new TypedRouter({
   'get-project-structure': [TypedRouter.GET, '/api/madoc/projects/:id/structure', getProjectStructure],
   'get-project-metadata': [TypedRouter.GET, '/api/madoc/projects/:id/metadata', getProjectMetadata],
   'update-project-metadata': [TypedRouter.PUT, '/api/madoc/projects/:id/metadata', updateProjectMetadata],
+  'update-project-template-config': [
+    TypedRouter.PUT,
+    '/api/madoc/projects/:id/template-config',
+    updateProjectTemplateConfig,
+  ],
   'update-project-annotation-style': [
     TypedRouter.PUT,
     '/api/madoc/projects/:id/annotation-style',
@@ -631,9 +714,9 @@ export const router = new TypedRouter({
 
   // Pages
   'create-page': [TypedRouter.POST, '/api/madoc/pages', createPage],
-  'get-page': [TypedRouter.GET, '/api/madoc/pages/root/:paths*', getPage],
-  'delete-page': [TypedRouter.DELETE, '/api/madoc/pages/root/:paths*', deletePage],
-  'update-page': [TypedRouter.PUT, '/api/madoc/pages/root/:paths*', updatePage],
+  'get-page': [TypedRouter.GET, '/api/madoc/pages/root{/*paths}', getPage],
+  'delete-page': [TypedRouter.DELETE, '/api/madoc/pages/root{/*paths}', deletePage],
+  'update-page': [TypedRouter.PUT, '/api/madoc/pages/root{/*paths}', updatePage],
   'get-all-pages': [TypedRouter.GET, '/api/madoc/pages', getAllPages],
   'get-link-autocomplete': [TypedRouter.GET, '/api/madoc/links/autocomplete', linkAutocomplete],
 
@@ -702,6 +785,13 @@ export const router = new TypedRouter({
   'current-site-details': [TypedRouter.GET, '/s/:slug/madoc/api/site', siteDetails],
   'site-canvas': [TypedRouter.GET, '/s/:slug/madoc/api/canvases/:id', siteCanvas],
   'site-canvas-metadata': [TypedRouter.GET, '/s/:slug/madoc/api/canvases/:canvasId/metadata', siteMetadata],
+  'root-collection-options': [
+    TypedRouter.OPTIONS,
+    '/s/:slug/madoc/api/collections/root',
+    siteRootCollectionOptions,
+    { isPublic: true },
+  ],
+  'root-collection': [TypedRouter.GET, '/s/:slug/madoc/api/collections/root', siteRootCollection, { isPublic: true }],
   'site-collection': [TypedRouter.GET, '/s/:slug/madoc/api/collections/:id', siteCollection],
   'site-collections': [TypedRouter.GET, '/s/:slug/madoc/api/collections', siteCollections],
   'site-collection-metadata': [TypedRouter.GET, '/s/:slug/madoc/api/collections/:collectionId/metadata', siteMetadata],
@@ -714,8 +804,8 @@ export const router = new TypedRouter({
     '/s/:slug/madoc/api/projects/:projectSlug/manifest-tasks/:manifestId',
     siteManifestTasks,
   ],
-  'site-page': [TypedRouter.GET, '/s/:slug/madoc/api/page/root/:paths*', sitePages],
-  'site-static-page': [TypedRouter.GET, '/s/:slug/madoc/api/page/static/root/:paths*', getStaticPage],
+  'site-page': [TypedRouter.GET, '/s/:slug/madoc/api/page/root{/*paths}', sitePages],
+  'site-static-page': [TypedRouter.GET, '/s/:slug/madoc/api/page/static/root{/*paths}', getStaticPage],
   'site-resolve-slot': [TypedRouter.GET, '/s/:slug/madoc/api/slots', resolveSlots],
   'site-project': [TypedRouter.GET, '/s/:slug/madoc/api/projects/:projectSlug', siteProject],
   'site-project-updates': [TypedRouter.GET, '/s/:slug/madoc/api/projects/:projectSlug/updates', siteProjectUpdates],
@@ -753,7 +843,7 @@ export const router = new TypedRouter({
   'site-configuration': [TypedRouter.GET, '/s/:slug/madoc/api/configuration', siteConfiguration],
   'site-completion': [TypedRouter.GET, '/s/:slug/madoc/api/completions/:type', siteCompletions],
   'site-model-configuration': [TypedRouter.GET, '/s/:slug/madoc/api/configuration/model', siteModelConfiguration],
-  'site-page-navigation': [TypedRouter.GET, '/s/:slug/madoc/api/pages/navigation/:paths*', sitePageNavigation],
+  'site-page-navigation': [TypedRouter.GET, '/s/:slug/madoc/api/pages/navigation{/*paths}', sitePageNavigation],
   'site-facet-configuration': [
     TypedRouter.GET,
     '/s/:slug/madoc/api/configuration/search-facets',
@@ -774,8 +864,26 @@ export const router = new TypedRouter({
   // To be worked into API calling methods
   'manifest-search': [TypedRouter.GET, '/s/:slug/madoc/api/manifests/:id/search/1.0', searchManifest],
   // 'manifest-export': [TypedRouter.GET, '/s/:slug/madoc/api/manifests/:id/export/source', exportManifest],
+  'manifest-build-options': [
+    TypedRouter.OPTIONS,
+    '/s/:slug/madoc/api/manifests/:id/export/:version',
+    siteManifestBuildOptions,
+    { isPublic: true },
+  ],
   'manifest-build': [TypedRouter.GET, '/s/:slug/madoc/api/manifests/:id/export/:version', siteManifestBuild],
+  'collection-build-options': [
+    TypedRouter.OPTIONS,
+    '/s/:slug/madoc/api/collections/:id/export/:version',
+    siteManifestBuildOptions,
+    { isPublic: true },
+  ],
   'collection-build': [TypedRouter.GET, '/s/:slug/madoc/api/collections/:id/export/:version', siteManifestBuild],
+  'manifest-project-build-options': [
+    TypedRouter.OPTIONS,
+    '/s/:slug/madoc/api/projects/:projectSlug/export/manifest/:id/:version',
+    siteManifestBuildOptions,
+    { isPublic: true },
+  ],
   'manifest-project-build': [
     TypedRouter.GET,
     '/s/:slug/madoc/api/projects/:projectSlug/export/manifest/:id/:version',
@@ -806,9 +914,9 @@ export const router = new TypedRouter({
   'captcha-redeem': [TypedRouter.POST, '/s/:slug/madoc/api/captcha/redeem', captchaRedeem],
 
   // Frontend
-  'admin-frontend': [TypedRouter.GET, '/s/:slug/admin(.*)', adminFrontend],
+  'admin-frontend': [TypedRouter.GET, '/s/:slug/admin{/*path}', adminFrontend],
   'site-frontend-root': [TypedRouter.GET, '/s/:slug', siteFrontend],
-  'site-frontend': [TypedRouter.GET, '/s/:slug/(.*)', siteFrontend],
+  'site-frontend': [TypedRouter.GET, '/s/:slug{/*path}', siteFrontend],
 
   // Make sure this is last.
   'site-root': [TypedRouter.GET, '/', siteRoot],

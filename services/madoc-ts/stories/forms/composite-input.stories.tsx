@@ -150,8 +150,8 @@ export const SimpleComposite = () => {
 };
 
 export const AnnoStyle = () => {
-  const canvas = useRef<any>();
-  const displayAnno = useRef<any>();
+  const canvas = useRef<any>(undefined);
+  const displayAnno = useRef<any>(undefined);
   const [currentStyle, setCurrentStyle] = useState({
     backgroundColor: 'rgba(255, 0, 0, 0.65)',
     borderWidth: '3px',

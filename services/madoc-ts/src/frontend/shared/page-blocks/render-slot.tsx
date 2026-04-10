@@ -64,6 +64,7 @@ export const RenderSlot: React.FC<RenderSlotProps> = props => {
   return (
     <SlotLayout id={props.id} layout={layout} surfaceProps={surfaceProps} noSurface={props.noSurface}>
       {orderedBlocks.map(block => {
+        // @ts-ignore
         return <RenderBlock key={block.id} block={block} context={props.context} />;
       })}
     </SlotLayout>

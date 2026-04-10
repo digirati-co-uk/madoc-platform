@@ -1,4 +1,5 @@
 import { RouteMiddleware } from '../../types/route-middleware';
+import { castBool } from '../../utility/cast-bool';
 import { parseUrn } from '../../utility/parse-urn';
 
 export type SiteCollectionQuery = {
@@ -6,6 +7,7 @@ export type SiteCollectionQuery = {
   parent_collections?: number[];
   project_id?: string | number;
   hide_status?: string;
+  published?: boolean;
   page?: number;
 };
 
@@ -97,6 +99,8 @@ export const siteCollection: RouteMiddleware<{ slug: string; id: string }> = asy
   const type = context.query.type || undefined;
   const projectId = context.query.project_id;
   const hideStatus: string[] | undefined = context.query.hide_status ? context.query.hide_status.split(',') : undefined;
+  const scope = context.state.jwt?.scope || [];
+  const onlyPublished = scope.indexOf('site.admin') !== -1 ? castBool(context.request.query.published) : true;
 
   // @todo limit based on site configuration query.
   // @todo give hints for the navigation of collections
@@ -108,7 +112,7 @@ export const siteCollection: RouteMiddleware<{ slug: string; id: string }> = asy
 
   if (!projectId || !hideStatus) {
     const [collection, project] = await Promise.all([
-      siteApi.getCollectionById(Number(id), page, type),
+      siteApi.getCollectionById(Number(id), page, type, undefined, onlyPublished),
       projectId ? siteApi.getProjectTask(projectId) : undefined,
     ]);
 
@@ -168,7 +172,7 @@ export const siteCollection: RouteMiddleware<{ slug: string; id: string }> = asy
   }
 
   // Finally we can make an optimum request to get a filtered collection set.
-  const collection = await siteApi.getCollectionById(Number(id), page, type, filteredMembers);
+  const collection = await siteApi.getCollectionById(Number(id), page, type, filteredMembers, onlyPublished);
 
   collection.subjects = filteredSubjects;
 

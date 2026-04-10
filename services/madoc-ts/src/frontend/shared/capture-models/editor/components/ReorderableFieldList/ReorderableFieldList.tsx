@@ -7,7 +7,7 @@ import { Button } from '../../atoms/Button';
 import React, { SetStateAction, useMemo } from 'react';
 import { CaptureModel } from '../../../types/capture-model';
 import { useTranslation } from 'react-i18next';
-import { DragDropContext, Draggable, Droppable, DropResult } from 'react-beautiful-dnd';
+import { DragDropContext, Draggable, Droppable, DropResult } from '@hello-pangea/dnd';
 
 interface ReorderableFieldListProps {
   document: CaptureModel['document'];

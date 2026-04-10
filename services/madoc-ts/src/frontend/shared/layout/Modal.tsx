@@ -18,7 +18,7 @@ export const ModalContainer = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 24;
+  z-index: 60;
   display: flex;
 `;
 
@@ -45,7 +45,9 @@ export const InnerModalContainer = styled.div<{ size?: keyof typeof sizes; $expa
   max-height: 80vh;
   border-radius: 5px;
   overflow: hidden;
-  box-shadow: 4px 0 40px 0 rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(0, 0, 0, 0.2);
+  box-shadow:
+    4px 0 40px 0 rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(0, 0, 0, 0.2);
 
   ${props =>
     props.$expanded &&

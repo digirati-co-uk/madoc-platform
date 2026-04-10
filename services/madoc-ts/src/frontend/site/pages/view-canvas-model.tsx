@@ -18,6 +18,7 @@ import { useSiteConfiguration } from '../features/SiteConfigurationContext';
 import { useCanvasNavigation } from '../hooks/use-canvas-navigation';
 import { useCanvasUserTasks } from '../hooks/use-canvas-user-tasks';
 import { useManifestTask } from '../hooks/use-manifest-task';
+import { useProject } from '../hooks/use-project';
 import { useProjectShadowConfiguration } from '../hooks/use-project-shadow-configuration';
 import { useProjectStatus } from '../hooks/use-project-status';
 import { useRelativeLinks } from '../hooks/use-relative-links';
@@ -35,8 +36,10 @@ export const ViewCanvasModel: React.FC = () => {
   const {
     project: { hideCanvasThumbnailNavigation = false },
   } = useSiteConfiguration();
+  const { data: project } = useProject();
   const createLink = useRelativeLinks();
   const { isActive, isPreparing } = useProjectStatus();
+  const hideThumbnailNavigationInFooter = hideCanvasThumbnailNavigation || project?.template === 'tabular-project';
 
   const { showCaptureModelOnManifest } = useProjectShadowConfiguration();
 
@@ -93,7 +96,7 @@ export const ViewCanvasModel: React.FC = () => {
       </Slot>
 
       <Slot name="canvas-model-footer">
-        <CanvasThumbnailNavigation subRoute="model" hidden={hideCanvasThumbnailNavigation || !showCanvasNavigation} />
+        <CanvasThumbnailNavigation subRoute="model" hidden={hideThumbnailNavigationInFooter || !showCanvasNavigation} />
       </Slot>
     </AutoSlotLoader>
   );

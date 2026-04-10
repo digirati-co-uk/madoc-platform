@@ -22,7 +22,7 @@ import { RotateIcon } from '../icons/RotateIcon';
 import { useModelPageConfiguration } from '../../site/hooks/use-model-page-configuration';
 import { PolygonSelectorProps } from '../capture-models/editor/selector-types/PolygonSelector/PolygonSelector';
 
-const runtimeOptions = { maxOverZoom: 5 };
+const runtimeOptions = { maxOverZoom: 5, visibilityRatio: 0.7 };
 const defaultPreset = ['default-preset', { runtimeOptions }] as any;
 
 export const SimpleAtlasViewer = React.forwardRef<
@@ -37,8 +37,8 @@ export const SimpleAtlasViewer = React.forwardRef<
 >(function SimpleAtlasViewer({ style = { height: 600 }, highlightedRegions, unstable_webglRenderer, isModel }, ref) {
   const { t } = useTranslation();
   const canvas = useCanvas();
-  const runtime = useRef<Runtime>();
-  const osd = useRef<any>();
+  const runtime = useRef<Runtime>(undefined);
+  const osd = useRef<any>(undefined);
   const { data: service } = useImageService();
   const {
     project: { atlasBackground },
@@ -154,7 +154,7 @@ export const SimpleAtlasViewer = React.forwardRef<
               <CanvasPanel.Viewer
                 renderPreset={defaultPreset}
                 runtimeOptions={runtimeOptions}
-                key={canvas.id}
+                // key={canvas.id}
                 onCreated={preset => void (runtime.current = preset.runtime)}
               >
                 <CanvasContext canvas={canvas.id}>

@@ -1,19 +1,23 @@
-import { expect } from '@storybook/jest';
-import { userEvent, within } from '@storybook/testing-library';
+import { expect } from 'storybook/test';
+import { userEvent, within } from 'storybook/test';
 import { CaptureModel } from '../../../src/frontend/shared/capture-models/types/capture-model';
 import { CaptureModelTestHarness } from './CaptureModelTestHarness';
 // @ts-ignore
 import fixture from '../../../fixtures/97-bugs/05-chain.json';
 
-export default { title: 'Capture model interactions / The Chain' };
+export default { title: 'Capture model interactions / The Chain', component: CaptureModelTestHarness };
 
-export const NonInteractive = CaptureModelTestHarness.story({
-  captureModel: fixture,
-});
+export const NonInteractive = {
+  args: {
+    captureModel: fixture,
+  },
+};
 
-export const EnsureAllFieldsInComputedRevision = CaptureModelTestHarness.story({
-  captureModel: fixture,
-});
+export const EnsureAllFieldsInComputedRevision = {
+  args: {
+    captureModel: fixture,
+  },
+};
 EnsureAllFieldsInComputedRevision.play = async args => {
   const canvas = within(args.canvasElement);
 

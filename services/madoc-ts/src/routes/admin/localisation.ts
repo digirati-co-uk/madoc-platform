@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import { sql } from 'slonik';
 import { Headers } from 'node-fetch';
 import invariant from 'tiny-invariant';
-import { TextFieldProps } from '../../frontend/shared/capture-models/editor/input-types/TextField/TextField';
+import type { TextFieldProps } from '../../frontend/shared/capture-models/editor/input-types/TextField/TextField';
 import { traverseDocument } from '../../frontend/shared/capture-models/helpers/traverse-document';
 import { calculateTranslationProgress } from '../../frontend/shared/utility/calculate-translation-progress';
 import { ApiClientWithoutExtensions } from '../../gateway/api';
@@ -14,7 +14,7 @@ import { castBool } from '../../utility/cast-bool';
 import { parseEtag } from '../../utility/parse-etag';
 import { traverseStructure } from '../../utility/traverse-structure';
 import { optionalUserWithScope, userWithScope } from '../../utility/user-with-scope';
-import { CheckboxFieldProps } from '../../frontend/shared/capture-models/editor/input-types/CheckboxField/CheckboxField';
+import type { CheckboxFieldProps } from '../../frontend/shared/capture-models/editor/input-types/CheckboxField/CheckboxField';
 
 export type LocalisationSiteConfig = {
   defaultLanguage: string;
@@ -221,7 +221,17 @@ export const getLocalisation: RouteMiddleware<{ code: string; namespace?: string
   // Load from disk if exists.
   const location = path.resolve(TRANSLATIONS_PATH, languageCode, `${namespace}.json`);
   const isStatic = fs.existsSync(location);
-  const staticOverride = isStatic ? JSON.parse(fs.readFileSync(location).toString()) : {};
+
+  const safeJsonParse = (jsonString: string) => {
+    try {
+      return JSON.parse(jsonString);
+    } catch (error) {
+      console.error(`Error parsing JSON: ${error}`);
+      return {};
+    }
+  };
+
+  const staticOverride = isStatic ? safeJsonParse(fs.readFileSync(location).toString()) : {};
 
   // Load from config if exists.
   const configResponse = await userApi.getConfiguration<LocalisationSiteConfig>(`${namespace}-i18n`, [

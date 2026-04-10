@@ -1,0 +1,4 @@
+interface:
+  display_name: "Madoc TS Site Frontend"
+  short_description: "Site UI routes, SSR, and loaders"
+  default_prompt: "Use $frontend-site to work on site pages, routes, and SSR wiring."

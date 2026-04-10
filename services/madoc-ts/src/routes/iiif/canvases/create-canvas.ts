@@ -4,7 +4,6 @@ import { RouteMiddleware } from '../../../types/route-middleware';
 import { CreateCanvas } from '../../../types/schemas/create-canvas';
 import { addLinks } from '../../../database/queries/linking-queries';
 import { extractLinks } from '../../../utility/extract-links';
-import { api } from '../../../gateway/api.server';
 
 export const createCanvas: RouteMiddleware<unknown, CreateCanvas> = async context => {
   const { userUrn, siteId } = userWithScope(context, ['site.admin']);
@@ -40,9 +39,6 @@ export const createCanvas: RouteMiddleware<unknown, CreateCanvas> = async contex
   } catch (err) {
     console.log(err);
   }
-
-  // search index
-  await api.asUser({ siteId }).indexCanvas(canonical_id);
 
   context.response.body = { id: canonical_id };
   context.response.status = 201;

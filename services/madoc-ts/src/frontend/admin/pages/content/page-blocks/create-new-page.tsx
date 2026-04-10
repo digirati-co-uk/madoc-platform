@@ -9,7 +9,7 @@ import { useSite } from '../../../../shared/hooks/use-site';
 
 export const CreateNewPage: React.FC = () => {
   const api = useApi();
-  const newPage = useRef<CreateNormalPageRequest>();
+  const newPage = useRef<CreateNormalPageRequest | undefined>(undefined);
   const { slug } = useSite();
 
   const [createPage, createPageResponse] = useMutation(async () => {

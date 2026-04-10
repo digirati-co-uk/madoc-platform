@@ -1,7 +1,7 @@
 import { v4 } from 'uuid';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { ApiKey } from '../../types/api-key';
-import { hash } from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import { onlyGlobalAdmin } from '../../utility/user-with-scope';
 
 export const generateApiKey: RouteMiddleware<unknown, ApiKey> = async context => {
@@ -25,7 +25,7 @@ export const generateApiKey: RouteMiddleware<unknown, ApiKey> = async context =>
     return;
   }
 
-  const hashedSecret = await hash(clientSecret, 12);
+  const hashedSecret = await bcrypt.hash(clientSecret, 12);
 
   await context.apiKeys.createApiKey(
     {
