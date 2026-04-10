@@ -2,6 +2,11 @@ import { sql } from 'slonik';
 import { api } from '../../gateway/api.server';
 import { BaseTask } from '../../gateway/tasks/base-task';
 import { createTask as createSearchIndexTask } from '../../gateway/tasks/search-index-task';
+import {
+  isTypesenseAvailable,
+  resolveTypesenseSearchCollection,
+  TypesenseClient,
+} from '../../search/typesense/typesense-client';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { userWithScope } from '../../utility/user-with-scope';
 
@@ -42,6 +47,18 @@ export const fullReindex: RouteMiddleware = async context => {
   const { siteId } = userWithScope(context, ['site.admin']);
 
   const userApi = api.asUser({ siteId });
+  const availability = await isTypesenseAvailable();
+
+  if (availability.available) {
+    try {
+      const collectionName = resolveTypesenseSearchCollection({ siteId });
+      const typesense = new TypesenseClient();
+      await typesense.ensureSearchCollection(collectionName);
+      await typesense.deleteByFilter(collectionName, `site_id:=${siteId}`);
+    } catch {
+      // Best effort cleanup. The queued reindex tasks will still recreate documents.
+    }
+  }
 
   const existingTopLevelSearchTaskIds = await getTopLevelSearchTaskIds(userApi);
   for (const taskId of existingTopLevelSearchTaskIds) {

@@ -1,5 +1,5 @@
 import { queryTypesenseSearch } from '../../search/typesense/search-query-adapter';
-import { isTypesenseSearchEnabled } from '../../search/typesense/typesense-client';
+import { isTypesenseAvailable, isTypesenseSearchEnabled } from '../../search/typesense/typesense-client';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { SearchQuery } from '../../types/search';
 import { optionalUserWithScope } from '../../utility/user-with-scope';
@@ -12,6 +12,16 @@ export const typesenseQuery: RouteMiddleware<{}, SearchQuery> = async context =>
     context.response.status = 503;
     context.response.body = {
       error: 'Typesense search is not enabled',
+    };
+    return;
+  }
+
+  const availability = await isTypesenseAvailable();
+  if (!availability.available) {
+    context.response.status = 503;
+    context.response.body = {
+      error: 'Typesense search is unavailable',
+      reason: availability.reason || 'Typesense service is unavailable',
     };
     return;
   }

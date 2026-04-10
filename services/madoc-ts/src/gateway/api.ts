@@ -151,7 +151,11 @@ function isObject(value: unknown): value is Record<string, unknown> {
 }
 
 function getSearchQueryEndpoint() {
-  return '/api/search/search';
+  return '/api/madoc/search';
+}
+
+function getMadocSearchBasePath() {
+  return '/api/madoc/search';
 }
 
 function getTypesenseProxyBasePath(siteSlug?: string) {
@@ -2388,14 +2392,14 @@ export class ApiClient {
 
   // can be used for both canvases and manifests
   async searchIngest(resource: SearchIngestRequest) {
-    return this.request<SearchIndexTask>(`/api/search/iiif`, {
+    return this.request<SearchIndexTask>(`${getMadocSearchBasePath()}/iiif`, {
       method: 'POST',
       body: resource,
     });
   }
 
   async searchReIngest(resource: SearchIngestRequest) {
-    return this.request<SearchIndexTask>(`/api/search/iiif/${resource.id}`, {
+    return this.request<SearchIndexTask>(`${getMadocSearchBasePath()}/iiif/${resource.id}`, {
       method: 'PUT',
       body: resource,
     });
@@ -2476,28 +2480,28 @@ export class ApiClient {
   }
 
   async searchListIndexables() {
-    return this.request(`/api/search/indexables`);
+    return this.request(`${getMadocSearchBasePath()}/indexables`);
   }
 
   async searchGetIndexable(id: number) {
-    return this.request(`/api/search/indexables/${id}`);
+    return this.request(`${getMadocSearchBasePath()}/indexables/${id}`);
   }
 
   async searchListModels(query?: { iiif__madoc_id?: string }) {
-    return this.request(`/api/search/model?${query ? stringify(query) : ''}`);
+    return this.request(`${getMadocSearchBasePath()}/model?${query ? stringify(query) : ''}`);
   }
 
   async searchGetModel(id: number) {
-    return this.request(`/api/search/model/${id}`);
+    return this.request(`${getMadocSearchBasePath()}/model/${id}`);
   }
 
   async searchListIIIF() {
-    return this.request(`/api/search/iiif`);
+    return this.request(`${getMadocSearchBasePath()}/iiif`);
   }
 
   async searchGetIIIF(id: string) {
     try {
-      return this.request(`/api/search/iiif/${id}`, { allow404: true });
+      return this.request(`${getMadocSearchBasePath()}/iiif/${id}`, { allow404: true });
     } catch {
       console.log('caught error?');
       return undefined;
@@ -2506,7 +2510,7 @@ export class ApiClient {
 
   async searchDeleteIIIF(id: string) {
     try {
-      return this.request(`/api/search/iiif/${id}`, {
+      return this.request(`${getMadocSearchBasePath()}/iiif/${id}`, {
         method: 'DELETE',
       });
     } catch {
@@ -2515,15 +2519,15 @@ export class ApiClient {
   }
 
   async searchListContexts() {
-    return this.request(`/api/search/contexts`);
+    return this.request(`${getMadocSearchBasePath()}/contexts`);
   }
 
   async searchGetContext(id: string) {
-    return this.request(`/api/search/contexts/${id}`);
+    return this.request(`${getMadocSearchBasePath()}/contexts/${id}`);
   }
 
   async indexRawSearchIndexable(indexable: SearchIndexable) {
-    return this.request(`/api/search/indexables`, {
+    return this.request(`${getMadocSearchBasePath()}/indexables`, {
       method: 'POST',
       body: indexable,
     });
