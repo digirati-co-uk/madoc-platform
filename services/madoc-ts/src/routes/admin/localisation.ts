@@ -13,8 +13,10 @@ import { RouteMiddleware } from '../../types/route-middleware';
 import { castBool } from '../../utility/cast-bool';
 import { parseEtag } from '../../utility/parse-etag';
 import { traverseStructure } from '../../utility/traverse-structure';
+import { ApiError } from '../../utility/errors/api-error';
 import { optionalUserWithScope, userWithScope } from '../../utility/user-with-scope';
 import type { CheckboxFieldProps } from '../../frontend/shared/capture-models/editor/input-types/CheckboxField/CheckboxField';
+import type { ConfigResponse } from '../../types/schemas/config-response';
 
 export type LocalisationSiteConfig = {
   defaultLanguage: string;
@@ -48,6 +50,118 @@ export type ListLocalisationsResponse = {
 
 const supportedNamespaces = ['madoc', 'capture-models'];
 
+type LocalisationConfigRecord = NonNullable<ConfigResponse<LocalisationSiteConfig>['config'][number]>;
+
+const I18N_CONFIG_CONTEXT = 'urn:madoc:context:localisation';
+const getLegacyLocalisationConfigScope = (siteId: number) => [`urn:madoc:site:${siteId}`];
+const getPrimaryLocalisationConfigScope = (siteId: number) => [`urn:madoc:site:${siteId}`, I18N_CONFIG_CONTEXT];
+const getLocalisationConfigService = (namespace: string) => `${namespace}-i18n`;
+
+function hasExactScope(config: LocalisationConfigRecord, scope: string[]) {
+  return config.scope.length === scope.length && config.scope.every(scopePart => scope.includes(scopePart));
+}
+
+function getExactConfigRecord(configResponse: ConfigResponse<LocalisationSiteConfig>, scope: string[]) {
+  return configResponse.config.find(
+    (config): config is LocalisationConfigRecord => !!config && hasExactScope(config, scope)
+  );
+}
+
+async function replaceLocalisationConfigByRecord(
+  userApi: ApiClientWithoutExtensions,
+  configRecord: LocalisationConfigRecord,
+  newConfiguration: LocalisationSiteConfig
+) {
+  if (!configRecord.id) {
+    return false;
+  }
+
+  const rawConfiguration = await userApi.getSingleConfigurationRaw(configRecord.id);
+  const etagHeader = rawConfiguration.headers.get('etag');
+  const etag = etagHeader ? parseEtag(etagHeader.toString()) : undefined;
+
+  if (!etag) {
+    return false;
+  }
+
+  await userApi.replaceConfiguration(configRecord.id, etag, newConfiguration);
+  return true;
+}
+
+function isConflictError(error: unknown) {
+  return error instanceof ApiError && !!error.response && typeof error.response.status === 'number' && error.response.status === 409;
+}
+
+async function saveLocalisationConfiguration(
+  userApi: ApiClientWithoutExtensions,
+  namespace: string,
+  siteId: number,
+  newConfiguration: LocalisationSiteConfig,
+  existingConfigResponse?: ConfigResponse<LocalisationSiteConfig>
+) {
+  const configService = getLocalisationConfigService(namespace);
+  const configScope = getPrimaryLocalisationConfigScope(siteId);
+  const configResponse =
+    existingConfigResponse || (await userApi.getConfiguration<LocalisationSiteConfig>(configService, configScope));
+  const existingConfig = getExactConfigRecord(configResponse, configScope);
+
+  if (existingConfig && (await replaceLocalisationConfigByRecord(userApi, existingConfig, newConfiguration))) {
+    return;
+  }
+
+  try {
+    await userApi.addConfiguration(configService, configScope, newConfiguration);
+    return;
+  } catch (error) {
+    if (!isConflictError(error)) {
+      throw error;
+    }
+  }
+
+  const latestConfigResponse = await userApi.getConfiguration<LocalisationSiteConfig>(configService, configScope);
+  const latestConfig = getExactConfigRecord(latestConfigResponse, configScope);
+  if (latestConfig && (await replaceLocalisationConfigByRecord(userApi, latestConfig, newConfiguration))) {
+    return;
+  }
+
+  throw new ApiError(`Could not save ${configService} configuration`);
+}
+
+async function loadLocalisationConfiguration(
+  userApi: ApiClientWithoutExtensions,
+  namespace: string,
+  siteId: number
+): Promise<{
+  config: LocalisationSiteConfig;
+  primaryResponse: ConfigResponse<LocalisationSiteConfig>;
+}> {
+  const configService = getLocalisationConfigService(namespace);
+  const primaryScope = getPrimaryLocalisationConfigScope(siteId);
+  const primaryResponse = await userApi.getConfiguration<LocalisationSiteConfig>(configService, primaryScope);
+  const primaryRecord = getExactConfigRecord(primaryResponse, primaryScope);
+  if (primaryRecord) {
+    return {
+      config: {
+        ...defaultSiteLocalisationSiteConfig,
+        ...primaryRecord.config_object,
+      },
+      primaryResponse,
+    };
+  }
+
+  const legacyScope = getLegacyLocalisationConfigScope(siteId);
+  const legacyResponse = await userApi.getConfiguration<LocalisationSiteConfig>(configService, legacyScope);
+  const legacyRecord = getExactConfigRecord(legacyResponse, legacyScope);
+
+  return {
+    config: {
+      ...defaultSiteLocalisationSiteConfig,
+      ...(legacyRecord?.config_object || {}),
+    },
+    primaryResponse,
+  };
+}
+
 export const extractLocalesFromContent: RouteMiddleware = async context => {
   const { siteId } = optionalUserWithScope(context, []);
 
@@ -65,10 +179,8 @@ export const listLocalisations: RouteMiddleware = async context => {
   const userApi = context.state.siteApi || api.asUser({ userId: id, siteId });
 
   // 1. Configuration localisations (storage API links in storage server)
-  const configResponse = await userApi.getConfiguration<LocalisationSiteConfig>('madoc-i18n', [
-    `urn:madoc:site:${siteId}`,
-  ]);
-  const config = configResponse?.config[0]?.config_object || defaultSiteLocalisationSiteConfig;
+  const loadedConfig = await loadLocalisationConfiguration(userApi, 'madoc', siteId);
+  const config = loadedConfig.config;
   const keys = Object.keys(config.availableLanguages);
 
   // 2. Disk localisations
@@ -234,10 +346,8 @@ export const getLocalisation: RouteMiddleware<{ code: string; namespace?: string
   const staticOverride = isStatic ? safeJsonParse(fs.readFileSync(location).toString()) : {};
 
   // Load from config if exists.
-  const configResponse = await userApi.getConfiguration<LocalisationSiteConfig>(`${namespace}-i18n`, [
-    `urn:madoc:site:${siteId}`,
-  ]);
-  const config = configResponse?.config[0]?.config_object || defaultSiteLocalisationSiteConfig;
+  const loadedConfig = await loadLocalisationConfiguration(userApi, namespace, siteId);
+  const config = loadedConfig.config;
   if (config && config.availableLanguages[languageCode]) {
     const found = config.availableLanguages[languageCode];
 
@@ -305,14 +415,11 @@ export const updateLanguagePreferences: RouteMiddleware<
     return;
   }
 
-  const configResponse = await userApi.getConfiguration<LocalisationSiteConfig>(`${namespace}-i18n`, [
-    `urn:madoc:site:${siteId}`,
-  ]);
-  const oldConfiguration = configResponse.config[0];
+  const loadedConfig = await loadLocalisationConfiguration(userApi, namespace, siteId);
 
   const newConfiguration: LocalisationSiteConfig = {
     ...defaultSiteLocalisationSiteConfig,
-    ...oldConfiguration?.config_object,
+    ...loadedConfig.config,
   };
 
   if (typeof changes.displayLanguages !== 'undefined') {
@@ -323,23 +430,7 @@ export const updateLanguagePreferences: RouteMiddleware<
     newConfiguration.contentLanguages = changes.contentLanguages;
   }
 
-  if (oldConfiguration && oldConfiguration.id) {
-    const rawConfiguration = await userApi.getSingleConfigurationRaw(oldConfiguration.id);
-    const etagHeader = rawConfiguration.headers.get('etag');
-    const etag = etagHeader ? parseEtag(etagHeader.toString()) : undefined;
-
-    if (etag) {
-      //  - If it exists, then grab the UUID and update that resource
-      await userApi.replaceConfiguration(oldConfiguration.id, etag, newConfiguration);
-    }
-  } else {
-    try {
-      //  - If it does not exist, then POST the new configuration.
-      await userApi.addConfiguration(`${namespace}-i18n`, [`urn:madoc:site:${siteId}`], newConfiguration);
-    } catch (err) {
-      console.log('Could not save config', err);
-    }
-  }
+  await saveLocalisationConfiguration(userApi, namespace, siteId, newConfiguration, loadedConfig.primaryResponse);
 
   context.response.status = 201;
 };
@@ -382,15 +473,12 @@ export const updateLocalisation: RouteMiddleware<{ code: string; namespace?: str
   const url = `/public/storage/urn:madoc:site:${siteId}/madoc-i18n/public/${languageCode}/${namespace}.json`;
 
   // Save to site configuration
-  const configResponse = await userApi.getConfiguration<LocalisationSiteConfig>(`${namespace}-i18n`, [
-    `urn:madoc:site:${siteId}`,
-  ]);
-  const oldConfiguration = configResponse.config[0];
+  const loadedConfig = await loadLocalisationConfiguration(userApi, namespace, siteId);
   const newConfiguration: LocalisationSiteConfig = {
     ...defaultSiteLocalisationSiteConfig,
-    ...(oldConfiguration ? oldConfiguration.config_object : {}),
+    ...loadedConfig.config,
     availableLanguages: {
-      ...(oldConfiguration ? oldConfiguration.config_object.availableLanguages : {}),
+      ...loadedConfig.config.availableLanguages,
       [languageCode]: {
         url,
         remote: false,
@@ -398,23 +486,7 @@ export const updateLocalisation: RouteMiddleware<{ code: string; namespace?: str
     },
   };
 
-  if (oldConfiguration && oldConfiguration.id) {
-    const rawConfiguration = await userApi.getSingleConfigurationRaw(oldConfiguration.id);
-    const etagHeader = rawConfiguration.headers.get('etag');
-    const etag = etagHeader ? parseEtag(etagHeader.toString()) : undefined;
-
-    if (etag) {
-      //  - If it exists, then grab the UUID and update that resource
-      await userApi.replaceConfiguration(oldConfiguration.id, etag, newConfiguration);
-    }
-  } else {
-    try {
-      //  - If it does not exist, then POST the new configuration.
-      await userApi.addConfiguration(`${namespace}-i18n`, [`urn:madoc:site:${siteId}`], newConfiguration);
-    } catch (err) {
-      console.log('Could not save config', err);
-    }
-  }
+  await saveLocalisationConfiguration(userApi, namespace, siteId, newConfiguration, loadedConfig.primaryResponse);
 
   context.response.status = 201;
   context.response.body = {
