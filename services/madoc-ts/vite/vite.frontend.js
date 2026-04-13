@@ -8,6 +8,7 @@ const PROSEMIRROR_PACKAGES = [
   ['prosemirror-state', 'dist/index.js'],
   ['prosemirror-view', 'dist/index.js'],
   ['prosemirror-transform', 'dist/index.js'],
+  ['prosemirror-gapcursor', 'dist/index.js'],
 ];
 
 function resolvePnpmModule(pkg, entry) {
