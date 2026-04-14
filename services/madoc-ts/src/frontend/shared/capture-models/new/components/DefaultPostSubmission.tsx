@@ -21,6 +21,9 @@ export const DefaultPostSubmission: EditorRenderingConfig['PostSubmission'] = ({
   const structure = useManifestStructure(manifestId);
   const createLink = useRelativeLinks();
   const config = useSiteConfiguration();
+  const showRandomManifestAfterSubmission = Boolean(
+    config.project.modelPageOptions?.showRandomManifestAfterSubmission || config.project.showRandomManifestAfterSubmission
+  );
 
   const idx = canvasId && structure.data ? structure.data.ids.indexOf(canvasId) : -1;
   if (!structure.data || idx === -1 || !manifestId || !canvasId) {
@@ -46,8 +49,7 @@ export const DefaultPostSubmission: EditorRenderingConfig['PostSubmission'] = ({
         >
           {t('Next image')}
         </Button>
-      ) : config.project.allowCollectionNavigation &&
-        config.project.modelPageOptions?.showRandomManifestAfterSubmission ? (
+      ) : config.project.allowCollectionNavigation && showRandomManifestAfterSubmission ? (
         <GoToRandomManifest notCurrentManifest={true} label={t('Contribute to another manifest')} />
       ) : null}
     </ButtonRow>

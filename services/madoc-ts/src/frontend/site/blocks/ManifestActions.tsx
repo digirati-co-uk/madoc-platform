@@ -23,6 +23,7 @@ import { useContinueSubmission } from '../hooks/use-continue-submission';
 import { useProject } from '../hooks/use-project';
 import { useManifestUserTasks } from '../hooks/use-manifest-user-tasks';
 import { OpenInTheseusButton } from '../../shared/components/OpenInTheseusButton';
+import { shouldShowGeneratePdfButton } from '../utility/manifest-page-options';
 
 export type props = {
   alignment?: string;
@@ -145,7 +146,7 @@ export const ManifestActions: React.FC<props> = ({ alignment }) => {
           <ManifestItemFilter />
         ) : null}
 
-        {options.generatePDF ? <GenerateManifestPdf /> : null}
+        {shouldShowGeneratePdfButton(options) ? <GenerateManifestPdf /> : null}
 
         <ManifestTaskProgress />
         {!showCaptureModelOnManifest ? <AssignManifestToUser /> : null}

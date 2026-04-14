@@ -25,6 +25,8 @@ function version1to2(config: ProjectConfiguration): ProjectConfigurationNEW {
     ...unchangedConfig
   } = config;
 
+  const showRandomManifestAfterSubmission = modelPageOptions?.showRandomManifestAfterSubmission;
+
   return {
     _version: 2,
     _source: config._source,
@@ -66,6 +68,7 @@ function version1to2(config: ProjectConfiguration): ProjectConfigurationNEW {
       preventContributionAfterSubmission: modelPageOptions?.preventContributionAfterSubmission,
     },
     preventMultipleUserSubmissionsPerResource: modelPageOptions?.preventMultipleUserSubmissionsPerResource,
+    showRandomManifestAfterSubmission,
   };
 }
 
@@ -84,6 +87,7 @@ function version2to1(config: ProjectConfigurationNEW): ProjectConfiguration {
     } = {},
     navigation: { allowCollectionNavigation, allowManifestNavigation, allowCanvasNavigation } = {},
     preventMultipleUserSubmissionsPerResource,
+    showRandomManifestAfterSubmission,
     submissionOptions: {
       disablePreview,
       disableNextCanvas,
@@ -115,6 +119,10 @@ function version2to1(config: ProjectConfigurationNEW): ProjectConfiguration {
     modelPageOptions: {
       ...modelPageOptions,
       preventMultipleUserSubmissionsPerResource,
+      showRandomManifestAfterSubmission:
+        typeof showRandomManifestAfterSubmission !== 'undefined'
+          ? showRandomManifestAfterSubmission
+          : (modelPageOptions as any).showRandomManifestAfterSubmission,
       disablePreview,
       disableNextCanvas,
       preventContributionAfterSubmission,

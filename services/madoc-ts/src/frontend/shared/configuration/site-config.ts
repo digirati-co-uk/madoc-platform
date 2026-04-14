@@ -687,7 +687,7 @@ export const ProjectConfigInterface: ProjectConfigTemplate = {
       },
       {
         label: 'Hide generate PDF button',
-        value: 'generatePDF',
+        value: 'hideGeneratePDF',
       },
 
       {
