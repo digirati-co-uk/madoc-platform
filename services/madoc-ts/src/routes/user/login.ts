@@ -1,4 +1,4 @@
-import { siteState } from '../../middleware/site-state';
+import { siteStateAllowPrivate } from '../../middleware/site-state';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { siteFrontend } from '../frontend/site-frontend';
 
@@ -47,7 +47,7 @@ export const loginPage: RouteMiddleware<{ slug: string }, { email: string; passw
     context.reactFormResponse.success = true;
   }
 
-  await siteState(context, async () => {
+  await siteStateAllowPrivate(context, async () => {
     await siteFrontend(context, next);
   });
 };

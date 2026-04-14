@@ -304,6 +304,7 @@ import { updatePassword } from './routes/user/update-password';
 import { updateProfilePage } from './routes/user/update-profile';
 import { userAutocomplete } from './routes/user/user-autocomplete';
 import { userSettingsModel } from './routes/user/user-settings-model';
+import { parseJwt } from './middleware/parse-jwt';
 import { TypedRouter } from './utility/typed-router';
 import { router as webhookRoutes } from './webhooks/router';
 
@@ -735,18 +736,23 @@ export const router = new TypedRouter({
   'update-block': [TypedRouter.PUT, '/api/madoc/blocks/:blockId', updateBlock],
 
   // Anonymous routes
-  'get-login': [TypedRouter.GET, '/s/:slug/login', loginPage],
+  'get-login': [TypedRouter.GET, '/s/:slug/login', [parseJwt, loginPage], { isPublic: true }],
   'post-login': [TypedRouter.POST, '/s/:slug/login', loginPage],
-  'get-register': [TypedRouter.GET, '/s/:slug/register', registerPage],
+  'get-register': [TypedRouter.GET, '/s/:slug/register', [parseJwt, registerPage], { isPublic: true }],
   'post-register': [TypedRouter.POST, '/s/:slug/register', registerPage],
-  'get-forgot-password': [TypedRouter.GET, '/s/:slug/forgot-password', forgotPassword],
+  'get-forgot-password': [TypedRouter.GET, '/s/:slug/forgot-password', [parseJwt, forgotPassword], { isPublic: true }],
   'post-forgot-password': [TypedRouter.POST, '/s/:slug/forgot-password', forgotPassword],
   'get-change-password': [TypedRouter.GET, '/s/:slug/profile/password', updatePassword],
   'post-change-password': [TypedRouter.POST, '/s/:slug/profile/password', updatePassword],
   'post-update-password': [TypedRouter.POST, '/s/:slug/profile', updateProfilePage],
-  'get-logout': [TypedRouter.GET, '/s/:slug/logout', logout],
-  'reset-password': [TypedRouter.GET, '/s/:slug/reset-password', resetPasswordPage],
-  'activate-account': [TypedRouter.GET, '/s/:slug/activate-account', resetPasswordPage],
+  'get-logout': [TypedRouter.GET, '/s/:slug/logout', [parseJwt, logout], { isPublic: true }],
+  'reset-password': [TypedRouter.GET, '/s/:slug/reset-password', [parseJwt, resetPasswordPage], { isPublic: true }],
+  'activate-account': [
+    TypedRouter.GET,
+    '/s/:slug/activate-account',
+    [parseJwt, resetPasswordPage],
+    { isPublic: true },
+  ],
   'post-reset-password': [TypedRouter.POST, '/s/:slug/reset-password', resetPasswordPage],
   'refresh-login': [TypedRouter.POST, '/s/:slug/auth/refresh', refreshToken],
   'api-authentication': [TypedRouter.POST, '/s/:slug/auth/api-token', authenticateApi],

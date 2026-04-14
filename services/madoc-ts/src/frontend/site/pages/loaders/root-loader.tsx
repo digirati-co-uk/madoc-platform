@@ -26,6 +26,10 @@ export type RootLoaderType = {
   context: any;
 };
 
+function isAccountPagePath(pathname: string) {
+  return /\/(login|register|forgot-password|reset-password|activate-account)$/.test(pathname);
+}
+
 export const RootLoader: UniversalComponent<RootLoaderType> = createUniversalComponent<RootLoaderType>(
   () => {
     const site = useSite();
@@ -116,16 +120,17 @@ export const RootLoader: UniversalComponent<RootLoaderType> = createUniversalCom
     );
   },
   {
-    hooks: [
-      {
-        creator: () => [],
-        name: 'getUserDetails',
-      },
-    ],
-    getKey: () => {
-      return ['root-config', []];
+    getKey: (params, query, pathname) => {
+      return ['root-config', { account: isAccountPagePath(pathname) }];
     },
-    getData: async (key, vars, api) => {
+    getData: async (key, vars, api, pathname) => {
+      if (isAccountPagePath(pathname)) {
+        return {
+          project: {},
+          navigation: [],
+        };
+      }
+
       const project = api.getSiteConfiguration();
       const navigation = api.pageBlocks.getPageNavigation();
 

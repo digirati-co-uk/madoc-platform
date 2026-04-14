@@ -2,10 +2,11 @@ import { v4 } from 'uuid';
 import { createUserActivationEmail, createUserActivationText } from '../../emails/user-activation-email';
 import { generateId } from '../../frontend/shared/capture-models/helpers/generate-id';
 import { gatewayHost } from '../../gateway/api.server';
-import { renderFrontend } from '../../middleware/render-frontend';
+import { siteStateAllowPrivate } from '../../middleware/site-state';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { passwordHash } from '../../utility/php-password-hash';
 import { validateEmail } from '../../utility/validate-email';
+import { siteFrontend } from '../frontend/site-frontend';
 
 export const registerPage: RouteMiddleware = async (context, next) => {
   if (context.query.redirect && !context.query.redirect.startsWith('/')) {
@@ -81,7 +82,9 @@ export const registerPage: RouteMiddleware = async (context, next) => {
       context.reactFormResponse.unknownError = true;
       context.reactFormResponse.email = email;
       context.reactFormResponse.name = name;
-      await renderFrontend(context, next);
+      await siteStateAllowPrivate(context, async () => {
+        await siteFrontend(context, next);
+      });
       return;
     }
     const alreadyExists = await context.siteManager.userEmailExists(email);
@@ -90,7 +93,9 @@ export const registerPage: RouteMiddleware = async (context, next) => {
       context.reactFormResponse.emailError = true;
       context.reactFormResponse.email = email;
       context.reactFormResponse.name = name;
-      await renderFrontend(context, next);
+      await siteStateAllowPrivate(context, async () => {
+        await siteFrontend(context, next);
+      });
       return;
     }
 
@@ -180,5 +185,7 @@ export const registerPage: RouteMiddleware = async (context, next) => {
     context.reactFormResponse.registerSuccess = true;
   }
 
-  await renderFrontend(context, next);
+  await siteStateAllowPrivate(context, async () => {
+    await siteFrontend(context, next);
+  });
 };

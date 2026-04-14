@@ -1,4 +1,4 @@
-import { siteState } from '../../middleware/site-state';
+import { siteStateAllowPrivate } from '../../middleware/site-state';
 import { RouteMiddleware } from '../../types/route-middleware';
 import validate from 'uuid-validate';
 import { siteFrontend } from '../frontend/site-frontend';
@@ -15,7 +15,7 @@ export const resetPasswordPage: RouteMiddleware = async (context, next) => {
   if (!c1 || !c2 || !validate(c1) || !validate(c2)) {
     context.reactFormResponse = { error: true };
 
-    await siteState(context, async () => {
+    await siteStateAllowPrivate(context, async () => {
       await siteFrontend(context, next);
     });
     return;
@@ -29,7 +29,7 @@ export const resetPasswordPage: RouteMiddleware = async (context, next) => {
     if (shouldExpire.getTime() > created.getTime()) {
       context.reactFormResponse = { error: true };
 
-      await siteState(context, async () => {
+      await siteStateAllowPrivate(context, async () => {
         await siteFrontend(context, next);
       });
       return;
@@ -54,7 +54,7 @@ export const resetPasswordPage: RouteMiddleware = async (context, next) => {
     context.reactFormResponse = { error: true };
   }
 
-  await siteState(context, async () => {
+  await siteStateAllowPrivate(context, async () => {
     await siteFrontend(context, next);
   });
 };

@@ -1,7 +1,7 @@
 import { v4 } from 'uuid';
 import { createResetPasswordEmail, createResetPasswordText } from '../../emails/reset-password-email';
 import { gatewayHost } from '../../gateway/api.server';
-import { siteState } from '../../middleware/site-state';
+import { siteStateAllowPrivate } from '../../middleware/site-state';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { passwordHash } from '../../utility/php-password-hash';
 import { siteFrontend } from '../frontend/site-frontend';
@@ -62,7 +62,7 @@ export const forgotPassword: RouteMiddleware = async (context, next) => {
   }
 
   // Render react.
-  await siteState(context, async () => {
+  await siteStateAllowPrivate(context, async () => {
     await siteFrontend(context, next);
   });
 };

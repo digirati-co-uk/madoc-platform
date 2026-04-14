@@ -23,6 +23,7 @@ Document the auth middleware chain so changes to JWT parsing, cookie handling, a
 - `services/madoc-ts/src/middleware/set-jwt.ts`
 - `services/madoc-ts/src/middleware/error-handler.ts`
 - `services/madoc-ts/src/middleware/site-api.ts`
+- `services/madoc-ts/src/middleware/site-state.ts`
 - `services/madoc-ts/src/utility/get-jwt-cookies.ts`
 - `services/madoc-ts/src/utility/get-token.ts`
 
@@ -31,6 +32,7 @@ Document the auth middleware chain so changes to JWT parsing, cookie handling, a
 - `parse-jwt.ts` supports service tokens with user/site overrides via `x-madoc-*` headers.
 - `set-jwt.ts` sets JWT cookies after authentication when an authenticated user exists but no JWT is in state.
 - `error-handler.ts` maps auth errors and expired JWTs to `401` responses.
+- `site-state.ts` has a default restricted resolver (`siteState`) plus a private-site-aware variant (`siteStateAllowPrivate`) used by account pages so login/register/reset can render on non-public sites without exposing regular site content routes.
 
 ## Quick Start Workflow
 1. Read `services/madoc-ts/src/middleware/parse-jwt.ts` to understand token sources and refresh behavior.
@@ -42,11 +44,13 @@ Document the auth middleware chain so changes to JWT parsing, cookie handling, a
 - Adjust token refresh window or cookie handling
 - Add new request header overrides for service tokens
 - Update auth error responses
+- Add or adjust account-route middleware wiring for private-site login/register/reset flows
 
 ## Pitfalls
 - Changing cookie names without updating both parse and set logic
 - Forgetting to propagate `authenticatedUser` state before `set-jwt`
 - Swallowing expired token errors and returning incorrect status codes
+- Using `siteStateAllowPrivate` on non-account routes, which can unintentionally expose private-site context
 
 ## Suggested Checks
 - Site route request with a valid cookie

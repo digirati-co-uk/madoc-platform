@@ -32,6 +32,6 @@ export const logout: RouteMiddleware<{ slug: string }> = async context => {
   const requestedRedirect = Array.isArray(context.query.redirect) ? context.query.redirect[0] : context.query.redirect;
   const safeRedirect = requestedRedirect && requestedRedirect.startsWith('/') ? requestedRedirect : '';
 
-  // Redirect to site homepage.
-  context.response.redirect(safeRedirect || `/s/${context.params.slug}`);
+  // Default to login so private sites don't bounce users to a not-found homepage after logout.
+  context.response.redirect(safeRedirect || `/s/${context.params.slug}/login`);
 };
