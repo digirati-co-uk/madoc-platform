@@ -40,6 +40,7 @@ Document the site-specific React app structure, route setup, and SSR entrypoints
 - Adding a route without its loader or data fetch
 - Breaking SSR hydration by mismatching route data
 - Reusing admin-only components on site routes
+- Shallow-merging site and project configuration objects (use deep merge so nested options like `manifestPageOptions` are preserved)
 
 ## Suggested Checks
 - Site page SSR request

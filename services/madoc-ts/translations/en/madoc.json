@@ -78,6 +78,7 @@
   "Allow users to register to the site": "Allow users to register to the site",
   "Allow users to suggest additions or corrections to metadata": "Allow users to suggest additions or corrections to metadata",
   "Allow users to take personal notes only visible to themselves on canvases in a project.": "Allow users to take personal notes only visible to themselves on canvases in a project.",
+  "Allow users to take personal notes visible only to themselves.": "Allow users to take personal notes visible only to themselves.",
   "Already exists": "Already exists",
   "Already have an account?": "Already have an account?",
   "Annotation styles": "Annotation styles",
@@ -1302,5 +1303,7 @@
   "{{count}} submission_plural": "{{count}} submission",
   "{{feature}} is an experimental feature": "{{feature}} is an experimental feature",
   "{{page}} of {{count}}": "{{page}} of {{count}}",
+  "{{page}} of {{count}}_plural": "{{page}} of {{count}}"
+}",
   "{{page}} of {{count}}_plural": "{{page}} of {{count}}"
 }

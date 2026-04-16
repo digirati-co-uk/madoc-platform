@@ -19,6 +19,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -->
 
+### Fixed
+
+- Fixed HTML page block creation after dependency updates by deduping ProseMirror gapcursor modules in frontend Vite builds. (MAD-1543)
+- Fixed localisation language preference updates failing with configurator conflicts by adding resilient config loading/saving with legacy fallback. (MAD-1542)
+
 ## [v2.3.0](https://github.com/digirati-co-uk/madoc-platform/compare/v2.2.11...v2.3.0)
 
 <!--

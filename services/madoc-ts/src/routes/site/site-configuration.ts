@@ -1,6 +1,7 @@
 import { getProject } from '../../database/queries/project-queries';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { castBool } from '../../utility/cast-bool';
+import { mergeProjectConfiguration } from '../../utility/merge-project-configuration';
 import { parseProjectId } from '../../utility/parse-project-id';
 
 export type SiteConfigurationQuery = {
@@ -43,7 +44,7 @@ export const siteConfiguration: RouteMiddleware<{ slug: string }> = async contex
     return;
   }
 
-  const resolvedConfig = { ...staticConfiguration, ...configResponse.config[0].config_object };
+  const resolvedConfig = mergeProjectConfiguration(staticConfiguration, configResponse.config[0].config_object);
 
   if (showSource) {
     // Better merging, to show which values are coming from where.

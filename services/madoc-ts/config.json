@@ -68,6 +68,8 @@
       "hideOpenInTheseus": false,
       "hideSearchButton": false,
       "hideRandomCanvas": false,
+      "generatePDF": false,
+      "showIIIFLogo": false,
       "hideFilterImages": false,
       "directModelPage": false
     },

@@ -2,6 +2,7 @@ import { getProject } from '../../database/queries/project-queries';
 import { api } from '../../gateway/api.server';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { ProjectConfiguration } from '../../types/schemas/project-configuration';
+import { mergeProjectConfiguration } from '../../utility/merge-project-configuration';
 import { NotFound } from '../../utility/errors/not-found';
 import { parseEtag } from '../../utility/parse-etag';
 import { parseProjectId } from '../../utility/parse-project-id';
@@ -43,11 +44,10 @@ export const updateSiteConfiguration: RouteMiddleware<{}, Partial<ProjectConfigu
 
   const oldConfiguration = rawConfigurationObject.config[0];
 
-  const newConfiguration = {
-    ...staticConfiguration,
-    ...(oldConfiguration ? oldConfiguration.config_object : {}),
-    ...configurationRequest,
-  };
+  const newConfiguration = mergeProjectConfiguration(
+    mergeProjectConfiguration(staticConfiguration, oldConfiguration ? oldConfiguration.config_object : {}),
+    configurationRequest
+  );
 
   // Is it the same context?
   const isEqual =

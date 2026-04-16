@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { ProjectConfiguration } from '../../../types/schemas/project-configuration';
 import { SitePage } from '../../../types/site-pages-recursive';
+import { mergeProjectConfiguration } from '../../../utility/merge-project-configuration';
 
 export type SiteConfigurationContext = {
   project: ProjectConfiguration;
@@ -38,8 +39,7 @@ export const ConfigProvider: React.FC<{ children?: React.ReactNode; project?: Pa
   const newContext: SiteConfigurationContext = useMemo(() => {
     return {
       project: {
-        ...ctx.project,
-        ...(props.project || {}),
+        ...mergeProjectConfiguration(ctx.project, props.project),
       },
       navigation: [...ctx.navigation, ...(props.navigation || [])],
       setEditMode: value => {

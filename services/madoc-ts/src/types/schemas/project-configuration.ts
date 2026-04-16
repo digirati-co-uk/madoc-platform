@@ -51,6 +51,7 @@ export type ProjectConfiguration = TabularProjectConfigurationFields & {
   contributionMode?: 'transcription' | 'annotation';
   atlasBackground?: string;
   forkMode?: boolean;
+  showRandomManifestAfterSubmission?: boolean;
   // New search options - need to migrate others to this.
   searchOptions?: {
     nonLatinFulltext?: boolean;
@@ -98,6 +99,7 @@ export type ProjectConfiguration = TabularProjectConfigurationFields & {
     hideSearchButton?: boolean;
     hideRandomCanvas?: boolean;
     generatePDF?: boolean;
+    hideGeneratePDF?: boolean;
     hideFilterImages?: boolean;
     directModelPage?: boolean;
     showIIIFLogo?: boolean;
@@ -175,6 +177,7 @@ export type ProjectConfigurationNEW = TabularProjectConfigurationFields & {
     directModelPage?: boolean;
     showIIIFLogo?: boolean;
     generatePDF?: boolean;
+    hideGeneratePDF?: boolean;
     coveredImages?: boolean;
     rectangularImages?: boolean;
     hideCanvasLabels?: boolean;

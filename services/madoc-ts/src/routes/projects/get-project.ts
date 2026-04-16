@@ -5,6 +5,7 @@ import { ProjectConfiguration } from '../../types/schemas/project-configuration'
 import { cachePromise, cachePromiseSWR } from '../../utility/cache-helper';
 import { castBool } from '../../utility/cast-bool';
 import { NotFound } from '../../utility/errors/not-found';
+import { mergeProjectConfiguration } from '../../utility/merge-project-configuration';
 import { parseProjectId } from '../../utility/parse-project-id';
 import { optionalUserWithScope } from '../../utility/user-with-scope';
 
@@ -56,7 +57,7 @@ export const getProject: RouteMiddleware<{ id: string }> = async context => {
 
   let config;
   if (projectConfiguration.config && projectConfiguration.config[0] && projectConfiguration.config[0].config_object) {
-    config = { ...staticConfiguration, ...projectConfiguration.config[0].config_object };
+    config = mergeProjectConfiguration(staticConfiguration, projectConfiguration.config[0].config_object);
   } else {
     config = staticConfiguration;
   }
