@@ -19,3 +19,4 @@ export const MANIFESTS_PATH = path.join(FILES_PATH, 'original/madoc-manifests/')
 
 export const HTML_SITE_PATH = path.join(ROOT_PATH, 'dist', 'frontend-site', 'src', 'site.html');
 export const HTML_ADMIN_PATH = path.join(ROOT_PATH, 'dist', 'frontend-site', 'src', 'admin.html');
+export const HTML_ACCOUNT_PATH = path.join(ROOT_PATH, 'dist', 'frontend-site', 'src', 'account.html');

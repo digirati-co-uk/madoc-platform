@@ -1,9 +1,10 @@
 import { stringify } from 'query-string';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Navigate, useHref, useNavigate } from 'react-router-dom';
 import { Button } from '../../../shared/navigation/Button';
 import { ErrorMessage } from '../../../shared/callouts/ErrorMessage';
+import { SuccessMessage } from '../../../shared/callouts/SuccessMessage';
 import { FlexSpacer } from '../../../shared/layout/FlexSpacer';
 import { Heading1 } from '../../../shared/typography/Heading1';
 import { Input, InputContainer, InputLabel } from '../../../shared/form/Input';
@@ -22,6 +23,7 @@ export const Register: React.FC = () => {
   const systemConfig = useSystemConfig();
   const query = useLocationQuery();
   const navigate = useNavigate();
+  const registerAction = useHref('/register');
   const form = useFormResponse<{
     invitation?: any;
     emailError: boolean;
@@ -30,6 +32,8 @@ export const Register: React.FC = () => {
     email?: string;
     registerSuccess?: boolean;
     noEmail?: boolean;
+    expired?: boolean;
+    invitationRequired?: boolean;
   }>();
   const didEmailError = form?.emailError;
   const didUnknownError = form?.unknownError;
@@ -49,6 +53,34 @@ export const Register: React.FC = () => {
 
   if (!user && !systemConfig.enableRegistrations && !form?.invitation) {
     return <Navigate to="/login" />;
+  }
+
+  if (form?.expired) {
+    return (
+      <div>
+        <LoginContainer>
+          <Heading1 $margin>{t('Register')}</Heading1>
+          <ErrorMessage>{t('This invitation link is invalid or expired.')}</ErrorMessage>
+          <InputContainer>
+            <HrefLink href="/login">{t('Back to login')}</HrefLink>
+          </InputContainer>
+        </LoginContainer>
+      </div>
+    );
+  }
+
+  if (form?.invitationRequired) {
+    return (
+      <div>
+        <LoginContainer>
+          <Heading1 $margin>{t('Register')}</Heading1>
+          <SuccessMessage>{t('Registration for this site requires an invitation link.')}</SuccessMessage>
+          <InputContainer>
+            <HrefLink href="/login">{t('Back to login')}</HrefLink>
+          </InputContainer>
+        </LoginContainer>
+      </div>
+    );
   }
 
   if (form?.registerSuccess) {
@@ -98,7 +130,7 @@ export const Register: React.FC = () => {
     // @todo.
     return (
       <div>
-        <form method="POST" action={`/s/${site.slug}/register`}>
+        <form method="POST" action={registerAction}>
           <LoginContainer>
             <Heading1 $margin>Invitation</Heading1>
             <p style={{ marginBottom: 20 }}>
@@ -123,7 +155,7 @@ export const Register: React.FC = () => {
 
   return (
     <div>
-      <form method="POST" action={`/s/${site.slug}/register`}>
+      <form method="POST" action={registerAction}>
         <LoginContainer>
           {form?.invitation ? (
             <>

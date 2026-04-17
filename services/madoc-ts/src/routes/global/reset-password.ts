@@ -24,38 +24,43 @@ export const resetPassword: RouteMiddleware<{ userId: string }, { skipEmail?: bo
 
   const systemConfig = await context.siteManager.getSystemConfig();
 
-  const route = context.routes.url('reset-password', { slug: site.slug }, { query: `?c1=${codeForUser}&c2=${idHash}` });
+  const route = context.routes.url(
+    site.is_public ? 'reset-password' : 'account-reset-password',
+    { slug: site.slug },
+    { query: `?c1=${codeForUser}&c2=${idHash}` }
+  );
+  const verificationLink = `${gatewayHost}${route}`;
 
   if (skipEmail) {
     context.response.status = 200;
     context.response.body = {
       accepted: false,
-      verificationLink: `${gatewayHost}${route}`,
+      verificationLink,
     };
     return;
-  } else {
-    try {
-      const vars = {
-        resetLink: `${gatewayHost}${route}`,
-        installationTitle: systemConfig.installationTitle,
-        username: user.name,
-      };
+  }
 
-      await context.mailer.sendMail(user.email, {
-        subject: `Password reset`,
-        text: createResetPasswordText(vars),
-        html: createResetPasswordEmail(vars),
-      });
-      context.response.status = 200;
-      context.response.body = {
-        accepted: true,
-      };
-    } catch (e) {
-      context.response.status = 200;
-      context.response.body = {
-        accepted: false,
-        verificationLink: `${gatewayHost}${route}`,
-      };
-    }
+  try {
+    const vars = {
+      resetLink: verificationLink,
+      installationTitle: systemConfig.installationTitle,
+      username: user.name,
+    };
+
+    await context.mailer.sendMail(user.email, {
+      subject: `Password reset`,
+      text: createResetPasswordText(vars),
+      html: createResetPasswordEmail(vars),
+    });
+    context.response.status = 200;
+    context.response.body = {
+      accepted: true,
+    };
+  } catch (e) {
+    context.response.status = 200;
+    context.response.body = {
+      accepted: false,
+      verificationLink,
+    };
   }
 };
