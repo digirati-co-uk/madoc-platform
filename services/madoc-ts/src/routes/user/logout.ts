@@ -1,8 +1,14 @@
 import { RouteMiddleware } from '../../types/route-middleware';
+import { getAuthPathPrefix, isAccountRequestPath } from './account-route-helper';
+
+const DEFAULT_COOKIE_NAME = 'madoc';
+const SITES_COOKIE_NAME = 'madoc-sites';
+const EXPIRED_DATE = new Date(0);
 
 export const logout: RouteMiddleware<{ slug: string }> = async context => {
-  const cookieName = context.externalConfig.cookieName || 'madoc';
-  const siteCookies = context.cookies.get('madoc-sites');
+  const accountRequest = isAccountRequestPath(context.path);
+  const cookieName = context.externalConfig.cookieName || DEFAULT_COOKIE_NAME;
+  const siteCookies = context.cookies.get(SITES_COOKIE_NAME);
   const sites = siteCookies
     ? siteCookies
         .split(',')
@@ -16,22 +22,23 @@ export const logout: RouteMiddleware<{ slug: string }> = async context => {
     context.cookies.set(`${cookieName}/${site}`, '', {
       path: domain,
       signed: true,
-      expires: new Date(Date.parse('0')),
+      expires: EXPIRED_DATE,
       overwrite: true,
     });
   }
 
   // Unset the site index cookie too, so we don't keep stale site ids around.
-  context.cookies.set('madoc-sites', '', {
+  context.cookies.set(SITES_COOKIE_NAME, '', {
     path: '/',
     signed: true,
-    expires: new Date(Date.parse('0')),
+    expires: EXPIRED_DATE,
     overwrite: true,
   });
 
   const requestedRedirect = Array.isArray(context.query.redirect) ? context.query.redirect[0] : context.query.redirect;
   const safeRedirect = requestedRedirect && requestedRedirect.startsWith('/') ? requestedRedirect : '';
+  const authPathPrefix = getAuthPathPrefix(context.params.slug, accountRequest);
 
   // Redirect to site homepage.
-  context.response.redirect(safeRedirect || `/s/${context.params.slug}`);
+  context.response.redirect(safeRedirect || (accountRequest ? `${authPathPrefix}/login` : `${authPathPrefix}`));
 };

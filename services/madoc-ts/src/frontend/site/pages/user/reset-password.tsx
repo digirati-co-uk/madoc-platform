@@ -1,17 +1,18 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useHref } from 'react-router-dom';
 import { Button } from '../../../shared/navigation/Button';
 import { ErrorMessage } from '../../../shared/callouts/ErrorMessage';
 import { FlexSpacer } from '../../../shared/layout/FlexSpacer';
 import { Heading1 } from '../../../shared/typography/Heading1';
 import { Input, InputContainer, InputLabel } from '../../../shared/form/Input';
 import { LoginActions, LoginContainer } from '../../../shared/layout/LoginContainer';
-import { useFormResponse, useSite } from '../../../shared/hooks/use-site';
+import { useFormResponse } from '../../../shared/hooks/use-site';
 import { HrefLink } from '../../../shared/utility/href-link';
 
 export const ResetPassword: React.FC = () => {
   const { t } = useTranslation();
-  const site = useSite();
+  const resetPasswordAction = useHref('/reset-password');
   const { c1, c2, error, formError, activate } =
     useFormResponse<{
       error: boolean;
@@ -20,7 +21,7 @@ export const ResetPassword: React.FC = () => {
       formError?: boolean;
       activate?: boolean;
     }>() || {};
-  const [didError, setDidError] = useState(formError);
+  const didError = Boolean(formError);
 
   if (error || !c1 || !c2) {
     return (
@@ -45,7 +46,7 @@ export const ResetPassword: React.FC = () => {
             ? t('Thank you, your email is confirmed. Please choose a password.')
             : t('Please choose a new password')}
         </p>
-        <form method="post" action={`/s/${site.slug}/reset-password`}>
+        <form method="post" action={resetPasswordAction}>
           <InputContainer $error={formError}>
             <InputLabel htmlFor="p1">{t('Password')}</InputLabel>
             <Input type="password" required name="p1" id="p1" />

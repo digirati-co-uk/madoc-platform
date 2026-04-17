@@ -56,7 +56,10 @@ export function createServerRenderer(
   createRoutes: ((c: any) => CreateRouteType) | RouteObject[],
   components: any,
   apiGateway: string,
-  extraConfig: Partial<ReactQueryConfig> = {}
+  extraConfig: Partial<ReactQueryConfig> = {},
+  renderOptions: {
+    disableDevLoading?: boolean;
+  } = {}
 ) {
   const defaultRoutes = Array.isArray(createRoutes) ? createRoutes : makeRoutes(createRoutes(components));
 
@@ -387,7 +390,7 @@ export function createServerRenderer(
     `;
 
     const devLoadingScript =
-      process.env.NODE_ENV === 'production'
+      process.env.NODE_ENV === 'production' || renderOptions.disableDevLoading
         ? ''
         : `
       <script>document.body.classList.add('dev-loading');</script>

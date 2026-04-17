@@ -1,23 +1,22 @@
 import { stringify } from 'query-string';
-import { useEffect } from 'react';
-import * as React from 'react';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Navigate, useHref, useNavigate } from 'react-router-dom';
 import { Button } from '../../../shared/navigation/Button';
 import { FlexSpacer } from '../../../shared/layout/FlexSpacer';
 import { Heading1 } from '../../../shared/typography/Heading1';
 import { Input, InputContainer, InputLabel } from '../../../shared/form/Input';
 import { LoginActions, LoginContainer } from '../../../shared/layout/LoginContainer';
 import { useLocationQuery } from '../../../shared/hooks/use-location-query';
-import { useFormResponse, useSite, useUser } from '../../../shared/hooks/use-site';
+import { useFormResponse, useUser } from '../../../shared/hooks/use-site';
 
 export const ForgotPasswordPage: React.FC = () => {
   const { t } = useTranslation();
-  const site = useSite();
   const user = useUser();
   const form = useFormResponse<{ forgotSuccess?: boolean }>();
   const navigate = useNavigate();
   const query = useLocationQuery<{ success?: string }>();
+  const forgotPasswordAction = useHref('/forgot-password');
 
   useEffect(() => {
     if (user) {
@@ -52,7 +51,7 @@ export const ForgotPasswordPage: React.FC = () => {
 
   return (
     <div>
-      <form method="post" action={`/s/${site.slug}/forgot-password`}>
+      <form method="post" action={forgotPasswordAction}>
         <LoginContainer>
           <Heading1 $margin>{t('Forgot password')}</Heading1>
           <p>{t('Please enter your email and we will sent you a link to recover your account.')}</p>

@@ -33,34 +33,42 @@ export const createUser: RouteMiddleware<unknown, UserCreationRequest> = async c
   await context.siteManager.resetUserPassword(idHash, sharedHash, createdUser.id, true);
 
   const route = context.routes.url(
-    'activate-account',
+    site.is_public ? 'activate-account' : 'account-activate-account',
     { slug: site.slug },
     { query: `?c1=${codeForUser}&c2=${idHash}` }
   );
+  const verificationLink = `${gatewayHost}${route}`;
 
   // Don't send emails to BOT users, they don't have passwords.
-  if (!user.automated && user.skipEmail) {
-    // We want to return the link to activate for the administrator to share with the user.
-    (createdUser as any).verificationLink = `${gatewayHost}${route}`;
-  } else if (!user.automated) {
-    try {
-      const systemConfig = await context.siteManager.getSystemConfig();
-      const vars = {
-        resetLink: `${gatewayHost}${route}`,
-        installationTitle: systemConfig.installationTitle,
-        username: createdUser.name,
-      };
+  if (user.automated) {
+    context.response.body = createdUser;
+    return;
+  }
 
-      await context.mailer.sendMail(createdUser.email, {
-        subject: `Activate your account`,
-        text: createUserActivationText(vars),
-        html: createUserActivationEmail(vars),
-      });
-    } catch (e) {
-      (createdUser as any).emailError = true;
-      (createdUser as any).verificationLink = `${gatewayHost}${route}`;
-      // unknown email error.
-    }
+  if (user.skipEmail) {
+    // We want to return the link to activate for the administrator to share with the user.
+    (createdUser as any).verificationLink = verificationLink;
+    context.response.body = createdUser;
+    return;
+  }
+
+  try {
+    const systemConfig = await context.siteManager.getSystemConfig();
+    const vars = {
+      resetLink: verificationLink,
+      installationTitle: systemConfig.installationTitle,
+      username: createdUser.name,
+    };
+
+    await context.mailer.sendMail(createdUser.email, {
+      subject: `Activate your account`,
+      text: createUserActivationText(vars),
+      html: createUserActivationEmail(vars),
+    });
+  } catch (e) {
+    (createdUser as any).emailError = true;
+    (createdUser as any).verificationLink = verificationLink;
+    // unknown email error.
   }
 
   context.response.body = createdUser;
