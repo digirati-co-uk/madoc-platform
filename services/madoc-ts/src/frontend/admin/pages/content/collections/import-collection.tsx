@@ -7,6 +7,7 @@ import { usePaginatedData } from '../../../../shared/hooks/use-data';
 import { ErrorIcon } from '../../../../shared/icons/ErrorIcon';
 import { Spinner } from '../../../../shared/icons/Spinner';
 import { TickIcon } from '../../../../shared/icons/TickIcon';
+import { TriangleIcon } from '../../../../shared/icons/TriangleIcon';
 import { GridContainer, HalfGird } from '../../../../shared/layout/Grid';
 import { serverRendererFor } from '../../../../shared/plugins/external/server-renderer-for';
 import { Heading3, Subheading3 } from '../../../../shared/typography/Heading3';
@@ -23,6 +24,37 @@ import { VaultProvider } from 'react-iiif-vault';
 import { AdminHeader } from '../../../molecules/AdminHeader';
 import { WidePage } from '../../../../shared/layout/WidePage';
 import { useLocationQuery } from '../../../../shared/hooks/use-location-query';
+
+type TaskManifestImportStats = {
+  expectedManifestTotal: number;
+  importedManifestTotal: number;
+  manifestStatusCounts: Record<string, number>;
+};
+
+type ImportCollectionTaskWithStats = ImportCollectionTask & {
+  manifestImportStats?: TaskManifestImportStats;
+};
+
+function getManifestImportSummary(task: ImportCollectionTaskWithStats) {
+  const manifestSubtasks = (task.subtasks || []).filter(subtask => subtask.type === 'madoc-manifest-import');
+  const expectedManifestTotal =
+    task.state?.manifestIds?.length ?? task.manifestImportStats?.expectedManifestTotal ?? manifestSubtasks.length ?? 0;
+  const importedManifestTotal =
+    task.manifestImportStats?.importedManifestTotal ?? manifestSubtasks.filter(subtask => subtask.status === 3).length;
+  const manifestStatusCounts = task.manifestImportStats?.manifestStatusCounts;
+  const activeManifestImports = ['0', '1', '2'].reduce(
+    (total, status) => total + (manifestStatusCounts ? manifestStatusCounts[status] || 0 : 0),
+    0
+  );
+  const showManifestWarning =
+    expectedManifestTotal > 0 && importedManifestTotal < expectedManifestTotal && activeManifestImports === 0;
+
+  return {
+    expectedManifestTotal,
+    importedManifestTotal,
+    showManifestWarning,
+  };
+}
 
 export const ImportCollection: React.FC = () => {
   const { t } = useTranslation();
@@ -113,12 +145,17 @@ export const ImportCollection: React.FC = () => {
             </GridContainer>
             <Heading3 $margin>Recent imports</Heading3>
             <SystemBackground $rounded>
-              {data?.tasks.map((task: ImportCollectionTask) => {
+              {data?.tasks.map((task: ImportCollectionTaskWithStats) => {
+                const { expectedManifestTotal, importedManifestTotal, showManifestWarning } =
+                  getManifestImportSummary(task);
+
                 return (
                   <SystemListItem key={task.id}>
                     <div style={{ fontSize: '1.5em', marginRight: '1em' }}>
                       {task.status === -1 ? (
                         <ErrorIcon style={{ height: '1em', width: '1em' }} />
+                      ) : showManifestWarning ? (
+                        <TriangleIcon style={{ height: '1em', width: '1em', color: '#d97706' }} />
                       ) : task.status === 3 ? (
                         <TickIcon style={{ height: '1em', width: '1em' }} />
                       ) : (
@@ -127,6 +164,12 @@ export const ImportCollection: React.FC = () => {
                     </div>
                     <SystemMetadata>
                       <SystemName>{task.name}</SystemName>
+                      <SystemDescription>
+                        {t('Imported {{imported}} of {{expected}} manifests', {
+                          imported: importedManifestTotal,
+                          expected: expectedManifestTotal,
+                        })}
+                      </SystemDescription>
                       <SystemDescription>{task.subject}</SystemDescription>
                       <ActivityActions>
                         <ActivityAction as={HrefLink} href={`/tasks/${task.id}`}>
@@ -161,10 +204,39 @@ export const ImportCollection: React.FC = () => {
 
 serverRendererFor(ImportCollection, {
   getKey: (params, query) => ['collection-import-tasks', { page: query.page ? Number(query.page) : 1 }],
-  getData: (key, vars, api) => {
-    return api.getTasks<ImportCollectionTask>(vars.page, {
+  getData: async (key, vars, api) => {
+    const response = await api.getTasks<ImportCollectionTask>(vars.page, {
       type: 'madoc-collection-import',
       detail: true,
     });
+
+    const tasks = await Promise.all(
+      response.tasks.map(async task => {
+        if (!task.id) {
+          return task as ImportCollectionTaskWithStats;
+        }
+
+        try {
+          const stats = await api.getTaskStats(task.id, { type: 'madoc-manifest-import' });
+          const manifestImportStats: TaskManifestImportStats = {
+            expectedManifestTotal: stats.total || 0,
+            importedManifestTotal: stats.statuses?.['3'] || 0,
+            manifestStatusCounts: stats.statuses || {},
+          };
+
+          return {
+            ...task,
+            manifestImportStats,
+          } as ImportCollectionTaskWithStats;
+        } catch {
+          return task as ImportCollectionTaskWithStats;
+        }
+      })
+    );
+
+    return {
+      ...response,
+      tasks,
+    };
   },
 });
