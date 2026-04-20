@@ -544,6 +544,7 @@
   "Import {{count}} manifests": "Mewnforio {{count}} maniffest",
   "Import {{count}} manifests_plural": "Mewnforio {{count}} maniffestau",
   "Imported": "Wedi'i fewnforio",
+  "Imported {{imported}} of {{expected}} manifests": "Imported {{imported}} of {{expected}} manifests",
   "Importing canvases": "Mewnforio cynfasau",
   "In progress": "Ar y gweill",
   "In review": "Mewn adolygiad",
