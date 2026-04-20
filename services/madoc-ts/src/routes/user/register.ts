@@ -5,6 +5,7 @@ import { generateId } from '../../frontend/shared/capture-models/helpers/generat
 import { gatewayHost } from '../../gateway/api.server';
 import { renderFrontend } from '../../middleware/render-frontend';
 import { RouteMiddleware } from '../../types/route-middleware';
+import { NotFound } from '../../utility/errors/not-found';
 import { passwordHash } from '../../utility/php-password-hash';
 import { validateEmail } from '../../utility/validate-email';
 import { accountFrontend } from '../frontend/account-frontend';
@@ -58,9 +59,16 @@ export const registerPage: RouteMiddleware = async (context, next) => {
   const site = await context.siteManager.getSiteBySlug(context.params.slug);
   const authPathPrefix = getAuthPathPrefix(site.slug, accountRequest);
   const systemConfig = await context.siteManager.getSystemConfig();
-  const invitation = invitationId
-    ? await context.siteManager.getInvitation(invitationId, site.id).catch(() => null)
-    : null;
+  let invitation: UserInvitation | null = null;
+  if (invitationId) {
+    try {
+      invitation = await context.siteManager.getInvitation(invitationId, site.id);
+    } catch (error) {
+      if (!(error instanceof NotFound)) {
+        throw error;
+      }
+    }
+  }
   const invitationExpired = isInvitationExpired(invitation);
   const hasInvalidInvitationCode = Boolean(invitationId && !invitation);
   const invitationRequired = !site.is_public && !invitation;

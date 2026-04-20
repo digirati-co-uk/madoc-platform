@@ -68,6 +68,15 @@ export const accountFrontend: RouteMiddleware<{ slug: string }> = async context 
           <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
           <meta http-equiv="X-UA-Compatible" content="ie=edge">
           <!--ssr-head-->
+          <script type="module">
+            import RefreshRuntime from '${viteProtocol}://${hostname}:3088/@react-refresh'
+            RefreshRuntime.injectIntoGlobalHook(window)
+            window.$RefreshReg$ = () => {}
+            window.$RefreshSig$ = () => (type) => type
+            window.__vite_plugin_react_preamble_installed__ = true
+            window.__HMR_PROTOCOL__ = '${viteProtocol === 'https' ? 'wss' : 'ws'}';
+          </script>
+          <script type="module" src="${viteProtocol}://${hostname}:3088/src/frontend/account/client.ts"></script>
           <link rel="stylesheet" href="${viteProtocol}://${hostname}:3088/src/frontend/site/index.css" />
         </head>
         <body>

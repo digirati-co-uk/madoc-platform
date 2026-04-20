@@ -93,8 +93,13 @@ export async function renderClient(
         dehydratedSite.site.id
       );
 
-  const [, slug] = window.location.pathname.match(/s\/([^/]*)/) as string[];
-  const jwt = cookies.get(`madoc/${slug}`) || undefined;
+  const slugMatch = window.location.pathname.match(/\/(?:s|account)\/([^/]*)/);
+  const slug = slugMatch ? slugMatch[1] : undefined;
+  const jwt = slug ? cookies.get(`madoc/${slug}`) || undefined : undefined;
+
+  if (!slug) {
+    return;
+  }
 
   if (!jwt && requireJwt) {
     const loc = window.location.pathname;
