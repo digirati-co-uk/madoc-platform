@@ -30,14 +30,6 @@ const CastANetLazy = madocLazy(async () => {
 });
 
 const LEAVE_SETUP_MESSAGE = 'are you sure you want to leave? Your tabular project will not be saved.';
-const LEAVE_GUARD_STATE_KEY = '__tabularProjectLeaveGuard';
-
-function getHistoryStateObject(state: unknown): Record<string, unknown> {
-  if (state && typeof state === 'object' && !Array.isArray(state)) {
-    return state as Record<string, unknown>;
-  }
-  return {};
-}
 
 export const TabularProjectWizard: React.FC = () => {
   const api = useApi();
@@ -82,18 +74,7 @@ export const TabularProjectWizard: React.FC = () => {
       return;
     }
 
-    const wizardUrl = window.location.href;
-    const initialHistoryState = getHistoryStateObject(window.history.state);
-    if (!initialHistoryState[LEAVE_GUARD_STATE_KEY]) {
-      window.history.pushState(
-        {
-          ...initialHistoryState,
-          [LEAVE_GUARD_STATE_KEY]: true,
-        },
-        '',
-        wizardUrl
-      );
-    }
+    let isRestoringWizardState = false;
 
     const onDocumentClick = (event: MouseEvent) => {
       if (event.defaultPrevented) {
@@ -142,28 +123,19 @@ export const TabularProjectWizard: React.FC = () => {
     };
 
     const onPopState = () => {
-      const currentHistoryState = getHistoryStateObject(window.history.state);
-      const isOnGuardEntry = Boolean(currentHistoryState[LEAVE_GUARD_STATE_KEY]);
-
-      if (!confirmLeaveSetup()) {
-        if (!isOnGuardEntry) {
-          window.history.pushState(
-            {
-              ...currentHistoryState,
-              [LEAVE_GUARD_STATE_KEY]: true,
-            },
-            '',
-            wizardUrl
-          );
-        }
+      if (isRestoringWizardState) {
+        isRestoringWizardState = false;
         return;
       }
 
-      // We first land on the non-guard entry. Confirming should continue one more step back.
-      if (!isOnGuardEntry) {
+      if (confirmLeaveSetup()) {
         window.removeEventListener('popstate', onPopState);
-        window.history.back();
+        return;
       }
+
+      // Re-enter the wizard history entry if the user cancels leaving.
+      isRestoringWizardState = true;
+      window.history.go(1);
     };
 
     document.addEventListener('click', onDocumentClick, true);
