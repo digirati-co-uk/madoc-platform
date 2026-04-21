@@ -578,6 +578,7 @@ export const createResourceClaim: RouteMiddleware<{ id: string }, ResourceClaim>
       context.response.body = {
         claim: await userApi.updateTask(canvasClaim.id, {
           state: {
+            ...(canvasClaim.state || {}),
             revisionId: claim.revisionId,
           },
           status: claim.status,
@@ -630,6 +631,7 @@ export const createResourceClaim: RouteMiddleware<{ id: string }, ResourceClaim>
         context.response.body = {
           claim: await userApi.updateTask(manifestClaim.id, {
             state: {
+              ...(manifestClaim.state || {}),
               revisionId: claim.revisionId,
             },
             status: claim.status,

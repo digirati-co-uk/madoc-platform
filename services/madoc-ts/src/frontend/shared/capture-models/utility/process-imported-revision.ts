@@ -4,6 +4,7 @@ import { expandModelFields } from '../helpers/expand-model-fields';
 import { filterEmptyFields, filterRemovedFields } from '../helpers/field-post-filters';
 import { filterCaptureModel } from '../helpers/filter-capture-model';
 import { findStructure } from '../helpers/find-structure';
+import { isEntity } from '../helpers/is-entity';
 import { recurseRevisionDependencies } from '../helpers/recurse-revision-dependencies';
 import { traverseDocument } from '../helpers/traverse-document';
 import { CaptureModel } from '../types/capture-model';
@@ -13,7 +14,7 @@ import { applyModelRootToDocument } from './apply-model-root-to-document';
 export function processImportedRevision(
   revision: RevisionRequest['revision'],
   captureModel: CaptureModel,
-  { filterEmpty }: { filterEmpty?: boolean } = {}
+  { filterEmpty, preferRevisionValues }: { filterEmpty?: boolean; preferRevisionValues?: boolean } = {}
 ): RevisionRequest | null {
   const flatFields = expandModelFields(revision.fields);
   const allRevisions = recurseRevisionDependencies(revision.id, captureModel.revisions);
@@ -48,6 +49,39 @@ export function processImportedRevision(
       foundStructure.modelRoot.length
     ) {
       applyModelRootToDocument(document, foundStructure.modelRoot);
+    }
+
+    if (preferRevisionValues) {
+      traverseDocument(document, {
+        visitProperty(property, list, parent) {
+          if (!Array.isArray(list) || list.length < 2) {
+            return;
+          }
+
+          if ((list as any[]).some(isEntity)) {
+            return;
+          }
+
+          const ranked = (list as any[])
+            .map((item, index) => {
+              const itemRevision = item?.revision;
+
+              return {
+                item,
+                index,
+                score: itemRevision === revision.id ? 3 : itemRevision ? 2 : 1,
+              };
+            })
+            .sort((left, right) => {
+              if (left.score !== right.score) {
+                return right.score - left.score;
+              }
+              return left.index - right.index;
+            });
+
+          parent.properties[property] = ranked.map(entry => entry.item) as any;
+        },
+      });
     }
 
     // Make entities immutable.

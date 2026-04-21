@@ -7,6 +7,11 @@ import { filterRevises } from './filter-revises';
 import { flattenStructures } from './flatten-structures';
 import { isEntityList } from './is-entity';
 import { traverseDocument } from './traverse-document';
+import { TABULAR_CELL_FLAGS_PROPERTY } from '../../utility/tabular-cell-flags';
+
+function isTabularCaptureModel(captureModel: CaptureModel): boolean {
+  return Object.prototype.hasOwnProperty.call(captureModel.document.properties, TABULAR_CELL_FLAGS_PROPERTY);
+}
 
 export function captureModelToRevisionList(
   captureModel: CaptureModel,
@@ -14,6 +19,7 @@ export function captureModelToRevisionList(
   filterEmpty = true
 ): RevisionRequest[] {
   const models: RevisionRequest[] = [];
+  const shouldFilterEmpty = isTabularCaptureModel(captureModel) ? false : filterEmpty;
 
   if (!captureModel.id) {
     throw new Error('Cannot make revision on model that has not yet been saved.');
@@ -25,7 +31,7 @@ export function captureModelToRevisionList(
     const flatStructures = flattenStructures(captureModel.structure);
     for (const structure of flatStructures) {
       try {
-        models.push(createRevisionRequestFromStructure(captureModel, structure, true));
+        models.push(createRevisionRequestFromStructure(captureModel, structure, shouldFilterEmpty));
       } catch (err) {
         console.error(err);
       }
@@ -33,7 +39,10 @@ export function captureModelToRevisionList(
   }
 
   for (const revision of captureModel.revisions || []) {
-    const processed = processImportedRevision(revision, captureModel, { filterEmpty });
+    const processed = processImportedRevision(revision, captureModel, {
+      filterEmpty: shouldFilterEmpty,
+      preferRevisionValues: isTabularCaptureModel(captureModel),
+    });
     if (processed) {
       models.push(processed);
     }

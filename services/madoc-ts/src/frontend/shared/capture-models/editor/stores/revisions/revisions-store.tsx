@@ -397,7 +397,7 @@ export const revisionStore: RevisionsModel = {
       for (const prop of props) {
         const fields = currentSubtree.properties[prop];
         for (const field of fields) {
-          if (field.selector) {
+          if (field && field.selector) {
             selectors.push(field.selector.id);
           }
         }
@@ -463,7 +463,7 @@ export const revisionStore: RevisionsModel = {
   // This method assumes we have the latest capture model available, which may not
   // be the case. This needs to be more generic.
   createRevision: action<RevisionsModel>(
-    (state, { revisionId, readMode, cloneMode, modelMapping, modelRoot, fieldsToEdit }) => {
+    (state, { revisionId, readMode, cloneMode, modelMapping, modelRoot, fieldsToEdit, authorUrn }) => {
       const baseRevision = state.revisions[revisionId];
       // Structure ID is the structure from the capture model, so if this exists we can set fields.
       if (!baseRevision) {
@@ -493,6 +493,8 @@ export const revisionStore: RevisionsModel = {
       newRevisionRequest.revision = {
         ...baseRevision.revision,
         approved: false, // @todo this is where auto-approval config might go, will still be server checked.
+        status: 'draft',
+        authors: authorUrn ? [authorUrn] : baseRevision.revision.authors,
         id: newRevisionId,
         revises: baseRevision.revision.id,
       };

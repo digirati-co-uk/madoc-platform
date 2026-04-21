@@ -98,7 +98,7 @@ export function useCaptureModelEditorApi({ tableProperty }: CaptureModelEditorAp
   );
 
   const rows = useMemo<TableRowRef[]>(() => {
-    return snapshot.rows.map((row, rowIndex) => {
+    return snapshot.rows.map(({ row, rowIndex }) => {
       const path = [[tableProperty, row.id]] as Array<[string, string]>;
 
       return {

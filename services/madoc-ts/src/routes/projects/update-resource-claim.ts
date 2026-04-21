@@ -41,6 +41,7 @@ export const updateResourceClaim: RouteMiddleware<
       status,
       status_text: statusToClaimMap[status],
       state: {
+        ...(task.state || {}),
         revisionId,
       },
     }),
