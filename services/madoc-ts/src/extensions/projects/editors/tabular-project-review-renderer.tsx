@@ -189,6 +189,10 @@ export function TabularProjectReviewRenderer(props: CustomReviewRendererProps) {
         : undefined;
   const canvasId = fallbackCanvasId;
   const reviewTaskId = review.task?.id ? String(review.task.id) : undefined;
+  const reviewRevisionId =
+    typeof (review.task as { state?: { revisionId?: unknown } })?.state?.revisionId === 'string'
+      ? ((review.task as { state?: { revisionId?: string } }).state?.revisionId as string)
+      : undefined;
   const isEditingDisabled = props.mode !== 'write';
   const zoomTrackingUiEnabled = resolveTabularZoomTrackingEnabled({
     enableZoomTracking,
@@ -231,18 +235,27 @@ export function TabularProjectReviewRenderer(props: CustomReviewRendererProps) {
     removeInstance,
   });
 
-  const { flaggedCells, isCellFlagged, isCellNoted, onRemoveFlag, onConvertFlagToNote, onFocusFlaggedCell } =
-    useTabularCellFlags({
-      table,
-      projectId: review.project?.id,
-      canvasId,
-      visibleColumnKeys,
-      headerColumns,
-      tableActiveCell,
-      setTableActiveCell,
-      useLegacyTopLevelLayout,
-      removeRowFromFooter,
-    });
+  const {
+    canPersistFlags,
+    flaggedCells,
+    isCellFlagged,
+    isCellNoted,
+    onRemoveFlag,
+    onConvertFlagToNote,
+    onFocusFlaggedCell,
+  } = useTabularCellFlags({
+    table,
+    projectId: review.project?.id,
+    canvasId,
+    revisionId: reviewRevisionId,
+    preferRevisionFallback: true,
+    visibleColumnKeys,
+    headerColumns,
+    tableActiveCell,
+    setTableActiveCell,
+    useLegacyTopLevelLayout,
+    removeRowFromFooter,
+  });
 
   useEffect(() => {
     if (tableActiveCell) {
@@ -394,7 +407,7 @@ export function TabularProjectReviewRenderer(props: CustomReviewRendererProps) {
                           key={flag.key}
                           flag={flag}
                           linkedCell={linkedCell}
-                          canResolveFlag={!isEditingDisabled}
+                          canResolveFlag={!isEditingDisabled && canPersistFlags}
                           onFocusCell={() => focusFlaggedCell(flag.rowIndex, flag.columnKey, canFocusCell)}
                           onConvertToNote={noteComment => convertFlagToNote(flag, noteComment)}
                           onDeleteFlag={() => unflagCell(flag)}

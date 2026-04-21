@@ -3,6 +3,7 @@ import { ProjectFull } from '../../../../../types/project-full';
 import { Revisions } from '../../../../shared/capture-models/editor/stores/revisions';
 import { useTranslation } from 'react-i18next';
 import { useApi } from '../../../../shared/hooks/use-api';
+import { apiHooks } from '../../../../shared/hooks/use-api-query';
 import { useSite } from '../../../../shared/hooks/use-site';
 import {
   EditorToolbarButton,
@@ -32,13 +33,22 @@ export const ApproveSubmission: React.FC<{
   const api = useApi();
   const site = useSite();
   const { t } = useTranslation();
+  const revisionId = acceptedRevision?.revision.id;
+  const { data: latestRevisionForApproval } = apiHooks.getCaptureModelRevision(() =>
+    revisionId ? [revisionId] : undefined
+  );
   const unresolvedFlaggedCellCount = useMemo(() => {
-    if (!acceptedRevision) {
+    const localCount = acceptedRevision ? getTabularFlaggedCellCount(acceptedRevision) : 0;
+    if (localCount > 0) {
+      return localCount;
+    }
+
+    if (!latestRevisionForApproval) {
       return 0;
     }
 
-    return getTabularFlaggedCellCount(acceptedRevision);
-  }, [acceptedRevision]);
+    return getTabularFlaggedCellCount(latestRevisionForApproval);
+  }, [acceptedRevision, latestRevisionForApproval]);
   const unresolvedFlagsDisabledReason = unresolvedFlaggedCellCount > 0 ? getTabularApprovalBlockedMessage() : undefined;
   const resolvedDisabledReason = disabledReason || unresolvedFlagsDisabledReason;
   const isApproveDisabled = loading || !!resolvedDisabledReason;
