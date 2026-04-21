@@ -1,7 +1,7 @@
 import { stringify } from 'query-string';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useHref } from 'react-router-dom';
 import { Button } from '../../../shared/navigation/Button';
 import { ErrorMessage } from '../../../shared/callouts/ErrorMessage';
 import { Heading1 } from '../../../shared/typography/Heading1';
@@ -9,7 +9,7 @@ import { Input, InputContainer, InputLabel } from '../../../shared/form/Input';
 import { LoginActions, LoginContainer } from '../../../shared/layout/LoginContainer';
 import { SuccessMessage } from '../../../shared/callouts/SuccessMessage';
 import { useLocationQuery } from '../../../shared/hooks/use-location-query';
-import { useFormResponse, useSite, useSystemConfig, useUser } from '../../../shared/hooks/use-site';
+import { useFormResponse, useSystemConfig, useUser } from '../../../shared/hooks/use-site';
 import { HrefLink } from '../../../shared/utility/href-link';
 import { ArrowForwardIcon } from '../../../shared/icons/ArrowForwardIcon';
 import { LoginMessage } from '../../../tailwind/components/LoginMessage';
@@ -17,11 +17,11 @@ import { LoginMessage } from '../../../tailwind/components/LoginMessage';
 export const LoginPage: React.FC = () => {
   const { t } = useTranslation();
   const user = useUser();
-  const site = useSite();
   const system = useSystemConfig();
   const form = useFormResponse<{ loginError?: boolean; email?: string; success?: boolean }>();
   const didError = form?.loginError || false;
   const { redirect } = useLocationQuery();
+  const loginAction = useHref(`/login?${stringify({ redirect })}`);
 
   if (user) {
     return <Navigate to="/" />;
@@ -46,7 +46,7 @@ export const LoginPage: React.FC = () => {
             </HrefLink>
           </LoginMessage>
         ) : null}
-        <form method="post" action={`/s/${site.slug}/login?${stringify({ redirect })}`}>
+        <form method="post" action={loginAction}>
           <InputContainer $error={didError}>
             <InputLabel htmlFor="email">{t('Email')}</InputLabel>
             <Input type="text" required defaultValue={form?.email} name="email" id="email" />

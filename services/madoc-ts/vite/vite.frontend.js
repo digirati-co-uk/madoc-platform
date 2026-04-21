@@ -68,6 +68,7 @@ export default defineConfig({
       input: {
         site: 'src/site.html',
         admin: 'src/admin.html',
+        account: 'src/account.html',
       },
       external: ['csv-stringify'],
     },

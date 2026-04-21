@@ -82,7 +82,9 @@ export const ListInvitations: React.FC = () => {
                         <HighlightInput
                           id={invitation.id}
                           type="text"
-                          value={`${window.location.protocol}//${window.location.host}/s/${site.slug}/register?code=${invitation.id}`}
+                          value={`${window.location.protocol}//${window.location.host}/${
+                            site.is_public ? 's' : 'account'
+                          }/${site.slug}/register?code=${invitation.id}`}
                         />
                       )}
                     </InputContainer>

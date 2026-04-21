@@ -14,7 +14,7 @@ import { disposeApis } from './middleware/dispose-apis';
 import { errorHandler } from './middleware/error-handler';
 import { createKoaInternalRequestRunner, setInternalRequestRunner } from './gateway/internal-request';
 import { internalSubrequestContext } from './middleware/internal-subrequest-context';
-import { HTML_ADMIN_PATH, HTML_SITE_PATH, SCHEMAS_PATH } from './paths';
+import { HTML_ACCOUNT_PATH, HTML_ADMIN_PATH, HTML_SITE_PATH, SCHEMAS_PATH } from './paths';
 import { EnvConfig } from './types/env-config';
 import { createAwaiter } from './utility/awaiter';
 import { castBool } from './utility/cast-bool';
@@ -90,6 +90,10 @@ export async function createApp(config: ExternalConfig, env: EnvConfig) {
 
     awaitProperty(readFile(HTML_ADMIN_PATH), html => {
       app.context.adminTemplate = html.toString('utf-8');
+    });
+
+    awaitProperty(readFile(HTML_ACCOUNT_PATH), html => {
+      app.context.accountTemplate = html.toString('utf-8');
     });
   }
 

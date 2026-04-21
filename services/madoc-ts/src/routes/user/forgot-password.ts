@@ -4,16 +4,31 @@ import { gatewayHost } from '../../gateway/api.server';
 import { siteState } from '../../middleware/site-state';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { passwordHash } from '../../utility/php-password-hash';
+import { accountFrontend } from '../frontend/account-frontend';
 import { siteFrontend } from '../frontend/site-frontend';
+import { isAccountRequestPath } from './account-route-helper';
 
 export const forgotPassword: RouteMiddleware = async (context, next) => {
+  const accountRequest = isAccountRequestPath(context.path);
+  const renderAuthPage = async () => {
+    if (accountRequest) {
+      await accountFrontend(context, next);
+      return;
+    }
+
+    await siteState(context, async () => {
+      await siteFrontend(context, next);
+    });
+  };
+
   if (context.query.redirect && !context.query.redirect.startsWith('/')) {
     context.query.redirect = '';
   }
+  const redirectTarget = context.query.redirect || `/s/${context.params.slug}`;
 
   // For logged in users.
   if (context.state.jwt) {
-    context.response.redirect(context.query.redirect || `/s/${context.params.slug}`);
+    context.response.redirect(redirectTarget);
     return;
   }
 
@@ -34,7 +49,7 @@ export const forgotPassword: RouteMiddleware = async (context, next) => {
         await context.siteManager.resetUserPassword(idHash, sharedHash, user.id, false);
 
         const route = context.routes.url(
-          'reset-password',
+          !site.is_public || accountRequest ? 'account-reset-password' : 'reset-password',
           { slug: site.slug },
           { query: `?c1=${codeForUser}&c2=${idHash}` }
         );
@@ -61,8 +76,5 @@ export const forgotPassword: RouteMiddleware = async (context, next) => {
     };
   }
 
-  // Render react.
-  await siteState(context, async () => {
-    await siteFrontend(context, next);
-  });
+  await renderAuthPage();
 };

@@ -63,5 +63,6 @@ declare module 'koa' {
     // New frontend
     adminTemplate: string;
     siteTemplate: string;
+    accountTemplate: string;
   }
 }

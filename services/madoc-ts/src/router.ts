@@ -281,6 +281,7 @@ import { siteTopicTypes } from './routes/site/site-topic-types';
 import { siteUserAutocomplete } from './routes/site/site-user-autocomplete';
 import { siteUserImage } from './routes/site/site-user-image';
 import { siteUserProfile } from './routes/site/site-user-profile';
+import { parseJwt } from './middleware/parse-jwt';
 import { userDetails } from './routes/user/details';
 import { forgotPassword } from './routes/user/forgot-password';
 import { getSiteUser } from './routes/user/get-site-user';
@@ -745,12 +746,43 @@ export const router = new TypedRouter({
   'post-change-password': [TypedRouter.POST, '/s/:slug/profile/password', updatePassword],
   'post-update-password': [TypedRouter.POST, '/s/:slug/profile', updateProfilePage],
   'get-logout': [TypedRouter.GET, '/s/:slug/logout', logout],
-  'reset-password': [TypedRouter.GET, '/s/:slug/reset-password', resetPasswordPage],
-  'activate-account': [TypedRouter.GET, '/s/:slug/activate-account', resetPasswordPage],
+  'reset-password': [TypedRouter.GET, '/s/:slug/reset-password', [parseJwt, resetPasswordPage], { isPublic: true }],
+  'activate-account': [
+    TypedRouter.GET,
+    '/s/:slug/activate-account',
+    [parseJwt, resetPasswordPage],
+    { isPublic: true },
+  ],
   'post-reset-password': [TypedRouter.POST, '/s/:slug/reset-password', resetPasswordPage],
   'refresh-login': [TypedRouter.POST, '/s/:slug/auth/refresh', refreshToken],
   'api-authentication': [TypedRouter.POST, '/s/:slug/auth/api-token', authenticateApi],
   'get-login-refresh': [TypedRouter.GET, '/s/:slug/login/refresh', loginRefresh],
+  // Isolated account routes for private-site login/registration flows.
+  'account-get-login': [TypedRouter.GET, '/account/:slug/login', [parseJwt, loginPage], { isPublic: true }],
+  'account-post-login': [TypedRouter.POST, '/account/:slug/login', loginPage],
+  'account-get-register': [TypedRouter.GET, '/account/:slug/register', [parseJwt, registerPage], { isPublic: true }],
+  'account-post-register': [TypedRouter.POST, '/account/:slug/register', registerPage],
+  'account-get-forgot-password': [
+    TypedRouter.GET,
+    '/account/:slug/forgot-password',
+    [parseJwt, forgotPassword],
+    { isPublic: true },
+  ],
+  'account-post-forgot-password': [TypedRouter.POST, '/account/:slug/forgot-password', forgotPassword],
+  'account-reset-password': [
+    TypedRouter.GET,
+    '/account/:slug/reset-password',
+    [parseJwt, resetPasswordPage],
+    { isPublic: true },
+  ],
+  'account-activate-account': [
+    TypedRouter.GET,
+    '/account/:slug/activate-account',
+    [parseJwt, resetPasswordPage],
+    { isPublic: true },
+  ],
+  'account-post-reset-password': [TypedRouter.POST, '/account/:slug/reset-password', resetPasswordPage],
+  'account-get-logout': [TypedRouter.GET, '/account/:slug/logout', logout, { isPublic: true }],
   'asset-plugin-bundles': [
     TypedRouter.GET,
     '/s/:slug/madoc/assets/plugins/:pluginId/:revisionId/plugin.js',
