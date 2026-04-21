@@ -179,7 +179,21 @@ export const createNewProject: RouteMiddleware<unknown, CreateProject> = async c
       // Apply default configuration.
       const siteConfig = await userApi.getProjectConfiguration(project.id, siteUrn);
       const onCreateConfiguration = setupFunctions?.onCreateConfiguration;
-      const mergedConfiguration = deepmerge(siteConfig, configurationOptions.defaults);
+      const tabularZoomTrackingFromSetup =
+        isTabularTemplate &&
+        resolvedTemplateConfig &&
+        typeof (resolvedTemplateConfig as { enableZoomTracking?: unknown }).enableZoomTracking === 'boolean'
+          ? ((resolvedTemplateConfig as { enableZoomTracking: boolean }).enableZoomTracking as boolean)
+          : undefined;
+      const defaultsWithSetupOverrides =
+        typeof tabularZoomTrackingFromSetup === 'boolean'
+          ? deepmerge(configurationOptions.defaults, {
+              modelPageOptions: {
+                enableZoomTracking: tabularZoomTrackingFromSetup,
+              },
+            })
+          : configurationOptions.defaults;
+      const mergedConfiguration = deepmerge(siteConfig, defaultsWithSetupOverrides);
       const hookConfiguration = onCreateConfiguration
         ? // @todo add config
           await onCreateConfiguration(mergedConfiguration, { api: userApi, options: template_options })
