@@ -545,6 +545,7 @@
   "Import {{count}} manifests": "Import {{count}} manifests",
   "Import {{count}} manifests_plural": "Import {{count}} manifests",
   "Imported": "Imported",
+  "Imported {{imported}} of {{expected}} manifests": "Imported {{imported}} of {{expected}} manifests",
   "Importing canvases": "Importing canvases",
   "In progress": "In progress",
   "In review": "In review",
@@ -1303,7 +1304,5 @@
   "{{count}} submission_plural": "{{count}} submission",
   "{{feature}} is an experimental feature": "{{feature}} is an experimental feature",
   "{{page}} of {{count}}": "{{page}} of {{count}}",
-  "{{page}} of {{count}}_plural": "{{page}} of {{count}}"
-}",
   "{{page}} of {{count}}_plural": "{{page}} of {{count}}"
 }

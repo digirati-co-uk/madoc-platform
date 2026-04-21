@@ -544,6 +544,7 @@
   "Import {{count}} manifests": "{{count}} manifests importeren",
   "Import {{count}} manifests_plural": "{{count}} manifests importeren",
   "Imported": "Geïmporteerd",
+  "Imported {{imported}} of {{expected}} manifests": "Imported {{imported}} of {{expected}} manifests",
   "Importing canvases": "Canvases aan het importeren",
   "In progress": "In uitvoering",
   "In review": "In revisie",
