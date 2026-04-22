@@ -91,6 +91,7 @@ import { updatePage } from './routes/content/update-page';
 import { updateSlot } from './routes/content/update-slot';
 import { updateSlotStructure } from './routes/content/update-slot-structure';
 import { adminFrontend } from './routes/frontend/admin-frontend';
+import { siteFrontendAccess } from './routes/frontend/site-frontend-access';
 import { siteFrontend } from './routes/frontend/site-frontend';
 import { activateUser } from './routes/global/activate-user';
 import { authenticateApi } from './routes/global/api-authentication';
@@ -283,6 +284,7 @@ import { siteUserImage } from './routes/site/site-user-image';
 import { siteUserProfile } from './routes/site/site-user-profile';
 import { parseJwt } from './middleware/parse-jwt';
 import { userDetails } from './routes/user/details';
+import { accountEntryRedirect } from './routes/user/account-entry-redirect';
 import { forgotPassword } from './routes/user/forgot-password';
 import { getSiteUser } from './routes/user/get-site-user';
 import { loginPage } from './routes/user/login';
@@ -300,6 +302,7 @@ import {
 import { refreshToken } from './routes/user/refresh';
 import { registerPage } from './routes/user/register';
 import { resetPasswordPage } from './routes/user/reset-password';
+import { redirectPrivateSiteAuthRoute } from './routes/user/private-site-auth-redirect';
 import { saveUserSettings } from './routes/user/save-user-settings';
 import { updatePassword } from './routes/user/update-password';
 import { updateProfilePage } from './routes/user/update-profile';
@@ -736,16 +739,31 @@ export const router = new TypedRouter({
   'update-block': [TypedRouter.PUT, '/api/madoc/blocks/:blockId', updateBlock],
 
   // Anonymous routes
-  'get-login': [TypedRouter.GET, '/s/:slug/login', loginPage],
+  'get-login': [
+    TypedRouter.GET,
+    '/s/:slug/login',
+    [parseJwt, redirectPrivateSiteAuthRoute('login'), loginPage],
+    { isPublic: true },
+  ],
   'post-login': [TypedRouter.POST, '/s/:slug/login', loginPage],
-  'get-register': [TypedRouter.GET, '/s/:slug/register', registerPage],
+  'get-register': [
+    TypedRouter.GET,
+    '/s/:slug/register',
+    [parseJwt, redirectPrivateSiteAuthRoute('register'), registerPage],
+    { isPublic: true },
+  ],
   'post-register': [TypedRouter.POST, '/s/:slug/register', registerPage],
-  'get-forgot-password': [TypedRouter.GET, '/s/:slug/forgot-password', forgotPassword],
+  'get-forgot-password': [
+    TypedRouter.GET,
+    '/s/:slug/forgot-password',
+    [parseJwt, redirectPrivateSiteAuthRoute('forgot-password'), forgotPassword],
+    { isPublic: true },
+  ],
   'post-forgot-password': [TypedRouter.POST, '/s/:slug/forgot-password', forgotPassword],
   'get-change-password': [TypedRouter.GET, '/s/:slug/profile/password', updatePassword],
   'post-change-password': [TypedRouter.POST, '/s/:slug/profile/password', updatePassword],
   'post-update-password': [TypedRouter.POST, '/s/:slug/profile', updateProfilePage],
-  'get-logout': [TypedRouter.GET, '/s/:slug/logout', logout],
+  'get-logout': [TypedRouter.GET, '/s/:slug/logout', [parseJwt, logout], { isPublic: true }],
   'reset-password': [TypedRouter.GET, '/s/:slug/reset-password', [parseJwt, resetPasswordPage], { isPublic: true }],
   'activate-account': [
     TypedRouter.GET,
@@ -757,6 +775,27 @@ export const router = new TypedRouter({
   'refresh-login': [TypedRouter.POST, '/s/:slug/auth/refresh', refreshToken],
   'api-authentication': [TypedRouter.POST, '/s/:slug/auth/api-token', authenticateApi],
   'get-login-refresh': [TypedRouter.GET, '/s/:slug/login/refresh', loginRefresh],
+  'account-login-entry': [TypedRouter.GET, '/account/login', accountEntryRedirect('login'), { isPublic: true }],
+  'account-register-entry': [TypedRouter.GET, '/account/register', accountEntryRedirect('register'), { isPublic: true }],
+  'account-forgot-password-entry': [
+    TypedRouter.GET,
+    '/account/forgot-password',
+    accountEntryRedirect('forgot-password'),
+    { isPublic: true },
+  ],
+  'account-reset-password-entry': [
+    TypedRouter.GET,
+    '/account/reset-password',
+    accountEntryRedirect('reset-password'),
+    { isPublic: true },
+  ],
+  'account-activate-account-entry': [
+    TypedRouter.GET,
+    '/account/activate-account',
+    accountEntryRedirect('activate-account'),
+    { isPublic: true },
+  ],
+  'account-logout-entry': [TypedRouter.GET, '/account/logout', accountEntryRedirect('logout'), { isPublic: true }],
   // Isolated account routes for private-site login/registration flows.
   'account-get-login': [TypedRouter.GET, '/account/:slug/login', [parseJwt, loginPage], { isPublic: true }],
   'account-post-login': [TypedRouter.POST, '/account/:slug/login', loginPage],
@@ -947,8 +986,18 @@ export const router = new TypedRouter({
 
   // Frontend
   'admin-frontend': [TypedRouter.GET, '/s/:slug/admin{/*path}', adminFrontend],
-  'site-frontend-root': [TypedRouter.GET, '/s/:slug', siteFrontend],
-  'site-frontend': [TypedRouter.GET, '/s/:slug{/*path}', siteFrontend],
+  'site-frontend-root': [
+    TypedRouter.GET,
+    '/s/:slug',
+    [parseJwt, siteFrontendAccess, siteFrontend],
+    { isPublic: true },
+  ],
+  'site-frontend': [
+    TypedRouter.GET,
+    '/s/:slug{/*path}',
+    [parseJwt, siteFrontendAccess, siteFrontend],
+    { isPublic: true },
+  ],
 
   // Make sure this is last.
   'site-root': [TypedRouter.GET, '/', siteRoot],

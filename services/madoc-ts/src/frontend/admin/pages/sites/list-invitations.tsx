@@ -83,8 +83,10 @@ export const ListInvitations: React.FC = () => {
                           id={invitation.id}
                           type="text"
                           value={`${window.location.protocol}//${window.location.host}/${
-                            site.is_public ? 's' : 'account'
-                          }/${site.slug}/register?code=${invitation.id}`}
+                            site.is_public
+                              ? `s/${site.slug}/register?code=${invitation.id}`
+                              : `account/register?site=${site.slug}&code=${invitation.id}`
+                          }`}
                         />
                       )}
                     </InputContainer>
