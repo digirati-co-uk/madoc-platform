@@ -9,6 +9,7 @@ import {
   TABULAR_CELL_FLAGS_PROPERTY,
   type TabularCellFlag,
 } from '../../../../frontend/shared/utility/tabular-cell-flags';
+import { compareFieldKeysByTabularOrder, getTabularFieldOrderMap } from './tabular-export-order';
 
 type CachedTarget = { label?: string; uri?: string };
 type CachedManifest = { label?: string; uri?: string };
@@ -316,17 +317,62 @@ export const projectCsvContributionsExport: ExportConfig = {
     subject: SupportedExportResource,
     options: ExportDataOptions<any>
   ): Promise<ExportFileDefinition[] | undefined> {
+    let fieldOrderMap = new Map<string, number>();
+    try {
+      const project = await options.api.getProject(subject.id);
+      fieldOrderMap = getTabularFieldOrderMap(project?.template_config);
+    } catch (err) {
+      console.warn('CSV export: failed to load project template config for field ordering', {
+        projectId: subject.id,
+        err: String(err),
+      });
+    }
+
     const entity = isBlankString(options.config.entity) ? null : options.config.entity;
     const statusFilter = options.config.reviews ? 'all' : 'approved';
     const allPublished = await options.api.getProjectFieldsRaw(subject.id, {
       status: statusFilter,
       ...(entity ? { entity } : {}),
     });
+    const docOrder = new Map<string, number>();
+    let docOrderIndex = 0;
+
+    for (const item of allPublished) {
+      const docId = typeof item.doc_id === 'string' ? item.doc_id : '';
+      if (!docId || docOrder.has(docId)) {
+        continue;
+      }
+      docOrder.set(docId, docOrderIndex++);
+    }
+
+    const orderedPublished = allPublished
+      .map((item, index) => ({ item, index }))
+      .sort((left, right) => {
+        const leftDocId = typeof left.item.doc_id === 'string' ? left.item.doc_id : '';
+        const rightDocId = typeof right.item.doc_id === 'string' ? right.item.doc_id : '';
+
+        const leftDocOrder = leftDocId ? (docOrder.get(leftDocId) ?? Number.MAX_SAFE_INTEGER) : Number.MAX_SAFE_INTEGER;
+        const rightDocOrder = rightDocId
+          ? (docOrder.get(rightDocId) ?? Number.MAX_SAFE_INTEGER)
+          : Number.MAX_SAFE_INTEGER;
+
+        if (leftDocOrder !== rightDocOrder) {
+          return leftDocOrder - rightDocOrder;
+        }
+
+        const fieldOrderDiff = compareFieldKeysByTabularOrder(left.item.key, right.item.key, fieldOrderMap);
+        if (fieldOrderDiff !== 0) {
+          return fieldOrderDiff;
+        }
+
+        return left.index - right.index;
+      })
+      .map(({ item }) => item);
 
     const manifestIds: number[] = [];
     const canvasIds: number[] = [];
 
-    for (const item of allPublished) {
+    for (const item of orderedPublished) {
       const t = safeParseModelTarget((item as any).target);
       if (typeof t.manifest?.id === 'number') manifestIds.push(t.manifest.id);
       if (typeof t.canvas?.id === 'number') canvasIds.push(t.canvas.id);
@@ -334,7 +380,7 @@ export const projectCsvContributionsExport: ExportConfig = {
 
     const { manifests, canvases } = await fetchTargets(options.api, manifestIds, canvasIds);
 
-    const rows = allPublished.map(item => {
+    const rows = orderedPublished.map(item => {
       const t = safeParseModelTarget((item as any).target);
       const tabular = getTabularContributionNormalization(item.key, (item as any).value);
 

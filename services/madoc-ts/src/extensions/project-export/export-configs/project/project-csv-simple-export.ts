@@ -9,6 +9,7 @@ import {
   TABULAR_CELL_FLAGS_PROPERTY,
   type TabularCellFlag,
 } from '../../../../frontend/shared/utility/tabular-cell-flags';
+import { compareFieldKeysByTabularOrder, getTabularFieldOrderMap } from './tabular-export-order';
 
 const labelCache: {
   manifestLabels: Record<string, { label?: string; uri?: string }>;
@@ -202,6 +203,17 @@ export const projectCsvSimpleExport: ExportConfig = {
     subject: SupportedExportResource,
     options: ExportDataOptions<any>
   ): Promise<ExportFileDefinition[] | undefined> {
+    let fieldOrderMap = new Map<string, number>();
+    try {
+      const project = await options.api.getProject(subject.id);
+      fieldOrderMap = getTabularFieldOrderMap(project?.template_config);
+    } catch (err) {
+      console.warn('CSV export: failed to load project template config for field ordering', {
+        projectId: subject.id,
+        err: String(err),
+      });
+    }
+
     const allPublished = await options.api.getProjectFieldsRaw(subject.id, {
       status: options.config.reviews ? 'all' : 'approved',
       entity: options.config.entity,
@@ -250,7 +262,11 @@ export const projectCsvSimpleExport: ExportConfig = {
         };
 
         if (record.__fields) {
-          for (const field of record.__fields) {
+          const orderedFields = [...record.__fields].sort((leftFieldKey: string, rightFieldKey: string) =>
+            compareFieldKeysByTabularOrder(leftFieldKey, rightFieldKey, fieldOrderMap)
+          );
+
+          for (const field of orderedFields) {
             const value = findBest(record[field])?.value;
             if (field === TABULAR_CELL_FLAGS_PROPERTY) {
               Object.assign(newRecord, getTabularCellReviewColumns(value));
