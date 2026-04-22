@@ -1,5 +1,5 @@
 import { RouteMiddleware } from '../../types/route-middleware';
-import { getAuthPathPrefix, isAccountRequestPath } from './account-route-helper';
+import { buildAccountEntryPath, getAuthPathPrefix, getFirstQueryValue, isAccountRequestPath } from './account-route-helper';
 
 const DEFAULT_COOKIE_NAME = 'madoc';
 const SITES_COOKIE_NAME = 'madoc-sites';
@@ -35,10 +35,15 @@ export const logout: RouteMiddleware<{ slug: string }> = async context => {
     overwrite: true,
   });
 
-  const requestedRedirect = Array.isArray(context.query.redirect) ? context.query.redirect[0] : context.query.redirect;
+  const requestedRedirect = getFirstQueryValue(context.query.redirect);
   const safeRedirect = requestedRedirect && requestedRedirect.startsWith('/') ? requestedRedirect : '';
-  const authPathPrefix = getAuthPathPrefix(context.params.slug, accountRequest);
+  const site = await context.siteManager.getSiteBySlug(context.params.slug);
+  if (!site.is_public) {
+    const query = safeRedirect ? new URLSearchParams({ redirect: safeRedirect }) : undefined;
+    context.response.redirect(buildAccountEntryPath('login', site.slug, query));
+    return;
+  }
 
-  // Redirect to site homepage.
+  const authPathPrefix = getAuthPathPrefix(site.slug, accountRequest);
   context.response.redirect(safeRedirect || (accountRequest ? `${authPathPrefix}/login` : `${authPathPrefix}`));
 };

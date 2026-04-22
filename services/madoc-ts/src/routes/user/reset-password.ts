@@ -3,7 +3,7 @@ import { RouteMiddleware } from '../../types/route-middleware';
 import validate from 'uuid-validate';
 import { accountFrontend } from '../frontend/account-frontend';
 import { siteFrontend } from '../frontend/site-frontend';
-import { getAuthPathPrefix, isAccountRequestPath } from './account-route-helper';
+import { buildAccountEntryPath, getAuthPathPrefix, isAccountRequestPath } from './account-route-helper';
 
 const RESET_LINK_MAX_AGE_DAYS = 1;
 
@@ -30,8 +30,8 @@ export const resetPasswordPage: RouteMiddleware = async (context, next) => {
   if (!accountRequest) {
     const site = await context.siteManager.getSiteBySlug(context.params.slug);
     if (!site.is_public && !context.state.jwt) {
-      const query = context.querystring ? `?${context.querystring}` : '';
-      context.redirect(`/account/${context.params.slug}/${destinationPath}${query}`);
+      const query = context.querystring ? new URLSearchParams(context.querystring) : undefined;
+      context.redirect(buildAccountEntryPath(destinationPath, context.params.slug, query));
       return;
     }
   }
