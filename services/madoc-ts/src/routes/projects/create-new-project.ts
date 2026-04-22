@@ -11,6 +11,7 @@ import { InternationalString } from '@iiif/presentation-3';
 import { ConflictError } from '../../utility/errors/conflict';
 import { iiifGetLabel } from '../../utility/iiif-get-label';
 import { assertValidTabularProjectTemplateConfig } from './validate-tabular-project-template-config';
+import { ProjectConfiguration } from '../../types/schemas/project-configuration';
 
 const TABULAR_PROJECT_TEMPLATE = 'tabular-project';
 
@@ -19,12 +20,33 @@ const firstLang = (field: InternationalString) => {
   return (field[keys[0]] || [])[0] || 'Untitled project';
 };
 
+const parseDuplicateProjectId = (value: CreateProject['duplicate_project_id']) => {
+  if (typeof value === 'number' && Number.isInteger(value) && value > 0) {
+    return value;
+  }
+
+  if (typeof value === 'string' && value.trim()) {
+    const parsed = Number.parseInt(value, 10);
+    if (Number.isInteger(parsed) && parsed > 0) {
+      return parsed;
+    }
+  }
+
+  return null;
+};
+
 export const createNewProject: RouteMiddleware<unknown, CreateProject> = async context => {
   const { siteId, siteUrn, id } = userWithScope(context, ['site.admin']);
   const userApi = api.asUser({ userId: id, siteId }, {}, true);
   context.disposableApis.push(userApi);
 
-  const { label, slug, summary, template, template_options, template_config, remote_template } = context.requestBody;
+  const { label, slug, summary, template, template_options, template_config, remote_template, duplicate_project_id } =
+    context.requestBody;
+  const duplicateProjectId = parseDuplicateProjectId(duplicate_project_id);
+  if (typeof duplicate_project_id !== 'undefined' && duplicate_project_id !== null && !duplicateProjectId) {
+    throw new RequestError(`Invalid duplicate project id ${duplicate_project_id}.`);
+  }
+
   const chosenTemplate = template
     ? template === 'remote'
       ? remote_template
@@ -32,8 +54,9 @@ export const createNewProject: RouteMiddleware<unknown, CreateProject> = async c
     : null;
   const setupFunctions = chosenTemplate?.setup;
   const isTabularTemplate = template === TABULAR_PROJECT_TEMPLATE;
-  const resolvedTemplateConfig =
-    isTabularTemplate ? template_config || template_options || null : template_config || null;
+  const resolvedTemplateConfig = isTabularTemplate
+    ? template_config || template_options || null
+    : template_config || null;
   const tabularConfigCandidate =
     resolvedTemplateConfig && typeof resolvedTemplateConfig === 'object'
       ? (resolvedTemplateConfig as { tabular?: { structure?: unknown } })
@@ -68,6 +91,22 @@ export const createNewProject: RouteMiddleware<unknown, CreateProject> = async c
 
   if (rowCount) {
     throw new ConflictError('Slug is already used.');
+  }
+
+  let duplicateProjectStyleId: number | null = null;
+  if (duplicateProjectId) {
+    const sourceProject = await context.connection.maybeOne(
+      sql<{ id: number; style_id: number | null }>`
+        select id, style_id
+        from iiif_project
+        where site_id = ${siteId}
+          and id = ${duplicateProjectId}
+      `
+    );
+    if (!sourceProject) {
+      throw new RequestError(`Invalid duplicate project id ${duplicateProjectId}.`);
+    }
+    duplicateProjectStyleId = sourceProject.style_id ?? null;
   }
 
   // 1. Create collection [flat]
@@ -140,7 +179,21 @@ export const createNewProject: RouteMiddleware<unknown, CreateProject> = async c
       // Apply default configuration.
       const siteConfig = await userApi.getProjectConfiguration(project.id, siteUrn);
       const onCreateConfiguration = setupFunctions?.onCreateConfiguration;
-      const mergedConfiguration = deepmerge(siteConfig, configurationOptions.defaults);
+      const tabularZoomTrackingFromSetup =
+        isTabularTemplate &&
+        resolvedTemplateConfig &&
+        typeof (resolvedTemplateConfig as { enableZoomTracking?: unknown }).enableZoomTracking === 'boolean'
+          ? ((resolvedTemplateConfig as { enableZoomTracking: boolean }).enableZoomTracking as boolean)
+          : undefined;
+      const defaultsWithSetupOverrides =
+        typeof tabularZoomTrackingFromSetup === 'boolean'
+          ? deepmerge(configurationOptions.defaults, {
+              modelPageOptions: {
+                enableZoomTracking: tabularZoomTrackingFromSetup,
+              },
+            })
+          : configurationOptions.defaults;
+      const mergedConfiguration = deepmerge(siteConfig, defaultsWithSetupOverrides);
       const hookConfiguration = onCreateConfiguration
         ? // @todo add config
           await onCreateConfiguration(mergedConfiguration, { api: userApi, options: template_options })
@@ -148,6 +201,17 @@ export const createNewProject: RouteMiddleware<unknown, CreateProject> = async c
       await userApi.saveSiteConfiguration(hookConfiguration ? hookConfiguration : mergedConfiguration, {
         project_id: project.id,
       });
+    }
+
+    if (duplicateProjectId) {
+      const sourceProjectConfiguration = await userApi.getProjectConfiguration(duplicateProjectId, siteUrn);
+      await userApi.saveSiteConfiguration(sourceProjectConfiguration as ProjectConfiguration, {
+        project_id: project.id,
+      });
+    }
+
+    if (duplicateProjectStyleId !== null) {
+      await context.annotationStyles.addStyleToProject(duplicateProjectStyleId, project.id, siteId);
     }
 
     if (setupFunctions?.onCreateProject) {
@@ -163,7 +227,7 @@ export const createNewProject: RouteMiddleware<unknown, CreateProject> = async c
 
     try {
       await userApi.addProjectMember(project.id, id, { id: 'creator', label: 'Creator' });
-    } catch (err) {
+    } catch {
       // ignore
     }
 

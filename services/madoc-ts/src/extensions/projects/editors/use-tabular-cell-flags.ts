@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { CaptureModelEditorApi } from '@/frontend/shared/capture-models/new/hooks/use-capture-model-editor-api';
+import type { RevisionRequest } from '@/frontend/shared/capture-models/types/revision-request';
 import { useApi } from '@/frontend/shared/hooks/use-api';
 import { apiHooks } from '@/frontend/shared/hooks/use-api-query';
 import {
@@ -26,6 +27,8 @@ type UseTabularCellFlagsOptions = {
   table: CaptureModelEditorApi;
   projectId?: number | string;
   canvasId?: number;
+  revisionId?: string;
+  preferRevisionFallback?: boolean;
   visibleColumnKeys: string[];
   headerColumns: TabularEditorHeaderModel[];
   tableActiveCell: TabularCellRef | null;
@@ -34,10 +37,30 @@ type UseTabularCellFlagsOptions = {
   removeRowFromFooter: () => number | null;
 };
 
+type FieldLike = {
+  value: unknown;
+};
+
+function isFieldLike(value: unknown): value is FieldLike {
+  return !!value && typeof value === 'object' && !Array.isArray(value) && 'value' in value;
+}
+
+function getRevisionFlagsField(revisionRequest: RevisionRequest | undefined): FieldLike | null {
+  const rawFlags = revisionRequest?.document?.properties?.[TABULAR_CELL_FLAGS_PROPERTY];
+  if (!Array.isArray(rawFlags)) {
+    return null;
+  }
+
+  const flagsField = rawFlags.find(isFieldLike);
+  return flagsField || null;
+}
+
 export function useTabularCellFlags({
   table,
   projectId,
   canvasId,
+  revisionId,
+  preferRevisionFallback = false,
   visibleColumnKeys,
   headerColumns,
   tableActiveCell,
@@ -52,8 +75,20 @@ export function useTabularCellFlags({
   const fallbackFlushTimerRef = useRef<number | null>(null);
 
   const cellFlagsField = table.topLevelFields[TABULAR_CELL_FLAGS_PROPERTY]?.[0];
+  const useRevisionFallback = preferRevisionFallback && !cellFlagsField;
+  const { data: revisionFallbackData, refetch: refetchRevisionFallback } = apiHooks.getCaptureModelRevision(() =>
+    useRevisionFallback && revisionId ? [revisionId] : undefined
+  );
+  const revisionFallbackFlags = useMemo(
+    () => parseTabularCellFlags(getRevisionFlagsField(revisionFallbackData)?.value),
+    [revisionFallbackData]
+  );
+  const canPersistRevisionFallback = useMemo(
+    () => !!(revisionId && getRevisionFlagsField(revisionFallbackData)),
+    [revisionFallbackData, revisionId]
+  );
   const { data: personalNoteData, refetch: refetchPersonalNote } = apiHooks.getPersonalNote(() =>
-    projectId && canvasId ? [projectId, canvasId] : undefined
+    !useRevisionFallback && projectId && canvasId ? [projectId, canvasId] : undefined
   );
   const parsedPersonalNote = useMemo(() => parsePersonalNotePayload(personalNoteData?.note), [personalNoteData?.note]);
 
@@ -62,8 +97,12 @@ export function useTabularCellFlags({
       return parseTabularCellFlags(cellFlagsField.value);
     }
 
+    if (useRevisionFallback) {
+      return revisionFallbackFlags;
+    }
+
     return parsedPersonalNote.tabularCellFlags;
-  }, [cellFlagsField, parsedPersonalNote.tabularCellFlags]);
+  }, [cellFlagsField, parsedPersonalNote.tabularCellFlags, revisionFallbackFlags, useRevisionFallback]);
 
   const cellFlags = pendingCellFlags || sourceCellFlags;
 
@@ -78,7 +117,7 @@ export function useTabularCellFlags({
   }, [pendingCellFlags, sourceCellFlags]);
 
   const flushFallbackFlags = useCallback(async () => {
-    if (fallbackSyncInFlightRef.current || !projectId || !canvasId) {
+    if (fallbackSyncInFlightRef.current) {
       return;
     }
 
@@ -92,17 +131,38 @@ export function useTabularCellFlags({
         fallbackQueuedFlagsRef.current = null;
 
         try {
-          const latest = await api.getPersonalNote(projectId, canvasId);
-          const parsed = parsePersonalNotePayload(latest.note);
+          if (useRevisionFallback) {
+            if (!revisionId) {
+              break;
+            }
 
-          await api.updatePersonalNote(
-            projectId,
-            canvasId,
-            serializePersonalNotePayload({
-              note: parsed.note,
-              tabularCellFlags: nextFlags,
-            })
-          );
+            const latestRevision = await api.getCaptureModelRevision(revisionId);
+            const flagsField = getRevisionFlagsField(latestRevision);
+            if (!flagsField) {
+              fallbackQueuedFlagsRef.current = nextFlags;
+              break;
+            }
+
+            flagsField.value = serializeTabularCellFlags(nextFlags);
+            await api.updateCaptureModelRevision(latestRevision);
+          } else {
+            if (!projectId || !canvasId) {
+              break;
+            }
+
+            const latest = await api.getPersonalNote(projectId, canvasId);
+            const parsed = parsePersonalNotePayload(latest.note);
+
+            await api.updatePersonalNote(
+              projectId,
+              canvasId,
+              serializePersonalNotePayload({
+                note: parsed.note,
+                tabularCellFlags: nextFlags,
+              })
+            );
+          }
+
           didPersist = true;
         } catch {
           // Re-queue on failure; next edit will retry.
@@ -112,12 +172,16 @@ export function useTabularCellFlags({
       }
 
       if (didPersist) {
-        await refetchPersonalNote();
+        if (useRevisionFallback) {
+          await refetchRevisionFallback();
+        } else {
+          await refetchPersonalNote();
+        }
       }
     } finally {
       fallbackSyncInFlightRef.current = false;
     }
-  }, [api, canvasId, projectId, refetchPersonalNote]);
+  }, [api, canvasId, projectId, refetchPersonalNote, refetchRevisionFallback, revisionId, useRevisionFallback]);
 
   const scheduleFallbackFlush = useCallback(() => {
     if (typeof window === 'undefined') {
@@ -154,6 +218,17 @@ export function useTabularCellFlags({
       setPendingCellFlags(nextFlags);
 
       if (!cellFlagsField) {
+        if (useRevisionFallback) {
+          if (!revisionId) {
+            setPendingCellFlags(null);
+            return;
+          }
+
+          fallbackQueuedFlagsRef.current = nextFlags;
+          scheduleFallbackFlush();
+          return;
+        }
+
         if (!projectId || !canvasId) {
           setPendingCellFlags(null);
           return;
@@ -166,7 +241,7 @@ export function useTabularCellFlags({
 
       cellFlagsField.setValue(serializeTabularCellFlags(nextFlags));
     },
-    [canvasId, cellFlags, cellFlagsField, projectId, scheduleFallbackFlush]
+    [canvasId, cellFlags, cellFlagsField, projectId, revisionId, scheduleFallbackFlush, useRevisionFallback]
   );
 
   const activeCellColumnKey =
@@ -400,7 +475,7 @@ export function useTabularCellFlags({
   }, [cellFlags, persistCellFlags, removeRowFromFooter]);
 
   return {
-    canPersistFlags: !!cellFlagsField || (!!projectId && !!canvasId),
+    canPersistFlags: !!cellFlagsField || (useRevisionFallback ? canPersistRevisionFallback : !!projectId && !!canvasId),
     activeCellColumnKey,
     activeCellColumnLabel,
     activeCellIsFlagged,

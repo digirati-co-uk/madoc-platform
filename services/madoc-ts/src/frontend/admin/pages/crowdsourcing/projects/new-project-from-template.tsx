@@ -52,9 +52,15 @@ export const NewProjectFromTemplate: React.FC = () => {
   const { template: routeTemplate } = useParams<{ template: string }>();
   const chosenTemplateType = routeTemplate || '';
   const isRemoteTemplateType = chosenTemplateType === 'remote';
-  const query = useLocationQuery<{ template?: string | string[]; source?: string | string[] }>();
+  const query = useLocationQuery<{
+    template?: string | string[];
+    source?: string | string[];
+    duplicateProjectId?: string | string[];
+  }>();
   const initialTemplate = getSingleQueryValue(query.template);
   const initialSource = getSingleQueryValue(query.source) === 'upload' ? 'upload' : 'url';
+  const initialDuplicateProjectId = getSingleQueryValue(query.duplicateProjectId).trim();
+  const duplicateProjectId = /^\d+$/.test(initialDuplicateProjectId) ? initialDuplicateProjectId : undefined;
 
   const [label, setLabel] = useState<InternationalString>({ en: [''] });
   const [summary, setSummary] = useState<InternationalString>({ en: [''] });
@@ -472,7 +478,7 @@ export const NewProjectFromTemplate: React.FC = () => {
                       template: chosenTemplateType,
                       template_options: customOptions,
                       template_config: customConfigValues,
-
+                      duplicate_project_id: duplicateProjectId,
                       remote_template: isRemoteTemplateType ? template : null,
                     })
                   }

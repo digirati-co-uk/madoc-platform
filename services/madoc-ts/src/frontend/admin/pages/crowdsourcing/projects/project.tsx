@@ -13,7 +13,10 @@ import { createUniversalComponent } from '@/frontend/shared/utility/create-unive
 import { Button } from '@/frontend/shared/navigation/Button';
 import type { TabularOutlineSharePayload } from './tabular-project/types';
 
-const DEFAULT_DUPLICATE_URL = (id: string | number) => `/projects/create/remote?template=urn:madoc:project:${id}`;
+const DEFAULT_DUPLICATE_URL = (id: string | number) =>
+  `/projects/create/remote?template=urn:madoc:project:${encodeURIComponent(String(id))}&duplicateProjectId=${encodeURIComponent(
+    String(id)
+  )}`;
 
 function isObjectRecord(value: unknown): value is Record<string, unknown> {
   return !!value && typeof value === 'object' && !Array.isArray(value);
@@ -48,6 +51,7 @@ function isTabularProject(project: { template?: string; template_config?: unknow
 
 function buildTabularDuplicateUrl(project: { id?: number | string; summary?: unknown; template_config?: unknown }) {
   const templateConfig = isObjectRecord(project.template_config) ? project.template_config : null;
+  const sourceProjectId = typeof project.id !== 'undefined' ? String(project.id) : '';
   const outlinePayload: TabularOutlineSharePayload = {};
 
   if (isObjectRecord(project.summary)) {
@@ -73,11 +77,14 @@ function buildTabularDuplicateUrl(project: { id?: number | string; summary?: unk
   }
 
   const encodedOutline = encodeOutlinePayloadForUrl(outlinePayload);
+  const sourceProjectIdQuery = sourceProjectId ? `&duplicateProjectId=${encodeURIComponent(sourceProjectId)}` : '';
   if (!encodedOutline) {
-    return '/projects/create/tabular-project?duplicate=1';
+    return `/projects/create/tabular-project?duplicate=1${sourceProjectIdQuery}`;
   }
 
-  return `/projects/create/tabular-project?duplicate=1&outline=${encodeURIComponent(encodedOutline)}`;
+  return `/projects/create/tabular-project?duplicate=1${sourceProjectIdQuery}&outline=${encodeURIComponent(
+    encodedOutline
+  )}`;
 }
 
 type ProjectType = {

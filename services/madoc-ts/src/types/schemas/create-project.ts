@@ -8,4 +8,5 @@ export type CreateProject = {
   template_options?: unknown;
   template_config?: unknown;
   remote_template?: unknown | null;
+  duplicate_project_id?: number | string;
 };

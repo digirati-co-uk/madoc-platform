@@ -217,6 +217,7 @@ export function useTabularProjectController(options: UseTabularProjectController
   const [previewAdditionalRows, setPreviewAdditionalRows] = useState(0);
   const [shareCopied, setShareCopied] = useState<'idle' | 'copied' | 'error'>('idle');
   const [didLoadSharedOutline, setDidLoadSharedOutline] = useState(false);
+  const [duplicateProjectId, setDuplicateProjectId] = useState<string | undefined>();
 
   const [saveProject, { status, data, isSuccess, reset }] = useMutation<ProjectMutationResult, unknown, CreateProject>(
     async (config: CreateProject) => {
@@ -462,6 +463,13 @@ export function useTabularProjectController(options: UseTabularProjectController
     const searchParams = new URLSearchParams(window.location.search);
     const outlineValue = searchParams.get('outline');
     const isDuplicateFlow = searchParams.get('duplicate') === '1';
+    const sourceProjectId = searchParams.get('duplicateProjectId') || searchParams.get('sourceProjectId');
+    const normalizedSourceProjectId = sourceProjectId ? sourceProjectId.trim() : '';
+
+    if (isDuplicateFlow && normalizedSourceProjectId && /^\d+$/.test(normalizedSourceProjectId)) {
+      setDuplicateProjectId(normalizedSourceProjectId);
+    }
+
     if (!outlineValue) {
       return;
     }
@@ -572,9 +580,10 @@ export function useTabularProjectController(options: UseTabularProjectController
       template: 'tabular-project',
       template_options: templateOptionsWithSetup,
       template_config: { ...templateOptionsWithSetup },
+      duplicate_project_id: duplicateProjectId,
       remote_template: null,
     };
-  }, [label, summary, slug, templateOptions, setupPayload]);
+  }, [duplicateProjectId, label, summary, slug, templateOptions, setupPayload]);
 
   const shareUrl = useMemo(() => {
     if (typeof window === 'undefined' || !setupPayload) {
