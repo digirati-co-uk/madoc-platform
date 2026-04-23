@@ -345,14 +345,23 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
           if (existingReviews.tasks.length === 0) {
             // If this is the first review, create the new task.
             const response = await api.addSubtasks(reviewTask.createTask(task), task.parent_task);
-            await api.updateTask(task.id, { state: { reviewTask: response.id }, delegated_task: response.id });
+            await api.updateTask(task.id, {
+              state: {
+                ...(task.state || {}),
+                reviewTask: response.id,
+              },
+              delegated_task: response.id,
+            });
           } else {
             // We'll just use the first available review.
             const firstExisting = existingReviews.tasks[0];
             const id = firstExisting.id;
             if (id) {
               await api.updateTask(task.id, {
-                state: { reviewTask: firstExisting.id },
+                state: {
+                  ...(task.state || {}),
+                  reviewTask: firstExisting.id,
+                },
                 delegated_task: firstExisting.id,
               });
 

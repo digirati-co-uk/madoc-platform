@@ -206,7 +206,7 @@ function TabularProjectCustomEditorContent({
     preventContributionAfterManifestUnassign = false,
   } = useModelPageConfiguration();
   const config = useSiteConfiguration();
-  const lifecycle = useCaptureModelContributionLifecycle();
+  const lifecycle = useCaptureModelContributionLifecycle({ preferSharedRevisionAsBase: true });
   const { userTasks } = useCanvasUserTasks();
   const [currentView] = useNavigation();
   const { t } = useTranslation();

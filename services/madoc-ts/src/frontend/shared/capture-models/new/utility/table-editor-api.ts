@@ -45,7 +45,7 @@ export type TopLevelFieldRef = {
 export type TableEditorSnapshot = {
   status: TableEditorApiStatus;
   columns: TableColumn[];
-  rows: CaptureModel['document'][];
+  rows: Array<{ rowIndex: number; row: CaptureModel['document'] }>;
   errors: string[];
 };
 
@@ -58,6 +58,30 @@ function getTopLevelPropertyList(
   property: string
 ): Array<BaseField | CaptureModel['document']> {
   return (document.properties[property] || []) as Array<BaseField | CaptureModel['document']>;
+}
+
+function hasTopLevelProperty(document: CaptureModel['document'], property: string) {
+  return Object.prototype.hasOwnProperty.call(document.properties, property);
+}
+
+function getEntityRowsWithIndexes(
+  propertyList: Array<BaseField | CaptureModel['document']>
+): Array<{ rowIndex: number; row: CaptureModel['document'] }> {
+  const rows: Array<{ rowIndex: number; row: CaptureModel['document'] }> = [];
+
+  for (let rowIndex = 0; rowIndex < propertyList.length; rowIndex += 1) {
+    const maybeRow = propertyList[rowIndex];
+    if (!isEntity(maybeRow as any)) {
+      continue;
+    }
+
+    rows.push({
+      rowIndex,
+      row: maybeRow as CaptureModel['document'],
+    });
+  }
+
+  return rows;
 }
 
 function getTopLevelRowPath(tableProperty: string, rowEntityId: string): Array<[string, string]> {
@@ -127,9 +151,7 @@ export function getTableEditorSnapshot(
     };
   }
 
-  const propertyList = getTopLevelPropertyList(document, tableProperty);
-
-  if (!propertyList.length || !isEntity(propertyList[0] as any)) {
+  if (!hasTopLevelProperty(document, tableProperty)) {
     return {
       status: 'invalid-table-property',
       columns: [],
@@ -140,10 +162,31 @@ export function getTableEditorSnapshot(
     };
   }
 
-  const rows = propertyList.filter(isEntity) as CaptureModel['document'][];
+  const propertyList = getTopLevelPropertyList(document, tableProperty);
+  if (!propertyList.length) {
+    return {
+      status: 'ready',
+      columns: [],
+      rows: [],
+      errors: [],
+    };
+  }
+  const rows = getEntityRowsWithIndexes(propertyList);
+
+  if (!rows.length) {
+    return {
+      status: 'invalid-table-property',
+      columns: [],
+      rows: [],
+      errors: [
+        `Table property \"${tableProperty}\" is missing or is not an entity list on the top-level revision document.`,
+      ],
+    };
+  }
+
   const columnMap = new Map<string, TableColumn>();
 
-  for (const row of rows) {
+  for (const { row } of rows) {
     for (const property of Object.keys(row.properties || {})) {
       const instances = row.properties[property] as Array<BaseField | CaptureModel['document']>;
       const firstField = findFirstFieldInstance(instances);
@@ -210,13 +253,17 @@ export function setTableCellValue(options: {
     return { ok: false, error: 'No revision selected.' };
   }
 
-  const propertyList = getTopLevelPropertyList(document, tableProperty);
-  if (!propertyList.length || !isEntity(propertyList[0] as any)) {
+  if (!hasTopLevelProperty(document, tableProperty)) {
     return { ok: false, error: `Table property \"${tableProperty}\" is invalid.` };
   }
 
-  const rows = propertyList.filter(isEntity) as CaptureModel['document'][];
-  const row = rows[rowIndex];
+  const propertyList = getTopLevelPropertyList(document, tableProperty);
+  const rows = getEntityRowsWithIndexes(propertyList);
+  if (propertyList.length && !rows.length) {
+    return { ok: false, error: `Table property \"${tableProperty}\" is invalid.` };
+  }
+
+  const row = rows.find(candidate => candidate.rowIndex === rowIndex)?.row;
 
   if (!row) {
     return { ok: false, error: `Row index ${rowIndex} does not exist.` };
@@ -252,8 +299,8 @@ export function setTableCellValue(options: {
     return { ok: false, error: 'Revision disappeared after creating a field instance.' };
   }
 
-  const refreshedRows = getTopLevelPropertyList(refreshed, tableProperty).filter(isEntity) as CaptureModel['document'][];
-  const refreshedRow = refreshedRows.find(entity => entity.id === row.id);
+  const refreshedRows = getEntityRowsWithIndexes(getTopLevelPropertyList(refreshed, tableProperty));
+  const refreshedRow = refreshedRows.find(entity => entity.row.id === row.id)?.row;
 
   if (!refreshedRow) {
     return {
@@ -286,8 +333,13 @@ export function addTableRow(
     return { ok: false, error: 'No revision selected.' };
   }
 
+  if (!hasTopLevelProperty(document, tableProperty)) {
+    return { ok: false, error: `Table property \"${tableProperty}\" is invalid.` };
+  }
+
   const propertyList = getTopLevelPropertyList(document, tableProperty);
-  if (!propertyList.length || !isEntity(propertyList[0] as any)) {
+  const rows = getEntityRowsWithIndexes(propertyList);
+  if (propertyList.length && !rows.length) {
     return { ok: false, error: `Table property \"${tableProperty}\" is invalid.` };
   }
 
@@ -313,13 +365,17 @@ export function removeTableRow(
     return { ok: false, error: 'No revision selected.' };
   }
 
-  const propertyList = getTopLevelPropertyList(document, tableProperty);
-  if (!propertyList.length || !isEntity(propertyList[0] as any)) {
+  if (!hasTopLevelProperty(document, tableProperty)) {
     return { ok: false, error: `Table property \"${tableProperty}\" is invalid.` };
   }
 
-  const rows = propertyList.filter(isEntity) as CaptureModel['document'][];
-  const row = rows[rowIndex];
+  const propertyList = getTopLevelPropertyList(document, tableProperty);
+  const rows = getEntityRowsWithIndexes(propertyList);
+  if (propertyList.length && !rows.length) {
+    return { ok: false, error: `Table property \"${tableProperty}\" is invalid.` };
+  }
+
+  const row = rows.find(candidate => candidate.rowIndex === rowIndex)?.row;
 
   if (!row) {
     return { ok: false, error: `Row index ${rowIndex} does not exist.` };
@@ -405,12 +461,12 @@ export function getTableCellReference(options: {
 
   const propertyList = getTopLevelPropertyList(document, tableProperty);
 
-  if (!propertyList.length || !isEntity(propertyList[0] as any)) {
+  const rows = getEntityRowsWithIndexes(propertyList);
+  if (propertyList.length && !rows.length) {
     return null;
   }
 
-  const rows = propertyList.filter(isEntity) as CaptureModel['document'][];
-  const row = rows[rowIndex];
+  const row = rows.find(candidate => candidate.rowIndex === rowIndex)?.row;
 
   if (!row) {
     return null;

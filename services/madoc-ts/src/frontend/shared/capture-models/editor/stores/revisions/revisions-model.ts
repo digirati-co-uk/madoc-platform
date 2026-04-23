@@ -122,6 +122,7 @@ export type RevisionsModel = {
     {
       revisionId: string;
       cloneMode: string;
+      authorUrn?: string;
       readMode?: boolean;
       modelRoot?: string[];
       modelMapping?: { [key: string]: string };

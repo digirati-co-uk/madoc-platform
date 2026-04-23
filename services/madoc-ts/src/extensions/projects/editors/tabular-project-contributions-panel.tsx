@@ -72,8 +72,27 @@ function normalizePreviewValue(value: unknown): string | null {
 }
 
 function getFirstField(values: Array<CaptureModel['document'] | BaseField>): BaseField | null {
-  const maybeField = values.find((item): item is BaseField => !isEntity(item));
-  return maybeField || null;
+  const fields = values.filter((item): item is BaseField => !isEntity(item));
+  if (!fields.length) {
+    return null;
+  }
+
+  const revisedWithValue = fields.find(field => !!field.revision && !!normalizePreviewValue(field.value));
+  if (revisedWithValue) {
+    return revisedWithValue;
+  }
+
+  const revisedField = fields.find(field => !!field.revision);
+  if (revisedField) {
+    return revisedField;
+  }
+
+  const canonicalWithValue = fields.find(field => !field.revision && !!normalizePreviewValue(field.value));
+  if (canonicalWithValue) {
+    return canonicalWithValue;
+  }
+
+  return fields[0];
 }
 
 function getCellReviewsByRowIndex(document: CaptureModel['document']): Map<number, TabularCellReviewsByRow> {
@@ -108,29 +127,39 @@ function getEntityRows(document: CaptureModel['document']): TabularPreviewRow[] 
     return [];
   }
 
-  const entities = rows.filter(isEntity) as CaptureModel['document'][];
-  return entities.map((rowEntity, rowIndex) => ({
-    rowIndex,
-    cells: Object.entries(rowEntity.properties).flatMap(([columnKey, values]) => {
-      if (isTabularSystemProperty(columnKey) || !Array.isArray(values)) {
-        return [];
-      }
+  const entities: TabularPreviewRow[] = [];
 
-      const field = getFirstField(values as Array<CaptureModel['document'] | BaseField>);
-      if (!field) {
-        return [];
-      }
+  for (let rowIndex = 0; rowIndex < rows.length; rowIndex += 1) {
+    const rowEntity = rows[rowIndex];
+    if (!isEntity(rowEntity as any)) {
+      continue;
+    }
 
-      const value = normalizePreviewValue(field.value);
-      if (!value) {
-        return [];
-      }
+    entities.push({
+      rowIndex,
+      cells: Object.entries((rowEntity as CaptureModel['document']).properties).flatMap(([columnKey, values]) => {
+        if (isTabularSystemProperty(columnKey) || !Array.isArray(values)) {
+          return [];
+        }
 
-      return [{ label: field.label?.trim() || formatColumnKey(columnKey), value }];
-    }),
-    flags: [],
-    notes: [],
-  }));
+        const field = getFirstField(values as Array<CaptureModel['document'] | BaseField>);
+        if (!field) {
+          return [];
+        }
+
+        const value = normalizePreviewValue(field.value);
+        if (!value) {
+          return [];
+        }
+
+        return [{ label: field.label?.trim() || formatColumnKey(columnKey), value }];
+      }),
+      flags: [],
+      notes: [],
+    });
+  }
+
+  return entities;
 }
 
 function getTopLevelRows(document: CaptureModel['document']): TabularPreviewRow[] {

@@ -56,6 +56,10 @@ export type ContributionLifecycle = {
   lastErrorStage?: 'prepare' | 'save';
 };
 
+export type UseCaptureModelContributionLifecycleOptions = {
+  preferSharedRevisionAsBase?: boolean;
+};
+
 export function getNextCanvasData(options: {
   structure?: { ids: number[]; items: ItemStructureListItem[] };
   canvasId?: number;
@@ -172,7 +176,9 @@ export async function persistContributionRevision(options: {
   await options.refresh();
 }
 
-export function useCaptureModelContributionLifecycle(): ContributionLifecycle {
+export function useCaptureModelContributionLifecycle(
+  options: UseCaptureModelContributionLifecycleOptions = {}
+): ContributionLifecycle {
   const routeContext = useRouteContext();
   const { manifestId, canvasId } = routeContext;
   const currentUser = useCurrentUser(true);
@@ -233,6 +239,7 @@ export function useCaptureModelContributionLifecycle(): ContributionLifecycle {
   const ensureRevision = useCallback(async () => {
     const result = ensureWorkingRevision(store, {
       userId: currentUser.user?.id,
+      preferSharedRevisionAsBase: !!options.preferSharedRevisionAsBase,
     });
 
     setNeedsRevisionSelection(result.needsSelection);
@@ -242,7 +249,7 @@ export function useCaptureModelContributionLifecycle(): ContributionLifecycle {
     }
 
     return result.revisionId;
-  }, [currentUser.user?.id, store]);
+  }, [currentUser.user?.id, options.preferSharedRevisionAsBase, store]);
 
   useEffect(() => {
     if (!captureModel?.id) {

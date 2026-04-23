@@ -604,18 +604,25 @@ serverRendererFor(ReviewListingPage, {
   getData: async (key, vars, api) => {
     const slug = vars.projectSlug;
     const project = slug ? await api.getProject(slug) : undefined;
-    const query = { ...vars.query };
+    const {
+      type: _ignoredType,
+      all_tasks: _ignoredAllTasks,
+      all: _ignoredAll,
+      root_task_id: _ignoredRootTaskId,
+      ...query
+    } = { ...vars.query } as Record<string, any>;
 
     if (typeof query.sort_by === 'string' && query.sort_by.startsWith('flagged_cells:')) {
       delete query.sort_by;
     }
 
     return api.getTasks(vars.page, {
-      all_tasks: !project?.task_id,
+      all_tasks: true,
       type: 'crowdsourcing-task',
       root_task_id: project?.task_id,
       per_page: 20,
       detail: true,
+      sort_by: query.sort_by || 'newest',
       ...query,
     });
   },
