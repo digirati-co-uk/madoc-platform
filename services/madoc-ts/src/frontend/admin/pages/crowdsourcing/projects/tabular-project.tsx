@@ -47,6 +47,8 @@ export const TabularProjectWizard: React.FC = () => {
   });
   const { stepIds } = controller;
   const shouldWarnOnLeave = !controller.isProjectCompleted;
+  const isProceedingWithBackNavigation = React.useRef(false);
+  const hasPushedGuardEntry = React.useRef(false);
 
   const confirmLeaveSetup = React.useCallback(() => window.confirm(LEAVE_SETUP_MESSAGE), []);
 
@@ -74,75 +76,34 @@ export const TabularProjectWizard: React.FC = () => {
       return;
     }
 
-    let isRestoringWizardState = false;
+    if (!hasPushedGuardEntry.current) {
+      // Add an in-place history entry so browser Back can be intercepted even after direct opens.
+      window.history.pushState({ ...(window.history.state || {}), tabularLeaveGuard: true }, '', window.location.href);
+      hasPushedGuardEntry.current = true;
+    }
 
-    const onDocumentClick = (event: MouseEvent) => {
-      if (event.defaultPrevented) {
-        return;
-      }
-      if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
-        return;
-      }
-
-      const target = event.target;
-      if (!(target instanceof Element)) {
-        return;
-      }
-
-      const anchor = target.closest('a[href]');
-      if (!(anchor instanceof HTMLAnchorElement)) {
-        return;
-      }
-
-      const href = anchor.getAttribute('href');
-      if (!href || href.startsWith('#')) {
-        return;
-      }
-      if (anchor.target && anchor.target.toLowerCase() !== '_self') {
-        return;
-      }
-      if (anchor.hasAttribute('download')) {
-        return;
-      }
-
-      const currentUrl = new URL(window.location.href);
-      const nextUrl = new URL(anchor.href, window.location.href);
-      const isSameDestination =
-        currentUrl.origin === nextUrl.origin &&
-        currentUrl.pathname === nextUrl.pathname &&
-        currentUrl.search === nextUrl.search &&
-        currentUrl.hash === nextUrl.hash;
-      if (isSameDestination) {
+    const onPopState = () => {
+      if (isProceedingWithBackNavigation.current) {
+        isProceedingWithBackNavigation.current = false;
         return;
       }
 
       if (!confirmLeaveSetup()) {
-        event.preventDefault();
-        event.stopPropagation();
-      }
-    };
-
-    const onPopState = () => {
-      if (isRestoringWizardState) {
-        isRestoringWizardState = false;
+        window.history.pushState(
+          { ...(window.history.state || {}), tabularLeaveGuard: true },
+          '',
+          window.location.href
+        );
         return;
       }
 
-      if (confirmLeaveSetup()) {
-        window.removeEventListener('popstate', onPopState);
-        return;
-      }
-
-      // Re-enter the wizard history entry if the user cancels leaving.
-      isRestoringWizardState = true;
-      window.history.go(1);
+      isProceedingWithBackNavigation.current = true;
+      window.history.back();
     };
 
-    document.addEventListener('click', onDocumentClick, true);
     window.addEventListener('popstate', onPopState);
 
     return () => {
-      document.removeEventListener('click', onDocumentClick, true);
       window.removeEventListener('popstate', onPopState);
     };
   }, [confirmLeaveSetup, shouldWarnOnLeave]);

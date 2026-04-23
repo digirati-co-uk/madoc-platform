@@ -139,17 +139,14 @@ export const Project: UniversalComponent<ProjectType> = createUniversalComponent
                 {t('Go to project on site')}
               </Button>
               {projectTemplate && projectTemplate.type !== 'custom' ? (
-                <div>
+                <div className="mt-2">
                   <strong>{projectTemplate.metadata.label}</strong> |{' '}
-                  <HrefLink href={duplicateProjectUrl}>Duplicate project →</HrefLink> |{' '}
-                  <HrefLink href={`/projects/create/${projectTemplate.type}`}>
-                    Create new project using this template →
-                  </HrefLink>
+                  <HrefLink href={duplicateProjectUrl}>{t('Duplicate this project →')}</HrefLink>
                 </div>
               ) : (
-                <div>
+                <div className="mt-2">
                   <strong>{t('Canvas annotation project')}</strong> |{' '}
-                  <HrefLink href={duplicateProjectUrl}>Duplicate project →</HrefLink>
+                  <HrefLink href={duplicateProjectUrl}>{t('Duplicate this project →')}</HrefLink>
                 </div>
               )}
             </>
