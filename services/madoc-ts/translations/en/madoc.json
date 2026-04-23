@@ -1,6 +1,7 @@
 {
   " Public contribution and enrichment": " Public contribution and enrichment",
   " Public contribution and enrichment tools": " Public contribution and enrichment tools",
+  "(optional)": "(optional)",
   "+ Add {{label}}": "+ Add {{label}}",
   "...": "...",
   "A longer description for your form field, appears under the label (like this)": "A longer description for your form field, appears under the label (like this)",
@@ -174,6 +175,7 @@
   "Changes requested": "Changes requested",
   "Changes requested on your submission": "Changes requested on your submission",
   "Changes saved": "Changes saved",
+  "Check your project details, model, and grid before creating the project.": "Check your project details, model, and grid before creating the project.",
   "Checkbox options (value,label one per line)": "Checkbox options (value,label one per line)",
   "Choice": "Choice",
   "Choose": "Choose",
@@ -1058,6 +1060,7 @@
   "Use as default value": "Use as default value",
   "Use new grid": "Use new grid",
   "Use your Gravitar profile image": "Use your Gravitar profile image",
+  "Used in the project URL. This must be unique for this site.": "Used in the project URL. This must be unique for this site.",
   "User Invitations": "User Invitations",
   "User already assigned": "User already assigned",
   "User dashboard": "User dashboard",
@@ -1302,6 +1305,11 @@
   "{{count}} more_plural": "{{count}} more",
   "{{count}} submission": "{{count}} submission",
   "{{count}} submission_plural": "{{count}} submission",
+  "{{feature}} is an experimental feature": "{{feature}} is an experimental feature",
+  "{{page}} of {{count}}": "{{page}} of {{count}}",
+  "{{page}} of {{count}}_plural": "{{page}} of {{count}}"
+}{{page}} of {{count}}"
+}
   "{{feature}} is an experimental feature": "{{feature}} is an experimental feature",
   "{{page}} of {{count}}": "{{page}} of {{count}}",
   "{{page}} of {{count}}_plural": "{{page}} of {{count}}"
