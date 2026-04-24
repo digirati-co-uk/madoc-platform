@@ -27,7 +27,13 @@
     },
     "template_options": {},
     "template_config": {},
-    "remote_template": {}
+    "remote_template": {},
+    "duplicate_project_id": {
+      "type": [
+        "string",
+        "number"
+      ]
+    }
   },
   "required": [
     "label",

@@ -202,6 +202,9 @@
         "forkMode": {
           "type": "boolean"
         },
+        "showRandomManifestAfterSubmission": {
+          "type": "boolean"
+        },
         "searchOptions": {
           "type": "object",
           "properties": {
@@ -375,6 +378,9 @@
               "type": "boolean"
             },
             "generatePDF": {
+              "type": "boolean"
+            },
+            "hideGeneratePDF": {
               "type": "boolean"
             },
             "hideFilterImages": {

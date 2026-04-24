@@ -19,6 +19,22 @@ function isObjectLike(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
+export function hasTabularCellFlagsProperty(value: unknown): boolean {
+  if (Array.isArray(value)) {
+    return value.some(hasTabularCellFlagsProperty);
+  }
+
+  if (!isObjectLike(value)) {
+    return false;
+  }
+
+  if (Object.prototype.hasOwnProperty.call(value, TABULAR_CELL_FLAGS_PROPERTY)) {
+    return true;
+  }
+
+  return Object.values(value).some(hasTabularCellFlagsProperty);
+}
+
 function isHiddenFieldType(type?: string) {
   const normalizedType = (type || '').trim();
   return normalizedType === 'hidden' || normalizedType === 'hidden-field';
