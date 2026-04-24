@@ -156,6 +156,9 @@
             "generatePDF": {
               "type": "boolean"
             },
+            "hideGeneratePDF": {
+              "type": "boolean"
+            },
             "coveredImages": {
               "type": "boolean"
             },

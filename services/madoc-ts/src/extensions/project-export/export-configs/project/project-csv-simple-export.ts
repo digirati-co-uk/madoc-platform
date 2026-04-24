@@ -9,7 +9,11 @@ import {
   TABULAR_CELL_FLAGS_PROPERTY,
   type TabularCellFlag,
 } from '../../../../frontend/shared/utility/tabular-cell-flags';
-import { compareFieldKeysByTabularOrder, getTabularFieldOrderMap } from './tabular-export-order';
+import {
+  compareFieldKeysByTabularOrder,
+  getTabularFieldOrderMap,
+  hasTabularCellFlagsProperty,
+} from './tabular-export-order';
 
 const labelCache: {
   manifestLabels: Record<string, { label?: string; uri?: string }>;
@@ -46,6 +50,39 @@ function getTabularCellReviewColumns(value: unknown): {
     tabular_flags: flags.map(formatTabularCellReview).join(' | '),
     tabular_notes: notes.map(formatTabularCellReview).join(' | '),
   };
+}
+
+const csvMetadataFields = new Set([
+  'model_id',
+  'doc_id',
+  'manifest',
+  'manifest_uri',
+  'manifest_label',
+  'canvas',
+  'canvas_uri',
+  'canvas_label',
+  'tabular_flag_count',
+  'tabular_note_count',
+]);
+
+function isEmptyCsvValue(value: unknown): boolean {
+  if (value === null || typeof value === 'undefined') {
+    return true;
+  }
+
+  if (typeof value === 'string') {
+    return value.trim().length === 0;
+  }
+
+  if (Array.isArray(value)) {
+    return value.length === 0 || value.every(isEmptyCsvValue);
+  }
+
+  return false;
+}
+
+function isEmptyTabularCsvRow(record: Record<string, unknown>): boolean {
+  return Object.entries(record).every(([key, value]) => csvMetadataFields.has(key) || isEmptyCsvValue(value));
 }
 
 async function fetchLabels(api: any, manifestIds: number[], canvasIds: number[]) {
@@ -204,9 +241,11 @@ export const projectCsvSimpleExport: ExportConfig = {
     options: ExportDataOptions<any>
   ): Promise<ExportFileDefinition[] | undefined> {
     let fieldOrderMap = new Map<string, number>();
+    let isTabularProject = false;
     try {
       const project = await options.api.getProject(subject.id);
       fieldOrderMap = getTabularFieldOrderMap(project?.template_config);
+      isTabularProject = hasTabularCellFlagsProperty(project?.template_config);
     } catch (err) {
       console.warn('CSV export: failed to load project template config for field ordering', {
         projectId: subject.id,
@@ -218,6 +257,7 @@ export const projectCsvSimpleExport: ExportConfig = {
       status: options.config.reviews ? 'all' : 'approved',
       entity: options.config.entity,
     });
+    isTabularProject = isTabularProject || allPublished.some((item: any) => item.key === TABULAR_CELL_FLAGS_PROPERTY);
 
     const rowRecord: Record<string, any> = {};
     const manifestIds: number[] = [];
@@ -292,7 +332,8 @@ export const projectCsvSimpleExport: ExportConfig = {
         }
         return false;
       })
-      .filter(Boolean) as any[];
+      .filter(Boolean)
+      .filter(record => !isTabularProject || !isEmptyTabularCsvRow(record as Record<string, unknown>)) as any[];
 
     return [await ExportFile.csv(mappedList, 'project-data/data.csv')];
   },

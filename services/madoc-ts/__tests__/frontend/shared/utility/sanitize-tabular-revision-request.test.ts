@@ -35,7 +35,23 @@ function createRowEntity(id: string, value: string): CaptureModel['document'] {
 function createRevisionRequestFixture(options: {
   rows: CaptureModel['document'][];
   flags: TabularCellFlagMap;
+  includeTabularMarker?: boolean;
 }): RevisionRequest {
+  const properties: CaptureModel['document']['properties'] = {
+    rows: options.rows,
+  };
+
+  if (options.includeTabularMarker !== false) {
+    properties[TABULAR_CELL_FLAGS_PROPERTY] = [
+      {
+        id: 'tabular-flags',
+        type: 'text-field',
+        label: 'Cell flags',
+        value: serializeTabularCellFlags(options.flags),
+      },
+    ];
+  }
+
   return {
     captureModelId: 'capture-model-1',
     source: 'structure',
@@ -50,23 +66,13 @@ function createRevisionRequestFixture(options: {
       id: 'document-root',
       type: 'entity',
       label: 'Root',
-      properties: {
-        rows: options.rows,
-        [TABULAR_CELL_FLAGS_PROPERTY]: [
-          {
-            id: 'tabular-flags',
-            type: 'text-field',
-            label: 'Cell flags',
-            value: serializeTabularCellFlags(options.flags),
-          },
-        ],
-      } as CaptureModel['document']['properties'],
+      properties,
     },
   };
 }
 
 describe('sanitizeTabularRevisionRequestForSave', () => {
-  test('removes unfilled tabular rows before save', () => {
+  test('preserves unfilled tabular rows by default', () => {
     const request = createRevisionRequestFixture({
       rows: [
         createRowEntity('row-0', 'Filled'),
@@ -80,13 +86,14 @@ describe('sanitizeTabularRevisionRequestForSave', () => {
 
     const sanitized = sanitizeTabularRevisionRequestForSave(request);
 
-    expect(sanitized).not.toBe(request);
+    expect(sanitized).toBe(request);
     const rows = sanitized.document.properties.rows as Array<ReturnType<typeof createRowEntity>>;
-    expect(rows).toHaveLength(1);
+    expect(rows).toHaveLength(5);
     expect(rows[0].id).toEqual('row-0');
+    expect(rows[1].id).toEqual('row-1');
   });
 
-  test('shifts tabular cell flag row indexes when empty rows are pruned', () => {
+  test('preserves tabular cell flag row indexes by default', () => {
     const request = createRevisionRequestFixture({
       rows: [createRowEntity('row-0', 'A'), createRowEntity('row-1', ''), createRowEntity('row-2', 'B')],
       flags: {
@@ -102,8 +109,22 @@ describe('sanitizeTabularRevisionRequestForSave', () => {
     const flagsField = (sanitized.document.properties[TABULAR_CELL_FLAGS_PROPERTY] || [])[0] as { value?: unknown };
     const parsedFlags = parseTabularCellFlags(flagsField?.value);
 
-    expect(parsedFlags['1:value']).toBeDefined();
-    expect(parsedFlags['1:value'].rowIndex).toEqual(1);
-    expect(parsedFlags['2:value']).toBeUndefined();
+    expect(sanitized).toBe(request);
+    expect(parsedFlags['2:value']).toBeDefined();
+    expect(parsedFlags['2:value'].rowIndex).toEqual(2);
+    expect(parsedFlags['1:value']).toBeUndefined();
+  });
+
+  test('does not modify non-tabular revision requests', () => {
+    const request = createRevisionRequestFixture({
+      rows: [createRowEntity('row-0', 'A'), createRowEntity('row-1', '')],
+      flags: {},
+      includeTabularMarker: false,
+    });
+
+    const sanitized = sanitizeTabularRevisionRequestForSave(request);
+
+    expect(sanitized).toBe(request);
+    expect(sanitized.document.properties.rows).toHaveLength(2);
   });
 });
