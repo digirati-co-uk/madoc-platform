@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.3.0...main)
+## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.3.1...main)
 
 <!--
 
@@ -19,10 +19,45 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -->
 
+## [v2.3.1](https://github.com/digirati-co-uk/madoc-platform/compare/v2.3.0...v2.3.1)
+
+<!--
+
+### Added
+
+### Changed
+
+### Fixed
+
+### Removed
+
+-->
+
+### Added
+
+- Added isolated account authentication routes and frontend bundle for non-public sites, covering login, registration, forgot password, reset password, activation, logout, and account entry redirects. (MAD-1534)
+- Added collection-import task feedback showing imported versus expected manifest counts, with warning states for stopped or incomplete manifest imports. (NS-82)
+
+### Changed
+
+- Improved project and site configuration merging so nested option groups are preserved when configurations are saved, resolved, or migrated. (MAD-1544)
+- Ordered tabular project CSV, contribution CSV, and canvas model exports by the saved tabular template column order.
+- Updated tabular project setup so zoom-tracking defaults follow the setup wizard value, including when zoom tracking is disabled.
+- Removed the extra "Create new project using this template" link from project admin pages to make the duplicate project flow clearer.
+
 ### Fixed
 
 - Fixed HTML page block creation after dependency updates by deduping ProseMirror gapcursor modules in frontend Vite builds. (MAD-1543)
 - Fixed localisation language preference updates failing with configurator conflicts by adding resilient config loading/saving with legacy fallback. (MAD-1542)
+- Fixed non-public site redirects so unauthenticated users are sent through the account routes with safe relative redirect targets. (MAD-1534)
+- Fixed project configuration regressions around generated PDF options and post-submission random-manifest behavior. (MAD-1544)
+- Fixed duplicated project creation so new projects preserve the source project configuration and annotation style.
+- Fixed tabular review flags not appearing or persisting in review mode, and kept approval blocking in sync with the latest revision data.
+- Fixed a tabular save regression that pruned filtered or blank rows and shifted cell flag indexes before save.
+- Fixed tabular export output so empty tabular rows are omitted, tabular system fields are present in copied templates, and flag/note data remains aligned with row and column order.
+- Fixed canvas model exports for tabular projects so project IDs resolve correctly and exported row fields follow tabular column order.
+- Fixed tabular project wizard back-button behavior in development and removed noisy console alerts from that flow.
+- Fixed local Docker development setup mounting the old `yarn.lock` path instead of `pnpm-lock.yaml`.
 
 ## [v2.3.0](https://github.com/digirati-co-uk/madoc-platform/compare/v2.2.11...v2.3.0)
 
