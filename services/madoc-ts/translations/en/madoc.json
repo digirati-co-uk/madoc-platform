@@ -465,6 +465,7 @@
   "Go to task": "Go to task",
   "Go to task view": "Go to task view",
   "Grid background color": "Grid background color",
+  "Header layout": "Header layout",
   "Header options": "Header options",
   "Height (number)": "Height (number)",
   "Hide": "Hide",
@@ -637,6 +638,7 @@
   "Max number of instances (used when referring to lists of this document)": "Max number of instances (used when referring to lists of this document)",
   "Maximum number of contributors reached": "Maximum number of contributors reached",
   "Media": "Media",
+  "Menu": "Menu",
   "Menu layout": "Menu layout",
   "Menu options": "Menu options",
   "Message from reviewer": "Message from reviewer",
@@ -728,6 +730,7 @@
   "Padding size": "Padding size",
   "Page": "Page",
   "Page blocks": "Page blocks",
+  "Page navigation": "Page navigation",
   "Page not found": "Page not found",
   "Page with menu": "Page with menu",
   "Page without menu": "Page without menu",
@@ -907,6 +910,7 @@
   "Site general configuration": "Site general configuration",
   "Site metadata display configuration": "Site metadata display configuration",
   "Site name": "Site name",
+  "Site navigation": "Site navigation",
   "Site pages": "Site pages",
   "Site permissions": "Site permissions",
   "Site search indexing": "Site search indexing",
@@ -1305,11 +1309,6 @@
   "{{count}} more_plural": "{{count}} more",
   "{{count}} submission": "{{count}} submission",
   "{{count}} submission_plural": "{{count}} submission",
-  "{{feature}} is an experimental feature": "{{feature}} is an experimental feature",
-  "{{page}} of {{count}}": "{{page}} of {{count}}",
-  "{{page}} of {{count}}_plural": "{{page}} of {{count}}"
-}{{page}} of {{count}}"
-}
   "{{feature}} is an experimental feature": "{{feature}} is an experimental feature",
   "{{page}} of {{count}}": "{{page}} of {{count}}",
   "{{page}} of {{count}}_plural": "{{page}} of {{count}}"

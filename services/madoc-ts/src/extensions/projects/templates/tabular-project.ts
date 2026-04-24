@@ -37,11 +37,7 @@ type TabularNestedEntityConfig = {
 type TabularCaptureModelTemplate = {
   __entity__?: { label: string };
   __nested__?: Record<string, TabularNestedEntityConfig>;
-  [term: string]:
-    | TabularCaptureModelField
-    | { label: string }
-    | Record<string, TabularNestedEntityConfig>
-    | undefined;
+  [term: string]: TabularCaptureModelField | { label: string } | Record<string, TabularNestedEntityConfig> | undefined;
 };
 
 export type TabularWizardSetup = {
@@ -106,9 +102,10 @@ function normalizeTabularCaptureModelTemplate(template: TabularCaptureModelTempl
     return template;
   }
 
-  const legacyRowLabel = isObjectLike(template.__entity__) && typeof template.__entity__.label === 'string'
-    ? template.__entity__.label.trim() || 'Tabular row'
-    : 'Tabular row';
+  const legacyRowLabel =
+    isObjectLike(template.__entity__) && typeof template.__entity__.label === 'string'
+      ? template.__entity__.label.trim() || 'Tabular row'
+      : 'Tabular row';
   const nestedConfig = isObjectLike(template.__nested__)
     ? (template.__nested__ as Record<string, TabularNestedEntityConfig>)
     : {};
@@ -152,6 +149,15 @@ function normalizeTabularCaptureModelTemplate(template: TabularCaptureModelTempl
   return normalizedTemplate;
 }
 
+function withTabularSystemFields(template: TabularCaptureModelTemplate): TabularCaptureModelTemplate {
+  return {
+    ...template,
+    [TABULAR_CELL_FLAGS_PROPERTY]: isTabularCaptureModelField(template[TABULAR_CELL_FLAGS_PROPERTY])
+      ? template[TABULAR_CELL_FLAGS_PROPERTY]
+      : createTabularCellFlagsCaptureModelField(),
+  };
+}
+
 const getCaptureModelTemplateFromOptions = (options: TabularProjectTemplateOptions) => {
   const template = options.tabular?.model?.captureModelTemplate;
   if (!template) {
@@ -164,7 +170,7 @@ const getCaptureModelTemplateFromOptions = (options: TabularProjectTemplateOptio
     return null;
   }
 
-  return normalizedTemplate;
+  return withTabularSystemFields(normalizedTemplate);
 };
 
 const TabularProjectCustomEditorLazy = React.lazy(async () => {
