@@ -1,6 +1,14 @@
 import { RouteMiddleware } from '../../types/route-middleware';
 import { castBool } from '../../utility/cast-bool';
-import { parseUrn } from '../../utility/parse-urn';
+import {
+  filterHiddenSubjects,
+  isActiveTaskStatus,
+  mapProjectTaskStatus,
+  mapUserTaskStatus,
+  RESOURCE_STATUS_AVAILABLE,
+  RESOURCE_STATUS_COMPLETED,
+  TaskSubjectStatus,
+} from '../../utility/resource-status';
 
 export type SiteCollectionQuery = {
   type?: 'manifest' | 'collection';
@@ -11,84 +19,59 @@ export type SiteCollectionQuery = {
   page?: number;
 };
 
-function combineStatuses(
-  projectStatuses: { subjects: Array<{ subject: string; status: number; assignee_id?: string }> },
-  userStatuses?: { subjects: Array<{ subject: string; status: number; assignee_id?: string }> }
-) {
+interface TaskSubjectResponse {
+  subjects: Array<TaskSubjectStatus & { assignee_id?: string }>;
+}
+
+function toSubjectMap(statuses?: TaskSubjectResponse) {
+  const map = new Map<string, TaskSubjectStatus>();
+  for (const status of statuses?.subjects || []) {
+    if (isActiveTaskStatus(status.status)) {
+      map.set(status.subject, status);
+    }
+  }
+  return map;
+}
+
+function getSubjectSet(...statusResponses: Array<TaskSubjectResponse | undefined>) {
   const allSubjects = new Set<string>();
-  const combinedStatues: Array<{ subject: string; status: number }> = [];
-  const projectSubjectMap: {
-    [subject: string]: { subject: string; status: number };
-  } = {};
-  const userSubjectMap: {
-    [subject: string]: { subject: string; status: number };
-  } = {};
-
-  for (const projectStatus of projectStatuses.subjects) {
-    allSubjects.add(projectStatus.subject);
-    if (projectStatus.status !== -1) {
-      projectSubjectMap[projectStatus.subject] = projectStatus;
+  for (const statusResponse of statusResponses) {
+    for (const status of statusResponse?.subjects || []) {
+      allSubjects.add(status.subject);
     }
   }
-  if (userStatuses) {
-    for (const userStatus of userStatuses.subjects) {
-      allSubjects.add(userStatus.subject);
-      if (userStatus.status !== -1) {
-        userSubjectMap[userStatus.subject] = userStatus;
-      }
+  return allSubjects;
+}
+
+function combineStatuses(projectStatuses: TaskSubjectResponse, userStatuses?: TaskSubjectResponse) {
+  const allSubjects = getSubjectSet(projectStatuses, userStatuses);
+  const projectSubjectMap = toSubjectMap(projectStatuses);
+  const userSubjectMap = toSubjectMap(userStatuses);
+  const combinedStatuses: Array<{ subject: string; status: number }> = [];
+
+  for (const subject of allSubjects) {
+    const userStatus = userSubjectMap.get(subject);
+    const projectStatus = projectSubjectMap.get(subject);
+
+    if (projectStatus?.status === RESOURCE_STATUS_COMPLETED || userStatus?.status === RESOURCE_STATUS_COMPLETED) {
+      combinedStatuses.push({ subject, status: RESOURCE_STATUS_COMPLETED });
+      continue;
+    }
+
+    if (userStatus) {
+      combinedStatuses.push({ subject, status: mapUserTaskStatus(userStatus.status) });
+      continue;
+    }
+
+    const projectResourceStatus = projectStatus
+      ? mapProjectTaskStatus(projectStatus.status)
+      : RESOURCE_STATUS_AVAILABLE;
+    if (typeof projectResourceStatus !== 'undefined') {
+      combinedStatuses.push({ subject, status: projectResourceStatus });
     }
   }
 
-  allSubjects.forEach(subject => {
-    const userStatus = userSubjectMap[subject];
-    const projectStatus = projectSubjectMap[subject];
-
-    // If the project has marked as done [done]
-    if (projectStatus && projectStatus.status === 3) {
-      combinedStatues.push({
-        subject,
-        status: 3,
-      });
-      return;
-    }
-
-    // If the users submitted or completed item [done]
-    if (userStatus && (userStatus.status === 2 || userStatus.status === 3)) {
-      combinedStatues.push({
-        subject,
-        status: 3,
-      });
-      return;
-    }
-
-    // Assigned to the user.
-    if (userStatus && (userStatus.status === 0 || userStatus.status === 1)) {
-      combinedStatues.push({
-        subject,
-        status: 2,
-      });
-      return;
-    }
-
-    // If the users not assigned and its unavailable, mark as "done"
-    if (projectStatus && projectStatus.status === 2) {
-      combinedStatues.push({
-        subject,
-        status: 3,
-      });
-      return;
-    }
-
-    // Available for working on.
-    if (!userStatus && (!projectStatus || projectStatus.status === 0 || projectStatus.status === 1)) {
-      combinedStatues.push({
-        subject,
-        status: 1,
-      });
-    }
-  });
-
-  return combinedStatues;
+  return combinedStatuses;
 }
 
 export const siteCollection: RouteMiddleware<{ slug: string; id: string }> = async context => {
@@ -153,28 +136,13 @@ export const siteCollection: RouteMiddleware<{ slug: string; id: string }> = asy
       })
     : undefined;
 
-  const combinedStatues = combineStatuses(projectStatuses, userStatuses);
-  const filteredMembers: number[] = [];
-  const filteredSubjects: typeof combinedStatues = [];
-
-  for (const subject of combinedStatues) {
-    const parsedUrn = parseUrn(subject.subject);
-    // Skip invalid, if any.
-    if (!parsedUrn) continue;
-    // First check show
-
-    // If we have hide status, then these matching will be excluded.
-    if (hideStatus.indexOf(`${subject.status}`) !== -1) {
-      filteredMembers.push(parsedUrn.id);
-    } else {
-      filteredSubjects.push(subject);
-    }
-  }
+  const combinedStatuses = combineStatuses(projectStatuses, userStatuses);
+  const { hiddenIds, visibleSubjects } = filterHiddenSubjects(combinedStatuses, hideStatus);
 
   // Finally we can make an optimum request to get a filtered collection set.
-  const collection = await siteApi.getCollectionById(Number(id), page, type, filteredMembers, onlyPublished);
+  const collection = await siteApi.getCollectionById(Number(id), page, type, hiddenIds, onlyPublished);
 
-  collection.subjects = filteredSubjects;
+  collection.subjects = visibleSubjects;
 
   // And finally respond.
   context.response.status = 200;

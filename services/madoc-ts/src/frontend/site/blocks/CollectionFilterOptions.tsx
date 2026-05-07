@@ -14,6 +14,7 @@ import { GoToRandomManifest } from '../features/manifest/GoToRandomManifest';
 import { useProjectPageConfiguration } from '../hooks/use-project-page-configuration';
 import { useSiteConfiguration } from '../features/SiteConfigurationContext';
 import { StartContributingButton } from '../features/project/StartContributingButton';
+import { HIDE_COMPLETED_FILTER, SHOW_AVAILABLE_FILTER } from '../../../utility/resource-status';
 
 export interface CollectionFilterOptionsProps {
   buttons?: {
@@ -32,8 +33,9 @@ export function CollectionFilterOptions(props: CollectionFilterOptionsProps) {
   const { data } = usePaginatedData(CollectionLoader);
 
   const createLink = useRelativeLinks();
-  const { filter, page } = useLocationQuery();
+  const { c, filter } = useLocationQuery();
   const [, showDoneButton] = useSubjectMap(data ? data.subjects : []);
+  const activeFilter = typeof filter === 'undefined' ? undefined : `${filter}`;
   const options = useProjectPageConfiguration();
   const {
     project: { allowCollectionNavigation = true, allowManifestNavigation = true },
@@ -50,10 +52,20 @@ export function CollectionFilterOptions(props: CollectionFilterOptionsProps) {
           <Button
             as={HrefLink}
             href={createLink({
-              query: { filter: filter ? undefined : 3, page },
+              query: { filter: activeFilter === HIDE_COMPLETED_FILTER ? undefined : HIDE_COMPLETED_FILTER, c },
             })}
           >
-            {filter ? t('Show completed') : t('Hide completed')}
+            {activeFilter === HIDE_COMPLETED_FILTER ? t('Show completed') : t('Hide completed')}
+          </Button>
+        ) : null}
+        {!hideFilterButton ? (
+          <Button
+            as={HrefLink}
+            href={createLink({
+              query: { filter: activeFilter === SHOW_AVAILABLE_FILTER ? undefined : SHOW_AVAILABLE_FILTER, c },
+            })}
+          >
+            {activeFilter === SHOW_AVAILABLE_FILTER ? t('Show all') : t('Show available')}
           </Button>
         ) : null}
         {hideSearchButton ? null : (
