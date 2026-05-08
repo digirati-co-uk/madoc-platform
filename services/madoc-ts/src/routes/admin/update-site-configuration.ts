@@ -64,14 +64,12 @@ export const updateSiteConfiguration: RouteMiddleware<{}, Partial<ProjectConfigu
     if (etag) {
       //  - If it exists, then grab the UUID and update that resource
       await userApi.replaceConfiguration(oldConfiguration.id, etag, newConfiguration);
+    } else {
+      throw new Error(`Could not save configuration ${oldConfiguration.id}: missing ETag`);
     }
   } else {
-    try {
-      //  - If it does not exist, then POST the new configuration.
-      await userApi.addConfiguration('madoc', configRequest, newConfiguration);
-    } catch (err) {
-      console.log('Could not save config', err);
-    }
+    //  - If it does not exist, then POST the new configuration.
+    await userApi.addConfiguration('madoc', configRequest, newConfiguration);
   }
 
   context.response.body = newConfiguration;
