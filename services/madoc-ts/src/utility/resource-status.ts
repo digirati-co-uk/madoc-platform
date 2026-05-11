@@ -4,6 +4,7 @@ export const RESOURCE_STATUS_AVAILABLE = 0;
 export const RESOURCE_STATUS_IN_PROGRESS = 1;
 export const RESOURCE_STATUS_SUBMITTED = 2;
 export const RESOURCE_STATUS_COMPLETED = 3;
+export const TASK_STATUS_CHANGES_REQUESTED = 4;
 export const TASK_STATUS_REJECTED = -1;
 
 export const HIDE_COMPLETED_FILTER = `${RESOURCE_STATUS_COMPLETED}`;
@@ -50,6 +51,7 @@ export function mapUserTaskStatus(status: number): ResourceStatus {
       return RESOURCE_STATUS_SUBMITTED;
     case RESOURCE_STATUS_AVAILABLE:
     case RESOURCE_STATUS_IN_PROGRESS:
+    case TASK_STATUS_CHANGES_REQUESTED:
       return RESOURCE_STATUS_IN_PROGRESS;
     default:
       return RESOURCE_STATUS_AVAILABLE;
