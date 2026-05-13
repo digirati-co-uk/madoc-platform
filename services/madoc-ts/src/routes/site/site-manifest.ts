@@ -1,6 +1,13 @@
 import { RouteMiddleware } from '../../types/route-middleware';
 import { NotFound } from '../../utility/errors/not-found';
-import { parseUrn } from '../../utility/parse-urn';
+import {
+  filterHiddenSubjects,
+  mapProjectTaskStatus,
+  mapUserTaskStatus,
+  RESOURCE_STATUS_AVAILABLE,
+  RESOURCE_STATUS_COMPLETED,
+  TaskSubjectStatus,
+} from '../../utility/resource-status';
 
 export type SiteManifestQuery = {
   page: number;
@@ -12,64 +19,39 @@ export type SiteManifestQuery = {
 };
 
 function mapUserSubjects(
-  subjects: Array<{ subject: string; status: number }>,
-  allSubjects: Array<{ subject: string; status: number }>,
+  subjects: TaskSubjectStatus[],
+  allSubjects: TaskSubjectStatus[],
   isPreparing = false
 ): Array<{ subject: string; status: number }> {
-  const toRemove: string[] = [];
+  const overriddenSubjects = new Set<string>();
   const userSubjects = subjects
     .map(subject => {
       const allSubject = allSubjects.find(sub => sub.subject === subject.subject);
+      if (allSubject?.status === RESOURCE_STATUS_COMPLETED) {
+        return undefined; // Does not matter how far the user was, it is complete.
+      }
+
       if (allSubject) {
-        if (allSubject.status === 3) {
-          return undefined; // Does not matter how far the user was, it is complete.
-        } else {
-          // The users status takes precedent, so we will remove it later.
-          toRemove.push(allSubject.subject);
-        }
+        overriddenSubjects.add(allSubject.subject);
       }
 
-      if (subject.status === 0 || subject.status === 1) {
-        // In progress
-        return {
-          subject: subject.subject,
-          status: 2,
-        };
-      }
-
-      if (subject.status === 2 || subject.status === 3) {
-        return {
-          subject: subject.subject,
-          status: 3,
-        };
-      }
-
-      // Everything else is not started.
       return {
         subject: subject.subject,
-        status: 0,
+        status: mapUserTaskStatus(subject.status),
       };
     })
     .filter(Boolean) as Array<{ subject: string; status: number }>;
 
   const returnAllSubjects = allSubjects
     .map(subject => {
-      if (toRemove.indexOf(subject.subject) !== -1) {
+      if (overriddenSubjects.has(subject.subject)) {
         return undefined;
       }
 
-      if (isPreparing) {
-        // Do something.
-
-        if (subject.status === 0 || subject.status === 1) {
-          return {
-            subject: subject.subject,
-            status: 2,
-          };
-        }
-      }
-
-      return subject;
+      return {
+        subject: subject.subject,
+        status: mapProjectTaskStatus(subject.status, isPreparing) ?? RESOURCE_STATUS_AVAILABLE,
+      };
     })
     .filter(Boolean) as Array<{ subject: string; status: number }>;
 
@@ -124,7 +106,6 @@ export const siteManifest: RouteMiddleware<{ slug: string; id: string }> = async
       const taskSubjects = (
         await siteApi.getTaskSubjects(taskId, canvasSubjects, {
           type: 'crowdsourcing-canvas-task',
-          status: userId && !isPreparing ? 3 : undefined,
         })
       ).subjects;
 
@@ -160,38 +141,20 @@ export const siteManifest: RouteMiddleware<{ slug: string; id: string }> = async
   const taskSubjects = (
     await siteApi.getTaskSubjects(taskId, subjects, {
       type: 'crowdsourcing-canvas-task',
-      status: userId && !isPreparing ? 3 : undefined,
     })
   ).subjects;
 
   const allSubjects = mapUserSubjects(userSubjects, taskSubjects, isPreparing);
-
-  // const allSubjects = userId ? mapUserSubjects(taskSubjects.subjects) : taskSubjects.subjects;
-  const filteredCanvases: number[] = [];
-  const filteredSubjects: typeof allSubjects = [];
-
-  for (const subject of allSubjects) {
-    const parsedUrn = parseUrn(subject.subject);
-    // Skip invalid, if any.
-    if (!parsedUrn) continue;
-    // First check show
-
-    // If we have hide status, then these matching will be excluded.
-    if (hideStatus.indexOf(`${subject.status}`) !== -1) {
-      filteredCanvases.push(parsedUrn.id);
-    } else {
-      filteredSubjects.push(subject);
-    }
-  }
+  const { hiddenIds, visibleSubjects } = filterHiddenSubjects(allSubjects, hideStatus);
 
   // Finally we can make an optimum request to get a filtered collection set.
-  const manifest = await siteApi.getManifestById(Number(id), page, filteredCanvases);
+  const manifest = await siteApi.getManifestById(Number(id), page, hiddenIds);
 
   if (!manifest.manifest.published && !isSiteAdmin) {
     throw new NotFound('Manifest not found');
   }
 
-  manifest.subjects = filteredSubjects;
+  manifest.subjects = visibleSubjects;
 
   // And finally respond.
   context.response.status = 200;

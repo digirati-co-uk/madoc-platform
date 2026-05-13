@@ -95,6 +95,7 @@ Do not assume they affect runtime unless you add explicit call sites.
 - Debugging claim failures without checking `canUserClaimResource` and `modelPageOptions` restrictions.
 - Assuming each submission creates a new review task; the system reuses active review tasks.
 - Ignoring manifest-mode behavior (`claimGranularity = manifest`) when diagnosing canvas claim issues.
+- On project collection pages and manifest canvas grids, `site-collection.ts` / `site-manifest.ts` map task state to UI filter status: `0` available/no bar, `1` in progress, `2` submitted/review, `3` completed. The "show available" filter hides `1,2,3`.
 
 ## Suggested Checks
 - Claim same resource twice with different `revisionId` and verify policy behavior.
