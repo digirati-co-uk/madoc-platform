@@ -5,35 +5,35 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.3.1...main)
+## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.3.2...main)
+
+<!--
 
 ### Added
+
+### Changed
+
+### Fixed
+
+### Removed
+
+-->
+
+## [v2.3.2](https://github.com/digirati-co-uk/madoc-platform/compare/v2.3.1...v2.3.2)
+
+### Added
+
 - Added collection import warnings showing imported versus expected manifest counts, including warning states when manifest imports stop before completing.
 
 ### Changed
+
 Improved canvas and manifest status bars with shared status mapping, clearer submitted/completed/in-progress colours, and support for changes-requested tasks. ([MAD-1548](https://digirati.atlassian.net/browse/MAD-1548))
 
 ### Fixed
+
 - Fixed themed site headers so the default site title is hidden when a theme-provided header is configured. ([NS-83](https://digirati.atlassian.net/browse/NS-83))
 
-<!--
-### Removed
--->
-
-
 ## [v2.3.1](https://github.com/digirati-co-uk/madoc-platform/compare/v2.3.0...v2.3.1)
-
-<!--
-
-### Added
-
-### Changed
-
-### Fixed
-
-### Removed
-
--->
 
 ### Added
 
