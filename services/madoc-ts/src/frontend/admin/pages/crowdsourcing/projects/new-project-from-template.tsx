@@ -49,7 +49,11 @@ function isValidUploadedProjectTemplate(value: any): value is ProjectTemplate {
 export const NewProjectFromTemplate: React.FC = () => {
   const api = useApi();
   const { t } = useTranslation();
-  const { template: routeTemplate } = useParams<{ template: string }>();
+  const { template: routeTemplateRaw, namespace: routeNamespace } = useParams<{
+    template: string;
+    namespace: string;
+  }>();
+  const routeTemplate = routeNamespace ? `${routeNamespace}/${routeTemplateRaw}` : routeTemplateRaw;
   const chosenTemplateType = routeTemplate || '';
   const isRemoteTemplateType = chosenTemplateType === 'remote';
   const query = useLocationQuery<{

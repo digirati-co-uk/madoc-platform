@@ -299,7 +299,15 @@ export const routes: RouteObject[] = [
     element: <NewProjectFromTemplate />,
   },
   {
+    path: '/projects/create/:namespace/:template',
+    element: <NewProjectFromTemplate />,
+  },
+  {
     path: '/projects/create/:template/*',
+    element: <NewProjectFromTemplate />,
+  },
+  {
+    path: '/projects/create/:namespace/*',
     element: <NewProjectFromTemplate />,
   },
   {
