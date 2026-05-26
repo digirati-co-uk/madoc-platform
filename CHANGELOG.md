@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added collection import warnings showing imported versus expected manifest counts, including warning states when manifest imports stop before completing.
 
 ### Changed
-Improved canvas and manifest status bars with shared status mapping, clearer submitted/completed/in-progress colours, and support for changes-requested tasks. ([MAD-1548](https://digirati.atlassian.net/browse/MAD-1548))
+- Improved project collection availability filtering and canvas/manifest status bars with shared status mapping, clearer submitted/completed/in-progress colours, and project-scoped "Show available" controls. ([MAD-1548](https://digirati.atlassian.net/browse/MAD-1548))
 
 ### Fixed
 - Fixed themed site headers so the default site title is hidden when a theme-provided header is configured. ([NS-83](https://digirati.atlassian.net/browse/NS-83))
