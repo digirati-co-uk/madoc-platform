@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.3.2...main)
 
+### Fixed
+
+- Improved canvas and manifest status bars with shared status mapping, clearer submitted/completed/in-progress colours, and support for changes-requested tasks. ([MAD-1548](https://digirati.atlassian.net/browse/MAD-1548))
+
 <!--
 
 ### Added
@@ -33,8 +37,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Improved project collection availability filtering and canvas/manifest status bars with shared status mapping, clearer submitted/completed/in-progress colours, and project-scoped "Show available" controls. ([MAD-1548](https://digirati.atlassian.net/browse/MAD-1548))
-
-Improved canvas and manifest status bars with shared status mapping, clearer submitted/completed/in-progress colours, and support for changes-requested tasks. ([MAD-1548](https://digirati.atlassian.net/browse/MAD-1548))
 
 ### Fixed
 
