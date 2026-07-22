@@ -15,6 +15,7 @@ import { useProjectPageConfiguration } from '../hooks/use-project-page-configura
 import { useSiteConfiguration } from '../features/SiteConfigurationContext';
 import { StartContributingButton } from '../features/project/StartContributingButton';
 import { HIDE_COMPLETED_FILTER, SHOW_AVAILABLE_FILTER } from '../../../utility/resource-status';
+import { useRouteContext } from '../hooks/use-route-context';
 
 export interface CollectionFilterOptionsProps {
   buttons?: {
@@ -33,6 +34,7 @@ export function CollectionFilterOptions(props: CollectionFilterOptionsProps) {
   const { data } = usePaginatedData(CollectionLoader);
 
   const createLink = useRelativeLinks();
+  const { projectId } = useRouteContext();
   const { c, filter } = useLocationQuery();
   const [, showDoneButton] = useSubjectMap(data ? data.subjects : []);
   const activeFilter = typeof filter === 'undefined' ? undefined : `${filter}`;
@@ -58,7 +60,7 @@ export function CollectionFilterOptions(props: CollectionFilterOptionsProps) {
             {activeFilter === HIDE_COMPLETED_FILTER ? t('Show completed') : t('Hide completed')}
           </Button>
         ) : null}
-        {!hideFilterButton ? (
+        {!hideFilterButton && projectId ? (
           <Button
             as={HrefLink}
             href={createLink({

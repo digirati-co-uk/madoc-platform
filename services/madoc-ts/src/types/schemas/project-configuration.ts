@@ -42,7 +42,7 @@ export type ProjectConfiguration = TabularProjectConfigurationFields & {
   hideStatistics?: boolean; // @todo move to project page options
   hideProjectCollectionNavigation?: boolean; // @todo move to project page options
   hideProjectManifestNavigation?: boolean; // @todo move to project page options
-  searchStrategy?: 'string';
+  searchStrategy?: 'websearch' | 'phrase' | 'plain' | 'raw' | 'string';
   hideManifestMetadataOnCanvas?: boolean;
   hideCanvasThumbnailNavigation?: boolean;
   showSearchFacetCount?: boolean; // @todo move to searchOptions
@@ -198,7 +198,7 @@ export type ProjectConfigurationNEW = TabularProjectConfigurationFields & {
     allowCanvasNavigation: boolean; // Changed to sub-item
   };
 
-  searchStrategy?: 'string';
+  searchStrategy?: 'websearch' | 'phrase' | 'plain' | 'raw' | 'string';
   searchOptions?: {
     nonLatinFulltext?: boolean;
     searchMultipleFields?: boolean;
