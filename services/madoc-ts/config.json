@@ -59,6 +59,7 @@
       "hideSearchButton": false,
       "hideRandomManifest": false,
       "hideRandomCanvas": false,
+      "hideOpenInTheseus": false,
       "generatePDF": false,
       "reviewerDashboard": false
     },

@@ -87,6 +87,7 @@ export type ProjectConfiguration = TabularProjectConfigurationFields & {
     hideSearchButton?: boolean;
     hideRandomManifest?: boolean;
     hideRandomCanvas?: boolean;
+    hideOpenInTheseus?: boolean;
   };
   reviewOptions?: {
     allowMerging?: boolean;
@@ -158,6 +159,7 @@ export type ProjectConfigurationNEW = TabularProjectConfigurationFields & {
     hideSearchButton?: boolean;
     hideRandomManifest?: boolean;
     hideRandomCanvas?: boolean;
+    hideOpenInTheseus?: boolean;
   };
 
   // collectionPageOptions?: {

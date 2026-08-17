@@ -24,6 +24,7 @@ import { useProject } from '../hooks/use-project';
 import { useManifestUserTasks } from '../hooks/use-manifest-user-tasks';
 import { OpenInTheseusButton } from '../../shared/components/OpenInTheseusButton';
 import { shouldShowGeneratePdfButton } from '../utility/manifest-page-options';
+import { useRouteContext } from '../hooks/use-route-context';
 
 export type props = {
   alignment?: string;
@@ -36,6 +37,7 @@ export const ManifestActions: React.FC<props> = ({ alignment }) => {
   const { canUserSubmit, preventFurtherSubmission } = useManifestUserTasks();
   const { isActive, isPreparing } = useProjectStatus();
   const { data: project } = useProject();
+  const { manifestId, projectId } = useRouteContext();
   const { tasks: continueSubmission, inProgress: continueCount } = useContinueSubmission();
 
   const {
@@ -134,7 +136,9 @@ export const ManifestActions: React.FC<props> = ({ alignment }) => {
           </Button>
         ) : null}
 
-        {!options.hideOpenInTheseus ? <OpenInTheseusButton /> : null}
+        {!options.hideOpenInTheseus ? (
+          <OpenInTheseusButton id={manifestId} type="manifest" projectSlug={projectId} />
+        ) : null}
 
         {!options.hideSearchButton ? (
           <Button as={Link} to={createLink({ subRoute: 'search' })}>

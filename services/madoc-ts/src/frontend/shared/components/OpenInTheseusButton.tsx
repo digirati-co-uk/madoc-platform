@@ -1,17 +1,36 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRouteContext } from '../../site/hooks/use-route-context';
 import { useSite } from '../hooks/use-site';
 import { Button } from '../navigation/Button';
 
+interface OpenInTheseusButtonProps {
+  id?: number;
+  type: 'collection' | 'manifest';
+  projectSlug?: string;
+}
 
-export const OpenInTheseusButton: React.FC = () => {
+interface TheseusUrlOptions extends OpenInTheseusButtonProps {
+  id: number;
+  origin: string;
+  siteSlug: string;
+}
+
+export function createTheseusUrl({ id, origin, projectSlug, siteSlug, type }: TheseusUrlOptions) {
+  const resourcePath = projectSlug
+    ? `projects/${projectSlug}/export/manifest/${id}/3.0`
+    : `${type}s/${id}/export/${type === 'manifest' ? 'source' : '3.0'}`;
+
+  return `https://theseusviewer.org?iiif-content=${encodeURIComponent(
+    `${origin}/s/${siteSlug}/madoc/api/${resourcePath}`
+  )}`;
+}
+
+export function OpenInTheseusButton({ id, type, projectSlug }: OpenInTheseusButtonProps) {
   const { t } = useTranslation();
-  const { manifestId } = useRouteContext();
   const { slug } = useSite();
   const origin = typeof window === 'undefined' ? '' : window.location.origin;
 
-  if (!manifestId) {
+  if (!id) {
     return null;
   }
 
@@ -21,7 +40,7 @@ export const OpenInTheseusButton: React.FC = () => {
       title={t('Open in Theseus')}
       target="_blank"
       rel="noopener noreferrer"
-      href={`https://theseusviewer.org?iiif-content=${origin}/s/${slug}/madoc/api/manifests/${manifestId}/export/source`}
+      href={createTheseusUrl({ id, origin, projectSlug, siteSlug: slug, type })}
     >
       {t('Open in Theseus')}
     </Button>

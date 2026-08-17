@@ -12,6 +12,7 @@ import { GoToRandomCanvas } from '../features/canvas/GoToRandomCanvas';
 import { GoToRandomManifest } from '../features/manifest/GoToRandomManifest';
 import { useSiteConfiguration } from '../features/SiteConfigurationContext';
 import { StartContributingButton } from '../features/project/StartContributingButton';
+import { OpenInTheseusButton } from '../../shared/components/OpenInTheseusButton';
 
 export const ProjectActions: React.FC<{
   showContributingButton?: boolean;
@@ -48,6 +49,9 @@ export const ProjectActions: React.FC<{
           <Button as={Link} to={createLink({ subRoute: 'personal-notes' })}>
             {t('Personal notes')}
           </Button>
+        ) : null}
+        {!options.hideOpenInTheseus ? (
+          <OpenInTheseusButton id={project.collection_id} type="collection" projectSlug={project.slug} />
         ) : null}
       </ButtonRow>
     </div>

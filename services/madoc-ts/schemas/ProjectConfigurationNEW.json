@@ -118,6 +118,9 @@
             },
             "hideRandomCanvas": {
               "type": "boolean"
+            },
+            "hideOpenInTheseus": {
+              "type": "boolean"
             }
           }
         },

@@ -390,6 +390,10 @@ export const siteConfigurationModel: {
         label: 'Hide go to random canvas',
         value: 'hideRandomCanvas',
       },
+      {
+        label: 'Hide open in Theseus button',
+        value: 'hideOpenInTheseus',
+      },
     ],
   },
   manifestPageOptions: {
@@ -622,6 +626,10 @@ export const ProjectConfigInterface: ProjectConfigTemplate = {
       {
         label: 'Hide go to random canvas',
         value: 'hideRandomCanvas',
+      },
+      {
+        label: 'Hide open in Theseus button',
+        value: 'hideOpenInTheseus',
       },
     ],
   },

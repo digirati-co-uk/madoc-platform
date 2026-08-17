@@ -7,9 +7,14 @@ import { CollectionPaginatedItems } from '../blocks/CollectionPaginatedItems';
 import { CollectionTitle } from '../blocks/CollectionTitle';
 import { usePaginatedCollection } from '../hooks/use-paginated-collection';
 import { CollectionMetadata } from '../blocks/CollectionMetadata';
+import { OpenInTheseusButton } from '../../shared/components/OpenInTheseusButton';
+import { useRouteContext } from '../hooks/use-route-context';
+import { useProjectPageConfiguration } from '../hooks/use-project-page-configuration';
 
-export const ViewCollection: React.FC = () => {
+export function ViewCollection() {
   const { isLoading } = usePaginatedCollection();
+  const { collectionId, projectId } = useRouteContext();
+  const options = useProjectPageConfiguration();
 
   if (isLoading) {
     return <DisplayBreadcrumbs />;
@@ -23,6 +28,10 @@ export const ViewCollection: React.FC = () => {
 
       <Slot name="collection-header">
         <CollectionTitle />
+
+        {!options.hideOpenInTheseus ? (
+          <OpenInTheseusButton id={collectionId} type="collection" projectSlug={projectId} />
+        ) : null}
 
         <CollectionFilterOptions />
 
@@ -48,4 +57,4 @@ export const ViewCollection: React.FC = () => {
       </Slot>
     </>
   );
-};
+}

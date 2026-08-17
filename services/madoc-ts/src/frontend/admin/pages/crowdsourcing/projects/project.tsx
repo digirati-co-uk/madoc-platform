@@ -12,6 +12,7 @@ import { useData } from '@/frontend/shared/hooks/use-data';
 import { createUniversalComponent } from '@/frontend/shared/utility/create-universal-component';
 import { Button } from '@/frontend/shared/navigation/Button';
 import type { TabularOutlineSharePayload } from './tabular-project/types';
+import { OpenInTheseusButton } from '@/frontend/shared/components/OpenInTheseusButton';
 
 const DEFAULT_DUPLICATE_URL = (id: string | number) =>
   `/projects/create/remote?template=urn:madoc:project:${encodeURIComponent(String(id))}&duplicateProjectId=${encodeURIComponent(
@@ -138,6 +139,7 @@ export const Project: UniversalComponent<ProjectType> = createUniversalComponent
               <Button as="a" href={`/s/${slug}/projects/${data.slug}`}>
                 {t('Go to project on site')}
               </Button>
+              <OpenInTheseusButton id={data.collection_id} type="collection" projectSlug={data.slug} />
               {projectTemplate && projectTemplate.type !== 'custom' ? (
                 <div className="mt-2">
                   <strong>{projectTemplate.metadata.label}</strong> |{' '}

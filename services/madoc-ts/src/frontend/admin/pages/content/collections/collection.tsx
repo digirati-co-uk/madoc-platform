@@ -10,6 +10,7 @@ import { WidePage } from '../../../../shared/layout/WidePage';
 import { usePaginatedData } from '../../../../shared/hooks/use-data';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
 import { ErrorPage } from '../../../../shared/components/NotFoundPage';
+import { OpenInTheseusButton } from '../../../../shared/components/OpenInTheseusButton';
 
 type CollectionViewType = {
   data: CollectionFull;
@@ -58,6 +59,8 @@ export const CollectionView: UniversalComponent<CollectionViewType> = createUniv
               {t('{{count}} manifests', { count: pagination.totalResults })}
               {' | '}
               <a href={`/s/${site.slug}/collections/${id}`}>{t('View on site')}</a>
+              {' | '}
+              <OpenInTheseusButton id={Number(id)} type="collection" />
             </>
           }
         />
