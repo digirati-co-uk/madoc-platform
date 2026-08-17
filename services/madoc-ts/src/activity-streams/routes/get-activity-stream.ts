@@ -9,6 +9,8 @@ export const getActivityStream: RouteMiddleware<{
   secondaryStream?: string;
   slug?: string;
 }> = async context => {
+  context.set('Access-Control-Allow-Origin', '*');
+
   const slug = context.params.slug;
   const siteId = slug
     ? (await context.siteManager.getSiteBySlug(slug))?.id
