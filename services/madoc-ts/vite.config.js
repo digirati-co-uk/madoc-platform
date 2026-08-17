@@ -36,14 +36,6 @@ export default defineConfig({
   optimizeDeps: {
     include: ['@manifest-editor/iiif-browser-bundle'],
   },
-  test: {
-    globals: true,
-    environment: 'happy-dom',
-    coverage: {
-      reporter: ['text', 'html'],
-      exclude: ['node_modules/'],
-    },
-  },
   plugins: [
     react({
       babel: {

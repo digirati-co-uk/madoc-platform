@@ -169,10 +169,14 @@
           "type": "boolean"
         },
         "searchStrategy": {
-          "type": "string",
           "enum": [
-            "string"
-          ]
+            "phrase",
+            "plain",
+            "raw",
+            "string",
+            "websearch"
+          ],
+          "type": "string"
         },
         "hideManifestMetadataOnCanvas": {
           "type": "boolean"

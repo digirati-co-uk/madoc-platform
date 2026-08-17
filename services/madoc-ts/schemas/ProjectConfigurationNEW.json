@@ -210,10 +210,14 @@
           ]
         },
         "searchStrategy": {
-          "type": "string",
           "enum": [
-            "string"
-          ]
+            "phrase",
+            "plain",
+            "raw",
+            "string",
+            "websearch"
+          ],
+          "type": "string"
         },
         "searchOptions": {
           "type": "object",

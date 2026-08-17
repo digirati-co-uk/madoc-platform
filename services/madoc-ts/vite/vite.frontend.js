@@ -1,5 +1,5 @@
 import react from '@vitejs/plugin-react';
-import { defineConfig, splitVendorChunkPlugin } from 'vite';
+import { defineConfig } from 'vite';
 import fs from 'fs';
 import path from 'path';
 
@@ -55,16 +55,6 @@ export default defineConfig({
   base: '/s/default/madoc/',
   build: {
     rollupOptions: {
-      onwarn(warning, warn) {
-        if (
-          warning.code === 'MODULE_LEVEL_DIRECTIVE' &&
-          typeof warning.message === 'string' &&
-          warning.message.includes('"use client"')
-        ) {
-          return;
-        }
-        warn(warning);
-      },
       input: {
         site: 'src/site.html',
         admin: 'src/admin.html',
@@ -75,16 +65,10 @@ export default defineConfig({
     outDir: `dist/frontend-site`,
     manifest: true,
     target: ['es2021', 'chrome97', 'safari13'],
-    minify: 'esbuild',
     sourcemap: true,
     emptyOutDir: true,
   },
-  esbuild: {
-    jsx: 'automatic',
-    jsxSideEffects: false,
-  },
   plugins: [
-    splitVendorChunkPlugin(),
     react({
       jsxRuntime: 'automatic',
       babel: {

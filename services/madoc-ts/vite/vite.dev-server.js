@@ -58,6 +58,10 @@ export default defineConfig({
     dedupe: ['react', 'react-dom', ...PROSEMIRROR_PACKAGES.map(([pkg]) => pkg)],
     alias: [
       { find: /^@\//, replacement: `${path.resolve(process.cwd(), 'src')}/` },
+      {
+        find: /^react-accessible-dropdown-menu-hook$/,
+        replacement: path.resolve(process.cwd(), 'vite/react-accessible-dropdown-menu-hook.js'),
+      },
       ...prosemirrorAliases,
       // React 19-compatible defaults.
     ],
@@ -67,10 +71,6 @@ export default defineConfig({
     target: ['es2021', 'chrome97', 'safari13'],
     minify: false,
     sourcemap: true,
-  },
-  esbuild: {
-    jsx: 'automatic',
-    jsxSideEffects: false,
   },
   server: {
     https: https
