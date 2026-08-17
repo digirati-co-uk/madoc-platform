@@ -4,6 +4,14 @@ import {
   streamManifestTypesenseDocuments,
 } from '../../src/search/typesense/build-manifest-documents';
 import { flattenCaptureModelFieldsByResource } from '../../src/search/typesense/flatten-capture-model-fields';
+import { getTypesenseProjectFilter } from '../../src/search/typesense/project-filter';
+
+describe('getTypesenseProjectFilter', () => {
+  test('scopes searches to the indexed project context', () => {
+    expect(getTypesenseProjectFilter(99)).toEqual('contexts:=`urn:madoc:project:99`');
+    expect(getTypesenseProjectFilter()).toBeUndefined();
+  });
+});
 
 describe('flattenCaptureModelFieldsByResource', () => {
   test('flattens capture model fields per target resource', () => {

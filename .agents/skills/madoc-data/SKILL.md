@@ -30,6 +30,7 @@ description: Work on Madoc TS database migrations, Slonik queries, repository me
 - Keep DB access in the existing repository/query owner instead of route-local SQL.
 - Use explicit row and domain types; do not introduce `any` to bridge a contract change.
 - Treat migrations as forward-only production history and make destructive transforms explicit.
+- Collection and project membership are embedded in Typesense manifest documents; structure changes must reindex affected manifests.
 
 ## Check
 

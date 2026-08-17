@@ -1,4 +1,5 @@
 import { useQuery } from 'react-query';
+import { getTypesenseProjectFilter } from '../../../search/typesense/project-filter';
 import { useSite } from './use-site';
 
 export type TypesenseAutocompleteHit = {
@@ -25,7 +26,7 @@ function getMadocUrnId(urn: string | undefined, type: string): string | null {
   return match ? match[1] : null;
 }
 
-export function resolveTypesenseHitPrimaryLink(hit: TypesenseAutocompleteHit): string | null {
+export function resolveTypesenseHitPrimaryLink(hit: TypesenseAutocompleteHit, projectSlug?: string): string | null {
   const isManifest = `${hit.resource_type || ''}`.toLowerCase() === 'manifest';
   const isCanvas = `${hit.resource_type || ''}`.toLowerCase() === 'canvas';
 
@@ -37,16 +38,18 @@ export function resolveTypesenseHitPrimaryLink(hit: TypesenseAutocompleteHit): s
     ? hit.contexts.map(context => getMadocUrnId(context, 'collection')).filter(Boolean)
     : [];
 
+  const projectPath = projectSlug ? `/projects/${encodeURIComponent(projectSlug)}` : '';
+
   if (canvasId && manifestId) {
-    return `/manifests/${manifestId}/c/${canvasId}`;
+    return `${projectPath}/manifests/${manifestId}/c/${canvasId}`;
   }
 
   if (manifestId) {
-    return `/manifests/${manifestId}`;
+    return `${projectPath}/manifests/${manifestId}`;
   }
 
   if (collectionIds[0]) {
-    return `/collections/${collectionIds[0]}`;
+    return `${projectPath}/collections/${collectionIds[0]}`;
   }
 
   return null;
@@ -54,10 +57,11 @@ export function resolveTypesenseHitPrimaryLink(hit: TypesenseAutocompleteHit): s
 
 export function useTypesenseSiteAutocomplete(
   rawQuery: string,
-  { enabled = true, limit = 6 }: { enabled?: boolean; limit?: number } = {}
+  { enabled = true, limit = 6, projectId }: { enabled?: boolean; limit?: number; projectId?: number } = {}
 ) {
   const site = useSite();
   const query = rawQuery.trim();
+  const projectFilter = getTypesenseProjectFilter(projectId);
 
   const statusQuery = useQuery<TypesenseStatus>(
     ['site-typesense-search-status', site.slug],
@@ -78,7 +82,7 @@ export function useTypesenseSiteAutocomplete(
   );
 
   const suggestionsQuery = useQuery<TypesenseAutocompleteHit[]>(
-    ['typesense-site-autocomplete', site.slug, query, limit],
+    ['typesense-site-autocomplete', site.slug, projectId, query, limit],
     async () => {
       const response = await fetch(`/s/${site.slug}/madoc/api/typesense`, {
         method: 'POST',
@@ -89,6 +93,7 @@ export function useTypesenseSiteAutocomplete(
         body: JSON.stringify({
           q: query,
           query_by: 'resource_label,search_text',
+          filter_by: projectFilter,
           per_page: limit,
           page: 1,
         }),

@@ -10,7 +10,8 @@ import {
   useSearchBox,
   useRefinementList,
 } from 'react-instantsearch';
-import TypesenseInstantSearchAdapter from 'typesense-instantsearch-adapter';
+import TypesenseInstantSearchAdapterImport from 'typesense-instantsearch-adapter';
+import { getTypesenseProjectFilter } from '../../../search/typesense/project-filter';
 import { DisplayBreadcrumbs } from '../blocks/Breadcrumbs';
 import { LoadingBlock } from '../../shared/callouts/LoadingBlock';
 import { HrefLink } from '../../shared/utility/href-link';
@@ -20,6 +21,12 @@ import {
   useTypesenseSiteAutocomplete,
 } from '../../shared/hooks/use-typesense-site-autocomplete';
 import { Search as LegacySearch } from './search';
+import { useProject } from '../hooks/use-project';
+import { useRouteContext } from '../hooks/use-route-context';
+
+const TypesenseInstantSearchAdapter =
+  (TypesenseInstantSearchAdapterImport as unknown as { default?: typeof TypesenseInstantSearchAdapterImport })
+    .default || TypesenseInstantSearchAdapterImport;
 
 // Scoped overrides — only target the ais-* classes we need to neutralise so that
 // our own Tailwind card styles are the single source of truth.
@@ -300,16 +307,11 @@ function sortMetadataFacetsByGrouping(a: TypesenseFacet, b: TypesenseFacet) {
   return metadataFacetLabelFromAttribute(a.field_name).localeCompare(metadataFacetLabelFromAttribute(b.field_name));
 }
 
-const SearchDefaults: React.FC = () => {
+const SearchDefaults: React.FC<{ projectFilter?: string }> = ({ projectFilter }) => {
   const { query } = useSearchBox();
   const hasQuery = !!query.trim();
-  // query_by and filter_by are Typesense-specific params forwarded by the adapter;
-  // they are not in PlainSearchParameters so we cast to bypass the type check.
-  const extraParams = {
-    query_by: 'resource_label,search_text',
-    filter_by: hasQuery ? undefined : 'resource_type:=Manifest',
-  } as any;
-  return <Configure hitsPerPage={24} {...extraParams} />;
+  const filters = [projectFilter, hasQuery ? undefined : 'resource_type:=Manifest'].filter(Boolean).join(' && ');
+  return <Configure hitsPerPage={24} filters={filters || undefined} />;
 };
 
 const SearchModeHint: React.FC = () => {
@@ -324,12 +326,13 @@ const SearchModeHint: React.FC = () => {
   );
 };
 
-const SearchInputWithAutocomplete: React.FC = () => {
+const SearchInputWithAutocomplete: React.FC<{ projectId?: number }> = ({ projectId }) => {
   const [focused, setFocused] = useState(false);
   const { query, refine } = useSearchBox();
   const { available, suggestions, isLoadingSuggestions } = useTypesenseSiteAutocomplete(query, {
     enabled: true,
     limit: 8,
+    projectId,
   });
   const showSuggestions = available && focused && query.trim().length > 1;
 
@@ -381,7 +384,8 @@ const SearchInputWithAutocomplete: React.FC = () => {
 };
 
 const HitCard: React.FC<{ hit: any }> = ({ hit }) => {
-  const primaryLink = resolveTypesenseHitPrimaryLink(hit);
+  const { projectId } = useRouteContext();
+  const primaryLink = resolveTypesenseHitPrimaryLink(hit, projectId);
 
   return (
     <article className="flex h-full w-full flex-col overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm transition hover:shadow-md">
@@ -587,6 +591,9 @@ const MetadataFacetSections: React.FC<{ facets: MetadataFacet[] }> = ({ facets }
 
 export const TypesenseSearch: React.FC = () => {
   const site = useSite();
+  const { projectId: projectSlug } = useRouteContext();
+  const { data: project } = useProject();
+  const projectFilter = getTypesenseProjectFilter(project?.id);
   const node = useMemo(() => getNodeConfig(site.slug), [site.slug]);
 
   const { data, isLoading, error } = useQuery<TypesenseStatus>(
@@ -603,7 +610,7 @@ export const TypesenseSearch: React.FC = () => {
     isLoading: metadataFacetsLoading,
     error: metadataFacetsError,
   } = useQuery<MetadataFacet[]>(
-    ['site-typesense-search-metadata-facets', site.slug, data?.collection],
+    ['site-typesense-search-metadata-facets', site.slug, data?.collection, project?.id],
     async () => {
       const response = await fetch(`/s/${site.slug}/madoc/api/typesense`, {
         method: 'POST',
@@ -614,6 +621,7 @@ export const TypesenseSearch: React.FC = () => {
           query_by: 'resource_label,search_text',
           per_page: 0,
           facet_by: 'metadata_*',
+          filter_by: projectFilter,
           max_facet_values: 25,
         }),
       });
@@ -631,7 +639,7 @@ export const TypesenseSearch: React.FC = () => {
         .map(facet => ({ attribute: facet.field_name, label: metadataFacetLabelFromAttribute(facet.field_name) }))
         .filter(facet => !isBlacklistedMetadataFacetLabel(facet.label));
     },
-    { enabled: !!data?.available && !!site.slug }
+    { enabled: !!data?.available && !!site.slug && (!projectSlug || !!project?.id) }
   );
 
   const adapter = useMemo(() => {
@@ -675,7 +683,7 @@ export const TypesenseSearch: React.FC = () => {
     };
   }, [data?.collection]);
 
-  if (isLoading) {
+  if (isLoading || (projectSlug && !project)) {
     return (
       <>
         <DisplayBreadcrumbs currentPage="Search" />
@@ -713,10 +721,10 @@ export const TypesenseSearch: React.FC = () => {
       <style>{aisResetStyles}</style>
       <DisplayBreadcrumbs currentPage="Search" />
       <InstantSearch searchClient={adapter.searchClient} indexName={data.collection} routing={routing}>
-        <SearchDefaults />
+        <SearchDefaults projectFilter={projectFilter} />
 
         <div className="mb-4">
-          <SearchInputWithAutocomplete />
+          <SearchInputWithAutocomplete projectId={project?.id} />
           <SearchModeHint />
           <Stats />
         </div>

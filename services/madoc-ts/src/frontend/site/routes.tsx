@@ -284,7 +284,7 @@ export function createRoutes(Components: RouteComponents): CreateRouteType {
         {
           path: '/projects/:slug/search',
           exact: true,
-          element: <Components.Search />,
+          element: <Components.TypesenseSearch />,
         },
         {
           path: '/projects/:slug/collections',

@@ -23,6 +23,7 @@ description: Work on Madoc TS site, admin, or account React routes, loaders, sha
 3. Use `ApiClient`, `useData`, and `useStaticData`; do not add route-local `fetch` without a concrete reason.
 4. Build links with `createLink` or `useRelativeLinks` so site/project context survives.
 5. Verify the resource context, including slot-derived values and the manifest/canvas `/model` route.
+6. Keep Typesense results, facet discovery, autocomplete, and result links in the same project context when under `/projects/:slug`.
 
 ## SSR workflow
 
