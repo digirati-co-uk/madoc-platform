@@ -1,0 +1,4 @@
+interface:
+  display_name: "Madoc Architecture"
+  short_description: "Startup, middleware, config, and process wiring"
+  default_prompt: "Use $madoc-architecture to trace or change Madoc TS application startup."

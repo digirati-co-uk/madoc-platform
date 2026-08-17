@@ -1,0 +1,4 @@
+interface:
+  display_name: "Madoc Extensions"
+  short_description: "Extension registries, plugins, and domain APIs"
+  default_prompt: "Use $madoc-extensions to add or change Madoc extension-backed behavior."

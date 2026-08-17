@@ -1,0 +1,4 @@
+interface:
+  display_name: "Madoc Tasks"
+  short_description: "Task handlers, queues, bots, and cron jobs"
+  default_prompt: "Use $madoc-tasks to add or change Madoc task, queue, bot, or cron behavior."

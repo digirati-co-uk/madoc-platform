@@ -1,0 +1,4 @@
+interface:
+  display_name: "Madoc Frontend"
+  short_description: "Site, admin, account React, loaders, and SSR"
+  default_prompt: "Use $madoc-frontend to change a Madoc frontend or SSR flow."
