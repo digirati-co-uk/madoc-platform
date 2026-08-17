@@ -25,7 +25,7 @@ export const getActivityStream: RouteMiddleware<{
   const totalItems = await context.changeDiscovery.getTotalItems({ primaryStream, secondaryStream }, siteId);
 
   const firstPage = 0;
-  const lastPage = Math.ceil(totalItems / perPage) - 1; // Math.ceil to get total NUMBER of pages, -1 to account for zero-index.
+  const lastPage = Math.max(0, Math.ceil(totalItems / perPage) - 1);
   const baseUrl = slug
     ? `${gatewayHost}/s/${slug}/madoc/api/activity/${primaryStream}${
         secondaryStream ? '/stream/' + secondaryStream : ''

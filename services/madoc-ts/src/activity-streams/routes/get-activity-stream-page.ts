@@ -35,7 +35,7 @@ export const getActivityStreamPage: RouteMiddleware<{
         secondaryStream ? '/stream/' + secondaryStream : ''
       }`
     : `${gatewayHost}/api/madoc/activity/${primaryStream}${secondaryStream ? '/stream/' + secondaryStream : ''}`;
-  const hasNextPage = totalItems < page * perPage;
+  const hasNextPage = totalItems > (page + 1) * perPage;
   const hasPrevPage = page > 0;
 
   if (Number.isNaN(page)) {
