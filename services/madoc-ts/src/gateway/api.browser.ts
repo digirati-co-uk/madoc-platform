@@ -1,7 +1,7 @@
 import cookies from 'browser-cookies';
 import { ApiClient } from './api';
 
-const [, slug] = window.location.pathname.match(/s\/([^/]*)/) as string[];
+const slug = window.location.pathname.match(/\/(?:s|account)\/([^/]*)/)?.[1];
 const jwt = cookies.get(`madoc/${slug}`) || undefined;
 
 export const api = new ApiClient({
