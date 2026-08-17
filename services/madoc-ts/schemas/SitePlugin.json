@@ -47,9 +47,7 @@
           "properties": {
             "enabled": {
               "type": "boolean",
-              "enum": [
-                false
-              ]
+              "const": false
             }
           },
           "required": [
@@ -61,9 +59,7 @@
           "properties": {
             "enabled": {
               "type": "boolean",
-              "enum": [
-                true
-              ]
+              "const": true
             },
             "revision": {
               "type": "string"

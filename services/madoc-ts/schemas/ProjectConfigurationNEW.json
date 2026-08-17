@@ -25,9 +25,7 @@
       "properties": {
         "_version": {
           "type": "number",
-          "enum": [
-            2
-          ]
+          "const": 2
         },
         "_source": {
           "type": "object",
@@ -246,9 +244,7 @@
         "maxContributionsPerResource": {
           "anyOf": [
             {
-              "enum": [
-                false
-              ],
+              "const": false,
               "type": "boolean"
             },
             {
@@ -352,9 +348,7 @@
         "contributionWarningTime": {
           "anyOf": [
             {
-              "enum": [
-                false
-              ],
+              "const": false,
               "type": "boolean"
             },
             {

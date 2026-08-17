@@ -46,9 +46,7 @@
         },
         "accent": {
           "type": "string",
-          "enum": [
-            "default"
-          ]
+          "const": "default"
         },
         "siteContainer": {
           "$ref": "#/definitions/SiteContainerTheme"
@@ -58,15 +56,11 @@
         },
         "global": {
           "type": "string",
-          "enum": [
-            "default"
-          ]
+          "const": "default"
         },
         "fonts": {
           "type": "string",
-          "enum": [
-            "default"
-          ]
+          "const": "default"
         }
       },
       "required": [
@@ -105,22 +99,22 @@
       "type": "object",
       "properties": {
         "header": {
-          "$ref": "#/definitions/5f960e3e2e87815f1d28c4d9b87c5a1f"
+          "$ref": "#/definitions/Omit%3CPartial%3CHeaderTheme%3E%2C%22__VARIATIONS__%22%3E"
         },
         "accent": {
-          "$ref": "#/definitions/2465ba41b990ac278a27e94fc80de680"
+          "$ref": "#/definitions/Omit%3CPartial%3CAccentTheme%3E%2C%22__VARIATIONS__%22%3E"
         },
         "siteContainer": {
-          "$ref": "#/definitions/c8680ad2ae0ff85f6800663e1968c10f"
+          "$ref": "#/definitions/Omit%3CPartial%3CSiteContainerTheme%3E%2C%22__VARIATIONS__%22%3E"
         },
         "footer": {
-          "$ref": "#/definitions/707af62e329a855f15bc72dc96445a8e"
+          "$ref": "#/definitions/Omit%3CPartial%3CFooterTheme%3E%2C%22__VARIATIONS__%22%3E"
         },
         "global": {
-          "$ref": "#/definitions/2c90d36b20396f72f9bf51b77fb57411"
+          "$ref": "#/definitions/Omit%3CPartial%3CGlobalTheme%3E%2C%22__VARIATIONS__%22%3E"
         },
         "fonts": {
-          "$ref": "#/definitions/eea4564a3c2bbe3be73ec4cdbd482dd0"
+          "$ref": "#/definitions/Omit%3CPartial%3CFonts%3E%2C%22__VARIATIONS__%22%3E"
         }
       }
     },
