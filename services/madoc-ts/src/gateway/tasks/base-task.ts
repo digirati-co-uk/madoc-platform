@@ -127,4 +127,9 @@ export type BaseTask = {
     progress: number;
     done: number;
   };
+  pagination?: {
+    page: number;
+    total_results: number;
+    total_pages: number;
+  };
 };

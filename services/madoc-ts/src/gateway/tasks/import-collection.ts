@@ -3,10 +3,10 @@ import { BaseTask } from './base-task';
 import * as importManifest from './import-manifest';
 import * as tasks from './task-helpers';
 import { Vault } from '@iiif/helpers/vault';
-import fetch from 'node-fetch';
 import { ImportManifestTask } from './import-manifest';
 import { iiifGetLabel } from '../../utility/iiif-get-label';
 import { ApiClient } from '../api';
+import { fetchIiifResource } from './fetch-iiif-resource';
 
 export const type = 'madoc-collection-import';
 
@@ -141,7 +141,7 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
       const [userId, siteId, manifestIds] = task.parameters;
 
       // 1. Fetch collection
-      const json = await fetch(task.subject).then(r => r.json());
+      const json = JSON.parse(await fetchIiifResource(task.subject));
       const iiifCollection = await vault.loadCollection(task.subject, json);
 
       if (!iiifCollection) {
@@ -234,7 +234,7 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
       let manifestIds = task.state.manifestIds || [];
       if (!manifestIds.length) {
         const vault = new Vault();
-        const json = await fetch(task.subject).then(r => r.json());
+        const json = JSON.parse(await fetchIiifResource(task.subject));
         const iiifCollection = await vault.loadCollection(task.subject, json);
 
         if (!iiifCollection) {

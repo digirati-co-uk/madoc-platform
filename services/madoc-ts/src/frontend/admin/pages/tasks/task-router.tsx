@@ -7,8 +7,9 @@ import React, { useEffect, useState } from 'react';
 import { ExportResourceTask } from './export-resource-task';
 import { GenericTask } from './generic-task';
 import { ManifestImportTask } from './manifest-import-task';
-import { ImportManifestTask } from '../../../../gateway/tasks/import-manifest';
+import type { ImportManifestTask } from '../../../../gateway/tasks/import-manifest';
 import { CollectionImportTask } from './collection-import-task';
+import type { ImportCollectionTask } from '../../../../gateway/tasks/import-collection';
 import { AdminHeader } from '../../molecules/AdminHeader';
 import { WidePage } from '../../../shared/layout/WidePage';
 import { useTranslation } from 'react-i18next';
@@ -18,22 +19,35 @@ import { createUniversalComponent } from '../../../shared/utility/create-univers
 import { CanvasSnippet } from '../../../shared/features/CanvasSnippet';
 import { Link } from 'react-router-dom';
 import { SmallButton } from '../../../shared/navigation/Button';
+import { Pagination } from '../../molecules/Pagination';
+import { useLocationQuery } from '../../../shared/hooks/use-location-query';
+
+export interface ManifestImportStats {
+  statuses: Record<string, number>;
+  total: number;
+}
 
 type TaskRouterType = {
-  query: { page: number };
+  query: { page?: number; status?: string };
   params: { id: string };
-  data: { task: BaseTask };
-  variables: { id: string; page: number };
+  data: { task: BaseTask; manifestImportStats?: ManifestImportStats };
+  variables: { id: string; page: number; status?: number };
 };
 
-function renderTask({ task }: TaskRouterType['data'], statusBar?: React.ReactNode) {
+function renderTask({ task, manifestImportStats }: TaskRouterType['data'], statusBar?: React.ReactNode) {
   switch (task.type) {
     case 'export-resource-task':
       return <ExportResourceTask task={task as any} statusBar={statusBar} />;
     case 'madoc-manifest-import':
       return <ManifestImportTask task={task as ImportManifestTask} statusBar={statusBar} />;
     case 'madoc-collection-import':
-      return <CollectionImportTask task={task as ImportManifestTask} statusBar={statusBar} />;
+      return (
+        <CollectionImportTask
+          task={task as ImportCollectionTask & { id: string }}
+          manifestImportStats={manifestImportStats}
+          statusBar={statusBar}
+        />
+      );
     case 'madoc-canvas-import': {
       const resourceId: number | undefined = task.state && task.state.resourceId ? task.state.resourceId : undefined;
       if (resourceId) {
@@ -72,6 +86,7 @@ export const TaskRouter: UniversalComponent<TaskRouterType> = createUniversalCom
   () => {
     const { t } = useTranslation();
     const [isDone, setIsDone] = useState(false);
+    const query = useLocationQuery<{ status?: string }>();
     const { latestData: data, status } = usePaginatedData(TaskRouter, undefined, {
       refetchInterval: isDone ? undefined : 2000,
       refetchOnWindowFocus: true,
@@ -79,15 +94,12 @@ export const TaskRouter: UniversalComponent<TaskRouterType> = createUniversalCom
     });
 
     useEffect(() => {
-      if (data && data.task.subtasks) {
-        if (data.task.subtasks.length === 0 && data.task.status !== 1) {
-          setIsDone(true);
-        } else if (
-          data.task.status !== 1 &&
-          (data.task.subtasks || []).filter(e => e.status === 3).length === data.task.subtasks.length
-        ) {
-          setIsDone(true);
-        }
+      if (data) {
+        const stats = data.task.root_statistics;
+        const hasOutstandingTasks = stats
+          ? stats.error + stats.not_started + stats.accepted + stats.progress > 0
+          : false;
+        setIsDone((data.task.status === 3 || data.task.status === -1) && !hasOutstandingTasks);
       }
     }, [data]);
 
@@ -95,7 +107,10 @@ export const TaskRouter: UniversalComponent<TaskRouterType> = createUniversalCom
       return <div>Loading...</div>;
     }
 
-    const hasSubtasks = data.task ? (data.task.subtasks || []).length > 0 : false;
+    const stats = data.task.root_statistics;
+    const hasSubtasks = stats
+      ? stats.error + stats.not_started + stats.accepted + stats.progress + stats.done > 0
+      : (data.task.subtasks || []).length > 0;
 
     return (
       <>
@@ -132,17 +147,40 @@ export const TaskRouter: UniversalComponent<TaskRouterType> = createUniversalCom
               <React.Fragment />
             )
           )}
+          {data.task.pagination ? (
+            <Pagination
+              page={data.task.pagination.page}
+              totalPages={data.task.pagination.total_pages}
+              stale={false}
+              extraQuery={{ status: query.status }}
+            />
+          ) : null}
         </WidePage>
       </>
     );
   },
   {
     async getData(key, vars, api) {
-      const task = await api.getTask(vars.id, { root_statistics: true, all: true });
-      return { task };
+      const task = await api.getTask(vars.id, {
+        root_statistics: true,
+        page: vars.page,
+        status: vars.status,
+      });
+      let manifestImportStats: ManifestImportStats | undefined;
+
+      if (task.type === 'madoc-collection-import') {
+        try {
+          manifestImportStats = await api.getTaskStats(vars.id, { type: 'madoc-manifest-import' });
+        } catch {
+          // The task remains usable if statistics are unavailable.
+        }
+      }
+
+      return { task, manifestImportStats };
     },
-    getKey(params, { page = 1 }) {
-      return ['task', { id: params.id, page }];
+    getKey(params, { page = 1, status: statusQuery }) {
+      const status = statusQuery === undefined ? undefined : Number(statusQuery);
+      return ['task', { id: params.id, page: Number(page), status: Number.isFinite(status) ? status : undefined }];
     },
   }
 );

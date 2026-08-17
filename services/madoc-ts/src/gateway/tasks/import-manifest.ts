@@ -8,12 +8,13 @@ import * as manifestOcr from './process-manifest-ocr';
 import { createTask as createSearchIndexTask } from './search-index-task';
 import * as tasks from './task-helpers';
 import { Vault } from '@iiif/helpers/vault';
-import fetch from 'node-fetch';
 import { ImportCanvasTask } from './import-canvas';
 import { iiifGetLabel } from '../../utility/iiif-get-label';
 import { ApiClient } from '../api';
 import { deleteAsync } from 'del';
 import { trimInternationalString } from '../helpers/trim-international-string';
+import { fetchIiifResource } from './fetch-iiif-resource';
+import { shouldResumeCollectionImport } from './should-resume-collection-import';
 export const type = 'madoc-manifest-import';
 
 export const status = [
@@ -67,6 +68,26 @@ export function errorMessage(message: string) {
   return changeStatus('error' as any, { state: { errorMessage: message } });
 }
 
+async function resumeParentCollectionImport(api: ApiClient, task: ImportManifestTask) {
+  if (!task.parent_task) {
+    return;
+  }
+
+  try {
+    const parent = await api.getTask(task.parent_task);
+    if (parent.type !== 'madoc-collection-import' || !parent.id) {
+      return;
+    }
+
+    const stats = await api.getTaskStats(parent.id, { type });
+    if (shouldResumeCollectionImport(stats.statuses)) {
+      await api.updateTask(parent.id, { status: 0, status_text: 'pending' });
+    }
+  } catch (error) {
+    console.log('Unable to resume parent collection import', error);
+  }
+}
+
 export const jobHandler = async (name: string, taskId: string, api: ApiClient) => {
   switch (name) {
     case 'created': {
@@ -76,7 +97,7 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
 
       // 1. Fetch manifest
       const subject = decodeURI(task.subject);
-      const text = await fetch(subject).then(r => r.text());
+      const text = await fetchIiifResource(subject);
       const json = JSON.parse(text);
       const iiifManifest = await vault.loadManifest(subject, json);
 
@@ -200,6 +221,7 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
       // 6. Mark as done if no canvases
       if (subtasks.length === 0 && subtasksToReTrigger.length === 0) {
         await api.updateTask(task.id, changeStatus('done', { state: { diskCacheLocation: fileLocation } }));
+        await resumeParentCollectionImport(api, task);
         return;
       }
 
@@ -231,8 +253,8 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
               await deleteAsync(dirname(task.state.diskCacheLocation));
             }
           }
-        } catch (e) {
-          console.log('Unable to delete local manifest file', e);
+        } catch (error) {
+          console.log('Unable to delete local manifest file', error);
         }
       }
 
@@ -297,6 +319,7 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
             structureComplete: true,
           },
         });
+        await resumeParentCollectionImport(api, task);
         try {
           if (!task.parent_task) {
             await userApi.notifications.createNotification({
@@ -310,7 +333,7 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
               user: userId,
             });
           }
-        } catch (e) {
+        } catch {
           // no-op
         }
       }
