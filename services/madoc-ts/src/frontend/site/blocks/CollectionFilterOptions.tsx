@@ -16,6 +16,7 @@ import { useSiteConfiguration } from '../features/SiteConfigurationContext';
 import { StartContributingButton } from '../features/project/StartContributingButton';
 import { HIDE_COMPLETED_FILTER, SHOW_AVAILABLE_FILTER } from '../../../utility/resource-status';
 import { useRouteContext } from '../hooks/use-route-context';
+import { OpenInTheseusButton } from '../../shared/components/OpenInTheseusButton';
 
 export interface CollectionFilterOptionsProps {
   buttons?: {
@@ -69,6 +70,9 @@ export function CollectionFilterOptions(props: CollectionFilterOptionsProps) {
           >
             {activeFilter === SHOW_AVAILABLE_FILTER ? t('Show all') : t('Show available')}
           </Button>
+        ) : null}
+        {!options.hideOpenInTheseus ? (
+          <OpenInTheseusButton id={data.collection.id} type="collection" projectSlug={projectId} />
         ) : null}
         {hideSearchButton ? null : (
           <Button as={Link} to={createLink({ subRoute: 'search' })}>
