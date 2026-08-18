@@ -75,7 +75,9 @@ export function clearTypesenseAvailabilityCache() {
   availabilityCache = undefined;
 }
 
-export async function isTypesenseAvailable({ force = false }: { force?: boolean } = {}): Promise<TypesenseAvailability> {
+export async function isTypesenseAvailable({
+  force = false,
+}: { force?: boolean } = {}): Promise<TypesenseAvailability> {
   if (!isTypesenseSearchEnabled()) {
     return {
       available: false,
@@ -189,9 +191,11 @@ export class TypesenseClient {
         { name: 'rights', type: 'string', optional: true, facet: true },
         { name: 'site_id', type: 'int32', facet: true },
         { name: 'project_ids', type: 'string[]', facet: true, optional: true },
+        { name: 'project_facets', type: 'string[]', facet: true, optional: true },
         { name: 'collection_ids', type: 'string[]', facet: true, optional: true },
         { name: 'contexts', type: 'string[]', facet: true },
         { name: 'search_text', type: 'string[]' },
+        { name: 'search_context', type: 'string[]', optional: true },
         { name: 'metadata_keys', type: 'string[]', facet: true, optional: true },
         { name: 'metadata_pairs', type: 'string[]', facet: true, optional: true },
         { name: 'metadata_.*', type: 'string[]', facet: true, optional: true },
@@ -208,9 +212,11 @@ export class TypesenseClient {
     const existingFields = Array.isArray(existing?.fields) ? existing.fields : [];
     const requiredFields: Array<TypesenseCollectionField> = [
       { name: 'manifest_ids', type: 'string[]', facet: true, optional: true },
+      { name: 'project_facets', type: 'string[]', facet: true, optional: true },
       { name: 'collection_ids', type: 'string[]', facet: true, optional: true },
       { name: 'metadata_.*', type: 'string[]', facet: true, optional: true },
       { name: 'capture_model_.*', type: 'string[]', optional: true },
+      { name: 'search_context', type: 'string[]', optional: true },
     ];
     const missingFields = requiredFields.filter(
       requiredField => !existingFields.some((field: any) => field?.name === requiredField.name)
@@ -333,7 +339,10 @@ export class TypesenseClient {
     return this.parseImportResponse(result || '');
   }
 
-  async upsertDocumentsStream(collectionName: string, documents: Iterable<Record<string, any>> | AsyncIterable<Record<string, any>>) {
+  async upsertDocumentsStream(
+    collectionName: string,
+    documents: Iterable<Record<string, any>> | AsyncIterable<Record<string, any>>
+  ) {
     const toNdjson = async function* () {
       for await (const document of documents as AsyncIterable<Record<string, any>>) {
         yield `${JSON.stringify(document)}\n`;
@@ -385,7 +394,9 @@ export class TypesenseClient {
       searchParams.set(key, `${value}`);
     }
 
-    return this.request(`/collections/${encodeURIComponent(collectionName)}/documents/search?${searchParams.toString()}`);
+    return this.request(
+      `/collections/${encodeURIComponent(collectionName)}/documents/search?${searchParams.toString()}`
+    );
   }
 
   async multiSearch(payload: Record<string, any>) {

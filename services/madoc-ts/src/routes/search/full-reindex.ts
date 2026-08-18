@@ -83,11 +83,17 @@ export const fullReindex: RouteMiddleware = async context => {
   });
 
   while (state.active) {
-    const responses = await context.connection.any(sql<{ id: number; type: 'manifest' | 'collection' }>`
-        select resource_id as id, resource_type as type
-        from iiif_derived_resource idr
-        where site_id = ${siteId}
-          and (resource_type = 'manifest' or (resource_type = 'collection' and flat = false))
+    const responses = await context.connection.any(sql<{ id: number; type: 'manifest' | 'collection' | 'project' }>`
+        select id, type from (
+          select resource_id as id, resource_type as type
+          from iiif_derived_resource
+          where site_id = ${siteId}
+            and (resource_type = 'manifest' or (resource_type = 'collection' and flat = false))
+          union all
+          select id, 'project'::text as type
+          from iiif_project
+          where site_id = ${siteId}
+        ) resources
         limit ${state.limit} offset ${state.offset}
     `);
 

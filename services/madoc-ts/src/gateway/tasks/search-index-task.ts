@@ -129,6 +129,16 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
             }
             break;
           }
+
+          case 'project': {
+            try {
+              await siteApi.indexProject(resource.id);
+              await api.updateTask(taskId, { status: 3 });
+            } catch {
+              // Ignore errors.
+            }
+            break;
+          }
         }
       } catch (err) {
         // no-op

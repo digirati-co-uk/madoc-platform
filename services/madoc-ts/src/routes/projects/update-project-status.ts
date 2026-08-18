@@ -6,6 +6,7 @@ import { RequestError } from '../../utility/errors/request-error';
 import { parseProjectId } from '../../utility/parse-project-id';
 import { SQL_EMPTY } from '../../utility/postgres-tags';
 import { userWithScope } from '../../utility/user-with-scope';
+import { api } from '../../gateway/api.server';
 
 type UpdateProjectStatus = {
   status: number;
@@ -24,12 +25,13 @@ export const updateProjectStatus: RouteMiddleware<{ id: string }, UpdateProjectS
     throw new RequestError('Status must be between 0-4');
   }
 
-  await context.connection.query(sql`
+  const project = await context.connection.one<{ id: number }>(sql`
     update iiif_project set status = ${status} 
     where 
       ${projectId ? sql`id = ${projectId}` : SQL_EMPTY}
       ${projectSlug ? sql`slug = ${projectSlug}` : SQL_EMPTY}
       and site_id = ${siteId}
+    returning id
   `);
 
   if (status === 1) {
@@ -43,6 +45,10 @@ export const updateProjectStatus: RouteMiddleware<{ id: string }, UpdateProjectS
         and start_date is null
     `);
   }
+
+  const userApi = api.asUser({ siteId });
+  context.disposableApis.push(userApi);
+  await userApi.indexProject(project.id);
 
   context.response.status = 204;
 };

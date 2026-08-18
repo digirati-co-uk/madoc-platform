@@ -10,4 +10,16 @@ describe('Typesense result links', () => {
       })
     ).toBe('/collections/2438');
   });
+
+  test('links project results to the project outside project search context', () => {
+    expect(
+      resolveTypesenseHitPrimaryLink(
+        {
+          resource_type: 'Project',
+          resource_id: 'urn:madoc:project:99',
+        },
+        'another-project'
+      )
+    ).toBe('/projects/99');
+  });
 });

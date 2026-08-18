@@ -50,4 +50,5 @@ export async function deleteProject(projectId: number, siteId: number, connectio
 
   // Delete project collection
   await deleteCollection(collection_id, siteId, connection, false);
+  await siteApi.indexProject(projectId);
 }

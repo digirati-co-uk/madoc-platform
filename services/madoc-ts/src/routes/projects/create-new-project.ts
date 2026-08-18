@@ -231,6 +231,8 @@ export const createNewProject: RouteMiddleware<unknown, CreateProject> = async c
       // ignore
     }
 
+    await userApi.indexProject(project.id);
+
     // Returning project.
     context.response.body = await context.projects.getProjectByIdOrSlug(project.id, siteId);
   } catch (err) {

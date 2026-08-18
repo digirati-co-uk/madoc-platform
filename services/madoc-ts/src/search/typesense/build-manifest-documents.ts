@@ -1,5 +1,7 @@
 import { ManifestSearchExportRow, SearchExportMetadataField } from '../../database/queries/search-index-export';
 import { CaptureModelSearchAggregate } from './flatten-capture-model-fields';
+import type { Project } from '../../types/project-full';
+import type { InternationalString } from '@iiif/presentation-3';
 
 export interface ManifestDocumentContext {
   siteId: number;
@@ -19,9 +21,11 @@ export interface TypesenseManifestSearchDocument {
   rights: string | null;
   site_id: number;
   project_ids: string[];
+  project_facets: string[];
   collection_ids: string[];
   contexts: string[];
   search_text: string[];
+  search_context: string[];
   metadata_keys: string[];
   metadata_pairs: string[];
   languages: string[];
@@ -189,9 +193,11 @@ export function buildManifestTypesenseDocument(
     rights: row.rights,
     site_id: context.siteId,
     project_ids: row.project_ids.map(projectId => `${projectId}`),
+    project_facets: row.project_facets,
     collection_ids: row.collection_ids.map(collectionId => `${collectionId}`),
     contexts,
     search_text: uniq([label, ...metadataValues, ...(captureModel?.searchText || [])]),
+    search_context: captureModel?.labels || [],
     metadata_keys: uniq(metadataKeys),
     metadata_pairs: uniq(metadataPairs),
     ...metadataFacetValues,
@@ -200,6 +206,54 @@ export function buildManifestTypesenseDocument(
     nav_date: row.nav_date ? Math.floor(new Date(row.nav_date).getTime() / 1000) : null,
     item_index: row.item_index ?? null,
     sort_index: row.resource_type === 'Manifest' ? 0 : (row.item_index ?? 0) + 1,
+  };
+}
+
+function getInternationalStringValues(value: InternationalString | string | null | undefined) {
+  if (!value) {
+    return [];
+  }
+  return uniq(
+    typeof value === 'string'
+      ? [value]
+      : Object.values(value)
+          .flat()
+          .filter((item): item is string => typeof item === 'string')
+  );
+}
+
+export function buildProjectTypesenseDocument(
+  project: Project,
+  context: Pick<ManifestDocumentContext, 'siteId' | 'siteUrn'>
+): TypesenseManifestSearchDocument {
+  const projectUrn = `urn:madoc:project:${project.id}`;
+  const labels = getInternationalStringValues(project.label);
+  const summaries = getInternationalStringValues(project.summary);
+  const label = labels[0] || `Project ${project.id}`;
+
+  return {
+    id: `${projectUrn}:site:${context.siteId}`,
+    resource_id: projectUrn,
+    manifest_id: projectUrn,
+    manifest_ids: [],
+    resource_type: 'Project',
+    resource_label: label,
+    sort_label: label.toLocaleLowerCase(),
+    thumbnail: project.placeholderImage || null,
+    rights: null,
+    site_id: context.siteId,
+    project_ids: [`${project.id}`],
+    project_facets: [],
+    collection_ids: [`${project.collection_id}`],
+    contexts: [context.siteUrn],
+    search_text: summaries,
+    search_context: labels.slice(1),
+    metadata_keys: [],
+    metadata_pairs: [],
+    languages: uniq([...Object.keys(project.label || {}), ...Object.keys(project.summary || {})]),
+    nav_date: null,
+    item_index: null,
+    sort_index: 0,
   };
 }
 

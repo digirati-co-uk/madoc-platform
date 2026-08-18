@@ -224,6 +224,7 @@ import { fullReindex } from './routes/search/full-reindex';
 import { indexCanvas } from './routes/search/index-canvas';
 import { indexCollection } from './routes/search/index-collection';
 import { indexManifest } from './routes/search/index-manifest';
+import { indexProject } from './routes/search/index-project';
 import { typesenseGetContext, typesenseListContexts } from './routes/search/typesense-contexts';
 import {
   typesenseDeleteIIIF,
@@ -496,6 +497,7 @@ export const router = new TypedRouter({
   'delete-collection': [TypedRouter.DELETE, '/api/madoc/iiif/collections/:id', deleteCollectionEndpoint],
   'publish-collection': [TypedRouter.POST, '/api/madoc/iiif/collections/:id/publish', publishCollection],
   'search-index-collection': [TypedRouter.POST, '/api/madoc/iiif/collections/:id/index', indexCollection],
+  'search-index-project': [TypedRouter.POST, '/api/madoc/projects/:id/index', indexProject],
   'get-collection-metadata': [TypedRouter.GET, '/api/madoc/iiif/collections/:id/metadata', getCollectionMetadata],
   'get-collection-structure': [TypedRouter.GET, '/api/madoc/iiif/collections/:id/structure', getCollectionStructure],
   'get-collection-projects': [TypedRouter.GET, '/api/madoc/iiif/collections/:id/projects', getCollectionProjects],

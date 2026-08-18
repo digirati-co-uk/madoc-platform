@@ -342,7 +342,7 @@ const SearchInputWithAutocomplete: React.FC<{ projectId?: number }> = ({ project
         className="w-full rounded-md border border-slate-300 px-4 py-2.5 text-sm shadow-sm outline-none transition focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
         type="search"
         value={query}
-        placeholder="Search manifests and canvases…"
+        placeholder="Search resources…"
         onFocus={() => setFocused(true)}
         onBlur={() => setTimeout(() => setFocused(false), 120)}
         onChange={event => refine(event.target.value)}
@@ -471,6 +471,7 @@ function ResourceTypeTabs() {
   const refinedItems = items.filter(item => item.isRefined);
   const tabs = [
     { label: 'All resources', value: undefined },
+    { label: 'Projects', value: 'Project' },
     { label: 'Collections', value: 'Collection' },
     { label: 'Manifests', value: 'Manifest' },
     { label: 'Canvases', value: 'Canvas' },
@@ -622,6 +623,50 @@ const FacetOptionList: React.FC<{
   </>
 );
 
+const ProjectFacet = () => {
+  const { items, refine, canToggleShowMore, isShowingMore, toggleShowMore } = useRefinementList(
+    {
+      attribute: 'project_facets',
+      limit: 8,
+      showMore: true,
+      showMoreLimit: 30,
+      sortBy: ['isRefined:desc', 'count:desc', 'name:asc'],
+    },
+    {
+      $$widgetType: 'ais.refinementList',
+    }
+  );
+  const visibleItems = useMemo<VisibleFacetItem[]>(
+    () =>
+      items
+        .filter(item => item.count > 0 || item.isRefined)
+        .map(item => {
+          const separatorIndex = item.value.indexOf('|');
+          return {
+            ...item,
+            label: separatorIndex === -1 ? item.label : item.value.slice(separatorIndex + 1),
+          };
+        }),
+    [items]
+  );
+
+  if (!visibleItems.length) {
+    return null;
+  }
+
+  return (
+    <SidebarSection title="Project">
+      <FacetOptionList
+        items={visibleItems}
+        refine={refine}
+        canToggleShowMore={canToggleShowMore}
+        isShowingMore={isShowingMore}
+        toggleShowMore={toggleShowMore}
+      />
+    </SidebarSection>
+  );
+};
+
 const MetadataFacetList: React.FC<MetadataFacet> = ({ attribute, label }) => {
   const { items, refine, canToggleShowMore, isShowingMore, toggleShowMore } = useRefinementList(
     {
@@ -740,7 +785,7 @@ export function TypesenseSearch() {
         nodes: [node],
         cacheSearchResultsForSeconds: 0,
       },
-      additionalSearchParameters: { query_by: 'resource_label,search_text' },
+      additionalSearchParameters: { query_by: 'resource_label,search_text,search_context' },
     });
   }, [data?.available, node]);
 
@@ -827,6 +872,7 @@ export function TypesenseSearch() {
         <div className="flex flex-col items-start gap-6 md:flex-row">
           {/* Sidebar */}
           <aside className="w-full shrink-0 pr-2 md:sticky md:top-4 md:max-h-[calc(100vh-2rem)] md:w-64 md:overflow-y-auto">
+            {!projectSlug ? <ProjectFacet /> : null}
             {(metadataFacetsLoading || metadataFacets.length > 0 || !!metadataFacetsError) && (
               <>
                 {metadataFacetsLoading ? (

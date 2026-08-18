@@ -21,6 +21,7 @@ export interface ManifestSearchExportRow {
   primary_manifest_id: number | null;
   manifest_ids: number[];
   project_ids: number[];
+  project_facets: string[];
   collection_ids: number[];
   metadata: SearchExportMetadataField[];
 }
@@ -48,6 +49,11 @@ function resourceScopeContext(siteId: number) {
             filter (where project.id is not null),
           ARRAY[]::int[]
         ) as project_ids,
+        coalesce(
+          array_agg(distinct concat(project.id, '|', coalesce(project_label.value, concat('Project ', project.id))))
+            filter (where project.id is not null),
+          ARRAY[]::text[]
+        ) as project_facets,
         case
           when rs.resource_type = 'Manifest' then rs.resource_id
           when coalesce(array_length(pm.manifest_ids, 1), 0) = 0 then null
@@ -93,6 +99,15 @@ function resourceScopeContext(siteId: number) {
         on project.site_id = ${siteId}
        and project.collection_id = collection_link.resource_id
        and col.flat = true
+      left join lateral (
+        select metadata.value
+        from iiif_metadata metadata
+        where metadata.site_id = ${siteId}
+          and metadata.resource_id = project.collection_id
+          and metadata.key = 'label'
+        order by metadata.id
+        limit 1
+      ) project_label on true
       group by rs.resource_id, rs.resource_type, pm.manifest_ids
     )
   `;
@@ -137,6 +152,7 @@ export function getManifestResourcesForSearchExport(manifestId: number, siteId: 
         sc.primary_manifest_id,
         sc.manifest_ids,
         sc.project_ids,
+        sc.project_facets,
         sc.collection_ids
       from resource_scope rs
       inner join iiif_resource r on r.id = rs.resource_id
@@ -158,6 +174,7 @@ export function getManifestResourcesForSearchExport(manifestId: number, siteId: 
       rb.primary_manifest_id,
       rb.manifest_ids,
       rb.project_ids,
+      rb.project_facets,
       rb.collection_ids,
       coalesce(
         jsonb_agg(
@@ -189,6 +206,7 @@ export function getManifestResourcesForSearchExport(manifestId: number, siteId: 
       rb.primary_manifest_id,
       rb.manifest_ids,
       rb.project_ids,
+      rb.project_facets,
       rb.collection_ids
     order by
       case when rb.resource_type = 'Manifest' then 0 else 1 end asc,
@@ -224,6 +242,7 @@ export function getCollectionResourceForSearchExport(collectionId: number, siteI
         sc.primary_manifest_id,
         sc.manifest_ids,
         sc.project_ids,
+        sc.project_facets,
         sc.collection_ids
       from resource_scope rs
       inner join iiif_resource r on r.id = rs.resource_id and r.type = 'collection'
@@ -242,6 +261,7 @@ export function getCollectionResourceForSearchExport(collectionId: number, siteI
       rb.primary_manifest_id,
       rb.manifest_ids,
       rb.project_ids,
+      rb.project_facets,
       rb.collection_ids,
       coalesce(
         jsonb_agg(
@@ -270,6 +290,7 @@ export function getCollectionResourceForSearchExport(collectionId: number, siteI
       rb.primary_manifest_id,
       rb.manifest_ids,
       rb.project_ids,
+      rb.project_facets,
       rb.collection_ids
     limit 1
   `;
@@ -307,6 +328,7 @@ export function getCanvasResourceForSearchExport(canvasId: number, siteId: numbe
         sc.primary_manifest_id,
         sc.manifest_ids,
         sc.project_ids,
+        sc.project_facets,
         sc.collection_ids
       from resource_scope rs
       inner join iiif_resource r on r.id = rs.resource_id and r.type = 'canvas'
@@ -325,6 +347,7 @@ export function getCanvasResourceForSearchExport(canvasId: number, siteId: numbe
       rb.primary_manifest_id,
       rb.manifest_ids,
       rb.project_ids,
+      rb.project_facets,
       rb.collection_ids,
       coalesce(
         jsonb_agg(
@@ -353,6 +376,7 @@ export function getCanvasResourceForSearchExport(canvasId: number, siteId: numbe
       rb.primary_manifest_id,
       rb.manifest_ids,
       rb.project_ids,
+      rb.project_facets,
       rb.collection_ids
     limit 1
   `;

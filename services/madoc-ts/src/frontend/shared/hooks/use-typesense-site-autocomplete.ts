@@ -27,6 +27,7 @@ function getMadocUrnId(urn: string | undefined, type: string): string | null {
 }
 
 export function resolveTypesenseHitPrimaryLink(hit: TypesenseAutocompleteHit, projectSlug?: string): string | null {
+  const isProject = `${hit.resource_type || ''}`.toLowerCase() === 'project';
   const isCollection = `${hit.resource_type || ''}`.toLowerCase() === 'collection';
   const isManifest = `${hit.resource_type || ''}`.toLowerCase() === 'manifest';
   const isCanvas = `${hit.resource_type || ''}`.toLowerCase() === 'canvas';
@@ -39,8 +40,13 @@ export function resolveTypesenseHitPrimaryLink(hit: TypesenseAutocompleteHit, pr
     ? hit.contexts.map(context => getMadocUrnId(context, 'collection')).filter(Boolean)
     : [];
   const collectionId = isCollection ? getMadocUrnId(hit.resource_id, 'collection') : collectionIds[0];
+  const projectId = isProject ? getMadocUrnId(hit.resource_id, 'project') : null;
 
   const projectPath = projectSlug ? `/projects/${encodeURIComponent(projectSlug)}` : '';
+
+  if (projectId) {
+    return `/projects/${projectId}`;
+  }
 
   if (isCollection && collectionId) {
     return `${projectPath}/collections/${collectionId}`;
@@ -98,7 +104,7 @@ export function useTypesenseSiteAutocomplete(
         },
         body: JSON.stringify({
           q: query,
-          query_by: 'resource_label,search_text',
+          query_by: 'resource_label,search_text,search_context',
           filter_by: projectFilter,
           per_page: limit,
           page: 1,

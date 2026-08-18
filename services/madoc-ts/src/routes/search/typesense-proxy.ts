@@ -67,7 +67,7 @@ function sanitizeSearchParams(input: Record<string, any> | string) {
     scoped.q = '*';
   }
   if (!scoped.query_by) {
-    scoped.query_by = 'resource_label,search_text';
+    scoped.query_by = 'resource_label,search_text,search_context';
   }
 
   return scoped;

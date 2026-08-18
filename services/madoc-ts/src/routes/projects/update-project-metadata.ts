@@ -23,6 +23,7 @@ export const updateProjectMetadata: RouteMiddleware<{ id: string }, UpdateProjec
   const { metadata } = context.requestBody;
 
   const userApi = api.asUser({ siteId });
+  context.disposableApis.push(userApi);
 
   // 1. get project.
   const project = await context.connection.one(getProject({ projectId, projectSlug }, siteId));
@@ -70,6 +71,7 @@ export const updateProjectMetadata: RouteMiddleware<{ id: string }, UpdateProjec
     name: label,
     description: summary,
   });
+  await userApi.indexProject(project.id);
 
   context.response.body = {
     label,
