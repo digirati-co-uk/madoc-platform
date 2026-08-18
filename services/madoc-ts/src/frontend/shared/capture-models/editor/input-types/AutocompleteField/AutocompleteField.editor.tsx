@@ -29,13 +29,7 @@ const AutocompleteFieldEditor: React.FC<Props> = props => {
       <StyledFormField>
         <StyledFormLabel>
           {t('Placeholder')}
-          <Field
-            as={StyledFormInputElement}
-            type="text"
-            name="placeholder"
-            value={props.placeholder}
-            required={false}
-          />
+          <Field as={StyledFormInputElement} type="text" name="placeholder" required={false} />
         </StyledFormLabel>
       </StyledFormField>
       <StyledFormField>
