@@ -82,10 +82,6 @@ const ReviewContainer = styledComponents.div`
 
   &[data-is-max-window='true'] {
     height: 100vh;
-
-    ${CanvasViewerControls} {
-      top: 9em;
-    }
   }
 `;
 
@@ -576,10 +572,11 @@ function ViewSingleReview({
             {isOSD ? (
               <ReviewCanvasViewer canvas={canvas}>
                 <InfoMessage
-                  style={{ lineHeight: '3.4em', position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10 }}
+                  $small
+                  style={{ lineHeight: '1.4em', position: 'absolute', top: 0, left: 0, right: 0, zIndex: 20 }}
                 >
                   {t('You cannot edit annotations if you are rotating')}
-                  <Button style={{ margin: '0.8em' }} onClick={() => setIsOSD(false)}>
+                  <Button style={{ margin: '0.4em 0 0' }} onClick={() => setIsOSD(false)}>
                     Reset
                   </Button>
                 </InfoMessage>
@@ -597,7 +594,7 @@ function ViewSingleReview({
               />
             )}
             {(enableRotation || isOpen) && (
-              <CanvasViewerControls>
+              <CanvasViewerControls style={isOSD ? { top: '4em' } : undefined}>
                 {enableRotation ? (
                   <CanvasViewerButton onClick={rotate}>
                     <RotateIcon title={t('atlas__rotate', { defaultValue: 'Rotate' })} />
