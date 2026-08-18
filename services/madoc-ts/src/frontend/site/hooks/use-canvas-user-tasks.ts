@@ -7,6 +7,7 @@ import { useInvalidateAfterSubmission } from './use-invalidate-after-submission'
 import { useManifestUserTasks } from './use-manifest-user-tasks';
 import { useProjectCanvasTasks } from './use-project-canvas-tasks';
 import { RouteContext } from './use-route-context';
+import { isContinuableTaskStatus } from '../../../utility/resource-status';
 
 const defaultScope: any[] = [];
 export function useCanvasUserTasks() {
@@ -105,7 +106,7 @@ export function useCanvasUserTasks() {
       : true;
 
     const canSubmitMultiple = config.project.modelPageOptions?.preventMultipleUserSubmissionsPerResource
-      ? !userContributions || userContributions.length === 0 || userContributions?.some(task => task.status === 1)
+      ? userContributions.length === 0 || userContributions.some(task => isContinuableTaskStatus(task.status))
       : true;
 
     const allTasksDone = userContributions.length

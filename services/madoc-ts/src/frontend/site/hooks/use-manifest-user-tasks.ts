@@ -6,6 +6,7 @@ import { useInvalidateAfterSubmission } from './use-invalidate-after-submission'
 import { useProjectManifestTasks } from './use-project-manifest-tasks';
 import { RouteContext } from './use-route-context';
 import { useSiteConfiguration } from '../features/SiteConfigurationContext';
+import { isContinuableTaskStatus } from '../../../utility/resource-status';
 
 const defaultScope: any[] = [];
 export function useManifestUserTasks() {
@@ -77,9 +78,7 @@ export function useManifestUserTasks() {
       : true;
 
     const canSubmitMultiple = config.project.modelPageOptions?.preventMultipleUserSubmissionsPerResource
-      ? !userContributions ||
-        userContributions.length === 0 ||
-        userContributions?.some(task => task.status === 0 || task.status === 1)
+      ? userContributions.length === 0 || userContributions.some(task => isContinuableTaskStatus(task.status))
       : true;
 
     const allTasksDone = userContributions.length

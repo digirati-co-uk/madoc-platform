@@ -18,6 +18,8 @@
 | `3` | Accepted | Reviewer approves |
 | `4` | Changes requested | Reviewer returns work |
 
+Contributor gating must treat statuses `0`, `1`, and `4` as continuable; multiple-submission policy must not block revisions returned for changes.
+
 ## Review states
 
 | Status | Meaning |

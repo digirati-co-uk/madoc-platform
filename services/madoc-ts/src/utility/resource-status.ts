@@ -43,6 +43,14 @@ export function isActiveTaskStatus(status: number) {
   return status !== TASK_STATUS_REJECTED;
 }
 
+export function isContinuableTaskStatus(status: number) {
+  return (
+    status === RESOURCE_STATUS_AVAILABLE ||
+    status === RESOURCE_STATUS_IN_PROGRESS ||
+    status === TASK_STATUS_CHANGES_REQUESTED
+  );
+}
+
 export function mapUserTaskStatus(status: number): ResourceStatus {
   switch (status) {
     case RESOURCE_STATUS_COMPLETED:
