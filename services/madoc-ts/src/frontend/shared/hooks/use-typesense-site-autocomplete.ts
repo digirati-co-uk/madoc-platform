@@ -27,6 +27,7 @@ function getMadocUrnId(urn: string | undefined, type: string): string | null {
 }
 
 export function resolveTypesenseHitPrimaryLink(hit: TypesenseAutocompleteHit, projectSlug?: string): string | null {
+  const isCollection = `${hit.resource_type || ''}`.toLowerCase() === 'collection';
   const isManifest = `${hit.resource_type || ''}`.toLowerCase() === 'manifest';
   const isCanvas = `${hit.resource_type || ''}`.toLowerCase() === 'canvas';
 
@@ -37,8 +38,13 @@ export function resolveTypesenseHitPrimaryLink(hit: TypesenseAutocompleteHit, pr
   const collectionIds = Array.isArray(hit.contexts)
     ? hit.contexts.map(context => getMadocUrnId(context, 'collection')).filter(Boolean)
     : [];
+  const collectionId = isCollection ? getMadocUrnId(hit.resource_id, 'collection') : collectionIds[0];
 
   const projectPath = projectSlug ? `/projects/${encodeURIComponent(projectSlug)}` : '';
+
+  if (isCollection && collectionId) {
+    return `${projectPath}/collections/${collectionId}`;
+  }
 
   if (canvasId && manifestId) {
     return `${projectPath}/manifests/${manifestId}/c/${canvasId}`;
@@ -48,8 +54,8 @@ export function resolveTypesenseHitPrimaryLink(hit: TypesenseAutocompleteHit, pr
     return `${projectPath}/manifests/${manifestId}`;
   }
 
-  if (collectionIds[0]) {
-    return `${projectPath}/collections/${collectionIds[0]}`;
+  if (collectionId) {
+    return `${projectPath}/collections/${collectionId}`;
   }
 
   return null;

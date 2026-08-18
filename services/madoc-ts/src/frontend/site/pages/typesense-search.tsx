@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import type { Hit } from 'instantsearch.js';
 import { useQuery } from 'react-query';
 import {
   Configure,
@@ -7,6 +8,7 @@ import {
   InstantSearch,
   Pagination,
   Stats,
+  useInfiniteHits,
   useSearchBox,
   useRefinementList,
 } from 'react-instantsearch';
@@ -18,11 +20,16 @@ import { HrefLink } from '../../shared/utility/href-link';
 import { useSite } from '../../shared/hooks/use-site';
 import {
   resolveTypesenseHitPrimaryLink,
+  type TypesenseAutocompleteHit,
   useTypesenseSiteAutocomplete,
 } from '../../shared/hooks/use-typesense-site-autocomplete';
 import { Search as LegacySearch } from './search';
 import { useProject } from '../hooks/use-project';
 import { useRouteContext } from '../hooks/use-route-context';
+import { useSiteConfiguration } from '../features/SiteConfigurationContext';
+import { GridIcon } from '../../shared/icons/GridIcon';
+import { UnorderedListIcon } from '../../shared/icons/UnorderedListIcon';
+import { useInfiniteAction } from '../hooks/use-infinite-action';
 
 const TypesenseInstantSearchAdapter =
   (TypesenseInstantSearchAdapterImport as unknown as { default?: typeof TypesenseInstantSearchAdapterImport })
@@ -190,6 +197,14 @@ type SearchPageUiState = {
   refinementList?: Record<string, string[]>;
 };
 
+type SearchView = 'grid' | 'list';
+
+interface TypesenseSearchDocument extends TypesenseAutocompleteHit {
+  search_text?: string;
+}
+
+type TypesenseSearchHit = Hit<TypesenseSearchDocument>;
+
 const blacklistedMetadataFacetLabels = new Set(['label', 'summary', 'description', 'notes', 'note', 'noot']);
 const blacklistedMetadataFacetIncludes = ['label', 'oclc', 'link', 'description', 'related'];
 
@@ -307,24 +322,9 @@ function sortMetadataFacetsByGrouping(a: TypesenseFacet, b: TypesenseFacet) {
   return metadataFacetLabelFromAttribute(a.field_name).localeCompare(metadataFacetLabelFromAttribute(b.field_name));
 }
 
-const SearchDefaults: React.FC<{ projectFilter?: string }> = ({ projectFilter }) => {
-  const { query } = useSearchBox();
-  const hasQuery = !!query.trim();
-  const filters = [projectFilter, hasQuery ? undefined : 'resource_type:=Manifest'].filter(Boolean).join(' && ');
-  return <Configure hitsPerPage={24} filters={filters || undefined} />;
-};
-
-const SearchModeHint: React.FC = () => {
-  const { query } = useSearchBox();
-  const hasQuery = !!query.trim();
-  return (
-    <p className="mb-4 mt-1 text-sm text-slate-500">
-      {hasQuery
-        ? 'Searching all indexed resource types.'
-        : 'Showing manifests by default. Start typing to include canvases and other resources.'}
-    </p>
-  );
-};
+function SearchDefaults({ projectFilter }: { projectFilter?: string }) {
+  return <Configure hitsPerPage={24} filters={projectFilter || undefined} />;
+}
 
 const SearchInputWithAutocomplete: React.FC<{ projectId?: number }> = ({ projectId }) => {
   const [focused, setFocused] = useState(false);
@@ -383,35 +383,37 @@ const SearchInputWithAutocomplete: React.FC<{ projectId?: number }> = ({ project
   );
 };
 
-const HitCard: React.FC<{ hit: any }> = ({ hit }) => {
+function HitCard({ hit, view }: { hit: TypesenseSearchHit; view: SearchView }) {
   const { projectId } = useRouteContext();
   const primaryLink = resolveTypesenseHitPrimaryLink(hit, projectId);
+  const isList = view === 'list';
+  const thumbnail = hit.thumbnail ? (
+    <img
+      className={`block bg-slate-100 object-cover ${isList ? 'h-32 w-40' : 'h-44 w-full'}`}
+      src={hit.thumbnail}
+      alt={hit.resource_label || 'Search result thumbnail'}
+    />
+  ) : (
+    <div className={`flex items-center justify-center bg-slate-100 ${isList ? 'h-32 w-40' : 'h-44 w-full'}`}>
+      <svg className="h-10 w-10 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75L7.5 9l4.5 6 3-4 4.5 6H2.25z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 8.25a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+      </svg>
+    </div>
+  );
 
   return (
-    <article className="flex h-full w-full flex-col overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm transition hover:shadow-md">
-      {hit.thumbnail ? (
-        <img
-          className="block h-44 w-full bg-slate-100 object-cover"
-          src={hit.thumbnail}
-          alt={hit.resource_label || 'Search result thumbnail'}
-        />
+    <article
+      className={`flex h-full w-full overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm transition hover:shadow-md ${
+        isList ? 'flex-row' : 'flex-col'
+      }`}
+    >
+      {primaryLink ? (
+        <HrefLink href={primaryLink} className={`block shrink-0 ${isList ? '' : 'w-full'}`}>
+          {thumbnail}
+        </HrefLink>
       ) : (
-        <div className="flex h-44 w-full items-center justify-center bg-slate-100">
-          <svg
-            className="h-10 w-10 text-slate-300"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={1.5}
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75L7.5 9l4.5 6 3-4 4.5 6H2.25z" />
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M21.75 8.25a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"
-            />
-          </svg>
-        </div>
+        <div className={`shrink-0 ${isList ? '' : 'w-full'}`}>{thumbnail}</div>
       )}
 
       <div className="flex flex-1 flex-col p-3.5">
@@ -430,10 +432,10 @@ const HitCard: React.FC<{ hit: any }> = ({ hit }) => {
         >
           {primaryLink ? (
             <HrefLink href={primaryLink} className="text-blue-700 no-underline hover:underline">
-              <Highlight hit={hit as any} attribute="resource_label" />
+              <Highlight hit={hit} attribute="resource_label" />
             </HrefLink>
           ) : (
-            <Highlight hit={hit as any} attribute="resource_label" />
+            <Highlight hit={hit} attribute="resource_label" />
           )}
         </h3>
 
@@ -446,15 +448,133 @@ const HitCard: React.FC<{ hit: any }> = ({ hit }) => {
             overflow: 'hidden',
           }}
         >
-          <Highlight hit={hit as any} attribute="search_text" />
+          <Highlight hit={hit} attribute="search_text" />
         </div>
       </div>
     </article>
   );
-};
+}
+
+function GridHitCard({ hit }: { hit: TypesenseSearchHit }) {
+  return <HitCard hit={hit} view="grid" />;
+}
+
+function ListHitCard({ hit }: { hit: TypesenseSearchHit }) {
+  return <HitCard hit={hit} view="list" />;
+}
+
+function ResourceTypeTabs() {
+  const { items, refine } = useRefinementList(
+    { attribute: 'resource_type', limit: 20 },
+    { $$widgetType: 'ais.refinementList' }
+  );
+  const refinedItems = items.filter(item => item.isRefined);
+  const tabs = [
+    { label: 'All resources', value: undefined },
+    { label: 'Collections', value: 'Collection' },
+    { label: 'Manifests', value: 'Manifest' },
+    { label: 'Canvases', value: 'Canvas' },
+  ];
+  const allResourcesCount = items.reduce((total, item) => total + item.count, 0);
+
+  return (
+    <div className="mb-5 border-b border-slate-200" role="tablist" aria-label="Resource type">
+      <div className="flex gap-6">
+        {tabs.map(tab => {
+          const isActive = tab.value
+            ? refinedItems.length === 1 && refinedItems[0].value === tab.value
+            : refinedItems.length === 0;
+          return (
+            <button
+              key={tab.label}
+              type="button"
+              role="tab"
+              aria-selected={isActive}
+              className={`border-b-2 px-1 pb-2.5 text-sm font-medium transition ${
+                isActive
+                  ? 'border-blue-700 text-blue-700'
+                  : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-800'
+              }`}
+              onClick={() => {
+                refinedItems.forEach(item => refine(item.value));
+                if (tab.value && !refinedItems.some(item => item.value === tab.value)) refine(tab.value);
+              }}
+            >
+              {tab.label}
+              <span className="ml-2 rounded-full bg-slate-100 px-1.5 py-0.5 text-xs text-slate-500">
+                {(tab.value
+                  ? items.find(item => item.value === tab.value)?.count || 0
+                  : allResourcesCount
+                ).toLocaleString()}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function ViewToggle({ view, onChange }: { view: SearchView; onChange: (view: SearchView) => void }) {
+  return (
+    <div className="inline-flex overflow-hidden rounded-md border border-slate-300 bg-white" aria-label="Result view">
+      {[
+        { value: 'grid' as const, label: 'Grid view', icon: <GridIcon className="h-4 w-4" /> },
+        { value: 'list' as const, label: 'List view', icon: <UnorderedListIcon className="h-4 w-4" /> },
+      ].map(option => (
+        <button
+          key={option.value}
+          type="button"
+          aria-label={option.label}
+          aria-pressed={view === option.value}
+          title={option.label}
+          className={`flex h-8 w-9 items-center justify-center border-r border-slate-300 last:border-r-0 ${
+            view === option.value ? 'bg-blue-700 text-white' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800'
+          }`}
+          onClick={() => onChange(option.value)}
+        >
+          {option.icon}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function InfiniteSearchResults({ view }: { view: SearchView }) {
+  const { items, isLastPage, showMore } = useInfiniteHits<TypesenseSearchDocument>({});
+  const [loadMoreButton] = useInfiniteAction({ canFetchMore: !isLastPage, fetchMore: showMore });
+
+  return (
+    <>
+      <ul
+        className={`m-0 mb-6 list-none p-0 ${
+          view === 'grid' ? 'grid grid-cols-[repeat(auto-fill,minmax(15rem,1fr))] gap-4' : 'flex flex-col gap-3'
+        }`}
+      >
+        {items.map(hit => (
+          <li key={hit.objectID} className="m-0 flex border-0 bg-transparent p-0 shadow-none">
+            <HitCard hit={hit} view={view} />
+          </li>
+        ))}
+      </ul>
+      {!isLastPage ? (
+        <div className="flex justify-center">
+          <button
+            ref={loadMoreButton}
+            type="button"
+            className="rounded-md border border-slate-300 bg-white px-4 py-2 text-sm text-slate-700 hover:bg-slate-50"
+            onClick={showMore}
+          >
+            Load more results
+          </button>
+        </div>
+      ) : null}
+    </>
+  );
+}
 
 const SidebarSection: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
-  <div className="mb-5">
+  <div className="mb-8 last:mb-0">
     <h4 className="mb-2 text-[0.7rem] font-semibold uppercase tracking-widest text-slate-400">{title}</h4>
     {children}
   </div>
@@ -502,41 +622,6 @@ const FacetOptionList: React.FC<{
   </>
 );
 
-const SingleFacetSection: React.FC<{ title: string; attribute: string }> = ({ title, attribute }) => {
-  const { items, refine, canToggleShowMore, isShowingMore, toggleShowMore } = useRefinementList(
-    {
-      attribute,
-      limit: 8,
-      showMore: true,
-      showMoreLimit: 20,
-      sortBy: ['isRefined:desc', 'count:desc', 'name:asc'],
-    },
-    {
-      $$widgetType: 'ais.refinementList',
-    }
-  );
-  const visibleItems = useMemo<VisibleFacetItem[]>(
-    () => items.filter(item => item.count > 0 || item.isRefined),
-    [items]
-  );
-
-  if (!visibleItems.length) {
-    return null;
-  }
-
-  return (
-    <SidebarSection title={title}>
-      <FacetOptionList
-        items={visibleItems}
-        refine={refine}
-        canToggleShowMore={canToggleShowMore}
-        isShowingMore={isShowingMore}
-        toggleShowMore={toggleShowMore}
-      />
-    </SidebarSection>
-  );
-};
-
 const MetadataFacetList: React.FC<MetadataFacet> = ({ attribute, label }) => {
   const { items, refine, canToggleShowMore, isShowingMore, toggleShowMore } = useRefinementList(
     {
@@ -560,8 +645,8 @@ const MetadataFacetList: React.FC<MetadataFacet> = ({ attribute, label }) => {
   }
 
   return (
-    <div className="mb-3 last:mb-0">
-      <p className="mb-1 text-[0.75rem] font-medium capitalize text-slate-500">{label}</p>
+    <div>
+      <p className="mb-2 text-[0.75rem] font-medium capitalize text-slate-500">{label}</p>
       <FacetOptionList
         items={visibleItems}
         refine={refine}
@@ -582,18 +667,23 @@ const MetadataFacetSections: React.FC<{ facets: MetadataFacet[] }> = ({ facets }
 
   return (
     <SidebarSection title="Metadata">
-      {visibleFacets.map(facet => (
-        <MetadataFacetList key={facet.attribute} attribute={facet.attribute} label={facet.label} />
-      ))}
+      <div className="space-y-6">
+        {visibleFacets.map(facet => (
+          <MetadataFacetList key={facet.attribute} attribute={facet.attribute} label={facet.label} />
+        ))}
+      </div>
     </SidebarSection>
   );
 };
 
-export const TypesenseSearch: React.FC = () => {
+export function TypesenseSearch() {
   const site = useSite();
+  const { project: siteConfiguration } = useSiteConfiguration();
   const { projectId: projectSlug } = useRouteContext();
   const { data: project } = useProject();
+  const [view, setView] = useState<SearchView>('grid');
   const projectFilter = getTypesenseProjectFilter(project?.id);
+  const infiniteScroll = siteConfiguration.searchOptions?.infiniteScroll !== false;
   const node = useMemo(() => getNodeConfig(site.slug), [site.slug]);
 
   const { data, isLoading, error } = useQuery<TypesenseStatus>(
@@ -725,15 +815,18 @@ export const TypesenseSearch: React.FC = () => {
 
         <div className="mb-4">
           <SearchInputWithAutocomplete projectId={project?.id} />
-          <SearchModeHint />
-          <Stats />
         </div>
 
-        <div className="flex items-start gap-6">
-          {/* Sidebar */}
-          <aside className="w-56 shrink-0 rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-            <SingleFacetSection title="Type" attribute="resource_type" />
+        <ResourceTypeTabs />
 
+        <div className="mb-4 flex items-center justify-between gap-4">
+          <Stats />
+          <ViewToggle view={view} onChange={setView} />
+        </div>
+
+        <div className="flex flex-col items-start gap-6 md:flex-row">
+          {/* Sidebar */}
+          <aside className="w-full shrink-0 pr-2 md:sticky md:top-4 md:max-h-[calc(100vh-2rem)] md:w-64 md:overflow-y-auto">
             {(metadataFacetsLoading || metadataFacets.length > 0 || !!metadataFacetsError) && (
               <>
                 {metadataFacetsLoading ? (
@@ -752,21 +845,30 @@ export const TypesenseSearch: React.FC = () => {
           </aside>
 
           {/* Results */}
-          <main className="min-w-0 flex-1">
-            <Hits
-              hitComponent={HitCard}
-              classNames={{
-                root: 'mb-6',
-                list: 'm-0 grid list-none grid-cols-[repeat(auto-fill,minmax(15rem,1fr))] gap-4 p-0',
-                item: 'm-0 flex h-full border-0 bg-transparent p-0 shadow-none',
-              }}
-            />
-            <div className="flex justify-center">
-              <Pagination />
-            </div>
+          <main id="search-results" className="min-w-0 flex-1">
+            {infiniteScroll ? (
+              <InfiniteSearchResults view={view} />
+            ) : (
+              <>
+                <Hits
+                  hitComponent={view === 'grid' ? GridHitCard : ListHitCard}
+                  classNames={{
+                    root: 'mb-6',
+                    list:
+                      view === 'grid'
+                        ? 'm-0 grid list-none grid-cols-[repeat(auto-fill,minmax(15rem,1fr))] gap-4 p-0'
+                        : 'm-0 flex list-none flex-col gap-3 p-0',
+                    item: 'm-0 flex h-full border-0 bg-transparent p-0 shadow-none',
+                  }}
+                />
+                <div className="flex justify-center">
+                  <Pagination />
+                </div>
+              </>
+            )}
           </main>
         </div>
       </InstantSearch>
     </>
   );
-};
+}

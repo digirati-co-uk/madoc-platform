@@ -78,6 +78,10 @@ function getResourceUrn(resourceType: ManifestSearchExportRow['resource_type'], 
     return `urn:madoc:manifest:${resourceId}`;
   }
 
+  if (resourceType === 'Collection') {
+    return `urn:madoc:collection:${resourceId}`;
+  }
+
   return `urn:madoc:canvas:${resourceId}`;
 }
 
@@ -94,7 +98,7 @@ function getPrimaryManifestUrn(row: ManifestSearchExportRow) {
     return `urn:madoc:manifest:${row.manifest_ids[0]}`;
   }
 
-  return `urn:madoc:canvas:${row.resource_id}`;
+  return getResourceUrn(row.resource_type, row.resource_id);
 }
 
 export function buildManifestTypesenseDocument(
@@ -137,7 +141,10 @@ export function buildManifestTypesenseDocument(
 
     const fallbackFacetFieldName = toMetadataFacetFieldName(key);
     if (fallbackFacetFieldName) {
-      metadataFacetValues[fallbackFacetFieldName] = uniq([...(metadataFacetValues[fallbackFacetFieldName] || []), value]);
+      metadataFacetValues[fallbackFacetFieldName] = uniq([
+        ...(metadataFacetValues[fallbackFacetFieldName] || []),
+        value,
+      ]);
     }
   }
 

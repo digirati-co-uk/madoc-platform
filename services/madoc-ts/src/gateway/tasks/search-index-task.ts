@@ -15,7 +15,7 @@ export interface SearchIndexTask extends BaseTask {
   parameters: [
     Array<{ id: number; type: string }>,
     { indexAllResources?: boolean; recursive?: boolean; resourceStack?: number[] } | undefined,
-    number
+    number,
   ];
 
   status: -1 | 0 | 1 | 2 | 3 | 4;
@@ -121,11 +121,12 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
           }
 
           case 'collection': {
-            // @todo ingest collection.
-            //  - Make sure collection isn't in resourceStack
-            //  - Ingest collection.
-            //  - Create task for each manifest.
-            //  - Add each collection id to the resourceStack
+            try {
+              await siteApi.indexCollection(resource.id);
+              await api.updateTask(taskId, { status: 3 });
+            } catch {
+              // Ignore errors.
+            }
             break;
           }
         }

@@ -504,6 +504,10 @@ export const siteConfigurationModel: {
         label: 'Only show manifests',
         value: 'onlyShowManifests',
       },
+      {
+        label: 'Use infinite scroll for search results',
+        value: 'infiniteScroll',
+      },
     ],
   },
   activityStreams: {
@@ -797,6 +801,10 @@ export const ProjectConfigSearch: ProjectConfigTemplate = {
       {
         label: 'Show search facet count (number of matching manifests)',
         value: 'showSearchFacetCount',
+      },
+      {
+        label: 'Use infinite scroll for search results',
+        value: 'infiniteScroll',
       },
     ],
   },

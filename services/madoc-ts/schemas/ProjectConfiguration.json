@@ -214,6 +214,9 @@
             },
             "onlyShowManifests": {
               "type": "boolean"
+            },
+            "infiniteScroll": {
+              "type": "boolean"
             }
           }
         },

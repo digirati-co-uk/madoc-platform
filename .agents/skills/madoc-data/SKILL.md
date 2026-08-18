@@ -31,6 +31,7 @@ description: Work on Madoc TS database migrations, Slonik queries, repository me
 - Use explicit row and domain types; do not introduce `any` to bridge a contract change.
 - Treat migrations as forward-only production history and make destructive transforms explicit.
 - Collection and project membership are embedded in Typesense manifest documents; structure changes must reindex affected manifests.
+- Non-flat collections have their own Typesense documents; keep their descendant manifest, project, and collection contexts aligned with the shared search export.
 
 ## Check
 

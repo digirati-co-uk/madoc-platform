@@ -222,6 +222,7 @@ import { batchIndex } from './routes/search/batch-index';
 import { getFacetConfiguration, updateFacetConfiguration } from './routes/search/facet-configuration';
 import { fullReindex } from './routes/search/full-reindex';
 import { indexCanvas } from './routes/search/index-canvas';
+import { indexCollection } from './routes/search/index-collection';
 import { indexManifest } from './routes/search/index-manifest';
 import { typesenseGetContext, typesenseListContexts } from './routes/search/typesense-contexts';
 import {
@@ -494,6 +495,7 @@ export const router = new TypedRouter({
   ],
   'delete-collection': [TypedRouter.DELETE, '/api/madoc/iiif/collections/:id', deleteCollectionEndpoint],
   'publish-collection': [TypedRouter.POST, '/api/madoc/iiif/collections/:id/publish', publishCollection],
+  'search-index-collection': [TypedRouter.POST, '/api/madoc/iiif/collections/:id/index', indexCollection],
   'get-collection-metadata': [TypedRouter.GET, '/api/madoc/iiif/collections/:id/metadata', getCollectionMetadata],
   'get-collection-structure': [TypedRouter.GET, '/api/madoc/iiif/collections/:id/structure', getCollectionStructure],
   'get-collection-projects': [TypedRouter.GET, '/api/madoc/iiif/collections/:id/projects', getCollectionProjects],
@@ -765,18 +767,18 @@ export const router = new TypedRouter({
   'post-update-password': [TypedRouter.POST, '/s/:slug/profile', updateProfilePage],
   'get-logout': [TypedRouter.GET, '/s/:slug/logout', [parseJwt, logout], { isPublic: true }],
   'reset-password': [TypedRouter.GET, '/s/:slug/reset-password', [parseJwt, resetPasswordPage], { isPublic: true }],
-  'activate-account': [
-    TypedRouter.GET,
-    '/s/:slug/activate-account',
-    [parseJwt, resetPasswordPage],
-    { isPublic: true },
-  ],
+  'activate-account': [TypedRouter.GET, '/s/:slug/activate-account', [parseJwt, resetPasswordPage], { isPublic: true }],
   'post-reset-password': [TypedRouter.POST, '/s/:slug/reset-password', resetPasswordPage],
   'refresh-login': [TypedRouter.POST, '/s/:slug/auth/refresh', refreshToken],
   'api-authentication': [TypedRouter.POST, '/s/:slug/auth/api-token', authenticateApi],
   'get-login-refresh': [TypedRouter.GET, '/s/:slug/login/refresh', loginRefresh],
   'account-login-entry': [TypedRouter.GET, '/account/login', accountEntryRedirect('login'), { isPublic: true }],
-  'account-register-entry': [TypedRouter.GET, '/account/register', accountEntryRedirect('register'), { isPublic: true }],
+  'account-register-entry': [
+    TypedRouter.GET,
+    '/account/register',
+    accountEntryRedirect('register'),
+    { isPublic: true },
+  ],
   'account-forgot-password-entry': [
     TypedRouter.GET,
     '/account/forgot-password',
@@ -986,12 +988,7 @@ export const router = new TypedRouter({
 
   // Frontend
   'admin-frontend': [TypedRouter.GET, '/s/:slug/admin{/*path}', adminFrontend],
-  'site-frontend-root': [
-    TypedRouter.GET,
-    '/s/:slug',
-    [parseJwt, siteFrontendAccess, siteFrontend],
-    { isPublic: true },
-  ],
+  'site-frontend-root': [TypedRouter.GET, '/s/:slug', [parseJwt, siteFrontendAccess, siteFrontend], { isPublic: true }],
   'site-frontend': [
     TypedRouter.GET,
     '/s/:slug{/*path}',

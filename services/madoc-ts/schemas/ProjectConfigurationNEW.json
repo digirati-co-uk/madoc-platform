@@ -234,6 +234,9 @@
             },
             "showSearchFacetCount": {
               "type": "boolean"
+            },
+            "infiniteScroll": {
+              "type": "boolean"
             }
           }
         },

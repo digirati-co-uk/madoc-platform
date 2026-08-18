@@ -60,6 +60,7 @@ export const updateMetadata: RouteMiddleware<{ id: number }, MetadataUpdate> = a
 
   if (context.request.originalUrl.indexOf('iiif/collections') !== -1) {
     const userApi = api.asUser({ siteId });
+    userApi.indexCollection(resourceId);
     userApi.postUniversalChangeToStreams({
       id: resourceId,
       type: 'collection',

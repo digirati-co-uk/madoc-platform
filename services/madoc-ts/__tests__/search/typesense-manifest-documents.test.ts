@@ -201,4 +201,30 @@ describe('buildManifestTypesenseDocument', () => {
     expect(documents[0].resource_type).toEqual('Manifest');
     expect(documents[1].resource_type).toEqual('Canvas');
   });
+
+  test('maps collections as searchable resources', () => {
+    const row: ManifestSearchExportRow = {
+      resource_id: 44,
+      resource_type: 'Collection',
+      item_index: null,
+      source: null,
+      rights: null,
+      nav_date: null,
+      thumbnail: 'https://example.org/collection.jpg',
+      default_thumbnail: null,
+      placeholder_image: null,
+      primary_manifest_id: 5,
+      manifest_ids: [5],
+      project_ids: [99],
+      collection_ids: [44],
+      metadata: [{ key: 'label', value: 'Collection one', language: 'en', source: 'iiif', data: null }],
+    };
+
+    const document = buildManifestTypesenseDocument(row, { siteId: 1, siteUrn: 'urn:madoc:site:1' });
+
+    expect(document.id).toEqual('urn:madoc:collection:44:site:1');
+    expect(document.resource_type).toEqual('Collection');
+    expect(document.resource_label).toEqual('Collection one');
+    expect(document.contexts).toEqual(expect.arrayContaining(['urn:madoc:project:99', 'urn:madoc:collection:44']));
+  });
 });

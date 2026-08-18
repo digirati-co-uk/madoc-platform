@@ -13,9 +13,8 @@ export function ProjectSearchBox() {
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
     const data = new FormData(e.target as HTMLFormElement);
-    const text = data.get('text');
-    if (!text) return;
-    navigate(`/projects/${projectId}/search?fulltext=${encodeURIComponent(text.toString())}`);
+    const text = data.get('text')?.toString() || '';
+    navigate(`/projects/${projectId}/search?fulltext=${encodeURIComponent(text)}`);
   };
 
   return (

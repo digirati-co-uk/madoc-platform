@@ -2543,6 +2543,16 @@ export class ApiClient {
     }
   }
 
+  async indexCollection(id: number) {
+    try {
+      await this.request<SearchIndexTask>(`/api/madoc/iiif/collections/${id}/index`, {
+        method: 'POST',
+      });
+    } catch {
+      // Search indexing is best effort for resource updates.
+    }
+  }
+
   async getIndexedCanvasById(madoc_id: string) {
     return this.request<SearchResponse>(`${getSearchQueryEndpoint()}?${stringify({ madoc_id })}`, {
       method: 'GET',

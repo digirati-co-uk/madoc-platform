@@ -57,6 +57,7 @@ export type ProjectConfiguration = TabularProjectConfigurationFields & {
     nonLatinFulltext?: boolean;
     searchMultipleFields?: boolean;
     onlyShowManifests?: boolean;
+    infiniteScroll?: boolean;
   };
   shortExpiryTime?: string;
   longExpiryTime?: string;
@@ -206,6 +207,7 @@ export type ProjectConfigurationNEW = TabularProjectConfigurationFields & {
     searchMultipleFields?: boolean;
     onlyShowManifests?: boolean;
     showSearchFacetCount?: boolean; // changed to sub-item
+    infiniteScroll?: boolean;
   };
 
   contributionMode?: 'transcription' | 'annotation';

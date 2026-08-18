@@ -104,14 +104,12 @@ export const updateCollectionStructure: RouteMiddleware<{ id: number }, UpdateSt
       type: 'collection',
       summary: `Collection structural changes`,
     });
-    if (affectedManifestIds.length) {
-      await userApi.newTask(
-        createSearchIndexTask(
-          affectedManifestIds.map(id => ({ id, type: 'manifest' })),
-          siteId
-        )
-      );
-    }
+    await userApi.newTask(
+      createSearchIndexTask(
+        [{ id: collectionId, type: 'collection' }, ...affectedManifestIds.map(id => ({ id, type: 'manifest' }))],
+        siteId
+      )
+    );
   } catch (e) {
     console.log(e);
   }

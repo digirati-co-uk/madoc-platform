@@ -85,7 +85,8 @@
     "searchOptions": {
       "nonLatinFulltext": false,
       "searchMultipleFields": false,
-      "onlyShowManifests": false
+      "onlyShowManifests": false,
+      "infiniteScroll": true
     },
     "activityStreams": {
       "manifest": true,

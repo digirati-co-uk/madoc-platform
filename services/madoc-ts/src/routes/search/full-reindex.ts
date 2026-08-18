@@ -83,10 +83,11 @@ export const fullReindex: RouteMiddleware = async context => {
   });
 
   while (state.active) {
-    const responses = await context.connection.any(sql<{ id: number }>`
-        select resource_id as id
+    const responses = await context.connection.any(sql<{ id: number; type: 'manifest' | 'collection' }>`
+        select resource_id as id, resource_type as type
         from iiif_derived_resource idr
-        where resource_type = 'manifest' and site_id = ${siteId}
+        where site_id = ${siteId}
+          and (resource_type = 'manifest' or (resource_type = 'collection' and flat = false))
         limit ${state.limit} offset ${state.offset}
     `);
 
@@ -96,12 +97,7 @@ export const fullReindex: RouteMiddleware = async context => {
 
     const batchTasks = [
       createSearchIndexTask(
-        responses.map(r => {
-          return {
-            id: r.id,
-            type: 'manifest',
-          };
-        }),
+        responses.map(resource => ({ id: resource.id, type: resource.type })),
         siteId,
         {
           recursive: false,
