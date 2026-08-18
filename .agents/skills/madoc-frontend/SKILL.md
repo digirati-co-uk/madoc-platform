@@ -35,6 +35,7 @@ description: Work on Madoc TS site, admin, or account React routes, loaders, sha
 ## Guardrails
 
 - Follow the Tailwind/styled-components migration rule in `AGENTS.md`.
+- Keep CommonJS compatibility aliases aligned across the frontend, dev-server, and SSR Vite configs.
 - Keep site and admin permissions and components on the correct surface.
 - Deep-merge nested site/project configuration rather than overwriting sibling options.
 - Keep MJML and plain-text email content equivalent.

@@ -48,6 +48,10 @@ export default defineConfig({
     dedupe: [...PROSEMIRROR_PACKAGES.map(([pkg]) => pkg)],
     alias: [
       { find: /^@\//, replacement: `${path.resolve(process.cwd(), 'src')}/` },
+      {
+        find: /^react-accessible-dropdown-menu-hook$/,
+        replacement: path.resolve(process.cwd(), 'vite/react-accessible-dropdown-menu-hook.js'),
+      },
       ...prosemirrorAliases,
       // React 19-compatible defaults.
     ],
