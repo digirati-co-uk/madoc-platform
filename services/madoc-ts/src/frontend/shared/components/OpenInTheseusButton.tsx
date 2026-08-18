@@ -28,7 +28,9 @@ export function createTheseusUrl({ id, origin, projectSlug, siteSlug, type }: Th
 export function OpenInTheseusButton({ id, type, projectSlug }: OpenInTheseusButtonProps) {
   const { t } = useTranslation();
   const { slug } = useSite();
-  const origin = typeof window === 'undefined' ? '' : window.location.origin;
+  const [origin, setOrigin] = React.useState('');
+
+  React.useEffect(() => setOrigin(window.location.origin), []);
 
   if (!id) {
     return null;
