@@ -39,5 +39,25 @@
     "entityPath",
     "label"
   ],
+  "definitions": {
+    "ProjectSearchIndexFacet": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "label": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "label",
+        "path"
+      ]
+    }
+  },
   "$schema": "http://json-schema.org/draft-07/schema#"
 }

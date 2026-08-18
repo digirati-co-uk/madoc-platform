@@ -213,8 +213,10 @@ export class TypesenseClient {
     };
   }
 
-  private async ensureSearchCollectionSchemaCompatibility(name: string, existing: any) {
-    const existingFields = Array.isArray(existing?.fields) ? existing.fields : [];
+  private async ensureSearchCollectionSchemaCompatibility(
+    name: string,
+    existing: Pick<TypesenseCollectionSchema, 'fields'>
+  ) {
     const requiredFields: Array<TypesenseCollectionField> = [
       { name: 'manifest_ids', type: 'string[]', facet: true, optional: true },
       { name: 'project_facets', type: 'string[]', facet: true, optional: true },
@@ -223,21 +225,31 @@ export class TypesenseClient {
       { name: 'capture_model_.*', type: 'string[]', optional: true },
       { name: 'search_context', type: 'string[]', optional: true },
     ];
-    const missingFields = requiredFields.filter(
-      requiredField => !existingFields.some((field: any) => field?.name === requiredField.name)
-    );
+    const getMissingFields = (collection: Pick<TypesenseCollectionSchema, 'fields'>) =>
+      requiredFields.filter(
+        requiredField => !collection.fields.some(field => field.name === requiredField.name)
+      );
+    const missingFields = getMissingFields(existing);
 
     if (!missingFields.length) {
       return;
     }
 
-    await this.request(`/collections/${encodeURIComponent(name)}`, {
-      method: 'PATCH',
-      contentType: 'application/json',
-      body: JSON.stringify({
-        fields: missingFields,
-      }),
-    });
+    try {
+      await this.request(`/collections/${encodeURIComponent(name)}`, {
+        method: 'PATCH',
+        contentType: 'application/json',
+        body: JSON.stringify({
+          fields: missingFields,
+        }),
+      });
+    } catch (error) {
+      const refreshed = await this.request<TypesenseCollectionSchema>(`/collections/${encodeURIComponent(name)}`);
+      if (refreshed && !getMissingFields(refreshed).length) {
+        return;
+      }
+      throw error;
+    }
   }
 
   private getIndexablesCollectionSchema(name: string): TypesenseCollectionSchema {
@@ -294,7 +306,9 @@ export class TypesenseClient {
       throw new Error('Missing TYPESENSE_API_KEY');
     }
 
-    const existing = await this.request(`/collections/${encodeURIComponent(name)}`, { allow404: true });
+    const existing = await this.request<TypesenseCollectionSchema>(`/collections/${encodeURIComponent(name)}`, {
+      allow404: true,
+    });
 
     if (existing) {
       await this.ensureSearchCollectionSchemaCompatibility(name, existing);
@@ -302,11 +316,21 @@ export class TypesenseClient {
     }
 
     const schema = this.getSearchCollectionSchema(name);
-    await this.request('/collections', {
-      method: 'POST',
-      contentType: 'application/json',
-      body: JSON.stringify(schema),
-    });
+    try {
+      await this.request('/collections', {
+        method: 'POST',
+        contentType: 'application/json',
+        body: JSON.stringify(schema),
+      });
+    } catch (error) {
+      const created = await this.request<TypesenseCollectionSchema>(`/collections/${encodeURIComponent(name)}`, {
+        allow404: true,
+      });
+      if (!created) {
+        throw error;
+      }
+      await this.ensureSearchCollectionSchemaCompatibility(name, created);
+    }
   }
 
   async ensureIndexablesCollection(name: string) {
