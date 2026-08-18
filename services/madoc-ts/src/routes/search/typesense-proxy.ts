@@ -9,7 +9,7 @@ import { getProjectSearchIndexConfiguration } from '../../search/project-search-
 import { api } from '../../gateway/api.server';
 import type { RouteMiddleware } from '../../types/route-middleware';
 import { NotFound } from '../../utility/errors/not-found';
-import { optionalUserWithScope } from '../../utility/user-with-scope';
+import { onlyPublishedProjects, optionalUserWithScope } from '../../utility/user-with-scope';
 
 function sanitizeSearchParams(input: Record<string, any> | string) {
   const scoped: Record<string, any> = {};
@@ -213,7 +213,11 @@ export const typesenseProxyMultiSearch: RouteMiddleware = async context => {
 async function getProjectTypesenseContext(context: any) {
   const site = await context.siteManager.getSiteBySlug(context.params.slug);
   if (!site) throw new NotFound('Site not found');
-  const project = await context.projects.getProjectByIdOrSlug(context.params.project, site.id, true);
+  const project = await context.projects.getProjectByIdOrSlug(
+    context.params.project,
+    site.id,
+    onlyPublishedProjects(context.state.jwt?.scope)
+  );
   const siteApi = api.asUser({ siteId: site.id }, { siteSlug: site.slug });
   context.disposableApis.push(siteApi);
   const { config } = await getProjectSearchIndexConfiguration(siteApi, site.id, project.id);

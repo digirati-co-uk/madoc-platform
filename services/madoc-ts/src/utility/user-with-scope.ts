@@ -2,6 +2,10 @@ import { SiteUserRepository } from '../repository/site-user-repository';
 import { NotFound } from './errors/not-found';
 import { ApplicationState } from '../types/application-state';
 
+export function onlyPublishedProjects(scope?: string[]) {
+  return !scope?.includes('site.admin');
+}
+
 export function userWithScope(context: { state: ApplicationState; cookies: any }, scopes: string[]) {
   if (!context.state.jwt || !context.state.jwt.user.id) {
     throw new NotFound('No id');

@@ -488,7 +488,7 @@ function ResourceTypeTabs({
   onBaseType: (resourceType?: string) => void;
 }) {
   const { items, refine } = useRefinementList(
-    { attribute: 'resource_type', limit: 20 },
+    { attribute: activeCustomIndex ? 'index_id' : 'resource_type', limit: 20 },
     { $$widgetType: 'ais.refinementList' }
   );
   const refinedItems = items.filter(item => item.isRefined);

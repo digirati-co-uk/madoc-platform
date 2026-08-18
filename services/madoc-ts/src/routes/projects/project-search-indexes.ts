@@ -28,7 +28,7 @@ import { NotFound } from '../../utility/errors/not-found';
 import { parseProjectId } from '../../utility/parse-project-id';
 import { parseUrn } from '../../utility/parse-urn';
 import { RequestError } from '../../utility/errors/request-error';
-import { optionalUserWithScope, userWithScope } from '../../utility/user-with-scope';
+import { onlyPublishedProjects, optionalUserWithScope, userWithScope } from '../../utility/user-with-scope';
 
 async function getScopedProject(context: Parameters<RouteMiddleware>[0], idOrSlug: string, siteId: number) {
   const parsed = parseProjectId(idOrSlug);
@@ -234,7 +234,11 @@ export const listPublicProjectSearchIndexes: RouteMiddleware<{ slug: string; pro
   const site = await context.siteManager.getSiteBySlug(context.params.slug);
   if (!site) throw new NotFound('Site not found');
   const siteId = site.id;
-  const project = await context.projects.getProjectByIdOrSlug(context.params.project, siteId, true);
+  const project = await context.projects.getProjectByIdOrSlug(
+    context.params.project,
+    siteId,
+    onlyPublishedProjects(context.state.jwt?.scope)
+  );
   const userApi = await getUserApi(context, siteId);
   const { config } = await getProjectSearchIndexConfiguration(userApi, siteId, project.id);
   context.response.body = config.indexes
