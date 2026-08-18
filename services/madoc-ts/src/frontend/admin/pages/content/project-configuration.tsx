@@ -42,6 +42,7 @@ export const SiteProjectConfiguration: React.FC = () => {
           old={false}
           updateKey={updatedAt}
           configuration={siteConfiguration}
+          configurationScope="site-project"
           onSave={saveConfig}
         />
       </WidePage>

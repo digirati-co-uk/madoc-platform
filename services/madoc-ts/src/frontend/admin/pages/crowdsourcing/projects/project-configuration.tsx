@@ -100,6 +100,7 @@ export const ProjectConfiguration: React.FC = () => {
     <EditProjectConfiguration
       updateKey={updatedAt}
       configuration={configurationWithDefaults}
+      configurationScope="project"
       onSave={save}
       immutableFields={projectTemplate?.configuration?.immutable}
       contributionsTemplate={tabularProject ? ProjectConfigContributionsTabular : undefined}
