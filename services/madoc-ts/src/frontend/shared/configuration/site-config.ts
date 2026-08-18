@@ -6,6 +6,14 @@ export type ProjectConfigTemplate = {
   [_key in keyof Partial<ProjectConfigurationNEW>]: string | (Partial<BaseField> & any);
 };
 
+const TYPESENSE_OPTIONS = [
+  { label: 'All resources', value: 'allResources' },
+  { label: 'Projects', value: 'projects' },
+  { label: 'Collections', value: 'collections' },
+  { label: 'Manifests', value: 'manifests' },
+  { label: 'Canvases', value: 'canvases' },
+];
+
 const TABULAR_OVERLAY_COLOR_FIELDS = {
   tabularHeaderOverlayColor: {
     label: 'Canvas overlay color: header row',
@@ -501,7 +509,7 @@ export const siteConfigurationModel: {
         value: 'searchMultipleFields',
       },
       {
-        label: 'Only show manifests',
+        label: 'Only show manifests (legacy)',
         value: 'onlyShowManifests',
       },
       {
@@ -509,6 +517,12 @@ export const siteConfigurationModel: {
         value: 'infiniteScroll',
       },
     ],
+  },
+  typesenseOptions: {
+    label: 'Typesense options',
+    description: 'Choose which resource tabs and resource types are available in Typesense search.',
+    type: 'checkbox-list-field',
+    options: TYPESENSE_OPTIONS,
   },
   activityStreams: {
     label: 'Activity streams',
@@ -795,7 +809,7 @@ export const ProjectConfigSearch: ProjectConfigTemplate = {
         value: 'searchMultipleFields',
       },
       {
-        label: 'Only show manifests',
+        label: 'Only show manifests (legacy)',
         value: 'onlyShowManifests',
       },
       {
@@ -807,6 +821,12 @@ export const ProjectConfigSearch: ProjectConfigTemplate = {
         value: 'infiniteScroll',
       },
     ],
+  },
+  typesenseOptions: {
+    label: 'Typesense options',
+    description: 'Choose which resource tabs and resource types are available in Typesense search.',
+    type: 'checkbox-list-field',
+    options: TYPESENSE_OPTIONS,
   },
 };
 

@@ -85,11 +85,16 @@ export function resolveTypesenseHitPrimaryLink(hit: TypesenseAutocompleteHit, pr
 
 export function useTypesenseSiteAutocomplete(
   rawQuery: string,
-  { enabled = true, limit = 6, projectId }: { enabled?: boolean; limit?: number; projectId?: number } = {}
+  {
+    enabled = true,
+    limit = 6,
+    projectId,
+    filter,
+  }: { enabled?: boolean; limit?: number; projectId?: number; filter?: string } = {}
 ) {
   const site = useSite();
   const query = rawQuery.trim();
-  const projectFilter = getTypesenseProjectFilter(projectId);
+  const projectFilter = filter || getTypesenseProjectFilter(projectId);
 
   const statusQuery = useQuery<TypesenseStatus>(
     ['site-typesense-search-status', site.slug],
@@ -110,7 +115,7 @@ export function useTypesenseSiteAutocomplete(
   );
 
   const suggestionsQuery = useQuery<TypesenseAutocompleteHit[]>(
-    ['typesense-site-autocomplete', site.slug, projectId, query, limit],
+    ['typesense-site-autocomplete', site.slug, projectId, projectFilter, query, limit],
     async () => {
       const response = await fetch(`/s/${site.slug}/madoc/api/typesense`, {
         method: 'POST',

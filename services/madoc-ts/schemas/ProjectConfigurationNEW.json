@@ -240,6 +240,26 @@
             }
           }
         },
+        "typesenseOptions": {
+          "type": "object",
+          "properties": {
+            "allResources": {
+              "type": "boolean"
+            },
+            "projects": {
+              "type": "boolean"
+            },
+            "collections": {
+              "type": "boolean"
+            },
+            "manifests": {
+              "type": "boolean"
+            },
+            "canvases": {
+              "type": "boolean"
+            }
+          }
+        },
         "contributionMode": {
           "enum": [
             "annotation",

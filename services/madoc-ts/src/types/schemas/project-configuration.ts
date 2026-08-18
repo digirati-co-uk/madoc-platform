@@ -14,6 +14,14 @@ type TabularModelPageOptions = {
   disableZoomTrackingOverlay?: boolean;
 };
 
+export type TypesenseSearchOptions = {
+  allResources?: boolean;
+  projects?: boolean;
+  collections?: boolean;
+  manifests?: boolean;
+  canvases?: boolean;
+};
+
 export type ProjectConfiguration = TabularProjectConfigurationFields & {
   _version?: 1;
   _source?: {
@@ -59,6 +67,7 @@ export type ProjectConfiguration = TabularProjectConfigurationFields & {
     onlyShowManifests?: boolean;
     infiniteScroll?: boolean;
   };
+  typesenseOptions?: TypesenseSearchOptions;
   shortExpiryTime?: string;
   longExpiryTime?: string;
 
@@ -209,6 +218,7 @@ export type ProjectConfigurationNEW = TabularProjectConfigurationFields & {
     showSearchFacetCount?: boolean; // changed to sub-item
     infiniteScroll?: boolean;
   };
+  typesenseOptions?: TypesenseSearchOptions;
 
   contributionMode?: 'transcription' | 'annotation';
   maxContributionsPerResource: false | number;

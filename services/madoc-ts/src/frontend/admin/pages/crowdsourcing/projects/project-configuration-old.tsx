@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { EmptyState } from '../../../../shared/layout/EmptyState';
@@ -11,6 +11,7 @@ import { apiHooks } from '../../../../shared/hooks/use-api-query';
 import { useProjectTemplate } from '../../../../shared/hooks/use-project-template';
 import { useShortMessage } from '../../../../shared/hooks/use-short-message';
 import { serverRendererFor } from '../../../../shared/plugins/external/server-renderer-for';
+import { resolveTypesenseTabOptions } from '../../../../../search/typesense/project-filter';
 
 export const ProjectConfigurationOld: React.FC = () => {
   const params = useParams() as { id: string };
@@ -18,11 +19,23 @@ export const ProjectConfigurationOld: React.FC = () => {
 
   const { scrollToTop } = useAdminLayout();
   const api = useApi();
-  const { data: _projectConfiguration, refetch, updatedAt } = apiHooks.getSiteConfiguration(() =>
-    params.id ? [{ project_id: params.id, show_source: true }] : undefined
-  );
+  const {
+    data: _projectConfiguration,
+    refetch,
+    updatedAt,
+  } = apiHooks.getSiteConfiguration(() => (params.id ? [{ project_id: params.id, show_source: true }] : undefined));
 
   const { _source, ...projectConfiguration } = _projectConfiguration || {};
+  const configurationWithTypesenseDefaults = useMemo(
+    () => ({
+      ...projectConfiguration,
+      typesenseOptions: resolveTypesenseTabOptions(
+        projectConfiguration.typesenseOptions,
+        projectConfiguration.searchOptions?.onlyShowManifests
+      ),
+    }),
+    [projectConfiguration]
+  );
 
   const { t } = useTranslation();
   const [didSave, setDidSave] = useShortMessage();
@@ -44,7 +57,7 @@ export const ProjectConfigurationOld: React.FC = () => {
         enableSearch
         searchLabel={t('Search configuration')}
         immutableFields={projectTemplate?.configuration?.immutable}
-        data={projectConfiguration}
+        data={configurationWithTypesenseDefaults}
         template={siteConfigurationModel}
         onSave={async rev => {
           await api.saveSiteConfiguration(postProcessConfiguration(rev), { project_id: project.id });

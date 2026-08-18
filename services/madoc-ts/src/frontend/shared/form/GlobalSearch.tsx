@@ -3,6 +3,11 @@ import { useQuery } from 'react-query';
 import { useTranslation } from 'react-i18next';
 import { matchPath, useLocation, useNavigate } from 'react-router-dom';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
+import {
+  getTypesenseResourceTypes,
+  getTypesenseSearchFilter,
+  resolveTypesenseTabOptions,
+} from '../../../search/typesense/project-filter';
 import type { ProjectFull } from '../../../types/project-full';
 import { useSiteConfiguration } from '../../site/features/SiteConfigurationContext';
 import { useApi } from '../hooks/use-api';
@@ -25,6 +30,17 @@ export const GlobalSearch: React.FC = () => {
   );
   const showSearch = !project.headerOptions?.hideSearchBar;
   const searchPath = projectSlug ? `/projects/${encodeURIComponent(projectSlug)}/search` : '/search';
+  const typesenseTabs = resolveTypesenseTabOptions(
+    project.typesenseOptions,
+    project.searchOptions?.onlyShowManifests === true,
+    {
+      projectSearch: !!projectSlug,
+      allowCollectionNavigation: project.allowCollectionNavigation,
+      allowManifestNavigation: project.allowManifestNavigation,
+      allowCanvasNavigation: project.allowCanvasNavigation,
+    }
+  );
+  const autocompleteFilter = getTypesenseSearchFilter(currentProject?.id, getTypesenseResourceTypes(typesenseTabs));
   const {
     available: typesenseAvailable,
     suggestions,
@@ -33,6 +49,7 @@ export const GlobalSearch: React.FC = () => {
     enabled: showSearch && (!projectSlug || !!currentProject?.id),
     limit: 8,
     projectId: currentProject?.id,
+    filter: autocompleteFilter,
   });
 
   if (!showSearch) {

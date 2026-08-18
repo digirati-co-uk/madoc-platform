@@ -13,7 +13,12 @@ import {
   useRefinementList,
 } from 'react-instantsearch';
 import TypesenseInstantSearchAdapterImport from 'typesense-instantsearch-adapter';
-import { getTypesenseProjectFilter } from '../../../search/typesense/project-filter';
+import {
+  getTypesenseResourceTypes,
+  getTypesenseSearchFilter,
+  resolveTypesenseTabOptions,
+  type TypesenseResourceType,
+} from '../../../search/typesense/project-filter';
 import { DisplayBreadcrumbs } from '../blocks/Breadcrumbs';
 import { LoadingBlock } from '../../shared/callouts/LoadingBlock';
 import { HrefLink } from '../../shared/utility/href-link';
@@ -334,9 +339,10 @@ function SearchDefaults({ projectFilter }: { projectFilter?: string }) {
   return <Configure hitsPerPage={24} filters={projectFilter || undefined} />;
 }
 
-const SearchInputWithAutocomplete: React.FC<{ projectId?: number; autocomplete?: boolean }> = ({
+const SearchInputWithAutocomplete: React.FC<{ projectId?: number; autocomplete?: boolean; filter?: string }> = ({
   projectId,
   autocomplete = true,
+  filter,
 }) => {
   const [focused, setFocused] = useState(false);
   const { query, refine } = useSearchBox();
@@ -344,6 +350,7 @@ const SearchInputWithAutocomplete: React.FC<{ projectId?: number; autocomplete?:
     enabled: autocomplete,
     limit: 8,
     projectId,
+    filter,
   });
   const showSuggestions = available && focused && query.trim().length > 1;
 
@@ -479,11 +486,15 @@ function ListHitCard({ hit }: { hit: TypesenseSearchHit }) {
 function ResourceTypeTabs({
   customIndexes,
   activeCustomIndex,
+  showAllResources,
+  resourceTypes,
   onCustomIndex,
   onBaseType,
 }: {
   customIndexes: PublicProjectSearchIndex[];
   activeCustomIndex?: string;
+  showAllResources: boolean;
+  resourceTypes: TypesenseResourceType[];
   onCustomIndex: (indexId: string) => void;
   onBaseType: (resourceType?: string) => void;
 }) {
@@ -498,16 +509,16 @@ function ResourceTypeTabs({
     { label: 'Collections', value: 'Collection' },
     { label: 'Manifests', value: 'Manifest' },
     { label: 'Canvases', value: 'Canvas' },
-  ];
+  ].filter(tab => (tab.value ? resourceTypes.includes(tab.value as TypesenseResourceType) : showAllResources));
   const allResourcesCount = items.reduce((total, item) => total + item.count, 0);
 
   return (
     <div className="mb-5 border-b border-slate-200" role="tablist" aria-label="Resource type">
       <div className="flex gap-6">
         {tabs.map(tab => {
-          const isActive = !activeCustomIndex && (tab.value
-            ? refinedItems.length === 1 && refinedItems[0].value === tab.value
-            : refinedItems.length === 0);
+          const isActive =
+            !activeCustomIndex &&
+            (tab.value ? refinedItems.length === 1 && refinedItems[0].value === tab.value : refinedItems.length === 0);
           return (
             <button
               key={tab.label}
@@ -630,41 +641,47 @@ const FacetOptionList: React.FC<{
   canToggleShowMore: boolean;
   isShowingMore: boolean;
   toggleShowMore: () => void;
-}> = ({ items, refine, canToggleShowMore, isShowingMore, toggleShowMore }) => (
-  <>
-    <ul className="m-0 list-none space-y-1 p-0">
-      {items.map(item => (
-        <li key={item.value}>
-          <label className="flex cursor-pointer items-center gap-2 rounded px-1 py-1 text-sm hover:bg-slate-50">
-            <input
-              className="h-4 w-4 shrink-0 accent-blue-700"
-              type="checkbox"
-              checked={item.isRefined}
-              onChange={() => refine(item.value)}
-            />
-            <span
-              className={`min-w-0 flex-1 truncate ${item.isRefined ? 'font-semibold text-blue-700' : 'text-slate-700'}`}
-            >
-              {item.label}
-            </span>
-            <span className="shrink-0 rounded-full border border-slate-200 bg-slate-100 px-1.5 text-[0.7rem] leading-5 text-slate-500">
-              {item.count}
-            </span>
-          </label>
-        </li>
-      ))}
-    </ul>
-    {canToggleShowMore ? (
-      <button
-        type="button"
-        className="mt-2 text-xs font-medium text-blue-700 underline underline-offset-2"
-        onClick={() => toggleShowMore()}
-      >
-        {isShowingMore ? 'Show less' : 'Show more'}
-      </button>
-    ) : null}
-  </>
-);
+}> = ({ items, refine, canToggleShowMore, isShowingMore, toggleShowMore }) => {
+  const { project } = useSiteConfiguration();
+
+  return (
+    <>
+      <ul className="m-0 list-none space-y-1 p-0">
+        {items.map(item => (
+          <li key={item.value}>
+            <label className="flex cursor-pointer items-center gap-2 rounded px-1 py-1 text-sm hover:bg-slate-50">
+              <input
+                className="h-4 w-4 shrink-0 accent-blue-700"
+                type="checkbox"
+                checked={item.isRefined}
+                onChange={() => refine(item.value)}
+              />
+              <span
+                className={`min-w-0 flex-1 truncate ${item.isRefined ? 'font-semibold text-blue-700' : 'text-slate-700'}`}
+              >
+                {item.label}
+              </span>
+              {project.showSearchFacetCount ? (
+                <span className="shrink-0 rounded-full border border-slate-200 bg-slate-100 px-1.5 text-[0.7rem] leading-5 text-slate-500">
+                  {item.count}
+                </span>
+              ) : null}
+            </label>
+          </li>
+        ))}
+      </ul>
+      {canToggleShowMore ? (
+        <button
+          type="button"
+          className="mt-2 text-xs font-medium text-blue-700 underline underline-offset-2"
+          onClick={() => toggleShowMore()}
+        >
+          {isShowingMore ? 'Show less' : 'Show more'}
+        </button>
+      ) : null}
+    </>
+  );
+};
 
 const ProjectFacet = () => {
   const { items, refine, canToggleShowMore, isShowingMore, toggleShowMore } = useRefinementList(
@@ -778,7 +795,19 @@ export function TypesenseSearch() {
     return new URLSearchParams(window.location.search).get('index') || undefined;
   });
   const [view, setView] = useState<SearchView>('grid');
-  const projectFilter = getTypesenseProjectFilter(project?.id);
+  const typesenseTabs = resolveTypesenseTabOptions(
+    siteConfiguration.typesenseOptions,
+    siteConfiguration.searchOptions?.onlyShowManifests === true,
+    {
+      projectSearch: !!projectSlug,
+      allowCollectionNavigation: siteConfiguration.allowCollectionNavigation,
+      allowManifestNavigation: siteConfiguration.allowManifestNavigation,
+      allowCanvasNavigation: siteConfiguration.allowCanvasNavigation,
+    }
+  );
+  const resourceTypes = getTypesenseResourceTypes(typesenseTabs);
+  const resourceTypesKey = resourceTypes.join(',');
+  const searchFilter = getTypesenseSearchFilter(project?.id, resourceTypes);
   const infiniteScroll = siteConfiguration.searchOptions?.infiniteScroll !== false;
   const customIndexes = useQuery<PublicProjectSearchIndex[]>(
     ['project-public-search-indexes', site.slug, project?.slug],
@@ -786,6 +815,7 @@ export function TypesenseSearch() {
     { enabled: !!project?.slug }
   );
   const activeCustomIndex = customIndexes.data?.find(index => index.id === activeCustomIndexId);
+  const defaultResourceType = !activeCustomIndex && !typesenseTabs.allResources ? resourceTypes[0] : undefined;
   const node = useMemo(
     () => getNodeConfig(site.slug, activeCustomIndex ? project?.slug : undefined, activeCustomIndex?.id),
     [activeCustomIndex, project?.slug, site.slug]
@@ -846,7 +876,7 @@ export function TypesenseSearch() {
           query_by: 'resource_label,search_text',
           per_page: 0,
           facet_by: 'metadata_*',
-          filter_by: projectFilter,
+          filter_by: searchFilter,
           max_facet_values: 25,
         }),
       });
@@ -908,17 +938,32 @@ export function TypesenseSearch() {
           };
         },
         routeToState(routeState: SearchRouteState) {
+          let refinementList = parseRouteRefinements(getSingleValue(routeState.refinements));
+          if (!activeCustomIndex) {
+            const validResourceType = refinementList?.resource_type?.find(value =>
+              resourceTypes.includes(value as TypesenseResourceType)
+            );
+            const { resource_type: _resourceType, ...otherRefinements } = refinementList || {};
+            refinementList = validResourceType
+              ? { ...otherRefinements, resource_type: [validResourceType] }
+              : defaultResourceType
+                ? { ...otherRefinements, resource_type: [defaultResourceType] }
+                : Object.keys(otherRefinements).length
+                  ? otherRefinements
+                  : undefined;
+          }
+
           return {
             [collection]: {
               query: getSingleValue(routeState.fulltext) || '',
               page: parseRoutePage(getSingleValue(routeState.page)),
-              refinementList: parseRouteRefinements(getSingleValue(routeState.refinements)),
+              refinementList,
             },
           };
         },
       },
     };
-  }, [activeCustomIndex?.id, collection]);
+  }, [activeCustomIndex?.id, collection, defaultResourceType, resourceTypesKey]);
 
   if (isLoading || (projectSlug && !project)) {
     return (
@@ -958,15 +1003,21 @@ export function TypesenseSearch() {
       <style>{aisResetStyles}</style>
       <DisplayBreadcrumbs currentPage="Search" />
       <InstantSearch key={collection} searchClient={adapter.searchClient} indexName={collection!} routing={routing}>
-        <SearchDefaults projectFilter={activeCustomIndex ? undefined : projectFilter} />
+        <SearchDefaults projectFilter={activeCustomIndex ? undefined : searchFilter} />
 
         <div className="mb-4">
-          <SearchInputWithAutocomplete projectId={project?.id} autocomplete={!activeCustomIndex} />
+          <SearchInputWithAutocomplete
+            projectId={project?.id}
+            autocomplete={!activeCustomIndex}
+            filter={searchFilter}
+          />
         </div>
 
         <ResourceTypeTabs
           customIndexes={customIndexes.data || []}
           activeCustomIndex={activeCustomIndex?.id}
+          showAllResources={typesenseTabs.allResources}
+          resourceTypes={resourceTypes}
           onCustomIndex={selectCustomIndex}
           onBaseType={selectBaseResourceType}
         />
