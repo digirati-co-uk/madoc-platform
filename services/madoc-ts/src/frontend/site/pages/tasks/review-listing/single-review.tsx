@@ -49,6 +49,7 @@ import { Runtime } from '@atlas-viewer/atlas';
 import { HomeIcon } from '../../../../shared/icons/HomeIcon';
 import { MinusIcon } from '../../../../shared/icons/MinusIcon';
 import { PlusIcon } from '../../../../shared/icons/PlusIcon';
+import { RotateIcon } from '../../../../shared/icons/RotateIcon';
 import { ArrowBackIcon } from '../../../../shared/icons/ArrowBackIcon';
 import { useTranslation } from 'react-i18next';
 import { extractIdFromUrn, parseUrn } from '../../../../../utility/parse-urn';
@@ -65,6 +66,11 @@ import {
   getReviewRendererMode,
   ReviewDefaultControlsComponent,
 } from '../review-renderers/types';
+import { useModelPageConfiguration } from '../../../hooks/use-model-page-configuration';
+import { OpenSeadragonViewer } from '../../../../shared/features/OpenSeadragonViewer.lazy';
+import { BrowserComponent } from '../../../../shared/utility/browser-component';
+import { InfoMessage } from '../../../../shared/callouts/InfoMessage';
+import { CanvasViewer as ReviewCanvasViewer } from '../../../../shared/components/StandaloneCanvasViewer';
 
 const ReviewContainer = styledComponents.div`
   position: relative;
@@ -291,12 +297,14 @@ function ViewSingleReview({
   const { t } = useTranslation();
   const gridRef = useRef<any>(undefined);
   const runtime = useRef<Runtime>(undefined);
+  const osd = useRef<any>(undefined);
+  const [isOSD, setIsOSD] = useState(false);
+  const { enableRotation = false } = useModelPageConfiguration();
   const annotationTheme = useProjectAnnotationStyles();
   const api = useApi();
   const template = useProjectTemplate(project?.template);
   const CustomReviewRenderer = template?.components?.customReviewRenderer as
-    | React.FC<CustomReviewRendererProps>
-    | undefined;
+    React.FC<CustomReviewRendererProps> | undefined;
 
   const [unassignUser] = useMutation(
     async () => {
@@ -352,17 +360,34 @@ function ViewSingleReview({
     if (runtime.current) {
       runtime.current.world.goHome();
     }
+    if (osd.current) {
+      osd.current.goHome();
+    }
   };
 
   const zoomIn = () => {
     if (runtime.current) {
       runtime.current.world.zoomIn();
     }
+    if (osd.current) {
+      osd.current.zoomIn();
+    }
   };
 
   const zoomOut = () => {
     if (runtime.current) {
       runtime.current.world.zoomOut();
+    }
+    if (osd.current) {
+      osd.current.zoomOut();
+    }
+  };
+
+  const rotate = () => {
+    if (isOSD) {
+      osd.current?.rotate();
+    } else {
+      setIsOSD(true);
     }
   };
 
@@ -546,24 +571,47 @@ function ViewSingleReview({
     <div style={{ flex: 1, minWidth: 200, display: 'flex', flexDirection: 'column' }}>
       {canvas ? (
         <CanvasViewerGrid ref={gridRef}>
-          <EditorContentViewer
-            height={'100%' as any}
-            canvasId={canvas.id}
-            onCreated={rt => {
-              return ((runtime as any).current = rt.runtime);
-            }}
-          />
-          {isOpen && (
+          {isOSD ? (
+            <ReviewCanvasViewer canvas={canvas}>
+              <InfoMessage style={{ lineHeight: '3.4em', position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10 }}>
+                {t('You cannot edit annotations if you are rotating')}
+                <Button style={{ margin: '0.8em' }} onClick={() => setIsOSD(false)}>
+                  Reset
+                </Button>
+              </InfoMessage>
+              <BrowserComponent fallback={null}>
+                <OpenSeadragonViewer ref={osd} onReady={viewer => viewer.viewport.setRotation(90)} />
+              </BrowserComponent>
+            </ReviewCanvasViewer>
+          ) : (
+            <EditorContentViewer
+              height={'100%' as any}
+              canvasId={canvas.id}
+              onCreated={rt => {
+                return ((runtime as any).current = rt.runtime);
+              }}
+            />
+          )}
+          {(enableRotation || isOpen) && (
             <CanvasViewerControls>
-              <CanvasViewerButton onClick={goHome}>
-                <HomeIcon title={t('atlas__zoom_home', { defaultValue: 'Home' })} />
-              </CanvasViewerButton>
-              <CanvasViewerButton onClick={zoomOut}>
-                <MinusIcon title={t('atlas__zoom_out', { defaultValue: 'Zoom out' })} />
-              </CanvasViewerButton>
-              <CanvasViewerButton onClick={zoomIn}>
-                <PlusIcon title={t('atlas__zoom_in', { defaultValue: 'Zoom in' })} />
-              </CanvasViewerButton>
+              {enableRotation ? (
+                <CanvasViewerButton onClick={rotate}>
+                  <RotateIcon title={t('atlas__rotate', { defaultValue: 'Rotate' })} />
+                </CanvasViewerButton>
+              ) : null}
+              {isOpen ? (
+                <>
+                  <CanvasViewerButton onClick={goHome}>
+                    <HomeIcon title={t('atlas__zoom_home', { defaultValue: 'Home' })} />
+                  </CanvasViewerButton>
+                  <CanvasViewerButton onClick={zoomOut}>
+                    <MinusIcon title={t('atlas__zoom_out', { defaultValue: 'Zoom out' })} />
+                  </CanvasViewerButton>
+                  <CanvasViewerButton onClick={zoomIn}>
+                    <PlusIcon title={t('atlas__zoom_in', { defaultValue: 'Zoom in' })} />
+                  </CanvasViewerButton>
+                </>
+              ) : null}
             </CanvasViewerControls>
           )}
         </CanvasViewerGrid>

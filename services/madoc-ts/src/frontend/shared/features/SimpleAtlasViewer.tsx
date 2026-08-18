@@ -191,7 +191,7 @@ export const SimpleAtlasViewer = React.forwardRef<
 
             {hideViewerControls && isModel ? null : (
               <CanvasViewerControls>
-                {enableRotation && isModel ? (
+                {enableRotation ? (
                   <CanvasViewerButton onClick={rotate}>
                     <RotateIcon title={t('atlas__rotate', { defaultValue: 'Rotate' })} />
                   </CanvasViewerButton>
