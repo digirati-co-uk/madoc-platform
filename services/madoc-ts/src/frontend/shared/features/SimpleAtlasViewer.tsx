@@ -47,7 +47,6 @@ export const SimpleAtlasViewer = React.forwardRef<
   const controller = useSelectorController();
   const readOnlyAnnotations = useReadOnlyAnnotations(false);
   const [isOSD, setIsOSD] = useState(false);
-  const [rotation, setRotation] = useState(0);
 
   const { enableRotation = false, hideViewerControls = false } = useModelPageConfiguration();
 
@@ -79,7 +78,10 @@ export const SimpleAtlasViewer = React.forwardRef<
   };
 
   const rotate = () => {
-    setRotation(current => (current + 90) % 360);
+    setIsOSD(true);
+    if (osd.current) {
+      osd.current.rotate();
+    }
   };
 
   useBrowserLayoutEffect(() => {
@@ -113,7 +115,6 @@ export const SimpleAtlasViewer = React.forwardRef<
   return (
     <div
       ref={ref}
-      data-rotation-test={rotation}
       style={{
         position: 'relative',
         flex: '1 1 0px',
@@ -154,13 +155,10 @@ export const SimpleAtlasViewer = React.forwardRef<
                 renderPreset={defaultPreset}
                 runtimeOptions={runtimeOptions}
                 // key={canvas.id}
-                onCreated={preset => {
-                  runtime.current = preset.runtime;
-                  (globalThis as any).__rotationTestRuntime = preset.runtime;
-                }}
+                onCreated={preset => void (runtime.current = preset.runtime)}
               >
                 <CanvasContext canvas={canvas.id}>
-                  <CanvasPanel.RenderCanvas rotation={rotation} />
+                  <CanvasPanel.RenderCanvas />
                   <worldObject key={`${canvas.id}/world`} height={canvas.height} width={canvas.width}>
                     {highlightedRegions
                       ? highlightedRegions.map(([x, y, width, height], key) => {
@@ -193,7 +191,7 @@ export const SimpleAtlasViewer = React.forwardRef<
 
             {hideViewerControls && isModel ? null : (
               <CanvasViewerControls>
-                {true ? (
+                {enableRotation && isModel ? (
                   <CanvasViewerButton onClick={rotate}>
                     <RotateIcon title={t('atlas__rotate', { defaultValue: 'Rotate' })} />
                   </CanvasViewerButton>
