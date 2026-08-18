@@ -481,7 +481,7 @@ export function getProjectSearchIIIFResources(resourceIds: number[], siteId: num
         when resource.type = 'manifest' then manifest_thumbnail(${siteId}, resource.id)
         else resource.default_thumbnail
       end as default_thumbnail,
-      resource.items_json,
+      max(resource.items_json::text)::jsonb as items_json,
       resource.width,
       resource.height
     from iiif_resource resource
@@ -503,6 +503,6 @@ export function getProjectSearchIIIFResources(resourceIds: number[], siteId: num
         (resource.type = 'manifest' and derived.published = true)
         or (resource.type = 'canvas' and parent.resource_id is not null)
       )
-    group by resource.id, resource.type, resource.default_thumbnail, resource.items_json, resource.width, resource.height
+    group by resource.id, resource.type, resource.default_thumbnail, resource.width, resource.height
   `;
 }
