@@ -82,6 +82,16 @@ function createDefinition(request: ProjectSearchIndexRequest, id = v4()): Projec
   };
 }
 
+function hasSameIndexedSettings(left: ProjectSearchIndexDefinition, right: ProjectSearchIndexDefinition) {
+  return (
+    left.label === right.label &&
+    samePath(left.entityPath, right.entityPath) &&
+    samePath(left.uniqueField, right.uniqueField) &&
+    JSON.stringify(left.facets) === JSON.stringify(right.facets) &&
+    left.includeUnapproved === right.includeUnapproved
+  );
+}
+
 export const listProjectSearchIndexes: RouteMiddleware<{ id: string }> = async context => {
   const { id: userId, siteId } = userWithScope(context, ['site.admin']);
   const project = await getScopedProject(context, context.params.id, siteId);
@@ -113,8 +123,18 @@ export const updateProjectSearchIndex: RouteMiddleware<
   await validateRequest(context, siteId, project.capture_model_id, context.requestBody);
   const userApi = await getUserApi(context, siteId, userId);
   const { config } = await getProjectSearchIndexConfiguration(userApi, siteId, project.id);
-  if (!config.indexes.some(index => index.id === context.params.indexId)) throw new NotFound('Search index not found');
-  const definition = createDefinition(context.requestBody, context.params.indexId);
+  const existing = config.indexes.find(index => index.id === context.params.indexId);
+  if (!existing) throw new NotFound('Search index not found');
+  const next = createDefinition(context.requestBody, context.params.indexId);
+  const definition: ProjectSearchIndexDefinition = hasSameIndexedSettings(existing, next)
+    ? {
+        ...next,
+        lastIndexedAt: existing.lastIndexedAt,
+        lastIndexedHash: existing.lastIndexedHash,
+        documentCount: existing.documentCount,
+        warnings: existing.warnings,
+      }
+    : next;
   await saveProjectSearchIndexConfiguration(userApi, siteId, project.id, {
     ...config,
     indexes: config.indexes.map(index => (index.id === definition.id ? definition : index)),
@@ -129,10 +149,14 @@ export const deleteProjectSearchIndex: RouteMiddleware<{ id: string; indexId: st
   const { config } = await getProjectSearchIndexConfiguration(userApi, siteId, project.id);
   if (!config.indexes.some(index => index.id === context.params.indexId)) throw new NotFound('Search index not found');
   if (isTypesenseConfigured()) {
-    await new TypesenseClient().deleteCollection(
-      getTypesenseProjectSearchCollectionName(siteId, project.id, context.params.indexId),
-      { allow404: true }
-    );
+    try {
+      await new TypesenseClient().deleteCollection(
+        getTypesenseProjectSearchCollectionName(siteId, project.id, context.params.indexId),
+        { allow404: true }
+      );
+    } catch {
+      // The collection is derived data; an unavailable search service must not block deleting its definition.
+    }
   }
   await saveProjectSearchIndexConfiguration(userApi, siteId, project.id, {
     ...config,
@@ -181,14 +205,11 @@ export const indexProjectSearchIndex: RouteMiddleware<{ id: string; indexId: str
     .update(
       JSON.stringify({
         id: definition.id,
-        presetKey: definition.presetKey,
         label: definition.label,
-        summary: definition.summary,
         entityPath: definition.entityPath,
         uniqueField: definition.uniqueField,
         facets: definition.facets,
         includeUnapproved: definition.includeUnapproved,
-        enabled: definition.enabled,
       })
     )
     .digest('hex');

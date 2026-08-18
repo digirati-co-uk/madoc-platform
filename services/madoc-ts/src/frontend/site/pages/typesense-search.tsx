@@ -8,6 +8,7 @@ import {
   Pagination,
   Stats,
   useInfiniteHits,
+  useInstantSearch,
   useSearchBox,
   useRefinementList,
 } from 'react-instantsearch';
@@ -395,7 +396,9 @@ const SearchInputWithAutocomplete: React.FC<{ projectId?: number; autocomplete?:
 
 function HitCard({ hit, view }: { hit: TypesenseSearchHit; view: SearchView }) {
   const { projectId } = useRouteContext();
-  const primaryLink = resolveTypesenseHitPrimaryLink(hit, projectId);
+  const { indexUiState } = useInstantSearch();
+  const selectedProject = indexUiState.refinementList?.project_facets?.[0]?.split('|', 1)[0];
+  const primaryLink = resolveTypesenseHitPrimaryLink(hit, projectId || selectedProject);
   const isList = view === 'list';
   const thumbnail = hit.thumbnail ? (
     <img

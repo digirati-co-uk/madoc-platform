@@ -22,4 +22,17 @@ describe('Typesense result links', () => {
       )
     ).toBe('/projects/99');
   });
+
+  test('links global results inside the selected project', () => {
+    expect(
+      resolveTypesenseHitPrimaryLink(
+        {
+          resource_type: 'Canvas',
+          resource_id: 'urn:madoc:canvas:123',
+          manifest_id: 'urn:madoc:manifest:456',
+        },
+        '99'
+      )
+    ).toBe('/projects/99/manifests/456/c/123');
+  });
 });
