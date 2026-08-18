@@ -12,6 +12,12 @@ import { ConflictError } from '../../utility/errors/conflict';
 import { iiifGetLabel } from '../../utility/iiif-get-label';
 import { assertValidTabularProjectTemplateConfig } from './validate-tabular-project-template-config';
 import { ProjectConfiguration } from '../../types/schemas/project-configuration';
+import { v4 } from 'uuid';
+import {
+  createProjectSearchIndexConfiguration,
+  getProjectSearchIndexConfiguration,
+  saveProjectSearchIndexConfiguration,
+} from '../../search/project-search-index-configuration';
 
 const TABULAR_PROJECT_TEMPLATE = 'tabular-project';
 
@@ -173,6 +179,28 @@ export const createNewProject: RouteMiddleware<unknown, CreateProject> = async c
         )
         returning *
     `);
+
+    if (duplicateProjectId) {
+      const sourceSearchIndexes = await getProjectSearchIndexConfiguration(userApi, siteId, duplicateProjectId);
+      await saveProjectSearchIndexConfiguration(userApi, siteId, project.id, {
+        available: sourceSearchIndexes.config.available,
+        indexes: sourceSearchIndexes.config.indexes.map(index => ({
+          ...index,
+          id: v4(),
+          lastIndexedAt: undefined,
+          lastIndexedHash: undefined,
+          documentCount: undefined,
+          warnings: undefined,
+        })),
+      });
+    } else {
+      await createProjectSearchIndexConfiguration(
+        userApi,
+        siteId,
+        project.id,
+        chosenTemplate?.configuration?.searchIndexes?.available
+      );
+    }
 
     const configurationOptions = chosenTemplate?.configuration;
     if (configurationOptions && configurationOptions.defaults) {

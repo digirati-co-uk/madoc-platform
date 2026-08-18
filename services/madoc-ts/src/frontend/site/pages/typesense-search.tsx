@@ -1,5 +1,4 @@
-import React, { useMemo, useState } from 'react';
-import type { Hit } from 'instantsearch.js';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useQuery } from 'react-query';
 import {
   Configure,
@@ -30,6 +29,9 @@ import { useSiteConfiguration } from '../features/SiteConfigurationContext';
 import { GridIcon } from '../../shared/icons/GridIcon';
 import { UnorderedListIcon } from '../../shared/icons/UnorderedListIcon';
 import { useInfiniteAction } from '../hooks/use-infinite-action';
+import { useApi } from '../../shared/hooks/use-api';
+import { PublicProjectSearchIndex } from '../../../types/schemas/project-search-index';
+import { getProjectSearchFacetFieldName } from '../../shared/capture-models/helpers/project-search-index-options';
 
 const TypesenseInstantSearchAdapter =
   (TypesenseInstantSearchAdapterImport as unknown as { default?: typeof TypesenseInstantSearchAdapterImport })
@@ -189,6 +191,7 @@ type SearchRouteState = {
   fulltext?: string | string[];
   page?: string | string[];
   refinements?: string | string[];
+  index?: string | string[];
 };
 
 type SearchPageUiState = {
@@ -201,9 +204,10 @@ type SearchView = 'grid' | 'list';
 
 interface TypesenseSearchDocument extends TypesenseAutocompleteHit {
   search_text?: string;
+  entity_type?: string;
 }
 
-type TypesenseSearchHit = Hit<TypesenseSearchDocument>;
+type TypesenseSearchHit = ReturnType<typeof useInfiniteHits<TypesenseSearchDocument>>['items'][number];
 
 const blacklistedMetadataFacetLabels = new Set(['label', 'summary', 'description', 'notes', 'note', 'noot']);
 const blacklistedMetadataFacetIncludes = ['label', 'oclc', 'link', 'description', 'related'];
@@ -246,13 +250,16 @@ function shouldFallbackToLegacy(reason?: string) {
   return reason === 'Typesense search is disabled' || reason === 'Typesense search is not configured';
 }
 
-function getNodeConfig(slug?: string) {
+function getNodeConfig(slug?: string, projectSlug?: string, indexId?: string) {
   if (typeof window === 'undefined' || !slug) return null;
   return {
     host: window.location.hostname,
     port: Number(window.location.port || (window.location.protocol === 'https:' ? '443' : '80')),
     protocol: window.location.protocol.replace(':', ''),
-    path: `/s/${slug}/madoc/api/typesense`,
+    path:
+      projectSlug && indexId
+        ? `/s/${slug}/madoc/api/projects/${encodeURIComponent(projectSlug)}/typesense/${encodeURIComponent(indexId)}`
+        : `/s/${slug}/madoc/api/typesense`,
   };
 }
 
@@ -326,11 +333,14 @@ function SearchDefaults({ projectFilter }: { projectFilter?: string }) {
   return <Configure hitsPerPage={24} filters={projectFilter || undefined} />;
 }
 
-const SearchInputWithAutocomplete: React.FC<{ projectId?: number }> = ({ projectId }) => {
+const SearchInputWithAutocomplete: React.FC<{ projectId?: number; autocomplete?: boolean }> = ({
+  projectId,
+  autocomplete = true,
+}) => {
   const [focused, setFocused] = useState(false);
   const { query, refine } = useSearchBox();
   const { available, suggestions, isLoadingSuggestions } = useTypesenseSiteAutocomplete(query, {
-    enabled: true,
+    enabled: autocomplete,
     limit: 8,
     projectId,
   });
@@ -418,7 +428,7 @@ function HitCard({ hit, view }: { hit: TypesenseSearchHit; view: SearchView }) {
 
       <div className="flex flex-1 flex-col p-3.5">
         <span className="mb-2 inline-block self-start rounded-full bg-slate-100 px-2 py-0.5 text-[0.7rem] font-semibold uppercase tracking-wide text-slate-500">
-          {hit.resource_type || 'resource'}
+          {hit.entity_type || hit.resource_type || 'resource'}
         </span>
 
         <h3
@@ -463,7 +473,17 @@ function ListHitCard({ hit }: { hit: TypesenseSearchHit }) {
   return <HitCard hit={hit} view="list" />;
 }
 
-function ResourceTypeTabs() {
+function ResourceTypeTabs({
+  customIndexes,
+  activeCustomIndex,
+  onCustomIndex,
+  onBaseType,
+}: {
+  customIndexes: PublicProjectSearchIndex[];
+  activeCustomIndex?: string;
+  onCustomIndex: (indexId: string) => void;
+  onBaseType: (resourceType?: string) => void;
+}) {
   const { items, refine } = useRefinementList(
     { attribute: 'resource_type', limit: 20 },
     { $$widgetType: 'ais.refinementList' }
@@ -482,9 +502,9 @@ function ResourceTypeTabs() {
     <div className="mb-5 border-b border-slate-200" role="tablist" aria-label="Resource type">
       <div className="flex gap-6">
         {tabs.map(tab => {
-          const isActive = tab.value
+          const isActive = !activeCustomIndex && (tab.value
             ? refinedItems.length === 1 && refinedItems[0].value === tab.value
-            : refinedItems.length === 0;
+            : refinedItems.length === 0);
           return (
             <button
               key={tab.label}
@@ -497,6 +517,10 @@ function ResourceTypeTabs() {
                   : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-800'
               }`}
               onClick={() => {
+                if (activeCustomIndex) {
+                  onBaseType(tab.value);
+                  return;
+                }
                 refinedItems.forEach(item => refine(item.value));
                 if (tab.value && !refinedItems.some(item => item.value === tab.value)) refine(tab.value);
               }}
@@ -511,6 +535,22 @@ function ResourceTypeTabs() {
             </button>
           );
         })}
+        {customIndexes.map(index => (
+          <button
+            key={index.id}
+            type="button"
+            role="tab"
+            aria-selected={activeCustomIndex === index.id}
+            className={`border-b-2 px-1 pb-2.5 text-sm font-medium transition ${
+              activeCustomIndex === index.id
+                ? 'border-blue-700 text-blue-700'
+                : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-800'
+            }`}
+            onClick={() => onCustomIndex(index.id)}
+          >
+            {index.label}
+          </button>
+        ))}
       </div>
     </div>
   );
@@ -703,15 +743,18 @@ const MetadataFacetList: React.FC<MetadataFacet> = ({ attribute, label }) => {
   );
 };
 
-const MetadataFacetSections: React.FC<{ facets: MetadataFacet[] }> = ({ facets }) => {
-  const visibleFacets = useMemo(() => facets.filter(facet => !isBlacklistedMetadataFacetLabel(facet.label)), [facets]);
+const MetadataFacetSections: React.FC<{ facets: MetadataFacet[]; custom?: boolean }> = ({ facets, custom }) => {
+  const visibleFacets = useMemo(
+    () => (custom ? facets : facets.filter(facet => !isBlacklistedMetadataFacetLabel(facet.label))),
+    [custom, facets]
+  );
 
   if (!visibleFacets.length) {
     return null;
   }
 
   return (
-    <SidebarSection title="Metadata">
+    <SidebarSection title={custom ? 'Facets' : 'Metadata'}>
       <div className="space-y-6">
         {visibleFacets.map(facet => (
           <MetadataFacetList key={facet.attribute} attribute={facet.attribute} label={facet.label} />
@@ -723,13 +766,57 @@ const MetadataFacetSections: React.FC<{ facets: MetadataFacet[] }> = ({ facets }
 
 export function TypesenseSearch() {
   const site = useSite();
+  const api = useApi();
   const { project: siteConfiguration } = useSiteConfiguration();
   const { projectId: projectSlug } = useRouteContext();
   const { data: project } = useProject();
+  const [activeCustomIndexId, setActiveCustomIndexId] = useState<string | undefined>(() => {
+    if (typeof window === 'undefined') return undefined;
+    return new URLSearchParams(window.location.search).get('index') || undefined;
+  });
   const [view, setView] = useState<SearchView>('grid');
   const projectFilter = getTypesenseProjectFilter(project?.id);
   const infiniteScroll = siteConfiguration.searchOptions?.infiniteScroll !== false;
-  const node = useMemo(() => getNodeConfig(site.slug), [site.slug]);
+  const customIndexes = useQuery<PublicProjectSearchIndex[]>(
+    ['project-public-search-indexes', site.slug, project?.slug],
+    () => api.getPublicProjectSearchIndexes(project!.slug),
+    { enabled: !!project?.slug }
+  );
+  const activeCustomIndex = customIndexes.data?.find(index => index.id === activeCustomIndexId);
+  const node = useMemo(
+    () => getNodeConfig(site.slug, activeCustomIndex ? project?.slug : undefined, activeCustomIndex?.id),
+    [activeCustomIndex, project?.slug, site.slug]
+  );
+
+  useEffect(() => {
+    if (activeCustomIndexId && customIndexes.data && !activeCustomIndex) setActiveCustomIndexId(undefined);
+  }, [activeCustomIndex, activeCustomIndexId, customIndexes.data]);
+
+  const selectCustomIndex = (indexId: string) => {
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location.href);
+      url.searchParams.set('index', indexId);
+      url.searchParams.delete('refinements');
+      url.searchParams.delete('page');
+      window.history.replaceState(window.history.state, '', url);
+    }
+    setActiveCustomIndexId(indexId);
+  };
+
+  const selectBaseResourceType = (resourceType?: string) => {
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location.href);
+      url.searchParams.delete('index');
+      url.searchParams.delete('page');
+      if (resourceType) {
+        url.searchParams.set('refinements', JSON.stringify({ resource_type: [resourceType] }));
+      } else {
+        url.searchParams.delete('refinements');
+      }
+      window.history.replaceState(window.history.state, '', url);
+    }
+    setActiveCustomIndexId(undefined);
+  };
 
   const { data, isLoading, error } = useQuery<TypesenseStatus>(
     ['site-typesense-search-status', site.slug],
@@ -774,8 +861,15 @@ export function TypesenseSearch() {
         .map(facet => ({ attribute: facet.field_name, label: metadataFacetLabelFromAttribute(facet.field_name) }))
         .filter(facet => !isBlacklistedMetadataFacetLabel(facet.label));
     },
-    { enabled: !!data?.available && !!site.slug && (!projectSlug || !!project?.id) }
+    { enabled: !activeCustomIndex && !!data?.available && !!site.slug && (!projectSlug || !!project?.id) }
   );
+
+  const visibleFacets = activeCustomIndex
+    ? activeCustomIndex.facets.map(facet => ({
+        attribute: getProjectSearchFacetFieldName(facet.path),
+        label: facet.label,
+      }))
+    : metadataFacets;
 
   const adapter = useMemo(() => {
     if (!data?.available || !node) return null;
@@ -785,16 +879,20 @@ export function TypesenseSearch() {
         nodes: [node],
         cacheSearchResultsForSeconds: 0,
       },
-      additionalSearchParameters: { query_by: 'resource_label,search_text,search_context' },
+      additionalSearchParameters: {
+        query_by: activeCustomIndex ? 'resource_label,search_text' : 'resource_label,search_text,search_context',
+      },
     });
-  }, [data?.available, node]);
+  }, [activeCustomIndex, data?.available, node]);
+
+  const collection = activeCustomIndex?.collection || data?.collection;
 
   const routing = useMemo(() => {
-    if (!data?.collection) return undefined;
+    if (!collection) return undefined;
     return {
       stateMapping: {
         stateToRoute(uiState: Record<string, SearchPageUiState | undefined>): SearchRouteState {
-          const indexUiState = uiState[data.collection];
+          const indexUiState = uiState[collection];
           const refinements =
             indexUiState?.refinementList && Object.keys(indexUiState.refinementList).length
               ? JSON.stringify(indexUiState.refinementList)
@@ -803,11 +901,12 @@ export function TypesenseSearch() {
             fulltext: indexUiState?.query || undefined,
             page: indexUiState?.page && indexUiState.page > 1 ? String(indexUiState.page) : undefined,
             refinements,
+            index: activeCustomIndex?.id,
           };
         },
         routeToState(routeState: SearchRouteState) {
           return {
-            [data.collection]: {
+            [collection]: {
               query: getSingleValue(routeState.fulltext) || '',
               page: parseRoutePage(getSingleValue(routeState.page)),
               refinementList: parseRouteRefinements(getSingleValue(routeState.refinements)),
@@ -816,7 +915,7 @@ export function TypesenseSearch() {
         },
       },
     };
-  }, [data?.collection]);
+  }, [activeCustomIndex?.id, collection]);
 
   if (isLoading || (projectSlug && !project)) {
     return (
@@ -855,14 +954,19 @@ export function TypesenseSearch() {
     <>
       <style>{aisResetStyles}</style>
       <DisplayBreadcrumbs currentPage="Search" />
-      <InstantSearch searchClient={adapter.searchClient} indexName={data.collection} routing={routing}>
-        <SearchDefaults projectFilter={projectFilter} />
+      <InstantSearch key={collection} searchClient={adapter.searchClient} indexName={collection!} routing={routing}>
+        <SearchDefaults projectFilter={activeCustomIndex ? undefined : projectFilter} />
 
         <div className="mb-4">
-          <SearchInputWithAutocomplete projectId={project?.id} />
+          <SearchInputWithAutocomplete projectId={project?.id} autocomplete={!activeCustomIndex} />
         </div>
 
-        <ResourceTypeTabs />
+        <ResourceTypeTabs
+          customIndexes={customIndexes.data || []}
+          activeCustomIndex={activeCustomIndex?.id}
+          onCustomIndex={selectCustomIndex}
+          onBaseType={selectBaseResourceType}
+        />
 
         <div className="mb-4 flex items-center justify-between gap-4">
           <Stats />
@@ -873,9 +977,9 @@ export function TypesenseSearch() {
           {/* Sidebar */}
           <aside className="w-full shrink-0 pr-2 md:sticky md:top-4 md:max-h-[calc(100vh-2rem)] md:w-64 md:overflow-y-auto">
             {!projectSlug ? <ProjectFacet /> : null}
-            {(metadataFacetsLoading || metadataFacets.length > 0 || !!metadataFacetsError) && (
+            {((!activeCustomIndex && metadataFacetsLoading) || visibleFacets.length > 0 || !!metadataFacetsError) && (
               <>
-                {metadataFacetsLoading ? (
+                {!activeCustomIndex && metadataFacetsLoading ? (
                   <SidebarSection title="Metadata">
                     <p className="text-xs text-slate-400">Loading…</p>
                   </SidebarSection>
@@ -884,7 +988,7 @@ export function TypesenseSearch() {
                     <p className="text-xs text-red-400">Failed to load metadata facets.</p>
                   </SidebarSection>
                 ) : (
-                  <MetadataFacetSections facets={metadataFacets} />
+                  <MetadataFacetSections facets={visibleFacets} custom={!!activeCustomIndex} />
                 )}
               </>
             )}

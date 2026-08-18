@@ -10,6 +10,12 @@ import {
 import { DatabasePoolConnectionType } from 'slonik';
 import { deleteCollection } from '../iiif/collections/delete-collection';
 import { buildProjectDeletionSummary } from './delete-project-summary';
+import { getProjectSearchIndexConfiguration } from '../../search/project-search-index-configuration';
+import {
+  getTypesenseProjectSearchCollectionName,
+  isTypesenseConfigured,
+  TypesenseClient,
+} from '../../search/typesense/typesense-client';
 
 export const deleteProjectEndpoint: RouteMiddleware<{ id: number }> = async context => {
   const { siteId } = userWithScope(context, ['site.admin']);
@@ -25,6 +31,20 @@ export async function deleteProject(projectId: number, siteId: number, connectio
 
   const deletionSummary = await buildProjectDeletionSummary(projectId, siteId, connection);
   const { collection_id, capture_model_id } = await connection().one(getProjectAssociates(projectId));
+
+  if (isTypesenseConfigured()) {
+    try {
+      const { config } = await getProjectSearchIndexConfiguration(siteApi, siteId, projectId);
+      const typesense = new TypesenseClient();
+      for (const index of config.indexes) {
+        await typesense.deleteCollection(getTypesenseProjectSearchCollectionName(siteId, projectId, index.id), {
+          allow404: true,
+        });
+      }
+    } catch {
+      // Search collections are derived data; project deletion must still complete when Typesense is unavailable.
+    }
+  }
 
   if (deletionSummary.tasks > 0 || deletionSummary.parentTasks > 0) {
     await siteApi.batchDeleteTasks({ resourceId: collection_id, subject: `urn:madoc:collection:${collection_id}` });

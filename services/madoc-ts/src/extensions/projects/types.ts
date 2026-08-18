@@ -9,6 +9,7 @@ import { ApiClient } from '../../gateway/api';
 import { ProjectRow } from '../../types/projects';
 import { ProjectConfiguration } from '../../types/schemas/project-configuration';
 import { SlotMappingRequest } from '../../types/schemas/site-page';
+import { ProjectSearchIndexPreset } from '../../types/schemas/project-search-index';
 
 export type JsonProjectTemplate = {
   type: string; // Required unique type used to register and index.
@@ -50,6 +51,9 @@ export type JsonProjectTemplate = {
     // };
     activity?: {
       noActivity?: boolean;
+    };
+    searchIndexes?: {
+      available: ProjectSearchIndexPreset[];
     };
   };
   theme?: Partial<MadocTheme>;

@@ -3,6 +3,12 @@ import { BaseTask } from './base-task';
 
 export const type = 'search-index-task';
 
+export type SearchIndexResource = {
+  id: number;
+  type: string;
+  indexId?: string;
+};
+
 export interface SearchIndexTask extends BaseTask {
   type: 'search-index-task';
 
@@ -13,7 +19,7 @@ export interface SearchIndexTask extends BaseTask {
    *   - Options
    */
   parameters: [
-    Array<{ id: number; type: string }>,
+    SearchIndexResource[],
     { indexAllResources?: boolean; recursive?: boolean; resourceStack?: number[] } | undefined,
     number,
   ];
@@ -26,7 +32,7 @@ export interface SearchIndexTask extends BaseTask {
 }
 
 export function createTask(
-  resources: Array<{ id: number; type: string }>,
+  resources: SearchIndexResource[],
   siteId: number,
   {
     recursive = false,
@@ -136,6 +142,23 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
               await api.updateTask(taskId, { status: 3 });
             } catch {
               // Ignore errors.
+            }
+            break;
+          }
+
+          case 'project-entity-index': {
+            if (!resource.indexId) {
+              await api.updateTask(taskId, { status: -1, status_text: 'Missing project search index id' });
+              throw new Error('Missing project search index id');
+            }
+            try {
+              await siteApi.indexProjectSearchIndex(resource.id, resource.indexId);
+              await api.updateTask(taskId, { status: 3, status_text: 'Indexed' });
+            } catch (error) {
+              await api.updateTask(taskId, { status: -1, status_text: 'Failed' });
+              throw error;
+            } finally {
+              siteApi.dispose();
             }
             break;
           }

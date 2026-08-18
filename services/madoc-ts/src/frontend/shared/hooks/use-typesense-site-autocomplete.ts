@@ -7,6 +7,9 @@ export type TypesenseAutocompleteHit = {
   resource_label?: string;
   resource_id?: string;
   manifest_id?: string;
+  canvas_id?: string;
+  entity_ids?: string[];
+  entity_type?: string;
   contexts?: string[];
   thumbnail?: string;
 };
@@ -27,6 +30,7 @@ function getMadocUrnId(urn: string | undefined, type: string): string | null {
 }
 
 export function resolveTypesenseHitPrimaryLink(hit: TypesenseAutocompleteHit, projectSlug?: string): string | null {
+  const isCustomEntity = `${hit.resource_type || ''}`.toLowerCase() === 'customentity';
   const isProject = `${hit.resource_type || ''}`.toLowerCase() === 'project';
   const isCollection = `${hit.resource_type || ''}`.toLowerCase() === 'collection';
   const isManifest = `${hit.resource_type || ''}`.toLowerCase() === 'manifest';
@@ -43,6 +47,18 @@ export function resolveTypesenseHitPrimaryLink(hit: TypesenseAutocompleteHit, pr
   const projectId = isProject ? getMadocUrnId(hit.resource_id, 'project') : null;
 
   const projectPath = projectSlug ? `/projects/${encodeURIComponent(projectSlug)}` : '';
+
+  if (isCustomEntity) {
+    const customManifestId = getMadocUrnId(hit.manifest_id, 'manifest');
+    const customCanvasId = getMadocUrnId(hit.canvas_id, 'canvas');
+    const entityQuery = hit.entity_ids?.[0] ? `?searchEntity=${encodeURIComponent(hit.entity_ids[0])}` : '';
+    if (customManifestId && customCanvasId) {
+      return `${projectPath}/manifests/${customManifestId}/c/${customCanvasId}${entityQuery}`;
+    }
+    if (customManifestId) {
+      return `${projectPath}/manifests/${customManifestId}${entityQuery}`;
+    }
+  }
 
   if (projectId) {
     return `/projects/${projectId}`;

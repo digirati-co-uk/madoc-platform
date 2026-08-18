@@ -60,6 +60,11 @@ export function getTypesenseIndexablesCollectionName(siteId: number) {
   return `${getCollectionPrefix()}indexables_site_${siteId}`;
 }
 
+export function getTypesenseProjectSearchCollectionName(siteId: number, projectId: number, indexId: string) {
+  const safeIndexId = indexId.replace(/[^a-zA-Z0-9_-]/g, '_');
+  return `${getCollectionPrefix()}site_${siteId}_project_${projectId}_entity_${safeIndexId}`;
+}
+
 export function resolveTypesenseSearchCollection({
   siteId,
 }: {
@@ -258,6 +263,32 @@ export class TypesenseClient {
     };
   }
 
+  private getProjectSearchCollectionSchema(name: string): TypesenseCollectionSchema {
+    return {
+      name,
+      default_sorting_field: 'sort_index',
+      fields: [
+        { name: 'id', type: 'string' },
+        { name: 'resource_id', type: 'string' },
+        { name: 'resource_type', type: 'string' },
+        { name: 'entity_type', type: 'string' },
+        { name: 'resource_label', type: 'string' },
+        { name: 'search_text', type: 'string[]' },
+        { name: 'project_id', type: 'string', facet: true },
+        { name: 'index_id', type: 'string', facet: true },
+        { name: 'entity_ids', type: 'string[]' },
+        { name: 'manifest_id', type: 'string' },
+        { name: 'manifest_ids', type: 'string[]' },
+        { name: 'canvas_id', type: 'string', optional: true },
+        { name: 'canvas_ids', type: 'string[]' },
+        { name: 'thumbnail', type: 'string', optional: true },
+        { name: 'region', type: 'string', optional: true },
+        { name: 'facet_.*', type: 'string[]', facet: true, optional: true },
+        { name: 'sort_index', type: 'int32' },
+      ],
+    };
+  }
+
   async ensureSearchCollection(name: string) {
     if (!this.apiKey) {
       throw new Error('Missing TYPESENSE_API_KEY');
@@ -295,6 +326,24 @@ export class TypesenseClient {
       contentType: 'application/json',
       body: JSON.stringify(schema),
     });
+  }
+
+  async ensureProjectSearchCollection(name: string) {
+    if (!this.apiKey) {
+      throw new Error('Missing TYPESENSE_API_KEY');
+    }
+    const existing = await this.request(`/collections/${encodeURIComponent(name)}`, { allow404: true });
+    if (!existing) {
+      await this.request('/collections', {
+        method: 'POST',
+        contentType: 'application/json',
+        body: JSON.stringify(this.getProjectSearchCollectionSchema(name)),
+      });
+    }
+  }
+
+  async deleteCollection(name: string, { allow404 = false }: { allow404?: boolean } = {}) {
+    return this.request(`/collections/${encodeURIComponent(name)}`, { method: 'DELETE', allow404 });
   }
 
   private parseImportResponse(result: string) {

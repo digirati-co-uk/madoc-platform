@@ -91,6 +91,12 @@ import { SearchIndexTask } from './tasks/search-index-task';
 import { JsonProjectTemplate, ProjectTemplate } from '../extensions/projects/types';
 import { ApiKey } from '../types/api-key';
 import { TabularProjectTemplateConfig } from '../types/tabular-project-template-config';
+import {
+  ProjectSearchIndexConfiguration,
+  ProjectSearchIndexDefinition,
+  ProjectSearchIndexRequest,
+  PublicProjectSearchIndex,
+} from '../types/schemas/project-search-index';
 
 export type ApiClientWithoutExtensions = Omit<
   ApiClient,
@@ -811,6 +817,47 @@ export class ApiClient {
 
   async getProject(id: number | string, query?: { published?: boolean }) {
     return this.request<ProjectFull>(`/api/madoc/projects/${id}${query ? `?${stringify(query)}` : ''}`);
+  }
+
+  async getProjectSearchIndexes(id: number | string) {
+    return this.request<ProjectSearchIndexConfiguration>(`/api/madoc/projects/${id}/search-indexes`);
+  }
+
+  async createProjectSearchIndex(id: number | string, request: ProjectSearchIndexRequest) {
+    return this.request<ProjectSearchIndexDefinition>(`/api/madoc/projects/${id}/search-indexes`, {
+      method: 'POST',
+      body: request,
+    });
+  }
+
+  async updateProjectSearchIndex(id: number | string, indexId: string, request: ProjectSearchIndexRequest) {
+    return this.request<ProjectSearchIndexDefinition>(`/api/madoc/projects/${id}/search-indexes/${indexId}`, {
+      method: 'PUT',
+      body: request,
+    });
+  }
+
+  async deleteProjectSearchIndex(id: number | string, indexId: string) {
+    return this.request(`/api/madoc/projects/${id}/search-indexes/${indexId}`, { method: 'DELETE' });
+  }
+
+  async reindexProjectSearchIndex(id: number | string, indexId: string) {
+    return this.request<SearchIndexTask>(`/api/madoc/projects/${id}/search-indexes/${indexId}/reindex`, {
+      method: 'POST',
+    });
+  }
+
+  async indexProjectSearchIndex(id: number | string, indexId: string) {
+    return this.request<{ indexed: number; collection: string; warnings: string[] }>(
+      `/api/madoc/projects/${id}/search-indexes/${indexId}/index`,
+      { method: 'POST' }
+    );
+  }
+
+  async getPublicProjectSearchIndexes(projectSlug: string) {
+    return this.publicRequest<PublicProjectSearchIndex[]>(
+      `/madoc/api/projects/${encodeURIComponent(projectSlug)}/search-indexes`
+    );
   }
 
   async getProjectMetadata(id: number) {

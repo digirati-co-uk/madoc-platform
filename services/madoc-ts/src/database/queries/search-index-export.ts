@@ -32,6 +32,23 @@ export interface SearchExportCaptureModelRow {
   document_data: unknown;
 }
 
+export interface ProjectSearchCaptureModelRow {
+  model_id: string;
+  target: Array<{ id: string; type: string }>;
+  document_data: unknown;
+  revisions: Array<{ id: string; status: string; approved: boolean }>;
+}
+
+export interface ProjectSearchIIIFResourceRow {
+  resource_id: number;
+  resource_type: 'canvas' | 'manifest';
+  manifest_id: number;
+  default_thumbnail: string | null;
+  items_json: unknown;
+  width: number | null;
+  height: number | null;
+}
+
 function resourceScopeContext(siteId: number) {
   return sql`
     scope_context as (
@@ -408,5 +425,84 @@ export function getCaptureModelDataForSearchExport(siteId: number, targetIds: st
       and target.id = any(${sql.array(targetIds, 'text')})
       and lower(coalesce(target.type, '')) in ('manifest', 'canvas')
     order by target.id, cm.id
+  `;
+}
+
+export function getProjectCaptureModelsForSearchExport(projectId: number, siteId: number) {
+  return sql<ProjectSearchCaptureModelRow>`
+    select
+      cm.id as model_id,
+      coalesce(cm.target, '[]'::jsonb) as target,
+      cmd.document_data,
+      coalesce(
+        jsonb_agg(
+          jsonb_build_object(
+            'id', revision.id,
+            'status', case when revision.approved then 'accepted' else revision.status end,
+            'approved', revision.approved
+          )
+        ) filter (where revision.id is not null),
+        '[]'::jsonb
+      ) as revisions
+    from capture_model cm
+    inner join iiif_project project
+      on project.id = ${projectId}
+     and project.site_id = ${siteId}
+     and project.capture_model_id = cm.derived_from
+    inner join capture_model_document cmd on cmd.id = cm.document_id and cmd.site_id = ${siteId}
+    left join capture_model_revision revision on revision.capture_model_id = cm.id and revision.site_id = ${siteId}
+    where cm.site_id = ${siteId}
+    group by cm.id, cm.target, cmd.document_data
+    order by cm.id
+  `;
+}
+
+export function getProjectSearchIIIFResources(resourceIds: number[], siteId: number) {
+  if (!resourceIds.length) {
+    return sql<ProjectSearchIIIFResourceRow>`
+      select
+        null::int as resource_id,
+        null::text as resource_type,
+        null::int as manifest_id,
+        null::text as default_thumbnail,
+        null::jsonb as items_json,
+        null::int as width,
+        null::int as height
+      where false
+    `;
+  }
+
+  return sql<ProjectSearchIIIFResourceRow>`
+    select
+      resource.id as resource_id,
+      resource.type as resource_type,
+      case when resource.type = 'manifest' then resource.id else min(parent.resource_id) end as manifest_id,
+      case
+        when resource.type = 'manifest' then manifest_thumbnail(${siteId}, resource.id)
+        else resource.default_thumbnail
+      end as default_thumbnail,
+      resource.items_json,
+      resource.width,
+      resource.height
+    from iiif_resource resource
+    inner join iiif_derived_resource derived
+      on derived.resource_id = resource.id
+     and derived.site_id = ${siteId}
+     and derived.resource_type = resource.type
+    left join iiif_derived_resource_items link
+      on resource.type = 'canvas'
+     and link.item_id = resource.id
+     and link.site_id = ${siteId}
+    left join iiif_derived_resource parent
+      on parent.resource_id = link.resource_id
+     and parent.site_id = ${siteId}
+     and parent.resource_type = 'manifest'
+     and parent.published = true
+    where resource.id = any(${sql.array(resourceIds, 'int4')})
+      and (
+        (resource.type = 'manifest' and derived.published = true)
+        or (resource.type = 'canvas' and parent.resource_id is not null)
+      )
+    group by resource.id, resource.type, resource.default_thumbnail, resource.items_json, resource.width, resource.height
   `;
 }

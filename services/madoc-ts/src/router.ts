@@ -187,6 +187,15 @@ import { getProjectMetadata } from './routes/projects/get-project-metadata';
 import { getProjectModel } from './routes/projects/get-project-model';
 import { getProjectNote } from './routes/projects/get-project-note';
 import { getProjectRawData } from './routes/projects/get-project-raw-data';
+import {
+  createProjectSearchIndex,
+  deleteProjectSearchIndex,
+  indexProjectSearchIndex,
+  listProjectSearchIndexes,
+  listPublicProjectSearchIndexes,
+  reindexProjectSearchIndex,
+  updateProjectSearchIndex,
+} from './routes/projects/project-search-indexes';
 import { getProjectStructure } from './routes/projects/get-project-structure';
 import { getProjectTask } from './routes/projects/get-project-task';
 import { listProjectEmails } from './routes/projects/list-project-emails';
@@ -240,7 +249,14 @@ import {
   typesenseListIndexables,
   typesenseListModels,
 } from './routes/search/typesense-indexables';
-import { typesenseProxyMultiSearch, typesenseProxySearch, typesenseProxyStatus } from './routes/search/typesense-proxy';
+import {
+  typesenseProjectProxyMultiSearch,
+  typesenseProjectProxySearch,
+  typesenseProjectProxyStatus,
+  typesenseProxyMultiSearch,
+  typesenseProxySearch,
+  typesenseProxyStatus,
+} from './routes/search/typesense-proxy';
 import { typesenseQuery } from './routes/search/typesense-query';
 import { siteCanvas } from './routes/site/site-canvas';
 import { siteCanvasModels } from './routes/site/site-canvas-models';
@@ -439,6 +455,36 @@ export const router = new TypedRouter({
     '/s/:slug/madoc/api/typesense/multi_search',
     typesenseProxyMultiSearch,
   ],
+  'site-project-search-indexes': [
+    TypedRouter.GET,
+    '/s/:slug/madoc/api/projects/:project/search-indexes',
+    listPublicProjectSearchIndexes,
+  ],
+  'site-project-typesense-status': [
+    TypedRouter.GET,
+    '/s/:slug/madoc/api/projects/:project/typesense/:indexId/status',
+    typesenseProjectProxyStatus,
+  ],
+  'site-project-typesense-search-get': [
+    TypedRouter.GET,
+    '/s/:slug/madoc/api/projects/:project/typesense/:indexId',
+    typesenseProjectProxySearch,
+  ],
+  'site-project-typesense-search-get-paths': [
+    TypedRouter.GET,
+    '/s/:slug/madoc/api/projects/:project/typesense/:indexId/collections/:collection/documents/search',
+    typesenseProjectProxySearch,
+  ],
+  'site-project-typesense-search-post': [
+    TypedRouter.POST,
+    '/s/:slug/madoc/api/projects/:project/typesense/:indexId',
+    typesenseProjectProxySearch,
+  ],
+  'site-project-typesense-multi-search-post': [
+    TypedRouter.POST,
+    '/s/:slug/madoc/api/projects/:project/typesense/:indexId/multi_search',
+    typesenseProjectProxyMultiSearch,
+  ],
   'search-index-iiif': [TypedRouter.POST, '/api/search/iiif', typesenseIngestIIIF],
   'search-reindex-iiif': [TypedRouter.PUT, '/api/search/iiif/:id', typesenseIngestIIIF],
   'search-list-iiif': [TypedRouter.GET, '/api/search/iiif', typesenseListIIIF],
@@ -626,6 +672,38 @@ export const router = new TypedRouter({
   'create-project': [TypedRouter.POST, '/api/madoc/projects', createNewProject],
   'list-projects': [TypedRouter.GET, '/api/madoc/projects', listProjects],
   'get-project': [TypedRouter.GET, '/api/madoc/projects/:id', getProject],
+  'get-project-search-indexes': [
+    TypedRouter.GET,
+    '/api/madoc/projects/:id/search-indexes',
+    listProjectSearchIndexes,
+  ],
+  'create-project-search-index': [
+    TypedRouter.POST,
+    '/api/madoc/projects/:id/search-indexes',
+    createProjectSearchIndex,
+    { schemaName: 'ProjectSearchIndexRequest' },
+  ],
+  'update-project-search-index': [
+    TypedRouter.PUT,
+    '/api/madoc/projects/:id/search-indexes/:indexId',
+    updateProjectSearchIndex,
+    { schemaName: 'ProjectSearchIndexRequest' },
+  ],
+  'delete-project-search-index': [
+    TypedRouter.DELETE,
+    '/api/madoc/projects/:id/search-indexes/:indexId',
+    deleteProjectSearchIndex,
+  ],
+  'reindex-project-search-index': [
+    TypedRouter.POST,
+    '/api/madoc/projects/:id/search-indexes/:indexId/reindex',
+    reindexProjectSearchIndex,
+  ],
+  'index-project-search-index': [
+    TypedRouter.POST,
+    '/api/madoc/projects/:id/search-indexes/:indexId/index',
+    indexProjectSearchIndex,
+  ],
   'get-project-by-task': [TypedRouter.GET, '/api/madoc/project-by-task/:id', getProjectFromTask],
   'export-project': [TypedRouter.POST, '/api/madoc/projects/:id/export', createProjectExport],
   'get-project-structure': [TypedRouter.GET, '/api/madoc/projects/:id/structure', getProjectStructure],

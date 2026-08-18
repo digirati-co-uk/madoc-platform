@@ -1,9 +1,12 @@
 import {
+  getTypesenseProjectSearchCollectionName,
   isTypesenseAvailable,
   resolveTypesenseSearchCollection,
   type TypesenseAvailability,
   TypesenseClient,
 } from '../../search/typesense/typesense-client';
+import { getProjectSearchIndexConfiguration } from '../../search/project-search-index-configuration';
+import { api } from '../../gateway/api.server';
 import type { RouteMiddleware } from '../../types/route-middleware';
 import { NotFound } from '../../utility/errors/not-found';
 import { optionalUserWithScope } from '../../utility/user-with-scope';
@@ -205,4 +208,64 @@ export const typesenseProxyMultiSearch: RouteMiddleware = async context => {
     requestPayload.union = payload.union;
   }
   context.response.body = await typesense.multiSearch(requestPayload);
+};
+
+async function getProjectTypesenseContext(context: any) {
+  const site = await context.siteManager.getSiteBySlug(context.params.slug);
+  if (!site) throw new NotFound('Site not found');
+  const project = await context.projects.getProjectByIdOrSlug(context.params.project, site.id, true);
+  const siteApi = api.asUser({ siteId: site.id }, { siteSlug: site.slug });
+  context.disposableApis.push(siteApi);
+  const { config } = await getProjectSearchIndexConfiguration(siteApi, site.id, project.id);
+  const definition = config.indexes.find(
+    index => index.id === context.params.indexId && index.enabled && index.lastIndexedAt
+  );
+  if (!definition) throw new NotFound('Search index not found');
+  return {
+    collection: getTypesenseProjectSearchCollectionName(site.id, project.id, definition.id),
+    availability: await isTypesenseAvailable(),
+  };
+}
+
+export const typesenseProjectProxyStatus: RouteMiddleware = async context => {
+  const { collection, availability } = await getProjectTypesenseContext(context);
+  context.response.body = { available: availability.available, collection, reason: availability.reason };
+};
+
+export const typesenseProjectProxySearch: RouteMiddleware = async context => {
+  const { collection, availability } = await getProjectTypesenseContext(context);
+  if (!availability.available) {
+    unavailableResponse({ context, availability, collection });
+    return;
+  }
+  const input = context.method === 'GET' ? context.query : parseRequestPayload(context.requestBody);
+  const params = sanitizeSearchParams(input);
+  params.query_by = 'resource_label,search_text';
+  const typesense = new TypesenseClient();
+  await typesense.ensureProjectSearchCollection(collection);
+  context.response.body = await typesense.searchRaw(collection, params);
+};
+
+export const typesenseProjectProxyMultiSearch: RouteMiddleware = async context => {
+  const { collection, availability } = await getProjectTypesenseContext(context);
+  if (!availability.available) {
+    unavailableResponse({ context, availability, collection });
+    return;
+  }
+  const payload = parseRequestPayload(context.requestBody);
+  const searches = Array.isArray(payload.searches) ? payload.searches : [];
+  if (!searches.length) {
+    context.response.status = 400;
+    context.response.body = { error: 'Invalid Typesense multi_search payload. Expected a non-empty searches array.' };
+    return;
+  }
+  const typesense = new TypesenseClient();
+  await typesense.ensureProjectSearchCollection(collection);
+  context.response.body = await typesense.multiSearch({
+    searches: searches.map(search => ({
+      ...sanitizeSearchParams(search || {}),
+      query_by: 'resource_label,search_text',
+      collection,
+    })),
+  });
 };
