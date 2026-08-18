@@ -6,6 +6,7 @@ on:
     tags: ['v*']
   pull_request:
     branches: ['main', 'feature/v2.1', 'feature/2026-dependencies']
+    types: [opened, synchronize, reopened, labeled]
     paths:
       - ".github/workflows/madoc-ts-docker.yaml"
       - "services/madoc-ts/src/**"
@@ -18,6 +19,10 @@ on:
       - "services/madoc-ts/ecosystem.config.js"
       - "services/madoc-ts/webpack.config.js"
       - "services/madoc-ts/tsconfig.json"
+
+concurrency:
+  group: madoc-ts-docker-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
 
