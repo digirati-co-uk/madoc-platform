@@ -12,6 +12,7 @@ import {
   CanvasViewerControls,
   CanvasViewerEditorStyleReset,
   CanvasViewerGrid,
+  CanvasViewerGridContent,
 } from '../../../../shared/atoms/CanvasViewerGrid';
 import { useApi } from '../../../../shared/hooks/use-api';
 import { useData } from '../../../../shared/hooks/use-data';
@@ -571,49 +572,53 @@ function ViewSingleReview({
     <div style={{ flex: 1, minWidth: 200, display: 'flex', flexDirection: 'column' }}>
       {canvas ? (
         <CanvasViewerGrid ref={gridRef}>
-          {isOSD ? (
-            <ReviewCanvasViewer canvas={canvas}>
-              <InfoMessage style={{ lineHeight: '3.4em', position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10 }}>
-                {t('You cannot edit annotations if you are rotating')}
-                <Button style={{ margin: '0.8em' }} onClick={() => setIsOSD(false)}>
-                  Reset
-                </Button>
-              </InfoMessage>
-              <BrowserComponent fallback={null}>
-                <OpenSeadragonViewer ref={osd} onReady={viewer => viewer.viewport.setRotation(90)} />
-              </BrowserComponent>
-            </ReviewCanvasViewer>
-          ) : (
-            <EditorContentViewer
-              height={'100%' as any}
-              canvasId={canvas.id}
-              onCreated={rt => {
-                return ((runtime as any).current = rt.runtime);
-              }}
-            />
-          )}
-          {(enableRotation || isOpen) && (
-            <CanvasViewerControls>
-              {enableRotation ? (
-                <CanvasViewerButton onClick={rotate}>
-                  <RotateIcon title={t('atlas__rotate', { defaultValue: 'Rotate' })} />
-                </CanvasViewerButton>
-              ) : null}
-              {isOpen ? (
-                <>
-                  <CanvasViewerButton onClick={goHome}>
-                    <HomeIcon title={t('atlas__zoom_home', { defaultValue: 'Home' })} />
+          <CanvasViewerGridContent>
+            {isOSD ? (
+              <ReviewCanvasViewer canvas={canvas}>
+                <InfoMessage
+                  style={{ lineHeight: '3.4em', position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10 }}
+                >
+                  {t('You cannot edit annotations if you are rotating')}
+                  <Button style={{ margin: '0.8em' }} onClick={() => setIsOSD(false)}>
+                    Reset
+                  </Button>
+                </InfoMessage>
+                <BrowserComponent fallback={null}>
+                  <OpenSeadragonViewer ref={osd} onReady={viewer => viewer.viewport.setRotation(90)} />
+                </BrowserComponent>
+              </ReviewCanvasViewer>
+            ) : (
+              <EditorContentViewer
+                height={'100%' as any}
+                canvasId={canvas.id}
+                onCreated={rt => {
+                  return ((runtime as any).current = rt.runtime);
+                }}
+              />
+            )}
+            {(enableRotation || isOpen) && (
+              <CanvasViewerControls>
+                {enableRotation ? (
+                  <CanvasViewerButton onClick={rotate}>
+                    <RotateIcon title={t('atlas__rotate', { defaultValue: 'Rotate' })} />
                   </CanvasViewerButton>
-                  <CanvasViewerButton onClick={zoomOut}>
-                    <MinusIcon title={t('atlas__zoom_out', { defaultValue: 'Zoom out' })} />
-                  </CanvasViewerButton>
-                  <CanvasViewerButton onClick={zoomIn}>
-                    <PlusIcon title={t('atlas__zoom_in', { defaultValue: 'Zoom in' })} />
-                  </CanvasViewerButton>
-                </>
-              ) : null}
-            </CanvasViewerControls>
-          )}
+                ) : null}
+                {isOpen ? (
+                  <>
+                    <CanvasViewerButton onClick={goHome}>
+                      <HomeIcon title={t('atlas__zoom_home', { defaultValue: 'Home' })} />
+                    </CanvasViewerButton>
+                    <CanvasViewerButton onClick={zoomOut}>
+                      <MinusIcon title={t('atlas__zoom_out', { defaultValue: 'Zoom out' })} />
+                    </CanvasViewerButton>
+                    <CanvasViewerButton onClick={zoomIn}>
+                      <PlusIcon title={t('atlas__zoom_in', { defaultValue: 'Zoom in' })} />
+                    </CanvasViewerButton>
+                  </>
+                ) : null}
+              </CanvasViewerControls>
+            )}
+          </CanvasViewerGridContent>
         </CanvasViewerGrid>
       ) : (
         metadata.subject?.id &&
