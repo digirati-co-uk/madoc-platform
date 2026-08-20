@@ -1,6 +1,5 @@
-import React, { useMemo, useState } from 'react';
-import Editor, { theme } from 'rich-markdown-editor';
-import styled from 'styled-components';
+import React, { ComponentType, useMemo, useState } from 'react';
+import EditorModule, { Props as EditorProps, theme } from 'rich-markdown-editor';
 import { captureModelShorthand } from '../../../frontend/shared/capture-models/helpers/capture-model-shorthand';
 import { useApi } from '../../../frontend/shared/hooks/use-api';
 import { Button } from '../../../frontend/shared/navigation/Button';
@@ -9,9 +8,11 @@ import { blockEditorFor } from '../block-editor-for';
 import { PageBlockEditor, ReactPageBlockDefinition } from '../extension';
 import { StaticMarkdownBlock } from './static-markdown-block';
 
-const MarkdownEditorWrapper = styled.div`
-  padding: 0.6em 0.6em 0.6em 2em;
-`;
+const Editor = (
+  typeof EditorModule === 'function'
+    ? EditorModule
+    : (EditorModule as unknown as { default: ComponentType<EditorProps> }).default
+) as ComponentType<EditorProps>;
 
 const MarkdownEditor: PageBlockEditor = props => {
   const initialValue = useMemo(() => props.block.static_data?.markdown || '', [props.block.static_data?.markdown]);
@@ -35,7 +36,7 @@ const MarkdownEditor: PageBlockEditor = props => {
 
   return (
     <>
-      <MarkdownEditorWrapper>
+      <div className="py-[0.6em] pr-[0.6em] pl-[2em]">
         <Editor
           // onSearchLink={term => searchLink(term)}
           defaultValue={initialValue}
@@ -59,7 +60,7 @@ const MarkdownEditor: PageBlockEditor = props => {
             } as any
           }
         />
-      </MarkdownEditorWrapper>
+      </div>
       <ModalFooter>
         <Button
           disabled={value === (props.block.static_data?.markdown || '')}

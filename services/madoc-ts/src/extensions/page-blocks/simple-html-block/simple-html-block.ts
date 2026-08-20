@@ -9,6 +9,7 @@ const definition: HTMLPageBlockDefinition<{ html: string }> = {
     html: {
       label: 'Enter HTML content',
       type: 'html-field',
+      enableLinks: true,
     },
   }),
   defaultData: {

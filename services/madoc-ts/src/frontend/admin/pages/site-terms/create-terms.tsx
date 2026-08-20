@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React, { ComponentType, useState } from 'react';
 import { useMutation } from 'react-query';
-import RichMarkdownEditor, { renderToHtml } from 'rich-markdown-editor';
-import styled from 'styled-components';
+import RichMarkdownEditorModule, { Props as RichMarkdownEditorProps, renderToHtml } from 'rich-markdown-editor';
 import { SiteTerms } from '../../../../types/site-terms';
 import { InfoMessage } from '../../../shared/callouts/InfoMessage';
 import { WarningMessage } from '../../../shared/callouts/WarningMessage';
@@ -10,10 +9,11 @@ import { useData } from '../../../shared/hooks/use-data';
 import { Button, ButtonRow } from '../../../shared/navigation/Button';
 import { serverRendererFor } from '../../../shared/plugins/external/server-renderer-for';
 
-const MarkdownEditorWrapper = styled.div`
-  padding: 0.6em 0.6em 0.6em 2em;
-  background: #fff;
-`;
+const RichMarkdownEditor = (
+  typeof RichMarkdownEditorModule === 'function'
+    ? RichMarkdownEditorModule
+    : (RichMarkdownEditorModule as unknown as { default: ComponentType<RichMarkdownEditorProps> }).default
+) as ComponentType<RichMarkdownEditorProps>;
 
 export function CreateTerms() {
   const [markdown, setMarkdown] = useState('');
@@ -68,7 +68,7 @@ export function CreateTerms() {
           Once you create the terms and conditions, new and existing users will be prompted to accept them.
         </InfoMessage>
       )}
-      <MarkdownEditorWrapper>
+      <div className="bg-white py-[0.6em] pr-[0.6em] pl-[2em]">
         <RichMarkdownEditor
           disableExtensions={['image']}
           defaultValue={data.latest?.terms?.markdown || ''}
@@ -82,7 +82,7 @@ export function CreateTerms() {
             Save
           </Button>
         </ButtonRow>
-      </MarkdownEditorWrapper>
+      </div>
     </>
   );
 }
