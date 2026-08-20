@@ -39,6 +39,9 @@ overrides:
   styled-components: 6.3.8
   ws: ^8.21.3
 
+patchedDependencies:
+  react-data-grid@7.0.0-beta.59: patches/react-data-grid@7.0.0-beta.59.patch
+
 peerDependencyRules:
   allowedVersions:
     prosemirror-tables: ^1.8.5
