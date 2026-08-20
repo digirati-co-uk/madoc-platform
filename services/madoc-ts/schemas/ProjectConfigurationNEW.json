@@ -366,6 +366,9 @@
                 },
                 "enableSplitView": {
                   "type": "boolean"
+                },
+                "enableEditorResizing": {
+                  "type": "boolean"
                 }
               }
             }

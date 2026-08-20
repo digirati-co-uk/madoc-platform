@@ -10,6 +10,7 @@ import { EditorSlots } from '../../../shared/capture-models/new/components/Edito
 import { RevisionProviderWithFeatures } from '../../../shared/capture-models/new/components/RevisionProviderWithFeatures';
 import { EditorContentViewer } from '../../../shared/capture-models/new/EditorContent';
 import { useBrowserLayoutEffect } from '../../../shared/hooks/use-browser-layout-effect';
+import { HorizontalEditorSplit } from '../../../shared/components/HorizontalEditorSplit';
 import { HomeIcon } from '../../../shared/icons/HomeIcon';
 import { MinusIcon } from '../../../shared/icons/MinusIcon';
 import { PlusIcon } from '../../../shared/icons/PlusIcon';
@@ -36,12 +37,12 @@ import {
   CanvasViewerButton,
   CanvasViewerControls,
   CanvasViewerEditorStyleReset,
-  CanvasViewerGrid,
   CanvasViewerGridContent,
   CanvasViewerGridSidebar,
 } from '../../../shared/atoms/CanvasViewerGrid';
 import { useCrowdsourcingTaskDetails } from '../../hooks/use-crowdsourcing-task-details';
 import { useReviewConfiguration } from '../../hooks/use-review-configuration';
+import { useModelPageConfiguration } from '../../hooks/use-model-page-configuration';
 import { RequestChanges } from './actions/request-changes';
 import { ApproveSubmission } from './actions/approve-submission';
 import { RejectSubmission } from './actions/reject-submission';
@@ -72,13 +73,15 @@ const PreviewCrowdsourcingTask: React.FC<{
   const gridRef = useRef<any>(undefined);
   const runtime = useRef<Runtime>(undefined);
   const config = useReviewConfiguration();
+  const { enableEditorResizing = true } = useModelPageConfiguration();
   const [height, setHeight] = useState(600);
   const isLocked = props.lockedTasks && props.lockedTasks.indexOf(props.task.id) !== -1;
   const isDone = taskData?.status === 3;
   const api = useApi();
   const site = useSite();
   const template = useProjectTemplate(project?.template);
-  const CustomReviewRenderer = template?.components?.customReviewRenderer as React.FC<CustomReviewRendererProps> | undefined;
+  const CustomReviewRenderer = template?.components?.customReviewRenderer as
+    React.FC<CustomReviewRendererProps> | undefined;
 
   const goHome = () => {
     if (runtime.current) {
@@ -318,38 +321,46 @@ const PreviewCrowdsourcingTask: React.FC<{
                     DefaultControls={DefaultControls}
                   />
                 ) : (
-                  <CanvasViewerGrid ref={gridRef}>
-                    <CanvasViewerGridContent>
-                      {canvas ? (
-                        <EditorContentViewer
-                          height={height}
-                          canvasId={canvas.id}
-                          onCreated={rt => {
-                            return ((runtime as any).current = rt.runtime);
-                          }}
-                        />
-                      ) : null}
+                  <HorizontalEditorSplit
+                    name="non-tabular-multi-review-editor"
+                    enabled={enableEditorResizing}
+                    resizableSide="right"
+                    containerRef={gridRef}
+                    flexiblePane={
+                      <CanvasViewerGridContent>
+                        {canvas ? (
+                          <EditorContentViewer
+                            height={height}
+                            canvasId={canvas.id}
+                            onCreated={rt => {
+                              return ((runtime as any).current = rt.runtime);
+                            }}
+                          />
+                        ) : null}
 
-                      <CanvasViewerControls>
-                        <CanvasViewerButton onClick={goHome}>
-                          <HomeIcon title={t('atlas__zoom_home', { defaultValue: 'Home' })} />
-                        </CanvasViewerButton>
-                        <CanvasViewerButton onClick={zoomOut}>
-                          <MinusIcon title={t('atlas__zoom_out', { defaultValue: 'Zoom out' })} />
-                        </CanvasViewerButton>
-                        <CanvasViewerButton onClick={zoomIn}>
-                          <PlusIcon title={t('atlas__zoom_in', { defaultValue: 'Zoom in' })} />
-                        </CanvasViewerButton>
-                      </CanvasViewerControls>
-                    </CanvasViewerGridContent>
-                    <CanvasViewerGridSidebar>
-                      <CanvasViewerEditorStyleReset>
-                        <EditorSlots.TopLevelEditor />
-                      </CanvasViewerEditorStyleReset>
+                        <CanvasViewerControls>
+                          <CanvasViewerButton onClick={goHome}>
+                            <HomeIcon title={t('atlas__zoom_home', { defaultValue: 'Home' })} />
+                          </CanvasViewerButton>
+                          <CanvasViewerButton onClick={zoomOut}>
+                            <MinusIcon title={t('atlas__zoom_out', { defaultValue: 'Zoom out' })} />
+                          </CanvasViewerButton>
+                          <CanvasViewerButton onClick={zoomIn}>
+                            <PlusIcon title={t('atlas__zoom_in', { defaultValue: 'Zoom in' })} />
+                          </CanvasViewerButton>
+                        </CanvasViewerControls>
+                      </CanvasViewerGridContent>
+                    }
+                    resizablePane={
+                      <CanvasViewerGridSidebar style={{ width: '100%' }}>
+                        <CanvasViewerEditorStyleReset>
+                          <EditorSlots.TopLevelEditor />
+                        </CanvasViewerEditorStyleReset>
 
-                      <EditorSlots.SubmitButton captureModel={captureModel} />
-                    </CanvasViewerGridSidebar>
-                  </CanvasViewerGrid>
+                        <EditorSlots.SubmitButton captureModel={captureModel} />
+                      </CanvasViewerGridSidebar>
+                    }
+                  />
                 )}
               </ReviewContextWithActions>
             </RevisionProviderWithFeatures>

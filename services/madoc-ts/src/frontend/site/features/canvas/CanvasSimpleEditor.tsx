@@ -38,6 +38,7 @@ export function CanvasSimpleEditor({ revision, isSegmentation }: CanvasSimpleEdi
     disableNextCanvas = false,
     enableRotation = false,
     enableTooltipDescriptions = false,
+    enableEditorResizing = true,
   } = useModelPageConfiguration();
   const mode = useContributionMode();
   const isVertical = config.project.defaultEditorOrientation === 'vertical';
@@ -88,6 +89,7 @@ export function CanvasSimpleEditor({ revision, isSegmentation }: CanvasSimpleEdi
         autosave={autosave}
         hideViewerControls={hideViewerControls}
         isVertical={isVertical}
+        enableEditorResizing={enableEditorResizing}
         disableSaveForLater={disableSaveForLater}
         modelRefetch={modelRefetch}
         markedAsUnusable={markedAsUnusable}

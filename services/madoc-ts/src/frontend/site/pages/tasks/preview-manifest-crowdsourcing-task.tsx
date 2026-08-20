@@ -12,6 +12,7 @@ import { Revisions } from '../../../shared/capture-models/editor/stores/revision
 import { useApi } from '../../../shared/hooks/use-api';
 import { useApiTask } from '../../../shared/hooks/use-api-task';
 import { useProjectTemplate } from '../../../shared/hooks/use-project-template';
+import { HorizontalEditorSplit } from '../../../shared/components/HorizontalEditorSplit';
 import { useSite } from '../../../shared/hooks/use-site';
 import { ArrowBackIcon } from '../../../shared/icons/ArrowBackIcon';
 import { EditIcon } from '../../../shared/icons/EditIcon';
@@ -30,11 +31,11 @@ import {
 } from '../../../shared/navigation/EditorToolbar';
 import {
   CanvasViewerEditorStyleReset,
-  CanvasViewerGrid,
   CanvasViewerGridContent,
   CanvasViewerGridSidebar,
 } from '../../../shared/atoms/CanvasViewerGrid';
 import { useCrowdsourcingTaskDetails } from '../../hooks/use-crowdsourcing-task-details';
+import { useModelPageConfiguration } from '../../hooks/use-model-page-configuration';
 import { ApproveSubmission } from './actions/approve-submission';
 import { RejectSubmission } from './actions/reject-submission';
 import { RequestChanges } from './actions/request-changes';
@@ -63,7 +64,9 @@ export function PreviewManifestCrowdsourcingTask(props: {
   const api = useApi();
   const site = useSite();
   const template = useProjectTemplate(project?.template);
-  const CustomReviewRenderer = template?.components?.customReviewRenderer as React.FC<CustomReviewRendererProps> | undefined;
+  const { enableEditorResizing = true } = useModelPageConfiguration();
+  const CustomReviewRenderer = template?.components?.customReviewRenderer as
+    React.FC<CustomReviewRendererProps> | undefined;
 
   const DefaultControls: ReviewDefaultControlsComponent = () => {
     return (
@@ -237,18 +240,26 @@ export function PreviewManifestCrowdsourcingTask(props: {
                     DefaultControls={DefaultControls}
                   />
                 ) : (
-                  <CanvasViewerGrid ref={gridRef}>
-                    <CanvasViewerGridContent>
-                      <MetadataEmptyState>No preview</MetadataEmptyState>
-                    </CanvasViewerGridContent>
-                    <CanvasViewerGridSidebar>
-                      <CanvasViewerEditorStyleReset>
-                        <EditorSlots.TopLevelEditor />
-                      </CanvasViewerEditorStyleReset>
+                  <HorizontalEditorSplit
+                    name="non-tabular-manifest-review-editor"
+                    enabled={enableEditorResizing}
+                    resizableSide="right"
+                    containerRef={gridRef}
+                    flexiblePane={
+                      <CanvasViewerGridContent>
+                        <MetadataEmptyState>No preview</MetadataEmptyState>
+                      </CanvasViewerGridContent>
+                    }
+                    resizablePane={
+                      <CanvasViewerGridSidebar style={{ width: '100%' }}>
+                        <CanvasViewerEditorStyleReset>
+                          <EditorSlots.TopLevelEditor />
+                        </CanvasViewerEditorStyleReset>
 
-                      <EditorSlots.SubmitButton captureModel={captureModel} />
-                    </CanvasViewerGridSidebar>
-                  </CanvasViewerGrid>
+                        <EditorSlots.SubmitButton captureModel={captureModel} />
+                      </CanvasViewerGridSidebar>
+                    }
+                  />
                 )}
               </ReviewContextWithActions>
             </RevisionProviderWithFeatures>

@@ -354,7 +354,10 @@ export function ReviewListingPage() {
                   <col style={{ width: columnWidths.assignee }} />
                 </colgroup>
                 <thead>
-                  <SimpleTable.Row style={{ height: 47 }}>
+                  <SimpleTable.Row
+                    className="[&:hover_.resize-handle]:!bg-[#ddd] [&:hover_.resize-handle_svg]:!fill-[#555]"
+                    style={{ height: 47 }}
+                  >
                     <SimpleTable.Header style={{ width: columnWidths.manifest, position: 'relative' }}>
                       <ResizableHeader>
                         <HeaderLink
@@ -366,6 +369,7 @@ export function ReviewListingPage() {
                           Manifest <Chevron />
                         </HeaderLink>
                         <ResizeHandle
+                          className="resize-handle"
                           onMouseDown={e => startResize('manifest', e.clientX)}
                           onClick={e => e.stopPropagation()}
                         >

@@ -23,4 +23,18 @@ describe('Configuration migration', () => {
     expect(_version).toBe(1);
     expect(_source).toBeUndefined();
   });
+
+  test('editor resizing can be disabled per project', () => {
+    const config = {
+      ...siteConfig,
+      modelPageOptions: {
+        ...siteConfig.modelPageOptions,
+        enableEditorResizing: false,
+      },
+    };
+
+    expect(migrateConfig.version2to1(migrateConfig.version1to2(config)).modelPageOptions?.enableEditorResizing).toBe(
+      false
+    );
+  });
 });

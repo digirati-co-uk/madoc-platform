@@ -18,6 +18,20 @@ function getMaxWidthPct(container: number, defaultMaxWidthPct: number, maxWidthP
   return defaultMaxWidthPct;
 }
 
+export function getResizeLayoutWidths(
+  containerWidth: number,
+  resizedFraction: number,
+  minWidth: number,
+  maxWidth: number
+) {
+  const resizedWidth = Math.min(maxWidth, Math.max(minWidth, resizedFraction * containerWidth));
+
+  return {
+    widthA: `${containerWidth - resizedWidth}px`,
+    widthB: `${resizedWidth}px`,
+  };
+}
+
 export function useResizeLayout(
   name: string,
   options: {
@@ -66,21 +80,7 @@ export function useResizeLayout(
       const maxWidthPct = getMaxWidthPct(width, 0.8, options.maxWidthPct, options.maxWidthPx) * width;
       const minWidthPct = getMaxWidthPct(width, 0.2, options.minWidthPct, options.minWidthPx) * width;
 
-      if (options.left) {
-        const newWidthB = newPct.current * width;
-
-        setWidths({
-          widthA: `${(1 - newPct.current) * width}px`,
-          widthB: `${newWidthB > maxWidthPct ? maxWidthPct : newWidthB < minWidthPct ? minWidthPct : newWidthB}px`,
-        });
-      } else {
-        const newWidthA = 1 - newPct.current * width;
-
-        setWidths({
-          widthA: `${newWidthA > maxWidthPct ? maxWidthPct : newWidthA < minWidthPct ? minWidthPct : newWidthA}px`,
-          widthB: `${newPct.current * width}px`,
-        });
-      }
+      setWidths(getResizeLayoutWidths(width, newPct.current, minWidthPct, maxWidthPct));
 
       setIsDragging(false);
       isEventDragging.current = false;

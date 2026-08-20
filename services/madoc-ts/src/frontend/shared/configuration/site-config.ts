@@ -360,6 +360,10 @@ export const siteConfigurationModel: {
         label: 'Enable split-view',
         value: 'enableSplitView',
       },
+      {
+        label: 'Enable resizable editor panels',
+        value: 'enableEditorResizing',
+      },
     ],
   },
   reviewOptions: {
@@ -960,6 +964,12 @@ const ENABLE_TOOLTIP_DESCRIPTIONS_MODEL_OPTION = {
   value: 'enableTooltipDescriptions',
 };
 
+const ENABLE_EDITOR_RESIZING_MODEL_OPTION = {
+  label: 'Enable resizable editor panels',
+  description: 'Allow contributors and reviewers to resize panels in split editor layouts.',
+  value: 'enableEditorResizing',
+};
+
 const genericAllowPersonalNotesModelOption = {
   label: 'Allow personal notes',
   description: 'allow users to take personal notes only visible to themselves on canvases in a project',
@@ -990,6 +1000,7 @@ const genericContributionModelPageOptions = [
     label: 'Enable split view',
     value: 'enableSplitView',
   },
+  ENABLE_EDITOR_RESIZING_MODEL_OPTION,
 ];
 
 const tabularContributionModelPageOptions = [
@@ -1010,6 +1021,7 @@ const tabularContributionModelPageOptions = [
     ...ENABLE_TOOLTIP_DESCRIPTIONS_MODEL_OPTION,
     description: 'Show column descriptions as tooltips in the table header.',
   },
+  ENABLE_EDITOR_RESIZING_MODEL_OPTION,
   tabularAllowPersonalNotesModelOption,
   {
     label: 'Enable cell flagging',

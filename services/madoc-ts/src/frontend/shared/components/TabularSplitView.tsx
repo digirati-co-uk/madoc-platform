@@ -21,6 +21,7 @@ type TabularSplitViewProps = {
   dividerClassName?: string;
   dividerStyle?: React.CSSProperties;
   dividerChildren?: React.ReactNode;
+  resizable?: boolean;
 };
 
 function joinClasses(...classNames: Array<string | undefined>) {
@@ -58,13 +59,16 @@ export function TabularSplitView({
   dividerClassName,
   dividerStyle,
   dividerChildren,
+  resizable = true,
 }: TabularSplitViewProps) {
+  const renderedDividerHeight = resizable ? dividerHeight : 1;
+
   return (
     <div
       ref={containerRef}
       className={joinClasses('grid h-full min-h-0 min-w-0 overflow-hidden', className)}
       style={{
-        gridTemplateRows: `${topTrack} ${dividerHeight}px ${bottomTrack}`,
+        gridTemplateRows: `${topTrack} ${renderedDividerHeight}px ${bottomTrack}`,
         ...style,
       }}
     >
@@ -78,20 +82,24 @@ export function TabularSplitView({
         {topPanel}
       </div>
 
-      <VerticalResizeSeparator
-        ariaLabel={dividerAriaLabel}
-        onResizeStart={onResizeStart}
-        onHoverChange={onDividerHoverChange}
-        className={joinClasses('flex items-center justify-center', dividerClassName)}
-        style={{
-          cursor: 'row-resize',
-          userSelect: 'none',
-          background: isDividerActive ? '#a1a1a1' : '#ddd',
-          ...dividerStyle,
-        }}
-      >
-        {dividerChildren ?? <DefaultDividerHandle active={isDividerActive} />}
-      </VerticalResizeSeparator>
+      {resizable ? (
+        <VerticalResizeSeparator
+          ariaLabel={dividerAriaLabel}
+          onResizeStart={onResizeStart}
+          onHoverChange={onDividerHoverChange}
+          className={joinClasses('flex items-center justify-center', dividerClassName)}
+          style={{
+            cursor: 'row-resize',
+            userSelect: 'none',
+            background: isDividerActive ? '#a1a1a1' : '#ddd',
+            ...dividerStyle,
+          }}
+        >
+          {dividerChildren ?? <DefaultDividerHandle active={isDividerActive} />}
+        </VerticalResizeSeparator>
+      ) : (
+        <div className="border-t border-gray-300" />
+      )}
 
       <div
         className={joinClasses('grid h-full min-h-0 min-w-0', bottomPanelClassName)}

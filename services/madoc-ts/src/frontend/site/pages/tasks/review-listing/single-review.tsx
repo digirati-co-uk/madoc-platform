@@ -6,7 +6,6 @@ import { CrowdsourcingTask } from '../../../../../gateway/tasks/crowdsourcing-ta
 import { EditorSlots } from '../../../../shared/capture-models/new/components/EditorSlots';
 import { RevisionProviderWithFeatures } from '../../../../shared/capture-models/new/components/RevisionProviderWithFeatures';
 import { EditorContentViewer } from '../../../../shared/capture-models/new/EditorContent';
-import styledComponents, { css } from 'styled-components';
 import {
   CanvasViewerButton,
   CanvasViewerControls,
@@ -72,127 +71,73 @@ import { OpenSeadragonViewer } from '../../../../shared/features/OpenSeadragonVi
 import { BrowserComponent } from '../../../../shared/utility/browser-component';
 import { InfoMessage } from '../../../../shared/callouts/InfoMessage';
 import { CanvasViewer as ReviewCanvasViewer } from '../../../../shared/components/StandaloneCanvasViewer';
+import { HorizontalEditorSplit } from '../../../../shared/components/HorizontalEditorSplit';
 
-const ReviewContainer = styledComponents.div`
-  position: relative;
-  overflow-x: hidden;
-  height: 80vh;
-  display: flex;
-  flex-direction: column;
+function ReviewContainer(props: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div {...props} className="relative flex h-[80vh] flex-col overflow-x-hidden data-[is-max-window=true]:h-screen" />
+  );
+}
 
-  &[data-is-max-window='true'] {
-    height: 100vh;
-  }
-`;
+function ReviewHeader(props: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div
+      {...props}
+      className="sticky top-0 z-[12] flex h-12 items-center border-b border-[#ddd] bg-[#f7f7f7] leading-6"
+    />
+  );
+}
 
-const ReviewHeader = styledComponents.div`
-  height: 48px;
-  background-color: #f7f7f7;
-  display: flex;
-  border-bottom: 1px solid #dddddd;
-  line-height: 24px;
-  position: sticky;
-  align-items: center;
-  top: 0;
-  z-index: 12;
-`;
+function Label(props: React.HTMLAttributes<HTMLDivElement>) {
+  return <div {...props} className="overflow-hidden text-ellipsis whitespace-nowrap p-[0.6em] font-semibold" />;
+}
 
-const Label = styledComponents.div`
-  font-weight: 600;
-  padding: 0.6em;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-`;
+function SubLabel(props: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div
+      {...props}
+      className="mr-[130px] overflow-hidden text-ellipsis whitespace-nowrap p-[0.6em] text-sm text-[#6b6b6b]"
+    />
+  );
+}
 
-const SubLabel = styledComponents.div`
-  color: #6b6b6b;
-  padding: 0.6em;
-  font-size: 14px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  margin-right: 130px;
-`;
-const ReviewActionBar = styledComponents.div`
-  border-bottom: 1px solid #dddddd;
-  display: inline-flex;
-  justify-content: space-between;
-  flex-wrap: wrap-reverse;
-  width: 100%;
-  padding: 0.6em;
-  min-height: 42px;
-  overflow: visible;
-`;
+function ReviewActionBar(props: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div
+      {...props}
+      className="inline-flex min-h-[42px] w-full flex-wrap-reverse justify-between overflow-visible border-b border-[#ddd] p-[0.6em]"
+    />
+  );
+}
 
-const ReviewActionMessage = styledComponents.div`
-  background-color: rgba(0, 92, 197, 0.15);
-  padding: 0.5em;
-  border-radius: 4px;
-  font-size: small;
-`;
+function ReviewActionMessage(props: React.HTMLAttributes<HTMLDivElement>) {
+  return <div {...props} className="rounded bg-[rgba(0,92,197,0.15)] p-[0.5em] text-sm" />;
+}
 
-const ReviewActions = styledComponents.div`
-  display: flex;
-  margin-left: auto;
+function ReviewActions(props: React.HTMLAttributes<HTMLDivElement>) {
+  return <div {...props} className="ml-auto flex [&_button]:border-0" />;
+}
 
-  button {
-    border: none;
-  }
-`;
+function ReviewActionControls(props: React.HTMLAttributes<HTMLDivElement>) {
+  return <div {...props} className="ml-auto flex items-center gap-[0.5em]" />;
+}
 
-const ReviewActionControls = styledComponents.div`
-  display: flex;
-  align-items: center;
-  gap: 0.5em;
-  margin-left: auto;
-`;
+function ReviewDropdownContainer(props: React.HTMLAttributes<HTMLDivElement>) {
+  return <div {...props} className="relative z-30 max-w-[150px] self-end" />;
+}
 
-const ReviewDropdownContainer = styledComponents.div`
-  position: relative;
-  max-width: 150px;
-  align-self: end;
-  z-index: 30;
-`;
+function ReviewDropdownPopup({ $visible, ...props }: React.HTMLAttributes<HTMLDivElement> & { $visible?: boolean }) {
+  return (
+    <div
+      {...props}
+      className={`${$visible ? 'block' : 'hidden'} absolute right-0 top-[2.6em] z-[31] m-[0.3em] min-w-[10em] rounded border border-[#3498db] bg-white text-[0.9em]`}
+    />
+  );
+}
 
-const ReviewDropdownPopup = styledComponents.div<{ $visible?: boolean }>`
-  background: #ffffff;
-  border: 1px solid #3498db;
-  z-index: 31;
-  border-radius: 4px;
-  position: absolute;
-  display: none;
-  margin: 0.3em;
-  top: 2.6em;
-  right: 0;
-  font-size: 0.9em;
-  min-width: 10em;
-  ${props =>
-    props.$visible &&
-    css`
-      display: block;
-    `}
-`;
-
-const ReviewPreview = styledComponents.div`
-  display: flex;
-  overflow-y: scroll;
-  flex-wrap: wrap;
-  flex: 1;
-
-  > div {
-    padding: 0.6em;
-    width: auto;
-  }
-`;
-
-const Assignee = styledComponents.div`
-  font-size: small;
-  color: #575757;
-  align-self: center;
-  margin-left: 0.5em;
-  min-width: 200px;
-`;
+function Assignee(props: React.HTMLAttributes<HTMLDivElement>) {
+  return <div {...props} className="ml-[0.5em] min-w-[200px] self-center text-sm text-[#575757]" />;
+}
 
 type ViewOptionsDropdownProps = {
   isFullscreen: boolean;
@@ -296,7 +241,7 @@ function ViewSingleReview({
   const runtime = useRef<Runtime>(undefined);
   const osd = useRef<any>(undefined);
   const [isOSD, setIsOSD] = useState(false);
-  const { enableRotation = false } = useModelPageConfiguration();
+  const { enableRotation = false, enableEditorResizing = true } = useModelPageConfiguration();
   const annotationTheme = useProjectAnnotationStyles();
   const api = useApi();
   const template = useProjectTemplate(project?.template);
@@ -780,15 +725,22 @@ function ViewSingleReview({
           ) : (
             <>
               {reviewHeaderActions}
-              <ReviewPreview>
-                <div style={{ flexGrow: 1, maxWidth: 300, overflowX: 'scroll' }}>
-                  <CanvasViewerEditorStyleReset>
-                    <EditorSlots.TopLevelEditor />
-                  </CanvasViewerEditorStyleReset>
-                  <EditorSlots.SubmitButton captureModel={captureModel} />
-                </div>
-                {viewerNode}
-              </ReviewPreview>
+              <HorizontalEditorSplit
+                name="non-tabular-single-review-editor"
+                enabled={enableEditorResizing}
+                resizableSide="left"
+                defaultWidth={300}
+                className="flex-1 overflow-y-auto p-[0.6em]"
+                resizablePane={
+                  <div className="h-full overflow-x-auto">
+                    <CanvasViewerEditorStyleReset>
+                      <EditorSlots.TopLevelEditor />
+                    </CanvasViewerEditorStyleReset>
+                    <EditorSlots.SubmitButton captureModel={captureModel} />
+                  </div>
+                }
+                flexiblePane={viewerNode}
+              />
             </>
           )}
         </ReviewContainer>
