@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import {
   DataGrid,
+  type CellRange,
   type CellKeyDownArgs,
   type CellKeyboardEvent,
   type CellMouseArgs,
@@ -12,6 +13,7 @@ import {
   type RowsChangeData,
 } from 'react-data-grid';
 import { Tooltip as ReactTooltip } from 'react-tooltip';
+import { Copy } from '@styled-icons/entypo/Copy';
 import 'react-data-grid/lib/styles.css';
 import type { TabularCellRef } from '@/frontend/shared/utility/tabular-types';
 import { Button } from '@/frontend/shared/navigation/Button';
@@ -21,6 +23,7 @@ import {
   TABULAR_GRID_ROW_HEIGHT_PX,
 } from '@/frontend/shared/utility/tabular-grid-constants';
 import {
+  copyTabularCellValueToClipboard,
   formatTabularClipboardMatrix,
   getTabularCellClipboardText,
   parseTabularClipboardMatrix,
@@ -376,11 +379,12 @@ function TabularGridCellInput(options: TabularGridCellInputProps) {
 type TabularGridCellDisplayProps = {
   cell: TabularEditorCellModel;
   isActiveCell: boolean;
+  isEditable: boolean;
   isFlagged: boolean;
   isNoted: boolean;
 };
 
-function TabularGridCellDisplay({ cell, isActiveCell, isFlagged, isNoted }: TabularGridCellDisplayProps) {
+function TabularGridCellDisplay({ cell, isActiveCell, isEditable, isFlagged, isNoted }: TabularGridCellDisplayProps) {
   const isReadOnlyField = cell.fieldType === 'read-only-field';
   const isCheckboxField = cell.fieldType === 'checkbox-field';
   const textValue = toTextValue(cell.value);
@@ -403,7 +407,7 @@ function TabularGridCellDisplay({ cell, isActiveCell, isFlagged, isNoted }: Tabu
         overflowWrap: 'anywhere',
         wordBreak: 'break-word',
         overflow: 'hidden',
-        paddingRight: isReadOnlyField ? 64 : undefined,
+        paddingRight: isReadOnlyField ? 64 : isActiveCell && isEditable ? 36 : undefined,
       }}
       title={isReadOnlyField ? 'Read-only field' : displayValue || undefined}
     >
@@ -415,7 +419,17 @@ function TabularGridCellDisplay({ cell, isActiveCell, isFlagged, isNoted }: Tabu
           Read only
         </span>
       ) : null}
-      {displayValue || '\u00A0'}
+      {displayValue ||
+        (isActiveCell && isEditable ? <span className="text-xs text-slate-400">Double click to edit</span> : '\u00A0')}
+      {isActiveCell && isEditable ? (
+        <kbd
+          className="pointer-events-none absolute bottom-1 right-1 inline-flex h-5 min-w-5 items-center justify-center rounded border border-slate-300 bg-white px-1 text-[11px] font-semibold leading-none text-slate-600 shadow-sm"
+          title="Press Enter to edit"
+          aria-label="Press Enter to edit"
+        >
+          ↵
+        </kbd>
+      ) : null}
     </div>
   );
 }
@@ -470,6 +484,7 @@ export function TabularProjectCustomEditorTable({
   const lastScrolledCellKeyRef = useRef<string | null>(null);
   const contextMenuRef = useRef<HTMLDivElement | null>(null);
   const [tableViewportWidth, setTableViewportWidth] = useState(0);
+  const [selectedRange, setSelectedRange] = useState<CellRange | null>(null);
   const [cellContextMenu, setCellContextMenu] = useState<TabularCellContextMenuState | null>(null);
   const closeCellContextMenu = useCallback(() => {
     setCellContextMenu(null);
@@ -547,6 +562,29 @@ export function TabularProjectCustomEditorTable({
       })),
     [rows]
   );
+  const selectedCellCount = selectedRange
+    ? (selectedRange.endRowIdx - selectedRange.startRowIdx + 1) *
+      (selectedRange.endColumnIdx - selectedRange.startColumnIdx + 1)
+    : 0;
+
+  const syncSelectedRange = useCallback(() => {
+    setSelectedRange(dataGridRef.current?.getSelectedRange() ?? null);
+  }, []);
+
+  const copySelectedCells = useCallback(() => {
+    if (!selectedRange) {
+      return;
+    }
+
+    const values = gridRows
+      .slice(selectedRange.startRowIdx, selectedRange.endRowIdx + 1)
+      .map(row =>
+        row.row.cells
+          .slice(selectedRange.startColumnIdx, selectedRange.endColumnIdx + 1)
+          .map(getTabularCellClipboardText)
+      );
+    void copyTabularCellValueToClipboard(formatTabularClipboardMatrix(values));
+  }, [gridRows, selectedRange]);
 
   const selectGridCell = useCallback(
     (rowPosition: number, colIndex: number, enableEditor = false) => {
@@ -558,6 +596,7 @@ export function TabularProjectCustomEditorTable({
 
       lastScrolledCellKeyRef.current = `${targetCell.rowIndex}:${colIndex}`;
       dataGridRef.current?.selectCell({ rowIdx: rowPosition, idx: colIndex }, { enableEditor, shouldFocusCell: true });
+      setSelectedRange(null);
       scrollTabularGridCellIntoView(dataGridRef.current, {
         gridRowIndex: rowPosition,
         gridColumnIndex: colIndex,
@@ -765,7 +804,13 @@ export function TabularProjectCustomEditorTable({
                   }}
                 />
               ) : null}
-              <TabularGridCellDisplay cell={cell} isActiveCell={isActiveCell} isFlagged={isFlagged} isNoted={isNoted} />
+              <TabularGridCellDisplay
+                cell={cell}
+                isActiveCell={isActiveCell}
+                isEditable={!disabled && !isReadOnlyCell}
+                isFlagged={isFlagged}
+                isNoted={isNoted}
+              />
             </div>
           );
         },
@@ -991,7 +1036,7 @@ export function TabularProjectCustomEditorTable({
       style={containerStyle}
     >
       <TabularDataGridStyles scopeClassName="tabular-contributor-rdg" disableRowHover />
-      {hasAnyRowControl || hasTableActions ? (
+      {hasAnyRowControl || hasTableActions || selectedCellCount > 1 ? (
         <div
           className={`sticky top-0 z-[2] flex flex-none items-center gap-2 border-b border-[#d6d6d6] bg-[#f1f5f9] px-3 py-2 ${topBarJustifyClass}`}
         >
@@ -1023,10 +1068,33 @@ export function TabularProjectCustomEditorTable({
               ) : null}
             </div>
           ) : null}
+          {selectedCellCount > 1 ? (
+            <div
+              className="ml-auto inline-flex h-8 items-center overflow-hidden rounded border border-slate-300 bg-white text-sm font-medium text-slate-700 shadow-sm"
+              aria-live="polite"
+            >
+              <span className="px-2.5">{selectedCellCount} selected</span>
+              <button
+                type="button"
+                className="inline-flex h-full w-8 items-center justify-center border-l border-slate-300 text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                title="Copy selected cells"
+                aria-label="Copy selected cells"
+                onMouseDown={event => event.preventDefault()}
+                onClick={copySelectedCells}
+              >
+                <Copy className="h-4 w-4" />
+              </button>
+            </div>
+          ) : null}
           {hasTableActions ? <div className="flex items-center gap-2">{tableActions}</div> : null}
         </div>
       ) : null}
-      <div ref={tableScrollRef} className="min-h-0 min-w-0 flex-1 overflow-hidden">
+      <div
+        ref={tableScrollRef}
+        className="min-h-0 min-w-0 flex-1 overflow-hidden"
+        onMouseUp={syncSelectedRange}
+        onKeyUp={syncSelectedRange}
+      >
         <DataGrid
           ref={dataGridRef}
           className="rdg-light tabular-contributor-rdg"
