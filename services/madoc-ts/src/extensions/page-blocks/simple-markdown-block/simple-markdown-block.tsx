@@ -1,5 +1,5 @@
-import React, { ComponentType, useMemo, useState } from 'react';
-import EditorModule, { Props as EditorProps, theme } from 'rich-markdown-editor';
+import React, { useMemo, useState } from 'react';
+import EditorModule, { theme } from 'rich-markdown-editor';
 import { captureModelShorthand } from '../../../frontend/shared/capture-models/helpers/capture-model-shorthand';
 import { useApi } from '../../../frontend/shared/hooks/use-api';
 import { Button } from '../../../frontend/shared/navigation/Button';
@@ -11,8 +11,8 @@ import { StaticMarkdownBlock } from './static-markdown-block';
 const Editor = (
   typeof EditorModule === 'function'
     ? EditorModule
-    : (EditorModule as unknown as { default: ComponentType<EditorProps> }).default
-) as ComponentType<EditorProps>;
+    : (EditorModule as unknown as { default: typeof EditorModule }).default
+) as typeof EditorModule;
 
 const MarkdownEditor: PageBlockEditor = props => {
   const initialValue = useMemo(() => props.block.static_data?.markdown || '', [props.block.static_data?.markdown]);
