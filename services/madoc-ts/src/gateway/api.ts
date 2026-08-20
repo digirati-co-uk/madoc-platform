@@ -43,7 +43,7 @@ import { PublicUserProfile, Site, SiteUser, UserInformationRequest } from '../ex
 import { ProjectManifestTasks } from '../types/manifest-tasks';
 import { NoteListResponse } from '../types/personal-notes';
 import { Pm2Status } from '../types/pm2';
-import { ProjectFeedback, ProjectMember, ProjectUpdate } from '../types/projects';
+import { CreateProjectUpdate, ProjectFeedback, ProjectMember, ProjectUpdate } from '../types/projects';
 import { BullMqCancelSearchIndexResult, BullMqResumeQueueResult, BullMqSnapshot } from '../types/bullmq-status';
 import { ResourceLinkResponse } from '../types/schemas/linking';
 import { ProjectConfiguration } from '../types/schemas/project-configuration';
@@ -990,22 +990,22 @@ export class ApiClient {
     return response?.updates[0] || null;
   }
 
-  async createProjectUpdate(id: string | number, update: string) {
-    return this.request(`/api/madoc/projects/${id}/updates`, {
+  async createProjectUpdate(id: string | number, update: CreateProjectUpdate) {
+    return this.request<ProjectUpdate>(`/api/madoc/projects/${id}/updates`, {
       method: 'POST',
-      body: { update },
+      body: update,
     });
   }
 
-  async updateProjectUpdate(id: string | number, updateId: string | number, update: string) {
-    return this.request(`/api/madoc/projects/${id}/updates/${updateId}`, {
+  async updateProjectUpdate(id: string | number, updateId: string | number, update: CreateProjectUpdate) {
+    return this.request<ProjectUpdate>(`/api/madoc/projects/${id}/updates/${updateId}`, {
       method: 'PUT',
-      body: { update },
+      body: update,
     });
   }
 
   async deleteProjectUpdate(id: string | number, updateId: string | number) {
-    return this.request(`/api/madoc/projects/${id}/updates/${updateId}`, {
+    return this.request<{ success: true }>(`/api/madoc/projects/${id}/updates/${updateId}`, {
       method: 'DELETE',
     });
   }

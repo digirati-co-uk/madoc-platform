@@ -42,6 +42,7 @@ export interface ProjectUpdatesRow {
   project_id: number;
   user_id: number;
   created: Date;
+  title: string | null;
   update: string;
   snapshot: ProjectUpdateSnapshot;
   // Joins
@@ -58,11 +59,13 @@ export interface ProjectUpdate {
     | undefined;
 
   created: Date;
+  title?: string;
   update: string;
   snapshot: ProjectUpdateSnapshot;
 }
 
 export interface CreateProjectUpdate {
+  title?: string | null;
   update: string;
   snapshot?: ProjectUpdateSnapshot;
 }

@@ -765,8 +765,18 @@ export const router = new TypedRouter({
   'project-task-svg': [TypedRouter.GET, '/api/madoc/projects/:id/tasks/:taskId/preview-svg', svgFromCrowdsourcingTask],
   // Project updates
   'list-project-updates': [TypedRouter.GET, '/api/madoc/projects/:id/updates', listProjectUpdates],
-  'create-project-update': [TypedRouter.POST, '/api/madoc/projects/:id/updates', createProjectUpdate],
-  'update-project-update': [TypedRouter.PUT, '/api/madoc/projects/:id/updates/:updateId', updateProjectUpdate],
+  'create-project-update': [
+    TypedRouter.POST,
+    '/api/madoc/projects/:id/updates',
+    createProjectUpdate,
+    { schemaName: 'ProjectUpdateRequest' },
+  ],
+  'update-project-update': [
+    TypedRouter.PUT,
+    '/api/madoc/projects/:id/updates/:updateId',
+    updateProjectUpdate,
+    { schemaName: 'ProjectUpdateRequest' },
+  ],
   'delete-project-update': [TypedRouter.DELETE, '/api/madoc/projects/:id/updates/:updateId', deleteProjectUpdate],
   // Project members
   'list-project-members': [TypedRouter.GET, '/api/madoc/projects/:id/members', listProjectMembers],
