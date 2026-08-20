@@ -105,7 +105,7 @@
     "i18next-fs-backend": "^1.0.7",
     "i18next-http-backend": "^1.0.19",
     "i18next-localstorage-backend": "^3.1.1",
-    "iiif-browser": "2.2.4",
+    "iiif-browser": "2.2.5",
     "immer": "^9.0.6",
     "immutable": "3.8.2",
     "instantsearch.css": "^8.19.0",

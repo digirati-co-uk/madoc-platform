@@ -7,6 +7,9 @@ allowBuilds:
   typesense-instantsearch-adapter: false
   unrs-resolver: true
 
+minimumReleaseAgeExclude:
+  - iiif-browser@2.2.5
+
 overrides:
   '@atlas-viewer/atlas': 3.2.3
   '@atlas-viewer/iiif-image-api': 2.2.2
@@ -22,7 +25,7 @@ overrides:
   dnd-multi-backend: 9.0.0
   formik: ^2.2.9
   html-entities: 1.4.0
-  iiif-browser: 2.2.4
+  iiif-browser: 2.2.5
   immer: ^9
   immutable: 3.8.2
   popmotion: ^8.7.6

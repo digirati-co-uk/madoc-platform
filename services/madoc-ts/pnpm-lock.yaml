@@ -19,7 +19,7 @@ overrides:
   dnd-multi-backend: 9.0.0
   formik: ^2.2.9
   html-entities: 1.4.0
-  iiif-browser: 2.2.4
+  iiif-browser: 2.2.5
   immer: ^9
   immutable: 3.8.2
   popmotion: ^8.7.6
@@ -227,8 +227,8 @@ importers:
         specifier: ^3.1.1
         version: 3.1.3
       iiif-browser:
-        specifier: 2.2.4
-        version: 2.2.4(@types/react@19.2.18)(immer@9.0.21)(react-reconciler@0.33.0(react@19.2.8))
+        specifier: 2.2.5
+        version: 2.2.5(@types/react@19.2.18)(immer@9.0.21)(react-reconciler@0.33.0(react@19.2.8))
       immer:
         specifier: ^9
         version: 9.0.21
@@ -6097,8 +6097,8 @@ packages:
     resolution: {integrity: sha512-Hs59xBNfUIunMFgWAbGX5cq6893IbWg4KnrjbYwX3tx0ztorVgTDA6B2sxf8ejHJ4wz8BqGUMYlnzNBer5NvGg==}
     engines: {node: '>= 4'}
 
-  iiif-browser@2.2.4:
-    resolution: {integrity: sha512-l2biesED3SxzC1BiMhd29gLJ0ucW/KTIOXjznk1oFlnaSGvXcWglc1Q5Ijv0IUgt9jFAySVqifmW7O5F2OjeVA==}
+  iiif-browser@2.2.5:
+    resolution: {integrity: sha512-FzsbRZ6Tu/gQp0W0c2so2r6K8KVJ43StHMjrBIw489xKgx6n9tkrcrZGxda4+iZnHy+choKMaf8c81O4pWOyHA==}
     engines: {node: '>=18.14.1'}
     peerDependencies:
       '@mdxeditor/editor': ^4.0.4
@@ -15805,7 +15805,7 @@ snapshots:
 
   ignore@7.0.5: {}
 
-  iiif-browser@2.2.4(@types/react@19.2.18)(immer@9.0.21)(react-reconciler@0.33.0(react@19.2.8)):
+  iiif-browser@2.2.5(@types/react@19.2.18)(immer@9.0.21)(react-reconciler@0.33.0(react@19.2.8)):
     dependencies:
       '@atlas-viewer/atlas': 3.2.3(@iiif/helpers@1.6.1(@iiif/parser@2.2.14))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
       '@iiif/helpers': 1.6.1(@iiif/parser@2.2.14)
@@ -15822,7 +15822,6 @@ snapshots:
       react-aria-components: 1.20.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       react-dom: 19.2.8(react@19.2.8)
       react-iiif-vault: 2.0.19(@atlas-viewer/atlas@3.2.3(@iiif/helpers@1.6.1(@iiif/parser@2.2.14))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@types/react@19.2.18)(immer@9.0.21)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      react-lazy-load-image-component: 1.6.3(react@19.2.8)
       react-timeago: 8.3.0(react@19.2.8)
       tailwind-merge: 3.4.0
       zustand: 4.5.7(@types/react@19.2.18)(immer@9.0.21)(react@19.2.8)
