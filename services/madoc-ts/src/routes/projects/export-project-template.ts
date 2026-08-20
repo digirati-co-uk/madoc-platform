@@ -49,7 +49,7 @@ export const exportProjectTemplate: RouteMiddleware<{ id: string }> = async cont
   const value = values && values.length ? values[0] : 'Untitled project';
 
   context.response.body = {
-    type: `template-${project.id}-${project.slug}`,
+    type: project.template || `template-${project.id}-${project.slug}`,
     template_config: project.template_config || null,
     metadata: {
       label: `${value} (copy)`,

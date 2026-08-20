@@ -59,10 +59,24 @@ export const createNewProject: RouteMiddleware<unknown, CreateProject> = async c
       : api.projectTemplates.getDefinition(template, siteId)
     : null;
   const setupFunctions = chosenTemplate?.setup;
-  const isTabularTemplate = template === TABULAR_PROJECT_TEMPLATE;
+  const importedTemplateConfig = template === 'remote' ? chosenTemplate?.template_config : null;
+  const isLegacyTabularExport =
+    template === 'remote' &&
+    typeof chosenTemplate?.type === 'string' &&
+    chosenTemplate.type.startsWith('template-') &&
+    importedTemplateConfig &&
+    typeof importedTemplateConfig === 'object' &&
+    'tabular' in importedTemplateConfig;
+  const resolvedTemplate =
+    template === 'remote'
+      ? isLegacyTabularExport
+        ? TABULAR_PROJECT_TEMPLATE
+        : chosenTemplate?.type || template
+      : template;
+  const isTabularTemplate = resolvedTemplate === TABULAR_PROJECT_TEMPLATE;
   const resolvedTemplateConfig = isTabularTemplate
-    ? template_config || template_options || null
-    : template_config || null;
+    ? template_config ?? importedTemplateConfig ?? template_options ?? null
+    : template_config ?? importedTemplateConfig ?? null;
   const tabularConfigCandidate =
     resolvedTemplateConfig && typeof resolvedTemplateConfig === 'object'
       ? (resolvedTemplateConfig as { tabular?: { structure?: unknown } })
@@ -154,7 +168,7 @@ export const createNewProject: RouteMiddleware<unknown, CreateProject> = async c
   const task = await userApi.newTask<CrowdsourcingProjectTask>({
     name: firstLang(label),
     subject: `urn:madoc:collection:${collection.id}`,
-    parameters: [captureModel.id, chosenTemplate?.type],
+    parameters: [captureModel.id, resolvedTemplate],
     type: 'crowdsourcing-project',
     status_text: 'paused',
     status: 0,
@@ -173,7 +187,7 @@ export const createNewProject: RouteMiddleware<unknown, CreateProject> = async c
           ${slug}, 
           ${siteId}, 
           ${captureModel.id}, 
-          ${template || null}, 
+          ${resolvedTemplate || null},
           ${resolvedTemplateConfig ? sql.json(resolvedTemplateConfig) : null},
           ${defaultStatus}
         )
