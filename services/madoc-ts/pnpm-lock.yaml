@@ -33,6 +33,9 @@ overrides:
   styled-components: 6.3.8
   ws: ^8.21.3
 
+patchedDependencies:
+  react-data-grid@7.0.0-beta.59: 71d6303f1bfb7c9de65cd39000c7e3a122df2191cb72a219ad8779c412c09af5
+
 importers:
 
   .:
@@ -316,6 +319,9 @@ importers:
       object-assign:
         specifier: ^4.1.1
         version: 4.1.1
+      papaparse:
+        specifier: ^5.6.0
+        version: 5.6.0
       passport:
         specifier: ^0.5.0
         version: 0.5.3
@@ -354,7 +360,7 @@ importers:
         version: 1.20.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       react-data-grid:
         specifier: 7.0.0-beta.59
-        version: 7.0.0-beta.59(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 7.0.0-beta.59(patch_hash=71d6303f1bfb7c9de65cd39000c7e3a122df2191cb72a219ad8779c412c09af5)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       react-dnd:
         specifier: ^16.0.1
         version: 16.0.1(@types/hoist-non-react-statics@3.3.7(@types/react@19.2.18))(@types/node@25.2.1)(@types/react@19.2.18)(react@19.2.8)
@@ -599,6 +605,9 @@ importers:
       '@types/nodemailer':
         specifier: ^6.4.4
         version: 6.4.22
+      '@types/papaparse':
+        specifier: ^5.5.2
+        version: 5.5.2
       '@types/passport':
         specifier: ^1.0.7
         version: 1.0.17
@@ -3751,6 +3760,9 @@ packages:
 
   '@types/oauth@0.9.6':
     resolution: {integrity: sha512-H9TRCVKBNOhZZmyHLqFt9drPM9l+ShWiqqJijU1B8P3DX3ub84NjxDuy+Hjrz+fEca5Kwip3qPMKNyiLgNJtIA==}
+
+  '@types/papaparse@5.5.2':
+    resolution: {integrity: sha512-gFnFp/JMzLHCwRf7tQHrNnfhN4eYBVYYI897CGX4MY1tzY9l2aLkVyx2IlKZ/SAqDbB3I1AOZW5gTMGGsqWliA==}
 
   '@types/parse-json@4.0.2':
     resolution: {integrity: sha512-dISoDXWWQwUquiKsyZ4Ng+HX2KsPL7LyHKHQwgGFEA3IaKac4Obd+h2a/a6waisAoepJlBcx9paWqjA8/HVjCw==}
@@ -7648,6 +7660,9 @@ packages:
 
   pako@0.2.9:
     resolution: {integrity: sha512-NUcwaKxUxWrZLpDG+z/xZaCgQITkA/Dv4V/T6bw7VON6l1Xz/VnrBqrYjZQ12TamKHzITTfOEIYUj48y2KXImA==}
+
+  papaparse@5.6.0:
+    resolution: {integrity: sha512-N2vuNQAYGK1/4vs6HJX86+VYU6OkiSTgdJz3JQfTk1y51cFCO/U8gnaeTF4iNE4r57Tt0sV47dUua1/19pxO6Q==}
 
   param-case@2.1.1:
     resolution: {integrity: sha512-eQE845L6ot89sk2N8liD8HAuH4ca6Vvr7VWAWwt7+kvvG5aBcPmmphQ68JsEG2qa9n1TykS2DLeMt363AAH8/w==}
@@ -13148,6 +13163,10 @@ snapshots:
     dependencies:
       '@types/node': 25.2.1
 
+  '@types/papaparse@5.5.2':
+    dependencies:
+      '@types/node': 25.2.1
+
   '@types/parse-json@4.0.2': {}
 
   '@types/passport-github2@1.2.9':
@@ -18089,6 +18108,8 @@ snapshots:
 
   pako@0.2.9: {}
 
+  papaparse@5.6.0: {}
+
   param-case@2.1.1:
     dependencies:
       no-case: 2.3.2
@@ -18725,7 +18746,7 @@ snapshots:
       react-stately: 3.49.0(react@19.2.8)
       use-sync-external-store: 1.6.0(react@19.2.8)
 
-  react-data-grid@7.0.0-beta.59(react-dom@19.2.8(react@19.2.8))(react@19.2.8):
+  react-data-grid@7.0.0-beta.59(patch_hash=71d6303f1bfb7c9de65cd39000c7e3a122df2191cb72a219ad8779c412c09af5)(react-dom@19.2.8(react@19.2.8))(react@19.2.8):
     dependencies:
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
