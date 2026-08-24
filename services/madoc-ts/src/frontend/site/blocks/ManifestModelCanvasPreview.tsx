@@ -9,19 +9,9 @@ import { useRouteContext } from '../hooks/use-route-context';
 import { useManifestPagination } from '../../shared/hooks/use-manifest-pagination';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 import { ManifestCanvasGrid } from './ManifestCanvasGrid';
-import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { ArrowForwardIcon } from '../../shared/icons/ArrowForwardIcon';
 import { ArrowBackIcon } from '../../shared/icons/ArrowBackIcon';
-
-const CanvasNavigator = styled.div`
-  display: flex;
-  justify-content: space-between;
-  padding: 0.5em;
-  background: #e6ecfe;
-  margin: 0.5em 0;
-  border-radius: 3px;
-`;
 
 export function ManifestModelCanvasPreview(props: { isModel?: boolean }) {
   const { t } = useTranslation();
@@ -39,7 +29,7 @@ export function ManifestModelCanvasPreview(props: { isModel?: boolean }) {
 
   return (
     <CustomRouteContext ctx={{ canvas: canvasId }}>
-      <CanvasNavigator>
+      <div className="my-[0.5em] flex justify-between rounded-[3px] bg-[#e6ecfe] p-[0.5em]">
         <Button
           as={HrefLink}
           to={createLink({
@@ -77,6 +67,14 @@ export function ManifestModelCanvasPreview(props: { isModel?: boolean }) {
               {t('Previous canvas')}
             </Button>
           )}
+          {manifestPagination ? (
+            <div className="flex self-stretch items-center">
+              {t('Page {{page}} of {{count}}', {
+                page: manifestPagination.currentPage,
+                count: manifestPagination.totalPages,
+              })}
+            </div>
+          ) : null}
           {isModel ? (
             <Button
               disabled={!next}
@@ -108,7 +106,7 @@ export function ManifestModelCanvasPreview(props: { isModel?: boolean }) {
             </Button>
           )}
         </ButtonRow>
-      </CanvasNavigator>
+      </div>
 
       <CanvasViewer>
         <StandaloneCanvasViewer canvasId={canvasId} isModel={isModel} />
