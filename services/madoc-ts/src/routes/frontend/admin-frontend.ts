@@ -22,7 +22,7 @@ export const adminFrontend: RouteMiddleware = async context => {
   const user = context.siteManager.getUserFromJwt(site.id, context.state.jwt);
   const siteLocales = await cachedApi(`locales`, 3000, api => api.getSiteLocales());
   const lng = context.cookies.get('i18next');
-  const [, i18nInstance] = await createBackend(lng, site.id);
+  const [, i18nInstance] = await createBackend(lng || siteLocales.defaultLanguage || 'en', site.id);
 
   context.staticPage = async token => {
     const result = await renderAdmin({

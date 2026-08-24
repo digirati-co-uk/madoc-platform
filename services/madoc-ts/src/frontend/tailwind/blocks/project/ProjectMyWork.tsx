@@ -22,7 +22,11 @@ export function ProjectMyWork() {
   const createLink = useRelativeLinks();
   const [filter, setFilter] = useState('0,1');
   const { t } = useTranslation();
-  const { data: tasks, latestData, isFetching } = paginatedApiHooks.getTasks(() =>
+  const {
+    data: tasks,
+    latestData,
+    isFetching,
+  } = paginatedApiHooks.getTasks(() =>
     user && project
       ? [
           0,
@@ -56,10 +60,10 @@ export function ProjectMyWork() {
             value={filter}
             onChange={e => setFilter(e)}
             options={[
-              { value: '0,1,2,3', label: 'All' },
-              { value: '0,1', label: 'In progress' },
-              { value: '2', label: 'Submitted' },
-              { value: '3', label: 'Approved' },
+              { value: '0,1,2,3', label: t('All') },
+              { value: '0,1', label: t('In progress') },
+              { value: '2', label: t('Submitted') },
+              { value: '3', label: t('Approved') },
             ]}
           />
         </div>
@@ -153,7 +157,7 @@ function TaskRow({ task }: { task: BaseTask }) {
         <HrefLink href={createLink({ manifestId: subject?.parent?.id || subject?.id })}>{t('View manifest')}</HrefLink>
       </td>
       <td className="px-2 whitespace-nowrap">
-        <SimpleStatus status={task.status || 0} status_text={task.status_text || ''} />
+        <SimpleStatus status={task.status || 0} status_text={t(task.status_text || '')} />
       </td>
     </tr>
   );

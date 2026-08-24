@@ -35,7 +35,7 @@ export const siteFrontend: RouteMiddleware = async (context, next) => {
   }
 
   context.staticPage = async token => {
-    const [, i18nInstance] = await createBackend(lng, site.id);
+    const [, i18nInstance] = await createBackend(lng || siteLocales.defaultLanguage || 'en', site.id);
     const result = await renderSite({
       url: context.req.url || '',
       jwt: token,

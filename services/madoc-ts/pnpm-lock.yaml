@@ -214,18 +214,12 @@ importers:
       i18next-browser-languagedetector:
         specifier: ^6.0.1
         version: 6.1.8
-      i18next-chained-backend:
-        specifier: ^2.0.1
-        version: 2.1.0
       i18next-fs-backend:
         specifier: ^1.0.7
         version: 1.2.0
       i18next-http-backend:
         specifier: ^1.0.19
         version: 1.4.5
-      i18next-localstorage-backend:
-        specifier: ^3.1.1
-        version: 3.1.3
       iiif-browser:
         specifier: 2.2.5
         version: 2.2.5(@types/react@19.2.18)(immer@9.0.21)(react-reconciler@0.33.0(react@19.2.8))
@@ -6063,17 +6057,11 @@ packages:
   i18next-browser-languagedetector@6.1.8:
     resolution: {integrity: sha512-Svm+MduCElO0Meqpj1kJAriTC6OhI41VhlT/A0UPjGoPZBhAHIaGE5EfsHlTpgdH09UVX7rcc72pSDDBeKSQQA==}
 
-  i18next-chained-backend@2.1.0:
-    resolution: {integrity: sha512-Cr9+kA0mIGZJHLliSdRfoAlrRbKrqWV2+73NXoq6dToC6RhoAJS3fR0E/UdXFMpQJuNdVr2i8VeO6pt6kqyQAQ==}
-
   i18next-fs-backend@1.2.0:
     resolution: {integrity: sha512-pUx3AcgXCbur0jpFA7U67Z2RJflAcIi698Y8VL+phdOqUchahxriV3Cs+M6UkPNQSS/zPEzWLfdJ8EgjB7HVxg==}
 
   i18next-http-backend@1.4.5:
     resolution: {integrity: sha512-tLuHWuLWl6CmS07o+UB6EcQCaUjrZ1yhdseIN7sfq0u7phsMePJ8pqlGhIAdRDPF/q7ooyo5MID5DRFBCH+x5w==}
-
-  i18next-localstorage-backend@3.1.3:
-    resolution: {integrity: sha512-tx8dxQTEsTnRC654IrXPFr94c3NH7bIVHGKHnGvbgefpLz13/uFT5ITsmhqhg/gOza0TIj8e5jTsGnQytIhh+A==}
 
   i18next@19.9.2:
     resolution: {integrity: sha512-0i6cuo6ER6usEOtKajUUDj92zlG+KArFia0857xxiEHAQcUwh/RtOQocui1LPJwunSYT574Pk64aNva1kwtxZg==}
@@ -15771,10 +15759,6 @@ snapshots:
     dependencies:
       '@babel/runtime': 7.28.6
 
-  i18next-chained-backend@2.1.0:
-    dependencies:
-      '@babel/runtime': 7.28.6
-
   i18next-fs-backend@1.2.0: {}
 
   i18next-http-backend@1.4.5:
@@ -15782,10 +15766,6 @@ snapshots:
       cross-fetch: 3.1.5
     transitivePeerDependencies:
       - encoding
-
-  i18next-localstorage-backend@3.1.3:
-    dependencies:
-      '@babel/runtime': 7.28.6
 
   i18next@19.9.2:
     dependencies:
