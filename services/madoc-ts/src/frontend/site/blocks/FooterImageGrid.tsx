@@ -1,33 +1,8 @@
 import React from 'react';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
-import styled from 'styled-components';
 import { HrefLink } from '../../shared/utility/href-link';
 
-const GridWrapper = styled.div<{ $rows?: string; $cols?: string }>`
-  display: grid;
-  grid-template-columns: ${props => (props.$cols ? `repeat(${props.$cols}, auto)` : 'repeat(2, auto)')};
-  grid-template-rows: ${props => (props.$rows ? `repeat(${props.$rows}, auto)` : 'repeat(2, auto)')};
-  grid-gap: 1em;
-  justify-content: space-between;
-`;
-const LogoContainer = styled.div`
-  width: 100%;
-  height: auto;
-  img {
-    max-height: 80px;
-  }
-
-  &[data-is-flex='true'] {
-    display: flex;
-    align-items: end;
-  }
-`;
-
-const LogoLabel = styled.div`
-  text-decoration: none;
-  color: inherit;
-  padding: 0 0.5em;
-`;
+const isExternalUrl = (url: string) => /^https?:\/\//i.test(url);
 
 interface ImageType {
   text?: string;
@@ -47,30 +22,50 @@ interface ImageType {
   };
   maxHeight?: string;
 }
-export const FooterImageGrid: React.FC<{
+
+interface FooterImageGridProps {
   images?: ImageType[];
   colNum?: string;
   rowNum?: string;
-}> = ({ images, colNum, rowNum }) => {
+}
+
+export function FooterImageGrid({ images, colNum, rowNum }: FooterImageGridProps) {
   const Logo = (image: ImageType) => (
-    <LogoContainer
-      data-is-flex={image.labelOptions?.inline}
+    <div
+      className={`h-auto w-full ${image.labelOptions?.inline ? 'flex items-end' : ''}`}
       style={{ padding: image.imgOptions?.padding ? '0.5em' : '', margin: image.imgOptions?.margin ? '0 0.5em' : '' }}
     >
-      <img style={{ maxHeight: `${image.maxHeight}px` }} alt={image.text} src={image?.logo?.image} />
-      {image.labelOptions?.hide ? null : <LogoLabel>{image.text}</LogoLabel>}
-    </LogoContainer>
+      <img
+        className="max-h-[80px]"
+        style={{ maxHeight: `${image.maxHeight}px` }}
+        alt={image.text}
+        src={image?.logo?.image}
+      />
+      {image.labelOptions?.hide ? null : <div className="px-[0.5em] text-inherit no-underline">{image.text}</div>}
+    </div>
   );
   return (
-    <GridWrapper $rows={rowNum} $cols={colNum}>
+    <div
+      className="grid justify-between gap-[1em]"
+      style={{
+        gridTemplateColumns: colNum ? `repeat(${colNum}, auto)` : 'repeat(2, auto)',
+        gridTemplateRows: rowNum ? `repeat(${rowNum}, auto)` : 'repeat(2, auto)',
+      }}
+    >
       {images
         ? images.map((image, i) => {
             return (
               <div key={i}>
                 {image.url ? (
-                  <HrefLink href={image.url}>
-                    <Logo {...image} />
-                  </HrefLink>
+                  isExternalUrl(image.url) ? (
+                    <a href={image.url}>
+                      <Logo {...image} />
+                    </a>
+                  ) : (
+                    <HrefLink href={image.url}>
+                      <Logo {...image} />
+                    </HrefLink>
+                  )
                 ) : (
                   <Logo {...image} />
                 )}
@@ -78,9 +73,9 @@ export const FooterImageGrid: React.FC<{
             );
           })
         : null}
-    </GridWrapper>
+    </div>
   );
-};
+}
 
 blockEditorFor(FooterImageGrid, {
   type: 'default.FooterImageGrid',
@@ -159,6 +154,7 @@ blockEditorFor(FooterImageGrid, {
     'images.url': {
       label: 'URL Link for image',
       type: 'text-field',
+      description: 'Use a root-relative path for internal links, or an absolute URL including http:// or https://.',
     },
     colNum: {
       label: 'Number of columns in grid',
