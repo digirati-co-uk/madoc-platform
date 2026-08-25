@@ -7,9 +7,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.3.2...main)
 
+### Added
+
+- Added JSON import/export for project configuration, safely merging imported settings while preserving protected project values. ([MAD-1531](https://digirati.atlassian.net/browse/MAD-1531))
+- Added configurable, keyboard-accessible resizing for contribution, preview, review, and tabular editor panels. ([MAD-1535](https://digirati.atlassian.net/browse/MAD-1535))
+- Added image rotation to contribution previews and review screens, with a clear rotated mode and reset option. ([MAD-1556](https://digirati.atlassian.net/browse/MAD-1556))
+- Added administrator-managed project search tabs, configurable facets, resource filters, result counts, grid/list views, thumbnails, and optional infinite scrolling.
+- Added import/export for global and site settings, and preserved the correct type when exported project templates are imported again.
+- Added "Open in Theseus" access for collections and improved its availability across project resources, with an option to hide the action.
+
+### Changed
+
+- Improved project updates with optional titles, formatted content, edit/preview modes, administrator editing and deletion, and immediate on-page refreshes. ([MAD-1549](https://digirati.atlassian.net/browse/MAD-1549))
+- Improved collection and manifest imports with automatic retries, clearer progress and failure totals, status filtering, pagination, and re-importing failed manifests. ([MAD-1555](https://digirati.atlassian.net/browse/MAD-1555))
+- Refined project search so autocomplete, results, and resource links stay within the current project, with improved project and metadata filtering. ([NS-48](https://digirati.atlassian.net/browse/NS-48))
+- Increased the permitted tabular heading length and improved column-description tooltips for mouse and keyboard users. ([MTDP-73](https://digirati.atlassian.net/browse/MTDP-73))
+- Changed the Personal Notes action to use a clearer pencil icon. ([MAD-1577](https://digirati.atlassian.net/browse/MAD-1577))
+- Updated the review dashboard to open the newer review listing by default.
+- Improved search indexing reliability so results stay aligned with project, collection, and resource changes.
+- Improved translation refreshing across site, account, and administration pages, and updated the English, Welsh, and Dutch catalogues.
+- Developer improvements covering platform maintenance, automated checks, deployment previews, migrations, generated configuration, and internal guidance.
+
 ### Fixed
 
 - Improved canvas and manifest status bars with shared status mapping, clearer submitted/completed/in-progress colours, and support for changes-requested tasks. ([MAD-1548](https://digirati.atlassian.net/browse/MAD-1548))
+- Fixed contributor task statuses after a reviewer requests changes, ensuring work is shown as requiring further action rather than completed. ([MAD-1553](https://digirati.atlassian.net/browse/MAD-1553))
+- Fixed capture-model editing issues including fields losing focus after the first character, optional-region validation, missing field headings, and autocomplete placeholder handling. ([MAD-1570](https://digirati.atlassian.net/browse/MAD-1570))
+- Fixed HTML and Markdown block editing, including support for adding links and more reliable editor loading. ([MAD-1574](https://digirati.atlassian.net/browse/MAD-1574))
+- Fixed spacer and divider rendering across configurable pages. ([MAD-1576](https://digirati.atlassian.net/browse/MAD-1576))
+- Fixed themed headers showing a duplicate site title, including when language-specific themes are used. ([NS-83](https://digirati.atlassian.net/browse/NS-83))
+- Fixed site identification on account pages, preventing the wrong site session or configuration from being used. ([NS-84](https://digirati.atlassian.net/browse/NS-84))
+- Fixed activity-feed links and external-client access.
+- Fixed manifest model previews not showing the total page count.
+- Fixed external links on footer logos.
+- Fixed the IIIF Browser integration and refreshed its user-facing labels.
 
 <!--
 
