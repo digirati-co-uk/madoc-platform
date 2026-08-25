@@ -35,6 +35,7 @@ description: Work on Madoc TS site, admin, or account React routes, loaders, sha
 ## Guardrails
 
 - Follow the Tailwind/styled-components migration rule in `AGENTS.md`.
+- Keep the shared styled-components Babel transform in `vite/styled-components.js` enabled for frontend, dev-server, and SSR builds; Vite 8 Babel plugins run through `@rolldown/plugin-babel`, not `react({ babel })`.
 - Keep CommonJS compatibility aliases aligned across the frontend, dev-server, and SSR Vite configs.
 - `rich-markdown-editor` may expose its React component as a nested CommonJS default; normalize the imported value before rendering it.
 - Keep site and admin permissions and components on the correct surface.

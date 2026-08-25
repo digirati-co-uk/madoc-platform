@@ -3,6 +3,7 @@ import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 import react from '@vitejs/plugin-react';
+import { styledComponents } from './vite/styled-components.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const pnpmStorePath = path.resolve(__dirname, 'node_modules/.pnpm');
@@ -36,19 +37,5 @@ export default defineConfig({
   optimizeDeps: {
     include: ['@manifest-editor/iiif-browser-bundle'],
   },
-  plugins: [
-    react({
-      babel: {
-        plugins: [
-          [
-            'babel-plugin-styled-components',
-            {
-              displayName: true,
-              fileName: false,
-            },
-          ],
-        ],
-      },
-    }),
-  ],
+  plugins: [react(), styledComponents()],
 });

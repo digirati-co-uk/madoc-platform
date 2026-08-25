@@ -2,6 +2,7 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import fs from 'fs';
 import path from 'path';
+import { styledComponents } from './styled-components.js';
 
 const PROSEMIRROR_PACKAGES = [
   ['prosemirror-model', 'dist/index.js'],
@@ -97,17 +98,7 @@ export default defineConfig({
   plugins: [
     react({
       jsxRuntime: 'automatic',
-      babel: {
-        plugins: [
-          [
-            'babel-plugin-styled-components',
-            {
-              displayName: true,
-              fileName: false,
-            },
-          ],
-        ],
-      },
     }),
+    styledComponents(),
   ],
 });

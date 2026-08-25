@@ -1,6 +1,7 @@
 import react from '@vitejs/plugin-react';
 import { readFileSync } from 'fs';
 import path from 'path';
+import { styledComponents } from './styled-components.js';
 
 const pkg = JSON.parse(readFileSync('./package.json').toString());
 
@@ -130,6 +131,7 @@ export function createConfig(name, entry) {
       react({
         jsxRuntime: 'automatic',
       }),
+      ...(name === 'server' ? [styledComponents()] : []),
     ],
   });
 }

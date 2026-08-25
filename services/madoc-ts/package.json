@@ -200,6 +200,7 @@
     "@babel/types": "^7.29.0",
     "@eslint/eslintrc": "^3.3.6",
     "@eslint/js": "^9.39.2",
+    "@rolldown/plugin-babel": "^0.2.3",
     "@storybook/addon-docs": "^10.5.8",
     "@storybook/builder-vite": "^10.5.8",
     "@storybook/react": "^10.5.8",
