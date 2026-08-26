@@ -25,8 +25,6 @@ export const RequestChanges: React.FC<{
       currentRevision: state.currentRevision,
     };
   });
-  const deselectRevision = Revisions.useStoreActions(a => a.deselectRevision);
-
   const requestChangesApiCall = useCallback(() => {
     if (currentRevision) {
       setIsLoading(true);
@@ -37,12 +35,11 @@ export const RequestChanges: React.FC<{
           userTaskId,
         })
         .then(() => {
-          deselectRevision({ revisionId: currentRevision.revision.id });
           setIsLoading(false);
           onRequest();
         });
     }
-  }, [api, currentRevision, deselectRevision, onRequest, requestMessage, userTaskId]);
+  }, [api, currentRevision, onRequest, requestMessage, userTaskId]);
 
   if (currentRevision?.revision.approved) {
     return null;

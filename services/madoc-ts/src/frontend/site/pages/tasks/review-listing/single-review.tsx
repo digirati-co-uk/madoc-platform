@@ -628,7 +628,6 @@ function ViewSingleReview({
                 userTaskId: task.id,
                 message: task.state?.changesRequested || '',
               });
-              deselectRevision({ revisionId: currentRevision.revision.id });
               await refetch();
             },
             approve: async () => {
