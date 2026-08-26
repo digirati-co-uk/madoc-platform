@@ -1,12 +1,20 @@
-export class ApiError extends Error {
-  constructor(message: string, response?: any) {
-    super(message);
-    this.response = response;
+interface ApiErrorResponse {
+  status?: number;
+  statusText?: string;
+  url?: string;
+}
 
-    if (response && response.debugResponse && response.debugResponse.json) {
-      this.jsonError = response.debugResponse.json();
-    }
+export class ApiError extends Error {
+  constructor(message: string, response?: ApiErrorResponse) {
+    const status = response?.status
+      ? `HTTP ${response.status}${response.statusText ? ` ${response.statusText}` : ''}`
+      : '';
+    const path = response?.url ? new URL(response.url).pathname : '';
+    const details = [status, path].filter(Boolean).join(' · ');
+
+    super(details ? `${message} (${details})` : message);
+    this.response = response;
   }
-  response: any | undefined;
-  jsonError: any | undefined;
+
+  response: ApiErrorResponse | undefined;
 }

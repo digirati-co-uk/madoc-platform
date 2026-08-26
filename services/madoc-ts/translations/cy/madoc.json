@@ -211,6 +211,8 @@
   "Collections_plural": "Casgliadau",
   "Column": "Colofn",
   "Complete": "Cyflawn",
+  "Complete this collection without the failed manifests?": "Cwblhau'r casgliad hwn heb y maniffestau a fethodd?",
+  "Complete without failed manifests ({{count}})": "Cwblhau heb faniffestau a fethodd ({{count}})",
   "Completed": "Cwblhawyd",
   "Completed canvas activity (not yet implemented)": "Gweithgarwch canfas wedi'i gwblhau (heb ei weithredu eto)",
   "Completed manifests activity": "Gweithgarwch maniffestau wedi'u cwblhau",

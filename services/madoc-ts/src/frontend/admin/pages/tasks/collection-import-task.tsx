@@ -25,12 +25,17 @@ export function CollectionImportTask({ task, manifestImportStats, statusBar }: C
   const query = useLocationQuery<{ status?: string }>();
   const [taskStatusMap, setTaskStatusMap] = useState<Record<string, boolean>>({});
   const manifestSubtasks = (task.subtasks || []).filter(subtask => subtask.type === 'madoc-manifest-import');
-  const manifestTotal = manifestImportStats?.total ?? task.state.manifestIds?.length ?? manifestSubtasks.length;
+  const manifestTotal = task.state.manifestIds?.length ?? manifestImportStats?.total ?? manifestSubtasks.length;
   const importedTotal =
     manifestImportStats?.statuses?.['3'] ??
     manifestSubtasks.filter(subtask => subtask.status === 3 && subtask.state?.resourceId).length;
   const failedTotal =
     manifestImportStats?.statuses?.['-1'] ?? manifestSubtasks.filter(subtask => subtask.status === -1).length;
+  const canCompleteWithFailures =
+    task.status !== 3 &&
+    failedTotal > 0 &&
+    manifestImportStats?.total === manifestTotal &&
+    importedTotal + failedTotal === manifestImportStats.total;
 
   const [trigger] = useMutation(async (taskId: string) => {
     setTaskStatusMap(statuses => ({ ...statuses, [taskId]: true }));
@@ -43,7 +48,22 @@ export function CollectionImportTask({ task, manifestImportStats, statusBar }: C
   });
 
   const [retryFailed, retryFailedStatus] = useMutation(async () => {
-    await api.updateTask(task.id, { status: 0, status_text: 'pending' });
+    await api.updateTask(task.id, {
+      status: 0,
+      status_text: 'pending',
+      state: { skipFailedManifests: false },
+    });
+  });
+
+  const [completeWithFailures, completeWithFailuresStatus] = useMutation(async () => {
+    if (!window.confirm(t('Complete this collection without the failed manifests?'))) {
+      return;
+    }
+    await api.updateTask(task.id, {
+      status: 0,
+      status_text: 'completing without failed manifests',
+      state: { skipFailedManifests: true },
+    });
   });
 
   return (
@@ -85,10 +105,20 @@ export function CollectionImportTask({ task, manifestImportStats, statusBar }: C
             {t('Re-import failed manifests ({{count}})', { count: failedTotal })}
           </button>
         ) : null}
+        {canCompleteWithFailures ? (
+          <button
+            type="button"
+            className="rounded bg-amber-700 px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50"
+            disabled={completeWithFailuresStatus.isLoading}
+            onClick={() => completeWithFailures()}
+          >
+            {t('Complete without failed manifests ({{count}})', { count: failedTotal })}
+          </button>
+        ) : null}
       </div>
-      {retryFailedStatus.isError ? (
+      {retryFailedStatus.isError || completeWithFailuresStatus.isError ? (
         <p role="alert" className="my-3 rounded bg-red-700 p-3 text-white">
-          {t('Failed')}: {(retryFailedStatus.error as Error).message}
+          {t('Failed')}: {((retryFailedStatus.error || completeWithFailuresStatus.error) as Error).message}
         </p>
       ) : null}
       {statusBar}

@@ -22,7 +22,7 @@ Use `$madoc-crowdsourcing` as well when the task is specifically about claim, co
 
 1. Define the task type, creation/enqueue path, and handler beside the nearest existing task.
 2. Add the worker import and switch case in `src/queue/producer.ts`.
-3. Preserve task `status` and `status_text` on success, retry, and terminal failure.
+3. Preserve task `status` and `status_text` on success and retry; terminal failures must also store a concise reason in `state.error` for the admin task view.
 4. Dispose contextual `ApiClient` instances on every path.
 5. Rebuild `vite-producer`, restart PM2 `queue`, and run one real task.
 
@@ -36,6 +36,7 @@ Use `$madoc-crowdsourcing` as well when the task is specifically about claim, co
 ## Guardrails
 
 - Trace every producer and consumer before changing a task type string or payload.
+- Queue independent fan-out subtasks together, then gate parent completion on every expected child; a failed child must not prevent siblings from being created.
 - Keep retryable errors retryable; do not turn unknown failures into successful jobs.
 - Preserve the worker's site-context isolation and cleanup.
 

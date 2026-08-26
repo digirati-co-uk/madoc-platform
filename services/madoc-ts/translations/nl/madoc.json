@@ -211,6 +211,8 @@
   "Collections_plural": "Collecties",
   "Column": "Kolom",
   "Complete": "Voltooien",
+  "Complete this collection without the failed manifests?": "Deze collectie voltooien zonder de mislukte manifests?",
+  "Complete without failed manifests ({{count}})": "Voltooien zonder mislukte manifests ({{count}})",
   "Completed": "Voltooid",
   "Completed canvas activity (not yet implemented)": "Activiteit voor voltooid canvas (nog niet geïmplementeerd)",
   "Completed manifests activity": "Activiteit voor voltooide manifesten",

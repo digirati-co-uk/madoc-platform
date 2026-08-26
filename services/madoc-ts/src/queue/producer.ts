@@ -182,10 +182,16 @@ worker.on('failed', async (job: Job) => {
       }
     }
 
-    await (contextualApi || api).updateTask(job.data.taskId, { status: -1, status_text: 'Failed' });
-
-    if (contextualApi) {
-      contextualApi.dispose();
+    try {
+      await (contextualApi || api).updateTask(job.data.taskId, {
+        status: -1,
+        status_text: 'Failed',
+        state: { error: job.failedReason || 'Task failed without an error message' },
+      });
+    } finally {
+      if (contextualApi) {
+        contextualApi.dispose();
+      }
     }
   }
 });

@@ -14,7 +14,6 @@ import { ApiClient } from '../api';
 import { deleteAsync } from 'del';
 import { trimInternationalString } from '../helpers/trim-international-string';
 import { fetchIiifResource } from './fetch-iiif-resource';
-import { shouldResumeCollectionImport } from './should-resume-collection-import';
 export const type = 'madoc-manifest-import';
 
 export const status = [
@@ -66,26 +65,6 @@ export function changeStatus(newStatus: string, data: { state?: any; name?: stri
 
 export function errorMessage(message: string) {
   return changeStatus('error' as any, { state: { errorMessage: message } });
-}
-
-async function resumeParentCollectionImport(api: ApiClient, task: ImportManifestTask) {
-  if (!task.parent_task) {
-    return;
-  }
-
-  try {
-    const parent = await api.getTask(task.parent_task);
-    if (parent.type !== 'madoc-collection-import' || !parent.id) {
-      return;
-    }
-
-    const stats = await api.getTaskStats(parent.id, { type });
-    if (shouldResumeCollectionImport(stats.statuses)) {
-      await api.updateTask(parent.id, { status: 0, status_text: 'pending' });
-    }
-  } catch (error) {
-    console.log('Unable to resume parent collection import', error);
-  }
 }
 
 export const jobHandler = async (name: string, taskId: string, api: ApiClient) => {
@@ -221,7 +200,6 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
       // 6. Mark as done if no canvases
       if (subtasks.length === 0 && subtasksToReTrigger.length === 0) {
         await api.updateTask(task.id, changeStatus('done', { state: { diskCacheLocation: fileLocation } }));
-        await resumeParentCollectionImport(api, task);
         return;
       }
 
@@ -319,7 +297,6 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
             structureComplete: true,
           },
         });
-        await resumeParentCollectionImport(api, task);
         try {
           if (!task.parent_task) {
             await userApi.notifications.createNotification({
