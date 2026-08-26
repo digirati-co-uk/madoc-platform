@@ -37,6 +37,7 @@ Use `$madoc-crowdsourcing` as well when the task is specifically about claim, co
 
 - Trace every producer and consumer before changing a task type string or payload.
 - Queue independent fan-out subtasks together, then gate parent completion on every expected child; a failed child must not prevent siblings from being created.
+- Treat a child as complete only when its required output state is present; recovery must explicitly retry or skip `done` children with missing outputs.
 - Keep retryable errors retryable; do not turn unknown failures into successful jobs.
 - Preserve the worker's site-context isolation and cleanup.
 

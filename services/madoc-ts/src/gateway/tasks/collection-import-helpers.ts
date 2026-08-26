@@ -68,7 +68,7 @@ export function getManifestImportResult(
       resourceIds.push(subtask.state.resourceId);
       continue;
     }
-    if (skipFailed && subtask?.status === -1) {
+    if (skipFailed && (subtask?.status === -1 || subtask?.status === DONE)) {
       skippedManifestIds.push(manifestId);
       continue;
     }

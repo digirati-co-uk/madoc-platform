@@ -396,6 +396,8 @@
   "Error - Unable to save your submission": "Fout - Je inzending kon niet worden opgeslagen",
   "Errored": "Fout",
   "Errored / Rejected": "Fout / Geweigerd",
+  "Estimated time remaining: {{time}}": "Geschatte resterende tijd: {{time}}",
+  "Estimating time remaining": "Resterende tijd wordt geschat",
   "Exclude all": "Alles uitsluiten",
   "Exit Correction": "Correctie afsluiten",
   "Exit edit mode": "Sluit bewerkingsmodus",

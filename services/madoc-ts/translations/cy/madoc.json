@@ -396,6 +396,8 @@
   "Error - Unable to save your submission": "Gwall - Methu cadw eich cyflwyniad",
   "Errored": "Gwallus",
   "Errored / Rejected": "Gwallus/Gwrthodwyd",
+  "Estimated time remaining: {{time}}": "Amcangyfrif o'r amser sy'n weddill: {{time}}",
+  "Estimating time remaining": "Yn amcangyfrif yr amser sy'n weddill",
   "Exclude all": "Eithrio'r cyfan",
   "Exit Correction": "Gadael y Cywiriad",
   "Exit edit mode": "Gadael y dull golygu",

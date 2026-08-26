@@ -199,7 +199,12 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
 
       // 6. Mark as done if no canvases
       if (subtasks.length === 0 && subtasksToReTrigger.length === 0) {
-        await api.updateTask(task.id, changeStatus('done', { state: { diskCacheLocation: fileLocation } }));
+        await api.updateTask(
+          task.id,
+          changeStatus('done', {
+            state: { resourceId: item.id, isDuplicate: false, diskCacheLocation: fileLocation },
+          })
+        );
         return;
       }
 
