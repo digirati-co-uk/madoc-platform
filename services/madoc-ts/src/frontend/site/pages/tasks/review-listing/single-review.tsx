@@ -731,7 +731,7 @@ function ViewSingleReview({
                 defaultWidth={300}
                 className="flex-1 overflow-y-auto p-[0.6em]"
                 resizablePane={
-                  <div className="h-full overflow-x-auto">
+                  <div className="h-full overflow-x-auto w-full">
                     <CanvasViewerEditorStyleReset>
                       <EditorSlots.TopLevelEditor />
                     </CanvasViewerEditorStyleReset>
