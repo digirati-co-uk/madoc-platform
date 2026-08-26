@@ -6,13 +6,18 @@ function distance(x1: number, y1: number, x2: number, y2: number) {
   return Math.sqrt(Math.pow(Math.abs(x2 - x1), 2) + Math.pow(Math.abs(y2 - y1), 2));
 }
 
-function getMaxWidthPct(container: number, defaultMaxWidthPct: number, maxWidthPct?: number, maxWidthPixel?: number) {
+function getMaxWidthPct(
+  container: number,
+  defaultMaxWidthPct: number,
+  maxWidthPct?: number,
+  maxWidthPixel?: number | ((containerWidth: number) => number)
+) {
   if (maxWidthPct) {
     return maxWidthPct;
   }
 
   if (maxWidthPixel) {
-    return maxWidthPixel / container;
+    return (typeof maxWidthPixel === 'function' ? maxWidthPixel(container) : maxWidthPixel) / container;
   }
 
   return defaultMaxWidthPct;
@@ -38,7 +43,7 @@ export function useResizeLayout(
     left?: boolean;
     widthA?: any;
     widthB?: any;
-    maxWidthPx?: number;
+    maxWidthPx?: number | ((containerWidth: number) => number);
     maxWidthPct?: number;
     minWidthPx?: number;
     minWidthPct?: number;

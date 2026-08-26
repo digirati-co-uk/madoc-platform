@@ -597,6 +597,7 @@ function TabularProjectCustomEditorContent({
             style={{
               width: isSidebarPanelOpen ? widthB : 56,
               minWidth: isSidebarPanelOpen ? 320 : 56,
+              maxWidth: isSidebarPanelOpen && enableEditorResizing ? 'calc(100% - 12px)' : undefined,
               height: '100%',
               borderRight: 'none',
             }}
