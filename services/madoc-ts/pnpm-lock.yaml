@@ -19,7 +19,7 @@ overrides:
   dnd-multi-backend: 9.0.0
   formik: ^2.2.9
   html-entities: 1.4.0
-  iiif-browser: 2.2.5
+  iiif-browser: 2.2.6
   immer: ^9
   immutable: 3.8.2
   popmotion: ^8.7.6
@@ -221,8 +221,8 @@ importers:
         specifier: ^1.0.19
         version: 1.4.5
       iiif-browser:
-        specifier: 2.2.5
-        version: 2.2.5(@types/react@19.2.18)(immer@9.0.21)(react-reconciler@0.33.0(react@19.2.8))
+        specifier: 2.2.6
+        version: 2.2.6(@types/react@19.2.18)(immer@9.0.21)(react-reconciler@0.33.0(react@19.2.8))
       immer:
         specifier: ^9
         version: 9.0.21
@@ -6109,8 +6109,8 @@ packages:
     resolution: {integrity: sha512-Hs59xBNfUIunMFgWAbGX5cq6893IbWg4KnrjbYwX3tx0ztorVgTDA6B2sxf8ejHJ4wz8BqGUMYlnzNBer5NvGg==}
     engines: {node: '>= 4'}
 
-  iiif-browser@2.2.5:
-    resolution: {integrity: sha512-FzsbRZ6Tu/gQp0W0c2so2r6K8KVJ43StHMjrBIw489xKgx6n9tkrcrZGxda4+iZnHy+choKMaf8c81O4pWOyHA==}
+  iiif-browser@2.2.6:
+    resolution: {integrity: sha512-rWLFZXrfJ9osfncfPUSdbQzxcMbPWeQxgRD0G5JHM6YBgkCZb67RrGd3CIx/dFvdOwJSGdZxrZQph1Mal4BcPw==}
     engines: {node: '>=18.14.1'}
     peerDependencies:
       '@mdxeditor/editor': ^4.0.4
@@ -15820,7 +15820,7 @@ snapshots:
 
   ignore@7.0.5: {}
 
-  iiif-browser@2.2.5(@types/react@19.2.18)(immer@9.0.21)(react-reconciler@0.33.0(react@19.2.8)):
+  iiif-browser@2.2.6(@types/react@19.2.18)(immer@9.0.21)(react-reconciler@0.33.0(react@19.2.8)):
     dependencies:
       '@atlas-viewer/atlas': 3.2.3(@iiif/helpers@1.6.1(@iiif/parser@2.2.14))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
       '@iiif/helpers': 1.6.1(@iiif/parser@2.2.14)

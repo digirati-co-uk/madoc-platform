@@ -4,14 +4,13 @@ import {
   UnknownSizeImage,
   VariableSizeImage,
 } from '@atlas-viewer/iiif-image-api';
-import { createThumbnailHelper } from '@iiif/helpers/thumbnail';
+import { createThumbnailHelper, Vault } from '@iiif/helpers';
 import * as path from 'path';
 import { MANIFESTS_PATH } from '../../paths';
 import { BaseTask } from './base-task';
 import mkdirp from 'mkdirp';
 import { promises, existsSync } from 'fs';
 import cache from 'memory-cache';
-import { Vault } from '@iiif/helpers/vault';
 import { Manifest } from '@iiif/presentation-3';
 import { CanvasNormalized, ManifestNormalized } from '@iiif/presentation-3-normalized';
 import { createHash } from 'crypto';
@@ -138,32 +137,12 @@ export async function getThumbnail(
   return undefined;
 }
 
-export async function ensureManifestLoaded(vault: Vault, manifestId: string, manifestJson: any) {
-  const state = vault.getState();
-
-  const manifestJsonId = manifestJson['@id'] ? manifestJson['@id'] : manifestJson.id;
-
-  if (state.iiif.requests[manifestId]) {
-    let times = 0;
-    if (state.iiif.requests[manifestId].loadingState === 'RESOURCE_LOADING') {
-      while (times < 10) {
-        if (state.iiif.requests[manifestId].loadingState === 'RESOURCE_LOADING') {
-          await new Promise(resolve => setTimeout(resolve, 1000));
-        } else {
-          break;
-        }
-        times++;
-      }
-    }
-    if (state.iiif.requests[manifestId].loadingState === 'RESOURCE_ERROR') {
-      // I don't know? Try again?
-      await vault.loadManifest(manifestJsonId, manifestJson);
-    }
-  } else if (!state.iiif.entities.Manifest[manifestJsonId]) {
-    await vault.loadManifest(manifestJsonId, manifestJson).catch(err => {
-      console.log(err);
-    });
+export async function ensureManifestLoaded(vault: Vault, manifestJson: Record<string, unknown>) {
+  const manifestJsonId = manifestJson['@id'] || manifestJson.id;
+  if (typeof manifestJsonId !== 'string') {
+    throw new Error('Manifest has no identifier');
   }
+  await vault.loadManifest(manifestJsonId, manifestJson);
 }
 
 export function getCanvasFromManifest(manifest: any, canvasId: string) {
@@ -199,14 +178,13 @@ export async function tryGetManifest(manifestId: string, pathToManifest: string,
     const [manifestJson, unmodifiedManifest] = await loadManifest(pathToManifest);
     const vault = sharedVault(manifestId);
 
-    await ensureManifestLoaded(vault, manifestId, manifestJson);
+    await ensureManifestLoaded(vault, manifestJson);
 
     const manifest = vault.get<ManifestNormalized>({ id: manifestId, type: 'Manifest' });
     const ref: { id: string; type: 'Canvas' } = { id: canvasId, type: 'Canvas' };
-    // @todo handle case where canvas does not exist.
     const canvas = vault.get<CanvasNormalized>(ref);
-    if (Object.keys(canvas).length === 2) {
-      throw new Error('Could not load manifest from vault.');
+    if (!canvas || Object.keys(canvas).length === 2) {
+      throw new Error(`Canvas ${canvasId} was not found in manifest ${manifestId}`);
     }
 
     return { manifest, unmodifiedManifest, canvas, vault };
@@ -214,6 +192,7 @@ export async function tryGetManifest(manifestId: string, pathToManifest: string,
 
   let maxTries = 5;
   let returnManifest;
+  let lastError: unknown;
   while (maxTries > 0) {
     try {
       returnManifest = await doGet();
@@ -221,7 +200,7 @@ export async function tryGetManifest(manifestId: string, pathToManifest: string,
         break;
       }
     } catch (err) {
-      // do nothing.
+      lastError = err;
       maxTries--;
       await new Promise(resolve => setTimeout(resolve, 500));
     }
@@ -231,5 +210,6 @@ export async function tryGetManifest(manifestId: string, pathToManifest: string,
     return returnManifest;
   }
 
-  throw new Error('Could not load manifest from vault after 5 tries');
+  const reason = lastError instanceof Error ? `: ${lastError.message}` : '';
+  throw new Error(`Could not load canvas ${canvasId} from manifest ${manifestId} after 5 tries${reason}`);
 }
