@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components';
 
-export const AdminPageTitle = styled.h1<{ subtitle?: boolean }>`
+export const AdminPageTitle = styled.h1<{ $subtitle?: boolean }>`
   display: block;
   color: #fff;
   font-size: 1.8em;
@@ -9,7 +9,7 @@ export const AdminPageTitle = styled.h1<{ subtitle?: boolean }>`
   margin: 0;
   background: #24386b;
   ${props =>
-    props.subtitle &&
+    props.$subtitle &&
     css`
       padding-bottom: 0.2em;
     `}

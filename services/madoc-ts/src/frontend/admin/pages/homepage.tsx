@@ -178,6 +178,9 @@ export const Homepage: UniversalComponent<HomepageType> = createUniversalCompone
                     <Link to="/global/status">{t('System status')}</Link>
                   </li>
                   <li>
+                    <Link to="/global/logs">{t('Process logs')}</Link>
+                  </li>
+                  <li>
                     <Link to="/global/queue">{t('Queue inspector')}</Link>
                   </li>
                   <li>

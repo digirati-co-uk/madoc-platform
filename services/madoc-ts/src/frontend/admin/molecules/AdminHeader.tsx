@@ -109,7 +109,7 @@ export const AdminHeader: React.FC<{
             </AdminHeaderThumbnail>
           ) : null}
           <TitleContainer>
-            <AdminPageTitle subtitle={!!subtitle}>{title}</AdminPageTitle>
+            <AdminPageTitle $subtitle={!!subtitle}>{title}</AdminPageTitle>
             {subtitle ? <AdminPageSubtitle>{subtitle}</AdminPageSubtitle> : null}
           </TitleContainer>
           {action ? (

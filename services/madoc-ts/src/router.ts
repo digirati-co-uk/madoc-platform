@@ -47,7 +47,14 @@ import {
   uninstallPlugin,
   viewRemotePlugin,
 } from './routes/admin/plugins';
-import { pm2RestartAuth, pm2RestartMadoc, pm2RestartQueue, pm2RestartScheduler, pm2Status } from './routes/admin/pm2';
+import {
+  pm2Logs,
+  pm2RestartAuth,
+  pm2RestartMadoc,
+  pm2RestartQueue,
+  pm2RestartScheduler,
+  pm2Status,
+} from './routes/admin/pm2';
 import { queueStatus } from './routes/admin/queue-status';
 import { resumeQueue } from './routes/admin/resume-queue';
 import { getSiteDetails } from './routes/admin/site-details';
@@ -335,6 +342,7 @@ export const router = new TypedRouter({
   'get-scopes': [TypedRouter.GET, '/api/madoc/site/:siteId/permissions', getSiteScopes],
   'update-scopes': [TypedRouter.POST, '/api/madoc/site/:siteId/permissions', saveSiteScopes],
   'pm2-list': [TypedRouter.GET, '/api/madoc/pm2/list', pm2Status],
+  'pm2-logs': [TypedRouter.GET, '/s/:slug/madoc/api/pm2/:processId/logs', pm2Logs],
   'pm2-restart-auth': [TypedRouter.POST, '/api/madoc/pm2/restart/auth', pm2RestartAuth],
   'pm2-restart-queue': [TypedRouter.POST, '/api/madoc/pm2/restart/queue', pm2RestartQueue],
   'pm2-restart-madoc': [TypedRouter.POST, '/api/madoc/pm2/restart/madoc', pm2RestartMadoc],

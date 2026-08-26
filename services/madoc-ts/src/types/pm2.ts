@@ -1,5 +1,5 @@
 export type Pm2Status = {
-  id: string;
+  id: number;
   name: string;
   monit: {
     memory: number;
@@ -18,3 +18,8 @@ export type Pm2Status = {
   status: string;
   uptime: number;
 };
+
+export interface Pm2LogEvent {
+  stream: 'stdout' | 'stderr';
+  message: string;
+}

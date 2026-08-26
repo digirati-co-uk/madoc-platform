@@ -766,6 +766,12 @@ export class ApiClient {
     return this.request<{ list: Pm2Status[]; build: any; slowRequests: any }>(`/api/madoc/pm2/list`);
   }
 
+  getPm2LogsUrl(processId: number, lines = 100) {
+    const slug = this.getSiteSlug();
+    invariant(slug, 'Site slug not found');
+    return this.resolveUrl(`/s/${slug}/madoc/api/pm2/${processId}/logs?${stringify({ lines })}`);
+  }
+
   async pm2Restart(service: 'auth' | 'queue' | 'madoc' | 'scheduler') {
     return this.request<{ success: true }>(`/api/madoc/pm2/restart/${service}`, { method: 'POST' });
   }

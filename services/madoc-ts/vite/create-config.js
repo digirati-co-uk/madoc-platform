@@ -93,6 +93,7 @@ export function createConfig(name, entry) {
         external: [
           // Node + missing deps.
           'pm2',
+          'child_process',
           'fs',
           'path',
           'vm2',
@@ -101,6 +102,7 @@ export function createConfig(name, entry) {
           'https',
           'url',
           'stream',
+          'readline',
           'whatwg-url',
           'zlib',
           'util',

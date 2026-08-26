@@ -28,6 +28,7 @@ Read the repository `AGENTS.md` first; it owns the cross-cutting runtime and ver
 
 - Treat middleware order as behavior. Check auth, site state, static-page handling, and disposal before inserting anything.
 - Keep configuration in the existing config/path layer; do not add a second env parser.
+- Do not attach long-lived PM2 bus listeners to the imported singleton: status requests call `pm2.disconnect()`. Use an isolated PM2 client or child process and clean it up when the request closes.
 - When a new runtime file is required, verify the Docker build copies it into the final image.
 - Use the process-specific rebuild and restart command from `AGENTS.md`, then smoke-test `https://madoc.local`.
 
