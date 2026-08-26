@@ -300,8 +300,6 @@ export function CoreModelEditor({
         </CanvasViewerControls>
       )}
 
-      <CanvasViewerControls id="atlas-controls" data-position="left" />
-
       <CanvasViewerContentOverlay>
         <SmallToast $active={showPanWarning}>{t('Hold space to pan and zoom')}</SmallToast>
       </CanvasViewerContentOverlay>

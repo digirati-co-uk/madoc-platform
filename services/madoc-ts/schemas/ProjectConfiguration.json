@@ -150,6 +150,13 @@
           ],
           "type": "string"
         },
+        "defaultPolygonTool": {
+          "enum": [
+            "box",
+            "pen"
+          ],
+          "type": "string"
+        },
         "skipManifestListingPage": {
           "type": "boolean"
         },

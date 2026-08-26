@@ -46,6 +46,7 @@ export type ProjectConfiguration = TabularProjectConfigurationFields & {
   skipAutomaticOCRImport?: boolean;
   allowPersonalNotes?: boolean;
   defaultEditorOrientation: 'vertical' | 'horizontal';
+  defaultPolygonTool?: 'pen' | 'box';
   skipManifestListingPage?: boolean; // @todo move to manifest page options
   hideStatistics?: boolean; // @todo move to project page options
   hideProjectCollectionNavigation?: boolean; // @todo move to project page options
@@ -235,6 +236,7 @@ export type ProjectConfigurationNEW = TabularProjectConfigurationFields & {
   };
   randomCanvas?: boolean;
   defaultEditorOrientation: 'vertical' | 'horizontal';
+  defaultPolygonTool?: 'pen' | 'box';
   modelPageOptions?: TabularModelPageOptions & {
     hideViewerControls?: boolean;
     enableRotation?: boolean;

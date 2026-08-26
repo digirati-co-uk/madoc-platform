@@ -35,6 +35,17 @@ const TABULAR_OVERLAY_COLOR_FIELDS = {
   },
 } as const;
 
+const DEFAULT_POLYGON_TOOL_FIELD = {
+  label: 'Default polygon tool',
+  description: 'Choose the initial drawing tool when defining a polygon region.',
+  type: 'dropdown-field',
+  defaultValue: 'pen',
+  options: [
+    { value: 'pen', text: 'Polygon (pen)' },
+    { value: 'box', text: 'Box' },
+  ],
+} as const;
+
 export function postProcessConfiguration(config: Partial<ProjectConfiguration>): ProjectConfiguration {
   if (config.revisionApprovalsRequired) {
     config.revisionApprovalsRequired = Number(config.revisionApprovalsRequired);
@@ -169,6 +180,7 @@ export const siteConfigurationModel: {
       { value: 'horizontal', text: 'Horizontal (to the right) ' },
     ],
   },
+  defaultPolygonTool: DEFAULT_POLYGON_TOOL_FIELD,
   skipManifestListingPage: {
     label: 'Manifest display options',
     type: 'checkbox-field',
@@ -917,6 +929,7 @@ const sharedProjectContributionFields = {
     type: 'checkbox-field',
     inlineLabel: 'Randomly select canvas',
   },
+  defaultPolygonTool: DEFAULT_POLYGON_TOOL_FIELD,
 };
 
 const sharedProjectContributionTailFields = {

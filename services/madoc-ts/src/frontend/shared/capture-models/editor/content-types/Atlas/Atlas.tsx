@@ -18,6 +18,9 @@ import { Preset, PopmotionControllerConfig } from '@atlas-viewer/atlas';
 import { ImageServiceContext } from './Atlas.helpers';
 import { Button } from '../../atoms/Button';
 import { useTranslation } from 'react-i18next';
+import { CanvasViewerControls } from '../../../../atoms/CanvasViewerGrid';
+import { useSiteConfiguration } from '../../../../../site/features/SiteConfigurationContext';
+import { PolygonControls } from '../../selector-types/PolygonSelector/components/CreateCustomShape';
 
 export type AtlasCustomOptions = {
   unstable_webglRenderer?: boolean;
@@ -120,6 +123,7 @@ const Canvas: React.FC<{
 };
 
 export const AtlasViewer: React.FC<AtlasViewerProps> = props => {
+  const { project } = useSiteConfiguration();
   const { isLoaded } = useExternalManifest(props.state.manifestId);
   const currentSelector = useCurrentSelector('atlas', undefined);
   const currentSelectorId = Revisions.useStoreState(s => s.selector.currentSelectorId);
@@ -150,6 +154,7 @@ export const AtlasViewer: React.FC<AtlasViewerProps> = props => {
   return (
     <div
       style={{
+        position: 'relative',
         flex: '1 1 0px',
         minWidth: 0,
         display: 'flex',
@@ -187,6 +192,13 @@ export const AtlasViewer: React.FC<AtlasViewerProps> = props => {
           {props.children}
         </Canvas>
       </CanvasContext>
+      <CanvasViewerControls
+        id="atlas-controls"
+        data-position="left"
+        data-default-polygon-tool={project.defaultPolygonTool === 'box' ? 'box' : 'pen'}
+      >
+        {currentSelectorType === 'polygon-selector' ? <PolygonControls /> : null}
+      </CanvasViewerControls>
     </div>
   );
 };

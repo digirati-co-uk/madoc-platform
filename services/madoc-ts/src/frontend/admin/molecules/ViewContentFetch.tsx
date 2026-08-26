@@ -1,5 +1,5 @@
 import { Preset } from '@atlas-viewer/atlas';
-import React, { useMemo, Suspense } from 'react';
+import React, { useMemo } from 'react';
 import { ViewContent } from '../../shared/components/ViewContent';
 import { useApiCanvas } from '../../shared/hooks/use-api-canvas';
 import { Spinner } from '../../shared/icons/Spinner';
@@ -22,6 +22,16 @@ export const ViewContentFetch: React.FC<{
       id: data.canvas.source_id || 'http://canvas/' + data.canvas.id,
     };
   }, [data]);
+  const target = useMemo(
+    () =>
+      canvas
+        ? [
+            { type: 'Canvas', id: canvas.id },
+            { type: 'Manifest', id: 'http://manifest/top' },
+          ]
+        : [],
+    [canvas]
+  );
 
   if (!data || !canvas) {
     return <div>Loading...</div>;
@@ -31,10 +41,7 @@ export const ViewContentFetch: React.FC<{
     <BrowserComponent fallback={<Spinner />}>
       <ViewContent
         height={height}
-        target={[
-          { type: 'Canvas', id: data.canvas.source_id || 'http://canvas/' + data.canvas.id },
-          { type: 'Manifest', id: 'http://manifest/top' },
-        ]}
+        target={target}
         canvas={canvas as any}
         onCreated={onCreated}
         onPanInSketchMode={onPanInSketchMode}

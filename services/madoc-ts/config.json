@@ -21,6 +21,7 @@
     "skipAutomaticOCRImport": false,
     "allowPersonalNotes": false,
     "defaultEditorOrientation": "horizontal",
+    "defaultPolygonTool": "pen",
     "skipManifestListingPage": false,
     "hideStatistics": false,
     "hideProjectCollectionNavigation": false,
