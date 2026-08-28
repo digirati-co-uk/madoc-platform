@@ -173,11 +173,9 @@ export function PolygonControls() {
           </CanvasViewerButton>
         </>
       ) : null}
-      {state.showBoundingBox ? (
-        <CanvasViewerButton onClick={switchTool.remove}>
-          <DeleteForeverIcon style={{ color: 'red' }} />
-        </CanvasViewerButton>
-      ) : null}
+      <CanvasViewerButton onClick={switchTool.remove}>
+        <DeleteForeverIcon style={{ color: 'red' }} />
+      </CanvasViewerButton>
     </>
   );
 }
