@@ -15,7 +15,7 @@ export async function cachePromise<T extends object>(
   return result;
 }
 
-const swcPromises: Record<string, Promise<any> | null> = {};
+const swrPromises = new Map<string, Promise<object | null>>();
 const DEFAULT_STALE_TIME = 1000 * 60 * 60 * 8; // 8 hours
 
 export async function cachePromiseSWR<T extends object | null>(
@@ -24,29 +24,28 @@ export async function cachePromiseSWR<T extends object | null>(
   timeInMs: number,
   staleTimeInMs: number = DEFAULT_STALE_TIME
 ): Promise<T> {
-  if (swcPromises[key]) {
-    await swcPromises[key];
-  }
-  const resource = cache.get(key);
-  const staleResource = cache.get(`@stale/${key}`);
-  if (!resource) {
-    const promise = getter();
-    swcPromises[key] = promise;
-    promise.then(result => {
-      cache.put(key, result, timeInMs);
-      cache.put(`@stale/${key}`, result, staleTimeInMs);
-
-      delete swcPromises[key];
-
-      return result;
-    });
-
-    if (staleResource) {
-      return staleResource;
-    }
-
-    return promise;
+  const resource = cache.get(key) as T | null;
+  if (resource) {
+    return resource;
   }
 
-  return resource;
+  const staleResource = cache.get(`@stale/${key}`) as T | null;
+  let promise = swrPromises.get(key) as Promise<T> | undefined;
+  if (!promise) {
+    promise = getter()
+      .then(result => {
+        cache.put(key, result, timeInMs);
+        cache.put(`@stale/${key}`, result, staleTimeInMs);
+        return result;
+      })
+      .finally(() => swrPromises.delete(key));
+    swrPromises.set(key, promise);
+  }
+
+  if (staleResource) {
+    void promise.catch(() => undefined);
+    return staleResource;
+  }
+
+  return promise;
 }

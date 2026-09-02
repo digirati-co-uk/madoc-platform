@@ -1146,9 +1146,13 @@ export class ApiClient {
     }>(`/api/madoc/locales/analysis`);
   }
 
-  async getLocale(code: string, namespace?: string, withTemplate?: boolean) {
+  async getLocale(code: string, namespace?: string, withTemplate?: boolean, contentOnly?: boolean) {
+    const query = stringify({
+      show_empty: withTemplate || undefined,
+      content_only: contentOnly || undefined,
+    });
     return this.request<GetLocalisationResponse>(
-      `/api/madoc/locales/${code}${namespace ? `/${namespace}` : ''}${withTemplate ? `?show_empty=true` : ''}`
+      `/api/madoc/locales/${code}${namespace ? `/${namespace}` : ''}${query ? `?${query}` : ''}`
     );
   }
 
