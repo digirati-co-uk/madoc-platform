@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import type { InternationalString } from '@iiif/presentation-3';
 import { useQuery } from 'react-query';
 import {
   Configure,
@@ -38,6 +39,13 @@ import { useInfiniteAction } from '../hooks/use-infinite-action';
 import { useApi } from '../../shared/hooks/use-api';
 import { PublicProjectSearchIndex } from '../../../types/schemas/project-search-index';
 import { getProjectSearchFacetFieldName } from '../../shared/capture-models/helpers/project-search-index-options';
+import { apiHooks } from '../../shared/hooks/use-api-query';
+import { LocaleString } from '../../shared/components/LocaleString';
+import {
+  resolveTypesenseMetadataFacets,
+  type TypesenseMetadataFacet,
+  type TypesenseMetadataFacetField,
+} from '../features/search/resolve-typesense-facets';
 
 const TypesenseInstantSearchAdapter =
   (TypesenseInstantSearchAdapterImport as unknown as { default?: typeof TypesenseInstantSearchAdapterImport })
@@ -181,16 +189,18 @@ type TypesenseFacet = {
   counts: TypesenseFacetCount[];
 };
 
-type MetadataFacet = {
+type DiscoveredMetadataFacet = {
   attribute: string;
   label: string;
 };
 
 type VisibleFacetItem = {
   value: string;
-  label: string;
+  label: InternationalString | string;
   count: number;
   isRefined: boolean;
+  values: string[];
+  refinedValues: string[];
 };
 
 type SearchRouteState = {
@@ -402,10 +412,10 @@ const SearchInputWithAutocomplete: React.FC<{ projectId?: number; autocomplete?:
 };
 
 function HitCard({ hit, view }: { hit: TypesenseSearchHit; view: SearchView }) {
-  const { projectId } = useRouteContext();
+  const { projectId, collectionId } = useRouteContext();
   const { indexUiState } = useInstantSearch();
   const selectedProject = indexUiState.refinementList?.project_facets?.[0]?.split('|', 1)[0];
-  const primaryLink = resolveTypesenseHitPrimaryLink(hit, projectId || selectedProject);
+  const primaryLink = resolveTypesenseHitPrimaryLink(hit, projectId || selectedProject, collectionId);
   const isList = view === 'list';
   const thumbnail = hit.thumbnail ? (
     <img
@@ -635,13 +645,19 @@ const SidebarSection: React.FC<{ title: string; children: React.ReactNode }> = (
   </div>
 );
 
-const FacetOptionList: React.FC<{
+function FacetOptionList({
+  items,
+  refine,
+  canToggleShowMore,
+  isShowingMore,
+  toggleShowMore,
+}: {
   items: VisibleFacetItem[];
   refine: (value: string) => void;
   canToggleShowMore: boolean;
   isShowingMore: boolean;
   toggleShowMore: () => void;
-}> = ({ items, refine, canToggleShowMore, isShowingMore, toggleShowMore }) => {
+}) {
   const { project } = useSiteConfiguration();
 
   return (
@@ -654,12 +670,12 @@ const FacetOptionList: React.FC<{
                 className="h-4 w-4 shrink-0 accent-blue-700"
                 type="checkbox"
                 checked={item.isRefined}
-                onChange={() => refine(item.value)}
+                onChange={() => (item.isRefined ? item.refinedValues : item.values).forEach(value => refine(value))}
               />
               <span
                 className={`min-w-0 flex-1 truncate ${item.isRefined ? 'font-semibold text-blue-700' : 'text-slate-700'}`}
               >
-                {item.label}
+                <LocaleString>{item.label}</LocaleString>
               </span>
               {project.showSearchFacetCount ? (
                 <span className="shrink-0 rounded-full border border-slate-200 bg-slate-100 px-1.5 text-[0.7rem] leading-5 text-slate-500">
@@ -681,7 +697,7 @@ const FacetOptionList: React.FC<{
       ) : null}
     </>
   );
-};
+}
 
 const ProjectFacet = () => {
   const { items, refine, canToggleShowMore, isShowingMore, toggleShowMore } = useRefinementList(
@@ -705,6 +721,8 @@ const ProjectFacet = () => {
           return {
             ...item,
             label: separatorIndex === -1 ? item.label : item.value.slice(separatorIndex + 1),
+            values: [item.value],
+            refinedValues: item.isRefined ? [item.value] : [],
           };
         }),
     [items]
@@ -727,12 +745,12 @@ const ProjectFacet = () => {
   );
 };
 
-const MetadataFacetList: React.FC<MetadataFacet> = ({ attribute, label }) => {
+function MetadataFacetList({ attribute, values }: TypesenseMetadataFacetField) {
   const { items, refine, canToggleShowMore, isShowingMore, toggleShowMore } = useRefinementList(
     {
       attribute,
-      limit: 6,
-      showMore: true,
+      limit: values?.length ? 100 : 6,
+      showMore: !values?.length,
       showMoreLimit: 20,
       sortBy: ['isRefined:desc', 'count:desc', 'name:asc'],
     },
@@ -741,8 +759,29 @@ const MetadataFacetList: React.FC<MetadataFacet> = ({ attribute, label }) => {
     }
   );
   const visibleItems = useMemo<VisibleFacetItem[]>(
-    () => items.filter(item => item.count > 0 || item.isRefined),
-    [items]
+    () =>
+      values?.length
+        ? values
+            .map(value => {
+              const matchingItems = items.filter(item => value.values.includes(item.value));
+              return {
+                value: value.id,
+                label: value.label,
+                count: matchingItems.reduce((count, item) => count + item.count, 0),
+                isRefined: matchingItems.some(item => item.isRefined),
+                values: value.values,
+                refinedValues: matchingItems.filter(item => item.isRefined).map(item => item.value),
+              };
+            })
+            .filter(item => item.count > 0 || item.isRefined)
+        : items
+            .filter(item => item.count > 0 || item.isRefined)
+            .map(item => ({
+              ...item,
+              values: [item.value],
+              refinedValues: item.isRefined ? [item.value] : [],
+            })),
+    [items, values]
   );
 
   if (!visibleItems.length) {
@@ -750,48 +789,49 @@ const MetadataFacetList: React.FC<MetadataFacet> = ({ attribute, label }) => {
   }
 
   return (
-    <div>
-      <p className="mb-2 text-[0.75rem] font-medium capitalize text-slate-500">{label}</p>
-      <FacetOptionList
-        items={visibleItems}
-        refine={refine}
-        canToggleShowMore={canToggleShowMore}
-        isShowingMore={isShowingMore}
-        toggleShowMore={toggleShowMore}
-      />
-    </div>
+    <FacetOptionList
+      items={visibleItems}
+      refine={refine}
+      canToggleShowMore={!values?.length && canToggleShowMore}
+      isShowingMore={isShowingMore}
+      toggleShowMore={toggleShowMore}
+    />
   );
-};
+}
 
-const MetadataFacetSections: React.FC<{ facets: MetadataFacet[]; custom?: boolean }> = ({ facets, custom }) => {
-  const visibleFacets = useMemo(
-    () => (custom ? facets : facets.filter(facet => !isBlacklistedMetadataFacetLabel(facet.label))),
-    [custom, facets]
-  );
-
-  if (!visibleFacets.length) {
+function MetadataFacetSections({ facets, custom }: { facets: TypesenseMetadataFacet[]; custom?: boolean }) {
+  if (!facets.length) {
     return null;
   }
 
   return (
     <SidebarSection title={custom ? 'Facets' : 'Metadata'}>
       <div className="space-y-6">
-        {visibleFacets.map(facet => (
-          <MetadataFacetList key={facet.attribute} attribute={facet.attribute} label={facet.label} />
+        {facets.map(facet => (
+          <div key={facet.id}>
+            <p className="mb-2 text-[0.75rem] font-medium capitalize text-slate-500">
+              <LocaleString>{facet.label}</LocaleString>
+            </p>
+            <div className="space-y-2">
+              {facet.fields.map(field => (
+                <MetadataFacetList key={field.attribute} {...field} />
+              ))}
+            </div>
+          </div>
         ))}
       </div>
     </SidebarSection>
   );
-};
+}
 
 export function TypesenseSearch() {
   const site = useSite();
   const api = useApi();
   const { project: siteConfiguration } = useSiteConfiguration();
-  const { projectId: projectSlug } = useRouteContext();
+  const { projectId: projectSlug, collectionId } = useRouteContext();
   const { data: project } = useProject();
   const [activeCustomIndexId, setActiveCustomIndexId] = useState<string | undefined>(() => {
-    if (typeof window === 'undefined') return undefined;
+    if (typeof window === 'undefined' || collectionId) return undefined;
     return new URLSearchParams(window.location.search).get('index') || undefined;
   });
   const [view, setView] = useState<SearchView>('grid');
@@ -807,14 +847,15 @@ export function TypesenseSearch() {
   );
   const resourceTypes = getTypesenseResourceTypes(typesenseTabs);
   const resourceTypesKey = resourceTypes.join(',');
-  const searchFilter = getTypesenseSearchFilter(project?.id, resourceTypes);
+  const searchFilter = getTypesenseSearchFilter(project?.id, resourceTypes, collectionId);
   const infiniteScroll = siteConfiguration.searchOptions?.infiniteScroll !== false;
   const customIndexes = useQuery<PublicProjectSearchIndex[]>(
     ['project-public-search-indexes', site.slug, project?.slug],
     () => api.getPublicProjectSearchIndexes(project!.slug),
-    { enabled: !!project?.slug }
+    { enabled: !!project?.slug && !collectionId }
   );
   const activeCustomIndex = customIndexes.data?.find(index => index.id === activeCustomIndexId);
+  const activeIndexId = activeCustomIndex?.id;
   const defaultResourceType = !activeCustomIndex && !typesenseTabs.allResources ? resourceTypes[0] : undefined;
   const node = useMemo(
     () => getNodeConfig(site.slug, activeCustomIndex ? project?.slug : undefined, activeCustomIndex?.id),
@@ -822,8 +863,10 @@ export function TypesenseSearch() {
   );
 
   useEffect(() => {
-    if (activeCustomIndexId && customIndexes.data && !activeCustomIndex) setActiveCustomIndexId(undefined);
-  }, [activeCustomIndex, activeCustomIndexId, customIndexes.data]);
+    if (activeCustomIndexId && (collectionId || (customIndexes.data && !activeCustomIndex))) {
+      setActiveCustomIndexId(undefined);
+    }
+  }, [activeCustomIndex, activeCustomIndexId, collectionId, customIndexes.data]);
 
   const selectCustomIndex = (indexId: string) => {
     if (typeof window !== 'undefined') {
@@ -860,12 +903,17 @@ export function TypesenseSearch() {
     }
   );
 
+  const facetConfiguration = apiHooks.getSiteSearchFacetConfiguration(
+    () => [{ project_id: project?.id, collection_id: collectionId }],
+    { enabled: !!site.slug && (!projectSlug || !!project?.id), retry: false }
+  );
+
   const {
-    data: metadataFacets = [],
+    data: discoveredMetadataFacets = [],
     isLoading: metadataFacetsLoading,
     error: metadataFacetsError,
-  } = useQuery<MetadataFacet[]>(
-    ['site-typesense-search-metadata-facets', site.slug, data?.collection, project?.id],
+  } = useQuery<DiscoveredMetadataFacet[]>(
+    ['site-typesense-search-metadata-facets', site.slug, data?.collection, searchFilter],
     async () => {
       const response = await fetch(`/s/${site.slug}/madoc/api/typesense`, {
         method: 'POST',
@@ -891,18 +939,27 @@ export function TypesenseSearch() {
           return Array.isArray(facet.counts) && facet.counts.length > 0;
         })
         .sort(sortMetadataFacetsByGrouping)
-        .map(facet => ({ attribute: facet.field_name, label: metadataFacetLabelFromAttribute(facet.field_name) }))
-        .filter(facet => !isBlacklistedMetadataFacetLabel(facet.label));
+        .map(facet => ({ attribute: facet.field_name, label: metadataFacetLabelFromAttribute(facet.field_name) }));
     },
     { enabled: !activeCustomIndex && !!data?.available && !!site.slug && (!projectSlug || !!project?.id) }
   );
 
-  const visibleFacets = activeCustomIndex
+  const configuredMetadataFacets = useMemo(() => {
+    const configuration = facetConfiguration.data?.facets || [];
+    const availableFacets = configuration.length
+      ? discoveredMetadataFacets
+      : discoveredMetadataFacets.filter(facet => !isBlacklistedMetadataFacetLabel(facet.label));
+    return resolveTypesenseMetadataFacets(availableFacets, configuration);
+  }, [discoveredMetadataFacets, facetConfiguration.data]);
+  const visibleFacets: TypesenseMetadataFacet[] = activeCustomIndex
     ? activeCustomIndex.facets.map(facet => ({
-        attribute: getProjectSearchFacetFieldName(facet.path),
+        id: getProjectSearchFacetFieldName(facet.path),
         label: facet.label,
+        fields: [{ attribute: getProjectSearchFacetFieldName(facet.path) }],
       }))
-    : metadataFacets;
+    : facetConfiguration.error
+      ? []
+      : configuredMetadataFacets;
 
   const adapter = useMemo(() => {
     if (!data?.available || !node) return null;
@@ -934,14 +991,14 @@ export function TypesenseSearch() {
             fulltext: indexUiState?.query || undefined,
             page: indexUiState?.page && indexUiState.page > 1 ? String(indexUiState.page) : undefined,
             refinements,
-            index: activeCustomIndex?.id,
+            index: activeIndexId,
           };
         },
         routeToState(routeState: SearchRouteState) {
           let refinementList = parseRouteRefinements(getSingleValue(routeState.refinements));
-          if (!activeCustomIndex) {
+          if (!activeIndexId) {
             const validResourceType = refinementList?.resource_type?.find(value =>
-              resourceTypes.includes(value as TypesenseResourceType)
+              resourceTypesKey.split(',').includes(value as TypesenseResourceType)
             );
             const { resource_type: _resourceType, ...otherRefinements } = refinementList || {};
             refinementList = validResourceType
@@ -963,9 +1020,9 @@ export function TypesenseSearch() {
         },
       },
     };
-  }, [activeCustomIndex?.id, collection, defaultResourceType, resourceTypesKey]);
+  }, [activeIndexId, collection, defaultResourceType, resourceTypesKey]);
 
-  if (isLoading || (projectSlug && !project)) {
+  if (isLoading || facetConfiguration.isLoading || (projectSlug && !project)) {
     return (
       <>
         <DisplayBreadcrumbs currentPage="Search" />
@@ -1031,13 +1088,16 @@ export function TypesenseSearch() {
           {/* Sidebar */}
           <aside className="w-full shrink-0 pr-2 md:sticky md:top-4 md:max-h-[calc(100vh-2rem)] md:w-64 md:overflow-y-auto">
             {!projectSlug ? <ProjectFacet /> : null}
-            {((!activeCustomIndex && metadataFacetsLoading) || visibleFacets.length > 0 || !!metadataFacetsError) && (
+            {((!activeCustomIndex && metadataFacetsLoading) ||
+              visibleFacets.length > 0 ||
+              !!metadataFacetsError ||
+              !!facetConfiguration.error) && (
               <>
                 {!activeCustomIndex && metadataFacetsLoading ? (
                   <SidebarSection title="Metadata">
                     <p className="text-xs text-slate-400">Loading…</p>
                   </SidebarSection>
-                ) : metadataFacetsError ? (
+                ) : metadataFacetsError || facetConfiguration.error ? (
                   <SidebarSection title="Metadata">
                     <p className="text-xs text-red-400">Failed to load metadata facets.</p>
                   </SidebarSection>

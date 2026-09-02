@@ -39,13 +39,27 @@ export function getTypesenseProjectFilter(projectId?: number) {
   return projectId && Number.isInteger(projectId) ? `contexts:=\`urn:madoc:project:${projectId}\`` : undefined;
 }
 
-export function getTypesenseSearchFilter(projectId?: number, resourceTypes?: TypesenseResourceType[]) {
+export function getTypesenseCollectionFilter(collectionId?: number) {
+  return collectionId && Number.isInteger(collectionId)
+    ? `contexts:=\`urn:madoc:collection:${collectionId}\``
+    : undefined;
+}
+
+export function getTypesenseSearchFilter(
+  projectId?: number,
+  resourceTypes?: TypesenseResourceType[],
+  collectionId?: number
+) {
   const resourceTypeFilter =
     resourceTypes && resourceTypes.length < allResourceTypes.length
       ? resourceTypes.length
         ? `(${resourceTypes.map(type => `resource_type:=\`${type}\``).join(' || ')})`
         : 'resource_type:=`__none__`'
       : undefined;
-  const filters = [getTypesenseProjectFilter(projectId), resourceTypeFilter];
+  const filters = [
+    getTypesenseProjectFilter(projectId),
+    getTypesenseCollectionFilter(collectionId),
+    resourceTypeFilter,
+  ];
   return filters.filter(Boolean).join(' && ') || undefined;
 }

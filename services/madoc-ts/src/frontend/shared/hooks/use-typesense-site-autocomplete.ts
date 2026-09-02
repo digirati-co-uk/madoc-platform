@@ -1,6 +1,7 @@
 import { useQuery } from 'react-query';
 import { getTypesenseProjectFilter } from '../../../search/typesense/project-filter';
 import { useSite } from './use-site';
+import { createLink } from '../utility/create-link';
 
 export type TypesenseAutocompleteHit = {
   resource_type?: string;
@@ -29,7 +30,11 @@ function getMadocUrnId(urn: string | undefined, type: string): string | null {
   return match ? match[1] : null;
 }
 
-export function resolveTypesenseHitPrimaryLink(hit: TypesenseAutocompleteHit, projectSlug?: string): string | null {
+export function resolveTypesenseHitPrimaryLink(
+  hit: TypesenseAutocompleteHit,
+  projectSlug?: string,
+  activeCollectionId?: number
+): string | null {
   const isCustomEntity = `${hit.resource_type || ''}`.toLowerCase() === 'customentity';
   const isProject = `${hit.resource_type || ''}`.toLowerCase() === 'project';
   const isCollection = `${hit.resource_type || ''}`.toLowerCase() === 'collection';
@@ -43,41 +48,41 @@ export function resolveTypesenseHitPrimaryLink(hit: TypesenseAutocompleteHit, pr
   const collectionIds = Array.isArray(hit.contexts)
     ? hit.contexts.map(context => getMadocUrnId(context, 'collection')).filter(Boolean)
     : [];
-  const collectionId = isCollection ? getMadocUrnId(hit.resource_id, 'collection') : collectionIds[0];
+  const resultCollectionId = isCollection ? getMadocUrnId(hit.resource_id, 'collection') : null;
+  const collectionId =
+    activeCollectionId && collectionIds.includes(`${activeCollectionId}`) ? activeCollectionId : undefined;
   const projectId = isProject ? getMadocUrnId(hit.resource_id, 'project') : null;
-
-  const projectPath = projectSlug ? `/projects/${encodeURIComponent(projectSlug)}` : '';
 
   if (isCustomEntity) {
     const customManifestId = getMadocUrnId(hit.manifest_id, 'manifest');
     const customCanvasId = getMadocUrnId(hit.canvas_id, 'canvas');
-    const entityQuery = hit.entity_ids?.[0] ? `?searchEntity=${encodeURIComponent(hit.entity_ids[0])}` : '';
+    const query = hit.entity_ids?.[0] ? { searchEntity: hit.entity_ids[0] } : undefined;
     if (customManifestId && customCanvasId) {
-      return `${projectPath}/manifests/${customManifestId}/c/${customCanvasId}${entityQuery}`;
+      return createLink({ projectId: projectSlug, manifestId: customManifestId, canvasId: customCanvasId, query });
     }
     if (customManifestId) {
-      return `${projectPath}/manifests/${customManifestId}${entityQuery}`;
+      return createLink({ projectId: projectSlug, manifestId: customManifestId, query });
     }
   }
 
   if (projectId) {
-    return `/projects/${projectId}`;
+    return createLink({ projectId });
   }
 
-  if (isCollection && collectionId) {
-    return `${projectPath}/collections/${collectionId}`;
+  if (resultCollectionId) {
+    return createLink({ projectId: projectSlug, collectionId: resultCollectionId });
   }
 
   if (canvasId && manifestId) {
-    return `${projectPath}/manifests/${manifestId}/c/${canvasId}`;
+    return createLink({ projectId: projectSlug, collectionId, manifestId, canvasId });
   }
 
   if (manifestId) {
-    return `${projectPath}/manifests/${manifestId}`;
+    return createLink({ projectId: projectSlug, collectionId, manifestId });
   }
 
-  if (collectionId) {
-    return `${projectPath}/collections/${collectionId}`;
+  if (collectionIds[0]) {
+    return createLink({ projectId: projectSlug, collectionId: collectionIds[0] });
   }
 
   return null;

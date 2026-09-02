@@ -35,4 +35,19 @@ describe('Typesense result links', () => {
       )
     ).toBe('/projects/99/manifests/456/c/123');
   });
+
+  test('keeps results inside the active project collection', () => {
+    expect(
+      resolveTypesenseHitPrimaryLink(
+        {
+          resource_type: 'Canvas',
+          resource_id: 'urn:madoc:canvas:123',
+          manifest_id: 'urn:madoc:manifest:456',
+          contexts: ['urn:madoc:collection:44', 'urn:madoc:project:99'],
+        },
+        'example-project',
+        44
+      )
+    ).toBe('/projects/example-project/collections/44/manifests/456/c/123');
+  });
 });

@@ -47,7 +47,7 @@ export function createRoutes(Components: RouteComponents): CreateRouteType {
         {
           path: '/collections/:collectionId/search',
           exact: true,
-          element: <Components.Search />,
+          element: <Components.TypesenseSearch />,
         },
         {
           path: '/collections/:collectionId/metadata/edit',
@@ -310,7 +310,7 @@ export function createRoutes(Components: RouteComponents): CreateRouteType {
             {
               path: '/projects/:slug/collections/:collectionId/search',
               exact: true,
-              element: <Components.Search />,
+              element: <Components.TypesenseSearch />,
             },
             {
               path: '/projects/:slug/collections/:collectionId/metadata/edit',

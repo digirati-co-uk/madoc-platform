@@ -2713,8 +2713,8 @@ export class ApiClient {
     return this.publicRequest<ConfigInjectionSettings>(`/madoc/api/configuration/model`, query);
   }
 
-  async getSiteSearchFacetConfiguration() {
-    return this.publicRequest<{ facets: FacetConfig[] }>(`/madoc/api/configuration/search-facets`);
+  async getSiteSearchFacetConfiguration(query?: { project_id?: number; collection_id?: number }) {
+    return this.publicRequest<{ facets: FacetConfig[] }>(`/madoc/api/configuration/search-facets`, query);
   }
 
   async getCurrentSiteDetails() {

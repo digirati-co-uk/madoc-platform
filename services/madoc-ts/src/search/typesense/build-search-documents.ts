@@ -1,6 +1,7 @@
 import { SearchIngestRequest } from '../../types/search';
 import { SearchIndexable } from '../../utility/capture-model-to-indexables';
 import { parseUrn } from '../../utility/parse-urn';
+import { getTypesenseMetadataFacetFieldName } from './metadata-facet-field';
 
 function uniq(values: string[]) {
   return [...new Set(values.filter(Boolean))];
@@ -14,26 +15,6 @@ function toStringValue(value: unknown): string {
     return `${value}`;
   }
   return '';
-}
-
-function toWildcardFieldName(prefix: string, key: string): string | null {
-  const normalized = key
-    .normalize('NFKD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLocaleLowerCase()
-    .replace(/[^a-z0-9]+/g, '_')
-    .replace(/_+/g, '_')
-    .replace(/^_+|_+$/g, '');
-
-  if (!normalized) {
-    return null;
-  }
-
-  return `${prefix}_${normalized}`;
-}
-
-function toMetadataFacetFieldName(key: string): string | null {
-  return toWildcardFieldName('metadata', key);
 }
 
 function fromInternationalString(value: any): string[] {
@@ -80,13 +61,19 @@ function parseMetadata(payload: SearchIngestRequest['resource']) {
 
     const metadataLabelMatch = key.match(/^metadata\.(\d+)\.label$/i);
     if (metadataLabelMatch) {
-      labelsByMetadataIndex[metadataLabelMatch[1]] = uniq([...(labelsByMetadataIndex[metadataLabelMatch[1]] || []), ...values]);
+      labelsByMetadataIndex[metadataLabelMatch[1]] = uniq([
+        ...(labelsByMetadataIndex[metadataLabelMatch[1]] || []),
+        ...values,
+      ]);
       continue;
     }
 
     const metadataValueMatch = key.match(/^metadata\.(\d+)\.value$/i);
     if (metadataValueMatch) {
-      valuesByMetadataIndex[metadataValueMatch[1]] = uniq([...(valuesByMetadataIndex[metadataValueMatch[1]] || []), ...values]);
+      valuesByMetadataIndex[metadataValueMatch[1]] = uniq([
+        ...(valuesByMetadataIndex[metadataValueMatch[1]] || []),
+        ...values,
+      ]);
       metadataValues.push(...values);
       continue;
     }
@@ -102,7 +89,7 @@ function parseMetadata(payload: SearchIngestRequest['resource']) {
       }
     }
 
-    const facetFieldName = key ? toMetadataFacetFieldName(key) : null;
+    const facetFieldName = key ? getTypesenseMetadataFacetFieldName(key) : null;
     if (facetFieldName && values.length) {
       metadataFacetValues[facetFieldName] = uniq([...(metadataFacetValues[facetFieldName] || []), ...values]);
     }
@@ -122,7 +109,7 @@ function parseMetadata(payload: SearchIngestRequest['resource']) {
         }
       }
 
-      const facetFieldName = toMetadataFacetFieldName(label);
+      const facetFieldName = getTypesenseMetadataFacetFieldName(label);
       if (facetFieldName) {
         metadataFacetValues[facetFieldName] = uniq([...(metadataFacetValues[facetFieldName] || []), ...values]);
       }
@@ -176,16 +163,15 @@ export function buildTypesenseDocumentFromIngest({
     site_id: siteId,
     project_ids: projectIds,
     contexts: uniq(contexts),
-    search_text: uniq([
-      ...(parsed.searchText.length ? parsed.searchText : [parsed.label]),
-      ...additionalSearchText,
-    ]),
+    search_text: uniq([...(parsed.searchText.length ? parsed.searchText : [parsed.label]), ...additionalSearchText]),
     metadata_keys: parsed.metadataKeys,
     metadata_pairs: parsed.metadataPairs,
     ...parsed.metadataFacetValues,
     ...Object.fromEntries(
       Object.entries(captureModelValues)
-        .filter(([fieldName, values]) => fieldName.startsWith('capture_model_') && Array.isArray(values) && values.length)
+        .filter(
+          ([fieldName, values]) => fieldName.startsWith('capture_model_') && Array.isArray(values) && values.length
+        )
         .map(([fieldName, values]) => [fieldName, uniq(values)])
     ),
     languages: parsed.languages,

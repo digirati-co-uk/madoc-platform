@@ -1,4 +1,5 @@
 import {
+  getTypesenseCollectionFilter,
   getTypesenseResourceTypes,
   getTypesenseSearchFilter,
   resolveTypesenseTabOptions,
@@ -51,4 +52,12 @@ test('combines explicit options with project and browse-navigation constraints',
     allowCollectionNavigation: false,
   });
   expect(getTypesenseResourceTypes(constrained)).toEqual(['Manifest']);
+});
+
+test('combines collection, project, and resource type scope', () => {
+  expect(getTypesenseCollectionFilter(44)).toBe('contexts:=`urn:madoc:collection:44`');
+  expect(getTypesenseCollectionFilter()).toBeUndefined();
+  expect(getTypesenseSearchFilter(12, ['Manifest'], 44)).toBe(
+    'contexts:=`urn:madoc:project:12` && contexts:=`urn:madoc:collection:44` && (resource_type:=`Manifest`)'
+  );
 });

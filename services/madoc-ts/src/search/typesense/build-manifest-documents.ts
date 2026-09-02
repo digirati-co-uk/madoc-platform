@@ -2,6 +2,7 @@ import { ManifestSearchExportRow, SearchExportMetadataField } from '../../databa
 import { CaptureModelSearchAggregate } from './flatten-capture-model-fields';
 import type { Project } from '../../types/project-full';
 import type { InternationalString } from '@iiif/presentation-3';
+import { getTypesenseMetadataFacetFieldName } from './metadata-facet-field';
 
 export interface ManifestDocumentContext {
   siteId: number;
@@ -50,22 +51,6 @@ function ensureString(value: unknown) {
 
 function uniq(values: string[]) {
   return [...new Set(values.filter(Boolean))];
-}
-
-function toMetadataFacetFieldName(key: string): string | null {
-  const normalized = ensureString(key)
-    .normalize('NFKD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLocaleLowerCase()
-    .replace(/[^a-z0-9]+/g, '_')
-    .replace(/_+/g, '_')
-    .replace(/^_+|_+$/g, '');
-
-  if (!normalized) {
-    return null;
-  }
-
-  return `metadata_${normalized}`;
 }
 
 function findLabel(metadata: SearchExportMetadataField[]) {
@@ -143,7 +128,7 @@ export function buildManifestTypesenseDocument(
     metadataKeys.push(key.toLowerCase());
     metadataPairs.push(`${key.toLowerCase()}:${value}`);
 
-    const fallbackFacetFieldName = toMetadataFacetFieldName(key);
+    const fallbackFacetFieldName = getTypesenseMetadataFacetFieldName(key);
     if (fallbackFacetFieldName) {
       metadataFacetValues[fallbackFacetFieldName] = uniq([
         ...(metadataFacetValues[fallbackFacetFieldName] || []),
@@ -165,7 +150,7 @@ export function buildManifestTypesenseDocument(
         }
       }
 
-      const facetFieldName = toMetadataFacetFieldName(label);
+      const facetFieldName = getTypesenseMetadataFacetFieldName(label);
       if (!facetFieldName) {
         continue;
       }
