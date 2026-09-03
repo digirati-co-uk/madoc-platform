@@ -376,6 +376,11 @@ export const siteConfigurationModel: {
         label: 'Enable resizable editor panels',
         value: 'enableEditorResizing',
       },
+      {
+        label: 'Text-only OCR correction',
+        description: 'Edit imported OCR as text while Madoc updates its word boxes automatically.',
+        value: 'textOnlyOcrCorrection',
+      },
     ],
   },
   reviewOptions: {
@@ -983,6 +988,12 @@ const ENABLE_EDITOR_RESIZING_MODEL_OPTION = {
   value: 'enableEditorResizing',
 };
 
+const TEXT_ONLY_OCR_CORRECTION_MODEL_OPTION = {
+  label: 'Text-only OCR correction',
+  description: 'Edit imported OCR as text while Madoc updates its word boxes automatically.',
+  value: 'textOnlyOcrCorrection',
+};
+
 const genericAllowPersonalNotesModelOption = {
   label: 'Allow personal notes',
   description: 'allow users to take personal notes only visible to themselves on canvases in a project',
@@ -1014,6 +1025,7 @@ const genericContributionModelPageOptions = [
     value: 'enableSplitView',
   },
   ENABLE_EDITOR_RESIZING_MODEL_OPTION,
+  TEXT_ONLY_OCR_CORRECTION_MODEL_OPTION,
 ];
 
 const tabularContributionModelPageOptions = [
