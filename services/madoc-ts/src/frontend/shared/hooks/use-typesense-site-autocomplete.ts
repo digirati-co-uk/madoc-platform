@@ -1,11 +1,16 @@
 import { useQuery } from 'react-query';
+import { getTypesenseProjectFilter } from '../../../search/typesense/project-filter';
 import { useSite } from './use-site';
+import { createLink } from '../utility/create-link';
 
 export type TypesenseAutocompleteHit = {
   resource_type?: string;
   resource_label?: string;
   resource_id?: string;
   manifest_id?: string;
+  canvas_id?: string;
+  entity_ids?: string[];
+  entity_type?: string;
   contexts?: string[];
   thumbnail?: string;
 };
@@ -25,7 +30,14 @@ function getMadocUrnId(urn: string | undefined, type: string): string | null {
   return match ? match[1] : null;
 }
 
-export function resolveTypesenseHitPrimaryLink(hit: TypesenseAutocompleteHit): string | null {
+export function resolveTypesenseHitPrimaryLink(
+  hit: TypesenseAutocompleteHit,
+  projectSlug?: string,
+  activeCollectionId?: number
+): string | null {
+  const isCustomEntity = `${hit.resource_type || ''}`.toLowerCase() === 'customentity';
+  const isProject = `${hit.resource_type || ''}`.toLowerCase() === 'project';
+  const isCollection = `${hit.resource_type || ''}`.toLowerCase() === 'collection';
   const isManifest = `${hit.resource_type || ''}`.toLowerCase() === 'manifest';
   const isCanvas = `${hit.resource_type || ''}`.toLowerCase() === 'canvas';
 
@@ -36,17 +48,41 @@ export function resolveTypesenseHitPrimaryLink(hit: TypesenseAutocompleteHit): s
   const collectionIds = Array.isArray(hit.contexts)
     ? hit.contexts.map(context => getMadocUrnId(context, 'collection')).filter(Boolean)
     : [];
+  const resultCollectionId = isCollection ? getMadocUrnId(hit.resource_id, 'collection') : null;
+  const collectionId =
+    activeCollectionId && collectionIds.includes(`${activeCollectionId}`) ? activeCollectionId : undefined;
+  const projectId = isProject ? getMadocUrnId(hit.resource_id, 'project') : null;
+
+  if (isCustomEntity) {
+    const customManifestId = getMadocUrnId(hit.manifest_id, 'manifest');
+    const customCanvasId = getMadocUrnId(hit.canvas_id, 'canvas');
+    const query = hit.entity_ids?.[0] ? { searchEntity: hit.entity_ids[0] } : undefined;
+    if (customManifestId && customCanvasId) {
+      return createLink({ projectId: projectSlug, manifestId: customManifestId, canvasId: customCanvasId, query });
+    }
+    if (customManifestId) {
+      return createLink({ projectId: projectSlug, manifestId: customManifestId, query });
+    }
+  }
+
+  if (projectId) {
+    return createLink({ projectId });
+  }
+
+  if (resultCollectionId) {
+    return createLink({ projectId: projectSlug, collectionId: resultCollectionId });
+  }
 
   if (canvasId && manifestId) {
-    return `/manifests/${manifestId}/c/${canvasId}`;
+    return createLink({ projectId: projectSlug, collectionId, manifestId, canvasId });
   }
 
   if (manifestId) {
-    return `/manifests/${manifestId}`;
+    return createLink({ projectId: projectSlug, collectionId, manifestId });
   }
 
   if (collectionIds[0]) {
-    return `/collections/${collectionIds[0]}`;
+    return createLink({ projectId: projectSlug, collectionId: collectionIds[0] });
   }
 
   return null;
@@ -54,10 +90,16 @@ export function resolveTypesenseHitPrimaryLink(hit: TypesenseAutocompleteHit): s
 
 export function useTypesenseSiteAutocomplete(
   rawQuery: string,
-  { enabled = true, limit = 6 }: { enabled?: boolean; limit?: number } = {}
+  {
+    enabled = true,
+    limit = 6,
+    projectId,
+    filter,
+  }: { enabled?: boolean; limit?: number; projectId?: number; filter?: string } = {}
 ) {
   const site = useSite();
   const query = rawQuery.trim();
+  const projectFilter = filter || getTypesenseProjectFilter(projectId);
 
   const statusQuery = useQuery<TypesenseStatus>(
     ['site-typesense-search-status', site.slug],
@@ -78,7 +120,7 @@ export function useTypesenseSiteAutocomplete(
   );
 
   const suggestionsQuery = useQuery<TypesenseAutocompleteHit[]>(
-    ['typesense-site-autocomplete', site.slug, query, limit],
+    ['typesense-site-autocomplete', site.slug, projectId, projectFilter, query, limit],
     async () => {
       const response = await fetch(`/s/${site.slug}/madoc/api/typesense`, {
         method: 'POST',
@@ -88,7 +130,8 @@ export function useTypesenseSiteAutocomplete(
         },
         body: JSON.stringify({
           q: query,
-          query_by: 'resource_label,search_text',
+          query_by: 'resource_label,search_text,search_context',
+          filter_by: projectFilter,
           per_page: limit,
           page: 1,
         }),

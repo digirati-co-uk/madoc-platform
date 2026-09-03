@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ProjectConfigurationNEW } from '../../../types/schemas/project-configuration';
 import { SuccessMessage } from '../../shared/callouts/SuccessMessage';
@@ -25,12 +25,15 @@ import { ReviewIcon } from '../../shared/icons/ReviewIcon';
 import { SettingsIcon } from '../../shared/icons/SettingsIcon';
 import { FloatingToolbar } from '../../shared/atoms/FloatingToolbar';
 import { HrefLink } from '../../shared/utility/href-link';
+import { ConfigurationImportExport } from './ConfigurationImportExport';
+import type { ConfigurationScope } from './ConfigurationImportExport';
 
 interface EditProjectConfigurationProps {
   updateKey: any;
   configuration: ProjectConfigurationNEW;
   immutableFields?: string[];
   contributionsTemplate?: ProjectConfigTemplate;
+  configurationScope: ConfigurationScope;
   old?: boolean;
   onSave: (config: ProjectConfigurationNEW) => Promise<void>;
 }
@@ -42,9 +45,11 @@ export function EditProjectConfiguration(props: EditProjectConfigurationProps) {
   const searchRef = useRef<EditorShorthandCaptureModelRef>(null);
   const contributionsRef = useRef<EditorShorthandCaptureModelRef>(null);
   const otherRef = useRef<EditorShorthandCaptureModelRef>(null);
+  const [importedConfig, setImportedConfig] = useState<ProjectConfigurationNEW>();
 
   const { scrollToTop } = useAdminLayout();
-  const projectConfiguration = props.configuration;
+  const projectConfiguration = importedConfig || props.configuration;
+  const updateKey = importedConfig ? JSON.stringify(importedConfig) : props.updateKey;
   const contributionsTemplate = props.contributionsTemplate ?? ProjectConfigContributions;
   const { t } = useTranslation();
   const [didSave, setDidSave] = useShortMessage();
@@ -60,6 +65,7 @@ export function EditProjectConfiguration(props: EditProjectConfigurationProps) {
     };
 
     await props.onSave(config);
+    setImportedConfig(undefined);
     setDidSave();
     scrollToTop();
   };
@@ -67,6 +73,14 @@ export function EditProjectConfiguration(props: EditProjectConfigurationProps) {
   return (
     <div style={{ flex: 1, marginBottom: '2em' }}>
       {didSave ? <SuccessMessage $margin>{t('Changes saved')}</SuccessMessage> : null}
+
+      <ConfigurationImportExport
+        key={props.updateKey}
+        configuration={projectConfiguration}
+        scope={props.configurationScope}
+        immutableFields={props.immutableFields}
+        onImport={setImportedConfig}
+      />
 
       <ButtonRow>
         <Button onClick={openAll}>Open all</Button>
@@ -89,7 +103,7 @@ export function EditProjectConfiguration(props: EditProjectConfigurationProps) {
           {...getItemProps(0)}
         >
           <EditShorthandCaptureModel
-            key={props.updateKey}
+            key={updateKey}
             ref={interfaceRef}
             searchLabel={t('Search configuration')}
             immutableFields={props.immutableFields}
@@ -108,7 +122,7 @@ export function EditProjectConfiguration(props: EditProjectConfigurationProps) {
           {...getItemProps(1)}
         >
           <EditShorthandCaptureModel
-            key={props.updateKey}
+            key={updateKey}
             ref={searchRef}
             immutableFields={props.immutableFields}
             data={projectConfiguration}
@@ -126,7 +140,7 @@ export function EditProjectConfiguration(props: EditProjectConfigurationProps) {
           {...getItemProps(2)}
         >
           <EditShorthandCaptureModel
-            key={props.updateKey}
+            key={updateKey}
             ref={contributionsRef}
             immutableFields={props.immutableFields}
             data={projectConfiguration}
@@ -144,7 +158,7 @@ export function EditProjectConfiguration(props: EditProjectConfigurationProps) {
           {...getItemProps(3)}
         >
           <EditShorthandCaptureModel
-            key={props.updateKey}
+            key={updateKey}
             ref={reviewRef}
             immutableFields={props.immutableFields}
             data={projectConfiguration}
@@ -162,7 +176,7 @@ export function EditProjectConfiguration(props: EditProjectConfigurationProps) {
           {...getItemProps(4)}
         >
           <EditShorthandCaptureModel
-            key={props.updateKey}
+            key={updateKey}
             ref={otherRef}
             immutableFields={props.immutableFields}
             data={projectConfiguration}

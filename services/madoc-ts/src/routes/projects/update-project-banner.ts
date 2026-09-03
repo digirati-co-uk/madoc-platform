@@ -3,6 +3,7 @@ import { RouteMiddleware } from '../../types/route-middleware';
 import { NotFound } from '../../utility/errors/not-found';
 import { parseProjectId } from '../../utility/parse-project-id';
 import { userWithScope } from '../../utility/user-with-scope';
+import { api } from '../../gateway/api.server';
 
 export const updateProjectBanner: RouteMiddleware<{ id: string }, { banner: string | null }> = async context => {
   const { siteId } = userWithScope(context, ['site.admin']);
@@ -15,6 +16,9 @@ export const updateProjectBanner: RouteMiddleware<{ id: string }, { banner: stri
   const project = await context.connection.one(getProject({ projectId, projectSlug }, siteId));
 
   await context.projects.setProjectBanner(project.id, banner, siteId);
+  const userApi = api.asUser({ siteId });
+  context.disposableApis.push(userApi);
+  await userApi.indexProject(project.id);
 
   context.response.body = { banner };
 };

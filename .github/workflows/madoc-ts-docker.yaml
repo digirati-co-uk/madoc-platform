@@ -6,6 +6,7 @@ on:
     tags: ['v*']
   pull_request:
     branches: ['main', 'feature/v2.1', 'feature/2026-dependencies']
+    types: [opened, synchronize, reopened, labeled]
     paths:
       - ".github/workflows/madoc-ts-docker.yaml"
       - "services/madoc-ts/src/**"
@@ -18,6 +19,10 @@ on:
       - "services/madoc-ts/ecosystem.config.js"
       - "services/madoc-ts/webpack.config.js"
       - "services/madoc-ts/tsconfig.json"
+
+concurrency:
+  group: madoc-ts-docker-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
 
@@ -96,3 +101,35 @@ jobs:
             docker pull ghcr.io/digirati-co-uk/madoc-api:pr-${{github.event.pull_request.number}}
             ```
           edit-mode: replace
+
+  deploy-preview:
+    needs: madoc-ts-docker
+    if: ${{ github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' && github.event.pull_request.state == 'open' && github.event.pull_request.head.repo.full_name == github.repository && contains(github.event.pull_request.labels.*.name, 'deploy-preview') }}
+    runs-on: ubuntu-latest
+    permissions:
+      deployments: write
+    environment: deploy-preview
+    concurrency:
+      group: madoc-ts-deploy-preview
+      cancel-in-progress: false
+    steps:
+      - name: Configure SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_PREVIEW_SSH_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.DEPLOY_PREVIEW_KNOWN_HOSTS }}
+        run: |
+          umask 077
+          printf '%s\n' "$SSH_PRIVATE_KEY" > "$RUNNER_TEMP/madoc.pem"
+          printf '%s\n' "$SSH_KNOWN_HOSTS" > "$RUNNER_TEMP/known_hosts"
+
+      - name: Deploy preview
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_PREVIEW_HOST }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          ssh -i "$RUNNER_TEMP/madoc.pem" \
+            -o BatchMode=yes \
+            -o StrictHostKeyChecking=yes \
+            -o UserKnownHostsFile="$RUNNER_TEMP/known_hosts" \
+            "$DEPLOY_HOST" \
+            "cd /etc/docker/compose/madoc/ && sudo env MADOC_TS_TAG=pr-$PR_NUMBER docker-compose --env-file /etc/madoc-environment pull && sudo env MADOC_TS_TAG=pr-$PR_NUMBER docker-compose --env-file /etc/madoc-environment up -d"

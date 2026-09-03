@@ -3,10 +3,12 @@ import { BaseTask } from './base-task';
 import * as importManifest from './import-manifest';
 import * as tasks from './task-helpers';
 import { Vault } from '@iiif/helpers/vault';
-import fetch from 'node-fetch';
 import { ImportManifestTask } from './import-manifest';
 import { iiifGetLabel } from '../../utility/iiif-get-label';
 import { ApiClient } from '../api';
+import { fetchIiifResource } from './fetch-iiif-resource';
+import { getManifestImportChanges, getManifestImportResult } from './collection-import-helpers';
+import type { ManifestImportResult } from './collection-import-helpers';
 
 export const type = 'madoc-collection-import';
 
@@ -30,6 +32,8 @@ export interface ImportCollectionTask extends BaseTask {
   state: {
     resourceId?: number;
     manifestIds?: string[];
+    skipFailedManifests?: boolean;
+    skippedManifestIds?: string[];
     errorMessage?: string;
     isDuplicate?: boolean;
   };
@@ -50,6 +54,7 @@ export function createTask(
     events: [
       'madoc-ts.created',
       `madoc-ts.subtask_type_status.madoc-manifest-import.${importManifest.status.indexOf('done')}`,
+      'madoc-ts.subtask_type_status.madoc-manifest-import.-1',
     ],
     status: 0,
     status_text: status[0],
@@ -90,47 +95,39 @@ function getImportTargets(iiifCollection: any, allowedManifestIds?: string[]) {
   };
 }
 
-async function queueNextManifest(
+async function completeCollectionImport(
   api: ApiClient,
-  task: ImportCollectionTask,
-  userId: number,
-  siteId: number | undefined,
-  manifestIds: string[]
+  task: ImportCollectionTask & { id: string },
+  result: ManifestImportResult
 ) {
-  const subtasks = (task.subtasks || []).filter(subtask => subtask.type === importManifest.type);
-  const subtaskMap = new Map<string, (typeof subtasks)[number]>();
-  for (const subtask of subtasks) {
-    if (!subtaskMap.has(subtask.subject)) {
-      subtaskMap.set(subtask.subject, subtask);
+  const [userId, siteId] = task.parameters;
+  const userApi = api.asUser({ siteId, userId });
+
+  await userApi.updateCollectionStructure(task.state.resourceId as number, result.resourceIds);
+  await api.updateTask(task.id, {
+    ...changeStatus('done', { state: { skippedManifestIds: result.skippedManifestIds } }),
+    status_text: result.skippedManifestIds.length ? 'done with skipped manifests' : status[tasks.STATUS.DONE],
+  });
+
+  if (siteId) {
+    const site = await userApi.getSiteDetails(siteId);
+    if (site.config.autoPublishImport) {
+      await userApi.publishCollection(task.state.resourceId as number);
     }
   }
 
-  for (const manifestId of manifestIds) {
-    const existingManifestTask = subtaskMap.get(manifestId);
-    if (existingManifestTask && existingManifestTask.status === tasks.STATUS.DONE) {
-      continue;
-    }
-
-    if (existingManifestTask) {
-      if (
-        existingManifestTask.status === tasks.STATUS.ACCEPTED ||
-        existingManifestTask.status === tasks.STATUS.IN_PROGRESS ||
-        existingManifestTask.status > tasks.STATUS.DONE
-      ) {
-        return true;
-      }
-
-      await api.updateTask(existingManifestTask.id, importManifest.changeStatus('pending'));
-      return true;
-    }
-
-    if (task.id) {
-      await api.addSubtasks<ImportManifestTask>([importManifest.createTask(manifestId, userId, siteId)], task.id);
-      return true;
-    }
+  if (!task.parent_task) {
+    await userApi.notifications.createNotification({
+      id: generateId(),
+      title: 'Finished importing collection',
+      summary: task.subject,
+      action: {
+        id: 'task:admin',
+        link: `urn:madoc:task:${task.id}`,
+      },
+      user: userId,
+    });
   }
-
-  return false;
 }
 
 export const jobHandler = async (name: string, taskId: string, api: ApiClient) => {
@@ -140,8 +137,17 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
       const task = await api.acceptTask<ImportCollectionTask>(taskId);
       const [userId, siteId, manifestIds] = task.parameters;
 
+      // Explicit recovery must not depend on the source collection still being available.
+      if (task.state.skipFailedManifests && task.state.resourceId && task.state.manifestIds) {
+        const result = getManifestImportResult(task.subtasks || [], task.state.manifestIds, true);
+        if (result) {
+          await completeCollectionImport(api, task as ImportCollectionTask & { id: string }, result);
+          return;
+        }
+      }
+
       // 1. Fetch collection
-      const json = await fetch(task.subject).then(r => r.json());
+      const json = JSON.parse(await fetchIiifResource(task.subject));
       const iiifCollection = await vault.loadCollection(task.subject, json);
 
       if (!iiifCollection) {
@@ -190,25 +196,7 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
         }, manifests queued: ${targetManifestIds.length}`
       );
 
-      if (collectionsToCreate.length && task.id) {
-        await api.addSubtasks<ImportCollectionTask>(collectionsToCreate, task.id);
-      }
-
-      if (collectionsToReTrigger.length) {
-        for (const subtask of collectionsToReTrigger) {
-          await api.updateTask(subtask, changeStatus('pending'));
-        }
-      }
-
-      const waitingOnManifest = await queueNextManifest(api, task, userId, siteId, targetManifestIds);
-
-      // 4. If no manifests, then mark as done
-      if (!waitingOnManifest && collectionsToCreate.length === 0 && collectionsToReTrigger.length === 0) {
-        await api.updateTask(task.id, changeStatus('done'));
-        return;
-      }
-
-      // 5. Set task to waiting for manifests
+      // Store the expected structure before children are queued so an immediately completed child can finalize it.
       await api.updateTask(
         task.id,
         changeStatus('waiting for manifests', {
@@ -219,13 +207,64 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
           },
         })
       );
+
+      if (collectionsToCreate.length && task.id) {
+        await api.addSubtasks<ImportCollectionTask>(collectionsToCreate, task.id);
+      }
+
+      if (collectionsToReTrigger.length) {
+        for (const subtask of collectionsToReTrigger) {
+          await api.updateTask(subtask, changeStatus('pending'));
+        }
+      }
+
+      const { manifestIdsToCreate, taskIdsToRetry } = getManifestImportChanges(
+        task.subtasks || [],
+        targetManifestIds,
+        !task.state.skipFailedManifests
+      );
+
+      if (manifestIdsToCreate.length && task.id) {
+        await api.addSubtasks<ImportManifestTask>(
+          manifestIdsToCreate.map(manifestId => importManifest.createTask(manifestId, userId, siteId)),
+          task.id
+        );
+      }
+
+      if (taskIdsToRetry.length) {
+        await Promise.all(
+          taskIdsToRetry.map(subtaskId => api.updateTask(subtaskId, importManifest.changeStatus('pending')))
+        );
+      }
+
+      if (task.state.skipFailedManifests && task.id) {
+        const result = getManifestImportResult(task.subtasks || [], targetManifestIds, true);
+        if (result) {
+          await completeCollectionImport(
+            api,
+            {
+              ...task,
+              id: task.id,
+              state: { ...task.state, resourceId: response.id, manifestIds: targetManifestIds },
+            },
+            result
+          );
+          return;
+        }
+      }
+
+      // 4. If no manifests, then mark as done
+      if (targetManifestIds.length === 0 && collectionsToCreate.length === 0 && collectionsToReTrigger.length === 0) {
+        await api.updateTask(task.id, changeStatus('done'));
+        return;
+      }
       break;
     }
-    case `subtask_type_status.${importManifest.type}.${tasks.STATUS.DONE}`: {
+    case `subtask_type_status.${importManifest.type}.${tasks.STATUS.DONE}`:
+    case `subtask_type_status.${importManifest.type}.-1`: {
       // 1. Update with manifest ids from sub tasks
       const task = await api.getTaskById<ImportCollectionTask>(taskId);
-      const subtasks = task.subtasks || [];
-      const [userId, siteId, requestedManifestIds] = task.parameters;
+      const [, , requestedManifestIds] = task.parameters;
 
       if (!task.state.resourceId) {
         return;
@@ -234,7 +273,7 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
       let manifestIds = task.state.manifestIds || [];
       if (!manifestIds.length) {
         const vault = new Vault();
-        const json = await fetch(task.subject).then(r => r.json());
+        const json = JSON.parse(await fetchIiifResource(task.subject));
         const iiifCollection = await vault.loadCollection(task.subject, json);
 
         if (!iiifCollection) {
@@ -244,48 +283,12 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
         manifestIds = getImportTargets(iiifCollection, requestedManifestIds).targetManifestIds;
       }
 
-      const waitingOnManifest = await queueNextManifest(api, task, userId, siteId, manifestIds);
-      if (waitingOnManifest) {
+      const result = getManifestImportResult(task.subtasks || [], manifestIds, task.state.skipFailedManifests);
+      if (!result) {
         return;
       }
 
-      const idMap: { [id: string]: number } = {};
-      for (const subtask of subtasks) {
-        if (subtask.type === importManifest.type) {
-          idMap[subtask.subject] = subtask.state.resourceId;
-        }
-      }
-      const manifestResourceIds = manifestIds.map(id => idMap[id]).filter(e => e);
-
-      const userApi = await api.asUser({ siteId, userId });
-
-      // 4. Save structure of collection
-      await userApi.updateCollectionStructure(task.state.resourceId, manifestResourceIds);
-
-      // 5. Update the task.
-      await api.updateTask(taskId, changeStatus('done'));
-
-      // 5.1
-      if (siteId) {
-        const site = await userApi.getSiteDetails(siteId);
-        if (site.config.autoPublishImport) {
-          await userApi.publishCollection(task.state.resourceId);
-        }
-      }
-
-      // 6. Notify user.
-      if (!task.parent_task) {
-        await userApi.notifications.createNotification({
-          id: generateId(),
-          title: 'Finished importing collection',
-          summary: task.subject,
-          action: {
-            id: 'task:admin',
-            link: `urn:madoc:task:${taskId}`,
-          },
-          user: userId,
-        });
-      }
+      await completeCollectionImport(api, task, result);
 
       break;
     }

@@ -25,9 +25,7 @@
       "properties": {
         "_version": {
           "type": "number",
-          "enum": [
-            1
-          ]
+          "const": 1
         },
         "_source": {
           "type": "object",
@@ -93,9 +91,7 @@
         "maxContributionsPerResource": {
           "anyOf": [
             {
-              "enum": [
-                false
-              ],
+              "const": false,
               "type": "boolean"
             },
             {
@@ -124,9 +120,7 @@
         "contributionWarningTime": {
           "anyOf": [
             {
-              "enum": [
-                false
-              ],
+              "const": false,
               "type": "boolean"
             },
             {
@@ -156,6 +150,13 @@
           ],
           "type": "string"
         },
+        "defaultPolygonTool": {
+          "enum": [
+            "box",
+            "pen"
+          ],
+          "type": "string"
+        },
         "skipManifestListingPage": {
           "type": "boolean"
         },
@@ -169,10 +170,14 @@
           "type": "boolean"
         },
         "searchStrategy": {
-          "type": "string",
           "enum": [
-            "string"
-          ]
+            "phrase",
+            "plain",
+            "raw",
+            "string",
+            "websearch"
+          ],
+          "type": "string"
         },
         "hideManifestMetadataOnCanvas": {
           "type": "boolean"
@@ -215,6 +220,29 @@
               "type": "boolean"
             },
             "onlyShowManifests": {
+              "type": "boolean"
+            },
+            "infiniteScroll": {
+              "type": "boolean"
+            }
+          }
+        },
+        "typesenseOptions": {
+          "type": "object",
+          "properties": {
+            "allResources": {
+              "type": "boolean"
+            },
+            "projects": {
+              "type": "boolean"
+            },
+            "collections": {
+              "type": "boolean"
+            },
+            "manifests": {
+              "type": "boolean"
+            },
+            "canvases": {
               "type": "boolean"
             }
           }
@@ -326,6 +354,9 @@
                 },
                 "enableSplitView": {
                   "type": "boolean"
+                },
+                "enableEditorResizing": {
+                  "type": "boolean"
                 }
               }
             }
@@ -344,6 +375,9 @@
               "type": "boolean"
             },
             "hideRandomCanvas": {
+              "type": "boolean"
+            },
+            "hideOpenInTheseus": {
               "type": "boolean"
             }
           }

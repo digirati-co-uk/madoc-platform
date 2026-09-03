@@ -1,34 +1,25 @@
-import styled, { css } from 'styled-components';
+import React from 'react';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 
-export const FlexSpacer = styled.div<{ size?: string; divider?: boolean }>`
-  flex: 1 1 0;
-  position: relative;
-  height: ${props => {
-    switch (props.size) {
-      case 'sm':
-        return '30px';
-      case 'lg':
-        return '100px';
-      default:
-        return '50px';
-    }
-  }};
-  ${props =>
-    props.divider === true &&
-    css`
-      :after {
-        content: '';
-        height: 2px;
-        background-color: rgba(0, 0, 0, 0.07);
-        left: 0;
-        right: 0;
-        top: 50%;
-        margin: 0 1em;
-        position: absolute;
-      }
-    `}
-`;
+interface FlexSpacerProps extends React.HTMLAttributes<HTMLDivElement> {
+  size?: string;
+  divider?: boolean;
+}
+
+export function FlexSpacer({ size, divider, className, ...props }: FlexSpacerProps) {
+  const heightClass = size === 'sm' ? 'h-[30px]' : size === 'lg' ? 'h-[100px]' : 'h-[50px]';
+
+  return (
+    <div
+      {...props}
+      className={`relative flex-[1_1_0] ${heightClass} ${
+        divider
+          ? "after:absolute after:inset-x-[1em] after:top-1/2 after:h-0.5 after:bg-black/[0.07] after:content-['']"
+          : ''
+      } ${className || ''}`}
+    />
+  );
+}
 
 blockEditorFor(FlexSpacer, {
   type: 'default.FlexSpacer',

@@ -257,6 +257,9 @@ export const SystemStatus: UniversalComponent<SystemStatusType> = createUniversa
                         <Button onClick={() => restart(item.name as any)} disabled={restartStatus.isLoading}>
                           {t('Restart')}
                         </Button>
+                        <Button as={HrefLink} href={`/global/logs?process=${item.id}`} style={{ marginLeft: 8 }}>
+                          {t('View logs')}
+                        </Button>
                       </div>
                     </div>
                   );

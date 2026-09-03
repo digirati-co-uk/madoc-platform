@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import { EditShorthandCaptureModel } from '../../../shared/capture-models/EditorShorthandCaptureModel';
@@ -6,6 +6,8 @@ import { useApi } from '../../../shared/hooks/use-api';
 import { useSite, useSystemConfig, useUpdateSystemConfig } from '../../../shared/hooks/use-site';
 import { AdminHeader } from '../../molecules/AdminHeader';
 import { WidePage } from '../../../shared/layout/WidePage';
+import { ConfigurationImportExport } from '../../components/ConfigurationImportExport';
+import type { SiteSystemConfig } from '../../../../extensions/site-manager/types';
 
 const systemConfigModel = {
   enableRegistrations: {
@@ -65,15 +67,21 @@ export const SiteSystemConfiguration: React.FC = () => {
   const updateConfig = useUpdateSystemConfig();
   const navigate = useNavigate();
   const site = useSite();
+  const [importedConfig, setImportedConfig] = useState<Partial<SiteSystemConfig>>();
 
-  const config = {
+  const config: Partial<SiteSystemConfig> = {
     loginHeader: '',
     loginFooter: '',
     registerHeader: '',
     registerFooter: '',
     disableSearchIndexing: false,
-    ...(savedConfig as any),
+    ...savedConfig,
+    ...importedConfig,
   };
+
+  const editableConfig = Object.fromEntries(
+    Object.keys(systemConfigModel).map(key => [key, config[key as keyof SiteSystemConfig]])
+  ) as Partial<SiteSystemConfig>;
 
   const [updateSystemConfig] = useMutation(async (newConfig: any) => {
     await api.siteManager.updateSite({
@@ -101,7 +109,13 @@ export const SiteSystemConfiguration: React.FC = () => {
       />
       <WidePage>
         <div style={{ maxWidth: 600 }}>
-          <EditShorthandCaptureModel data={config} template={systemConfigModel} onSave={updateSystemConfig} />
+          <ConfigurationImportExport configuration={editableConfig} scope="site" onImport={setImportedConfig} />
+          <EditShorthandCaptureModel
+            key={importedConfig ? JSON.stringify(importedConfig) : undefined}
+            data={editableConfig}
+            template={systemConfigModel}
+            onSave={updateSystemConfig}
+          />
         </div>
       </WidePage>
     </>

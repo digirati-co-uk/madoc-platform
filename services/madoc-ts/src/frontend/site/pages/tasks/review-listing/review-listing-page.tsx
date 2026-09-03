@@ -354,8 +354,11 @@ export function ReviewListingPage() {
                   <col style={{ width: columnWidths.assignee }} />
                 </colgroup>
                 <thead>
-                  <SimpleTable.Row style={{ height: 47 }}>
-                    <SimpleTable.Header style={{ width: columnWidths.manifest, position: 'relative' }}>
+                  <SimpleTable.Row
+                    className="[&_th]:z-20 [&:hover_.resize-handle]:!bg-[#ddd] [&:hover_.resize-handle_svg]:!fill-[#555]"
+                    style={{ height: 47 }}
+                  >
+                    <SimpleTable.Header style={{ width: columnWidths.manifest }}>
                       <ResizableHeader>
                         <HeaderLink
                           as={HrefLink}
@@ -366,6 +369,7 @@ export function ReviewListingPage() {
                           Manifest <Chevron />
                         </HeaderLink>
                         <ResizeHandle
+                          className="resize-handle"
                           onMouseDown={e => startResize('manifest', e.clientX)}
                           onClick={e => e.stopPropagation()}
                         >
@@ -373,7 +377,7 @@ export function ReviewListingPage() {
                         </ResizeHandle>
                       </ResizableHeader>
                     </SimpleTable.Header>
-                    <SimpleTable.Header style={{ width: columnWidths.canvas, position: 'relative' }}>
+                    <SimpleTable.Header style={{ width: columnWidths.canvas }}>
                       <ResizableHeader>
                         <HeaderLink
                           as={HrefLink}
@@ -392,7 +396,7 @@ export function ReviewListingPage() {
                         </ResizeHandle>
                       </ResizableHeader>
                     </SimpleTable.Header>
-                    <SimpleTable.Header style={{ width: columnWidths.modified, position: 'relative' }}>
+                    <SimpleTable.Header style={{ width: columnWidths.modified }}>
                       <ResizableHeader>
                         <HeaderLink
                           as={HrefLink}
@@ -412,7 +416,7 @@ export function ReviewListingPage() {
                         </ResizeHandle>
                       </ResizableHeader>
                     </SimpleTable.Header>
-                    <SimpleTable.Header style={{ width: columnWidths.status, position: 'relative' }}>
+                    <SimpleTable.Header style={{ width: columnWidths.status }}>
                       <ResizableHeader>
                         <HeaderLink
                           as={HrefLink}
@@ -431,7 +435,7 @@ export function ReviewListingPage() {
                         </ResizeHandle>
                       </ResizableHeader>
                     </SimpleTable.Header>
-                    <SimpleTable.Header style={{ width: columnWidths.assignee, position: 'relative' }}>
+                    <SimpleTable.Header style={{ width: columnWidths.assignee }}>
                       <ResizableHeader>
                         <HeaderLink
                           as={HrefLink}

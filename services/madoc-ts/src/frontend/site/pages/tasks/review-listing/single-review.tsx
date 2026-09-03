@@ -6,12 +6,12 @@ import { CrowdsourcingTask } from '../../../../../gateway/tasks/crowdsourcing-ta
 import { EditorSlots } from '../../../../shared/capture-models/new/components/EditorSlots';
 import { RevisionProviderWithFeatures } from '../../../../shared/capture-models/new/components/RevisionProviderWithFeatures';
 import { EditorContentViewer } from '../../../../shared/capture-models/new/EditorContent';
-import styledComponents, { css } from 'styled-components';
 import {
   CanvasViewerButton,
   CanvasViewerControls,
   CanvasViewerEditorStyleReset,
   CanvasViewerGrid,
+  CanvasViewerGridContent,
 } from '../../../../shared/atoms/CanvasViewerGrid';
 import { useApi } from '../../../../shared/hooks/use-api';
 import { useData } from '../../../../shared/hooks/use-data';
@@ -49,6 +49,7 @@ import { Runtime } from '@atlas-viewer/atlas';
 import { HomeIcon } from '../../../../shared/icons/HomeIcon';
 import { MinusIcon } from '../../../../shared/icons/MinusIcon';
 import { PlusIcon } from '../../../../shared/icons/PlusIcon';
+import { RotateIcon } from '../../../../shared/icons/RotateIcon';
 import { ArrowBackIcon } from '../../../../shared/icons/ArrowBackIcon';
 import { useTranslation } from 'react-i18next';
 import { extractIdFromUrn, parseUrn } from '../../../../../utility/parse-urn';
@@ -65,131 +66,78 @@ import {
   getReviewRendererMode,
   ReviewDefaultControlsComponent,
 } from '../review-renderers/types';
+import { useModelPageConfiguration } from '../../../hooks/use-model-page-configuration';
+import { OpenSeadragonViewer } from '../../../../shared/features/OpenSeadragonViewer.lazy';
+import { BrowserComponent } from '../../../../shared/utility/browser-component';
+import { InfoMessage } from '../../../../shared/callouts/InfoMessage';
+import { CanvasViewer as ReviewCanvasViewer } from '../../../../shared/components/StandaloneCanvasViewer';
+import { HorizontalEditorSplit } from '../../../../shared/components/HorizontalEditorSplit';
 
-const ReviewContainer = styledComponents.div`
-  position: relative;
-  overflow-x: hidden;
-  height: 80vh;
-  display: flex;
-  flex-direction: column;
+function ReviewContainer(props: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div {...props} className="relative flex h-[80vh] flex-col overflow-x-hidden data-[is-max-window=true]:h-screen" />
+  );
+}
 
-  &[data-is-max-window='true'] {
-    height: 100vh;
+function ReviewHeader(props: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div
+      {...props}
+      className="sticky top-0 z-[12] flex h-12 items-center border-b border-[#ddd] bg-[#f7f7f7] leading-6"
+    />
+  );
+}
 
-    ${CanvasViewerControls} {
-      top: 9em;
-    }
-  }
-`;
+function Label(props: React.HTMLAttributes<HTMLDivElement>) {
+  return <div {...props} className="overflow-hidden text-ellipsis whitespace-nowrap p-[0.6em] font-semibold" />;
+}
 
-const ReviewHeader = styledComponents.div`
-  height: 48px;
-  background-color: #f7f7f7;
-  display: flex;
-  border-bottom: 1px solid #dddddd;
-  line-height: 24px;
-  position: sticky;
-  align-items: center;
-  top: 0;
-  z-index: 12;
-`;
+function SubLabel(props: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div
+      {...props}
+      className="mr-[130px] overflow-hidden text-ellipsis whitespace-nowrap p-[0.6em] text-sm text-[#6b6b6b]"
+    />
+  );
+}
 
-const Label = styledComponents.div`
-  font-weight: 600;
-  padding: 0.6em;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-`;
+function ReviewActionBar(props: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div
+      {...props}
+      className="inline-flex min-h-[42px] w-full flex-wrap-reverse justify-between overflow-visible border-b border-[#ddd] p-[0.6em]"
+    />
+  );
+}
 
-const SubLabel = styledComponents.div`
-  color: #6b6b6b;
-  padding: 0.6em;
-  font-size: 14px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  margin-right: 130px;
-`;
-const ReviewActionBar = styledComponents.div`
-  border-bottom: 1px solid #dddddd;
-  display: inline-flex;
-  justify-content: space-between;
-  flex-wrap: wrap-reverse;
-  width: 100%;
-  padding: 0.6em;
-  min-height: 42px;
-  overflow: visible;
-`;
+function ReviewActionMessage(props: React.HTMLAttributes<HTMLDivElement>) {
+  return <div {...props} className="rounded bg-[rgba(0,92,197,0.15)] p-[0.5em] text-sm" />;
+}
 
-const ReviewActionMessage = styledComponents.div`
-  background-color: rgba(0, 92, 197, 0.15);
-  padding: 0.5em;
-  border-radius: 4px;
-  font-size: small;
-`;
+function ReviewActions(props: React.HTMLAttributes<HTMLDivElement>) {
+  return <div {...props} className="ml-auto flex [&_button]:border-0" />;
+}
 
-const ReviewActions = styledComponents.div`
-  display: flex;
-  margin-left: auto;
+function ReviewActionControls(props: React.HTMLAttributes<HTMLDivElement>) {
+  return <div {...props} className="ml-auto flex items-center gap-[0.5em]" />;
+}
 
-  button {
-    border: none;
-  }
-`;
+function ReviewDropdownContainer(props: React.HTMLAttributes<HTMLDivElement>) {
+  return <div {...props} className="relative z-30 max-w-[150px] self-end" />;
+}
 
-const ReviewActionControls = styledComponents.div`
-  display: flex;
-  align-items: center;
-  gap: 0.5em;
-  margin-left: auto;
-`;
+function ReviewDropdownPopup({ $visible, ...props }: React.HTMLAttributes<HTMLDivElement> & { $visible?: boolean }) {
+  return (
+    <div
+      {...props}
+      className={`${$visible ? 'block' : 'hidden'} absolute right-0 top-[2.6em] z-[31] m-[0.3em] min-w-[10em] rounded border border-[#3498db] bg-white text-[0.9em]`}
+    />
+  );
+}
 
-const ReviewDropdownContainer = styledComponents.div`
-  position: relative;
-  max-width: 150px;
-  align-self: end;
-  z-index: 30;
-`;
-
-const ReviewDropdownPopup = styledComponents.div<{ $visible?: boolean }>`
-  background: #ffffff;
-  border: 1px solid #3498db;
-  z-index: 31;
-  border-radius: 4px;
-  position: absolute;
-  display: none;
-  margin: 0.3em;
-  top: 2.6em;
-  right: 0;
-  font-size: 0.9em;
-  min-width: 10em;
-  ${props =>
-    props.$visible &&
-    css`
-      display: block;
-    `}
-`;
-
-const ReviewPreview = styledComponents.div`
-  display: flex;
-  overflow-y: scroll;
-  flex-wrap: wrap;
-  flex: 1;
-
-  > div {
-    padding: 0.6em;
-    width: auto;
-  }
-`;
-
-const Assignee = styledComponents.div`
-  font-size: small;
-  color: #575757;
-  align-self: center;
-  margin-left: 0.5em;
-  min-width: 200px;
-`;
+function Assignee(props: React.HTMLAttributes<HTMLDivElement>) {
+  return <div {...props} className="ml-[0.5em] min-w-[200px] self-center text-sm text-[#575757]" />;
+}
 
 type ViewOptionsDropdownProps = {
   isFullscreen: boolean;
@@ -291,12 +239,14 @@ function ViewSingleReview({
   const { t } = useTranslation();
   const gridRef = useRef<any>(undefined);
   const runtime = useRef<Runtime>(undefined);
+  const osd = useRef<any>(undefined);
+  const [isOSD, setIsOSD] = useState(false);
+  const { enableRotation = false, enableEditorResizing = true } = useModelPageConfiguration();
   const annotationTheme = useProjectAnnotationStyles();
   const api = useApi();
   const template = useProjectTemplate(project?.template);
   const CustomReviewRenderer = template?.components?.customReviewRenderer as
-    | React.FC<CustomReviewRendererProps>
-    | undefined;
+    React.FC<CustomReviewRendererProps> | undefined;
 
   const [unassignUser] = useMutation(
     async () => {
@@ -352,17 +302,34 @@ function ViewSingleReview({
     if (runtime.current) {
       runtime.current.world.goHome();
     }
+    if (osd.current) {
+      osd.current.goHome();
+    }
   };
 
   const zoomIn = () => {
     if (runtime.current) {
       runtime.current.world.zoomIn();
     }
+    if (osd.current) {
+      osd.current.zoomIn();
+    }
   };
 
   const zoomOut = () => {
     if (runtime.current) {
       runtime.current.world.zoomOut();
+    }
+    if (osd.current) {
+      osd.current.zoomOut();
+    }
+  };
+
+  const rotate = () => {
+    if (isOSD) {
+      osd.current?.rotate();
+    } else {
+      setIsOSD(true);
     }
   };
 
@@ -546,26 +513,54 @@ function ViewSingleReview({
     <div style={{ flex: 1, minWidth: 200, display: 'flex', flexDirection: 'column' }}>
       {canvas ? (
         <CanvasViewerGrid ref={gridRef}>
-          <EditorContentViewer
-            height={'100%' as any}
-            canvasId={canvas.id}
-            onCreated={rt => {
-              return ((runtime as any).current = rt.runtime);
-            }}
-          />
-          {isOpen && (
-            <CanvasViewerControls>
-              <CanvasViewerButton onClick={goHome}>
-                <HomeIcon title={t('atlas__zoom_home', { defaultValue: 'Home' })} />
-              </CanvasViewerButton>
-              <CanvasViewerButton onClick={zoomOut}>
-                <MinusIcon title={t('atlas__zoom_out', { defaultValue: 'Zoom out' })} />
-              </CanvasViewerButton>
-              <CanvasViewerButton onClick={zoomIn}>
-                <PlusIcon title={t('atlas__zoom_in', { defaultValue: 'Zoom in' })} />
-              </CanvasViewerButton>
-            </CanvasViewerControls>
-          )}
+          <CanvasViewerGridContent>
+            {isOSD ? (
+              <ReviewCanvasViewer canvas={canvas}>
+                <InfoMessage
+                  $small
+                  style={{ lineHeight: '1.4em', position: 'absolute', top: 0, left: 0, right: 0, zIndex: 20 }}
+                >
+                  {t('You cannot edit annotations if you are rotating')}
+                  <Button style={{ margin: '0.4em 0 0' }} onClick={() => setIsOSD(false)}>
+                    Reset
+                  </Button>
+                </InfoMessage>
+                <BrowserComponent fallback={null}>
+                  <OpenSeadragonViewer ref={osd} onReady={viewer => viewer.viewport.setRotation(90)} />
+                </BrowserComponent>
+              </ReviewCanvasViewer>
+            ) : (
+              <EditorContentViewer
+                height={'100%' as any}
+                canvasId={canvas.id}
+                onCreated={rt => {
+                  return ((runtime as any).current = rt.runtime);
+                }}
+              />
+            )}
+            {(enableRotation || isOpen) && (
+              <CanvasViewerControls style={isOSD ? { top: '4em' } : undefined}>
+                {enableRotation ? (
+                  <CanvasViewerButton onClick={rotate}>
+                    <RotateIcon title={t('atlas__rotate', { defaultValue: 'Rotate' })} />
+                  </CanvasViewerButton>
+                ) : null}
+                {isOpen ? (
+                  <>
+                    <CanvasViewerButton onClick={goHome}>
+                      <HomeIcon title={t('atlas__zoom_home', { defaultValue: 'Home' })} />
+                    </CanvasViewerButton>
+                    <CanvasViewerButton onClick={zoomOut}>
+                      <MinusIcon title={t('atlas__zoom_out', { defaultValue: 'Zoom out' })} />
+                    </CanvasViewerButton>
+                    <CanvasViewerButton onClick={zoomIn}>
+                      <PlusIcon title={t('atlas__zoom_in', { defaultValue: 'Zoom in' })} />
+                    </CanvasViewerButton>
+                  </>
+                ) : null}
+              </CanvasViewerControls>
+            )}
+          </CanvasViewerGridContent>
         </CanvasViewerGrid>
       ) : (
         metadata.subject?.id &&
@@ -633,7 +628,6 @@ function ViewSingleReview({
                 userTaskId: task.id,
                 message: task.state?.changesRequested || '',
               });
-              deselectRevision({ revisionId: currentRevision.revision.id });
               await refetch();
             },
             approve: async () => {
@@ -730,15 +724,22 @@ function ViewSingleReview({
           ) : (
             <>
               {reviewHeaderActions}
-              <ReviewPreview>
-                <div style={{ flexGrow: 1, maxWidth: 300, overflowX: 'scroll' }}>
-                  <CanvasViewerEditorStyleReset>
-                    <EditorSlots.TopLevelEditor />
-                  </CanvasViewerEditorStyleReset>
-                  <EditorSlots.SubmitButton captureModel={captureModel} />
-                </div>
-                {viewerNode}
-              </ReviewPreview>
+              <HorizontalEditorSplit
+                name="non-tabular-single-review-editor"
+                enabled={enableEditorResizing}
+                resizableSide="left"
+                defaultWidth={300}
+                className="flex-1 overflow-y-auto p-[0.6em]"
+                resizablePane={
+                  <div className="h-full overflow-x-auto w-full">
+                    <CanvasViewerEditorStyleReset>
+                      <EditorSlots.TopLevelEditor />
+                    </CanvasViewerEditorStyleReset>
+                    <EditorSlots.SubmitButton captureModel={captureModel} />
+                  </div>
+                }
+                flexiblePane={viewerNode}
+              />
             </>
           )}
         </ReviewContainer>

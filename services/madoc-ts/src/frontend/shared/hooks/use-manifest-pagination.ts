@@ -19,6 +19,8 @@ export function useManifestPagination(subRoute?: string) {
   const hasNextPage = idx < structure.data.items.length && structure.data.items[idx + 1];
 
   return {
+    currentPage: idx + 1,
+    totalPages: structure.data.items.length,
     hasPrevPage: !!hasPrevPage,
     prevItem: hasPrevPage,
     prevPage: hasPrevPage

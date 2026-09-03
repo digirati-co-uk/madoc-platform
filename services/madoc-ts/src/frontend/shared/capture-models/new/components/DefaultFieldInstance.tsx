@@ -66,7 +66,7 @@ export const DefaultFieldInstance: React.FC<{
         field={field}
         property={property}
         path={path}
-        hideHeader={hideHeader}
+        hideHeader={hideHeader && !selector}
       />
     </FieldSet>
   );

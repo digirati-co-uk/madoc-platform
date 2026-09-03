@@ -43,7 +43,7 @@ import { PublicUserProfile, Site, SiteUser, UserInformationRequest } from '../ex
 import { ProjectManifestTasks } from '../types/manifest-tasks';
 import { NoteListResponse } from '../types/personal-notes';
 import { Pm2Status } from '../types/pm2';
-import { ProjectFeedback, ProjectMember, ProjectUpdate } from '../types/projects';
+import { CreateProjectUpdate, ProjectFeedback, ProjectMember, ProjectUpdate } from '../types/projects';
 import { BullMqCancelSearchIndexResult, BullMqResumeQueueResult, BullMqSnapshot } from '../types/bullmq-status';
 import { ResourceLinkResponse } from '../types/schemas/linking';
 import { ProjectConfiguration } from '../types/schemas/project-configuration';
@@ -91,6 +91,12 @@ import { SearchIndexTask } from './tasks/search-index-task';
 import { JsonProjectTemplate, ProjectTemplate } from '../extensions/projects/types';
 import { ApiKey } from '../types/api-key';
 import { TabularProjectTemplateConfig } from '../types/tabular-project-template-config';
+import {
+  ProjectSearchIndexConfiguration,
+  ProjectSearchIndexDefinition,
+  ProjectSearchIndexRequest,
+  PublicProjectSearchIndex,
+} from '../types/schemas/project-search-index';
 
 export type ApiClientWithoutExtensions = Omit<
   ApiClient,
@@ -760,6 +766,12 @@ export class ApiClient {
     return this.request<{ list: Pm2Status[]; build: any; slowRequests: any }>(`/api/madoc/pm2/list`);
   }
 
+  getPm2LogsUrl(processId: number, lines = 100) {
+    const slug = this.getSiteSlug();
+    invariant(slug, 'Site slug not found');
+    return this.resolveUrl(`/s/${slug}/madoc/api/pm2/${processId}/logs?${stringify({ lines })}`);
+  }
+
   async pm2Restart(service: 'auth' | 'queue' | 'madoc' | 'scheduler') {
     return this.request<{ success: true }>(`/api/madoc/pm2/restart/${service}`, { method: 'POST' });
   }
@@ -811,6 +823,47 @@ export class ApiClient {
 
   async getProject(id: number | string, query?: { published?: boolean }) {
     return this.request<ProjectFull>(`/api/madoc/projects/${id}${query ? `?${stringify(query)}` : ''}`);
+  }
+
+  async getProjectSearchIndexes(id: number | string) {
+    return this.request<ProjectSearchIndexConfiguration>(`/api/madoc/projects/${id}/search-indexes`);
+  }
+
+  async createProjectSearchIndex(id: number | string, request: ProjectSearchIndexRequest) {
+    return this.request<ProjectSearchIndexDefinition>(`/api/madoc/projects/${id}/search-indexes`, {
+      method: 'POST',
+      body: request,
+    });
+  }
+
+  async updateProjectSearchIndex(id: number | string, indexId: string, request: ProjectSearchIndexRequest) {
+    return this.request<ProjectSearchIndexDefinition>(`/api/madoc/projects/${id}/search-indexes/${indexId}`, {
+      method: 'PUT',
+      body: request,
+    });
+  }
+
+  async deleteProjectSearchIndex(id: number | string, indexId: string) {
+    return this.request(`/api/madoc/projects/${id}/search-indexes/${indexId}`, { method: 'DELETE' });
+  }
+
+  async reindexProjectSearchIndex(id: number | string, indexId: string) {
+    return this.request<SearchIndexTask>(`/api/madoc/projects/${id}/search-indexes/${indexId}/reindex`, {
+      method: 'POST',
+    });
+  }
+
+  async indexProjectSearchIndex(id: number | string, indexId: string) {
+    return this.request<{ indexed: number; collection: string; warnings: string[] }>(
+      `/api/madoc/projects/${id}/search-indexes/${indexId}/index`,
+      { method: 'POST' }
+    );
+  }
+
+  async getPublicProjectSearchIndexes(projectSlug: string) {
+    return this.publicRequest<PublicProjectSearchIndex[]>(
+      `/madoc/api/projects/${encodeURIComponent(projectSlug)}/search-indexes`
+    );
   }
 
   async getProjectMetadata(id: number) {
@@ -943,22 +996,22 @@ export class ApiClient {
     return response?.updates[0] || null;
   }
 
-  async createProjectUpdate(id: string | number, update: string) {
-    return this.request(`/api/madoc/projects/${id}/updates`, {
+  async createProjectUpdate(id: string | number, update: CreateProjectUpdate) {
+    return this.request<ProjectUpdate>(`/api/madoc/projects/${id}/updates`, {
       method: 'POST',
-      body: { update },
+      body: update,
     });
   }
 
-  async updateProjectUpdate(id: string | number, updateId: string | number, update: string) {
-    return this.request(`/api/madoc/projects/${id}/updates/${updateId}`, {
+  async updateProjectUpdate(id: string | number, updateId: string | number, update: CreateProjectUpdate) {
+    return this.request<ProjectUpdate>(`/api/madoc/projects/${id}/updates/${updateId}`, {
       method: 'PUT',
-      body: { update },
+      body: update,
     });
   }
 
   async deleteProjectUpdate(id: string | number, updateId: string | number) {
-    return this.request(`/api/madoc/projects/${id}/updates/${updateId}`, {
+    return this.request<{ success: true }>(`/api/madoc/projects/${id}/updates/${updateId}`, {
       method: 'DELETE',
     });
   }
@@ -1093,9 +1146,13 @@ export class ApiClient {
     }>(`/api/madoc/locales/analysis`);
   }
 
-  async getLocale(code: string, namespace?: string, withTemplate?: boolean) {
+  async getLocale(code: string, namespace?: string, withTemplate?: boolean, contentOnly?: boolean) {
+    const query = stringify({
+      show_empty: withTemplate || undefined,
+      content_only: contentOnly || undefined,
+    });
     return this.request<GetLocalisationResponse>(
-      `/api/madoc/locales/${code}${namespace ? `/${namespace}` : ''}${withTemplate ? `?show_empty=true` : ''}`
+      `/api/madoc/locales/${code}${namespace ? `/${namespace}` : ''}${query ? `?${query}` : ''}`
     );
   }
 
@@ -2543,6 +2600,26 @@ export class ApiClient {
     }
   }
 
+  async indexCollection(id: number) {
+    try {
+      await this.request<SearchIndexTask>(`/api/madoc/iiif/collections/${id}/index`, {
+        method: 'POST',
+      });
+    } catch {
+      // Search indexing is best effort for resource updates.
+    }
+  }
+
+  async indexProject(id: number) {
+    try {
+      await this.request<SearchIndexTask>(`/api/madoc/projects/${id}/index`, {
+        method: 'POST',
+      });
+    } catch {
+      // Search indexing is best effort for resource updates.
+    }
+  }
+
   async getIndexedCanvasById(madoc_id: string) {
     return this.request<SearchResponse>(`${getSearchQueryEndpoint()}?${stringify({ madoc_id })}`, {
       method: 'GET',
@@ -2640,8 +2717,8 @@ export class ApiClient {
     return this.publicRequest<ConfigInjectionSettings>(`/madoc/api/configuration/model`, query);
   }
 
-  async getSiteSearchFacetConfiguration() {
-    return this.publicRequest<{ facets: FacetConfig[] }>(`/madoc/api/configuration/search-facets`);
+  async getSiteSearchFacetConfiguration(query?: { project_id?: number; collection_id?: number }) {
+    return this.publicRequest<{ facets: FacetConfig[] }>(`/madoc/api/configuration/search-facets`, query);
   }
 
   async getCurrentSiteDetails() {

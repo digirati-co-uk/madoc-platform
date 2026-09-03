@@ -11,6 +11,7 @@ import * as crowdsourcingManifest from '../gateway/tasks/crowdsourcing-manifest-
 import * as processManifestOcr from '../gateway/tasks/process-manifest-ocr';
 import * as processCanvasOcr from '../gateway/tasks/process-canvas-ocr';
 import * as searchIndex from '../gateway/tasks/search-index-task';
+import * as fullReindex from '../gateway/tasks/full-reindex-task';
 import * as apiActionTask from '../gateway/tasks/api-action-task';
 import * as migrationTasks from '../capture-model-server/migration/migrate-model-task';
 import * as exportResource from '../gateway/tasks/export-resource-task';
@@ -123,6 +124,10 @@ const worker = new Worker(
           return await searchIndex.jobHandler(job.name, job.data.taskId, contextualApi).catch(err => {
             throw err;
           });
+        case fullReindex.type:
+          return await fullReindex.jobHandler(job.name, job.data.taskId, contextualApi).catch(err => {
+            throw err;
+          });
         case apiActionTask.type:
           return await apiActionTask.jobHandler(job.name, job.data.taskId, contextualApi).catch(err => {
             throw err;
@@ -177,10 +182,16 @@ worker.on('failed', async (job: Job) => {
       }
     }
 
-    await (contextualApi || api).updateTask(job.data.taskId, { status: -1, status_text: 'Failed' });
-
-    if (contextualApi) {
-      contextualApi.dispose();
+    try {
+      await (contextualApi || api).updateTask(job.data.taskId, {
+        status: -1,
+        status_text: 'Failed',
+        state: { error: job.failedReason || 'Task failed without an error message' },
+      });
+    } finally {
+      if (contextualApi) {
+        contextualApi.dispose();
+      }
     }
   }
 });

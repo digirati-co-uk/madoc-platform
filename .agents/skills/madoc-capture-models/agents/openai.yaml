@@ -1,0 +1,4 @@
+interface:
+  display_name: "Madoc Capture Models"
+  short_description: "Capture model APIs, storage, and revisions"
+  default_prompt: "Use $madoc-capture-models to change a Madoc capture-model or revision flow."

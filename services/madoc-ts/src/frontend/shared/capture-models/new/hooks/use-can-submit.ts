@@ -1,9 +1,25 @@
 import { Revisions } from '../../editor/stores/revisions';
+import { isEntity } from '../../helpers/is-entity';
 import { resolveSelector } from '../../helpers/resolve-selector';
-import { BaseSelector } from '../../types/selector-types';
+import { CaptureModel } from '../../types/capture-model';
+import { BaseField } from '../../types/field-types';
+import { isEmptyFieldList } from '../../utility/is-field-list-empty';
+
+export function selectorBlocksSubmission(fieldOrEntity: BaseField | CaptureModel['document'], revisionId?: string) {
+  if (!fieldOrEntity.selector) {
+    return false;
+  }
+
+  const selector = resolveSelector(fieldOrEntity.selector, revisionId);
+  if (!selector?.required || selector.state) {
+    return false;
+  }
+
+  return isEntity(fieldOrEntity) || !!fieldOrEntity.required || !isEmptyFieldList([fieldOrEntity]);
+}
 
 export function useCanSubmit() {
-  const selectorsToValidate: BaseSelector[] = [];
+  const selectorsToValidate: Array<BaseField | CaptureModel['document']> = [];
   const requiredFieldsToValidate: any[] = [];
 
   const revision = Revisions.useStoreState(state => state.currentRevision);
@@ -24,12 +40,9 @@ export function useCanSubmit() {
         for (const singleFieldOrEntity of fieldOrEntity) {
           if (singleFieldOrEntity.required) {
             requiredFieldsToValidate.push(singleFieldOrEntity);
-            if (singleFieldOrEntity.selector) {
-              selectorsToValidate.push(singleFieldOrEntity.selector);
-            }
           }
           if (singleFieldOrEntity.selector) {
-            selectorsToValidate.push(singleFieldOrEntity.selector);
+            selectorsToValidate.push(singleFieldOrEntity);
           }
         }
       }
@@ -37,9 +50,8 @@ export function useCanSubmit() {
   }
 
   if (revision) {
-    for (const selector of selectorsToValidate) {
-      const resolved = resolveSelector(selector, revision?.revision.id);
-      if (resolved && resolved.required && !resolved.state) {
+    for (const fieldOrEntity of selectorsToValidate) {
+      if (selectorBlocksSubmission(fieldOrEntity, revision.revision.id)) {
         return false;
       }
     }

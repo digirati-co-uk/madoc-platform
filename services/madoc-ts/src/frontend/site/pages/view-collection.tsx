@@ -8,7 +8,7 @@ import { CollectionTitle } from '../blocks/CollectionTitle';
 import { usePaginatedCollection } from '../hooks/use-paginated-collection';
 import { CollectionMetadata } from '../blocks/CollectionMetadata';
 
-export const ViewCollection: React.FC = () => {
+export function ViewCollection() {
   const { isLoading } = usePaginatedCollection();
 
   if (isLoading) {
@@ -48,4 +48,4 @@ export const ViewCollection: React.FC = () => {
       </Slot>
     </>
   );
-};
+}

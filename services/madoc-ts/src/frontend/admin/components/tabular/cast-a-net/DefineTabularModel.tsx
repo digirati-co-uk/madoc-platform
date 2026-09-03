@@ -198,7 +198,7 @@ export function DefineTabularModel(props: {
     canvasId,
     minColumns = 1,
     maxColumns = 100,
-    maxHeadingLength = 80,
+    maxHeadingLength = 160,
     minPreviewRows = 1,
     maxPreviewRows = 50,
     defaultColumns = 6,

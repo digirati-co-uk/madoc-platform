@@ -25,9 +25,7 @@
       "properties": {
         "_version": {
           "type": "number",
-          "enum": [
-            2
-          ]
+          "const": 2
         },
         "_source": {
           "type": "object",
@@ -120,6 +118,9 @@
             },
             "hideRandomCanvas": {
               "type": "boolean"
+            },
+            "hideOpenInTheseus": {
+              "type": "boolean"
             }
           }
         },
@@ -210,10 +211,14 @@
           ]
         },
         "searchStrategy": {
-          "type": "string",
           "enum": [
-            "string"
-          ]
+            "phrase",
+            "plain",
+            "raw",
+            "string",
+            "websearch"
+          ],
+          "type": "string"
         },
         "searchOptions": {
           "type": "object",
@@ -229,6 +234,29 @@
             },
             "showSearchFacetCount": {
               "type": "boolean"
+            },
+            "infiniteScroll": {
+              "type": "boolean"
+            }
+          }
+        },
+        "typesenseOptions": {
+          "type": "object",
+          "properties": {
+            "allResources": {
+              "type": "boolean"
+            },
+            "projects": {
+              "type": "boolean"
+            },
+            "collections": {
+              "type": "boolean"
+            },
+            "manifests": {
+              "type": "boolean"
+            },
+            "canvases": {
+              "type": "boolean"
             }
           }
         },
@@ -242,9 +270,7 @@
         "maxContributionsPerResource": {
           "anyOf": [
             {
-              "enum": [
-                false
-              ],
+              "const": false,
               "type": "boolean"
             },
             {
@@ -286,6 +312,13 @@
           "enum": [
             "horizontal",
             "vertical"
+          ],
+          "type": "string"
+        },
+        "defaultPolygonTool": {
+          "enum": [
+            "box",
+            "pen"
           ],
           "type": "string"
         },
@@ -340,6 +373,9 @@
                 },
                 "enableSplitView": {
                   "type": "boolean"
+                },
+                "enableEditorResizing": {
+                  "type": "boolean"
                 }
               }
             }
@@ -348,9 +384,7 @@
         "contributionWarningTime": {
           "anyOf": [
             {
-              "enum": [
-                false
-              ],
+              "const": false,
               "type": "boolean"
             },
             {

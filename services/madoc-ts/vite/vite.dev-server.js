@@ -2,6 +2,7 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import fs from 'fs';
 import path from 'path';
+import { styledComponents } from './styled-components.js';
 
 const PROSEMIRROR_PACKAGES = [
   ['prosemirror-model', 'dist/index.js'],
@@ -58,6 +59,10 @@ export default defineConfig({
     dedupe: ['react', 'react-dom', ...PROSEMIRROR_PACKAGES.map(([pkg]) => pkg)],
     alias: [
       { find: /^@\//, replacement: `${path.resolve(process.cwd(), 'src')}/` },
+      {
+        find: /^react-accessible-dropdown-menu-hook$/,
+        replacement: path.resolve(process.cwd(), 'vite/react-accessible-dropdown-menu-hook.js'),
+      },
       ...prosemirrorAliases,
       // React 19-compatible defaults.
     ],
@@ -67,10 +72,6 @@ export default defineConfig({
     target: ['es2021', 'chrome97', 'safari13'],
     minify: false,
     sourcemap: true,
-  },
-  esbuild: {
-    jsx: 'automatic',
-    jsxSideEffects: false,
   },
   server: {
     https: https
@@ -97,17 +98,7 @@ export default defineConfig({
   plugins: [
     react({
       jsxRuntime: 'automatic',
-      babel: {
-        plugins: [
-          [
-            'babel-plugin-styled-components',
-            {
-              displayName: true,
-              fileName: false,
-            },
-          ],
-        ],
-      },
     }),
+    styledComponents(),
   ],
 });

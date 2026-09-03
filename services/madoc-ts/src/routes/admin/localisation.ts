@@ -311,6 +311,7 @@ export const getLocalisation: RouteMiddleware<{ code: string; namespace?: string
   const { id, siteId } = optionalUserWithScope(context, []);
   const userApi = context.state.siteApi || api.asUser({ userId: id, siteId });
   const showEmpty = castBool(context.query.show_empty);
+  const contentOnly = castBool(context.query.content_only);
 
   // Language code
   const languageCode = context.params.code;
@@ -321,15 +322,17 @@ export const getLocalisation: RouteMiddleware<{ code: string; namespace?: string
   invariant(!namespace.match(/\.\./), 'Namespace not found');
 
   const modelIds =
-    namespace === 'capture-models'
+    namespace === 'capture-models' && !contentOnly
       ? (
           await context.connection.any(
-            sql<{ capture_model_id: string }>`select capture_model_id from iiif_project where site_id = ${siteId}`
+            sql<{
+              capture_model_id: string;
+            }>`select distinct capture_model_id from iiif_project where site_id = ${siteId}`
           )
         ).map((m: { capture_model_id: string }) => m.capture_model_id)
       : [];
   // Load default english.
-  const emptyJson = await loadLocaleTemplate(userApi, namespace, modelIds);
+  const emptyJson = contentOnly ? {} : await loadLocaleTemplate(userApi, namespace, modelIds);
   // Load from disk if exists.
   const location = path.resolve(TRANSLATIONS_PATH, languageCode, `${namespace}.json`);
   const isStatic = fs.existsSync(location);
@@ -454,7 +457,9 @@ export const updateLocalisation: RouteMiddleware<{ code: string; namespace?: str
     namespace === 'capture-models'
       ? (
           await context.connection.any(
-            sql<{ capture_model_id: string }>`select capture_model_id from iiif_project where site_id = ${siteId}`
+            sql<{
+              capture_model_id: string;
+            }>`select distinct capture_model_id from iiif_project where site_id = ${siteId}`
           )
         ).map((m: { capture_model_id: string }) => m.capture_model_id)
       : [];

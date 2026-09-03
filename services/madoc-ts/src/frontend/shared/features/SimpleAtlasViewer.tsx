@@ -147,7 +147,7 @@ export const SimpleAtlasViewer = React.forwardRef<
                   </Button>
                 </InfoMessage>
                 <BrowserComponent fallback={null}>
-                  <OpenSeadragonViewer ref={osd} />
+                  <OpenSeadragonViewer ref={osd} onReady={viewer => viewer.viewport.setRotation(90)} />
                 </BrowserComponent>
               </>
             ) : (
@@ -191,7 +191,7 @@ export const SimpleAtlasViewer = React.forwardRef<
 
             {hideViewerControls && isModel ? null : (
               <CanvasViewerControls>
-                {enableRotation && isModel ? (
+                {enableRotation ? (
                   <CanvasViewerButton onClick={rotate}>
                     <RotateIcon title={t('atlas__rotate', { defaultValue: 'Rotate' })} />
                   </CanvasViewerButton>

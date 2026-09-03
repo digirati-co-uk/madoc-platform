@@ -1,5 +1,6 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { DataGrid, type Column, type DataGridHandle } from 'react-data-grid';
+import { Tooltip as ReactTooltip } from 'react-tooltip';
 import 'react-data-grid/lib/styles.css';
 import type { TabularCellRef } from '@/frontend/shared/utility/tabular-types';
 import { Button } from '@/frontend/shared/navigation/Button';
@@ -451,6 +452,7 @@ export function TabularProjectCustomEditorTable({
   containerStyle,
   showHeaderTooltips = false,
 }: TabularProjectCustomEditorTableProps) {
+  const headerTooltipId = useId();
   const isRemoveRowDisabled = disabled || !canRemoveRow;
   const isAddRowDisabled = disabled || !canAddRow;
   const hasAnyRowControl = showRowControls && (showAddRowControl || showRemoveRowControl);
@@ -649,7 +651,6 @@ export function TabularProjectCustomEditorTable({
 
           return (
             <div
-              title={tooltip}
               style={{
                 height: '100%',
                 background: isActiveColumn ? '#b9c8f5' : '#d9deee',
@@ -664,7 +665,20 @@ export function TabularProjectCustomEditorTable({
                 wordBreak: 'break-word',
               }}
             >
-              <div style={{ fontSize: 13, fontWeight: 600, lineHeight: 1.3 }}>{column.label}</div>
+              <div className="flex items-center gap-1" style={{ fontSize: 13, fontWeight: 600, lineHeight: 1.3 }}>
+                {column.label}
+                {tooltip ? (
+                  <span
+                    aria-label={tooltip}
+                    data-tooltip-content={tooltip}
+                    data-tooltip-id={headerTooltipId}
+                    tabIndex={0}
+                    className="inline-flex h-4 w-4 shrink-0 cursor-help items-center justify-center rounded-full border border-slate-400 text-[11px] font-normal leading-none text-slate-600"
+                  >
+                    ?
+                  </span>
+                ) : null}
+              </div>
             </div>
           );
         },
@@ -936,6 +950,15 @@ export function TabularProjectCustomEditorTable({
         <div className="border-t border-[#d6d6d6] px-3 py-6 text-center text-sm text-gray-600">
           No rows yet. Use + to create the first row.
         </div>
+      ) : null}
+      {showHeaderTooltips ? (
+        <ReactTooltip
+          className="react-tooltip"
+          id={headerTooltipId}
+          place="top"
+          positionStrategy="fixed"
+          variant="dark"
+        />
       ) : null}
       {cellContextMenu && hasCellContextActions ? (
         <div

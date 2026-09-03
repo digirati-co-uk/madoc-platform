@@ -113,7 +113,7 @@ export function useTabularEditorLayout(options: UseTabularEditorLayoutOptions = 
   const { widthB, refs, isDragging } = useResizeLayout('tabular-custom-editor-sidebar', {
     left: true,
     widthB: '420px',
-    maxWidthPx: 620,
+    maxWidthPx: containerWidth => containerWidth - 12,
     minWidthPx: CONTRIBUTOR_EDITOR_SIDEBAR_MIN_WIDTH,
     onDragEnd: () => {
       if (typeof window !== 'undefined') {

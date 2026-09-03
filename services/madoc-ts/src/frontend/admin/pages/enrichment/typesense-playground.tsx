@@ -11,11 +11,15 @@ import {
   Stats,
 } from 'react-instantsearch';
 import { Link } from 'react-router-dom';
-import TypesenseInstantSearchAdapter from 'typesense-instantsearch-adapter';
+import TypesenseInstantSearchAdapterImport from 'typesense-instantsearch-adapter';
 import { WidePage } from '../../../shared/layout/WidePage';
 import { AdminHeader } from '../../molecules/AdminHeader';
 import { useSite } from '../../../shared/hooks/use-site';
 import 'instantsearch.css/themes/satellite-min.css';
+
+const TypesenseInstantSearchAdapter =
+  (TypesenseInstantSearchAdapterImport as unknown as { default?: typeof TypesenseInstantSearchAdapterImport })
+    .default || TypesenseInstantSearchAdapterImport;
 
 type TypesenseFacetCount = {
   value: string;

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Madoc Auth"
+  short_description: "Login, JWT, cookies, and authorization"
+  default_prompt: "Use $madoc-auth to trace or change Madoc TS authentication and authorization."

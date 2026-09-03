@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1.6
-ARG NODE_VERSION=22
+ARG NODE_VERSION=24
 FROM node:${NODE_VERSION}-bullseye
 
 ENV PNPM_HOME="/pnpm"
@@ -7,10 +7,11 @@ ENV PATH="$PNPM_HOME:$PATH"
 
 WORKDIR /home/node/app
 
-RUN npm install -g pm2@5.4.3 ts-node
+RUN npm install -g pm2@5.4.3
 
 COPY ./package.json /home/node/app/package.json
 COPY ./pnpm-lock.yaml /home/node/app/pnpm-lock.yaml
+COPY ./pnpm-workspace.yaml /home/node/app/pnpm-workspace.yaml
 COPY ./npm /home/node/app/npm
 
 RUN corepack enable

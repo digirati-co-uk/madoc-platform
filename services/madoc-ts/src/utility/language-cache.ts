@@ -54,7 +54,7 @@ export class LanguageCache implements BackendModule {
 
     const storedLocale = filterEmptyContent(canonical);
 
-    cache.put(cacheKey, storedLocale, 600);
+    cache.put(cacheKey, storedLocale, 2 * 60 * 60 * 1000);
     callback(null, storedLocale);
   }
 

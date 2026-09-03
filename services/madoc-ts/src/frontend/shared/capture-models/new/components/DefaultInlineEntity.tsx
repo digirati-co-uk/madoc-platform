@@ -295,11 +295,11 @@ const TwoLevelInlineFieldProperty: React.FC<{
         );
 
         if (!canRemove) {
-          return <React.Fragment key={field.id}>{fieldInstance}</React.Fragment>;
+          return <React.Fragment key={field.revises || field.id}>{fieldInstance}</React.Fragment>;
         }
 
         return (
-          <CompactFieldItem key={field.id} data-instance-id={field.id}>
+          <CompactFieldItem key={field.revises || field.id} data-instance-id={field.id}>
             <CompactFieldActions>
               <CompactHeaderButton
                 type="button"

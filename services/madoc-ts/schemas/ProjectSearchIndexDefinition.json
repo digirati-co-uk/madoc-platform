@@ -1,0 +1,65 @@
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "presetKey": {
+      "type": "string"
+    },
+    "label": {
+      "type": "string"
+    },
+    "summary": {
+      "type": "string"
+    },
+    "entityPath": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "uniqueField": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "facets": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/ProjectSearchIndexFacet"
+      }
+    },
+    "includeUnapproved": {
+      "type": "boolean"
+    },
+    "enabled": {
+      "type": "boolean"
+    },
+    "lastIndexedAt": {
+      "type": "string"
+    },
+    "lastIndexedHash": {
+      "type": "string"
+    },
+    "documentCount": {
+      "type": "number"
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "enabled",
+    "entityPath",
+    "facets",
+    "id",
+    "includeUnapproved",
+    "label"
+  ],
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

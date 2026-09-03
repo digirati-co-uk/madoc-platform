@@ -82,6 +82,7 @@ import { ViewExternalPlugin } from './pages/system/external-plugin';
 import { KeyRegen } from './pages/system/key-regen';
 import { ListApiKeys } from './pages/system/list-api-keys';
 import { QueueStatus } from './pages/system/queue-status';
+import { Pm2Logs } from './pages/system/pm2-logs';
 import { SystemStatus } from './pages/system/system-status';
 import { ListThemes } from './pages/system/themes/list-themes';
 import { CreateWebhook } from './pages/system/webhooks/create-webhook';
@@ -586,6 +587,10 @@ export const routes: RouteObject[] = [
   {
     path: '/global/status',
     element: <SystemStatus />,
+  },
+  {
+    path: '/global/logs',
+    element: <Pm2Logs />,
   },
   {
     path: '/global/queue',

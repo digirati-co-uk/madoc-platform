@@ -8,12 +8,12 @@ import * as manifestOcr from './process-manifest-ocr';
 import { createTask as createSearchIndexTask } from './search-index-task';
 import * as tasks from './task-helpers';
 import { Vault } from '@iiif/helpers/vault';
-import fetch from 'node-fetch';
 import { ImportCanvasTask } from './import-canvas';
 import { iiifGetLabel } from '../../utility/iiif-get-label';
 import { ApiClient } from '../api';
 import { deleteAsync } from 'del';
 import { trimInternationalString } from '../helpers/trim-international-string';
+import { fetchIiifResource } from './fetch-iiif-resource';
 export const type = 'madoc-manifest-import';
 
 export const status = [
@@ -76,7 +76,7 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
 
       // 1. Fetch manifest
       const subject = decodeURI(task.subject);
-      const text = await fetch(subject).then(r => r.text());
+      const text = await fetchIiifResource(subject);
       const json = JSON.parse(text);
       const iiifManifest = await vault.loadManifest(subject, json);
 
@@ -199,7 +199,12 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
 
       // 6. Mark as done if no canvases
       if (subtasks.length === 0 && subtasksToReTrigger.length === 0) {
-        await api.updateTask(task.id, changeStatus('done', { state: { diskCacheLocation: fileLocation } }));
+        await api.updateTask(
+          task.id,
+          changeStatus('done', {
+            state: { resourceId: item.id, isDuplicate: false, diskCacheLocation: fileLocation },
+          })
+        );
         return;
       }
 
@@ -231,8 +236,8 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
               await deleteAsync(dirname(task.state.diskCacheLocation));
             }
           }
-        } catch (e) {
-          console.log('Unable to delete local manifest file', e);
+        } catch (error) {
+          console.log('Unable to delete local manifest file', error);
         }
       }
 
@@ -310,7 +315,7 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
               user: userId,
             });
           }
-        } catch (e) {
+        } catch {
           // no-op
         }
       }

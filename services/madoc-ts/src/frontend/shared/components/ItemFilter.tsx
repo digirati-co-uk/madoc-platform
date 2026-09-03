@@ -14,7 +14,7 @@ export const ItemFilterPopupContainer = styled.div<{ $visible?: boolean; $alignL
   border: 1px solid rgba(0, 0, 0, 0.15);
   box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.14);
   border-radius: 4px;
-  z-index: 11;
+  z-index: 21;
   position: absolute;
   display: none;
   padding: 0.3em;

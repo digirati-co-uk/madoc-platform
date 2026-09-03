@@ -37,5 +37,7 @@ export const publishCollection: RouteMiddleware = async context => {
     }
   }
 
+  await siteApi.indexCollection(collectionId);
+
   context.response.status = 201;
 };

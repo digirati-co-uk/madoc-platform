@@ -1,10 +1,20 @@
-import { sql } from 'slonik';
+import { DatabasePoolConnectionType, sql } from 'slonik';
 import { api } from '../../../gateway/api.server';
 import { RouteMiddleware } from '../../../types/route-middleware';
 import { UpdateStructureList } from '../../../types/schemas/item-structure-list';
 import { userWithScope } from '../../../utility/user-with-scope';
 import { SQL_INT_ARRAY } from '../../../utility/postgres-tags';
 import { RequestError } from '../../../utility/errors/request-error';
+import { createTask as createSearchIndexTask } from '../../../gateway/tasks/search-index-task';
+
+async function getManifestIds(collectionId: number, siteId: number, connection: DatabasePoolConnectionType) {
+  return (
+    await connection.any<{ id: number }>(sql`
+      select distinct manifest_id as id
+      from unnest(unflatten_derived_collection(${collectionId}, ${siteId}, null)) manifest_id
+    `)
+  ).map(({ id }) => id);
+}
 
 export const updateCollectionStructure: RouteMiddleware<{ id: number }, UpdateStructureList> = async context => {
   const { siteId, userUrn } = userWithScope(context, ['site.admin']);
@@ -15,9 +25,9 @@ export const updateCollectionStructure: RouteMiddleware<{ id: number }, UpdateSt
 
   const flatExcluded = await context.connection.any<{ resource_id: number }>(sql`
     select resource_id from iiif_derived_resource where site_id = ${siteId} and flat = true and resource_id = any (${sql.array(
-    manifestIds,
-    SQL_INT_ARRAY
-  )})
+      manifestIds,
+      SQL_INT_ARRAY
+    )})
   `);
 
   if (manifestIds.indexOf(collectionId) !== -1) {
@@ -34,9 +44,12 @@ export const updateCollectionStructure: RouteMiddleware<{ id: number }, UpdateSt
       select item_id as id from iiif_derived_resource_items where ${itemFilter}
     `)
   ).map(({ id }) => id);
+  const toRemove = ids.filter(id => manifestIds.indexOf(id) === -1);
+  const toAdd = manifestIds.filter(id => ids.indexOf(id) === -1);
+  const structureChanged = toAdd.length > 0 || toRemove.length > 0;
+  const manifestsBeforeUpdate = structureChanged ? await getManifestIds(collectionId, siteId, context.connection) : [];
 
   // First remove.
-  const toRemove = ids.filter(id => manifestIds.indexOf(id) === -1);
   if (toRemove.length) {
     const removeQuery = sql`
       delete
@@ -49,7 +62,6 @@ export const updateCollectionStructure: RouteMiddleware<{ id: number }, UpdateSt
   }
 
   // Then add missing.
-  const toAdd = manifestIds.filter(id => ids.indexOf(id) === -1);
   if (toAdd.length) {
     const toAddArray = sql.array(toAdd, SQL_INT_ARRAY);
     const insertQuery = sql`
@@ -80,13 +92,24 @@ export const updateCollectionStructure: RouteMiddleware<{ id: number }, UpdateSt
 
   await context.connection.query(updateQuery);
 
+  const affectedManifestIds = structureChanged
+    ? [...new Set([...manifestsBeforeUpdate, ...(await getManifestIds(collectionId, siteId, context.connection))])]
+    : [];
+
   try {
     const userApi = api.asUser({ siteId });
-    userApi.postUniversalChangeToStreams({
+    context.disposableApis.push(userApi);
+    await userApi.postUniversalChangeToStreams({
       id: collectionId,
       type: 'collection',
       summary: `Collection structural changes`,
     });
+    await userApi.newTask(
+      createSearchIndexTask(
+        [{ id: collectionId, type: 'collection' }, ...affectedManifestIds.map(id => ({ id, type: 'manifest' }))],
+        siteId
+      )
+    );
   } catch (e) {
     console.log(e);
   }

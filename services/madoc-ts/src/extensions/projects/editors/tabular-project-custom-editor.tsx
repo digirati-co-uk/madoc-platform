@@ -204,6 +204,7 @@ function TabularProjectCustomEditorContent({
     disablePreview = false,
     disableNextCanvas = false,
     preventContributionAfterManifestUnassign = false,
+    enableEditorResizing = true,
   } = useModelPageConfiguration();
   const config = useSiteConfiguration();
   const lifecycle = useCaptureModelContributionLifecycle();
@@ -596,6 +597,7 @@ function TabularProjectCustomEditorContent({
             style={{
               width: isSidebarPanelOpen ? widthB : 56,
               minWidth: isSidebarPanelOpen ? 320 : 56,
+              maxWidth: isSidebarPanelOpen && enableEditorResizing ? 'calc(100% - 12px)' : undefined,
               height: '100%',
               borderRight: 'none',
             }}
@@ -624,12 +626,12 @@ function TabularProjectCustomEditorContent({
           <LayoutHandle
             ref={refs.resizer as any}
             style={{
-              width: isSidebarPanelOpen ? 12 : 0,
-              minWidth: isSidebarPanelOpen ? 12 : 0,
-              opacity: isSidebarPanelOpen ? 1 : 0,
-              pointerEvents: isSidebarPanelOpen ? 'auto' : 'none',
+              width: isSidebarPanelOpen && enableEditorResizing ? 12 : 0,
+              minWidth: isSidebarPanelOpen && enableEditorResizing ? 12 : 0,
+              opacity: isSidebarPanelOpen && enableEditorResizing ? 1 : 0,
+              pointerEvents: isSidebarPanelOpen && enableEditorResizing ? 'auto' : 'none',
             }}
-            aria-hidden={!isSidebarPanelOpen}
+            aria-hidden={!isSidebarPanelOpen || !enableEditorResizing}
           >
             <ResizeHandleIcon />
           </LayoutHandle>
@@ -663,6 +665,7 @@ function TabularProjectCustomEditorContent({
               startCanvasTableResize={startCanvasTableResize}
               isCanvasTableDividerActive={isCanvasTableDividerActive}
               setIsCanvasTableDividerHover={setIsCanvasTableDividerHover}
+              resizable={enableEditorResizing}
               topPanel={
                 <TabularProjectCustomEditorCanvas
                   canvasId={canvasId}

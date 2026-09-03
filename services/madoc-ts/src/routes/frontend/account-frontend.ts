@@ -25,7 +25,7 @@ export const accountFrontend: RouteMiddleware<{ slug: string }> = async context 
   }
 
   const lng = context.cookies.get('i18next');
-  const [, i18nInstance] = await createBackend(lng, site.id);
+  const [, i18nInstance] = await createBackend(lng || siteLocales.defaultLanguage || 'en', site.id);
 
   context.staticPage = async token => {
     const result = await renderAccount({

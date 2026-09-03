@@ -107,12 +107,7 @@ function mapHitToResult(hit: TypesenseSearchHit): SearchResult {
   };
 }
 
-function addMetadataFacetValue(
-  facets: Record<string, any>,
-  key: string,
-  value: string,
-  count: number
-) {
+function addMetadataFacetValue(facets: Record<string, any>, key: string, value: string, count: number) {
   if (!facets.metadata) {
     facets.metadata = {};
   }
@@ -122,10 +117,7 @@ function addMetadataFacetValue(
   facets.metadata[key][value] = (facets.metadata[key][value] || 0) + count;
 }
 
-function mapFacetCounts(
-  facetCounts: TypesenseFacet[] | undefined,
-  query: SearchQuery
-): Record<string, any> {
+function mapFacetCounts(facetCounts: TypesenseFacet[] | undefined, query: SearchQuery): Record<string, any> {
   if (!facetCounts || !facetCounts.length) {
     return {};
   }
@@ -223,7 +215,7 @@ export async function queryTypesenseSearch({
   const q = query.fulltext && query.fulltext.trim().length ? query.fulltext.trim() : '*';
   const result = (await typesense.search(collectionName, {
     q,
-    query_by: 'resource_label,search_text',
+    query_by: 'resource_label,search_text,search_context',
     page,
     per_page: perPage,
     filter_by: filterBy,

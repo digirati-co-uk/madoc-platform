@@ -1,9 +1,18 @@
 import { ManifestSearchExportRow, SearchExportCaptureModelRow } from '../../src/database/queries/search-index-export';
 import {
   buildManifestTypesenseDocument,
+  buildProjectTypesenseDocument,
   streamManifestTypesenseDocuments,
 } from '../../src/search/typesense/build-manifest-documents';
 import { flattenCaptureModelFieldsByResource } from '../../src/search/typesense/flatten-capture-model-fields';
+import { getTypesenseProjectFilter } from '../../src/search/typesense/project-filter';
+
+describe('getTypesenseProjectFilter', () => {
+  test('scopes searches to the indexed project context', () => {
+    expect(getTypesenseProjectFilter(99)).toEqual('contexts:=`urn:madoc:project:99`');
+    expect(getTypesenseProjectFilter()).toBeUndefined();
+  });
+});
 
 describe('flattenCaptureModelFieldsByResource', () => {
   test('flattens capture model fields per target resource', () => {
@@ -34,6 +43,8 @@ describe('flattenCaptureModelFieldsByResource', () => {
     expect(flattened['urn:madoc:canvas:10']).toBeDefined();
     expect(flattened['urn:madoc:canvas:10'].fields.capture_model_ocr_correction).toContain('The quick brown fox');
     expect(flattened['urn:madoc:canvas:10'].searchText).toContain('The quick brown fox');
+    expect(flattened['urn:madoc:canvas:10'].labels).toEqual(expect.arrayContaining(['Root', 'Transcription']));
+    expect(flattened['urn:madoc:canvas:10'].fields.capture_model_ocr_correction).not.toContain('Transcription');
   });
 
   test('falls back to raw value extraction for non-capture-model documents', () => {
@@ -74,6 +85,7 @@ describe('buildManifestTypesenseDocument', () => {
       primary_manifest_id: 5,
       manifest_ids: [5, 6],
       project_ids: [99],
+      project_facets: ['99|Example project'],
       collection_ids: [44],
       metadata: [
         {
@@ -109,6 +121,7 @@ describe('buildManifestTypesenseDocument', () => {
             capture_model_ocr: ['Extracted OCR'],
           },
           searchText: ['Extracted OCR'],
+          labels: ['Transcription'],
         },
       },
     });
@@ -117,6 +130,7 @@ describe('buildManifestTypesenseDocument', () => {
     expect(document.manifest_id).toEqual('urn:madoc:manifest:5');
     expect(document.manifest_ids).toEqual(['5', '6']);
     expect(document.project_ids).toEqual(['99']);
+    expect(document.project_facets).toEqual(['99|Example project']);
     expect(document.collection_ids).toEqual(['44']);
     expect(document.contexts).toEqual(
       expect.arrayContaining([
@@ -130,9 +144,34 @@ describe('buildManifestTypesenseDocument', () => {
     );
     expect(document.capture_model_ocr).toEqual(['Extracted OCR']);
     expect(document.search_text).toEqual(expect.arrayContaining(['Canvas label', 'John Doe', 'Extracted OCR']));
+    expect(document.search_context).toEqual(['Transcription']);
     expect(document.metadata_creator).toEqual(['John Doe']);
     expect(document.metadata_pairs).toContain('creator:John Doe');
     expect(document.sort_index).toEqual(3);
+  });
+
+  test('maps projects using their banner and site-only search context', () => {
+    const document = buildProjectTypesenseDocument(
+      {
+        id: 99,
+        collection_id: 44,
+        slug: 'example-project',
+        capture_model_id: 'model-1',
+        task_id: 'task-1',
+        label: { en: ['Example project'] },
+        summary: { en: ['A useful project summary'] },
+        status: 1,
+        placeholderImage: 'https://example.org/banner.jpg',
+      },
+      { siteId: 1, siteUrn: 'urn:madoc:site:1' }
+    );
+
+    expect(document.resource_id).toEqual('urn:madoc:project:99');
+    expect(document.resource_type).toEqual('Project');
+    expect(document.thumbnail).toEqual('https://example.org/banner.jpg');
+    expect(document.search_text).toEqual(['A useful project summary']);
+    expect(document.contexts).toEqual(['urn:madoc:site:1']);
+    expect(document.project_facets).toEqual([]);
   });
 
   test('streams all rows', () => {
@@ -150,6 +189,7 @@ describe('buildManifestTypesenseDocument', () => {
         primary_manifest_id: 5,
         manifest_ids: [5],
         project_ids: [],
+        project_facets: [],
         collection_ids: [],
         metadata: [
           {
@@ -174,6 +214,7 @@ describe('buildManifestTypesenseDocument', () => {
         primary_manifest_id: 5,
         manifest_ids: [5],
         project_ids: [],
+        project_facets: [],
         collection_ids: [],
         metadata: [
           {
@@ -192,5 +233,32 @@ describe('buildManifestTypesenseDocument', () => {
     expect(documents).toHaveLength(2);
     expect(documents[0].resource_type).toEqual('Manifest');
     expect(documents[1].resource_type).toEqual('Canvas');
+  });
+
+  test('maps collections as searchable resources', () => {
+    const row: ManifestSearchExportRow = {
+      resource_id: 44,
+      resource_type: 'Collection',
+      item_index: null,
+      source: null,
+      rights: null,
+      nav_date: null,
+      thumbnail: 'https://example.org/collection.jpg',
+      default_thumbnail: null,
+      placeholder_image: null,
+      primary_manifest_id: 5,
+      manifest_ids: [5],
+      project_ids: [99],
+      project_facets: ['99|Example project'],
+      collection_ids: [44],
+      metadata: [{ key: 'label', value: 'Collection one', language: 'en', source: 'iiif', data: null }],
+    };
+
+    const document = buildManifestTypesenseDocument(row, { siteId: 1, siteUrn: 'urn:madoc:site:1' });
+
+    expect(document.id).toEqual('urn:madoc:collection:44:site:1');
+    expect(document.resource_type).toEqual('Collection');
+    expect(document.resource_label).toEqual('Collection one');
+    expect(document.contexts).toEqual(expect.arrayContaining(['urn:madoc:project:99', 'urn:madoc:collection:44']));
   });
 });

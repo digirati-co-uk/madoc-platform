@@ -60,6 +60,11 @@ export function getTypesenseIndexablesCollectionName(siteId: number) {
   return `${getCollectionPrefix()}indexables_site_${siteId}`;
 }
 
+export function getTypesenseProjectSearchCollectionName(siteId: number, projectId: number, indexId: string) {
+  const safeIndexId = indexId.replace(/[^a-zA-Z0-9_-]/g, '_');
+  return `${getCollectionPrefix()}site_${siteId}_project_${projectId}_entity_${safeIndexId}`;
+}
+
 export function resolveTypesenseSearchCollection({
   siteId,
 }: {
@@ -75,7 +80,9 @@ export function clearTypesenseAvailabilityCache() {
   availabilityCache = undefined;
 }
 
-export async function isTypesenseAvailable({ force = false }: { force?: boolean } = {}): Promise<TypesenseAvailability> {
+export async function isTypesenseAvailable({
+  force = false,
+}: { force?: boolean } = {}): Promise<TypesenseAvailability> {
   if (!isTypesenseSearchEnabled()) {
     return {
       available: false,
@@ -189,9 +196,11 @@ export class TypesenseClient {
         { name: 'rights', type: 'string', optional: true, facet: true },
         { name: 'site_id', type: 'int32', facet: true },
         { name: 'project_ids', type: 'string[]', facet: true, optional: true },
+        { name: 'project_facets', type: 'string[]', facet: true, optional: true },
         { name: 'collection_ids', type: 'string[]', facet: true, optional: true },
         { name: 'contexts', type: 'string[]', facet: true },
         { name: 'search_text', type: 'string[]' },
+        { name: 'search_context', type: 'string[]', optional: true },
         { name: 'metadata_keys', type: 'string[]', facet: true, optional: true },
         { name: 'metadata_pairs', type: 'string[]', facet: true, optional: true },
         { name: 'metadata_.*', type: 'string[]', facet: true, optional: true },
@@ -204,29 +213,43 @@ export class TypesenseClient {
     };
   }
 
-  private async ensureSearchCollectionSchemaCompatibility(name: string, existing: any) {
-    const existingFields = Array.isArray(existing?.fields) ? existing.fields : [];
+  private async ensureSearchCollectionSchemaCompatibility(
+    name: string,
+    existing: Pick<TypesenseCollectionSchema, 'fields'>
+  ) {
     const requiredFields: Array<TypesenseCollectionField> = [
       { name: 'manifest_ids', type: 'string[]', facet: true, optional: true },
+      { name: 'project_facets', type: 'string[]', facet: true, optional: true },
       { name: 'collection_ids', type: 'string[]', facet: true, optional: true },
       { name: 'metadata_.*', type: 'string[]', facet: true, optional: true },
       { name: 'capture_model_.*', type: 'string[]', optional: true },
+      { name: 'search_context', type: 'string[]', optional: true },
     ];
-    const missingFields = requiredFields.filter(
-      requiredField => !existingFields.some((field: any) => field?.name === requiredField.name)
-    );
+    const getMissingFields = (collection: Pick<TypesenseCollectionSchema, 'fields'>) =>
+      requiredFields.filter(
+        requiredField => !collection.fields.some(field => field.name === requiredField.name)
+      );
+    const missingFields = getMissingFields(existing);
 
     if (!missingFields.length) {
       return;
     }
 
-    await this.request(`/collections/${encodeURIComponent(name)}`, {
-      method: 'PATCH',
-      contentType: 'application/json',
-      body: JSON.stringify({
-        fields: missingFields,
-      }),
-    });
+    try {
+      await this.request(`/collections/${encodeURIComponent(name)}`, {
+        method: 'PATCH',
+        contentType: 'application/json',
+        body: JSON.stringify({
+          fields: missingFields,
+        }),
+      });
+    } catch (error) {
+      const refreshed = await this.request<TypesenseCollectionSchema>(`/collections/${encodeURIComponent(name)}`);
+      if (refreshed && !getMissingFields(refreshed).length) {
+        return;
+      }
+      throw error;
+    }
   }
 
   private getIndexablesCollectionSchema(name: string): TypesenseCollectionSchema {
@@ -252,12 +275,40 @@ export class TypesenseClient {
     };
   }
 
+  private getProjectSearchCollectionSchema(name: string): TypesenseCollectionSchema {
+    return {
+      name,
+      default_sorting_field: 'sort_index',
+      fields: [
+        { name: 'id', type: 'string' },
+        { name: 'resource_id', type: 'string' },
+        { name: 'resource_type', type: 'string' },
+        { name: 'entity_type', type: 'string' },
+        { name: 'resource_label', type: 'string' },
+        { name: 'search_text', type: 'string[]' },
+        { name: 'project_id', type: 'string', facet: true },
+        { name: 'index_id', type: 'string', facet: true },
+        { name: 'entity_ids', type: 'string[]' },
+        { name: 'manifest_id', type: 'string' },
+        { name: 'manifest_ids', type: 'string[]' },
+        { name: 'canvas_id', type: 'string', optional: true },
+        { name: 'canvas_ids', type: 'string[]' },
+        { name: 'thumbnail', type: 'string', optional: true },
+        { name: 'region', type: 'string', optional: true },
+        { name: 'facet_.*', type: 'string[]', facet: true, optional: true },
+        { name: 'sort_index', type: 'int32' },
+      ],
+    };
+  }
+
   async ensureSearchCollection(name: string) {
     if (!this.apiKey) {
       throw new Error('Missing TYPESENSE_API_KEY');
     }
 
-    const existing = await this.request(`/collections/${encodeURIComponent(name)}`, { allow404: true });
+    const existing = await this.request<TypesenseCollectionSchema>(`/collections/${encodeURIComponent(name)}`, {
+      allow404: true,
+    });
 
     if (existing) {
       await this.ensureSearchCollectionSchemaCompatibility(name, existing);
@@ -265,11 +316,21 @@ export class TypesenseClient {
     }
 
     const schema = this.getSearchCollectionSchema(name);
-    await this.request('/collections', {
-      method: 'POST',
-      contentType: 'application/json',
-      body: JSON.stringify(schema),
-    });
+    try {
+      await this.request('/collections', {
+        method: 'POST',
+        contentType: 'application/json',
+        body: JSON.stringify(schema),
+      });
+    } catch (error) {
+      const created = await this.request<TypesenseCollectionSchema>(`/collections/${encodeURIComponent(name)}`, {
+        allow404: true,
+      });
+      if (!created) {
+        throw error;
+      }
+      await this.ensureSearchCollectionSchemaCompatibility(name, created);
+    }
   }
 
   async ensureIndexablesCollection(name: string) {
@@ -289,6 +350,24 @@ export class TypesenseClient {
       contentType: 'application/json',
       body: JSON.stringify(schema),
     });
+  }
+
+  async ensureProjectSearchCollection(name: string) {
+    if (!this.apiKey) {
+      throw new Error('Missing TYPESENSE_API_KEY');
+    }
+    const existing = await this.request(`/collections/${encodeURIComponent(name)}`, { allow404: true });
+    if (!existing) {
+      await this.request('/collections', {
+        method: 'POST',
+        contentType: 'application/json',
+        body: JSON.stringify(this.getProjectSearchCollectionSchema(name)),
+      });
+    }
+  }
+
+  async deleteCollection(name: string, { allow404 = false }: { allow404?: boolean } = {}) {
+    return this.request(`/collections/${encodeURIComponent(name)}`, { method: 'DELETE', allow404 });
   }
 
   private parseImportResponse(result: string) {
@@ -333,7 +412,10 @@ export class TypesenseClient {
     return this.parseImportResponse(result || '');
   }
 
-  async upsertDocumentsStream(collectionName: string, documents: Iterable<Record<string, any>> | AsyncIterable<Record<string, any>>) {
+  async upsertDocumentsStream(
+    collectionName: string,
+    documents: Iterable<Record<string, any>> | AsyncIterable<Record<string, any>>
+  ) {
     const toNdjson = async function* () {
       for await (const document of documents as AsyncIterable<Record<string, any>>) {
         yield `${JSON.stringify(document)}\n`;
@@ -385,7 +467,9 @@ export class TypesenseClient {
       searchParams.set(key, `${value}`);
     }
 
-    return this.request(`/collections/${encodeURIComponent(collectionName)}/documents/search?${searchParams.toString()}`);
+    return this.request(
+      `/collections/${encodeURIComponent(collectionName)}/documents/search?${searchParams.toString()}`
+    );
   }
 
   async multiSearch(payload: Record<string, any>) {

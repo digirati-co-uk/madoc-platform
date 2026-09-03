@@ -1,0 +1,4 @@
+interface:
+  display_name: "Madoc Crowdsourcing"
+  short_description: "Contribution and review task lifecycle"
+  default_prompt: "Use $madoc-crowdsourcing to trace or change Madoc contribution and review behavior."

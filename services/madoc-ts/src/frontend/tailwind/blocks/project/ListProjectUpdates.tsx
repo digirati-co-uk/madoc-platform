@@ -28,6 +28,7 @@ export function ListProjectUpdates({ withBackground }: { withBackground?: boolea
         {data.updates?.map(update => (
           <ViewProjectUpdate
             key={update.id}
+            title={update.title}
             update={update.update}
             id={update.id}
             created={update.created}

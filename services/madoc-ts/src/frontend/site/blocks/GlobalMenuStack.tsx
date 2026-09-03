@@ -1,8 +1,9 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import { SiteDetails, SiteMenuContainer, SiteTitle } from '../../shared/layout/SiteHeader';
-import { useSite } from '../../shared/hooks/use-site';
+import { useSite, useSiteTheme } from '../../shared/hooks/use-site';
 import { HrefLink } from '../../shared/utility/href-link';
 import { GlobalSiteNavigation } from '../features/global/GlobalSiteNavigation';
 import { useSiteConfiguration } from '../features/SiteConfigurationContext';
@@ -50,8 +51,12 @@ export const GlobalMenuStack: React.FC<{
   }[];
 }> = ({ logo, hideSiteTitle, maxWidth, logoOptions = {}, menuOptions = {}, showHomepageMenu, extraLinks }) => {
   const site = useSite();
+  const siteTheme = useSiteTheme();
+  const { i18n } = useTranslation();
   const { project } = useSiteConfiguration();
-  const showSiteTitle = typeof hideSiteTitle === 'undefined' ? !project.headerOptions?.hideSiteTitle : !hideSiteTitle;
+  const themeHeader = siteTheme?.languages?.[i18n.language]?.html?.header || siteTheme?.html.header;
+  const showSiteTitle =
+    !themeHeader && (typeof hideSiteTitle === 'undefined' ? !project.headerOptions?.hideSiteTitle : !hideSiteTitle);
   const { padding = false, margin = false } = logoOptions;
 
   return (

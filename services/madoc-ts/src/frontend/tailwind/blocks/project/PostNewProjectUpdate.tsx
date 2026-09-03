@@ -1,40 +1,35 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
-import RichMarkdownEditor from 'rich-markdown-editor';
 import invariant from 'tiny-invariant';
 import { blockEditorFor } from '../../../../extensions/page-blocks/block-editor-for';
-import { ErrorMessage } from '../../../shared/callouts/ErrorMessage';
+import { CreateProjectUpdate } from '../../../../types/projects';
 import { SuccessMessage } from '../../../shared/callouts/SuccessMessage';
 import { useApi } from '../../../shared/hooks/use-api';
 import { useUser } from '../../../shared/hooks/use-site';
-import { LockIcon } from '../../../shared/icons/LockIcon';
-import { Button, ButtonRow } from '../../../shared/navigation/Button';
+import { useProjectUpdatesCache } from '../../../site/hooks/use-project-updates-cache';
 import { useRouteContext } from '../../../site/hooks/use-route-context';
+import { ProjectUpdateForm } from '../../components/ProjectUpdateForm';
 
 export function PostNewProjectUpdate() {
   const user = useUser();
   const { projectId } = useRouteContext();
   const api = useApi();
+  const updatesCache = useProjectUpdatesCache();
   const { t } = useTranslation();
-  const [markdown, setMarkdown] = useState('');
 
-  const [postUpdate, postUpdateStatus] = useMutation(async () => {
+  const [postUpdate, postUpdateStatus] = useMutation(async (update: CreateProjectUpdate) => {
     invariant(projectId, 'Project id must be set');
-    invariant(markdown.trim(), 'Update must not be empty');
-    return api.createProjectUpdate(projectId, markdown);
+    const created = await api.createProjectUpdate(projectId, update);
+    updatesCache.created({
+      ...created,
+      user: created.user ? { ...created.user, name: created.user.name || user?.name } : undefined,
+    });
+    return created;
   });
 
-  if (!user || user.site_role !== 'admin') {
+  if (!user?.scope.includes('site.admin')) {
     return null;
-  }
-
-  if (postUpdateStatus.isSuccess) {
-    return (
-      <div className="max-w-4xl mx-auto my-8">
-        <SuccessMessage $banner>{t('Project update posted')}</SuccessMessage>
-      </div>
-    );
   }
 
   return (
@@ -44,27 +39,19 @@ export function PostNewProjectUpdate() {
           {t('Post new project update')}
         </h3>
 
-        {postUpdateStatus.isError ? (
-          <ErrorMessage $banner $margin>
-            {(postUpdateStatus.error as any)?.message}
-          </ErrorMessage>
+        {postUpdateStatus.isSuccess ? (
+          <SuccessMessage $banner $margin>
+            {t('Project update posted')}
+          </SuccessMessage>
         ) : null}
 
-        <div className="px-8 bg-white border border-gray-300 rounded py-4">
-          <RichMarkdownEditor
-            disableExtensions={['image']}
-            defaultValue={''}
-            onChange={value => {
-              setMarkdown(value());
-            }}
-          />
-        </div>
-
-        <ButtonRow $noMargin className="mt-8">
-          <Button $primary onClick={() => postUpdate()} disabled={markdown.length <= 2 || postUpdateStatus.isLoading}>
-            Post update
-          </Button>
-        </ButtonRow>
+        <ProjectUpdateForm
+          key={postUpdateStatus.data?.id || 'new'}
+          isLoading={postUpdateStatus.isLoading}
+          error={postUpdateStatus.isError ? postUpdateStatus.error : undefined}
+          submitLabel={t('Post new project update')}
+          onSubmit={postUpdate}
+        />
       </div>
     </div>
   );

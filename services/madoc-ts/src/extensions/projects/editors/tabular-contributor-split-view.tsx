@@ -10,6 +10,7 @@ type TabularContributorSplitViewProps = {
   setIsCanvasTableDividerHover: (isHover: boolean) => void;
   topPanel: React.ReactNode;
   bottomPanel: React.ReactNode;
+  resizable?: boolean;
 };
 
 export function TabularContributorSplitView({
@@ -21,6 +22,7 @@ export function TabularContributorSplitView({
   setIsCanvasTableDividerHover,
   topPanel,
   bottomPanel,
+  resizable = true,
 }: TabularContributorSplitViewProps) {
   return (
     <TabularSplitView
@@ -35,6 +37,7 @@ export function TabularContributorSplitView({
       isDividerActive={isCanvasTableDividerActive}
       topPanel={topPanel}
       bottomPanel={bottomPanel}
+      resizable={resizable}
     />
   );
 }

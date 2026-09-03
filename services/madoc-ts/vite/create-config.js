@@ -1,6 +1,7 @@
 import react from '@vitejs/plugin-react';
 import { readFileSync } from 'fs';
 import path from 'path';
+import { styledComponents } from './styled-components.js';
 
 const pkg = JSON.parse(readFileSync('./package.json').toString());
 
@@ -49,10 +50,8 @@ const TO_BUNDLE = [
   'react-dropzone',
   'styled-components',
   'immer',
-  'koa-i18next-detector',
   'node-fetch',
   'react-accessible-dropdown-menu-hook',
-  'react/jsx-runtime',
   'rich-markdown-editor',
   'react-iiif-vault',
   'react-dnd',
@@ -66,7 +65,13 @@ export function createConfig(name, entry) {
     clearScreen: false,
     resolve: {
       dedupe: DEDUPE,
-      alias: [{ find: /^@\//, replacement: `${path.resolve(process.cwd(), 'src')}/` }],
+      alias: [
+        { find: /^@\//, replacement: `${path.resolve(process.cwd(), 'src')}/` },
+        {
+          find: /^react-accessible-dropdown-menu-hook$/,
+          replacement: path.resolve(process.cwd(), 'vite/react-accessible-dropdown-menu-hook.js'),
+        },
+      ],
     },
     build: {
       dedupe: DEDUPE,
@@ -77,23 +82,18 @@ export function createConfig(name, entry) {
         entry,
       },
       manifest: true,
-      target: ['node14'],
+      target: ['node24'],
       minify: false,
       sourcemap: true,
       rollupOptions: {
-        onwarn(warning, warn) {
-          if (
-            warning.code === 'MODULE_LEVEL_DIRECTIVE' &&
-            typeof warning.message === 'string' &&
-            warning.message.includes('"use client"')
-          ) {
-            return;
-          }
-          warn(warning);
+        output: {
+          banner:
+            "import { createRequire as __createRequire } from 'node:module';\nconst require = __createRequire(import.meta.url);",
         },
         external: [
           // Node + missing deps.
           'pm2',
+          'child_process',
           'fs',
           'path',
           'vm2',
@@ -102,6 +102,7 @@ export function createConfig(name, entry) {
           'https',
           'url',
           'stream',
+          'readline',
           'whatwg-url',
           'zlib',
           'util',
@@ -111,6 +112,8 @@ export function createConfig(name, entry) {
           'node:async_hooks',
           'debug',
           'csv-stringify',
+          'react/jsx-runtime',
+          'react/jsx-dev-runtime',
           ...Object.keys(pkg.dependencies),
           ...Object.keys(pkg.devDependencies),
         ].filter(t => TO_BUNDLE.indexOf(t) === -1),
@@ -126,14 +129,11 @@ export function createConfig(name, entry) {
               },
             },
     },
-    esbuild: {
-      jsx: 'automatic',
-      jsxSideEffects: false,
-    },
     plugins: [
       react({
         jsxRuntime: 'automatic',
       }),
+      ...(name === 'server' ? [styledComponents()] : []),
     ],
   });
 }

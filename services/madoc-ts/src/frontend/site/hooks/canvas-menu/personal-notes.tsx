@@ -13,6 +13,7 @@ import { useRouteContext } from '../use-route-context';
 import { CanvasMenuHook } from './types';
 import { StyledFormTextarea } from '../../../shared/capture-models/editor/atoms/StyledForm';
 import { parsePersonalNotePayload, serializePersonalNotePayload } from '../../../shared/utility/personal-note-payload';
+import { EditIcon } from '@/frontend/shared/icons/EditIcon';
 
 const NoteContainer = styledComponents.div`
   padding: 1em;
@@ -87,7 +88,7 @@ export function usePersonalNotesMenu(): CanvasMenuHook {
   return {
     id: 'personal-notes',
     label: t('Personal notes'),
-    icon: <LockIcon />,
+    icon: <EditIcon />,
     isLoaded: !!data,
     notifications: parsedNote.note ? 1 : undefined,
     isHidden: !(user && enabled),

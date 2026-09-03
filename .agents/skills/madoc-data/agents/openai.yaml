@@ -1,0 +1,4 @@
+interface:
+  display_name: "Madoc Data"
+  short_description: "Migrations, SQL, repositories, and schemas"
+  default_prompt: "Use $madoc-data to change Madoc persistence or a shared data contract."

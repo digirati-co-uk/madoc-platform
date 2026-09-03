@@ -12,6 +12,12 @@ import { ConflictError } from '../../utility/errors/conflict';
 import { iiifGetLabel } from '../../utility/iiif-get-label';
 import { assertValidTabularProjectTemplateConfig } from './validate-tabular-project-template-config';
 import { ProjectConfiguration } from '../../types/schemas/project-configuration';
+import { v4 } from 'uuid';
+import {
+  createProjectSearchIndexConfiguration,
+  getProjectSearchIndexConfiguration,
+  saveProjectSearchIndexConfiguration,
+} from '../../search/project-search-index-configuration';
 
 const TABULAR_PROJECT_TEMPLATE = 'tabular-project';
 
@@ -53,10 +59,24 @@ export const createNewProject: RouteMiddleware<unknown, CreateProject> = async c
       : api.projectTemplates.getDefinition(template, siteId)
     : null;
   const setupFunctions = chosenTemplate?.setup;
-  const isTabularTemplate = template === TABULAR_PROJECT_TEMPLATE;
+  const importedTemplateConfig = template === 'remote' ? chosenTemplate?.template_config : null;
+  const isLegacyTabularExport =
+    template === 'remote' &&
+    typeof chosenTemplate?.type === 'string' &&
+    chosenTemplate.type.startsWith('template-') &&
+    importedTemplateConfig &&
+    typeof importedTemplateConfig === 'object' &&
+    'tabular' in importedTemplateConfig;
+  const resolvedTemplate =
+    template === 'remote'
+      ? isLegacyTabularExport
+        ? TABULAR_PROJECT_TEMPLATE
+        : chosenTemplate?.type || template
+      : template;
+  const isTabularTemplate = resolvedTemplate === TABULAR_PROJECT_TEMPLATE;
   const resolvedTemplateConfig = isTabularTemplate
-    ? template_config || template_options || null
-    : template_config || null;
+    ? template_config ?? importedTemplateConfig ?? template_options ?? null
+    : template_config ?? importedTemplateConfig ?? null;
   const tabularConfigCandidate =
     resolvedTemplateConfig && typeof resolvedTemplateConfig === 'object'
       ? (resolvedTemplateConfig as { tabular?: { structure?: unknown } })
@@ -148,7 +168,7 @@ export const createNewProject: RouteMiddleware<unknown, CreateProject> = async c
   const task = await userApi.newTask<CrowdsourcingProjectTask>({
     name: firstLang(label),
     subject: `urn:madoc:collection:${collection.id}`,
-    parameters: [captureModel.id, chosenTemplate?.type],
+    parameters: [captureModel.id, resolvedTemplate],
     type: 'crowdsourcing-project',
     status_text: 'paused',
     status: 0,
@@ -167,12 +187,34 @@ export const createNewProject: RouteMiddleware<unknown, CreateProject> = async c
           ${slug}, 
           ${siteId}, 
           ${captureModel.id}, 
-          ${template || null}, 
+          ${resolvedTemplate || null},
           ${resolvedTemplateConfig ? sql.json(resolvedTemplateConfig) : null},
           ${defaultStatus}
         )
         returning *
     `);
+
+    if (duplicateProjectId) {
+      const sourceSearchIndexes = await getProjectSearchIndexConfiguration(userApi, siteId, duplicateProjectId);
+      await saveProjectSearchIndexConfiguration(userApi, siteId, project.id, {
+        available: sourceSearchIndexes.config.available,
+        indexes: sourceSearchIndexes.config.indexes.map(index => ({
+          ...index,
+          id: v4(),
+          lastIndexedAt: undefined,
+          lastIndexedHash: undefined,
+          documentCount: undefined,
+          warnings: undefined,
+        })),
+      });
+    } else {
+      await createProjectSearchIndexConfiguration(
+        userApi,
+        siteId,
+        project.id,
+        chosenTemplate?.configuration?.searchIndexes?.available
+      );
+    }
 
     const configurationOptions = chosenTemplate?.configuration;
     if (configurationOptions && configurationOptions.defaults) {
@@ -230,6 +272,8 @@ export const createNewProject: RouteMiddleware<unknown, CreateProject> = async c
     } catch {
       // ignore
     }
+
+    await userApi.indexProject(project.id);
 
     // Returning project.
     context.response.body = await context.projects.getProjectByIdOrSlug(project.id, siteId);

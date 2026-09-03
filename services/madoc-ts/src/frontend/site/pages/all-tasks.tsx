@@ -106,15 +106,16 @@ export const AllTasks: UniversalComponent<AllTasksType> = createUniversalCompone
       return <Navigate to="/" />;
     }
 
-    const viewProjectDash = projectId ? createLink({ projectId, subRoute: 'reviews' }) : undefined;
+    const reviewPanel =
+      query.type === 'crowdsourcing-review' ? createLink({ projectId, subRoute: 'reviews' }) : undefined;
 
     return (
       <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
         <DisplayBreadcrumbs currentPage={t('Tasks')} />
         <ButtonRow>
-          {viewProjectDash ? (
-            <Button as={Link} to={viewProjectDash}>
-              {t('View project dashboard')}
+          {reviewPanel ? (
+            <Button as={Link} to={reviewPanel}>
+              {t('Go to reviews')}
             </Button>
           ) : null}
 

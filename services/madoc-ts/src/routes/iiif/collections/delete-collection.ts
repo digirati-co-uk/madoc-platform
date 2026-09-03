@@ -99,4 +99,6 @@ export async function deleteCollection(
 
     await connection().query(sql`select refresh_item_counts()`);
   }
+
+  await siteApi.indexCollection(collectionId);
 }

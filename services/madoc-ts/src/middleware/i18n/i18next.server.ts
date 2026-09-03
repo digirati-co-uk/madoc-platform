@@ -1,7 +1,7 @@
 import i18next from 'i18next';
 import * as path from 'path';
 // @ts-ignore
-import * as KoaI18nextDetector from 'koa-i18next-detector';
+import KoaI18nextDetector from 'koa-i18next-detector';
 import { TRANSLATIONS_PATH } from '../../paths';
 import { LanguageCache } from '../../utility/language-cache';
 

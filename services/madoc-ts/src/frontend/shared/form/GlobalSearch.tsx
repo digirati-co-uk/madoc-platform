@@ -1,25 +1,55 @@
 import React, { useState } from 'react';
+import { useQuery } from 'react-query';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { matchPath, useLocation, useNavigate } from 'react-router-dom';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
+import {
+  getTypesenseResourceTypes,
+  getTypesenseSearchFilter,
+  resolveTypesenseTabOptions,
+} from '../../../search/typesense/project-filter';
+import type { ProjectFull } from '../../../types/project-full';
 import { useSiteConfiguration } from '../../site/features/SiteConfigurationContext';
+import { useApi } from '../hooks/use-api';
 import { SearchIcon } from '../icons/SearchIcon';
 import { resolveTypesenseHitPrimaryLink, useTypesenseSiteAutocomplete } from '../hooks/use-typesense-site-autocomplete';
 
 export const GlobalSearch: React.FC = () => {
+  const api = useApi();
+  const { pathname } = useLocation();
   const navigate = useNavigate();
   const [query, setQuery] = useState('');
   const [isFocused, setIsFocused] = useState(false);
   const { t } = useTranslation();
   const { project } = useSiteConfiguration();
+  const projectSlug = matchPath('/projects/:slug/*', pathname)?.params.slug;
+  const { data: currentProject } = useQuery<ProjectFull>(
+    ['getSiteProject', [projectSlug]],
+    () => api.getSiteProject(projectSlug as string),
+    { enabled: !!projectSlug }
+  );
   const showSearch = !project.headerOptions?.hideSearchBar;
+  const searchPath = projectSlug ? `/projects/${encodeURIComponent(projectSlug)}/search` : '/search';
+  const typesenseTabs = resolveTypesenseTabOptions(
+    project.typesenseOptions,
+    project.searchOptions?.onlyShowManifests === true,
+    {
+      projectSearch: !!projectSlug,
+      allowCollectionNavigation: project.allowCollectionNavigation,
+      allowManifestNavigation: project.allowManifestNavigation,
+      allowCanvasNavigation: project.allowCanvasNavigation,
+    }
+  );
+  const autocompleteFilter = getTypesenseSearchFilter(currentProject?.id, getTypesenseResourceTypes(typesenseTabs));
   const {
     available: typesenseAvailable,
     suggestions,
     isLoadingSuggestions,
   } = useTypesenseSiteAutocomplete(query, {
-    enabled: showSearch,
+    enabled: showSearch && (!projectSlug || !!currentProject?.id),
     limit: 8,
+    projectId: currentProject?.id,
+    filter: autocompleteFilter,
   });
 
   if (!showSearch) {
@@ -36,7 +66,7 @@ export const GlobalSearch: React.FC = () => {
           className="flex h-10"
           onSubmit={e => {
             e.preventDefault();
-            navigate(`/search?fulltext=${encodeURIComponent(trimmedQuery)}`);
+            navigate(`${searchPath}?fulltext=${encodeURIComponent(trimmedQuery)}`);
             setQuery('');
             setIsFocused(false);
           }}
@@ -69,9 +99,9 @@ export const GlobalSearch: React.FC = () => {
             <div className="px-3 py-2 text-sm text-slate-500">No suggestions</div>
           ) : null}
           {suggestions.map(suggestion => {
-            const resourceLink = resolveTypesenseHitPrimaryLink(suggestion);
+            const resourceLink = resolveTypesenseHitPrimaryLink(suggestion, projectSlug);
             const fallbackQuery = suggestion.resource_label || suggestion.resource_id || trimmedQuery;
-            const target = resourceLink || `/search?fulltext=${encodeURIComponent(fallbackQuery || '')}`;
+            const target = resourceLink || `${searchPath}?fulltext=${encodeURIComponent(fallbackQuery || '')}`;
             return (
               <button
                 key={suggestion.resource_id || `${suggestion.resource_type}-${fallbackQuery}`}

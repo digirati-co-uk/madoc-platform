@@ -166,7 +166,11 @@ function FlaggedCellCard({
 
 export function TabularProjectReviewRenderer(props: CustomReviewRendererProps) {
   const review = useReviewRendererContext();
-  const { enableZoomTracking, disableZoomTrackingOverlay = false } = useModelPageConfiguration();
+  const {
+    enableZoomTracking,
+    disableZoomTrackingOverlay = false,
+    enableEditorResizing = true,
+  } = useModelPageConfiguration();
   const table = useCaptureModelEditorApi({ tableProperty: 'rows' });
   const createNewFieldInstance = Revisions.useStoreActions(actions => actions.createNewFieldInstance);
   const removeInstance = Revisions.useStoreActions(actions => actions.removeInstance);
@@ -436,6 +440,7 @@ export function TabularProjectReviewRenderer(props: CustomReviewRendererProps) {
             onResizeStart={startCanvasTableResize}
             onDividerHoverChange={setIsCanvasTableDividerHover}
             isDividerActive={isCanvasTableDividerActive}
+            resizable={enableEditorResizing}
             topPanel={
               <div className="h-full min-h-0 min-w-0 overflow-hidden">
                 {canvasId ? (

@@ -21,6 +21,7 @@
     "skipAutomaticOCRImport": false,
     "allowPersonalNotes": false,
     "defaultEditorOrientation": "horizontal",
+    "defaultPolygonTool": "pen",
     "skipManifestListingPage": false,
     "hideStatistics": false,
     "hideProjectCollectionNavigation": false,
@@ -52,13 +53,15 @@
       "preventContributionAfterManifestUnassign": false,
       "hideViewerControls": false,
       "enableTooltipDescriptions": false,
-      "enableSplitView": false
+      "enableSplitView": false,
+      "enableEditorResizing": true
     },
     "projectPageOptions": {
       "hideStartContributing": false,
       "hideSearchButton": false,
       "hideRandomManifest": false,
       "hideRandomCanvas": false,
+      "hideOpenInTheseus": false,
       "generatePDF": false,
       "reviewerDashboard": false
     },
@@ -84,7 +87,8 @@
     "searchOptions": {
       "nonLatinFulltext": false,
       "searchMultipleFields": false,
-      "onlyShowManifests": false
+      "onlyShowManifests": false,
+      "infiniteScroll": true
     },
     "activityStreams": {
       "manifest": true,

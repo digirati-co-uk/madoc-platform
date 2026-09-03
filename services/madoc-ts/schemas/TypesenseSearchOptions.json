@@ -1,0 +1,21 @@
+{
+  "type": "object",
+  "properties": {
+    "allResources": {
+      "type": "boolean"
+    },
+    "projects": {
+      "type": "boolean"
+    },
+    "collections": {
+      "type": "boolean"
+    },
+    "manifests": {
+      "type": "boolean"
+    },
+    "canvases": {
+      "type": "boolean"
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

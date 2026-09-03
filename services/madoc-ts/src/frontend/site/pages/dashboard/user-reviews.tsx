@@ -1,10 +1,5 @@
-import React from 'react';
-import { ReviewerTasksTable } from '../../features/userDash/ReviewerTasksTable';
+import { ReviewListingPage } from '../tasks/review-listing/review-listing-page';
 
-export const UserReviews: React.FC = () => {
-  return (
-    <>
-      <ReviewerTasksTable />
-    </>
-  );
-};
+export function UserReviews() {
+  return <ReviewListingPage />;
+}

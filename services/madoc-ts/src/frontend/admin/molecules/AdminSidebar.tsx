@@ -242,6 +242,9 @@ export const AdminSidebar: React.FC = () => {
               <AdminMenuSubItem as={HrefLink} href="/global/status">
                 {t('System status')}
               </AdminMenuSubItem>
+              <AdminMenuSubItem as={HrefLink} href="/global/logs">
+                {t('Process logs')}
+              </AdminMenuSubItem>
               <AdminMenuSubItem as={HrefLink} href="/global/queue">
                 {t('Queue inspector')}
               </AdminMenuSubItem>

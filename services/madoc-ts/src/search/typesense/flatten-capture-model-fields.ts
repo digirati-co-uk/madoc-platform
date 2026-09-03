@@ -1,9 +1,12 @@
 import { captureModelToIndexables } from '../../utility/capture-model-to-indexables';
 import { SearchExportCaptureModelRow } from '../../database/queries/search-index-export';
+import { traverseDocument } from '../../frontend/shared/capture-models/helpers/traverse-document';
+import type { CaptureModel } from '../../frontend/shared/capture-models/types/capture-model';
 
 export type CaptureModelSearchAggregate = {
   fields: Record<string, string[]>;
   searchText: string[];
+  labels: string[];
 };
 
 function uniq(values: string[]) {
@@ -67,25 +70,50 @@ function collectSearchableValues(value: unknown, values: string[]) {
   }
 }
 
+function isCaptureModelDocument(value: unknown): value is CaptureModel['document'] {
+  return !!value && typeof value === 'object' && (value as { type?: unknown }).type === 'entity';
+}
+
 function extractCaptureModelValues(targetId: string, documentData: unknown) {
   const values: string[] = [];
 
-  if (documentData && typeof documentData === 'object') {
+  if (isCaptureModelDocument(documentData)) {
     try {
-      const indexables = captureModelToIndexables(targetId, documentData as any);
+      const indexables = captureModelToIndexables(targetId, documentData);
       for (const indexable of indexables) {
         collectSearchableValues(indexable.indexable, values);
       }
     } catch {
-      // no-op, fallback handled below.
+      // Ignore malformed capture model documents.
     }
-
-    if (!values.length) {
-      collectSearchableValues(documentData, values);
-    }
+  } else {
+    collectSearchableValues(documentData, values);
   }
 
   return uniq(values);
+}
+
+function extractCaptureModelLabels(documentData: unknown) {
+  if (!isCaptureModelDocument(documentData)) {
+    return [];
+  }
+
+  const labels: string[] = [];
+  try {
+    traverseDocument(documentData, {
+      visitField(field) {
+        collectSearchableValues(field.label, labels);
+        collectSearchableValues(field.pluralLabel, labels);
+      },
+      visitEntity(entity) {
+        collectSearchableValues(entity.label, labels);
+        collectSearchableValues(entity.pluralLabel, labels);
+      },
+    });
+  } catch {
+    // Ignore malformed capture model documents.
+  }
+  return uniq(labels);
 }
 
 export function flattenCaptureModelFieldsByResource(rows: SearchExportCaptureModelRow[]) {
@@ -99,8 +127,9 @@ export function flattenCaptureModelFieldsByResource(rows: SearchExportCaptureMod
 
     const fieldName = toCaptureModelFieldName(row.model_id);
     const values = extractCaptureModelValues(targetId, row.document_data);
+    const labels = extractCaptureModelLabels(row.document_data);
 
-    if (!values.length) {
+    if (!values.length && !labels.length) {
       continue;
     }
 
@@ -108,14 +137,16 @@ export function flattenCaptureModelFieldsByResource(rows: SearchExportCaptureMod
       byResource[targetId] = {
         fields: {},
         searchText: [],
+        labels: [],
       };
     }
 
-    if (fieldName) {
+    if (fieldName && values.length) {
       byResource[targetId].fields[fieldName] = uniq([...(byResource[targetId].fields[fieldName] || []), ...values]);
     }
 
     byResource[targetId].searchText = uniq([...(byResource[targetId].searchText || []), ...values]);
+    byResource[targetId].labels = uniq([...(byResource[targetId].labels || []), ...labels]);
   }
 
   return byResource;

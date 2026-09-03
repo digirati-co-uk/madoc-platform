@@ -452,8 +452,9 @@ export const siteManifestBuild: RouteMiddleware<{
 
   if (manifestRow.type === 'collection') {
     const collectionRow = manifestRow;
-    const newCollectionId =
-      collectionRow.source && useSourceIds
+    const newCollectionId = projectSlug
+      ? `${baseUrl}/madoc/api/projects/${projectSlug}/export/manifest/${manifestId}/${version}`
+      : collectionRow.source && useSourceIds
         ? collectionRow.source
         : `${baseUrl}/madoc/api/collections/${manifestId}/export/${version}`;
     madocIdsByResourceId.set(newCollectionId, collectionRow.id);
@@ -470,8 +471,9 @@ export const siteManifestBuild: RouteMiddleware<{
 
       for (const itemRow of collectionItems) {
         if (itemRow.type === 'manifest' || itemRow.type === 'collection') {
-          const newManifestId =
-            itemRow.source && useSourceIds
+          const newManifestId = projectSlug
+            ? `${baseUrl}/madoc/api/projects/${projectSlug}/export/manifest/${itemRow.id}/${version}`
+            : itemRow.source && useSourceIds
               ? itemRow.source
               : `${baseUrl}/madoc/api/${itemRow.type}s/${itemRow.id}/export/${version}`;
           madocIdsByResourceId.set(newManifestId, itemRow.id);

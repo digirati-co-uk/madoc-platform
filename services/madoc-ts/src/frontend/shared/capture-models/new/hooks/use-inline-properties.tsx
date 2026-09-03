@@ -296,7 +296,7 @@ const CompactInlineFieldList: React.FC<{
     <>
       {visibleFields.length
         ? visibleFields.map(field => (
-            <ProfileProvider key={field.id} profile={field.profile || profile}>
+            <ProfileProvider key={field.revises || field.id} profile={field.profile || profile}>
               <CompactFieldItem>
                 {canRemove ? (
                   <CompactRemoveButton

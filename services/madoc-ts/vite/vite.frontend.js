@@ -1,7 +1,8 @@
 import react from '@vitejs/plugin-react';
-import { defineConfig, splitVendorChunkPlugin } from 'vite';
+import { defineConfig } from 'vite';
 import fs from 'fs';
 import path from 'path';
+import { styledComponents } from './styled-components.js';
 
 const PROSEMIRROR_PACKAGES = [
   ['prosemirror-model', 'dist/index.js'],
@@ -48,6 +49,10 @@ export default defineConfig({
     dedupe: [...PROSEMIRROR_PACKAGES.map(([pkg]) => pkg)],
     alias: [
       { find: /^@\//, replacement: `${path.resolve(process.cwd(), 'src')}/` },
+      {
+        find: /^react-accessible-dropdown-menu-hook$/,
+        replacement: path.resolve(process.cwd(), 'vite/react-accessible-dropdown-menu-hook.js'),
+      },
       ...prosemirrorAliases,
       // React 19-compatible defaults.
     ],
@@ -55,16 +60,6 @@ export default defineConfig({
   base: '/s/default/madoc/',
   build: {
     rollupOptions: {
-      onwarn(warning, warn) {
-        if (
-          warning.code === 'MODULE_LEVEL_DIRECTIVE' &&
-          typeof warning.message === 'string' &&
-          warning.message.includes('"use client"')
-        ) {
-          return;
-        }
-        warn(warning);
-      },
       input: {
         site: 'src/site.html',
         admin: 'src/admin.html',
@@ -75,29 +70,13 @@ export default defineConfig({
     outDir: `dist/frontend-site`,
     manifest: true,
     target: ['es2021', 'chrome97', 'safari13'],
-    minify: 'esbuild',
     sourcemap: true,
     emptyOutDir: true,
   },
-  esbuild: {
-    jsx: 'automatic',
-    jsxSideEffects: false,
-  },
   plugins: [
-    splitVendorChunkPlugin(),
     react({
       jsxRuntime: 'automatic',
-      babel: {
-        plugins: [
-          [
-            'babel-plugin-styled-components',
-            {
-              displayName: true,
-              fileName: false,
-            },
-          ],
-        ],
-      },
     }),
+    styledComponents(),
   ],
 });

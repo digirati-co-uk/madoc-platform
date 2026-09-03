@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
 import { Site, SystemConfig } from '../../../../extensions/site-manager/types';
@@ -10,12 +10,14 @@ import { useData } from '../../../shared/hooks/use-data';
 import { serverRendererFor } from '../../../shared/plugins/external/server-renderer-for';
 import { AdminHeader } from '../../molecules/AdminHeader';
 import { WidePage } from '../../../shared/layout/WidePage';
+import { ConfigurationImportExport } from '../../components/ConfigurationImportExport';
 
 export const GlobalSystemConfig: React.FC = () => {
   const { data, refetch, updatedAt } = useData(GlobalSystemConfig);
   const api = useApi();
   const { t } = useTranslation();
   const { systemConfig, allSites } = (data || {}) as { allSites: Site[]; systemConfig: SystemConfig };
+  const [importedConfig, setImportedConfig] = useState<SystemConfig>();
 
   const globalSystemConfigModelWithSites: any = useMemo(() => {
     if (!allSites) {
@@ -36,13 +38,14 @@ export const GlobalSystemConfig: React.FC = () => {
 
   const [updateSystemConfig, updateSystemConfigStatus] = useMutation(async (newConfig: any) => {
     await api.siteManager.updateSystemConfig(newConfig);
-
+    setImportedConfig(undefined);
     await refetch();
   });
 
   if (!systemConfig || !allSites || !globalSystemConfigModelWithSites) {
     return <div>Loading...</div>;
   }
+  const configuration = importedConfig || systemConfig;
 
   return (
     <>
@@ -50,12 +53,21 @@ export const GlobalSystemConfig: React.FC = () => {
       <WidePage>
         <div style={{ maxWidth: 600 }}>
           {updateSystemConfigStatus.isSuccess ? <SuccessMessage>Config updated</SuccessMessage> : null}
+          <ConfigurationImportExport
+            key={updatedAt}
+            configuration={configuration}
+            scope="global"
+            onImport={newConfig => {
+              updateSystemConfigStatus.reset();
+              setImportedConfig(newConfig);
+            }}
+          />
           <EditShorthandCaptureModel
             keepExtraFields
             enableSearch
             searchLabel={t('Search configuration')}
-            key={updatedAt}
-            data={systemConfig}
+            key={importedConfig ? JSON.stringify(importedConfig) : updatedAt}
+            data={configuration}
             template={globalSystemConfigModelWithSites}
             onSave={updateSystemConfig}
           />

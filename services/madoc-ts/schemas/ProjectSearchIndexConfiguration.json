@@ -1,0 +1,22 @@
+{
+  "type": "object",
+  "properties": {
+    "available": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/ProjectSearchIndexPreset"
+      }
+    },
+    "indexes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/ProjectSearchIndexDefinition"
+      }
+    }
+  },
+  "required": [
+    "available",
+    "indexes"
+  ],
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

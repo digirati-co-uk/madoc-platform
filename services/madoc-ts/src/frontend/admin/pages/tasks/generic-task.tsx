@@ -21,6 +21,7 @@ export const GenericTask: React.FC<{ task: BaseTask; statusBar?: React.ReactNode
   const createLocaleString = useCreateLocaleString();
   const [taskStatusMap, setTaskStatusMap] = useState<any>({});
   const { subject } = useTaskMetadata(task);
+  const error = task.state?.error || task.state?.errorMessage;
 
   const [trigger] = useMutation(async (taskId: string) => {
     setTaskStatusMap((m: any) => {
@@ -54,9 +55,12 @@ export const GenericTask: React.FC<{ task: BaseTask; statusBar?: React.ReactNode
           </Button>
         </ButtonRow>
       ) : null}
-      {task.state.error ? (
-        <ErrorMessage>
-          <pre>{task.state.error}</pre>
+      {task.status === -1 || error ? (
+        <ErrorMessage $banner $margin role="alert">
+          <strong>{task.status === -1 ? 'Task failed' : 'Task error'}</strong>
+          <pre className="m-0 whitespace-pre-wrap break-words font-mono text-sm leading-normal">
+            {error || 'No error details were recorded. Retry the task to capture the failure.'}
+          </pre>
         </ErrorMessage>
       ) : null}
       {snippet}
@@ -68,7 +72,7 @@ export const GenericTask: React.FC<{ task: BaseTask; statusBar?: React.ReactNode
         lazyLoad={() => ({ type: 'text', value: JSON.stringify(task.parameters || {}, null, 2) })}
       />
 
-      {Object.keys(task.state).length ? (
+      {Object.keys(task.state || {}).length ? (
         <FilePreview
           fileName="state"
           contentType="json"

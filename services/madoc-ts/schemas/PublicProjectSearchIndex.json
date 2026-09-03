@@ -1,0 +1,30 @@
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "label": {
+      "type": "string"
+    },
+    "summary": {
+      "type": "string"
+    },
+    "facets": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/ProjectSearchIndexFacet"
+      }
+    },
+    "collection": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "collection",
+    "facets",
+    "id",
+    "label"
+  ],
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

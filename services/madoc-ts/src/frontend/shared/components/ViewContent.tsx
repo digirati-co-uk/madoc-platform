@@ -14,6 +14,8 @@ export const ViewContent: React.FC<{
   homeCover?: true | false | 'start' | 'end';
   children?: React.ReactNode;
 }> = ({ target, canvas, height = 600, onCreated, onPanInSketchMode, homeCover, children }) => {
+  const controllerConfig = useMemo(() => ({ onPanInSketchMode }), [onPanInSketchMode]);
+
   return useContentType(
     useMemo(() => {
       const fixedType = [];
@@ -36,9 +38,7 @@ export const ViewContent: React.FC<{
       () => ({
         height,
         custom: {
-          controllerConfig: {
-            onPanInSketchMode,
-          },
+          controllerConfig,
           onCreateAtlas: onCreated,
           homeCover,
           customFetcher: (mid: string) => {
@@ -52,7 +52,7 @@ export const ViewContent: React.FC<{
           },
         },
       }),
-      [onPanInSketchMode, onCreated, homeCover, height, canvas, target]
+      [controllerConfig, onCreated, homeCover, height, canvas, target]
     ),
     children as any
   );

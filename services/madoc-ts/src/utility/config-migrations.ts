@@ -1,4 +1,5 @@
 import { ProjectConfiguration, ProjectConfigurationNEW } from '../types/schemas/project-configuration';
+import { resolveTypesenseTabOptions } from '../search/typesense/project-filter';
 
 function version1to2(config: ProjectConfiguration): ProjectConfigurationNEW {
   const {
@@ -14,6 +15,7 @@ function version1to2(config: ProjectConfiguration): ProjectConfigurationNEW {
     allowManifestNavigation,
     allowCanvasNavigation,
     searchOptions,
+    typesenseOptions,
     showSearchFacetCount,
     randomlyAssignCanvas,
     priorityRandomness,
@@ -53,6 +55,7 @@ function version1to2(config: ProjectConfiguration): ProjectConfigurationNEW {
     searchOptions: Object.assign({}, searchOptions || {}, {
       showSearchFacetCount: showSearchFacetCount,
     }),
+    typesenseOptions: resolveTypesenseTabOptions(typesenseOptions, searchOptions?.onlyShowManifests),
     assigningCanvas: {
       randomlyAssignCanvas: randomlyAssignCanvas,
       priorityRandomness: priorityRandomness,

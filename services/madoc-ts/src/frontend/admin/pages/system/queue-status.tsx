@@ -20,6 +20,7 @@ import { HrefLink } from '../../../shared/utility/href-link';
 import { createUniversalComponent } from '../../../shared/utility/create-universal-component';
 import { UniversalComponent } from '../../../types';
 import { AdminHeader } from '../../molecules/AdminHeader';
+import { formatEta } from '../../../shared/utility/estimated-time-remaining';
 
 const STATE_ORDER: BullMqState[] = ['active', 'wait', 'delayed', 'failed', 'paused', 'completed'];
 const STATE_LABELS: Record<BullMqState, string> = {
@@ -59,22 +60,6 @@ type ProgressMetrics = {
   observationDurationMs: number;
   completionRatePerMinute: number | null;
 };
-
-function formatEta(seconds: number) {
-  if (seconds < 60) {
-    return `${Math.max(1, Math.round(seconds))}s`;
-  }
-
-  const hours = Math.floor(seconds / 3600);
-  const minutes = Math.floor((seconds % 3600) / 60);
-  const secs = Math.floor(seconds % 60);
-
-  if (hours > 0) {
-    return `${hours}h ${minutes}m ${secs}s`;
-  }
-
-  return `${minutes}m ${secs}s`;
-}
 
 function useObservedQueueProgress(data?: BullMqSnapshot): ProgressMetrics {
   const completedBaseline = useRef<number | null>(null);

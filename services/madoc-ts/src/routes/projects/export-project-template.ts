@@ -9,6 +9,7 @@ import { NotFound } from '../../utility/errors/not-found';
 import { api } from '../../gateway/api.server';
 import { JsonProjectTemplate } from '../../extensions/projects/types';
 import deepmerge from 'deepmerge';
+import { getProjectSearchIndexConfiguration } from '../../search/project-search-index-configuration';
 
 export const exportProjectTemplate: RouteMiddleware<{ id: string }> = async context => {
   const { siteId } = userWithScope(context, []);
@@ -19,8 +20,10 @@ export const exportProjectTemplate: RouteMiddleware<{ id: string }> = async cont
   }
 
   const userApi = api.asUser({ siteId });
+  context.disposableApis.push(userApi);
   const project = await userApi.getProject(context.params.id);
   const captureModel: CaptureModel = await userApi.getCaptureModel(project.capture_model_id);
+  const searchIndexes = await getProjectSearchIndexConfiguration(userApi, siteId, project.id);
 
   const newDocument = deepmerge({}, captureModel.document, { clone: true });
   const newStructure = deepmerge({}, captureModel.structure as any, { clone: true });
@@ -46,7 +49,7 @@ export const exportProjectTemplate: RouteMiddleware<{ id: string }> = async cont
   const value = values && values.length ? values[0] : 'Untitled project';
 
   context.response.body = {
-    type: `template-${project.id}-${project.slug}`,
+    type: project.template || `template-${project.id}-${project.slug}`,
     template_config: project.template_config || null,
     metadata: {
       label: `${value} (copy)`,
@@ -55,6 +58,15 @@ export const exportProjectTemplate: RouteMiddleware<{ id: string }> = async cont
     },
     configuration: {
       defaults: project.config,
+      searchIndexes: {
+        available: searchIndexes.config.indexes.map(index => ({
+          key: index.presetKey || index.id,
+          metadata: { label: index.label, summary: index.summary },
+          entityPath: index.entityPath,
+          uniqueField: index.uniqueField,
+          facets: index.facets,
+        })),
+      },
     },
     captureModel: {
       document: newDocument,

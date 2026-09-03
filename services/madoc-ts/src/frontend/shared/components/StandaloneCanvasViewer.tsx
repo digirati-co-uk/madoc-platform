@@ -6,7 +6,13 @@ import { useViewerHeight } from '../../site/hooks/use-viewer-height';
 import { apiHooks } from '../hooks/use-api-query';
 import { SimpleAtlasViewer } from '../features/SimpleAtlasViewer';
 
-export const CanvasViewer: React.FC<{ canvas: CanvasFull['canvas']; isModel?: boolean }> = ({ canvas, isModel }) => {
+interface CanvasViewerProps {
+  canvas: CanvasFull['canvas'];
+  isModel?: boolean;
+  children?: React.ReactNode;
+}
+
+export function CanvasViewer({ canvas, isModel, children }: CanvasViewerProps) {
   const [canvasRef, setCanvasRef] = useState<CanvasNormalized>();
   const height = useViewerHeight();
 
@@ -27,12 +33,12 @@ export const CanvasViewer: React.FC<{ canvas: CanvasFull['canvas']; isModel?: bo
     <>
       {canvasRef ? (
         <CanvasContext canvas={canvasRef.id}>
-          <SimpleAtlasViewer style={{ height }} isModel={isModel} />
+          {children ?? <SimpleAtlasViewer style={{ height }} isModel={isModel} />}
         </CanvasContext>
       ) : null}
     </>
   );
-};
+}
 
 export function StandaloneCanvasViewer(props: { canvasId: number; isModel?: boolean }) {
   const { data: canvas } = apiHooks.getCanvasById(() => (props.canvasId ? [props.canvasId] : undefined));
