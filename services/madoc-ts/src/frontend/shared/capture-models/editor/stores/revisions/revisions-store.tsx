@@ -611,6 +611,20 @@ export const revisionStore: RevisionsModel = {
       }
     }
   }),
+  replaceEntityProperty: action((state, { path, property, value, deletedFieldIds = [], revisionId }) => {
+    const entity = getRevisionFieldFromPath<CaptureModel['document']>(state, path, revisionId);
+    const currentRevisionId = revisionId || state.currentRevisionId;
+    if (!entity || !currentRevisionId) {
+      throw new Error('invalid entity');
+    }
+
+    entity.properties[property] = value as CaptureModel['document'][];
+    const revision = state.revisions[currentRevisionId].revision;
+    if (deletedFieldIds.length) {
+      revision.deletedFields = Array.from(new Set([...(revision.deletedFields || []), ...deletedFieldIds]));
+    }
+    state.selector = createSelectorStore(state.revisions[currentRevisionId].document);
+  }),
 
   createNewFieldInstance: action((state, { property, path, revisionId, withId, multipleOverride }) => {
     // Grab the parent entity where we want to add a new field.
