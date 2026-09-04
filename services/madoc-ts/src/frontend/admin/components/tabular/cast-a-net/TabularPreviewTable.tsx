@@ -106,6 +106,17 @@ export function TabularPreviewTable({
     [onChange, safeValues]
   );
 
+  const updateRows = useCallback(
+    (nextRows: TabularEditorRowModel[]) => {
+      onChange(
+        nextRows.map(row =>
+          Array.from({ length: safeColumns }, (_unused, colIndex) => toTextValue(row.cells[colIndex]?.value))
+        )
+      );
+    },
+    [onChange, safeColumns]
+  );
+
   const headerColumns = useMemo<TabularEditorHeaderModel[]>(
     () =>
       Array.from({ length: safeColumns }, (_unused, colIndex) => ({
@@ -161,6 +172,7 @@ export function TabularPreviewTable({
       <TabularProjectCustomEditorTable
         headerColumns={headerColumns}
         rows={tableRows}
+        onRowsChange={updateRows}
         showEmptyState={false}
         showRowControls={showRowControls}
         rowControlsAlignment="start"
