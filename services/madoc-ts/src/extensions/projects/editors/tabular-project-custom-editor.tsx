@@ -596,8 +596,12 @@ function TabularProjectCustomEditorContent({
             $noScroll
             style={{
               width: isSidebarPanelOpen ? widthB : 56,
-              minWidth: isSidebarPanelOpen ? 320 : 56,
-              maxWidth: isSidebarPanelOpen && enableEditorResizing ? 'calc(100% - 12px)' : undefined,
+              minWidth: isSidebarPanelOpen
+                ? enableEditorResizing
+                  ? 'min(320px, calc(100% - 440px - 12px))'
+                  : 320
+                : 56,
+              maxWidth: isSidebarPanelOpen && enableEditorResizing ? 'max(0px, calc(100% - 440px - 12px))' : undefined,
               height: '100%',
               borderRight: 'none',
             }}
