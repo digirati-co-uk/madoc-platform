@@ -1,37 +1,26 @@
 ---
 name: madoc-architecture
-description: Trace or change Madoc TS startup, application composition, middleware ordering, runtime configuration, process entrypoints, and top-level SSR wiring. Use for boot failures, new global middleware or services, entrypoint changes, and configuration that affects services/madoc-ts as a whole.
+description: Madoc process startup, global middleware order, and runtime/build configuration. Applies to boot failures or application composition changes; individual routes and React rendering belong to their subsystem skills.
 ---
 
 # Madoc Architecture
 
-Read the repository `AGENTS.md` first; it owns the cross-cutting runtime and verification rules.
+## Locate the process
 
-## Trace the process
+Follow `ecosystem.config.cjs` -> `entrypoint/*.cjs` -> the matching bundle and Vite source entrypoint. PM2 names are `server`, `auth`, `queue`, and `scheduler`; the queue bundle is named `producer`.
 
-1. Identify the PM2 process: `server`, `auth`, `queue`, or `scheduler`.
-2. Follow `services/madoc-ts/entrypoint/*.cjs` to its bundle under `dist/` and then to the matching source entrypoint.
-3. For the HTTP server, trace `src/server.ts` -> `src/app.ts` -> `src/router.ts`.
-4. Read neighbouring middleware and registrations before changing order or shared context.
+- HTTP composition: `src/server.ts`, `src/app.ts`, `src/router.ts`
+- Configuration and runtime paths: `src/config.ts`, `src/paths.ts`, `config.json`
+- Build inputs: `vite/`, `entrypoint/`
+- HTTP-to-SSR bridges: `src/routes/frontend/`
 
-## Source map
+## Constraints
 
-- Application and middleware composition: `src/app.ts`
-- Typed route table: `src/router.ts`
-- Server construction: `src/server.ts`
-- Runtime paths and configuration: `src/paths.ts`, `src/config.ts`, `config.json`
-- PM2 definitions: `ecosystem.config.cjs`
-- Build entrypoints: `entrypoint/`, `vite/`
-- Site/admin/account HTTP-to-SSR bridge: `src/routes/frontend/`
-
-## Guardrails
-
-- Treat middleware order as behavior. Check auth, site state, static-page handling, and disposal before inserting anything.
-- Keep configuration in the existing config/path layer; do not add a second env parser.
+- Check both entry and unwind order around Koa's `await next()`. Cookie issuance and API disposal wrap route execution; static pages can bypass it. The middleware contract is in `AGENTS.md`.
+- Keep configuration in the existing config/path layer. Verify new runtime files are copied into the final Docker image.
 - Do not attach long-lived PM2 bus listeners to the imported singleton: status requests call `pm2.disconnect()`. Use an isolated PM2 client or child process and clean it up when the request closes.
-- When a new runtime file is required, verify the Docker build copies it into the final image.
-- Use the process-specific rebuild and restart command from `AGENTS.md`, then smoke-test `https://madoc.local`.
+- Server instances share external state. Cron registration in `src/app.ts` is gated to `NODE_APP_INSTANCE === '0'`; preserve that gate to avoid duplicate jobs.
 
-## Check
+## Verify
 
-Run the narrowest process build, confirm PM2 reports the process online, and request one affected route. For SSR composition changes, check each affected site, admin, and account surface.
+Use the affected process build/restart from `AGENTS.md`, confirm PM2 is online, and exercise the affected entrypoint. Check each affected site/admin/account bridge if changing shared SSR composition.

@@ -1,46 +1,30 @@
 ---
 name: madoc-tasks
-description: Work on Madoc TS task definitions and handlers, BullMQ producer/scheduler wiring, task dispatch, automation bots, task metadata resolvers, cron jobs, retries, and task status/failure behavior in services/madoc-ts.
+description: Madoc background task dispatch, event subscriptions, retries, bots, and cron scheduling. Applies to asynchronous execution changes; contribution/review policy belongs to madoc-crowdsourcing.
 ---
 
 # Madoc Tasks
 
-Use `$madoc-crowdsourcing` as well when the task is specifically about claim, contribution, or review lifecycle policy.
+## Wiring
 
-## Source map
-
-- Task definitions and handlers: `src/gateway/tasks/`
-- Worker dispatch and failure handling: `src/queue/producer.ts`
+- Task definitions/handlers: `src/gateway/tasks/`
+- Worker dispatch/failure handling: `src/queue/producer.ts`
 - BullMQ scheduler/events: `src/queue/scheduler.ts`
-- Task API facade and metadata resolvers: `src/extensions/tasks/`
-- Bot registration and implementations: `src/automation/index.ts`, `src/automation/bot-definitions.ts`, `src/automation/bots/`
-- Cron implementations: `src/cron/`
-- Cron registration and shutdown: `src/app.ts`
-- Cron admin endpoints: `src/router.ts`, `src/routes/admin/list-jobs.ts`
+- Task API and metadata resolvers: `src/extensions/tasks/`
+- Bots: `src/automation/index.ts`, `src/automation/bot-definitions.ts`, `src/automation/bots/`
+- Cron jobs: `src/cron/`; registration/shutdown: `src/app.ts`; admin listing: `src/routes/admin/list-jobs.ts`
 
-## Add a task type
+For a worker-handled task, trace its type, `events` subscriptions, creation/enqueue path, and producer switch case. An imported handler without matching event routing is inert. Structural tasks need no worker case unless they execute work.
 
-1. Define the task type, creation/enqueue path, and handler beside the nearest existing task.
-2. Add the worker import and switch case in `src/queue/producer.ts`.
-3. Preserve task `status` and `status_text` on success and retry; terminal failures must also store a concise reason in `state.error` for the admin task view.
-4. Dispose contextual `ApiClient` instances on every path.
-5. Rebuild `vite-producer`, restart PM2 `queue`, and run one real task.
+A bot needs metadata, implementation registration, and an event mapping. A task metadata resolver must be wired into the task extension. Cron runs in the server process under the instance-zero gate, with cancellation on shutdown; the PM2 `scheduler` process handles BullMQ scheduling.
 
-## Bots and cron
+## Failure and recovery
 
-- A bot needs metadata in `bot-definitions.ts`, a registered implementation in `automation/index.ts`, and an event mapping.
-- A metadata resolver must be added to the task extension, not only created in `resolvers/`.
-- A cron implementation is inert until registered in `src/app.ts`; ensure shutdown cancels it.
-- Restart `scheduler` only for BullMQ scheduler changes; cron jobs run in the server process.
+- Preserve task `status`/`status_text` and the worker failure listener's `state.error` for the admin view. Keep job site-context isolation and contextual API cleanup on success and failure.
+- The producer treats a handler's 404 as handled and ignores unknown task types. Account for these paths when diagnosing jobs marked complete without work; do not generalize them to other errors.
+- For independent fan-out, create all expected children before waiting for completion so one failed child does not prevent sibling creation.
+- Gate parent completion on every required child output, not just a `done` status. Recovery must explicitly retry or skip completed children with missing outputs; inspect side effects before replaying work.
 
-## Guardrails
+## Verify
 
-- Trace every producer and consumer before changing a task type string or payload.
-- Queue independent fan-out subtasks together, then gate parent completion on every expected child; a failed child must not prevent siblings from being created.
-- Treat a child as complete only when its required output state is present; recovery must explicitly retry or skip `done` children with missing outputs.
-- Keep retryable errors retryable; do not turn unknown failures into successful jobs.
-- Preserve the worker's site-context isolation and cleanup.
-
-## Check
-
-Enqueue one representative task and confirm dispatch, state transitions, failure behavior, and PM2 health. For bot or cron changes, trigger the exact event/job rather than only importing the module.
+Run a representative task through its actual event/enqueue path and inspect state transitions and failure behavior. Trigger the changed bot event or cron job directly. Use the process build/restart rules in `AGENTS.md`: `queue` for producer changes, `scheduler` for BullMQ scheduling, `server` for cron.

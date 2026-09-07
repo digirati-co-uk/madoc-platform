@@ -1,49 +1,34 @@
 ---
 name: madoc-extensions
-description: Work on the Madoc TS extension and plugin system, ApiClient extension wiring, registry definitions, page blocks, project templates, project exports, media, themes, completions, site-manager APIs, or webhooks. Use when adding or changing extension-backed behavior in services/madoc-ts.
+description: Madoc extension dispatch, plugin registries, and registration of blocks, templates, exports, or themes. Applies to extension behavior or registration changes; calling an existing ApiClient method alone does not need this skill.
 ---
 
 # Madoc Extensions
 
-## Core model
+## Framework contracts
 
-- `src/extensions/extension-manager.ts` dispatches extension methods in order, passing each result to the next extension.
-- `src/extensions/registry-extension.ts` stores built-ins plus site/plugin overrides and owns global emitter listeners.
-- `src/gateway/api.ts` constructs the extension-backed API used on server and client.
-- `src/middleware/create-plugin-manager.ts` and `src/frontend/shared/plugins/plugin-manager.ts` load and register plugin definitions.
+- `src/extensions/extension-manager.ts` calls extensions in order with the original argument and an array of extra arguments; it returns the last successful result. It does not chain return values. Errors are logged and dispatch continues, so inspect callers before relying on failure propagation.
+- `src/extensions/registry-extension.ts` owns built-ins, site/plugin definitions, and global emitter listeners. `getDefinition` prefers a matching site override; `getAllDefinitions` appends plugin entries to built-ins and can contain the same type twice.
+- `src/gateway/api.ts` constructs extension-backed APIs. Registration runs through `src/middleware/create-plugin-manager.ts` and `src/frontend/shared/plugins/plugin-manager.ts`.
 
-When changing the framework, trace registration, lookup, plugin override, removal, and `dispose()`. Keep plugin loading inside the existing sandbox and path checks.
+For framework changes, trace registration, lookup, override, removal, and `dispose()`. Preserve sandbox/path checks and listener cleanup.
 
-## Domain map
+## Domain entrypoints
 
-| Domain | Start here | Non-obvious check |
+| Domain | Source | Check when changing it |
 | --- | --- | --- |
-| Capture-model client APIs | `src/extensions/capture-models/` | Keep revision contracts aligned with the capture-model server |
-| Completions | `src/extensions/completions/` | Register the source and preserve paging/language/error behavior |
-| Media | `src/extensions/media/`, `src/routes/media/`, `src/routes/assets/` | Keep storage paths, DB metadata, and thumbnail maps synchronized |
-| Page blocks | `src/extensions/page-blocks/` | Declare context correctly and verify slot-resolved plus direct routes |
-| Project exports | `src/extensions/project-export/` | Register the config; handle plans that produce zero files |
-| Project templates | `src/extensions/projects/` | Register the template and trace each hook/config option to a real caller |
-| Site manager | `src/extensions/site-manager/` | Update types and generated `get*` hooks with the API method |
-| Themes | `src/extensions/themes/`, `src/frontend/themes/`, `themes/` | Check registry metadata and packaged build assets |
-| Webhooks | `src/webhooks/` | Treat URL signing, validation, expiry, and public execution as security boundaries |
+| Capture-model transforms | `src/extensions/capture-models/` | Actual dispatch behavior and server revision contracts |
+| Completions | `src/extensions/completions/` | Source registration, paging, language and errors |
+| Media | `src/extensions/media/`, `src/routes/media/`, `src/routes/assets/` | Storage paths, DB metadata and thumbnail maps |
+| Page blocks | `src/extensions/page-blocks/` | Context/slot rules in `AGENTS.md`, including direct routes |
+| Project exports | `src/extensions/project-export/` | Registered config, zero-file plans, readable tabular flags/notes |
+| Project templates | `src/extensions/projects/` | Registration in `extension.ts`, creation-time configuration and slot mappings |
+| Site manager | `src/extensions/site-manager/` | Types and corresponding frontend `get*` hooks |
+| Themes | `src/extensions/themes/`, `src/frontend/themes/`, `themes/` | Registry metadata and packaged assets |
+| Webhooks | `src/webhooks/` | URL signing, validation, expiry and public execution |
 
-## Adding a project template
+Before adding a project template, inspect `src/extensions/projects/types.ts` and a built-in under `templates/`. Use a unique `type` and trace any hook to a runtime caller; some declared hooks are unused. Check frozen configuration and capture-model defaults during creation.
 
-1. Read `src/extensions/projects/types.ts` and the nearest built-in template.
-2. Add the template under `src/extensions/projects/templates/` with a unique `type` and only the options needed now.
-3. Register it in `src/extensions/projects/extension.ts`, or through the plugin manager for a plugin-owned template.
-4. Trace setup/configuration hooks through the creation UI before relying on them; the type contains hooks with no runtime caller.
-5. Verify creation, immutable/frozen configuration, capture-model defaults, and any slot mappings.
+## Verify
 
-## Guardrails
-
-- Reuse the relevant registry; do not create a parallel registration mechanism.
-- Preserve site-specific plugin override precedence and unregister definitions on removal.
-- Add new `ApiClient` instances created in routes to `context.disposableApis`.
-- For page blocks, follow the resource-context and SSR rules in `AGENTS.md`.
-- For tabular exports, keep flags/notes readable rather than emitting internal JSON fields unchanged.
-
-## Check
-
-Exercise registration and removal plus one real domain flow. For plugins, test both the built-in definition and a site-scoped override.
+Exercise the changed domain flow. For registry/plugin changes, also check site-scoped override and removal, including fallback to the built-in definition.

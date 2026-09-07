@@ -1,34 +1,20 @@
 ---
 name: madoc-capture-models
-description: Work on Madoc TS capture-model APIs, persistence, revisions, migrations, server filters, capture-model extension calls, and editor-facing contracts. Use when changing capture model CRUD, revision behavior, model migration, serialization, or server/frontend data flow in services/madoc-ts.
+description: Madoc capture-model persistence, revision contracts, response filters, and legacy model migration. Applies to model data flow changes; editor layout and contribution/review policy have separate owners.
 ---
 
 # Madoc Capture Models
 
-## Source map
+## Trace the model shape
 
-- API table: `src/capture-model-server/router.ts`
-- Handlers: `src/capture-model-server/routes/`
-- Persistence: `src/capture-model-server/capture-model-repository.ts`
-- Model migrations: `src/capture-model-server/migration/`
-- Response transforms: `src/capture-model-server/server-filters/`
-- Client/server API facade: `src/extensions/capture-models/`
-- Shared model and revision contracts: `src/frontend/shared/capture-models/types/`
+Follow the endpoint in `src/capture-model-server/router.ts` through `routes/`, `capture-model-repository.ts`, and any `server-filters/` under that directory. Then inspect callers in `src/extensions/capture-models/` and shared contracts in `src/frontend/shared/capture-models/types/`.
 
-## Workflow
+- Keep document, structure, revision, and metadata relationships consistent across storage and responses. Model and revision IDs do not replace site scoping in repository access.
+- When changing read filters, preserve author, accepted/published revision, and debug-scope visibility in `src/capture-model-server/routes/capture-model.ts`.
+- Trace concrete extension dispatch calls before assuming how enrichment modifies a response.
+- Legacy model migration lives in `src/capture-model-server/migration/`; use that layer for old model shapes. Database schema changes instead use forward-only SQL migrations in `migrations/`.
+- Reuse the owning repository methods and inspect their transaction boundaries when a change writes multiple related records.
 
-1. Locate the endpoint in the capture-model router and follow it through the handler.
-2. Trace repository reads/writes plus any server filter before changing a response shape.
-3. Find all extension and editor consumers of the affected model/revision field.
-4. For legacy-shape changes, use the existing migration layer instead of adding route-local compatibility branches.
+## Verify
 
-## Guardrails
-
-- Keep document, structure, revision, and metadata shapes consistent across routes.
-- Reuse repository methods; do not add a second query path in a handler.
-- Treat migrations as compatibility code and test both pre- and post-migration shapes.
-- Do not assume an enrichment pipeline exists: follow concrete call sites from the capture-model extension.
-
-## Check
-
-Use one representative model to verify the changed CRUD/revision path and any migration or filter involved. Add a focused regression test for non-trivial transforms.
+Exercise the affected model/revision operation through its consumer, including any response filter. For migration or transform changes, use representative old and current shapes in a focused regression check.

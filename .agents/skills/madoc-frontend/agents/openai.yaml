@@ -1,4 +1,4 @@
 interface:
   display_name: "Madoc Frontend"
-  short_description: "Site, admin, account React, loaders, and SSR"
-  default_prompt: "Use $madoc-frontend to change a Madoc frontend or SSR flow."
+  short_description: "React route loading, resource context, and SSR"
+  default_prompt: "Use $madoc-frontend to trace Madoc route loading, resource context, or hydration."

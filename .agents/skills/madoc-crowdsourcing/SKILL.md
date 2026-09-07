@@ -1,38 +1,32 @@
 ---
 name: madoc-crowdsourcing
-description: Trace or modify the Madoc TS contribution, claim, submission, review, reviewer-assignment, and approval workflow. Use when changing crowdsourcing task states, claim policy, revision review behavior, review bots, or project settings that govern the contribution lifecycle in services/madoc-ts.
+description: Madoc claim eligibility, contribution submission, reviewer assignment, and approval transitions. Applies to lifecycle policy and its UI gating; generic queue mechanics belong to madoc-tasks.
 ---
 
 # Madoc Crowdsourcing
 
-This workflow crosses routes, task handlers, capture-model revisions, automation, and frontend policy. Read `references/workflow.md` for lifecycle or setting changes; a local one-function fix only needs the relevant source and callers.
+Read [the workflow reference](references/workflow.md) for lifecycle or setting changes. A local fix needs only the affected source and callers.
 
-## Primary entrypoints
+## Trace the transition
 
-- Claim creation and gating: `src/routes/projects/create-resource-claim.ts`, `src/utility/claim-utilities.ts`
+Record the project settings and target (`projectId`, `manifestId`, `canvasId`, `revisionId`), then follow the affected part of the flow:
+
+- Claim creation and eligibility: `src/routes/projects/create-resource-claim.ts`, `src/utility/claim-utilities.ts`
 - Claim updates: `src/routes/projects/update-resource-claim.ts`
-- Contribution handler: `src/gateway/tasks/crowdsourcing-task.ts`
-- Review handler and assignment: `src/gateway/tasks/crowdsourcing-review.ts`, `src/routes/projects/assign-review.ts`
+- Contribution events: `src/gateway/tasks/crowdsourcing-task.ts`
+- Review events and assignment: `src/gateway/tasks/crowdsourcing-review.ts`, `src/routes/projects/assign-review.ts`
 - Review actions: `src/extensions/capture-models/crowdsourcing-api.ts`
 - Revision-task guard: `src/routes/projects/update-revision-task.ts`
-- Runtime configuration: `src/types/schemas/project-configuration.ts`
+- Configuration: `src/types/schemas/project-configuration.ts`
 
-## Debug in this order
+## Constraints
 
-1. Record project settings and the claim target (`projectId`, `manifestId`, `canvasId`, `revisionId`).
-2. Trace claim structure creation and `canUserClaimResource`.
-3. Inspect contribution task state, especially `revisionId`, `reviewTask`, and parent-task links.
-4. Follow the exact task status event and review assignment/action.
-5. Check frontend gating only after confirming backend state and policy.
+- Distinguish structural project/manifest/canvas tasks from user contributions. Follow `revisionId`, `reviewTask`, delegated and parent links before changing status handling.
+- Re-submission normally reuses a review task. Contributions in states `0`, `1`, and `4` remain continuable; multiple-submission restrictions must not strand changes-requested work.
+- Check backend policy and frontend gating together, including manifest claims and `/model` flows. A hidden button does not enforce eligibility.
+- Trace settings to runtime consumers; template type declarations alone do not establish behavior.
+- Preserve the unresolved-cell-flag check in `src/automation/bots/AutomaticReviewBot.ts` so flagged tabular submissions stay on the human-review path.
 
-## Guardrails
+## Verify
 
-- Distinguish structural project/manifest/canvas tasks from user contribution tasks.
-- Preserve task status and `status_text` transitions; the UI and automation consume them.
-- Re-submission normally reuses an active review task.
-- Verify configuration fields have runtime call sites; template types contain options and hooks that are not wired.
-- Keep unresolved tabular flags on the human-review path.
-
-## Check
-
-For lifecycle changes, cover claim, submit, assign, and the affected approve/reject/request-changes transition with one focused regression test where practical.
+Exercise the affected transition with its real project settings, including resubmission or denied eligibility where relevant. For a lifecycle change, cover claim, submit, assignment, and the changed review action in a focused regression check where practical.

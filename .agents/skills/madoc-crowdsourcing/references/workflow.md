@@ -1,5 +1,7 @@
 # Crowdsourcing workflow reference
 
+Status definitions and handlers live in `src/gateway/tasks/crowdsourcing-task.ts` and `src/gateway/tasks/crowdsourcing-review.ts` (paths relative to `services/madoc-ts`).
+
 ## Task families
 
 - `crowdsourcing-project`: project root.
@@ -17,8 +19,6 @@
 | `2` | Submitted/in review | Contributor submits or resubmits |
 | `3` | Accepted | Reviewer approves |
 | `4` | Changes requested | Reviewer returns work |
-
-Contributor gating must treat statuses `0`, `1`, and `4` as continuable; multiple-submission policy must not block revisions returned for changes.
 
 ## Review states
 
@@ -44,35 +44,11 @@ Confirm meanings against neighbouring handlers before changing them; external ta
 6. Review actions update revisions and move the contribution to accepted, rejected, or changes requested.
 7. Acceptance can complete related review and parent tasks, reindex resources, and emit notifications.
 
-## Settings with runtime call sites
+## Settings and consumers
 
-Claim policy:
+Start at `src/types/schemas/project-configuration.ts` and search the affected field with `rg -n '<setting>' services/madoc-ts/src`. Claim policy spans `claimGranularity`, contribution limits, and `modelPageOptions`; review policy spans reviewer assignment, approval thresholds, and `reviewOptions`. Expiry runs through `src/cron/check-expired-manifests.ts`.
 
-- `claimGranularity`
-- `maxContributionsPerResource`
-- `modelPageOptions.preventContributionAfterRejection`
-- `modelPageOptions.preventContributionAfterSubmission`
-- `modelPageOptions.preventMultipleUserSubmissionsPerResource`
-- `modelPageOptions.preventContributionAfterManifestUnassign`
-- `allowSubmissionsWhenCanvasComplete`
-- `shadow.showCaptureModelOnManifest`
-
-Review policy:
-
-- `randomlyAssignReviewer`
-- `manuallyAssignedReviewer`
-- `adminsAreReviewers`
-- `revisionApprovalsRequired`
-- `reviewOptions.enableAutoReview`
-- `reviewOptions.allowMerging`
-
-Timing:
-
-- `contributionWarningTime`
-- `shortExpiryTime`
-- `longExpiryTime`
-
-Use `rg -n '<setting>' services/madoc-ts/src` to find the current backend and frontend consumers instead of relying on this list as a call graph.
+Check `shadow.showCaptureModelOnManifest` alongside `claimGranularity`: manifest-level capture changes both frontend navigation and submission handling. A setting's presence in schema or template defaults does not establish backend enforcement.
 
 ## Defined but not wired
 

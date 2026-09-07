@@ -13,15 +13,21 @@ Use it as the cross-cutting guide for how Madoc works, how to change it safely, 
 ## Scope and skill usage
 
 - Keep README/docs human-focused; keep this file agent-focused.
-- This file is self-contained, but skills still apply. If a task matches a skill, use it for subsystem-specific workflow and constraints.
+- Skill descriptions are selection criteria, not a checklist. Load a skill when its subsystem guidance will change how you approach the task; a matching filename or incidental API call is not enough.
+- Start with the skill that owns the behavior. Load another only when the work crosses into its distinct concerns; read supporting references only for the relevant part of the task.
 - Do not duplicate deep skill instructions here; use this file for repository-wide rules and architecture context.
+- Paths in Madoc skills are relative to `services/madoc-ts` unless prefixed with `services/`; skill-local references are relative to the skill directory.
 
 ## Skill upkeep
 
-- If you learn a reusable workflow, recurring pitfall, or domain rule that is not captured in an existing skill, create a new skill.
-- If you modify behavior in an area already covered by a skill, update that skill in the same change so instructions stay accurate.
-- If you find a mistake or outdated guidance in a skill, fix it immediately.
-- Keep skill changes concise and practical; avoid duplicating this AGENTS file inside skills.
+- Update instructions when verified code, a reproduced failure, or an explicit user correction shows they would mislead future work. A code change alone does not require a skill edit; leaving accurate guidance unchanged is expected.
+- Capture knowledge only when it is non-obvious, likely to recur, and changes a future decision. Exclude task history, temporary environment failures, speculative advice, and facts easily read from nearby code.
+- Correct or replace the existing rule before adding one. Keep repository-wide rules here, subsystem rules in their owning skill, and long conditional procedures in a linked reference. Keep one authoritative copy.
+- Prefer extending an existing skill. Create one only for a distinct recurring workflow that existing skills cannot cover cleanly and whose saved rediscovery justifies its selection and reading cost.
+- State the applicable condition, the action or invariant, and a source path or runnable check where useful. Distinguish current implementation from intended policy; verify claims that a hook or feature is absent before recording them.
+- Keep descriptions short and neutral: name the task and the boundary that separates it from nearby skills. Avoid catchalls, keyword catalogs, promotional language, and instructions to load other skills by default.
+- With each upkeep edit, remove superseded or duplicated guidance in that area. Fix verified stale instructions encountered during the task, but do not expand routine work into a repository-wide audit.
+- Validate changed frontmatter, source paths, reference links, and any edited helpers. Check selection against both a request that benefits and a nearby request that should skip the skill; use behavioral trials for complex workflows. Report material corrections or remaining uncertainty briefly.
 
 ## Madoc runtime model (high-level)
 
@@ -35,10 +41,11 @@ Use it as the cross-cutting guide for how Madoc works, how to change it safely, 
 
 ## Request pipeline and auth behavior
 
-- Core middleware order matters: parse/set JWT, site state, static page handling, then router.
+- Core middleware order in `src/app.ts` is static-page handling, `setJwt`, site API setup, API disposal, then router. `setJwt` writes cookies after `await next()`; token parsing and site state are applied within routes.
 - `TypedRouter` applies middleware by HTTP method:
 - `GET`: `parseJwt` + `siteState` unless route is explicitly `isPublic`.
 - `POST`/`PUT`/`PATCH`: `parseJwt` + `requestBody(schemaName)`.
+- `DELETE`: `parseJwt`; `OPTIONS`: no automatic auth/body middleware. `isPublic` only changes GET registration, and `requestBody` validates only when a schema name and body are present.
 - Unauthorized/scope failures often intentionally return `NotFound`; preserve this behavior unless a task explicitly changes auth semantics.
 - When creating scoped API clients in routes (`api.asUser(...)`), add them to `context.disposableApis` so `dispose-apis` can clean up.
 
@@ -103,7 +110,7 @@ Use it as the cross-cutting guide for how Madoc works, how to change it safely, 
 
 ## Queue and async task wiring
 
-- New task types must be wired end-to-end: task definition/handler, enqueue path, and `src/queue/producer.ts` switch handling.
+- New worker-handled task types must be wired end-to-end: task definition/handler, event/enqueue path, and `src/queue/producer.ts` switch handling. Structural tasks without worker behavior do not need a switch case.
 - Preserve task status transitions and failure behavior (`status`, `status_text`) so task UIs remain accurate.
 - If you change producer/worker logic, rebuild `vite-producer` and restart PM2 `queue`.
 
@@ -130,7 +137,7 @@ Use it as the cross-cutting guide for how Madoc works, how to change it safely, 
 - Scheduler: `pnpm build:vite-scheduler` then `docker compose exec madoc-ts pm2 restart scheduler`
 - If dependencies or container build inputs changed, rebuild containers:
 - `docker compose up -d --build`
-- Always run a smoke check after changes on `https://madoc.local`.
+- Smoke-test affected runtime behavior on `https://madoc.local`. For instruction/docs-only changes, validate the edited artifacts; no application rebuild or runtime smoke test is needed.
 - If smoke checks need auth you do not have, ask the user for credentials/token or ask them to run the authenticated check.
 - If a process fails to come up, verify PM2 state first: `docker compose exec madoc-ts pm2 list`.
 - Use targeted logs when needed: `docker compose logs --tail=200 madoc-ts`.
@@ -143,7 +150,7 @@ Use it as the cross-cutting guide for how Madoc works, how to change it safely, 
 
 ## TypeScript Practice
 
-- Do prefer explicit interfaces/types for gameplay entities
+- Do prefer explicit interfaces/types for domain entities
 - Do use discriminated unions for complex states
 - Do use `type` for unions and simple aliases
 - Do use `interface` for object shapes and classes

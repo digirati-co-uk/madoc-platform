@@ -1,38 +1,26 @@
 ---
 name: madoc-data
-description: Work on Madoc TS database migrations, Slonik queries, repository methods, row mapping, shared TypeScript contracts, request schemas, and generated schema artifacts. Use when a change crosses persistence or data contracts in services/madoc-ts.
+description: Madoc SQL migrations, repository queries, generated request schemas, and search-index consistency. Applies to storage or validated data-contract changes; local TypeScript types alone do not need this skill.
 ---
 
 # Madoc Data
 
-## Source map
+## Storage and contracts
 
-- Forward-only SQL migrations: `services/madoc-ts/migrations/`
-- Migration runners: `src/migrate.ts`, `migrate.cjs`
-- Shared queries: `src/database/queries/`
-- SQL composition helpers: `src/utility/postgres-tags.ts`
-- Repositories and row mapping: `src/repository/`
-- Domain types: `src/types/`
-- TypeScript schema/config shapes: `src/types/schemas/`
-- Runtime request schemas and generated artifacts: `services/madoc-ts/schemas/`
+- Migrations and runners: `migrations/`, `src/migrate.ts`, `migrate.cjs`
+- Query owners and row mapping: `src/database/queries/`, `src/repository/`
+- SQL composition: `src/utility/postgres-tags.ts`
+- Domain contracts: `src/types/`
+- Schema sources: `src/types/schemas/`; generated JSON: `schemas/`
 
-## Workflow
+Use Slonik's `sql` tag and the existing query owner. Preserve site predicates on reads and writes, including joins; an object ID alone does not establish tenant access. Keep related writes within the owner's transaction boundary.
 
-1. Start at the owning repository or caller and look for an existing query/helper.
-2. If storage changes, add a new migration; never edit an applied migration.
-3. Update the query and row mapping together.
-4. Update shared types, request schemas, API methods, and consumers when the contract changes.
-5. Regenerate schema outputs using the repository's existing script when required.
+For storage changes, add a forward-only migration and update row mapping with its consumers. For generated request schemas, edit the TypeScript source and run `pnpm --dir services/madoc-ts generate-schema` from the repository root; `generate-schemas.js` emits JSON named after exported types. Check the route's `schemaName` matches the generated name and review generated changes before retaining them.
 
-## Guardrails
+## Search consistency
 
-- Use Slonik's `sql` tag and existing composition helpers; do not interpolate SQL strings.
-- Keep DB access in the existing repository/query owner instead of route-local SQL.
-- Use explicit row and domain types; do not introduce `any` to bridge a contract change.
-- Treat migrations as forward-only production history and make destructive transforms explicit.
-- Collection and project membership are embedded in Typesense manifest documents; structure changes must reindex affected manifests.
-- Non-flat collections have their own Typesense documents; keep their descendant manifest, project, and collection contexts aligned with the shared search export.
+Collection/project membership is embedded in Typesense manifest documents. Structure changes must reindex affected manifests. Non-flat collections also have documents whose descendant manifest and context data must stay aligned. Start at `src/search/typesense/build-search-documents.ts` and `src/search/typesense/build-manifest-documents.ts`.
 
-## Check
+## Verify
 
-Run the narrowest query/repository or schema validation available. For a migration, verify it against a disposable database and confirm the application can read the resulting shape.
+Use the affected query/repository check, including another site's data when changing scope. Test schema changes with accepted and rejected payloads. Apply migrations to a disposable database and confirm the application reads the resulting shape.

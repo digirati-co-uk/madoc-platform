@@ -1,47 +1,36 @@
 ---
 name: madoc-frontend
-description: Work on Madoc TS site, admin, or account React routes, loaders, shared UI, resource context, themes, internationalization, email templates, client hydration, or server-side rendering. Use for frontend and SSR changes in services/madoc-ts.
+description: Madoc React route loading, resource context, SSR/hydration, and shared frontend integration. Applies when UI behavior depends on those mechanisms; isolated styling or copy edits can use AGENTS.md alone.
 ---
 
 # Madoc Frontend
 
-## Choose the surface
+## Locate the surface
 
-- Site routes and SSR: `src/frontend/site/routes.tsx`, `src/frontend/site/server.ts`, `src/routes/frontend/site-frontend.ts`
-- Admin routes and SSR: `src/frontend/admin/routes.tsx`, `src/frontend/admin/server.tsx`, `src/routes/frontend/admin-frontend.ts`
-- Account UI and SSR: `src/frontend/account/`, `src/routes/frontend/account-frontend.ts`
-- Shared components, loaders, and utilities: `src/frontend/shared/`
-- HTML templates: `src/site.html`, `src/admin.html`, `src/account.html`
+- Site: `src/frontend/site/routes.tsx`, `src/frontend/site/server.ts`
+- Admin: `src/frontend/admin/routes.tsx`, `src/frontend/admin/server.tsx`
+- Account: `src/frontend/account/`
+- HTTP-to-SSR bridges: `src/routes/frontend/`; HTML templates: `src/site.html`, `src/admin.html`, `src/account.html`
+- Shared loaders/components: `src/frontend/shared/`
 - Themes: `src/frontend/themes/`, `themes/`
 - I18n: `src/middleware/i18n/`, `src/utility/language-cache.ts`
 - Email HTML/text pairs: `src/emails/`
 
-## Route and data workflow
+## Routes and resource context
 
-1. Locate the route object and its `createUniversalComponent` loader.
-2. Keep `getKey` deterministic for the same params/query and trace server plus client consumers of loaded data.
-3. Use `ApiClient`, `useData`, and `useStaticData`; do not add route-local `fetch` without a concrete reason.
-4. Build links with `createLink` or `useRelativeLinks` so site/project context survives.
-5. Verify the resource context, including slot-derived values and the manifest/canvas `/model` route.
-6. Keep Typesense results, facet discovery, autocomplete, and result links in the same project context when under `/projects/:slug`.
+Follow the route's `createUniversalComponent` loader and server/client consumers; use the loader, link, and SSR rules in `AGENTS.md`.
 
-## SSR workflow
+- Context merges in `src/frontend/site/hooks/use-route-context.ts`. Check both URL and slot-derived values, including manifest/canvas `/model` routes.
+- Under `/projects/:slug`, keep Typesense results, facet discovery, autocomplete, and result links in the same project context.
+- Manifest `/model` contributions compose their preview and editor in `ViewManifestModel`; keep its `HorizontalEditorSplit` behavior aligned with the canvas contribution editor.
+- Deep-merge nested site/project configuration to retain sibling options. Keep MJML and plain-text email content equivalent.
 
-1. Trace the HTTP bridge in `src/routes/frontend/` into the matching frontend server renderer.
-2. Preserve redirect results and the `body`, `head`, `htmlAttributes`, and `bodyAttributes` contract.
-3. Keep `<!--ssr-head-->` and `<!--ssr-outlet-->` aligned with the relevant HTML templates.
-4. Guard browser APIs with the existing server check.
+## SSR and build integration
 
-## Guardrails
+- Follow the HTTP bridge into the matching renderer. Preserve redirects and the `body`, `head`, `htmlAttributes`, and `bodyAttributes` contract, plus `<!--ssr-head-->` and `<!--ssr-outlet-->` template markers.
+- Keep `vite/styled-components.js` and CommonJS aliases aligned across frontend, dev-server, and SSR configs. The current Vite configs use `@rolldown/plugin-babel` for Babel plugins; inspect them before changing transforms.
+- `rich-markdown-editor` can expose a nested CommonJS default; retain import normalization when changing its wrapper.
 
-- Follow the Tailwind/styled-components migration rule in `AGENTS.md`.
-- Keep the shared styled-components Babel transform in `vite/styled-components.js` enabled for frontend, dev-server, and SSR builds; Vite 8 Babel plugins run through `@rolldown/plugin-babel`, not `react({ babel })`.
-- Keep CommonJS compatibility aliases aligned across the frontend, dev-server, and SSR Vite configs.
-- `rich-markdown-editor` may expose its React component as a nested CommonJS default; normalize the imported value before rendering it.
-- Keep site and admin permissions and components on the correct surface.
-- Deep-merge nested site/project configuration rather than overwriting sibling options.
-- Keep MJML and plain-text email content equivalent.
+## Verify
 
-## Check
-
-Verify the affected route through SSR and client navigation. For shared SSR or template changes, check the affected site, admin, and account surfaces; for UI changes, smoke-test `https://madoc.local`.
+Exercise affected route behavior on initial SSR load and client navigation. Shared renderer/template changes need each affected site, admin, and account surface; layout work follows the runtime smoke check in `AGENTS.md`.

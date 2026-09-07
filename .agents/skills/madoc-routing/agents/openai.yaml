@@ -1,4 +1,4 @@
 interface:
   display_name: "Madoc Routing"
-  short_description: "HTTP routes, permissions, activity streams, and IIIF"
-  default_prompt: "Use $madoc-routing to trace or change a Madoc HTTP endpoint."
+  short_description: "HTTP registration and request/response contracts"
+  default_prompt: "Use $madoc-routing to change a Madoc endpoint boundary or registration."
