@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.4.0...main)
 
+### Added
+
+- Added support for resizing the capture model sidebar on Manifest projects (MAD-1587)
+
 <!--
 
 ### Added

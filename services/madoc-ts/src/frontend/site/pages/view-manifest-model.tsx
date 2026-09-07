@@ -14,13 +14,16 @@ import { useProjectStatus } from '../hooks/use-project-status';
 import { useRelativeLinks } from '../hooks/use-relative-links';
 import { Navigate } from 'react-router-dom';
 import { ManifestModelCanvasPreview } from '../blocks/ManifestModelCanvasPreview';
+import { HorizontalEditorSplit } from '../../shared/components/HorizontalEditorSplit';
+import { useModelPageConfiguration } from '../hooks/use-model-page-configuration';
 
 export function ViewManifestModel() {
   const createLink = useRelativeLinks();
   const { isManifestComplete, hasExpired } = useManifestTask();
-  const { canUserSubmit, isLoading: isLoadingTasks, completedAndHide, canContribute } = useManifestUserTasks();;
+  const { canUserSubmit, isLoading: isLoadingTasks, completedAndHide, canContribute } = useManifestUserTasks();
   const { isActive, isPreparing } = useProjectStatus();
   const shadow = useProjectShadowConfiguration();
+  const { enableEditorResizing = true } = useModelPageConfiguration();
 
   const isReadOnly =
     (!canUserSubmit && !isLoadingTasks) ||
@@ -51,26 +54,34 @@ export function ViewManifestModel() {
 
       {showPrepareMessage ? <PrepareManifestsCaptureModel /> : null}
 
-      <div style={{ display: 'flex' }}>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <Slot name="manifest-model-listing-header" id="listing-header">
-            <ManifestPagination />
-          </Slot>
+      <HorizontalEditorSplit
+        name="non-tabular-manifest-contribution-editor"
+        enabled={enableEditorResizing}
+        resizableSide="right"
+        defaultWidth={400}
+        flexiblePane={
+          <div className="w-full min-w-0">
+            <Slot name="manifest-model-listing-header" id="listing-header">
+              <ManifestPagination />
+            </Slot>
 
-          <Slot name="manifest-model-contents">
-            <ManifestModelCanvasPreview isModel />
-          </Slot>
+            <Slot name="manifest-model-contents">
+              <ManifestModelCanvasPreview isModel />
+            </Slot>
 
-          <Slot name="manifest-model-footer">
-            <ManifestPagination />
-          </Slot>
-        </div>
-        <div style={{ width: 400, marginLeft: '1em' }}>
-          <Slot name="manifest-model-editor" small>
-            <ManifestModelEditor />
-          </Slot>
-        </div>
-      </div>
+            <Slot name="manifest-model-footer">
+              <ManifestPagination />
+            </Slot>
+          </div>
+        }
+        resizablePane={
+          <div className="w-full">
+            <Slot name="manifest-model-editor" small>
+              <ManifestModelEditor />
+            </Slot>
+          </div>
+        }
+      />
     </>
   );
 }
