@@ -1,6 +1,19 @@
 import React, { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
-import { DataGrid, type Column, type DataGridHandle } from 'react-data-grid';
+import {
+  DataGrid,
+  type CellRange,
+  type CellKeyDownArgs,
+  type CellKeyboardEvent,
+  type CellMouseArgs,
+  type CellSelectArgs,
+  type Column,
+  type DataGridHandle,
+  type FillEvent,
+  type MultiCellClipboardArgs,
+  type RowsChangeData,
+} from 'react-data-grid';
 import { Tooltip as ReactTooltip } from 'react-tooltip';
+import { Copy } from '@styled-icons/entypo/Copy';
 import 'react-data-grid/lib/styles.css';
 import type { TabularCellRef } from '@/frontend/shared/utility/tabular-types';
 import { Button } from '@/frontend/shared/navigation/Button';
@@ -11,24 +24,25 @@ import {
 } from '@/frontend/shared/utility/tabular-grid-constants';
 import {
   copyTabularCellValueToClipboard,
-  getInputCopyValue,
-  isTabularCopyShortcut,
-  shouldCopyWholeInputValue,
+  formatTabularClipboardMatrix,
+  getTabularCellClipboardText,
+  parseTabularClipboardMatrix,
+  parseTabularCellClipboardText,
 } from '@/frontend/shared/utility/tabular-grid-clipboard';
-import {
-  getTabularGridKeyboardNavigation,
-  isDirectionalArrowKey,
-  isForwardTabWithoutModifiers,
-} from '@/frontend/shared/utility/tabular-grid-keyboard-navigation';
 import { TabularDataGridStyles } from '@/frontend/shared/components/TabularDataGridStyles';
 import { scrollTabularGridCellIntoView } from '@/frontend/shared/utility/tabular-grid-scroll';
 import { formatDateFieldInput, isValidDateFieldValue } from '@/frontend/shared/utility/date-field-format';
 import FlagIcon from '@/frontend/shared/icons/FlagIcon';
-import type { TabularEditorHeaderModel, TabularEditorRowModel } from './tabular-project-custom-editor-table-model';
+import type {
+  TabularEditorCellModel,
+  TabularEditorHeaderModel,
+  TabularEditorRowModel,
+} from './tabular-project-custom-editor-table-model';
 
 type TabularProjectCustomEditorTableProps = {
   headerColumns: TabularEditorHeaderModel[];
   rows: TabularEditorRowModel[];
+  onRowsChange?: (nextRows: TabularEditorRowModel[], changedRowPositions: readonly number[]) => void;
   showEmptyState: boolean;
   showRowControls?: boolean;
   rowControlsAlignment?: 'center' | 'start';
@@ -197,6 +211,16 @@ function joinClasses(...classNames: Array<string | undefined>) {
   return classNames.filter(Boolean).join(' ');
 }
 
+function updateGridRowCellValue(row: TabularGridRow, colIndex: number, value: unknown): TabularGridRow {
+  const currentCell = row.row.cells[colIndex];
+  if (!currentCell || Object.is(currentCell.value, value)) {
+    return row;
+  }
+
+  const cells = row.row.cells.map((cell, index) => (index === colIndex ? { ...cell, value } : cell));
+  return { ...row, row: { ...row.row, cells } };
+}
+
 type TabularGridCellInputProps = {
   inputId: string;
   value: unknown;
@@ -204,9 +228,6 @@ type TabularGridCellInputProps = {
   fieldOptions?: Array<{ value: string; text: string; label?: string }>;
   disabled: boolean;
   onChange: (nextValue: unknown) => void;
-  onFocus: () => void;
-  onKeyDown: (event: React.KeyboardEvent<HTMLInputElement | HTMLSelectElement>) => void;
-  isActiveCell: boolean;
   isFlagged: boolean;
   isNoted: boolean;
 };
@@ -231,19 +252,7 @@ function getDropdownDisplayText(
 }
 
 function TabularGridCellInput(options: TabularGridCellInputProps) {
-  const {
-    inputId,
-    value,
-    fieldType,
-    fieldOptions,
-    disabled,
-    onChange,
-    onFocus,
-    onKeyDown,
-    isActiveCell,
-    isFlagged,
-    isNoted,
-  } = options;
+  const { inputId, value, fieldType, fieldOptions, disabled, onChange, isFlagged, isNoted } = options;
   const [optimisticTextValue, setOptimisticTextValue] = useState<string>(() => toTextValue(value));
   const [optimisticCheckedValue, setOptimisticCheckedValue] = useState<boolean>(() => !!value);
 
@@ -251,15 +260,10 @@ function TabularGridCellInput(options: TabularGridCellInputProps) {
   const isDateField = fieldType === 'date-field';
   const isDropdownField = fieldType === 'dropdown-field';
   const isReadOnlyField = fieldType === 'read-only-field';
-  const showReadOnlyTooltip = isReadOnlyField && isActiveCell;
-  const showReadOnlyBadge = isReadOnlyField && !isActiveCell;
   const isInvalidDateValue = isDateField && !isValidDateFieldValue(optimisticTextValue);
   const invalidDateClasses = isInvalidDateValue ? 'border-red-400 bg-red-50' : undefined;
   const dropdownOptions = fieldOptions ?? [];
-  const displayTextValue = isDropdownField
-    ? getDropdownDisplayText(dropdownOptions, optimisticTextValue)
-    : optimisticTextValue;
-  const inputContainerClass = getInputContainerClass(isReadOnlyField, isActiveCell, isFlagged, isNoted);
+  const inputContainerClass = getInputContainerClass(isReadOnlyField, true, isFlagged, isNoted);
 
   useEffect(() => {
     if (isCheckboxField) {
@@ -290,10 +294,8 @@ function TabularGridCellInput(options: TabularGridCellInputProps) {
           id={inputId}
           type="checkbox"
           checked={optimisticCheckedValue}
+          autoFocus
           aria-disabled={disabled}
-          onFocus={onFocus}
-          onClick={onFocus}
-          onKeyDown={onKeyDown}
           onChange={event => {
             if (disabled) {
               return;
@@ -307,43 +309,15 @@ function TabularGridCellInput(options: TabularGridCellInputProps) {
     );
   }
 
-  if (!isActiveCell) {
-    return (
-      <div
-        className={`relative h-full w-full rounded border px-2 py-1 text-sm leading-5 ${inputContainerClass}`}
-        style={{
-          whiteSpace: 'normal',
-          overflowWrap: 'anywhere',
-          wordBreak: 'break-word',
-          overflow: 'hidden',
-          paddingRight: showReadOnlyBadge ? 64 : undefined,
-        }}
-        title={isReadOnlyField ? 'Read-only field' : displayTextValue || undefined}
-      >
-        {showReadOnlyBadge ? (
-          <span
-            className="pointer-events-none absolute right-2 top-2 inline-flex rounded bg-slate-200 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-700"
-            aria-hidden="true"
-          >
-            Read only
-          </span>
-        ) : null}
-        {displayTextValue || '\u00A0'}
-      </div>
-    );
-  }
-
   if (isDropdownField) {
     return (
       <select
         id={inputId}
         className={`h-full w-full rounded border px-2 py-1 text-sm outline-none ${inputContainerClass}`}
         value={optimisticTextValue}
+        autoFocus
         disabled={disabled}
         aria-disabled={disabled}
-        onFocus={onFocus}
-        onClick={onFocus}
-        onKeyDown={onKeyDown}
         onChange={event => {
           if (disabled) {
             return;
@@ -364,15 +338,6 @@ function TabularGridCellInput(options: TabularGridCellInputProps) {
   if (isDateField) {
     return (
       <div className="relative h-full w-full">
-        {showReadOnlyTooltip ? (
-          <div
-            className="pointer-events-none absolute -top-7 right-0 z-[2] whitespace-nowrap rounded bg-slate-800 px-2 py-1 text-[11px] font-medium text-white shadow"
-            role="status"
-            aria-live="polite"
-          >
-            Read only
-          </div>
-        ) : null}
         <div
           className={`flex h-full w-full flex-col rounded border px-2 py-1 ${inputContainerClass} ${invalidDateClasses || ''}`}
         >
@@ -381,14 +346,12 @@ function TabularGridCellInput(options: TabularGridCellInputProps) {
             type="text"
             className="w-full border-0 bg-transparent p-0 text-sm leading-5 outline-none"
             value={optimisticTextValue}
+            autoFocus
             readOnly={disabled || isReadOnlyField}
             aria-readonly={disabled || isReadOnlyField}
             aria-invalid={isInvalidDateValue ? 'true' : 'false'}
             placeholder="DD-MM-YYYY"
             title={isReadOnlyField ? 'Read-only field' : undefined}
-            onFocus={onFocus}
-            onClick={onFocus}
-            onKeyDown={onKeyDown}
             onChange={handleTextInputChange}
           />
         </div>
@@ -398,28 +361,75 @@ function TabularGridCellInput(options: TabularGridCellInputProps) {
 
   return (
     <div className="relative h-full w-full">
-      {showReadOnlyTooltip ? (
-        <div
-          className="pointer-events-none absolute -top-7 right-0 z-[2] whitespace-nowrap rounded bg-slate-800 px-2 py-1 text-[11px] font-medium text-white shadow"
-          role="status"
-          aria-live="polite"
-        >
-          Read only
-        </div>
-      ) : null}
       <input
         id={inputId}
         type="text"
         className={`h-full w-full rounded border px-2 py-1 text-sm outline-none ${inputContainerClass}`}
         value={optimisticTextValue}
+        autoFocus
         readOnly={disabled || isReadOnlyField}
         aria-readonly={disabled || isReadOnlyField}
         title={isReadOnlyField ? 'Read-only field' : undefined}
-        onFocus={onFocus}
-        onClick={onFocus}
-        onKeyDown={onKeyDown}
         onChange={handleTextInputChange}
       />
+    </div>
+  );
+}
+
+type TabularGridCellDisplayProps = {
+  cell: TabularEditorCellModel;
+  isActiveCell: boolean;
+  isEditable: boolean;
+  isFlagged: boolean;
+  isNoted: boolean;
+};
+
+function TabularGridCellDisplay({ cell, isActiveCell, isEditable, isFlagged, isNoted }: TabularGridCellDisplayProps) {
+  const isReadOnlyField = cell.fieldType === 'read-only-field';
+  const isCheckboxField = cell.fieldType === 'checkbox-field';
+  const textValue = toTextValue(cell.value);
+  const displayValue =
+    cell.fieldType === 'dropdown-field'
+      ? getDropdownDisplayText(cell.fieldOptions ?? [], textValue)
+      : isCheckboxField
+        ? cell.value
+          ? 'Yes'
+          : 'No'
+        : textValue;
+  const inputContainerClass = getInputContainerClass(isReadOnlyField, isActiveCell, isFlagged, isNoted);
+
+  return (
+    <div
+      className={`relative flex h-full w-full items-center rounded border px-2 py-1 text-sm leading-5 ${inputContainerClass}`}
+      style={{
+        justifyContent: isCheckboxField ? 'center' : undefined,
+        whiteSpace: 'normal',
+        overflowWrap: 'anywhere',
+        wordBreak: 'break-word',
+        overflow: 'hidden',
+        paddingRight: isReadOnlyField ? 64 : isActiveCell && isEditable ? 36 : undefined,
+      }}
+      title={isReadOnlyField ? 'Read-only field' : displayValue || undefined}
+    >
+      {isReadOnlyField ? (
+        <span
+          className="pointer-events-none absolute right-2 top-2 inline-flex rounded bg-slate-200 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-700"
+          aria-hidden="true"
+        >
+          Read only
+        </span>
+      ) : null}
+      {displayValue ||
+        (isActiveCell && isEditable ? <span className="text-xs text-slate-400">Double click to edit</span> : '\u00A0')}
+      {isActiveCell && isEditable ? (
+        <kbd
+          className="pointer-events-none absolute bottom-1 right-1 inline-flex h-5 min-w-5 items-center justify-center rounded border border-slate-300 bg-white px-1 text-[11px] font-semibold leading-none text-slate-600 shadow-sm"
+          title="Press Enter to edit"
+          aria-label="Press Enter to edit"
+        >
+          ↵
+        </kbd>
+      ) : null}
     </div>
   );
 }
@@ -427,6 +437,7 @@ function TabularGridCellInput(options: TabularGridCellInputProps) {
 export function TabularProjectCustomEditorTable({
   headerColumns,
   rows,
+  onRowsChange,
   showEmptyState,
   showRowControls = true,
   rowControlsAlignment = 'center',
@@ -473,6 +484,7 @@ export function TabularProjectCustomEditorTable({
   const lastScrolledCellKeyRef = useRef<string | null>(null);
   const contextMenuRef = useRef<HTMLDivElement | null>(null);
   const [tableViewportWidth, setTableViewportWidth] = useState(0);
+  const [selectedRange, setSelectedRange] = useState<CellRange | null>(null);
   const [cellContextMenu, setCellContextMenu] = useState<TabularCellContextMenuState | null>(null);
   const closeCellContextMenu = useCallback(() => {
     setCellContextMenu(null);
@@ -550,9 +562,32 @@ export function TabularProjectCustomEditorTable({
       })),
     [rows]
   );
+  const selectedCellCount = selectedRange
+    ? (selectedRange.endRowIdx - selectedRange.startRowIdx + 1) *
+      (selectedRange.endColumnIdx - selectedRange.startColumnIdx + 1)
+    : 0;
 
-  const focusGridInput = useCallback(
-    (rowPosition: number, colIndex: number, caretPosition: 'start' | 'end' = 'end') => {
+  const syncSelectedRange = useCallback(() => {
+    setSelectedRange(dataGridRef.current?.getSelectedRange() ?? null);
+  }, []);
+
+  const copySelectedCells = useCallback(() => {
+    if (!selectedRange) {
+      return;
+    }
+
+    const values = gridRows
+      .slice(selectedRange.startRowIdx, selectedRange.endRowIdx + 1)
+      .map(row =>
+        row.row.cells
+          .slice(selectedRange.startColumnIdx, selectedRange.endColumnIdx + 1)
+          .map(getTabularCellClipboardText)
+      );
+    void copyTabularCellValueToClipboard(formatTabularClipboardMatrix(values));
+  }, [gridRows, selectedRange]);
+
+  const selectGridCell = useCallback(
+    (rowPosition: number, colIndex: number, enableEditor = false) => {
       const targetRow = gridRows[rowPosition];
       const targetCell = targetRow?.row.cells[colIndex];
       if (!targetCell) {
@@ -560,33 +595,16 @@ export function TabularProjectCustomEditorTable({
       }
 
       lastScrolledCellKeyRef.current = `${targetCell.rowIndex}:${colIndex}`;
-      onActiveCellChange({ row: targetCell.rowIndex, col: colIndex });
+      dataGridRef.current?.selectCell({ rowIdx: rowPosition, idx: colIndex }, { enableEditor, shouldFocusCell: true });
+      setSelectedRange(null);
       scrollTabularGridCellIntoView(dataGridRef.current, {
         gridRowIndex: rowPosition,
         gridColumnIndex: colIndex,
       });
-      if (typeof window !== 'undefined') {
-        window.requestAnimationFrame(() => {
-          const input = document.getElementById(targetCell.inputId) as HTMLInputElement | HTMLSelectElement | null;
-          if (!input) {
-            return;
-          }
-
-          input.focus();
-          if (
-            input instanceof HTMLInputElement &&
-            input.type !== 'checkbox' &&
-            typeof input.setSelectionRange === 'function'
-          ) {
-            const caret = caretPosition === 'start' ? 0 : input.value.length;
-            input.setSelectionRange(caret, caret);
-          }
-        });
-      }
 
       return true;
     },
-    [gridRows, onActiveCellChange]
+    [gridRows]
   );
 
   const columnWidth = useMemo(() => {
@@ -637,6 +655,52 @@ export function TabularProjectCustomEditorTable({
     [onActiveCellChange]
   );
 
+  const commitGridRows = useCallback(
+    (nextRows: TabularGridRow[], indexes: readonly number[]) => {
+      if (onRowsChange) {
+        onRowsChange(
+          nextRows.map(nextRow => nextRow.row),
+          indexes
+        );
+        return;
+      }
+
+      for (const rowIndex of indexes) {
+        const previousCells = gridRows[rowIndex]?.row.cells ?? [];
+        const nextCells = nextRows[rowIndex]?.row.cells ?? [];
+        for (let colIndex = 0; colIndex < nextCells.length; colIndex++) {
+          const previousCell = previousCells[colIndex];
+          const nextCell = nextCells[colIndex];
+          if (previousCell && nextCell && !Object.is(previousCell.value, nextCell.value)) {
+            previousCell.onChange(nextCell.value);
+          }
+        }
+      }
+    },
+    [gridRows, onRowsChange]
+  );
+
+  const handleRowsChange = useCallback(
+    (nextRows: TabularGridRow[], { indexes }: RowsChangeData<TabularGridRow>) => {
+      commitGridRows(nextRows, indexes);
+    },
+    [commitGridRows]
+  );
+
+  const handleFill = useCallback(
+    ({ columnKey, sourceRow, targetRow }: FillEvent<TabularGridRow>) => {
+      const colIndex = headerColumns.findIndex(column => column.key === columnKey);
+      const sourceCell = sourceRow.row.cells[colIndex];
+      const targetCell = targetRow.row.cells[colIndex];
+      if (!sourceCell || !targetCell || targetCell.fieldType === 'read-only-field') {
+        return targetRow;
+      }
+
+      return updateGridRowCellValue(targetRow, colIndex, sourceCell.value);
+    },
+    [headerColumns]
+  );
+
   const gridColumns = useMemo<readonly Column<TabularGridRow>[]>(() => {
     return headerColumns.map((column, colIndex) => {
       return {
@@ -645,6 +709,7 @@ export function TabularProjectCustomEditorTable({
         width: columnWidth,
         sortable: false,
         resizable: false,
+        editable: row => !disabled && row.row.cells[colIndex]?.fieldType !== 'read-only-field',
         renderHeaderCell: () => {
           const isActiveColumn = tableActiveCell?.col === colIndex;
           const tooltip = showHeaderTooltips ? column.description?.trim() || undefined : undefined;
@@ -699,69 +764,10 @@ export function TabularProjectCustomEditorTable({
           const canToggleFromContextMenu = !!onToggleCellFlag && canToggleCellFlags && !disabled && !isReadOnlyCell;
           const hasContextMenuForCell = !!onOpenCellReviewPanel || canToggleFromContextMenu;
 
-          const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement | HTMLSelectElement>) => {
-            const target = event.currentTarget;
-            const stopKeyboardEvent = () => {
-              event.preventDefault();
-              event.stopPropagation();
-            };
-
-            if (target instanceof HTMLInputElement && isTabularCopyShortcut(event)) {
-              const input = target;
-              event.stopPropagation();
-
-              if (shouldCopyWholeInputValue(input)) {
-                stopKeyboardEvent();
-                void copyTabularCellValueToClipboard(getInputCopyValue(input));
-              }
-              return;
-            }
-
-            const navigation = getTabularGridKeyboardNavigation({
-              key: event.key,
-              shiftKey: event.shiftKey,
-              altKey: event.altKey,
-              ctrlKey: event.ctrlKey,
-              metaKey: event.metaKey,
-              rowIndex: row.rowPosition,
-              colIndex,
-              rowCount: gridRows.length,
-              colCount: headerColumns.length,
-              inputType: target.type,
-              selectionStart: target instanceof HTMLInputElement ? target.selectionStart : null,
-              selectionEnd: target instanceof HTMLInputElement ? target.selectionEnd : null,
-              valueLength: target.value.length,
-              horizontalArrowBehavior: 'always',
-            });
-
-            if (!navigation) {
-              const isCreateRowShortcut =
-                isForwardTabWithoutModifiers(event) &&
-                row.rowPosition === gridRows.length - 1 &&
-                colIndex === headerColumns.length - 1;
-              if (isCreateRowShortcut && requestRowAppendForKeyboard()) {
-                stopKeyboardEvent();
-                return;
-              }
-
-              // Without this, react-data-grid can intercept the event and trap keyboard navigation.
-              if (isDirectionalArrowKey(event.key) && !event.altKey && !event.ctrlKey && !event.metaKey) {
-                stopKeyboardEvent();
-              }
-              return;
-            }
-
-            stopKeyboardEvent();
-            focusGridInput(navigation.nextRow, navigation.nextCol, navigation.caretPosition);
-          };
-
           return (
             <div
               className="group"
               id={cell.cellElementId}
-              onMouseDown={() => {
-                focusGridInput(row.rowPosition, colIndex, 'end');
-              }}
               onContextMenu={event => {
                 if (!hasCellContextActions || !hasContextMenuForCell) {
                   return;
@@ -798,18 +804,43 @@ export function TabularProjectCustomEditorTable({
                   }}
                 />
               ) : null}
+              <TabularGridCellDisplay
+                cell={cell}
+                isActiveCell={isActiveCell}
+                isEditable={!disabled && !isReadOnlyCell}
+                isFlagged={isFlagged}
+                isNoted={isNoted}
+              />
+            </div>
+          );
+        },
+        renderEditCell: ({ row, onRowChange }) => {
+          const cell = row.row.cells[colIndex];
+          if (!cell) {
+            return null;
+          }
+
+          const isFlagged = isCellFlagged(cell.rowIndex, cell.columnKey);
+          const isNoted = !isFlagged && isCellNoted(cell.rowIndex, cell.columnKey);
+
+          return (
+            <div
+              id={cell.cellElementId}
+              style={{
+                height: '100%',
+                padding: 4,
+                background: getCellBackgroundColor(true, isFlagged, isNoted, true),
+              }}
+            >
               <TabularGridCellInput
                 inputId={cell.inputId}
                 value={cell.value}
                 fieldType={cell.fieldType}
                 fieldOptions={cell.fieldOptions}
                 disabled={disabled}
-                onFocus={() => onActiveCellChange({ row: cell.rowIndex, col: colIndex })}
-                onKeyDown={handleKeyDown}
-                isActiveCell={isActiveCell}
                 isFlagged={isFlagged}
                 isNoted={isNoted}
-                onChange={cell.onChange}
+                onChange={value => onRowChange(updateGridRowCellValue(row, colIndex, value))}
               />
             </div>
           );
@@ -822,8 +853,6 @@ export function TabularProjectCustomEditorTable({
     disabled,
     hasCellContextActions,
     hasInlineFlagToggle,
-    focusGridInput,
-    gridRows.length,
     headerColumns,
     isCellFlagged,
     isCellNoted,
@@ -831,10 +860,130 @@ export function TabularProjectCustomEditorTable({
     onOpenCellReviewPanel,
     onToggleCellFlag,
     openCellContextMenu,
-    requestRowAppendForKeyboard,
     showHeaderTooltips,
     tableActiveCell,
   ]);
+
+  const handleCellClick = useCallback(
+    (args: CellMouseArgs<TabularGridRow>) => {
+      const cell = args.row.row.cells[args.column.idx];
+      if (disabled || !cell || cell.fieldType === 'read-only-field') {
+        return;
+      }
+
+      if (cell.fieldType === 'checkbox-field') {
+        const nextRows = [...gridRows];
+        nextRows[args.rowIdx] = updateGridRowCellValue(args.row, args.column.idx, !cell.value);
+        handleRowsChange(nextRows, { indexes: [args.rowIdx], column: args.column });
+      }
+    },
+    [disabled, gridRows, handleRowsChange]
+  );
+
+  const handleSelectedCellChange = useCallback(
+    ({ row, column }: CellSelectArgs<TabularGridRow>) => {
+      if (!row) {
+        onActiveCellChange(null);
+        return;
+      }
+
+      lastScrolledCellKeyRef.current = `${row.rowIndex}:${column.idx}`;
+      onActiveCellChange({ row: row.rowIndex, col: column.idx });
+    },
+    [onActiveCellChange]
+  );
+
+  const handleMultiCellCopy = useCallback(
+    (
+      { rows: selectedRows, columns }: MultiCellClipboardArgs<TabularGridRow>,
+      event: React.ClipboardEvent<HTMLDivElement>
+    ) => {
+      const values = selectedRows.map(row =>
+        columns.map(column => {
+          const cell = row.row.cells[column.idx];
+          return cell ? getTabularCellClipboardText(cell) : '';
+        })
+      );
+      event.clipboardData.setData('text/plain', formatTabularClipboardMatrix(values));
+      event.preventDefault();
+    },
+    []
+  );
+
+  const handleMultiCellPaste = useCallback(
+    ({ range }: MultiCellClipboardArgs<TabularGridRow>, event: React.ClipboardEvent<HTMLDivElement>) => {
+      if (disabled) {
+        return;
+      }
+
+      const clipboardRows = parseTabularClipboardMatrix(event.clipboardData.getData('text/plain'));
+      if (clipboardRows.length === 0) {
+        return;
+      }
+
+      event.preventDefault();
+      const nextRows = [...gridRows];
+      const changedRowPositions = new Set<number>();
+      for (let rowOffset = 0; rowOffset < clipboardRows.length; rowOffset++) {
+        const rowPosition = range.startRowIdx + rowOffset;
+        let nextRow = nextRows[rowPosition];
+        if (!nextRow) {
+          break;
+        }
+
+        for (let colOffset = 0; colOffset < clipboardRows[rowOffset].length; colOffset++) {
+          const colIndex = range.startColumnIdx + colOffset;
+          const cell = nextRow.row.cells[colIndex];
+          if (!cell || cell.fieldType === 'read-only-field') {
+            continue;
+          }
+
+          const parsed = parseTabularCellClipboardText(cell, clipboardRows[rowOffset][colOffset]);
+          if (!parsed.accepted) {
+            continue;
+          }
+
+          const value =
+            cell.fieldType === 'date-field' ? formatDateFieldInput(toTextValue(parsed.value)) : parsed.value;
+          const updatedRow = updateGridRowCellValue(nextRow, colIndex, value);
+          if (updatedRow !== nextRow) {
+            nextRow = updatedRow;
+            nextRows[rowPosition] = updatedRow;
+            changedRowPositions.add(rowPosition);
+          }
+        }
+      }
+
+      if (changedRowPositions.size > 0) {
+        commitGridRows(nextRows, [...changedRowPositions]);
+      }
+    },
+    [commitGridRows, disabled, gridRows]
+  );
+
+  const handleCellKeyDown = useCallback(
+    (args: CellKeyDownArgs<TabularGridRow>, event: CellKeyboardEvent) => {
+      const isLastCell =
+        event.key === 'Tab' &&
+        !event.shiftKey &&
+        !event.altKey &&
+        !event.ctrlKey &&
+        !event.metaKey &&
+        args.rowIdx === gridRows.length - 1 &&
+        args.column.idx === headerColumns.length - 1;
+      if (!isLastCell || isAddRowDisabled) {
+        return;
+      }
+
+      event.preventDefault();
+      event.preventGridDefault();
+      if (args.mode === 'EDIT') {
+        args.onClose(true, false);
+      }
+      requestRowAppendForKeyboard();
+    },
+    [gridRows.length, headerColumns.length, isAddRowDisabled, requestRowAppendForKeyboard]
+  );
 
   useEffect(() => {
     if (!shouldScrollToNewRowRef.current) {
@@ -848,12 +997,12 @@ export function TabularProjectCustomEditorTable({
     }
 
     if (headerColumns.length > 0) {
-      focusGridInput(lastRowPosition, 0, 'start');
+      selectGridCell(lastRowPosition, 0);
       return;
     }
 
     scrollTabularGridCellIntoView(dataGridRef.current, { gridRowIndex: lastRowPosition });
-  }, [focusGridInput, gridRows.length, headerColumns.length]);
+  }, [gridRows.length, headerColumns.length, selectGridCell]);
 
   useEffect(() => {
     if (!tableActiveCell) {
@@ -867,17 +1016,12 @@ export function TabularProjectCustomEditorTable({
     }
 
     const targetRow = gridRows.find(row => row.rowIndex === tableActiveCell.row);
-    const targetCell = targetRow?.row.cells[tableActiveCell.col];
-    if (!targetCell) {
+    if (!targetRow?.row.cells[tableActiveCell.col]) {
       return;
     }
 
-    lastScrolledCellKeyRef.current = targetCellKey;
-    scrollTabularGridCellIntoView(dataGridRef.current, {
-      gridRowIndex: targetRow.rowPosition,
-      gridColumnIndex: tableActiveCell.col,
-    });
-  }, [gridRows, tableActiveCell]);
+    selectGridCell(targetRow.rowPosition, tableActiveCell.col);
+  }, [gridRows, selectGridCell, tableActiveCell]);
 
   const handleAddRowFromFooter = useCallback(() => {
     requestRowAppendForKeyboard();
@@ -892,7 +1036,7 @@ export function TabularProjectCustomEditorTable({
       style={containerStyle}
     >
       <TabularDataGridStyles scopeClassName="tabular-contributor-rdg" disableRowHover />
-      {hasAnyRowControl || hasTableActions ? (
+      {hasAnyRowControl || hasTableActions || selectedCellCount > 1 ? (
         <div
           className={`sticky top-0 z-[2] flex flex-none items-center gap-2 border-b border-[#d6d6d6] bg-[#f1f5f9] px-3 py-2 ${topBarJustifyClass}`}
         >
@@ -924,16 +1068,47 @@ export function TabularProjectCustomEditorTable({
               ) : null}
             </div>
           ) : null}
+          {selectedCellCount > 1 ? (
+            <div
+              className="ml-auto inline-flex h-8 items-center overflow-hidden rounded border border-slate-300 bg-white text-sm font-medium text-slate-700 shadow-sm"
+              aria-live="polite"
+            >
+              <span className="px-2.5">{selectedCellCount} selected</span>
+              <button
+                type="button"
+                className="inline-flex h-full w-8 items-center justify-center border-l border-slate-300 text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                title="Copy selected cells"
+                aria-label="Copy selected cells"
+                onMouseDown={event => event.preventDefault()}
+                onClick={copySelectedCells}
+              >
+                <Copy className="h-4 w-4" />
+              </button>
+            </div>
+          ) : null}
           {hasTableActions ? <div className="flex items-center gap-2">{tableActions}</div> : null}
         </div>
       ) : null}
-      <div ref={tableScrollRef} className="min-h-0 min-w-0 flex-1 overflow-hidden">
+      <div
+        ref={tableScrollRef}
+        className="min-h-0 min-w-0 flex-1 overflow-hidden"
+        onMouseUp={syncSelectedRange}
+        onKeyUp={syncSelectedRange}
+      >
         <DataGrid
           ref={dataGridRef}
           className="rdg-light tabular-contributor-rdg"
           columns={gridColumns}
           rows={gridRows}
           rowKeyGetter={row => row.id}
+          onRowsChange={handleRowsChange}
+          onSelectedCellChange={handleSelectedCellChange}
+          onCellClick={handleCellClick}
+          onCellKeyDown={handleCellKeyDown}
+          onMultiCellCopy={handleMultiCellCopy}
+          onMultiCellPaste={handleMultiCellPaste}
+          onFill={disabled ? undefined : handleFill}
+          enableRangeSelection
           enableVirtualization={false}
           headerRowHeight={headerRowHeight}
           rowHeight={rowHeight}
@@ -941,8 +1116,8 @@ export function TabularProjectCustomEditorTable({
             height: '100%',
             width: '100%',
             border: 'none',
-            ['--rdg-selection-width' as string]: '0px',
             ['--rdg-border-color' as string]: '#d6d6d6',
+            ['--rdg-selection-color' as string]: '#34a853',
           }}
         />
       </div>
