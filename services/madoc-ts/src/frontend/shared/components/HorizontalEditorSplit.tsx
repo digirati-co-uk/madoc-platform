@@ -43,12 +43,12 @@ export function HorizontalEditorSplit({
     left: resizableSide === 'left',
     widthB: `${defaultWidth}px`,
     minWidthPx: minWidth,
-    maxWidthPx: containerWidth => containerWidth - 12,
+    maxWidthPx: containerWidth => Math.max(0, containerWidth - 320 - 12),
     onDragEnd: () => window.dispatchEvent(new Event('resize')),
   });
   const currentWidth = Number.parseFloat(widthB) || defaultWidth;
   const containerWidth = refs.container.current?.getBoundingClientRect().width;
-  const maximumWidth = containerWidth ? containerWidth - 12 : undefined;
+  const maximumWidth = containerWidth ? Math.max(0, containerWidth - 320 - 12) : undefined;
 
   const resizeWithKeyboard = (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') {
@@ -68,7 +68,7 @@ export function HorizontalEditorSplit({
         containerWidth,
         (currentWidth + sideDirection * 16) / containerWidth,
         minWidth,
-        containerWidth - 12
+        Math.max(0, containerWidth - 320 - 12)
       )
     );
     window.dispatchEvent(new Event('resize'));
@@ -104,7 +104,10 @@ export function HorizontalEditorSplit({
     <div
       ref={refs.resizableDiv as React.Ref<HTMLDivElement>}
       className={`flex h-full min-h-0 min-w-0 shrink-0 overflow-auto ${resizablePaneClassName}`}
-      style={{ width: enabled ? widthB : defaultWidth, maxWidth: enabled ? 'calc(100% - 12px)' : undefined }}
+      style={{
+        width: enabled ? widthB : defaultWidth,
+        maxWidth: enabled ? 'max(0px, calc(100% - 320px - 12px))' : undefined,
+      }}
     >
       {resizablePane}
     </div>
