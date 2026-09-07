@@ -56,7 +56,7 @@ import { extractIdFromUrn, parseUrn } from '../../../../../utility/parse-urn';
 import { useProjectAnnotationStyles } from '../../../hooks/use-project-annotation-styles';
 import UnlockSmileyIcon from '../../../../shared/icons/UnlockSmileyIcon';
 import { useCurrentUser } from '../../../../shared/hooks/use-current-user';
-import { ManifestSnippet } from '../../../../shared/features/ManifestSnippet';
+import { ManifestReviewViewer } from './ManifestReviewViewer';
 import { ReviewNavigation } from './ReviewNagivation';
 import { ErrorMessage } from '../../../../shared/callouts/ErrorMessage';
 import { Revisions } from '../../../../shared/capture-models/editor/stores/revisions';
@@ -565,13 +565,7 @@ function ViewSingleReview({
       ) : (
         metadata.subject?.id &&
         metadata.subject.type === 'manifest' && (
-          <ManifestSnippet
-            id={metadata.subject?.id}
-            data-is-stacked={true}
-            data-is-flatd={true}
-            data-is-portrait={true}
-            hideButton
-          />
+          <ManifestReviewViewer key={metadata.subject.id} manifestId={metadata.subject.id} />
         )
       )}
     </div>
