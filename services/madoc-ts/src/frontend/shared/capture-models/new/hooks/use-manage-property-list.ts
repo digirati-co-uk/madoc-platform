@@ -1,16 +1,20 @@
 import { useCallback } from 'react';
 import { Revisions } from '../../editor/stores/revisions/index';
+import { useModelPageConfiguration } from '../../../../site/hooks/use-model-page-configuration';
 import { useSlotContext } from '../components/EditorSlots';
 import { useCurrentEntity } from './use-current-entity';
 import { useResolvedDependant } from './use-resolved-dependant';
 
 export function useManagePropertyList(property: string) {
   const { configuration } = useSlotContext();
+  const { textOnlyOcrCorrection = false } = useModelPageConfiguration();
   const [entity, { path }] = useCurrentEntity();
 
   const fields = entity.properties[property];
   const label = fields[0].label;
-  const allowMultiple = Boolean(fields[0] ? fields[0].allowMultiple : false);
+  const isTextOnlyOcr =
+    textOnlyOcrCorrection && fields[0]?.profile === 'http://madoc.io/profiles/capture-model-fields/paragraphs';
+  const allowMultiple = !isTextOnlyOcr && Boolean(fields[0] ? fields[0].allowMultiple : false);
   const maxMultiple = fields[0] ? fields[0].maxMultiple : null;
   const { createNewEntityInstance, createNewFieldInstance, removeInstance } = Revisions.useStoreActions(a => ({
     createNewEntityInstance: a.createNewEntityInstance,

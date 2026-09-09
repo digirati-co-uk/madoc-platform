@@ -2,6 +2,7 @@
 export default {
   content: [
     './src/frontend/**/*.{js,ts,jsx,tsx}',
+    './src/extensions/capture-models/**/*.{js,ts,jsx,tsx}',
     './src/extensions/projects/editors/**/*.{js,ts,jsx,tsx}',
     './node_modules/iiif-browser/dist/**/*.{js,mjs,cjs}',
   ],

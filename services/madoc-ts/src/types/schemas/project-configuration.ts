@@ -93,6 +93,7 @@ export type ProjectConfiguration = TabularProjectConfigurationFields & {
     enableTooltipDescriptions?: boolean;
     enableSplitView?: boolean;
     enableEditorResizing?: boolean;
+    textOnlyOcrCorrection?: boolean;
   };
   projectPageOptions?: {
     hideStartContributing?: boolean;
@@ -247,6 +248,7 @@ export type ProjectConfigurationNEW = TabularProjectConfigurationFields & {
     enableTooltipDescriptions?: boolean;
     enableSplitView?: boolean;
     enableEditorResizing?: boolean;
+    textOnlyOcrCorrection?: boolean;
   };
   contributionWarningTime: false | number;
   shortExpiryTime?: string;

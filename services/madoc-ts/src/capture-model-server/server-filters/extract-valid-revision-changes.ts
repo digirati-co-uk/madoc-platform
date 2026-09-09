@@ -29,6 +29,12 @@ export function extractValidRevisionChanges(
     allowCustomStructure,
   });
   const allIds: string[] = [];
+  const requestEntities: Record<string, CaptureModel['document']> = {};
+  traverseDocument(req.document, {
+    visitEntity(entity) {
+      requestEntities[entity.id] = entity;
+    },
+  });
   const mutations: Record<
     string,
     Array<
@@ -83,7 +89,7 @@ export function extractValidRevisionChanges(
             type: 'field',
             field,
             term,
-            before: getBefore(field, term, parent),
+            before: getBefore(field, term, requestEntities[parent.id] || parent),
           });
         }
       },
@@ -97,7 +103,7 @@ export function extractValidRevisionChanges(
             entity,
             term,
             shallow: allowCanonicalChanges,
-            before: getBefore(entity, term, parent),
+            before: getBefore(entity, term, requestEntities[parent.id] || parent),
           });
         }
       },

@@ -149,6 +149,16 @@ export type RevisionsModel = {
 
   // Fields and selector state.
   updateFieldValue: Action<RevisionsModel, { path: Array<[string, string]>; revisionId?: string; value: any }>;
+  replaceEntityProperty: Action<
+    RevisionsModel,
+    {
+      path: Array<[string, string]>;
+      property: string;
+      value: Array<CaptureModel['document'] | BaseField>;
+      deletedFieldIds?: string[];
+      revisionId?: string;
+    }
+  >;
 
   // Field instances (for allowMultiple=true)
   createNewFieldInstance: Action<

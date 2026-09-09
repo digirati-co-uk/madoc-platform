@@ -330,17 +330,24 @@ export function updateRevisionInDocument(
 
             // then we are doing an insertion.
             const [beforeId] = mutation.before;
-            const beforeIndex = (entity.properties[mutation.term] as any[]).findIndex(r => r && r.id === beforeId);
+            const values = entity.properties[mutation.term] as any[];
+            const beforeIndex = values.findIndex(r => r && r.id === beforeId);
+            const revisedIndex =
+              beforeId === null && toPush.revises ? values.findIndex(r => r?.id === toPush.revises) : -1;
             if (beforeIndex !== -1) {
-              (entity.properties[mutation.term as any] as any[]).splice(beforeIndex + 1, 0, toPush);
+              values.splice(beforeIndex + 1, 0, toPush);
+            } else if (revisedIndex !== -1) {
+              values.splice(revisedIndex + 1, 0, toPush);
+            } else if (beforeId === null) {
+              values.unshift(toPush);
             } else {
-              (entity.properties[mutation.term as any] as any[]).push(toPush);
+              values.push(toPush);
             }
 
             // Filter our placeholder used to keep track of the correct beforeIndex.
-            (entity.properties[mutation.term as any] as any[]) = (entity.properties[
-              mutation.term as any
-            ] as any[]).filter(r => r !== null);
+            (entity.properties[mutation.term as any] as any[]) = (
+              entity.properties[mutation.term as any] as any[]
+            ).filter(r => r !== null);
           }
         }
       },
