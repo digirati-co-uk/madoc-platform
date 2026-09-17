@@ -1665,7 +1665,7 @@ export class ApiClient {
   /**
    * @deprecated use api.crowdsourcing.getCaptureModel() instead
    */
-  async getCaptureModel(id: string, query?: { author?: string; published?: boolean }) {
+  async getCaptureModel(id: string, query?: { author?: string; published?: boolean; debug?: boolean }) {
     return this.crowdsourcing.getCaptureModel(id, query);
   }
 

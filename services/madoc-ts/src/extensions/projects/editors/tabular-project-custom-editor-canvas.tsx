@@ -1,4 +1,14 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Tooltip as ReactTooltip } from 'react-tooltip';
+import { getTabularCellBounds } from '@/frontend/admin/components/tabular/cast-a-net/tabular-cell-bounds';
+import { TabularNetAlignmentToolbar } from './tabular-net-alignment-toolbar';
+import { TabularNetAlignmentControls } from './tabular-net-alignment-controls';
+import { TabularNetAlignmentGuides } from './tabular-net-alignment-guides';
+import {
+  ALIGNMENT_STEP,
+  nudgeHorizontalAlignment,
+  type TabularHorizontalAlignment,
+} from '@/frontend/shared/utility/tabular-horizontal-alignment';
+import React, { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { CastANetOverlayAtlas } from '@/frontend/admin/components/tabular/cast-a-net/CastANetOverlayAtlas';
 import {
   FollowActiveCellOnCanvas,
@@ -14,7 +24,6 @@ import { resizeAtlasRuntime } from '@/frontend/shared/utility/resize-atlas-runti
 import { CanvasViewerButton } from '@/frontend/shared/atoms/CanvasViewerGrid';
 import { EditorContentViewer } from '@/frontend/shared/capture-models/new/EditorContent';
 import { OpenSeadragonViewer } from '@/frontend/shared/features/OpenSeadragonViewer.lazy';
-import { ArrowDownIcon } from '@/frontend/shared/icons/ArrowDownIcon';
 import { PanIcon } from '@/frontend/shared/icons/PanIcon';
 import { RotateIcon } from '@/frontend/shared/icons/RotateIcon';
 import { Button } from '@/frontend/shared/navigation/Button';
@@ -39,12 +48,14 @@ type TabularProjectCustomEditorCanvasProps = {
   onNudgeUp?: () => void;
   onNudgeDown?: () => void;
   nudgeDisabled?: boolean;
+  onHorizontalAlignmentChange?: (value: TabularHorizontalAlignment) => void;
+  initialNetConfig?: NetConfig | null;
 };
 
 export function TabularProjectCustomEditorCanvas({
   canvasId,
   canvas,
-  netConfig,
+  netConfig: sourceNetConfig,
   activeCell,
   hideViewerControls = false,
   enableRotation = false,
@@ -57,7 +68,24 @@ export function TabularProjectCustomEditorCanvas({
   onNudgeUp,
   onNudgeDown,
   nudgeDisabled = false,
+  onHorizontalAlignmentChange,
+  initialNetConfig,
 }: TabularProjectCustomEditorCanvasProps) {
+  const tooltipId = useId();
+  const [alignmentExpanded, setAlignmentExpanded] = useState(false);
+  const [alignmentPreview, setAlignmentPreview] = useState<TabularHorizontalAlignment | null>(null);
+  const isAligning = !!alignmentPreview;
+  const alignmentConfigRef = useRef(sourceNetConfig);
+  alignmentConfigRef.current = sourceNetConfig;
+  const netConfig = useMemo(
+    () => (sourceNetConfig ? { ...sourceNetConfig, ...alignmentPreview } : null),
+    [sourceNetConfig, alignmentPreview]
+  );
+  const alignButtonRef = useRef<HTMLButtonElement>(null);
+  const finishAlignment = () => {
+    setAlignmentPreview(null);
+    requestAnimationFrame(() => alignButtonRef.current?.focus());
+  };
   const containerRef = useRef<HTMLDivElement | null>(null);
   const runtimeRef = useRef<RuntimeWithViewport | null>(null);
   const osdRef = useRef<any>(null);
@@ -126,17 +154,10 @@ export function TabularProjectCustomEditorCanvas({
         resizeRuntimeToSize(size);
       }
 
-      setTabularHeadingsHomePosition(runtimeRef.current, netConfig);
+      setTabularHeadingsHomePosition(runtimeRef.current, alignmentConfigRef.current);
     },
-    [getContainerSize, netConfig, resizeRuntimeToSize]
+    [getContainerSize, resizeRuntimeToSize]
   );
-
-  useEffect(() => {
-    runtimeRef.current = null;
-    osdRef.current = null;
-    pendingRotateRef.current = false;
-    setIsOSD(false);
-  }, [canvasId]);
 
   useEffect(() => {
     setTabularHeadingsHomePosition(runtimeRef.current, netConfig);
@@ -214,10 +235,19 @@ export function TabularProjectCustomEditorCanvas({
 
   const zoomIn = useCallback(() => {
     runViewerCommand(
-      runtime => runtime?.world?.zoomIn?.(),
+      runtime => {
+        // Review loads its canvas inside the viewer, so it may not have a canvas prop.
+        const width = canvas?.width ?? runtime?.world?.width;
+        const height = canvas?.height ?? runtime?.world?.height;
+        const cell =
+          !isAligning && activeCell && netConfig && width && height
+            ? getTabularCellBounds(netConfig, activeCell, { width, height })
+            : null;
+        runtime?.world?.zoomIn?.(cell ? { x: cell.x + cell.width / 2, y: cell.y + cell.height / 2 } : undefined);
+      },
       viewer => viewer?.zoomIn?.()
     );
-  }, [runViewerCommand]);
+  }, [runViewerCommand, isAligning, activeCell, netConfig, canvas]);
 
   function rotate() {
     setIsOSD(true);
@@ -236,10 +266,10 @@ export function TabularProjectCustomEditorCanvas({
   }, []);
 
   return (
-    <div className="h-full min-h-0 min-w-0 border-b border-gray-300 bg-gray-100 p-2">
+    <div className="flex h-full min-h-0 min-w-0 flex-col gap-2 border-b border-gray-300 bg-gray-100 p-2">
       <div
         ref={containerRef}
-        className="relative h-full min-h-0 min-w-0 overflow-hidden rounded border border-gray-400 bg-white"
+        className="relative min-h-0 min-w-0 flex-1 overflow-hidden rounded border border-gray-400 bg-white"
       >
         <TabularCanvasViewportControls
           onHome={goHome}
@@ -253,7 +283,7 @@ export function TabularProjectCustomEditorCanvas({
           leadingControls={
             <>
               {enableRotation ? (
-                <CanvasViewerButton type="button" onClick={rotate} title="Rotate image">
+                <CanvasViewerButton type="button" onClick={rotate} disabled={!!alignmentPreview} title="Rotate image">
                   <RotateIcon title="Rotate image" />
                 </CanvasViewerButton>
               ) : null}
@@ -261,7 +291,7 @@ export function TabularProjectCustomEditorCanvas({
                 <CanvasViewerButton
                   type="button"
                   onClick={() => setZoomTrackingOverride(!isZoomTrackingEnabled)}
-                  disabled={!netConfig}
+                  disabled={!netConfig || !!alignmentPreview}
                   data-active={isZoomTrackingEnabled}
                   aria-label="Toggle table row tracking"
                   aria-pressed={isZoomTrackingEnabled}
@@ -273,35 +303,35 @@ export function TabularProjectCustomEditorCanvas({
             </>
           }
         />
-        {shouldShowNudgeControls ? (
-          <div
-            style={{
-              position: 'absolute',
-              top: 12,
-              left: 12,
-              zIndex: 50,
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 8,
+        {shouldShowNudgeControls && netConfig ? (
+          <TabularNetAlignmentToolbar
+            expanded={alignmentExpanded}
+            previewing={isAligning}
+            disabled={nudgeDisabled || !isViewerReady}
+            tooltipId={tooltipId}
+            toggleRef={alignButtonRef}
+            onToggle={() => {
+              if (alignmentExpanded) finishAlignment();
+              setAlignmentExpanded(!alignmentExpanded);
             }}
-          >
-            <CanvasViewerButton
-              type="button"
-              onClick={onNudgeUp}
-              disabled={nudgeDisabled || !onNudgeUp}
-              title="Nudge table row tracking up"
-            >
-              <ArrowDownIcon style={{ transform: 'rotate(180deg)', fill: 'currentColor' }} />
-            </CanvasViewerButton>
-            <CanvasViewerButton
-              type="button"
-              onClick={onNudgeDown}
-              disabled={nudgeDisabled || !onNudgeDown}
-              title="Nudge table row tracking down"
-            >
-              <ArrowDownIcon style={{ fill: 'currentColor' }} />
-            </CanvasViewerButton>
-          </div>
+            onUp={onNudgeUp}
+            onDown={onNudgeDown}
+            onLeft={
+              onHorizontalAlignmentChange && netConfig.left > 0
+                ? () => onHorizontalAlignmentChange(nudgeHorizontalAlignment(netConfig, -ALIGNMENT_STEP))
+                : undefined
+            }
+            onRight={
+              onHorizontalAlignmentChange && netConfig.left + netConfig.width < 100
+                ? () => onHorizontalAlignmentChange(nudgeHorizontalAlignment(netConfig, ALIGNMENT_STEP))
+                : undefined
+            }
+            onAlign={
+              onHorizontalAlignmentChange
+                ? () => setAlignmentPreview({ left: netConfig.left, width: netConfig.width })
+                : undefined
+            }
+          />
         ) : null}
         {isOSD ? (
           <>
@@ -339,7 +369,7 @@ export function TabularProjectCustomEditorCanvas({
                   runtimeTick={runtimeTick}
                   value={netConfig}
                   activeCell={activeCell}
-                  enabled={isZoomTrackingEnabled && !!activeCell}
+                  enabled={isZoomTrackingEnabled && !!activeCell && !alignmentPreview}
                 />
                 <CastANetOverlayAtlas
                   value={netConfig}
@@ -350,11 +380,41 @@ export function TabularProjectCustomEditorCanvas({
                   dimOpacity={0}
                   previewOverlayOnly
                 />
+                {alignmentPreview ? (
+                  <TabularNetAlignmentGuides value={netConfig} onChange={setAlignmentPreview} />
+                ) : null}
               </>
             ) : null}
           </EditorContentViewer>
         )}
       </div>
+      {alignmentPreview && sourceNetConfig ? (
+        <TabularNetAlignmentControls
+          value={alignmentPreview}
+          tooltipId={tooltipId}
+          onChange={setAlignmentPreview}
+          disabled={nudgeDisabled}
+          onApply={() => {
+            onHorizontalAlignmentChange?.(alignmentPreview);
+            finishAlignment();
+          }}
+          onCancel={finishAlignment}
+          onReset={() =>
+            setAlignmentPreview({
+              left: (initialNetConfig || sourceNetConfig).left,
+              width: (initialNetConfig || sourceNetConfig).width,
+            })
+          }
+        />
+      ) : null}
+      <ReactTooltip
+        id={tooltipId}
+        place="bottom"
+        variant="dark"
+        delayShow={0}
+        positionStrategy="fixed"
+        style={{ zIndex: 100 }}
+      />
     </div>
   );
 }

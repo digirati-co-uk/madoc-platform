@@ -1,5 +1,5 @@
 import { Action, Computed, Thunk } from 'easy-peasy';
-import { CaptureModel } from '../../../types/capture-model';
+import { CaptureModel, Revision } from '../../../types/capture-model';
 import { BaseField } from '../../../types/field-types';
 import { RevisionRequest } from '../../../types/revision-request';
 import { BaseSelector } from '../../../types/selector-types';
@@ -144,6 +144,7 @@ export type RevisionsModel = {
   saveRevision: Action<RevisionsModel, { revisionId: string }>;
   selectRevision: Action<RevisionsModel, { revisionId: string; readMode?: boolean; modelRoot?: string[] }>;
   deselectRevision: Action<RevisionsModel, { revisionId: string }>;
+  setTabularAlignment: Action<RevisionsModel, NonNullable<Revision['tabularAlignment']>>;
   setRevisionLabel: Action<RevisionsModel, { revisionId?: string; label: string }>;
   // discardRevisionChanges(rid) -- maybe
 

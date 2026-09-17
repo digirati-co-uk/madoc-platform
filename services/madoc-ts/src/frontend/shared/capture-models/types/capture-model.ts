@@ -1,3 +1,4 @@
+import type { TabularAlignmentSnapshot } from '../../utility/tabular-alignment-snapshot';
 import { BaseProperty } from './base-property';
 import { BaseField } from './field-types';
 
@@ -17,6 +18,7 @@ export interface Document extends BaseProperty {
 }
 
 export type Revision = {
+  tabularAlignment?: TabularAlignmentSnapshot;
   id: string;
   label?: string;
   status?: StatusTypes;

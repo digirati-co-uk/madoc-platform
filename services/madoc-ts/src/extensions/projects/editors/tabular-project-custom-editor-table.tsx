@@ -38,6 +38,7 @@ import type {
   TabularEditorHeaderModel,
   TabularEditorRowModel,
 } from './tabular-project-custom-editor-table-model';
+import { useTranslation } from 'react-i18next';
 
 type TabularProjectCustomEditorTableProps = {
   headerColumns: TabularEditorHeaderModel[];
@@ -385,6 +386,7 @@ type TabularGridCellDisplayProps = {
 };
 
 function TabularGridCellDisplay({ cell, isActiveCell, isEditable, isFlagged, isNoted }: TabularGridCellDisplayProps) {
+  const { t } = useTranslation();
   const isReadOnlyField = cell.fieldType === 'read-only-field';
   const isCheckboxField = cell.fieldType === 'checkbox-field';
   const textValue = toTextValue(cell.value);
@@ -420,16 +422,11 @@ function TabularGridCellDisplay({ cell, isActiveCell, isEditable, isFlagged, isN
         </span>
       ) : null}
       {displayValue ||
-        (isActiveCell && isEditable ? <span className="text-xs text-slate-400">Double click to edit</span> : '\u00A0')}
-      {isActiveCell && isEditable ? (
-        <kbd
-          className="pointer-events-none absolute bottom-1 right-1 inline-flex h-5 min-w-5 items-center justify-center rounded border border-slate-300 bg-white px-1 text-[11px] font-semibold leading-none text-slate-600 shadow-sm"
-          title="Press Enter to edit"
-          aria-label="Press Enter to edit"
-        >
-          ↵
-        </kbd>
-      ) : null}
+        (isActiveCell && isEditable ? (
+          <span className="text-xs text-slate-400">{t('Double click to edit')}</span>
+        ) : (
+          '\u00A0'
+        ))}
     </div>
   );
 }
