@@ -18,11 +18,9 @@ import {
   ContributionSaveButton,
 } from '../../atoms/CanvasViewerGrid';
 import { CreateModelTestCase } from '../../../site/features/CreateModelTestCase';
-import { OpenSeadragonViewer } from '../../features/OpenSeadragonViewer.lazy';
 import { TranscriberModeWorkflowBar } from '../../../site/features/canvas/TranscriberModeWorkflowBar';
 import { RouteContext } from '../../../site/hooks/use-route-context';
 import { ViewReadOnlyAnnotation } from '../../atlas/ViewReadOnlyAnnotation';
-import { InfoMessage } from '../../callouts/InfoMessage';
 import { SmallToast } from '../../callouts/SmallToast';
 import { HorizontalEditorSplit } from '../../components/HorizontalEditorSplit';
 import { useLocalStorage } from '../../hooks/use-local-storage';
@@ -33,8 +31,6 @@ import { PlusIcon } from '../../icons/PlusIcon';
 import { RotateIcon } from '../../icons/RotateIcon';
 import { TickIcon } from '../../icons/TickIcon';
 import { EmptyState } from '../../layout/EmptyState';
-import { Button } from '../../navigation/Button';
-import { BrowserComponent } from '../../utility/browser-component';
 import { CaptureModelVisualSettings } from '../editor/components/CaptureModelVisualSettings/CaptureModelVisualSettings';
 import { CaptureModel } from '../types/capture-model';
 import { RevisionRequest } from '../types/revision-request';
@@ -146,13 +142,11 @@ export function CoreModelEditor({
 }: CoreModelEditorProps) {
   const { t } = useTranslation();
   const runtime = useRef<Runtime>(undefined);
-  const osd = useRef<any>(undefined);
   const gridRef = useRef<any>(undefined);
   const [showPanWarning, setShowPanWarning] = useLocalStorage('pan-warning', false);
   const [postSubmission, setPostSubmission] = useState(false);
   const [postSubmissionMessage, setPostSubmissionMessage] = useState(false);
   const [invalidateKey, invalidate] = useReducer(i => i + 1, 0);
-  const [isOSD, setIsOSD] = useState(false);
 
   const onPanInSketchMode = useCallback(() => {
     setShowPanWarning(true);
@@ -165,17 +159,11 @@ export function CoreModelEditor({
     if (runtime.current) {
       runtime.current.world.goHome();
     }
-    if (osd.current) {
-      osd.current.goHome();
-    }
   };
 
   const zoomIn = () => {
     if (runtime.current) {
       runtime.current.world.zoomIn();
-    }
-    if (osd.current) {
-      osd.current.zoomIn();
     }
   };
 
@@ -183,15 +171,11 @@ export function CoreModelEditor({
     if (runtime.current) {
       runtime.current.world.zoomOut();
     }
-    if (osd.current) {
-      osd.current.zoomOut();
-    }
   };
 
   const rotate = () => {
-    setIsOSD(true);
-    if (osd.current) {
-      osd.current.rotate();
+    if (runtime.current) {
+      runtime.current.world.rotateBy(90);
     }
   };
 
@@ -253,32 +237,18 @@ export function CoreModelEditor({
 
   const viewerPane = (
     <CanvasViewerGridContent $vertical={isVertical}>
-      {isOSD ? (
-        <>
-          <InfoMessage style={{ lineHeight: '3.4em', position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10 }}>
-            {t('You cannot edit annotations if you are rotating')}
-            <Button style={{ margin: '0.8em' }} onClick={() => setIsOSD(false)}>
-              Reset
-            </Button>
-          </InfoMessage>
-          <BrowserComponent fallback={null}>
-            <OpenSeadragonViewer ref={osd} onReady={viewer => viewer.viewport.setRotation(90)} />
-          </BrowserComponent>
-        </>
-      ) : (
-        <EditorContentViewer
-          height={'100%' as any}
-          onCreated={rt => {
-            return ((runtime as any).current = rt.runtime);
-          }}
-          onPanInSketchMode={onPanInSketchMode}
-          {...targetProps}
-        >
-          {(readOnlyAnnotations || []).map(anno => (
-            <ViewReadOnlyAnnotation key={anno.id} {...anno} />
-          ))}
-        </EditorContentViewer>
-      )}
+      <EditorContentViewer
+        height={'100%' as any}
+        onCreated={rt => {
+          return ((runtime as any).current = rt.runtime);
+        }}
+        onPanInSketchMode={onPanInSketchMode}
+        {...targetProps}
+      >
+        {(readOnlyAnnotations || []).map(anno => (
+          <ViewReadOnlyAnnotation key={anno.id} {...anno} />
+        ))}
+      </EditorContentViewer>
 
       {hideViewerControls ? null : (
         <CanvasViewerControls>

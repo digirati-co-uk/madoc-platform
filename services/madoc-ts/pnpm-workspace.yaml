@@ -9,15 +9,18 @@ allowBuilds:
 
 minimumReleaseAgeExclude:
   - iiif-browser@2.2.6
+  - '@atlas-viewer/atlas@3.3.0'
+  - react-iiif-vault@4.0.0
 
 overrides:
-  '@atlas-viewer/atlas': 3.2.3
+  '@atlas-viewer/atlas': 3.3.0
   '@atlas-viewer/iiif-image-api': 2.2.2
   '@babel/core': ^7.29.0
   '@babel/generator': ^7.29.0
   '@babel/runtime': ^7.28.6
   '@babel/types': ^7.29.0
-  '@iiif/helpers': ^1.6.1
+  "@iiif/parser": ^4.0.1
+  '@iiif/helpers': ^4.0.0
   '@iiif/vocabulary': 1.0.31
   '@types/react': 19.2.18
   '@types/react-dom': 19.2.4
