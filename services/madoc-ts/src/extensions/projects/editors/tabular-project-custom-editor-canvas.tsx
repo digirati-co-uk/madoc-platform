@@ -14,7 +14,6 @@ import {
   FollowActiveCellOnCanvas,
   type RuntimeWithViewport,
 } from '@/frontend/admin/components/tabular/cast-a-net/FollowActiveCellOnCanvas';
-import { InfoMessage } from '@/frontend/shared/callouts/InfoMessage';
 import type { NetConfig, TabularCellRef } from '@/frontend/shared/utility/tabular-types';
 import {
   goHomeToTabularHeadings,
@@ -23,11 +22,8 @@ import {
 import { resizeAtlasRuntime } from '@/frontend/shared/utility/resize-atlas-runtime';
 import { CanvasViewerButton } from '@/frontend/shared/atoms/CanvasViewerGrid';
 import { EditorContentViewer } from '@/frontend/shared/capture-models/new/EditorContent';
-import { OpenSeadragonViewer } from '@/frontend/shared/features/OpenSeadragonViewer.lazy';
 import { PanIcon } from '@/frontend/shared/icons/PanIcon';
 import { RotateIcon } from '@/frontend/shared/icons/RotateIcon';
-import { Button } from '@/frontend/shared/navigation/Button';
-import { BrowserComponent } from '@/frontend/shared/utility/browser-component';
 import { TabularCanvasViewportControls } from '@/frontend/shared/components/TabularCanvasViewportControls';
 import type { TabularOverlayColors } from '@/frontend/shared/utility/tabular-project-config';
 import type { CanvasFull } from '@/types/canvas-full';
@@ -88,15 +84,12 @@ export function TabularProjectCustomEditorCanvas({
   };
   const containerRef = useRef<HTMLDivElement | null>(null);
   const runtimeRef = useRef<RuntimeWithViewport | null>(null);
-  const osdRef = useRef<any>(null);
-  const pendingRotateRef = useRef(false);
   const [runtimeTick, setRuntimeTick] = useState(0);
-  const [isOSD, setIsOSD] = useState(false);
   const [zoomTrackingOverride, setZoomTrackingOverride] = useState<boolean | null>(null);
   const hideNudgeControlsResolved = hideZoomTrackingNudgeControls || hideNudgeControls;
-  const showZoomTrackingUi = zoomTrackingDefaultEnabled && !!netConfig && !isOSD;
+  const showZoomTrackingUi = zoomTrackingDefaultEnabled && !!netConfig;
   const showZoomTrackingToggle = showZoomTrackingUi && !hideZoomTrackingToggle;
-  const isViewerReady = isOSD ? !!osdRef.current : !!runtimeRef.current;
+  const isViewerReady = !!runtimeRef.current;
   const shouldShowNudgeControls =
     showZoomTrackingUi && !hideNudgeControlsResolved && showVerticalNudgeControls && Boolean(onNudgeUp || onNudgeDown);
   const isZoomTrackingEnabled = useMemo(() => {
@@ -203,67 +196,38 @@ export function TabularProjectCustomEditorCanvas({
     };
   }, [getContainerSize, resizeRuntimeToSize]);
 
-  const runViewerCommand = useCallback(
-    (atlasCommand: (runtime: RuntimeWithViewport | null) => void, osdCommand: (viewer: any) => void) => {
-      if (isOSD) {
-        osdCommand(osdRef.current);
-        return;
-      }
-
-      atlasCommand(runtimeRef.current);
-    },
-    [isOSD]
-  );
+  const runViewerCommand = useCallback((atlasCommand: (runtime: RuntimeWithViewport | null) => void) => {
+    atlasCommand(runtimeRef.current);
+  }, []);
 
   const goHome = useCallback(() => {
-    runViewerCommand(
-      runtime => {
-        if (!goHomeToTabularHeadings(runtime, netConfig)) {
-          runtime?.world?.goHome?.();
-        }
-      },
-      viewer => viewer?.goHome?.()
-    );
+    runViewerCommand(runtime => {
+      if (!goHomeToTabularHeadings(runtime, netConfig)) {
+        runtime?.world?.goHome?.();
+      }
+    });
   }, [netConfig, runViewerCommand]);
 
   const zoomOut = useCallback(() => {
-    runViewerCommand(
-      runtime => runtime?.world?.zoomOut?.(),
-      viewer => viewer?.zoomOut?.()
-    );
+    runViewerCommand(runtime => runtime?.world?.zoomOut?.());
   }, [runViewerCommand]);
 
   const zoomIn = useCallback(() => {
-    runViewerCommand(
-      runtime => {
-        // Review loads its canvas inside the viewer, so it may not have a canvas prop.
-        const width = canvas?.width ?? runtime?.world?.width;
-        const height = canvas?.height ?? runtime?.world?.height;
-        const cell =
-          !isAligning && activeCell && netConfig && width && height
-            ? getTabularCellBounds(netConfig, activeCell, { width, height })
-            : null;
-        runtime?.world?.zoomIn?.(cell ? { x: cell.x + cell.width / 2, y: cell.y + cell.height / 2 } : undefined);
-      },
-      viewer => viewer?.zoomIn?.()
-    );
+    runViewerCommand(runtime => {
+      // Review loads its canvas inside the viewer, so it may not have a canvas prop.
+      const width = canvas?.width ?? runtime?.world?.width;
+      const height = canvas?.height ?? runtime?.world?.height;
+      const cell =
+        !isAligning && activeCell && netConfig && width && height
+          ? getTabularCellBounds(netConfig, activeCell, { width, height })
+          : null;
+      runtime?.world?.zoomIn?.(cell ? { x: cell.x + cell.width / 2, y: cell.y + cell.height / 2 } : undefined);
+    });
   }, [runViewerCommand, isAligning, activeCell, netConfig, canvas]);
 
   function rotate() {
-    setIsOSD(true);
-
-    if (osdRef.current) {
-      osdRef.current.rotate?.();
-      return;
-    }
-
-    pendingRotateRef.current = true;
+    runViewerCommand(runtime => runtime?.world?.rotateBy?.(90));
   }
-
-  const resetRotationMode = useCallback(() => {
-    pendingRotateRef.current = false;
-    setIsOSD(false);
-  }, []);
 
   return (
     <div className="flex h-full min-h-0 min-w-0 flex-col gap-2 border-b border-gray-300 bg-gray-100 p-2">
@@ -333,60 +297,37 @@ export function TabularProjectCustomEditorCanvas({
             }
           />
         ) : null}
-        {isOSD ? (
-          <>
-            <InfoMessage style={{ lineHeight: '3.4em', position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10 }}>
-              Table row tracking is disabled while rotating.
-              <Button style={{ margin: '0.8em' }} onClick={resetRotationMode}>
-                Reset
-              </Button>
-            </InfoMessage>
-            <BrowserComponent fallback={null}>
-              <OpenSeadragonViewer
-                ref={osdRef}
-                onReady={() => {
-                  if (pendingRotateRef.current) {
-                    pendingRotateRef.current = false;
-                    osdRef.current?.rotate?.();
-                  }
-                }}
+
+        <EditorContentViewer
+          height="100%"
+          canvasId={canvasId}
+          canvas={canvas}
+          target={viewerTarget as any}
+          homeCover="start"
+          onCreated={handleViewerCreated as any}
+        >
+          {netConfig && showZoomTrackingUi ? (
+            <>
+              <FollowActiveCellOnCanvas
+                runtimeRef={runtimeRef}
+                runtimeTick={runtimeTick}
+                value={netConfig}
+                activeCell={activeCell}
+                enabled={isZoomTrackingEnabled && !!activeCell && !alignmentPreview}
               />
-            </BrowserComponent>
-          </>
-        ) : (
-          <EditorContentViewer
-            height="100%"
-            canvasId={canvasId}
-            canvas={canvas}
-            target={viewerTarget as any}
-            homeCover="start"
-            onCreated={handleViewerCreated as any}
-          >
-            {netConfig && showZoomTrackingUi ? (
-              <>
-                <FollowActiveCellOnCanvas
-                  runtimeRef={runtimeRef}
-                  runtimeTick={runtimeTick}
-                  value={netConfig}
-                  activeCell={activeCell}
-                  enabled={isZoomTrackingEnabled && !!activeCell && !alignmentPreview}
-                />
-                <CastANetOverlayAtlas
-                  value={netConfig}
-                  onChange={() => undefined}
-                  disabled
-                  activeCell={activeCell}
-                  overlayColors={overlayColors}
-                  dimOpacity={0}
-                  previewOverlayOnly
-                />
-                {alignmentPreview ? (
-                  <TabularNetAlignmentGuides value={netConfig} onChange={setAlignmentPreview} />
-                ) : null}
-              </>
-            ) : null}
-          </EditorContentViewer>
-        )}
+              <CastANetOverlayAtlas
+                value={netConfig}
+                onChange={() => undefined}
+                disabled
+                activeCell={activeCell}
+                overlayColors={overlayColors}
+                dimOpacity={0}
+                previewOverlayOnly
+              />
+              {alignmentPreview ? <TabularNetAlignmentGuides value={netConfig} onChange={setAlignmentPreview} /> : null}
+            </>
+          ) : null}
+        </EditorContentViewer>
       </div>
       {alignmentPreview && sourceNetConfig ? (
         <TabularNetAlignmentControls

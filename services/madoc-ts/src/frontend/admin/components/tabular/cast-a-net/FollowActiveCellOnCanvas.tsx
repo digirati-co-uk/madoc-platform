@@ -41,6 +41,7 @@ export type RuntimeWithViewport = {
     goHome?: () => void;
     zoomIn?: (origin?: { x: number; y: number }) => void;
     zoomOut?: () => void;
+    rotateBy?: (degrees: number) => void;
   };
 };
 
