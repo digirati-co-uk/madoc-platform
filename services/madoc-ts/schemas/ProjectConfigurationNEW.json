@@ -401,6 +401,9 @@
         "submissionOptions": {
           "type": "object",
           "properties": {
+            "showSaveForLaterAlongsideSubmit": {
+              "type": "boolean"
+            },
             "disablePreview": {
               "type": "boolean"
             },

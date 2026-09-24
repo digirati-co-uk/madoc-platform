@@ -95,6 +95,7 @@ export type EditorConfig = {
   selectFieldWhenCreating: boolean;
   deselectRevisionAfterSaving: boolean;
   disableSaveForLater: boolean;
+  showSaveForLaterAlongsideSubmit: boolean;
   saveOnNavigate: boolean;
   profileConfig: {
     [profile: string]: ProfileConfig;
@@ -107,6 +108,7 @@ const defaultEditorConfig: EditorConfig = {
   selectFieldWhenCreating: true,
   deselectRevisionAfterSaving: false,
   disableSaveForLater: false,
+  showSaveForLaterAlongsideSubmit: false,
   saveOnNavigate: false,
   profileConfig: {},
   immutableFields: [],

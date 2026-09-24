@@ -349,6 +349,10 @@ export const siteConfigurationModel: {
         value: 'disableSaveForLater',
       },
       {
+        label: 'Show save for later beside Submit',
+        value: 'showSaveForLaterAlongsideSubmit',
+      },
+      {
         label: 'Disable preview popup (direct submit)',
         value: 'disablePreview',
       },
@@ -890,6 +894,11 @@ const SUBMISSION_OPTIONS = [
   },
 ];
 
+const SHOW_SAVE_FOR_LATER_ALONGSIDE_SUBMIT_OPTION = {
+  label: 'Show save for later beside Submit',
+  value: 'showSaveForLaterAlongsideSubmit',
+};
+
 const sharedProjectContributionFields = {
   contributionMode: {
     label: 'Contribution mode',
@@ -1088,6 +1097,10 @@ export const ProjectConfigContributions: ProjectConfigTemplate = {
     options: genericContributionModelPageOptions,
   },
   ...sharedProjectContributionTailFields,
+  submissionOptions: {
+    ...sharedProjectContributionTailFields.submissionOptions,
+    options: [SHOW_SAVE_FOR_LATER_ALONGSIDE_SUBMIT_OPTION, ...SUBMISSION_OPTIONS],
+  },
   modelPageShowAnnotations: {
     label: 'Contribution page annotations',
     description: 'Decide when annotations are shown when a user is on the contributing page',

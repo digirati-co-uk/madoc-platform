@@ -72,6 +72,8 @@ export interface CoreModelEditorProps {
 
   disableSaveForLater?: boolean;
 
+  showSaveForLaterAlongsideSubmit?: boolean;
+
   disableNextCanvas?: boolean;
 
   markedAsUnusable?: boolean;
@@ -121,6 +123,7 @@ export function CoreModelEditor({
   allowMultiple,
   disableNextCanvas,
   disableSaveForLater,
+  showSaveForLaterAlongsideSubmit,
   preventFurtherSubmission,
   isVertical,
   enableEditorResizing = true,
@@ -342,6 +345,7 @@ export function CoreModelEditor({
             profileConfig,
             saveOnNavigate: isPreparing || mode === 'transcription',
             disableSaveForLater,
+            showSaveForLaterAlongsideSubmit,
           },
           components: components,
         }}

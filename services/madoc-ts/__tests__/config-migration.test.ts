@@ -37,4 +37,20 @@ describe('Configuration migration', () => {
       false
     );
   });
+
+  test('save for later placement survives project configuration editing', () => {
+    const v2 = migrateConfig.version1to2({
+      ...siteConfig,
+      modelPageOptions: {
+        ...siteConfig.modelPageOptions,
+        showSaveForLaterAlongsideSubmit: true,
+      },
+    });
+
+    expect(v2.submissionOptions?.showSaveForLaterAlongsideSubmit).toBe(true);
+    expect(migrateConfig.version2to1(v2).modelPageOptions?.showSaveForLaterAlongsideSubmit).toBe(true);
+
+    v2.submissionOptions!.showSaveForLaterAlongsideSubmit = false;
+    expect(migrateConfig.version2to1(v2).modelPageOptions?.showSaveForLaterAlongsideSubmit).toBe(false);
+  });
 });
