@@ -349,7 +349,7 @@ export const siteConfigurationModel: {
         value: 'disableSaveForLater',
       },
       {
-        label: 'Show save for later beside Submit',
+        label: "Show 'Save for later' beside 'Submit'",
         value: 'showSaveForLaterAlongsideSubmit',
       },
       {
@@ -895,7 +895,7 @@ const SUBMISSION_OPTIONS = [
 ];
 
 const SHOW_SAVE_FOR_LATER_ALONGSIDE_SUBMIT_OPTION = {
-  label: 'Show save for later beside Submit',
+  label: "Show 'Save for later' beside 'Submit'",
   value: 'showSaveForLaterAlongsideSubmit',
 };
 
