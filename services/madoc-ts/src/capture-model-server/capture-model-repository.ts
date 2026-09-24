@@ -242,16 +242,17 @@ export class CaptureModelRepository extends BaseRepository<'capture_model_api_mi
                                       (select p.capture_model_id from iiif_project p where p.id = ${projectId} and p.site_id = ${siteId}))
                    select entity.properties as doc,
                           entity.id         as doc_id,
+                          entity.row_position as row_position,
                           cmd.model_id      as model_id,
                           cmd.target        as target
                    from cmd,
-                        ${entityQuery} as entity(
-                           "id" text,
-                           "label" text,
-                           "properties" jsonb,
-                           "revision" text,
-                           "allowMultiple" bool
-                        ))
+                        rows from (${entityQuery} as (
+                          "id" text,
+                          "label" text,
+                          "properties" jsonb,
+                          "revision" text,
+                          "allowMultiple" bool
+                        )) with ordinality as entity(id, label, properties, revision, "allowMultiple", row_position))
         select d.model_id, r.key, d.doc_id, d.target, field.*
         from d,
              jsonb_each(d.doc) as r,
@@ -259,7 +260,8 @@ export class CaptureModelRepository extends BaseRepository<'capture_model_api_mi
                  left join capture_model_revision cmr on cmr.id = revision::uuid
         where type != 'entity'
           and revision != ''
-          ${approvedQuery};
+          ${approvedQuery}
+        order by d.model_id, d.row_position;
       `;
     },
   };

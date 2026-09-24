@@ -24,6 +24,8 @@ import { CanvasViewerButton } from '@/frontend/shared/atoms/CanvasViewerGrid';
 import { EditorContentViewer } from '@/frontend/shared/capture-models/new/EditorContent';
 import { PanIcon } from '@/frontend/shared/icons/PanIcon';
 import { RotateIcon } from '@/frontend/shared/icons/RotateIcon';
+import { Button } from '@/frontend/shared/navigation/Button';
+import { BrowserComponent } from '@/frontend/shared/utility/browser-component';
 import { TabularCanvasViewportControls } from '@/frontend/shared/components/TabularCanvasViewportControls';
 import type { TabularOverlayColors } from '@/frontend/shared/utility/tabular-project-config';
 import type { CanvasFull } from '@/types/canvas-full';
@@ -78,10 +80,10 @@ export function TabularProjectCustomEditorCanvas({
     [sourceNetConfig, alignmentPreview]
   );
   const alignButtonRef = useRef<HTMLButtonElement>(null);
-  const finishAlignment = () => {
+  const finishAlignment = useCallback<() => void>(() => {
     setAlignmentPreview(null);
     requestAnimationFrame(() => alignButtonRef.current?.focus());
-  };
+  }, []);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const runtimeRef = useRef<RuntimeWithViewport | null>(null);
   const [runtimeTick, setRuntimeTick] = useState(0);

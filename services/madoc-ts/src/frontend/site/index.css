@@ -32,6 +32,30 @@
         grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
     }
 
+
+
+    /**  */
+    .tabular-contributor-rdg .rdg-cell[data-rdg-range-top="true"] {
+      border-top: 2px solid #5379E9 !important;
+    }
+    .tabular-contributor-rdg .rdg-cell[data-rdg-range-bottom="true"] {
+      border-bottom: 2px solid #5379E9 !important;
+    }
+    .tabular-contributor-rdg .rdg-cell[data-rdg-range-left="true"] {
+      border-left: 2px solid #5379E9 !important;
+    }
+    .tabular-contributor-rdg .rdg-cell[data-rdg-range-right="true"] {
+      border-right: 2px solid #5379E9 !important;
+    }
+    .tabular-contributor-rdg .rdg-cell:has(input:focus) {
+      z-index: 90;
+      border: 2px solid #5379E9 !important;
+      box-shadow: 0 0 0 2px #9ab1f5 !important;
+    }
+
+    .tabular-contributor-rdg .rdg-cell[data-rdg-range-top="true"][data-rdg-range-bottom="true"][data-rdg-range-left="true"][data-rdg-range-right="true"][data-rdg-range-selected="true"] {
+      background: none !important;
+    }
 }
 
 @tailwind utilities;

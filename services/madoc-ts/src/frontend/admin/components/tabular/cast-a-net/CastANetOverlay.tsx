@@ -14,6 +14,8 @@ import {
   TABULAR_OVERLAY_DEFAULT_COLORS,
   type TabularOverlayColors,
 } from '../../../../shared/utility/tabular-project-config';
+import { TableHeaderSvg } from './components/TableHeaderSvg';
+import { ActiveCellHighlight } from './components/ActiveCellHighlight';
 
 type CastANetOverlayProps = {
   value: NetConfig;
@@ -239,149 +241,6 @@ export function CastANetOverlay({
 
   const headerStart = rowStops[0];
   const headerEnd = rowStops[1];
-  const header = useMemo(() => {
-    if (headerStart == null || headerEnd == null) {
-      return null;
-    }
-
-    const top = toCanvasY(headerStart);
-    const bottom = toCanvasY(headerEnd);
-    const height = bottom - top;
-    if (height <= 0) {
-      return null;
-    }
-
-    return (
-      <>
-        <rect x={netLeft} y={top} width={value.width} height={height} fill={headerFillColor} pointerEvents="none" />
-        <line
-          x1={netLeft}
-          y1={bottom}
-          x2={netRight}
-          y2={bottom}
-          stroke={headerStrokeColor}
-          strokeWidth={2}
-          vectorEffect="non-scaling-stroke"
-          pointerEvents="none"
-        />
-
-        {showInteractiveNet
-          ? colStops.slice(1, -1).map((position, index) => {
-              const x = toCanvasX(position);
-              return (
-                <line
-                  key={`head-col-${index}`}
-                  x1={x}
-                  y1={top}
-                  x2={x}
-                  y2={bottom}
-                  stroke={headerColumnStrokeColor}
-                  strokeWidth={2}
-                  vectorEffect="non-scaling-stroke"
-                  pointerEvents="none"
-                />
-              );
-            })
-          : null}
-      </>
-    );
-  }, [
-    colStops,
-    headerEnd,
-    headerStart,
-    headerColumnStrokeColor,
-    headerFillColor,
-    headerStrokeColor,
-    netLeft,
-    netRight,
-    showInteractiveNet,
-    toCanvasX,
-    toCanvasY,
-    value.width,
-  ]);
-
-  const activeCellHighlight = useMemo(() => {
-    if (!activeCell) {
-      return null;
-    }
-
-    const rowBounds = getProjectedRowBounds(activeCell.row);
-    const rowStart = rowBounds?.top;
-    const rowEnd = rowBounds?.bottom;
-    const colStart = colStops[activeCell.col];
-    const colEnd = colStops[activeCell.col + 1];
-    if (rowStart == null || rowEnd == null || colStart == null || colEnd == null) {
-      return null;
-    }
-
-    const rowTop = toCanvasY(rowStart);
-    const rowBottom = toCanvasY(rowEnd);
-    const rowHeight = rowBottom - rowTop;
-    const cellLeft = toCanvasX(colStart);
-    const cellRight = toCanvasX(colEnd);
-    const cellWidth = cellRight - cellLeft;
-
-    if (rowHeight <= 0 || cellWidth <= 0) {
-      return null;
-    }
-
-    return (
-      <>
-        <rect
-          x={netLeft}
-          y={rowTop}
-          width={value.width}
-          height={rowHeight}
-          fill={activeRowFillColor}
-          pointerEvents="none"
-        />
-        <line
-          x1={netLeft}
-          y1={rowTop}
-          x2={netRight}
-          y2={rowTop}
-          stroke={activeRowStrokeColor}
-          strokeWidth={2}
-          vectorEffect="non-scaling-stroke"
-          pointerEvents="none"
-        />
-        <line
-          x1={netLeft}
-          y1={rowBottom}
-          x2={netRight}
-          y2={rowBottom}
-          stroke={activeRowStrokeColor}
-          strokeWidth={2}
-          vectorEffect="non-scaling-stroke"
-          pointerEvents="none"
-        />
-        <rect
-          x={cellLeft}
-          y={rowTop}
-          width={cellWidth}
-          height={rowHeight}
-          fill={activeCellFillColor}
-          stroke={activeCellStrokeColor}
-          strokeWidth={2}
-          vectorEffect="non-scaling-stroke"
-          pointerEvents="none"
-        />
-      </>
-    );
-  }, [
-    activeCell,
-    colStops,
-    getProjectedRowBounds,
-    netLeft,
-    netRight,
-    activeCellFillColor,
-    activeCellStrokeColor,
-    activeRowFillColor,
-    activeRowStrokeColor,
-    toCanvasX,
-    toCanvasY,
-    value.width,
-  ]);
 
   return (
     <div
@@ -407,8 +266,35 @@ export function CastANetOverlay({
           pointerEvents: 'none',
         }}
       >
-        {header}
-        {activeCellHighlight}
+        <TableHeaderSvg
+          headerStart={headerStart}
+          headerEnd={headerEnd}
+          netLeft={netLeft}
+          netRight={netRight}
+          value={value}
+          headerFillColor={headerFillColor}
+          headerStrokeColor={headerStrokeColor}
+          headerColumnStrokeColor={headerColumnStrokeColor}
+          showInteractiveNet={showInteractiveNet}
+          colStops={colStops}
+          toCanvasY={toCanvasY}
+          toCanvasX={toCanvasX}
+        />
+
+        <ActiveCellHighlight
+          activeCell={activeCell}
+          colStops={colStops}
+          getProjectedRowBounds={getProjectedRowBounds}
+          netLeft={netLeft}
+          netRight={netRight}
+          activeCellFillColor={activeCellFillColor}
+          activeCellStrokeColor={activeCellStrokeColor}
+          activeRowFillColor={activeRowFillColor}
+          activeRowStrokeColor={activeRowStrokeColor}
+          toCanvasX={toCanvasX}
+          toCanvasY={toCanvasY}
+          value={value}
+        />
 
         {showInteractiveNet ? (
           <>

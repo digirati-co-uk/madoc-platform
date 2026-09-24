@@ -53,6 +53,7 @@ import {
   parseTabularRowCountOrDefault,
   resolveTabularZoomTrackingEnabled,
 } from '@/frontend/shared/utility/tabular-project-config';
+import { TabularHorizontalAlignment } from '@/frontend/shared/utility/tabular-horizontal-alignment';
 
 type TabularProjectCustomEditorContentProps = {
   canvasId: number;
@@ -458,6 +459,10 @@ function TabularProjectCustomEditorContent({
     [setTableActiveCell]
   );
 
+  const onHorizontalAlignmentChange = useCallback((alignment: TabularHorizontalAlignment) => {
+    if (netConfig) onNetConfigChange({ ...netConfig, ...alignment });
+  }, []);
+
   useEffect(() => {
     if (!rowRemovalWarning) {
       return;
@@ -576,9 +581,7 @@ function TabularProjectCustomEditorContent({
                   canvas={canvas}
                   netConfig={netConfig}
                   initialNetConfig={startingAlignment.current.net}
-                  onHorizontalAlignmentChange={alignment => {
-                    if (netConfig) onNetConfigChange({ ...netConfig, ...alignment });
-                  }}
+                  onHorizontalAlignmentChange={onHorizontalAlignmentChange}
                   activeCell={overlayActiveCell}
                   hideViewerControls={hideViewerControls}
                   enableRotation={enableRotation}

@@ -1,5 +1,5 @@
 import { ImageService } from '@iiif/presentation-3';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { webglSupport } from '../../../../utility/webgl-support';
 import { AnnotationStyleProvider, useAnnotationStyles } from '../../../AnnotationStyleContext';
 import { BaseContent, ContentOptions } from '../../../types/content-types';
@@ -203,15 +203,17 @@ export const AtlasViewer: React.FC<AtlasViewerProps> = props => {
   );
 };
 
-const WrappedViewer: React.FC<AtlasViewerProps> = props => {
+const WrappedViewer = (props: React.PropsWithChildren<AtlasViewerProps>) => {
   const customFetcher =
     props.options && props.options.custom && props.options.custom.customFetcher
       ? props.options.custom.customFetcher
       : undefined;
+  // VaultProvider creates a new vault whenever its options object changes.
+  const vaultOptions = useMemo(() => (customFetcher ? { customFetcher } : undefined), [customFetcher]);
 
   return (
     <AtlasStoreProvider>
-      <VaultProvider vaultOptions={customFetcher ? ({ customFetcher } as any) : undefined}>
+      <VaultProvider vaultOptions={vaultOptions}>
         <AtlasViewer {...props}>{props.children}</AtlasViewer>
       </VaultProvider>
     </AtlasStoreProvider>

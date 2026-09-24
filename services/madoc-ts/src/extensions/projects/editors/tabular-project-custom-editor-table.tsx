@@ -126,6 +126,8 @@ function getInputContainerClass(
   isFlagged: boolean,
   isNoted: boolean
 ): string {
+  return 'border-transparent bg-transparent';
+
   if (isReadOnlyField) {
     return isFlagged || isNoted || isActiveCell
       ? 'border-slate-400 bg-slate-100 cursor-not-allowed'
@@ -153,12 +155,22 @@ function getCellBackgroundColor(
   isNoted: boolean,
   isActiveRow: boolean
 ): string {
-  if (isActiveCell) {
-    return CELL_BACKGROUND_COLORS.active;
-  }
+  // return '';
 
   if (isFlagged) {
+    if (isActiveCell) {
+      return 'hsl(348, 79%, 43%, 0.1)';
+    }
+    if (isActiveRow) {
+      return 'hsl(348, 79%, 33%, 0.1)';
+    }
+
     return CELL_BACKGROUND_COLORS.flagged;
+  }
+
+  if (isActiveCell) {
+    return '';
+    // return CELL_BACKGROUND_COLORS.active;
   }
 
   if (isNoted) {
@@ -166,7 +178,8 @@ function getCellBackgroundColor(
   }
 
   if (isActiveRow) {
-    return CELL_BACKGROUND_COLORS.activeRow;
+    return '#f9f9f9';
+    // return CELL_BACKGROUND_COLORS.activeRow;
   }
 
   return CELL_BACKGROUND_COLORS.default;
@@ -402,7 +415,7 @@ function TabularGridCellDisplay({ cell, isActiveCell, isEditable, isFlagged, isN
 
   return (
     <div
-      className={`relative flex h-full w-full items-center rounded border px-2 py-1 text-sm leading-5 ${inputContainerClass}`}
+      className={`select-none relative flex h-full w-full items-center rounded border px-2 py-1 text-sm leading-5 ${inputContainerClass}`}
       style={{
         justifyContent: isCheckboxField ? 'center' : undefined,
         whiteSpace: 'normal',
@@ -1113,8 +1126,8 @@ export function TabularProjectCustomEditorTable({
             height: '100%',
             width: '100%',
             border: 'none',
-            ['--rdg-border-color' as string]: '#d6d6d6',
-            ['--rdg-selection-color' as string]: '#34a853',
+            // ['--rdg-border-color' as string]: '#d6d6d6',
+            // ['--rdg-selection-color' as string]: '#34a853',
           }}
         />
       </div>
