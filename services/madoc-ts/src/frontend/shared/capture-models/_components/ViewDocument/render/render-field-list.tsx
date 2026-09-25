@@ -23,7 +23,7 @@ export const renderFieldList = (
   }
 
   return (
-    <FieldPreviewWrapper>
+    <FieldPreviewWrapper data-preview-field-list>
       {filteredFields.map(field => (
         <ViewField key={field.id} field={field} fluidImage={fluidImage} revisionId={revisionId} />
       ))}
