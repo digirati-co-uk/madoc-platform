@@ -1128,9 +1128,7 @@ export function TabularProjectCustomEditorTable({
             </div>
           ) : null}
           {selectedCellCount > 0 ? (
-            <div
-              className="ml-auto inline-flex h-8 items-center overflow-hidden rounded border border-slate-300 bg-white text-sm font-medium text-slate-700 shadow-sm"
-            >
+            <div className="ml-auto inline-flex h-8 items-center overflow-hidden rounded border border-slate-300 bg-white text-sm font-medium text-slate-700 shadow-sm">
               <span className="px-2.5" role="status">
                 {clipboardFeedback === 'copied'
                   ? 'Copied!'
