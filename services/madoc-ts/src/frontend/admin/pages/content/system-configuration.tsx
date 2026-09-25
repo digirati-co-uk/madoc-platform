@@ -38,7 +38,6 @@ const systemConfigModel = {
   accentColor: {
     label: 'Site accent color',
     type: 'color-field',
-    defaultValue: '#4265e9',
   },
   // Login/Register messages
   loginHeader: {
@@ -88,7 +87,7 @@ export const SiteSystemConfiguration: React.FC = () => {
     disableSearchIndexing: false,
     ...savedConfig,
     footerLinksInNewTab: !!site.config?.footerLinksInNewTab,
-    accentColor: site.config?.accentColor || '#4265e9',
+    accentColor: site.config?.accentColor || '',
     ...importedConfig,
   };
 
@@ -97,8 +96,13 @@ export const SiteSystemConfiguration: React.FC = () => {
   ) as Partial<SiteSystemConfig>;
 
   const [updateSystemConfig] = useMutation(async (newConfig: any) => {
+    const siteConfig = { ...site.config, ...newConfig };
+    if (siteConfig.accentColor === '') {
+      delete siteConfig.accentColor;
+    }
+
     await api.siteManager.updateSite({
-      config: { ...site.config, ...newConfig },
+      config: siteConfig,
     });
     const siteDetails = await api.getSiteDetails(site.id);
 
