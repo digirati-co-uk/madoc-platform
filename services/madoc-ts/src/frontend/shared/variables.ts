@@ -1,7 +1,8 @@
 import { themeVariable } from '../themes/helpers/themeVariable';
 import { MadocTheme } from '../themes/definitions/types';
 
-export const accent = ({ theme }: { theme?: MadocTheme }) => theme?.custom?.accent?.primary || 'var(--madoc-accent, #4265e9)';
+export const accent = ({ theme }: { theme: object }) =>
+  (theme as Partial<MadocTheme>).custom?.accent?.primary || 'var(--madoc-accent, #4265e9)';
 
 export const globalBackground = themeVariable('header', 'globalBackground', {
   default: '#fff',
