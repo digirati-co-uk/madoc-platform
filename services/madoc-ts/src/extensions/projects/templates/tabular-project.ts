@@ -10,8 +10,7 @@ import {
   TABULAR_CELL_FLAGS_PROPERTY,
   createTabularCellFlagsCaptureModelField,
 } from '../../../frontend/shared/utility/tabular-cell-flags';
-import { ProjectTemplate } from '../types';
-import { TabularProjectMetadataEditor } from '../editors/tabular-project-metadata-editor';
+import type { ProjectTemplate, ProjectTemplateAdminModelProps } from '../types';
 
 type TabularColumnConfig = {
   id?: string;
@@ -174,6 +173,23 @@ const getCaptureModelTemplateFromOptions = (options: TabularProjectTemplateOptio
   return withTabularSystemFields(normalizedTemplate);
 };
 
+const TabularProjectMetadataEditorLazy = React.lazy(async () => {
+  const module = await import('../editors/tabular-project-metadata-editor');
+  return { default: module.TabularProjectMetadataEditor };
+});
+
+function TabularProjectMetadataEditorLoader(props: ProjectTemplateAdminModelProps) {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+
+  return React.createElement(
+    React.Suspense,
+    { fallback: null },
+    React.createElement(TabularProjectMetadataEditorLazy, props)
+  );
+}
+
 const TabularProjectCustomEditorLazy = React.lazy(async () => {
   const module = await import('../editors/tabular-project-custom-editor');
   return { default: module.TabularProjectCustomEditor };
@@ -301,7 +317,7 @@ export const tabularProject: ProjectTemplate<TabularProjectTemplateOptions> = {
     },
   },
   components: {
-    customAdminModelEditor: TabularProjectMetadataEditor,
+    customAdminModelEditor: TabularProjectMetadataEditorLoader,
     customEditor: TabularProjectCustomEditorLoader,
     customReviewRenderer: TabularProjectReviewRendererLoader,
   },
