@@ -93,29 +93,17 @@ const MetaDataKey = styled.td<{
   }
 `;
 
-const MetaDataValue = styled.td<{ $variation?: 'list' | 'table' }>`
-  ${props =>
-    ({
-      table: css`
-        padding: 0.7em 1em;
-      `,
-      list: css`
-        display: block;
-        padding: 0;
-        margin-bottom: 1em;
-      `,
-    })[props.$variation || 'table']}
-
-  font-size: 1em;
-  color: #000000;
-  text-decoration: rgb(0, 0, 0);
-  word-break: break-word;
-  white-space: pre-line;
-
-  a {
-    color: #4070d9;
-  }
-`;
+function MetaDataValue({ $variation, children }: { $variation?: 'list' | 'table'; children: React.ReactNode }) {
+  return (
+    <td
+      className={`break-words whitespace-pre-line text-black [&_a]:text-[var(--madoc-accent-link)] ${
+        $variation === 'list' ? 'mb-[1em] block p-0' : 'px-[1em] py-[0.7em]'
+      }`}
+    >
+      {children}
+    </td>
+  );
+}
 
 const MetadataContainer = styled.tr<{ $variation?: 'list' | 'table' }>`
   ${props =>

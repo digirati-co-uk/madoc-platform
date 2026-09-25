@@ -86,6 +86,7 @@ export type ProjectConfiguration = TabularProjectConfigurationFields & {
     preventContributionAfterManifestUnassign?: boolean;
     hideViewerControls?: boolean;
     disableSaveForLater?: boolean;
+    showSaveForLaterAlongsideSubmit?: boolean;
     disablePreview?: boolean;
     disableNextCanvas?: boolean;
     enableRotation?: boolean;
@@ -254,6 +255,7 @@ export type ProjectConfigurationNEW = TabularProjectConfigurationFields & {
 
   //new parent
   submissionOptions?: {
+    showSaveForLaterAlongsideSubmit?: boolean;
     disablePreview?: boolean; //changed parent
     disableNextCanvas?: boolean; // changed parent
     preventContributionAfterManifestUnassign?: boolean; // changed parent

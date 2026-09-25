@@ -62,5 +62,5 @@ export const renderEntityList = (
     return null;
   }
 
-  return <DocumentEntityList>{toRender}</DocumentEntityList>;
+  return <DocumentEntityList data-preview-entity-list>{toRender}</DocumentEntityList>;
 };

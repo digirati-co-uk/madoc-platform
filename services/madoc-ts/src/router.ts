@@ -232,6 +232,7 @@ import { updateProjectMetadata } from './routes/projects/update-project-metadata
 import { updateProjectNote } from './routes/projects/update-project-note';
 import { updateProjectStatus } from './routes/projects/update-project-status';
 import { updateProjectTemplateConfig } from './routes/projects/update-project-template-config';
+import { patchTabularProjectMetadataRoute } from './routes/projects/patch-tabular-project-metadata';
 import { updateResourceClaim } from './routes/projects/update-resource-claim';
 import { siteRoot } from './routes/root';
 import { batchIndex } from './routes/search/batch-index';
@@ -721,6 +722,12 @@ export const router = new TypedRouter({
     TypedRouter.PUT,
     '/api/madoc/projects/:id/template-config',
     updateProjectTemplateConfig,
+  ],
+  'patch-tabular-project-metadata': [
+    TypedRouter.PATCH,
+    '/api/madoc/projects/:id/template-config',
+    patchTabularProjectMetadataRoute,
+    { schemaName: 'TabularProjectMetadataUpdate' },
   ],
   'update-project-annotation-style': [
     TypedRouter.PUT,

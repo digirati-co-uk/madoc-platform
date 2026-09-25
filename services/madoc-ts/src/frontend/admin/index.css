@@ -2,3 +2,55 @@
 @tailwind components;
 @tailwind utilities;
 
+.madoc-admin-sidebar {
+  background: var(--madoc-accent, #4265e9) !important;
+  color: var(--madoc-accent-text, #fff) !important;
+}
+
+.madoc-admin-sidebar a,
+.madoc-admin-sidebar a > div,
+.madoc-admin-sidebar svg {
+  color: var(--madoc-accent-text, #fff) !important;
+}
+
+.madoc-admin-sidebar svg [fill='#FFF'],
+.madoc-admin-sidebar svg [fill='#fff'],
+.madoc-admin-sidebar svg [fill='currentColor'] {
+  fill: currentColor !important;
+}
+
+.madoc-admin-sidebar svg[data-current-color] path {
+  fill: currentColor !important;
+}
+
+.madoc-admin-sidebar svg [stroke='#fff'] {
+  stroke: currentColor !important;
+}
+
+.madoc-admin-sidebar [data-admin-switcher],
+.madoc-admin-sidebar a[data-active='true'],
+.madoc-admin-sidebar a[aria-current='page'] {
+  background: var(--madoc-accent-selected, #3551ba) !important;
+  color: var(--madoc-accent-selected-text, #fff) !important;
+}
+
+.madoc-admin-sidebar [data-admin-switcher] *,
+.madoc-admin-sidebar a[data-active='true'] > div,
+.madoc-admin-sidebar a[data-active='true'] svg,
+.madoc-admin-sidebar a[aria-current='page'] > div,
+.madoc-admin-sidebar a[aria-current='page'] svg {
+  color: var(--madoc-accent-selected-text, #fff) !important;
+}
+
+.madoc-admin-sidebar [data-admin-submenu] {
+  box-shadow: inset 0 -2px 0 0 var(--madoc-accent-divider, rgba(255, 255, 255, 0.35)) !important;
+}
+
+.madoc-capture-model :is(button, input, select, textarea):focus {
+  border-color: var(--madoc-accent, #4265e9) !important;
+}
+
+.madoc-capture-model :is(button, input, select, textarea):focus-visible {
+  outline-color: var(--madoc-accent, #4265e9) !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--madoc-accent, #4265e9) 20%, transparent) !important;
+}

@@ -67,10 +67,6 @@ import {
   ReviewDefaultControlsComponent,
 } from '../review-renderers/types';
 import { useModelPageConfiguration } from '../../../hooks/use-model-page-configuration';
-import { OpenSeadragonViewer } from '../../../../shared/features/OpenSeadragonViewer.lazy';
-import { BrowserComponent } from '../../../../shared/utility/browser-component';
-import { InfoMessage } from '../../../../shared/callouts/InfoMessage';
-import { CanvasViewer as ReviewCanvasViewer } from '../../../../shared/components/StandaloneCanvasViewer';
 import { HorizontalEditorSplit } from '../../../../shared/components/HorizontalEditorSplit';
 
 function ReviewContainer(props: React.HTMLAttributes<HTMLDivElement>) {
@@ -239,8 +235,6 @@ function ViewSingleReview({
   const { t } = useTranslation();
   const gridRef = useRef<any>(undefined);
   const runtime = useRef<Runtime>(undefined);
-  const osd = useRef<any>(undefined);
-  const [isOSD, setIsOSD] = useState(false);
   const { enableRotation = false, enableEditorResizing = true } = useModelPageConfiguration();
   const annotationTheme = useProjectAnnotationStyles();
   const api = useApi();
@@ -302,17 +296,11 @@ function ViewSingleReview({
     if (runtime.current) {
       runtime.current.world.goHome();
     }
-    if (osd.current) {
-      osd.current.goHome();
-    }
   };
 
   const zoomIn = () => {
     if (runtime.current) {
       runtime.current.world.zoomIn();
-    }
-    if (osd.current) {
-      osd.current.zoomIn();
     }
   };
 
@@ -320,16 +308,11 @@ function ViewSingleReview({
     if (runtime.current) {
       runtime.current.world.zoomOut();
     }
-    if (osd.current) {
-      osd.current.zoomOut();
-    }
   };
 
   const rotate = () => {
-    if (isOSD) {
-      osd.current?.rotate();
-    } else {
-      setIsOSD(true);
+    if (runtime.current) {
+      runtime.current.world.rotateBy(90);
     }
   };
 
@@ -514,32 +497,15 @@ function ViewSingleReview({
       {canvas ? (
         <CanvasViewerGrid ref={gridRef}>
           <CanvasViewerGridContent>
-            {isOSD ? (
-              <ReviewCanvasViewer canvas={canvas}>
-                <InfoMessage
-                  $small
-                  style={{ lineHeight: '1.4em', position: 'absolute', top: 0, left: 0, right: 0, zIndex: 20 }}
-                >
-                  {t('You cannot edit annotations if you are rotating')}
-                  <Button style={{ margin: '0.4em 0 0' }} onClick={() => setIsOSD(false)}>
-                    Reset
-                  </Button>
-                </InfoMessage>
-                <BrowserComponent fallback={null}>
-                  <OpenSeadragonViewer ref={osd} onReady={viewer => viewer.viewport.setRotation(90)} />
-                </BrowserComponent>
-              </ReviewCanvasViewer>
-            ) : (
-              <EditorContentViewer
-                height={'100%' as any}
-                canvasId={canvas.id}
-                onCreated={rt => {
-                  return ((runtime as any).current = rt.runtime);
-                }}
-              />
-            )}
+            <EditorContentViewer
+              height={'100%' as any}
+              canvasId={canvas.id}
+              onCreated={rt => {
+                return ((runtime as any).current = rt.runtime);
+              }}
+            />
             {(enableRotation || isOpen) && (
-              <CanvasViewerControls style={isOSD ? { top: '4em' } : undefined}>
+              <CanvasViewerControls>
                 {enableRotation ? (
                   <CanvasViewerButton onClick={rotate}>
                     <RotateIcon title={t('atlas__rotate', { defaultValue: 'Rotate' })} />

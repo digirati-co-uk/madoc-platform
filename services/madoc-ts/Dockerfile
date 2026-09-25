@@ -15,6 +15,7 @@ COPY ./package.json /home/node/app/package.json
 COPY ./pnpm-lock.yaml /home/node/app/pnpm-lock.yaml
 COPY ./pnpm-workspace.yaml /home/node/app/pnpm-workspace.yaml
 COPY ./npm /home/node/app/npm
+COPY ./patches /home/node/app/patches
 
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile --prod=false
 
@@ -49,6 +50,7 @@ COPY --from=build /home/node/app/package.json /home/node/app/package.json
 COPY --from=build /home/node/app/pnpm-lock.yaml /home/node/app/pnpm-lock.yaml
 COPY --from=build /home/node/app/pnpm-workspace.yaml /home/node/app/pnpm-workspace.yaml
 COPY --from=build /home/node/app/npm /home/node/app/npm
+COPY --from=build /home/node/app/patches /home/node/app/patches
 
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile
 

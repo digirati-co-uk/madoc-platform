@@ -12,6 +12,7 @@ import type { NetConfig, TabularCellRef } from '@/frontend/shared/utility/tabula
 import { stringifyTabularDropdownOptions } from '@/frontend/admin/components/tabular/cast-a-net/TabularModel';
 import { CastANet } from '@/frontend/admin/components/tabular/cast-a-net/CastANet';
 import type { TabularProjectTemplateConfig } from '@/types/tabular-project-template-config';
+import { Revisions } from '@/frontend/shared/capture-models/editor/stores/revisions';
 import { ViewContentFetch } from '../../../molecules/ViewContentFetch';
 import {
   TABULAR_WIZARD_CAST_A_NET_ROWS,
@@ -53,6 +54,7 @@ type TabularPreviewTemplateConfig = TabularProjectTemplateConfig & {
 type TabularProjectModelPreviewProps = {
   projectId?: string;
   templateConfig?: unknown;
+  instructions?: string;
 };
 
 function buildEvenLinePositions(count: number): number[] {
@@ -107,7 +109,11 @@ function toTemplateConfig(value: unknown): TabularPreviewTemplateConfig | undefi
   return value as TabularPreviewTemplateConfig;
 }
 
-export function TabularProjectModelPreview({ projectId, templateConfig }: TabularProjectModelPreviewProps) {
+export function TabularProjectModelPreview({
+  projectId,
+  templateConfig,
+  instructions,
+}: TabularProjectModelPreviewProps) {
   const { t } = useTranslation();
   const api = useApi();
   const site = useSite();
@@ -331,7 +337,9 @@ export function TabularProjectModelPreview({ projectId, templateConfig }: Tabula
           <div className="grid gap-3 p-2">
             <BrowserComponent fallback={<div>{t('Loading...')}</div>}>
               <div className="rounded border border-gray-200 bg-white p-2">
-                <ViewContentFetch id={selectedCanvasId} />
+                <Revisions.Provider>
+                  <ViewContentFetch id={selectedCanvasId} />
+                </Revisions.Provider>
               </div>
             </BrowserComponent>
             <div className="flex flex-wrap gap-2">
@@ -354,9 +362,10 @@ export function TabularProjectModelPreview({ projectId, templateConfig }: Tabula
   return (
     <TabularProjectPreviewStep
       t={t}
+      existingProject
       shareUrl=""
       shareCopied="idle"
-      crowdsourcingInstructions={resolvedTemplateConfig?.crowdsourcingInstructions}
+      crowdsourcingInstructions={instructions ?? resolvedTemplateConfig?.crowdsourcingInstructions}
       canTrackPreviewOnCanvas={canTrackPreviewOnCanvas}
       hasImage={hasImage}
       manifestId={manifestId}

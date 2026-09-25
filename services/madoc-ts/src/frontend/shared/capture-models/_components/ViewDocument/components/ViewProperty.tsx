@@ -22,8 +22,12 @@ export function ViewProperty({ label, description, interactive, collapsed, fallb
   const [isCollapsed, setIsCollapsed] = useState(collapsed);
 
   return (
-    <DocumentSectionField>
-      <DocumentHeading $interactive={interactive} onClick={() => (interactive ? setIsCollapsed(i => !i) : undefined)}>
+    <DocumentSectionField data-preview-property>
+      <DocumentHeading
+        data-preview-heading
+        $interactive={interactive}
+        onClick={() => (interactive ? setIsCollapsed(i => !i) : undefined)}
+      >
         <DocumentLabel>
           <span>{label}</span>
           {interactive ? (
@@ -44,7 +48,7 @@ export function ViewProperty({ label, description, interactive, collapsed, fallb
           <DocumentDescription>{description}</DocumentDescription>
         ) : null}
       </DocumentHeading>
-      {!isCollapsed ? <DocumentValueWrapper>{children}</DocumentValueWrapper> : null}
+      {!isCollapsed ? <DocumentValueWrapper data-preview-values>{children}</DocumentValueWrapper> : null}
     </DocumentSectionField>
   );
 }

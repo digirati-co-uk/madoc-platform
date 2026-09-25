@@ -23,9 +23,10 @@ type ProjectModelEditorType = {
   query: unknown;
   variables: { id: number };
   data: {
+    projectSlug: string;
     captureModel: CaptureModel;
     template?: string;
-    templateConfig?: ProjectFull['template_config'];
+    templateConfig?: unknown;
     annotationTheme?: ProjectFull['annotationTheme'];
     style_id?: ProjectFull['style_id'];
   };
@@ -45,6 +46,7 @@ export const ProjectModelEditor: UniversalComponent<ProjectModelEditorType> = cr
     const model = data?.captureModel;
     const config = useProjectTemplate(data?.template);
     const editorConfig = config?.configuration?.captureModels;
+    const CustomAdminModelEditor = config?.components?.customAdminModelEditor;
 
     const [updateModel, updateModelStatus] = useMutation(async (m: CaptureModel) => {
       if (m.id) {
@@ -67,7 +69,16 @@ export const ProjectModelEditor: UniversalComponent<ProjectModelEditorType> = cr
       return (
         <EditorContext captureModel={model}>
           <ModelEditorProvider template={data.template}>
-            <PreviewCaptureModel />
+            {CustomAdminModelEditor ? (
+              <CustomAdminModelEditor
+                projectId={Number(id)}
+                projectSlug={data.projectSlug}
+                captureModel={model}
+                templateConfig={data.templateConfig}
+              />
+            ) : (
+              <PreviewCaptureModel />
+            )}
           </ModelEditorProvider>
         </EditorContext>
       );
@@ -143,6 +154,7 @@ export const ProjectModelEditor: UniversalComponent<ProjectModelEditorType> = cr
       const { capture_model_id, template, template_config, annotationTheme, style_id } = project;
 
       return {
+        projectSlug: project.slug,
         template,
         templateConfig: template_config,
         captureModel: await api.crowdsourcing.getCaptureModel(capture_model_id),

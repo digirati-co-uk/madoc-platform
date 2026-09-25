@@ -31,7 +31,7 @@ export function HeroHyper(props: HeroHyperProps) {
           <h1 className="text-3xl font-extrabold sm:text-5xl">
             {props.title}
             {props.titleEmphasis ? (
-              <strong className="block font-extrabold text-blue-600"> {props.titleEmphasis}</strong>
+              <strong className="block font-extrabold text-[var(--madoc-accent)]"> {props.titleEmphasis}</strong>
             ) : null}
           </h1>
 

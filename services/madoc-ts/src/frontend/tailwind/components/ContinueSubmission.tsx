@@ -33,7 +33,7 @@ export function ContinueSubmission({ task, next }: { task: BaseTask; next?: bool
           <div className="text-sm text-slate-400">
             {subject.parent ? <LocaleString>{subject.label}</LocaleString> : subject.type}
           </div>
-          <div className="text-sky-600 underline flex items-center gap-2">
+          <div className="text-[var(--madoc-accent-link)] underline flex items-center gap-2">
             {next ? t('Contribute to the next image') : t('Continue contribution')}
             <ArrowForwardIcon />
           </div>

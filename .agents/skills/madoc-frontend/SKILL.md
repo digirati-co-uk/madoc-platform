@@ -24,6 +24,7 @@ Follow the route's `createUniversalComponent` loader and server/client consumers
 - Under `/projects/:slug`, keep Typesense results, facet discovery, autocomplete, and result links in the same project context.
 - Manifest `/model` contributions compose their preview and editor in `ViewManifestModel`; keep its `HorizontalEditorSplit` behavior aligned with the canvas contribution editor.
 - Deep-merge nested site/project configuration to retain sibling options. Keep MJML and plain-text email content equivalent.
+- When invalidating queries after a frontend mutation, use `useQueryCache()` from the active provider, not the module-level `queryCache`. `src/frontend/shared/utility/render-client.tsx` installs `ReactQueryCacheProvider`; invalidating the global cache can leave `useData` results stale until reload.
 
 ## SSR and build integration
 

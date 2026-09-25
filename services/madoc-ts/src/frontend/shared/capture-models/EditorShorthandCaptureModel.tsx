@@ -158,7 +158,9 @@ export const EditShorthandCaptureModel = forwardRef(
           </InputContainer>
         ) : null}
 
-        <div style={{ fontSize: '0.85em', maxWidth: 550 }}>{children ? children : <EditorSlots.TopLevelEditor />}</div>
+        <div className="madoc-capture-model" style={{ fontSize: '0.85em', maxWidth: 550 }}>
+          {children ? children : <EditorSlots.TopLevelEditor />}
+        </div>
 
         <div style={{ display: 'flex' }}>
           {onSave ? <EditorSlots.SubmitButton afterSave={saveRevision}>{saveLabel}</EditorSlots.SubmitButton> : null}

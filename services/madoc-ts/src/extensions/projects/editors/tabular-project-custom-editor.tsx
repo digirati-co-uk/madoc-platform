@@ -1,10 +1,11 @@
+import { TabularContributorInstructions } from '@/frontend/shared/components/TabularContributorInstructions';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { resolveTabularInstructions } from '@/frontend/shared/utility/tabular-instructions';
 import type { NetConfig, TabularCellRef } from '@/frontend/shared/utility/tabular-types';
 import { DynamicVaultContext } from '@/frontend/shared/capture-models/new/DynamicVaultContext';
 import { RevisionProviderWithFeatures } from '@/frontend/shared/capture-models/new/components/RevisionProviderWithFeatures';
 import { useCaptureModelEditorApi } from '@/frontend/shared/capture-models/new/hooks/use-capture-model-editor-api';
 import { Revisions } from '@/frontend/shared/capture-models/editor/stores/revisions';
-import { useApi } from '@/frontend/shared/hooks/use-api';
 import { useLoadedCaptureModel } from '@/frontend/shared/hooks/use-loaded-capture-model';
 import { addTabularRowOffsetAdjustment } from '@/frontend/shared/utility/tabular-row-offset-adjustments';
 import {
@@ -28,7 +29,7 @@ import type { CanvasFull } from '@/types/canvas-full';
 import { FullScreenEnterIcon } from '@/frontend/shared/icons/FullScreenEnterIcon';
 import { FullScreenExitIcon } from '@/frontend/shared/icons/FullScreenExitIcon';
 import ResizeHandleIcon from '@/frontend/shared/icons/ResizeHandleIcon';
-import { buildCastANetStructure } from '@/frontend/admin/components/tabular/cast-a-net/CastANetStructure';
+import { resolveTabularAlignment } from '@/frontend/shared/utility/tabular-alignment-snapshot';
 import { TabularContributorSplitView } from './tabular-contributor-split-view';
 import { TabularProjectCustomEditorCanvas } from './tabular-project-custom-editor-canvas';
 import { ContributionEditorStateAlerts } from './contribution-editor-state-alerts';
@@ -54,16 +55,14 @@ import {
   parseTabularRowCountOrDefault,
   resolveTabularZoomTrackingEnabled,
 } from '@/frontend/shared/utility/tabular-project-config';
+import { TabularHorizontalAlignment } from '@/frontend/shared/utility/tabular-horizontal-alignment';
 
 type TabularProjectCustomEditorContentProps = {
   canvasId: number;
   canvas?: CanvasFull['canvas'];
-  netConfig: NetConfig | null;
   tabularColumns: TabularModelColumn[];
   zoomTrackingDefaultEnabled: boolean;
   initialNetConfig: NetConfig | null;
-  onNetConfigChange: (next: NetConfig) => void;
-  templateConfig?: TabularTemplateConfig;
   modelInstructions?: string;
   templateInstructions?: string;
 };
@@ -73,16 +72,6 @@ const ROW_HAS_FLAGS_WARNING = 'Rows with flagged cells cannot be removed. Unflag
 const ROW_HAS_VALUES_WARNING = 'Rows can only be removed when empty. Clear all cell values first.';
 const EXPIRED_CLAIM_BLOCKED_REASON =
   'This canvas claim has expired and this project does not allow further submissions after expiry.';
-
-function getFirstNonEmptyText(values: Array<string | null | undefined>): string {
-  for (const value of values) {
-    const trimmed = (value || '').trim();
-    if (trimmed) {
-      return trimmed;
-    }
-  }
-  return '';
-}
 
 function getRowRemovalWarning(
   row: TabularEditorRowModel,
@@ -123,73 +112,15 @@ function getContributionTaskState(tasks?: Array<{ type?: string; status?: number
   return { hasExpired, hasActive };
 }
 
-function areNumberArraysEqual(left: number[], right: number[]) {
-  if (left.length !== right.length) {
-    return false;
-  }
-
-  for (let index = 0; index < left.length; index += 1) {
-    if (left[index] !== right[index]) {
-      return false;
-    }
-  }
-
-  return true;
-}
-
-function areRowOffsetAdjustmentsEqual(
-  left: NetConfig['rowOffsetAdjustments'],
-  right: NetConfig['rowOffsetAdjustments']
-) {
-  if (left.length !== right.length) {
-    return false;
-  }
-
-  for (let index = 0; index < left.length; index += 1) {
-    if (
-      left[index].startRow !== right[index].startRow ||
-      left[index].offsetPctOfPage !== right[index].offsetPctOfPage
-    ) {
-      return false;
-    }
-  }
-
-  return true;
-}
-
-function areNetConfigsEqual(left: NetConfig | null, right: NetConfig | null) {
-  if (!left || !right) {
-    return left === right;
-  }
-
-  return (
-    left.rows === right.rows &&
-    left.cols === right.cols &&
-    left.top === right.top &&
-    left.left === right.left &&
-    left.width === right.width &&
-    left.height === right.height &&
-    areNumberArraysEqual(left.rowPositions || [], right.rowPositions || []) &&
-    areNumberArraysEqual(left.colPositions || [], right.colPositions || []) &&
-    areRowOffsetAdjustmentsEqual(left.rowOffsetAdjustments || [], right.rowOffsetAdjustments || [])
-  );
-}
-
 function TabularProjectCustomEditorContent({
   canvasId,
   canvas,
-  netConfig,
   tabularColumns,
   zoomTrackingDefaultEnabled,
   initialNetConfig,
-  onNetConfigChange,
-  templateConfig,
   modelInstructions,
   templateInstructions,
 }: TabularProjectCustomEditorContentProps) {
-  const api = useApi();
-  const currentUser = api.getIsServer() ? undefined : api.getCurrentUser();
-  const isSiteAdmin = !!currentUser?.scope?.includes('site.admin');
   const {
     enableRotation = false,
     hideViewerControls = false,
@@ -223,13 +154,23 @@ function TabularProjectCustomEditorContent({
   const createNewFieldInstance = Revisions.useStoreActions(actions => actions.createNewFieldInstance);
   const deselectRevision = Revisions.useStoreActions(actions => actions.deselectRevision);
   const removeInstance = Revisions.useStoreActions(actions => actions.removeInstance);
-  const sharedNetConfigRef = useRef<NetConfig | null>(initialNetConfig);
+  const savedAlignment = Revisions.useStoreState(state => state.currentRevision?.revision.tabularAlignment);
+  const setTabularAlignment = Revisions.useStoreActions(actions => actions.setTabularAlignment);
+  const netConfig = resolveTabularAlignment(savedAlignment, initialNetConfig);
+  const startingAlignment = useRef({ revisionId: currentRevisionId, net: netConfig });
+  if (startingAlignment.current.revisionId !== currentRevisionId) {
+    startingAlignment.current = { revisionId: currentRevisionId, net: netConfig };
+  }
+  const onNetConfigChange = useCallback(
+    (net: NetConfig) => {
+      setTabularAlignment({ version: 1, net });
+    },
+    [setTabularAlignment]
+  );
   const seededBaseRowsRevisionRef = useRef<string | null>(null);
-  const [netSyncError, setNetSyncError] = useState<string | null>(null);
   const [successModalState, setSuccessModalState] = useState<'saved' | 'submitted' | null>(null);
   const [rowRemovalWarning, setRowRemovalWarning] = useState<string | null>(null);
   const [flagPanelOpenRequestToken, setFlagPanelOpenRequestToken] = useState(0);
-  const [areInstructionsExpanded, setAreInstructionsExpanded] = useState(true);
   const cellFlaggingEnabled = enableCellFlagging !== false;
   const tabularBaseRowCount = useMemo(
     () => parseTabularRowCountOrDefault(config.project?.tabularDefaultRowCount),
@@ -250,7 +191,8 @@ function TabularProjectCustomEditorContent({
     preventContributionAfterManifestUnassign && contributionTaskState.hasExpired && !contributionTaskState.hasActive;
   const isBlocked = lifecycle.phase === 'blocked' || blockedAfterExpiry;
   const isSubmittedRevision = currentRevisionStatus === 'submitted';
-  const isEditingDisabled = isBlocked || isPersisting || isSubmittedRevision;
+  const isEditingDisabled =
+    isBlocked || isPersisting || isSubmittedRevision || currentRevisionReadMode || !currentRevisionId;
   const canStartAnotherSubmission =
     !lifecycle.preventFurtherSubmission && lifecycle.canContribute && lifecycle.canUserSubmit && !blockedAfterExpiry;
   const {
@@ -361,18 +303,13 @@ function TabularProjectCustomEditorContent({
   const contributorInstructions = useMemo(() => {
     const fromCurrentView =
       currentView && currentView.type === 'model' ? currentView.instructions || currentView.description : undefined;
-    const resolvedInstructions = getFirstNonEmptyText([
+    const resolvedInstructions = resolveTabularInstructions(templateInstructions, [
       fromCurrentView,
       currentRevisionDocumentInstructions,
       modelInstructions,
-      templateInstructions,
     ]);
     return resolvedInstructions ? tModel(resolvedInstructions) : '';
   }, [currentRevisionDocumentInstructions, currentView, modelInstructions, tModel, templateInstructions]);
-
-  useEffect(() => {
-    sharedNetConfigRef.current = initialNetConfig;
-  }, [initialNetConfig]);
 
   useEffect(() => {
     if (!lifecycle.revisionId) {
@@ -420,6 +357,7 @@ function TabularProjectCustomEditorContent({
     }
 
     try {
+      if (netConfig) onNetConfigChange(netConfig);
       await lifecycle.saveForLater();
       setSuccessModalState('saved');
     } catch {
@@ -433,8 +371,6 @@ function TabularProjectCustomEditorContent({
         return;
       }
 
-      setNetSyncError(null);
-
       const fallbackAnchorRow = Math.max(0, Math.floor(netConfig.rows || 0));
       const anchorRow = overlayActiveCell?.row ?? fallbackAnchorRow;
       if (Number.isFinite(anchorRow) && anchorRow >= 0 && deltaY !== 0) {
@@ -446,52 +382,6 @@ function TabularProjectCustomEditorContent({
     },
     [netConfig, onNetConfigChange, overlayActiveCell]
   );
-
-  const syncSharedNetConfig = useCallback(async () => {
-    if (!netConfig || !templateConfig?.tabular || !projectId) {
-      return;
-    }
-
-    if (!isSiteAdmin) {
-      setNetSyncError(null);
-      return;
-    }
-
-    if (areNetConfigsEqual(sharedNetConfigRef.current, netConfig)) {
-      return;
-    }
-
-    const structure = buildCastANetStructure(netConfig, {
-      blankColumnIndexes: templateConfig.tabular.structure?.blankColumnIndexes,
-    });
-
-    const nextTemplateConfig: TabularTemplateConfig = {
-      ...templateConfig,
-      tabular: {
-        ...templateConfig.tabular,
-        structure: {
-          ...(templateConfig.tabular.structure || {}),
-          topLeft: structure.topLeft,
-          topRight: structure.topRight,
-          marginsPct: structure.marginsPct,
-          columnCount: structure.columnCount,
-          columnWidthsPctOfPage: structure.columnWidthsPctOfPage,
-          rowHeightsPctOfPage: structure.rowHeightsPctOfPage,
-          rowOffsetAdjustments: structure.rowOffsetAdjustments,
-          blankColumnIndexes: structure.blankColumnIndexes,
-        },
-      },
-    };
-
-    try {
-      await api.updateProjectTemplateConfig(projectId, nextTemplateConfig);
-      sharedNetConfigRef.current = netConfig;
-      setNetSyncError(null);
-    } catch {
-      // Keep submission working even when user cannot update project-level config.
-      setNetSyncError('Could not sync table row tracking coordinates for other contributors.');
-    }
-  }, [api, isSiteAdmin, netConfig, projectId, templateConfig]);
 
   async function onSubmit() {
     if (isSubmittedRevision) {
@@ -506,7 +396,7 @@ function TabularProjectCustomEditorContent({
     }
 
     try {
-      await syncSharedNetConfig();
+      if (netConfig) onNetConfigChange(netConfig);
       await lifecycle.submit();
       setSuccessModalState('submitted');
     } catch {
@@ -558,6 +448,10 @@ function TabularProjectCustomEditorContent({
     },
     [setTableActiveCell]
   );
+
+  const onHorizontalAlignmentChange = useCallback((alignment: TabularHorizontalAlignment) => {
+    if (netConfig) onNetConfigChange({ ...netConfig, ...alignment });
+  }, []);
 
   useEffect(() => {
     if (!rowRemovalWarning) {
@@ -672,9 +566,12 @@ function TabularProjectCustomEditorContent({
               resizable={enableEditorResizing}
               topPanel={
                 <TabularProjectCustomEditorCanvas
+                  key={canvasId}
                   canvasId={canvasId}
                   canvas={canvas}
                   netConfig={netConfig}
+                  initialNetConfig={startingAlignment.current.net}
+                  onHorizontalAlignmentChange={onHorizontalAlignmentChange}
                   activeCell={overlayActiveCell}
                   hideViewerControls={hideViewerControls}
                   enableRotation={enableRotation}
@@ -685,7 +582,7 @@ function TabularProjectCustomEditorContent({
                   showVerticalNudgeControls={zoomTrackingUiEnabled && !!netConfig}
                   onNudgeUp={() => nudgeNetVertical(-CONTRIBUTOR_NET_NUDGE_STEP)}
                   onNudgeDown={() => nudgeNetVertical(CONTRIBUTOR_NET_NUDGE_STEP)}
-                  nudgeDisabled={isPersisting || isBlocked}
+                  nudgeDisabled={isEditingDisabled}
                 />
               }
               bottomPanel={
@@ -698,26 +595,7 @@ function TabularProjectCustomEditorContent({
                         </div>
                       ) : null}
 
-                      {contributorInstructions ? (
-                        <div className="overflow-hidden rounded border border-blue-300 bg-blue-100/80">
-                          <div className="flex items-center justify-between border-b border-blue-300 bg-blue-200/80 px-3 py-2 text-sm font-semibold text-slate-900">
-                            <span>{t('Instructions')}</span>
-                            <button
-                              type="button"
-                              className="text-xs font-medium text-slate-700 underline hover:text-slate-900"
-                              aria-expanded={areInstructionsExpanded}
-                              onClick={() => setAreInstructionsExpanded(isExpanded => !isExpanded)}
-                            >
-                              {areInstructionsExpanded ? t('Hide') : t('Show')}
-                            </button>
-                          </div>
-                          {areInstructionsExpanded ? (
-                            <div className="whitespace-pre-wrap px-3 py-2 text-sm text-slate-900">
-                              {contributorInstructions}
-                            </div>
-                          ) : null}
-                        </div>
-                      ) : null}
+                      <TabularContributorInstructions instructions={contributorInstructions} />
 
                       <ContributionEditorStateAlerts
                         isLoading={isLoading}
@@ -803,7 +681,6 @@ function TabularProjectCustomEditorContent({
                           <pre className="whitespace-pre-wrap">{lifecycle.lastError.message}</pre>
                         </div>
                       ) : null}
-                      {netSyncError ? <pre className="whitespace-pre-wrap">{netSyncError}</pre> : null}
                       {isSubmittedRevision ? (
                         <div className="rounded border border-blue-200 bg-blue-50 p-2 text-sm">
                           This submission has already been submitted and cannot be edited.
@@ -837,14 +714,9 @@ export function TabularProjectCustomEditor() {
   const templateConfig = project?.template_config as TabularTemplateConfig | undefined;
   const tabularStructure = templateConfig?.tabular?.structure;
   const initialNetConfig = useMemo(() => netConfigFromSharedStructure(tabularStructure), [tabularStructure]);
-  const [netConfig, setNetConfig] = useState<NetConfig | null>(initialNetConfig);
   const tabularColumns = (templateConfig?.tabular?.model?.columns || []) as TabularModelColumn[];
   const { data: projectModel } = useCanvasModel();
   const [{ captureModel, canvas }] = useLoadedCaptureModel(projectModel?.model?.id, undefined, canvasId);
-
-  useEffect(() => {
-    setNetConfig(initialNetConfig);
-  }, [initialNetConfig]);
 
   if (!canvasId) {
     return null;
@@ -870,14 +742,12 @@ export function TabularProjectCustomEditor() {
         }}
       >
         <TabularProjectCustomEditorContent
+          key={canvasId}
           canvasId={canvasId}
           canvas={canvas}
-          netConfig={netConfig}
           tabularColumns={tabularColumns}
           zoomTrackingDefaultEnabled={templateConfig?.enableZoomTracking !== false}
           initialNetConfig={initialNetConfig}
-          onNetConfigChange={next => setNetConfig(next)}
-          templateConfig={templateConfig}
           modelInstructions={captureModel?.document?.instructions}
           templateInstructions={templateConfig?.crowdsourcingInstructions}
         />

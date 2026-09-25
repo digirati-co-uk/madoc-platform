@@ -1,6 +1,7 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
 import { HrefLink } from '../utility/href-link';
+import { accent } from '../variables';
 
 export const ButtonIcon = styled.div`
   transform: translate(-5px, -6px);
@@ -35,7 +36,10 @@ export const Button = styled.button<{
   display: inline-flex;
   letter-spacing: 0.25px;
   vertical-align: top;
-  transition: color 0.1s, background-color 0.1s, border-color 0.1s;
+  transition:
+    color 0.1s,
+    background-color 0.1s,
+    border-color 0.1s;
   white-space: nowrap;
 
   // Alternative with github style gradient
@@ -97,30 +101,35 @@ export const Button = styled.button<{
   ${props =>
     props.$primary &&
     css`
-      background: #4265e9;
-      color: #fff;
-      border: 1px solid #4265e9;
+      background: ${accent};
+      color: var(--madoc-accent-text, #fff);
+      border: 1px solid ${accent};
+
+      ${ButtonIcon} svg {
+        fill: var(--madoc-accent-text, #fff);
+      }
 
       &[type='submit'] {
-        background: #4265e9;
+        background: ${accent};
       }
       &:active {
         box-shadow: inset 0 2px 8px 0 rgba(39, 75, 155, 0.8);
       }
       &:link,
       &:visited {
-        color: #fff;
+        color: var(--madoc-accent-text, #fff);
       }
       &:hover {
-        background: #5371e9;
-        border-color: #5371e9;
-        color: #fff;
+        background: ${accent};
+        border-color: ${accent};
+        filter: brightness(1.08);
+        color: var(--madoc-accent-text, #fff);
       }
       &:focus,
       &:focus:hover {
-        background: #4265e9;
-        border-color: #4265e9;
-        color: #fff;
+        background: ${accent};
+        border-color: ${accent};
+        color: var(--madoc-accent-text, #fff);
       }
       &:focus-visible {
         box-shadow: inset 0 0px 0px 2px rgba(255, 255, 255, 0.8);
@@ -130,9 +139,9 @@ export const Button = styled.button<{
         cursor: not-allowed;
 
         &:hover {
-          background: #4265e9;
-          border-color: #4265e9;
-          color: #fff;
+          background: ${accent};
+          border-color: ${accent};
+          color: var(--madoc-accent-text, #fff);
         }
       }
     `}

@@ -6,6 +6,7 @@ import { CrowdsourcingTask } from '../../../gateway/tasks/crowdsourcing-task';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useBots } from '../../shared/hooks/use-bots';
+import { makeColorAccessible } from '../../shared/utility/make-color-accessible';
 
 export const ContributorsWrapper = styled.div`
   h3 {
@@ -19,15 +20,16 @@ export const ContributorsWrapper = styled.div`
 export const ContributorsList = styled.div`
   display: flex;
 `;
-export const Pill = styled.div`
-  border-radius: 3px;
-  width: auto;
-  background-color: #ecf0ff;
-  color: #437bdd;
-  margin-right: 1em;
-  font-size: 12px;
-  padding: 5px;
-`;
+export function Pill({ children, style }: { children: React.ReactNode; style?: React.CSSProperties }) {
+  return (
+    <div
+      className="mr-[1em] w-auto rounded-[3px] bg-[color-mix(in_srgb,var(--madoc-accent)_8%,white)] p-[5px] text-xs text-[var(--madoc-accent-link)]"
+      style={style}
+    >
+      {children}
+    </div>
+  );
+}
 
 interface ProjectContributors {
   background?: string;
@@ -61,7 +63,17 @@ export function ProjectContributors(props: ProjectContributors) {
           (user, i) =>
             user &&
             (!props.showBots && isBot(user.id) ? null : (
-              <Pill key={i} style={{ color: props.textColor, backgroundColor: props.background }}>
+              <Pill
+                key={i}
+                style={{
+                  color:
+                    props.textColor ||
+                    (props.background && /^#[0-9a-f]{3}(?:[0-9a-f]{3})?$/i.test(props.background)
+                      ? makeColorAccessible(props.background)
+                      : undefined),
+                  backgroundColor: props.background,
+                }}
+              >
                 {user.name}
               </Pill>
             ))

@@ -28,6 +28,7 @@ function version1to2(config: ProjectConfiguration): ProjectConfigurationNEW {
   } = config;
 
   const showRandomManifestAfterSubmission = modelPageOptions?.showRandomManifestAfterSubmission;
+  const { showSaveForLaterAlongsideSubmit, ...contributionPageOptions } = modelPageOptions || {};
 
   return {
     _version: 2,
@@ -60,10 +61,11 @@ function version1to2(config: ProjectConfiguration): ProjectConfigurationNEW {
       randomlyAssignCanvas: randomlyAssignCanvas,
       priorityRandomness: priorityRandomness,
     },
-    modelPageOptions: Object.assign({}, modelPageOptions || {}, {
+    modelPageOptions: Object.assign({}, contributionPageOptions, {
       allowPersonalNotes: allowPersonalNotes,
     }),
     submissionOptions: {
+      showSaveForLaterAlongsideSubmit,
       disablePreview: modelPageOptions?.disablePreview,
       disableNextCanvas: modelPageOptions?.disableNextCanvas,
       preventContributionAfterManifestUnassign: modelPageOptions?.preventContributionAfterManifestUnassign,
@@ -92,6 +94,7 @@ function version2to1(config: ProjectConfigurationNEW): ProjectConfiguration {
     preventMultipleUserSubmissionsPerResource,
     showRandomManifestAfterSubmission,
     submissionOptions: {
+      showSaveForLaterAlongsideSubmit,
       disablePreview,
       disableNextCanvas,
       preventContributionAfterManifestUnassign,
@@ -121,6 +124,7 @@ function version2to1(config: ProjectConfigurationNEW): ProjectConfiguration {
     searchOptions,
     modelPageOptions: {
       ...modelPageOptions,
+      ...(showSaveForLaterAlongsideSubmit === undefined ? {} : { showSaveForLaterAlongsideSubmit }),
       preventMultipleUserSubmissionsPerResource,
       showRandomManifestAfterSubmission:
         typeof showRandomManifestAfterSubmission !== 'undefined'

@@ -2,15 +2,16 @@ import deepmerge from 'deepmerge';
 import { filterDocumentRevisions } from '../../../src/capture-model-server/server-filters/filter-document-revisions';
 import { createRevisionStore } from '../../../src/frontend/shared/capture-models/editor/stores/revisions/revisions-store';
 import { captureModelToRevisionList } from '../../../src/frontend/shared/capture-models/helpers/capture-model-to-revision-list';
-import { CaptureModel } from '../../../src/frontend/shared/capture-models/types/capture-model';
+import { CaptureModel, ModelFields } from '../../../src/frontend/shared/capture-models/types/capture-model';
 import { processImportedRevision } from '../../../src/frontend/shared/capture-models/utility/process-imported-revision';
 import { getValueDotNotation as dot } from '../../../src/utility/iiif-metadata';
 import invariant from 'tiny-invariant';
-import { updateRevisionInDocument } from '../../../src/capture-model-server/server-filters/update-revision-in-document';
+import { createValidEntity, updateRevisionInDocument } from '../../../src/capture-model-server/server-filters/update-revision-in-document';
 import { captureModelRevisionStoreShorthand } from '../../../src/frontend/shared/capture-models/helpers/capture-model-revision-store-shorthand';
 import { generateId } from '../../../src/frontend/shared/capture-models/helpers/generate-id';
 import { registerField } from '../../../src/frontend/shared/capture-models/plugin-api/global-store';
 import { BaseField } from '../../../src/frontend/shared/capture-models/types/field-types';
+import { RevisionRequest } from '../../../src/frontend/shared/capture-models/types/revision-request';
 
 // For testing.
 registerField({
@@ -28,6 +29,75 @@ registerField({
 
 describe('Update revision', () => {
   const debug = (a: any) => console.log(JSON.stringify(a, null, 2));
+
+  test('keeps the first data row in place on update', () => {
+    const revisionId = '4c998b63-e33c-4f40-8a9f-5c58bf465570';
+    const fields: ModelFields = [['rows', ['name', 'note']]];
+    const field = (id: string, value: string, revision?: string): BaseField => ({
+      id,
+      label: id,
+      type: 'text-field',
+      value,
+      revision,
+    });
+    const row = (id: string, name: string, revision?: string): CaptureModel['document'] => ({
+      id,
+      label: id,
+      type: 'entity',
+      allowMultiple: true,
+      revision,
+      properties: {
+        name: [field(`${id}-name`, name, revision)],
+        note: [field(`${id}-note`, '', revision)],
+      },
+    });
+    const first = row('first', 'First', revisionId);
+    const model: CaptureModel = {
+      structure: { id: 'table', label: 'Table', type: 'model', fields },
+      revisions: [{ id: revisionId, fields, structureId: 'table', status: 'submitted' }],
+      document: {
+        id: 'document',
+        label: 'Table',
+        type: 'entity',
+        properties: { rows: [row('template', ''), first, row('second', 'Second', 'another-revision')] },
+      },
+    };
+    const request: RevisionRequest = {
+      source: 'structure',
+      revision: model.revisions![0],
+      document: {
+        ...model.document,
+        properties: {
+          rows: [{ ...first, properties: { ...first.properties, name: [field('first-name', 'Updated', revisionId)] } }],
+        },
+      },
+    };
+
+    updateRevisionInDocument(model, request, { allowAnonymous: true });
+
+    const rows = model.document.properties.rows as CaptureModel['document'][];
+    expect(rows.map(item => item.id)).toEqual(['template', 'first', 'second']);
+    expect((rows[1].properties.name[0] as BaseField).value).toBe('Updated');
+    expect((rows[1].properties.note[0] as BaseField).value).toBe('');
+  });
+
+  test('keeps existing entity properties absent from a sparse update', () => {
+    const base: CaptureModel['document'] = {
+      id: 'row',
+      label: 'Row',
+      type: 'entity',
+      properties: {
+        name: [{ id: 'name', label: 'Name', type: 'text-field', value: 'Old' }],
+        note: [{ id: 'note', label: 'Note', type: 'text-field', value: '' }],
+      },
+    };
+    const incoming = { ...base, properties: { name: [{ ...base.properties.name[0], value: 'New' }] } };
+
+    expect(createValidEntity(base, incoming, true)?.properties).toEqual({
+      name: incoming.properties.name,
+      note: base.properties.note,
+    });
+  });
 
   describe('Updating single field', () => {
     const { store, actions, captureModel, structureId } = captureModelRevisionStoreShorthand(

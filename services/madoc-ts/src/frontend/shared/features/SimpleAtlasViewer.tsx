@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { AnnotationPage } from '@iiif/presentation-3';
 import { RegionHighlight, Runtime } from '@atlas-viewer/atlas';
 import { ErrorBoundary } from 'react-error-boundary';
-import { useCanvas, useImageService, CanvasPanel, CanvasContext } from 'react-iiif-vault';
+import { useCanvas, CanvasPanel, CanvasContext } from 'react-iiif-vault';
 import { useTranslation } from 'react-i18next';
 import { CanvasViewerButton, CanvasViewerControls } from '../atoms/CanvasViewerGrid';
 import { useSiteConfiguration } from '../../site/features/SiteConfigurationContext';
@@ -14,10 +14,6 @@ import { HomeIcon } from '../icons/HomeIcon';
 import { MinusIcon } from '../icons/MinusIcon';
 import { PlusIcon } from '../icons/PlusIcon';
 import { useReadOnlyAnnotations } from '../hooks/use-read-only-annotations';
-import { InfoMessage } from '../callouts/InfoMessage';
-import { Button } from '../navigation/Button';
-import { BrowserComponent } from '../utility/browser-component';
-import { OpenSeadragonViewer } from './OpenSeadragonViewer.lazy';
 import { RotateIcon } from '../icons/RotateIcon';
 import { useModelPageConfiguration } from '../../site/hooks/use-model-page-configuration';
 import { PolygonSelectorProps } from '../capture-models/editor/selector-types/PolygonSelector/PolygonSelector';
@@ -38,15 +34,12 @@ export const SimpleAtlasViewer = React.forwardRef<
   const { t } = useTranslation();
   const canvas = useCanvas();
   const runtime = useRef<Runtime>(undefined);
-  const osd = useRef<any>(undefined);
-  const { data: service } = useImageService();
   const {
     project: { atlasBackground },
   } = useSiteConfiguration();
   const [isLoaded, setIsLoaded] = useState(false);
   const controller = useSelectorController();
   const readOnlyAnnotations = useReadOnlyAnnotations(false);
-  const [isOSD, setIsOSD] = useState(false);
 
   const { enableRotation = false, hideViewerControls = false } = useModelPageConfiguration();
 
@@ -54,17 +47,11 @@ export const SimpleAtlasViewer = React.forwardRef<
     if (runtime.current) {
       runtime.current.world.goHome();
     }
-    if (osd.current) {
-      osd.current.goHome();
-    }
   };
 
   const zoomIn = () => {
     if (runtime.current) {
       runtime.current.world.zoomIn();
-    }
-    if (osd.current) {
-      osd.current.zoomIn();
     }
   };
 
@@ -72,15 +59,11 @@ export const SimpleAtlasViewer = React.forwardRef<
     if (runtime.current) {
       runtime.current.world.zoomOut();
     }
-    if (osd.current) {
-      osd.current.zoomOut();
-    }
   };
 
   const rotate = () => {
-    setIsOSD(true);
-    if (osd.current) {
-      osd.current.rotate();
+    if (runtime.current) {
+      runtime.current.world.rotateBy(90);
     }
   };
 
@@ -136,58 +119,42 @@ export const SimpleAtlasViewer = React.forwardRef<
         </style>
         {isLoaded ? (
           <>
-            {isOSD ? (
-              <>
-                <InfoMessage
-                  style={{ lineHeight: '3.4em', position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10 }}
-                >
-                  {t('You cannot edit annotations if you are rotating')}
-                  <Button style={{ margin: '0.8em' }} onClick={() => setIsOSD(false)}>
-                    Reset
-                  </Button>
-                </InfoMessage>
-                <BrowserComponent fallback={null}>
-                  <OpenSeadragonViewer ref={osd} onReady={viewer => viewer.viewport.setRotation(90)} />
-                </BrowserComponent>
-              </>
-            ) : (
-              <CanvasPanel.Viewer
-                renderPreset={defaultPreset}
-                runtimeOptions={runtimeOptions}
-                // key={canvas.id}
-                onCreated={preset => void (runtime.current = preset.runtime)}
-              >
-                <CanvasContext canvas={canvas.id}>
-                  <CanvasPanel.RenderCanvas />
-                  <worldObject key={`${canvas.id}/world`} height={canvas.height} width={canvas.width}>
-                    {highlightedRegions
-                      ? highlightedRegions.map(([x, y, width, height], key) => {
-                          return (
-                            <React.Fragment key={key}>
-                              <RegionHighlight
-                                region={{ id: key, x, y, width, height }}
-                                isEditing={false}
-                                style={{
-                                  background: 'rgba(2,219,255, .5)',
-                                }}
-                                onSave={() => {
-                                  // no-op
-                                }}
-                                onClick={() => {
-                                  // no-op
-                                }}
-                              />
-                            </React.Fragment>
-                          );
-                        })
-                      : null}
-                    {readOnlyAnnotations.map(anno => (
-                      <ViewReadOnlyAnnotation key={anno.id} {...anno} />
-                    ))}
-                  </worldObject>
-                </CanvasContext>
-              </CanvasPanel.Viewer>
-            )}
+            <CanvasPanel.Viewer
+              renderPreset={defaultPreset}
+              runtimeOptions={runtimeOptions}
+              // key={canvas.id}
+              onCreated={preset => void (runtime.current = preset.runtime)}
+            >
+              <CanvasContext canvas={canvas.id}>
+                <CanvasPanel.RenderCanvas />
+                <worldObject key={`${canvas.id}/world`} height={canvas.height} width={canvas.width}>
+                  {highlightedRegions
+                    ? highlightedRegions.map(([x, y, width, height], key) => {
+                        return (
+                          <React.Fragment key={key}>
+                            <RegionHighlight
+                              region={{ id: key, x, y, width, height }}
+                              isEditing={false}
+                              style={{
+                                background: 'rgba(2,219,255, .5)',
+                              }}
+                              onSave={() => {
+                                // no-op
+                              }}
+                              onClick={() => {
+                                // no-op
+                              }}
+                            />
+                          </React.Fragment>
+                        );
+                      })
+                    : null}
+                  {readOnlyAnnotations.map(anno => (
+                    <ViewReadOnlyAnnotation key={anno.id} {...anno} />
+                  ))}
+                </worldObject>
+              </CanvasContext>
+            </CanvasPanel.Viewer>
 
             {hideViewerControls && isModel ? null : (
               <CanvasViewerControls>

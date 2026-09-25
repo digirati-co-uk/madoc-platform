@@ -11,6 +11,8 @@ import { ApiContext, useIsApiRestarting } from '../shared/hooks/use-api';
 import { ErrorMessage } from '../shared/callouts/ErrorMessage';
 import '../shared/capture-models/plugins';
 import { SiteProvider } from '../shared/hooks/use-site';
+import { accentCssVariables } from '../shared/utility/make-color-accessible';
+import { Helmet } from 'react-helmet';
 import { AdminSidebar } from './molecules/AdminSidebar';
 import './index.css';
 
@@ -48,6 +50,9 @@ const AdminApp: React.FC<AdminAppProps> = ({
 
   return (
     <div lang={i18n.language} dir={viewingDirection}>
+      <Helmet>
+        <style>{accentCssVariables(updatedSite.config?.accentColor)}</style>
+      </Helmet>
       <SiteProvider
         value={useMemo(
           () => ({

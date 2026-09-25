@@ -1,3 +1,4 @@
+import { resolveTabularAlignment } from '@/frontend/shared/utility/tabular-alignment-snapshot';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useCaptureModelEditorApi } from '@/frontend/shared/capture-models/new/hooks/use-capture-model-editor-api';
 import { Revisions } from '@/frontend/shared/capture-models/editor/stores/revisions';
@@ -175,9 +176,10 @@ export function TabularProjectReviewRenderer(props: CustomReviewRendererProps) {
   const createNewFieldInstance = Revisions.useStoreActions(actions => actions.createNewFieldInstance);
   const removeInstance = Revisions.useStoreActions(actions => actions.removeInstance);
   const templateConfig = (review.project?.template_config || undefined) as TabularTemplateConfig | undefined;
+  const savedAlignment = Revisions.useStoreState(state => state.currentRevision?.revision.tabularAlignment);
   const netConfig = useMemo(
-    () => netConfigFromSharedStructure(templateConfig?.tabular?.structure),
-    [templateConfig?.tabular?.structure]
+    () => resolveTabularAlignment(savedAlignment, netConfigFromSharedStructure(templateConfig?.tabular?.structure)),
+    [savedAlignment, templateConfig?.tabular?.structure]
   );
   const tabularColumns = (templateConfig?.tabular?.model?.columns || []) as TabularModelColumn[];
   const taskSubject = (
