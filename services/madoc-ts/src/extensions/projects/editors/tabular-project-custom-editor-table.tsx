@@ -14,6 +14,7 @@ import {
 } from 'react-data-grid';
 import { Tooltip as ReactTooltip } from 'react-tooltip';
 import { Copy } from '@styled-icons/entypo/Copy';
+import { Clipboard } from '@styled-icons/entypo/Clipboard';
 import 'react-data-grid/lib/styles.css';
 import type { TabularCellRef } from '@/frontend/shared/utility/tabular-types';
 import { Button } from '@/frontend/shared/navigation/Button';
@@ -493,14 +494,34 @@ export function TabularProjectCustomEditorTable({
   const shouldScrollToNewRowRef = useRef(false);
   const lastScrolledCellKeyRef = useRef<string | null>(null);
   const contextMenuRef = useRef<HTMLDivElement | null>(null);
+  const clipboardFeedbackTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [tableViewportWidth, setTableViewportWidth] = useState(0);
   const [selectedRange, setSelectedRange] = useState<CellRange | null>(null);
+  const [clipboardFeedback, setClipboardFeedback] = useState<'copied' | 'pasted' | 'copy-error' | 'paste-error' | null>(
+    null
+  );
   const [cellContextMenu, setCellContextMenu] = useState<TabularCellContextMenuState | null>(null);
   const closeCellContextMenu = useCallback(() => {
     setCellContextMenu(null);
   }, []);
   const hasInlineFlagToggle = enableCellFlagQuickActions && !!onToggleCellFlag;
   const hasCellContextActions = enableCellFlagQuickActions && (!!onToggleCellFlag || !!onOpenCellReviewPanel);
+
+  const showClipboardFeedback = useCallback((feedback: Exclude<typeof clipboardFeedback, null>) => {
+    if (clipboardFeedbackTimerRef.current) {
+      clearTimeout(clipboardFeedbackTimerRef.current);
+    }
+    setClipboardFeedback(feedback);
+    clipboardFeedbackTimerRef.current = setTimeout(() => setClipboardFeedback(null), 2000);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (clipboardFeedbackTimerRef.current) {
+        clearTimeout(clipboardFeedbackTimerRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (!hasCellContextActions && cellContextMenu) {
@@ -579,9 +600,10 @@ export function TabularProjectCustomEditorTable({
 
   const syncSelectedRange = useCallback(() => {
     setSelectedRange(dataGridRef.current?.getSelectedRange() ?? null);
+    setClipboardFeedback(null);
   }, []);
 
-  const copySelectedCells = useCallback(() => {
+  const copySelectedCells = useCallback(async () => {
     if (!selectedRange) {
       return;
     }
@@ -593,8 +615,10 @@ export function TabularProjectCustomEditorTable({
           .slice(selectedRange.startColumnIdx, selectedRange.endColumnIdx + 1)
           .map(getTabularCellClipboardText)
       );
-    void copyTabularCellValueToClipboard(formatTabularClipboardMatrix(values));
-  }, [gridRows, selectedRange]);
+    showClipboardFeedback(
+      (await copyTabularCellValueToClipboard(formatTabularClipboardMatrix(values))) ? 'copied' : 'copy-error'
+    );
+  }, [gridRows, selectedRange, showClipboardFeedback]);
 
   const selectGridCell = useCallback(
     (rowPosition: number, colIndex: number, enableEditor = false) => {
@@ -920,18 +944,17 @@ export function TabularProjectCustomEditorTable({
     []
   );
 
-  const handleMultiCellPaste = useCallback(
-    ({ range }: MultiCellClipboardArgs<TabularGridRow>, event: React.ClipboardEvent<HTMLDivElement>) => {
+  const pasteCells = useCallback(
+    (range: CellRange, text: string) => {
       if (disabled) {
-        return;
+        return false;
       }
 
-      const clipboardRows = parseTabularClipboardMatrix(event.clipboardData.getData('text/plain'));
+      const clipboardRows = parseTabularClipboardMatrix(text);
       if (clipboardRows.length === 0) {
-        return;
+        return false;
       }
 
-      event.preventDefault();
       const nextRows = [...gridRows];
       const changedRowPositions = new Set<number>();
       for (let rowOffset = 0; rowOffset < clipboardRows.length; rowOffset++) {
@@ -967,9 +990,35 @@ export function TabularProjectCustomEditorTable({
       if (changedRowPositions.size > 0) {
         commitGridRows(nextRows, [...changedRowPositions]);
       }
+      return true;
     },
     [commitGridRows, disabled, gridRows]
   );
+
+  const handleMultiCellPaste = useCallback(
+    ({ range }: MultiCellClipboardArgs<TabularGridRow>, event: React.ClipboardEvent<HTMLDivElement>) => {
+      if (disabled) {
+        return;
+      }
+      if (pasteCells(range, event.clipboardData.getData('text/plain'))) {
+        event.preventDefault();
+        setClipboardFeedback(null);
+      }
+    },
+    [disabled, pasteCells]
+  );
+
+  const pasteSelectedCells = useCallback(async () => {
+    if (!selectedRange || disabled) {
+      return;
+    }
+
+    try {
+      showClipboardFeedback(pasteCells(selectedRange, await navigator.clipboard.readText()) ? 'pasted' : 'paste-error');
+    } catch {
+      showClipboardFeedback('paste-error');
+    }
+  }, [disabled, pasteCells, selectedRange, showClipboardFeedback]);
 
   const handleCellKeyDown = useCallback(
     (args: CellKeyDownArgs<TabularGridRow>, event: CellKeyboardEvent) => {
@@ -1046,7 +1095,7 @@ export function TabularProjectCustomEditorTable({
       style={containerStyle}
     >
       <TabularDataGridStyles scopeClassName="tabular-contributor-rdg" disableRowHover />
-      {hasAnyRowControl || hasTableActions || selectedCellCount > 1 ? (
+      {hasAnyRowControl || hasTableActions || selectedCellCount > 0 ? (
         <div
           className={`sticky top-0 z-[2] flex flex-none items-center gap-2 border-b border-[#d6d6d6] bg-[#f1f5f9] px-3 py-2 ${topBarJustifyClass}`}
         >
@@ -1078,23 +1127,48 @@ export function TabularProjectCustomEditorTable({
               ) : null}
             </div>
           ) : null}
-          {selectedCellCount > 1 ? (
+          {selectedCellCount > 0 ? (
             <div
               className="ml-auto inline-flex h-8 items-center overflow-hidden rounded border border-slate-300 bg-white text-sm font-medium text-slate-700 shadow-sm"
-              aria-live="polite"
             >
-              <span className="px-2.5">{selectedCellCount} selected</span>
+              <span className="px-2.5" role="status">
+                {clipboardFeedback === 'copied'
+                  ? 'Copied!'
+                  : clipboardFeedback === 'pasted'
+                    ? 'Pasted!'
+                    : clipboardFeedback === 'copy-error'
+                      ? 'Copy failed'
+                      : clipboardFeedback === 'paste-error'
+                        ? 'Paste failed'
+                        : `${selectedCellCount} selected`}
+              </span>
+              {selectedCellCount > 1 ? (
+                <button
+                  type="button"
+                  className={`inline-flex h-full w-8 items-center justify-center border-l border-slate-300 transition-colors hover:bg-slate-50 active:bg-slate-200 ${clipboardFeedback === 'copied' ? 'bg-green-100 text-green-700' : clipboardFeedback === 'copy-error' ? 'bg-red-100 text-red-700' : 'text-slate-600 hover:text-slate-900'}`}
+                  title="Copy selected cells"
+                  aria-label="Copy selected cells"
+                  onMouseDown={event => event.preventDefault()}
+                  onClick={copySelectedCells}
+                >
+                  <Copy className="h-4 w-4" />
+                </button>
+              ) : null}
               <button
                 type="button"
-                className="inline-flex h-full w-8 items-center justify-center border-l border-slate-300 text-slate-600 hover:bg-slate-50 hover:text-slate-900"
-                title="Copy selected cells"
-                aria-label="Copy selected cells"
+                className={`inline-flex h-full w-8 items-center justify-center border-l border-slate-300 transition-colors hover:bg-slate-50 active:bg-slate-200 disabled:cursor-not-allowed disabled:opacity-50 ${clipboardFeedback === 'pasted' ? 'bg-green-100 text-green-700' : clipboardFeedback === 'paste-error' ? 'bg-red-100 text-red-700' : 'text-slate-600 hover:text-slate-900'}`}
+                title="Paste into selected cells"
+                aria-label="Paste into selected cells"
+                disabled={disabled}
                 onMouseDown={event => event.preventDefault()}
-                onClick={copySelectedCells}
+                onClick={pasteSelectedCells}
               >
-                <Copy className="h-4 w-4" />
+                <Clipboard className="h-4 w-4" />
               </button>
             </div>
+          ) : null}
+          {clipboardFeedback === 'paste-error' ? (
+            <span role="alert">Could not paste. Press Ctrl+V or Cmd+V instead.</span>
           ) : null}
           {hasTableActions ? <div className="flex items-center gap-2">{tableActions}</div> : null}
         </div>
