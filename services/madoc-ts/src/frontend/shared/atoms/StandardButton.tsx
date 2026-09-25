@@ -1,82 +1,40 @@
-import styled, { css } from 'styled-components';
+import React from 'react';
 
-type StandardButtonProps = {
-  $size?: 'large' | 'medium' | 'small';
-  $variation?: 'primary' | 'secondary' | 'tertiary';
-};
-
-const primary = '#2D70F9';
-const primaryText = '#fff';
-
-const secondary = 'none';
-const secondaryText = primary;
-
-const getFontSize = (props: StandardButtonProps) => {
-  switch (props.$size) {
-    case 'large':
-      return '1.2em';
-    case 'medium':
-    default:
-      return '0.95em';
-    case 'small':
-      return '0.75em';
-  }
-};
-
-const getPadding = (props: StandardButtonProps) => {
-  switch (props.$size) {
-    case 'large':
-      return '0.7em 1.2em';
-    case 'medium':
-    default:
-      return '0.6em 1.2em';
-    case 'small':
-      return '0.1em 0.8em';
-  }
-};
-
-export const StandardButton = styled.button<{
+interface StandardButtonProps extends React.ComponentPropsWithoutRef<'button'> {
   $size?: 'large' | 'medium' | 'small';
   $variation?: 'primary' | 'secondary' | 'tertiary';
   $stretched?: boolean;
-}>`
-  cursor: pointer;
-  font-size: ${getFontSize};
-  line-height: 22px;
-  font-weight: normal;
-  padding: ${getPadding};
-  background: ${props => (props.$variation === 'primary' ? primary : secondary)};
-  color: ${props => (props.$variation === 'primary' ? primaryText : secondaryText)};
-  border: 1px solid ${props => (props.$variation !== 'tertiary' ? primary : 'transparent')};
-  text-decoration: none;
-  ${props =>
-    props.$stretched &&
-    css`
-      width: 100%;
-    `}
-  &:active {
-    box-shadow: inset 0 2px 8px 0 rgba(78, 130, 223, 0.6);
-  }
-  &:link,
-  &:visited {
-    color: #fff;
-  }
-  &:hover {
-    background: #7baaff;
-    border-color: #7baaff;
-    color: #fff;
-  }
-  &:focus {
-    outline: none;
-    background: #7baaff;
-    color: #fff;
-  }
-  &:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-    &:hover {
-      background: #4265e9;
-      border-color: #4265e9;
-    }
-  }
-`;
+  as?: React.ElementType;
+  href?: string;
+}
+
+const sizes = {
+  large: 'px-[1.2em] py-[0.7em] text-[1.2em]',
+  medium: 'px-[1.2em] py-[0.6em] text-[0.95em]',
+  small: 'px-[0.8em] py-[0.1em] text-[0.75em]',
+};
+
+const variations = {
+  primary:
+    'border-[var(--madoc-accent,#4265e9)] bg-[var(--madoc-accent,#4265e9)] text-[var(--madoc-accent-text,#fff)] visited:text-[var(--madoc-accent-text,#fff)] hover:brightness-110',
+  secondary:
+    'border-[var(--madoc-accent,#4265e9)] bg-transparent text-[var(--madoc-accent,#4265e9)] visited:text-[var(--madoc-accent,#4265e9)] hover:bg-[var(--madoc-accent,#4265e9)] hover:text-[var(--madoc-accent-text,#fff)]',
+  tertiary:
+    'border-transparent bg-transparent text-[var(--madoc-accent,#4265e9)] visited:text-[var(--madoc-accent,#4265e9)] hover:bg-[var(--madoc-accent,#4265e9)] hover:text-[var(--madoc-accent-text,#fff)]',
+};
+
+export function StandardButton({
+  $size = 'medium',
+  $variation = 'secondary',
+  $stretched,
+  as: Component = 'button',
+  className = '',
+  ...props
+}: StandardButtonProps) {
+  return (
+    <Component
+      {...props}
+      className={`inline-flex cursor-pointer items-center justify-center border font-normal leading-[22px] no-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--madoc-accent,#4265e9)] disabled:cursor-not-allowed disabled:opacity-70 ${sizes[$size]} ${variations[$variation]} ${$stretched ? 'w-full' : ''} ${className}`}
+    />
+  );
+}

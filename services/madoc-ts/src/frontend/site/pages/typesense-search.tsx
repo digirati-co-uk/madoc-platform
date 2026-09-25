@@ -95,9 +95,9 @@ const aisResetStyles = `
     border-color: #9ca3af;
   }
   .ais-Pagination-item--selected .ais-Pagination-link {
-    background: #1d4ed8;
-    border-color: #1d4ed8;
-    color: #fff;
+    background: var(--madoc-accent, #4265e9);
+    border-color: var(--madoc-accent, #4265e9);
+    color: var(--madoc-accent-text, #fff);
     font-weight: 600;
   }
   .ais-Pagination-item--disabled .ais-Pagination-link {
@@ -122,7 +122,7 @@ const aisResetStyles = `
     cursor: pointer;
   }
   .ais-RefinementList-checkbox {
-    accent-color: #1d4ed8;
+    accent-color: var(--madoc-accent, #4265e9);
     width: 0.9rem;
     height: 0.9rem;
     flex-shrink: 0;
@@ -135,7 +135,7 @@ const aisResetStyles = `
   }
   .ais-RefinementList-item--selected .ais-RefinementList-labelText {
     font-weight: 600;
-    color: #1d4ed8;
+    color: var(--madoc-accent, #4265e9);
   }
   .ais-RefinementList-count {
     margin-left: auto;
@@ -151,7 +151,7 @@ const aisResetStyles = `
   .ais-RefinementList-showMore {
     margin-top: 0.5rem;
     font-size: 0.8rem;
-    color: #1d4ed8;
+    color: var(--madoc-accent, #4265e9);
     background: none;
     border: none;
     padding: 0;
@@ -165,8 +165,8 @@ const aisResetStyles = `
   }
   .ais-Highlight-highlighted,
   .ais-Snippet-highlighted {
-    background-color: rgba(84, 104, 255, 0.1);
-    color: #3730a3;
+    background-color: color-mix(in srgb, var(--madoc-accent, #4265e9) 12%, white);
+    color: var(--madoc-accent, #4265e9);
     font-style: normal;
     border-radius: 2px;
     padding: 0 1px;
@@ -371,7 +371,7 @@ const SearchInputWithAutocomplete: React.FC<{ projectId?: number; autocomplete?:
   return (
     <div className="relative mb-1 max-w-[40rem]">
       <input
-        className="w-full rounded-md border border-slate-300 px-4 py-2.5 text-sm shadow-sm outline-none transition focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+        className="w-full rounded-md border border-slate-300 px-4 py-2.5 text-sm shadow-sm outline-none transition focus:border-[var(--madoc-accent)] focus:ring-2 focus:ring-[var(--madoc-accent)] focus:ring-opacity-20"
         type="search"
         value={query}
         placeholder="Search resources…"
@@ -465,7 +465,7 @@ function HitCard({ hit, view }: { hit: TypesenseSearchHit; view: SearchView }) {
           }}
         >
           {primaryLink ? (
-            <HrefLink href={primaryLink} className="text-blue-700 no-underline hover:underline">
+            <HrefLink href={primaryLink} className="text-[var(--madoc-accent)] no-underline hover:underline">
               <Highlight hit={hit} attribute="resource_label" />
             </HrefLink>
           ) : (
@@ -541,7 +541,7 @@ function ResourceTypeTabs({
               aria-selected={isActive}
               className={`border-b-2 px-1 pb-2.5 text-sm font-medium transition ${
                 isActive
-                  ? 'border-blue-700 text-blue-700'
+                  ? 'border-[var(--madoc-accent)] text-[var(--madoc-accent)]'
                   : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-800'
               }`}
               onClick={() => {
@@ -571,7 +571,7 @@ function ResourceTypeTabs({
             aria-selected={activeCustomIndex === index.id}
             className={`border-b-2 px-1 pb-2.5 text-sm font-medium transition ${
               activeCustomIndex === index.id
-                ? 'border-blue-700 text-blue-700'
+                ? 'border-[var(--madoc-accent)] text-[var(--madoc-accent)]'
                 : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-800'
             }`}
             onClick={() => onCustomIndex(index.id)}
@@ -598,7 +598,9 @@ function ViewToggle({ view, onChange }: { view: SearchView; onChange: (view: Sea
           aria-pressed={view === option.value}
           title={option.label}
           className={`flex h-8 w-9 items-center justify-center border-r border-slate-300 last:border-r-0 ${
-            view === option.value ? 'bg-blue-700 text-white' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800'
+            view === option.value
+              ? 'bg-[var(--madoc-accent)] text-[var(--madoc-accent-text)]'
+              : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800'
           }`}
           onClick={() => onChange(option.value)}
         >
@@ -681,13 +683,13 @@ function FacetOptionList({
           <li key={item.value}>
             <label className="flex cursor-pointer items-center gap-2 rounded px-1 py-1 text-sm hover:bg-slate-50">
               <input
-                className="h-4 w-4 shrink-0 accent-blue-700"
+                className="h-4 w-4 shrink-0 accent-[var(--madoc-accent)]"
                 type="checkbox"
                 checked={item.isRefined}
                 onChange={() => (item.isRefined ? item.refinedValues : item.values).forEach(value => refine(value))}
               />
               <span
-                className={`min-w-0 flex-1 truncate ${item.isRefined ? 'font-semibold text-blue-700' : 'text-slate-700'}`}
+                className={`min-w-0 flex-1 truncate ${item.isRefined ? 'font-semibold text-[var(--madoc-accent)]' : 'text-slate-700'}`}
               >
                 <LocaleString>{item.label}</LocaleString>
               </span>
@@ -703,7 +705,7 @@ function FacetOptionList({
       {canToggleShowMore ? (
         <button
           type="button"
-          className="mt-2 text-xs font-medium text-blue-700 underline underline-offset-2"
+          className="mt-2 text-xs font-medium text-[var(--madoc-accent)] underline underline-offset-2"
           onClick={() => toggleShowMore()}
         >
           {isShowingMore ? 'Show less' : 'Show more'}
