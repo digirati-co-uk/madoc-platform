@@ -22,6 +22,7 @@ export type SiteSystemConfig = {
   autoPublishImport: boolean;
   disableSearchIndexing?: boolean;
   footerLinksInNewTab?: boolean;
+  accentColor?: string;
   loginHeader?: string;
   loginFooter?: string;
   registerHeader?: string;

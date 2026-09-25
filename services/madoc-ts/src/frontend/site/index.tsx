@@ -53,13 +53,28 @@ const SiteApp: React.FC<SiteAppProps> = ({
   systemConfig,
 }) => {
   const [updatedSite, setSite] = useState(site);
+  const baseTheme = theme && theme.theme ? theme.theme : defaultTheme;
+  const siteAccent = updatedSite.config?.accentColor;
+  const activeTheme = useMemo(
+    () =>
+      siteAccent
+        ? {
+            ...baseTheme,
+            custom: {
+              ...baseTheme.custom,
+              accent: { ...baseTheme.custom?.accent, primary: siteAccent },
+            },
+          }
+        : baseTheme,
+    [baseTheme, siteAccent]
+  );
   const [updatedFormResponse, setUpdatedFormResponse] = useState<any | undefined>(formResponse);
   const clearFormResponse = useCallback(() => {
     setUpdatedFormResponse(undefined);
   }, []);
 
   return (
-    <CustomThemeProvider theme={theme && theme.theme ? theme.theme : defaultTheme} themeOverrides={themeOverrides}>
+    <CustomThemeProvider theme={activeTheme} themeOverrides={themeOverrides}>
       <VaultProvider>
         <SiteProvider
           value={useMemo(

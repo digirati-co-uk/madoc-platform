@@ -1,7 +1,7 @@
 import { themeVariable } from '../themes/helpers/themeVariable';
 
 export const accent = themeVariable('accent', 'primary', {
-  default: '#5b80b2',
+  default: '#4265e9',
 });
 
 export const globalBackground = themeVariable('header', 'globalBackground', {

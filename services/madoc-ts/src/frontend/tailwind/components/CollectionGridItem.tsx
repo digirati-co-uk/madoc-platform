@@ -25,8 +25,8 @@ export function CollectionGridItem({
   const thumbnail = data.collection.thumbnail
     ? data.collection.thumbnail
     : data.collection.items[0] && data.collection.items[0].thumbnail
-    ? data.collection.items[0].thumbnail
-    : undefined;
+      ? data.collection.items[0].thumbnail
+      : undefined;
 
   const placeholder = data?.collection?.placeholder_image;
   // Tailwind instead
@@ -44,7 +44,7 @@ export function CollectionGridItem({
           <p>{t('Collection with {{count}} manifests', { count: data.pagination.totalResults })}</p>
           <LocaleString>{data.collection.summary}</LocaleString>
         </div>
-        <div className="mr-8 text-blue-600 no-underline hover:underline">{t('view collection')}</div>
+        <div className="mr-8 text-[var(--madoc-accent)] no-underline hover:underline">{t('view collection')}</div>
       </section>
     </HrefLink>
   );

@@ -35,6 +35,11 @@ const systemConfigModel = {
     type: 'checkbox-field',
     inlineLabel: 'Open footer links in new tab',
   },
+  accentColor: {
+    label: 'Site accent color',
+    type: 'color-field',
+    defaultValue: '#4265e9',
+  },
   // Login/Register messages
   loginHeader: {
     label: 'Login header message',
@@ -82,6 +87,7 @@ export const SiteSystemConfiguration: React.FC = () => {
     disableSearchIndexing: false,
     ...savedConfig,
     footerLinksInNewTab: !!site.config?.footerLinksInNewTab,
+    accentColor: site.config?.accentColor || '#4265e9',
     ...importedConfig,
   };
 
