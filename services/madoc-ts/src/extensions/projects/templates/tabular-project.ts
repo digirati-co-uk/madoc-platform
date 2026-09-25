@@ -11,6 +11,7 @@ import {
   createTabularCellFlagsCaptureModelField,
 } from '../../../frontend/shared/utility/tabular-cell-flags';
 import { ProjectTemplate } from '../types';
+import { TabularProjectMetadataEditor } from '../editors/tabular-project-metadata-editor';
 
 type TabularColumnConfig = {
   id?: string;
@@ -261,8 +262,6 @@ export const tabularProject: ProjectTemplate<TabularProjectTemplateOptions> = {
     immutable: [
       'claimGranularity',
       'contributionMode',
-      'allowCollectionNavigation',
-      'allowManifestNavigation',
       'allowCanvasNavigation',
       'randomlyAssignCanvas',
       'maxContributionsPerResource',
@@ -302,6 +301,7 @@ export const tabularProject: ProjectTemplate<TabularProjectTemplateOptions> = {
     },
   },
   components: {
+    customAdminModelEditor: TabularProjectMetadataEditor,
     customEditor: TabularProjectCustomEditorLoader,
     customReviewRenderer: TabularProjectReviewRendererLoader,
   },

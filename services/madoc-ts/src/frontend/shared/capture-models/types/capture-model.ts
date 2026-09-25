@@ -9,6 +9,7 @@ export interface ModelFields extends Array<string | NestedModelFields> {}
 
 export interface Document extends BaseProperty {
   id: string;
+  instructions?: string;
   // @todo future implementation of JSON-LD Extension. Added as optional for now.
   '@context'?: string | ({ [key: string]: string } & { '@vocab'?: string });
   type: 'entity';

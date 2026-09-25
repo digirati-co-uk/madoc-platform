@@ -1,4 +1,6 @@
+import { TabularContributorInstructions } from '@/frontend/shared/components/TabularContributorInstructions';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { resolveTabularInstructions } from '@/frontend/shared/utility/tabular-instructions';
 import type { NetConfig, TabularCellRef } from '@/frontend/shared/utility/tabular-types';
 import { DynamicVaultContext } from '@/frontend/shared/capture-models/new/DynamicVaultContext';
 import { RevisionProviderWithFeatures } from '@/frontend/shared/capture-models/new/components/RevisionProviderWithFeatures';
@@ -70,16 +72,6 @@ const ROW_HAS_FLAGS_WARNING = 'Rows with flagged cells cannot be removed. Unflag
 const ROW_HAS_VALUES_WARNING = 'Rows can only be removed when empty. Clear all cell values first.';
 const EXPIRED_CLAIM_BLOCKED_REASON =
   'This canvas claim has expired and this project does not allow further submissions after expiry.';
-
-function getFirstNonEmptyText(values: Array<string | null | undefined>): string {
-  for (const value of values) {
-    const trimmed = (value || '').trim();
-    if (trimmed) {
-      return trimmed;
-    }
-  }
-  return '';
-}
 
 function getRowRemovalWarning(
   row: TabularEditorRowModel,
@@ -179,7 +171,6 @@ function TabularProjectCustomEditorContent({
   const [successModalState, setSuccessModalState] = useState<'saved' | 'submitted' | null>(null);
   const [rowRemovalWarning, setRowRemovalWarning] = useState<string | null>(null);
   const [flagPanelOpenRequestToken, setFlagPanelOpenRequestToken] = useState(0);
-  const [areInstructionsExpanded, setAreInstructionsExpanded] = useState(true);
   const cellFlaggingEnabled = enableCellFlagging !== false;
   const tabularBaseRowCount = useMemo(
     () => parseTabularRowCountOrDefault(config.project?.tabularDefaultRowCount),
@@ -312,11 +303,10 @@ function TabularProjectCustomEditorContent({
   const contributorInstructions = useMemo(() => {
     const fromCurrentView =
       currentView && currentView.type === 'model' ? currentView.instructions || currentView.description : undefined;
-    const resolvedInstructions = getFirstNonEmptyText([
+    const resolvedInstructions = resolveTabularInstructions(templateInstructions, [
       fromCurrentView,
       currentRevisionDocumentInstructions,
       modelInstructions,
-      templateInstructions,
     ]);
     return resolvedInstructions ? tModel(resolvedInstructions) : '';
   }, [currentRevisionDocumentInstructions, currentView, modelInstructions, tModel, templateInstructions]);
@@ -605,26 +595,7 @@ function TabularProjectCustomEditorContent({
                         </div>
                       ) : null}
 
-                      {contributorInstructions ? (
-                        <div className="overflow-hidden rounded border border-blue-300 bg-blue-100/80">
-                          <div className="flex items-center justify-between border-b border-blue-300 bg-blue-200/80 px-3 py-2 text-sm font-semibold text-slate-900">
-                            <span>{t('Instructions')}</span>
-                            <button
-                              type="button"
-                              className="text-xs font-medium text-slate-700 underline hover:text-slate-900"
-                              aria-expanded={areInstructionsExpanded}
-                              onClick={() => setAreInstructionsExpanded(isExpanded => !isExpanded)}
-                            >
-                              {areInstructionsExpanded ? t('Hide') : t('Show')}
-                            </button>
-                          </div>
-                          {areInstructionsExpanded ? (
-                            <div className="whitespace-pre-wrap px-3 py-2 text-sm text-slate-900">
-                              {contributorInstructions}
-                            </div>
-                          ) : null}
-                        </div>
-                      ) : null}
+                      <TabularContributorInstructions instructions={contributorInstructions} />
 
                       <ContributionEditorStateAlerts
                         isLoading={isLoading}

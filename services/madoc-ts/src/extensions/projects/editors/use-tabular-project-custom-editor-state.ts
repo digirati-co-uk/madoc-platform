@@ -264,7 +264,7 @@ export function useTabularProjectCustomEditorState({
       return {
         key: columnKey,
         label: columnModel.labels.get(columnKey) || column?.label || columnKey,
-        description: column?.description || columnModel.descriptions.get(columnKey),
+        description: columnModel.descriptions.get(columnKey) ?? column?.description,
       };
     });
   }, [columnModel.descriptions, columnModel.labels, visibleColumnKeys, visibleColumnsById]);

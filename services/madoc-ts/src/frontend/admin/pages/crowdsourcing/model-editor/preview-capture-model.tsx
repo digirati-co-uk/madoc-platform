@@ -13,10 +13,18 @@ import '../../../../shared/capture-models/refinements';
 import { BrowserComponent } from '../../../../shared/utility/browser-component';
 import { ViewContentFetch } from '../../../molecules/ViewContentFetch';
 import { ProjectModelEditor } from '../projects/project-model-editor';
-import { CustomAdminPreviewRendererProps, getReviewRendererMode } from '../../../../site/pages/tasks/review-renderers/types';
+import {
+  CustomAdminPreviewRendererProps,
+  getReviewRendererMode,
+} from '../../../../site/pages/tasks/review-renderers/types';
 import { TabularProjectModelPreview } from './TabularProjectModelPreview';
+import {
+  getTabularModelInstructions,
+  resolveTabularInstructions,
+} from '../../../../shared/utility/tabular-instructions';
+import type { TabularProjectTemplateConfig } from '../../../../../types/tabular-project-template-config';
 
-export const PreviewCaptureModel: React.FC = () => {
+export function PreviewCaptureModel() {
   const { id } = useParams<{ id: string }>();
   const { data } = useData(ProjectModelEditor);
   const api = useApi();
@@ -28,15 +36,22 @@ export const PreviewCaptureModel: React.FC = () => {
 
   const { captureModel, annotationTheme } = data;
   const template = useProjectTemplate(data.template);
-  const CustomAdminPreviewRenderer = template?.components
-    ?.customAdminPreviewRenderer as React.FC<CustomAdminPreviewRendererProps> | undefined;
+  const CustomAdminPreviewRenderer = template?.components?.customAdminPreviewRenderer as
+    React.ComponentType<CustomAdminPreviewRendererProps> | undefined;
   const isTabularProject = data.template === 'tabular-project';
 
   if (isTabularProject) {
     return (
       <VaultProvider>
         <h3>Preview</h3>
-        <TabularProjectModelPreview projectId={id} templateConfig={data.templateConfig} />
+        <TabularProjectModelPreview
+          projectId={id}
+          templateConfig={data.templateConfig}
+          instructions={resolveTabularInstructions(
+            (data.templateConfig as TabularProjectTemplateConfig | null)?.crowdsourcingInstructions,
+            [getTabularModelInstructions(captureModel)]
+          )}
+        />
       </VaultProvider>
     );
   }
@@ -120,4 +135,4 @@ export const PreviewCaptureModel: React.FC = () => {
       </RevisionProviderWithFeatures>
     </VaultProvider>
   );
-};
+}

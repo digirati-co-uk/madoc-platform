@@ -22,7 +22,13 @@ const generator = TJS.buildGenerator(program, { required: true, noExtraProps: fa
 
 const symbols = generator.getMainFileSymbols(program, files);
 
-const includeRefs = ['BaseTheme', 'ConfigResponse', 'ProjectFull', 'ProjectSearchIndexRequest'];
+const includeRefs = [
+  'BaseTheme',
+  'ConfigResponse',
+  'ProjectFull',
+  'ProjectSearchIndexRequest',
+  'TabularProjectMetadataUpdate',
+];
 
 for (const typeName of symbols) {
   console.log('starting... ', typeName);

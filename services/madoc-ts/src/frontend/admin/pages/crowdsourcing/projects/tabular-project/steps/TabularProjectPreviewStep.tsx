@@ -1,3 +1,4 @@
+import { TabularContributorInstructions } from '@/frontend/shared/components/TabularContributorInstructions';
 import React, { ComponentType, ReactNode } from 'react';
 import type { TFunction } from 'i18next';
 import { ModalButton } from '@/frontend/shared/components/Modal';
@@ -18,6 +19,7 @@ interface TabularProjectPreviewStepProps {
   shareUrl: string;
   shareCopied: 'idle' | 'copied' | 'error';
   crowdsourcingInstructions?: string;
+  existingProject?: boolean;
   canTrackPreviewOnCanvas: boolean;
   hasImage: boolean;
   manifestId?: string;
@@ -55,6 +57,7 @@ export function TabularProjectPreviewStep(props: TabularProjectPreviewStepProps)
     shareUrl,
     shareCopied,
     crowdsourcingInstructions,
+    existingProject = false,
     canTrackPreviewOnCanvas,
     hasImage,
     manifestId,
@@ -85,7 +88,6 @@ export function TabularProjectPreviewStep(props: TabularProjectPreviewStepProps)
     onRemoveRow,
     CastANetComponent,
   } = props;
-  const hasCrowdsourcingInstructions = !!crowdsourcingInstructions?.trim();
 
   return (
     <>
@@ -117,7 +119,9 @@ export function TabularProjectPreviewStep(props: TabularProjectPreviewStepProps)
 
           <div className="mb-3 rounded border border-[#ced8ff] bg-[#e8edff] p-3 text-[#1f2d5a]">
             <div className="text-sm leading-[1.35]">
-              {t('Check your project details, model, and grid before creating the project.')}
+              {existingProject
+                ? t('Try the contributor table. Entries and image adjustments made here are not saved.')
+                : t('Check your project details, model, and grid before creating the project.')}
             </div>
             {canTrackPreviewOnCanvas ? <TabularCanvasControlsHelp t={t} withTopDivider /> : null}
           </div>
@@ -142,15 +146,6 @@ export function TabularProjectPreviewStep(props: TabularProjectPreviewStepProps)
                   <Button>{t('Select a different image')}</Button>
                 </ModalButton>
               </div>
-            </div>
-          ) : null}
-
-          {hasCrowdsourcingInstructions ? (
-            <div className="mb-3 rounded border border-[#ced8ff] bg-white p-3 text-[#1f2d5a]">
-              <div className="text-[11px] font-semibold uppercase tracking-wide text-[#3d4f88]">
-                {t('Contributor instructions')}
-              </div>
-              <div className="mt-2 whitespace-pre-wrap text-sm leading-[1.35]">{crowdsourcingInstructions}</div>
             </div>
           ) : null}
         </div>
@@ -185,24 +180,29 @@ export function TabularProjectPreviewStep(props: TabularProjectPreviewStepProps)
                 </BrowserComponent>
               }
               bottomPanel={
-                <TabularPreviewTable
-                  headings={previewColumns}
-                  tooltips={previewTooltips}
-                  fieldTypes={previewFieldTypes}
-                  dropdownOptionsText={previewDropdownOptionsText}
-                  rows={previewTableRowCount}
-                  values={previewRows}
-                  onChange={onPreviewRowsChange}
-                  activeCell={previewActiveCell}
-                  onActiveCellChange={onPreviewActiveCellChange}
-                  onAddRow={onAddRow}
-                  onRemoveRow={onRemoveRow}
-                  canRemoveRow={canRemovePreviewRow}
-                  addRowLabel={t('Add new row +')}
-                  removeRowLabel={t('Remove row -')}
-                  containerHeight="100%"
-                  containerWidth="100%"
-                />
+                <div className="flex h-full min-h-0 flex-col gap-2 overflow-y-auto">
+                  <TabularContributorInstructions instructions={crowdsourcingInstructions} />
+                  <div className="min-h-[180px] flex-1">
+                    <TabularPreviewTable
+                      headings={previewColumns}
+                      tooltips={previewTooltips}
+                      fieldTypes={previewFieldTypes}
+                      dropdownOptionsText={previewDropdownOptionsText}
+                      rows={previewTableRowCount}
+                      values={previewRows}
+                      onChange={onPreviewRowsChange}
+                      activeCell={previewActiveCell}
+                      onActiveCellChange={onPreviewActiveCellChange}
+                      onAddRow={onAddRow}
+                      onRemoveRow={onRemoveRow}
+                      canRemoveRow={canRemovePreviewRow}
+                      addRowLabel={t('Add new row +')}
+                      removeRowLabel={t('Remove row -')}
+                      containerHeight="100%"
+                      containerWidth="100%"
+                    />
+                  </div>
+                </div>
               }
             />
           ) : (
@@ -225,23 +225,26 @@ export function TabularProjectPreviewStep(props: TabularProjectPreviewStepProps)
             </div>
           )}
           {!hasImage ? (
-            <TabularPreviewTable
-              headings={previewColumns}
-              tooltips={previewTooltips}
-              fieldTypes={previewFieldTypes}
-              dropdownOptionsText={previewDropdownOptionsText}
-              rows={previewTableRowCount}
-              values={previewRows}
-              onChange={onPreviewRowsChange}
-              activeCell={previewActiveCell}
-              onActiveCellChange={onPreviewActiveCellChange}
-              onAddRow={onAddRow}
-              onRemoveRow={onRemoveRow}
-              canRemoveRow={canRemovePreviewRow}
-              addRowLabel={t('Add new row +')}
-              removeRowLabel={t('Remove row -')}
-              containerWidth="100%"
-            />
+            <>
+              <TabularContributorInstructions instructions={crowdsourcingInstructions} />
+              <TabularPreviewTable
+                headings={previewColumns}
+                tooltips={previewTooltips}
+                fieldTypes={previewFieldTypes}
+                dropdownOptionsText={previewDropdownOptionsText}
+                rows={previewTableRowCount}
+                values={previewRows}
+                onChange={onPreviewRowsChange}
+                activeCell={previewActiveCell}
+                onActiveCellChange={onPreviewActiveCellChange}
+                onAddRow={onAddRow}
+                onRemoveRow={onRemoveRow}
+                canRemoveRow={canRemovePreviewRow}
+                addRowLabel={t('Add new row +')}
+                removeRowLabel={t('Remove row -')}
+                containerWidth="100%"
+              />
+            </>
           ) : null}
         </div>
       </div>
