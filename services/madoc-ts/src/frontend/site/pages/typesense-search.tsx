@@ -171,6 +171,10 @@ const aisResetStyles = `
     border-radius: 2px;
     padding: 0 1px;
   }
+  .search-metadata-section:not(:has(li)),
+  .search-metadata-facet:not(:has(li)) {
+    display: none;
+  }
 `;
 
 type TypesenseStatus = {
@@ -638,12 +642,22 @@ function InfiniteSearchResults({ view }: { view: SearchView }) {
   );
 }
 
-const SidebarSection: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
-  <div className="mb-8 last:mb-0">
-    <h4 className="mb-2 text-sm font-semibold uppercase tracking-widest text-slate-900">{title}</h4>
-    {children}
-  </div>
-);
+function SidebarSection({
+  title,
+  children,
+  className = '',
+}: {
+  title: string;
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <div className={`mb-8 last:mb-0 ${className}`}>
+      <h4 className="mb-2 text-sm font-semibold uppercase tracking-widest text-slate-900">{title}</h4>
+      {children}
+    </div>
+  );
+}
 
 function FacetOptionList({
   items,
@@ -805,10 +819,10 @@ function MetadataFacetSections({ facets, custom }: { facets: TypesenseMetadataFa
   }
 
   return (
-    <SidebarSection title={custom ? 'Facets' : 'Metadata'}>
+    <SidebarSection title={custom ? 'Facets' : 'Metadata'} className="search-metadata-section">
       <div className="space-y-6">
         {facets.map(facet => (
-          <div key={facet.id}>
+          <div key={facet.id} className="search-metadata-facet">
             <p className="mb-2 text-sm font-medium capitalize text-slate-900">
               <LocaleString>{facet.label}</LocaleString>
             </p>
