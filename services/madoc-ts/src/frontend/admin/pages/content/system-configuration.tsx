@@ -3,7 +3,7 @@ import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import { EditShorthandCaptureModel } from '../../../shared/capture-models/EditorShorthandCaptureModel';
 import { useApi } from '../../../shared/hooks/use-api';
-import { useSite, useSystemConfig, useUpdateSystemConfig } from '../../../shared/hooks/use-site';
+import { useSetSite, useSite, useSystemConfig, useUpdateSystemConfig } from '../../../shared/hooks/use-site';
 import { AdminHeader } from '../../molecules/AdminHeader';
 import { WidePage } from '../../../shared/layout/WidePage';
 import { ConfigurationImportExport } from '../../components/ConfigurationImportExport';
@@ -75,6 +75,7 @@ export const SiteSystemConfiguration: React.FC = () => {
   const api = useApi();
   const savedConfig = useSystemConfig();
   const updateConfig = useUpdateSystemConfig();
+  const setSite = useSetSite();
   const navigate = useNavigate();
   const site = useSite();
   const [importedConfig, setImportedConfig] = useState<Partial<SiteSystemConfig>>();
@@ -97,9 +98,11 @@ export const SiteSystemConfiguration: React.FC = () => {
 
   const [updateSystemConfig] = useMutation(async (newConfig: any) => {
     await api.siteManager.updateSite({
-      config: newConfig,
+      config: { ...site.config, ...newConfig },
     });
     const siteDetails = await api.getSiteDetails(site.id);
+
+    setSite(siteDetails);
 
     updateConfig({
       ...config,

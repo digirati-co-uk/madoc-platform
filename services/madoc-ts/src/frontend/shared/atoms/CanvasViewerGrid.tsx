@@ -1,6 +1,9 @@
 import useDropdownMenu from 'react-accessible-dropdown-menu-hook';
 import styled from 'styled-components';
-import { Button, ButtonRow } from '../navigation/Button';
+import React from 'react';
+import { CanvasViewerButton } from './CanvasViewerButton';
+
+export { CanvasViewerButton } from './CanvasViewerButton';
 
 export const CanvasViewerGrid = styled.div<{ $vertical?: boolean }>`
   display: flex;
@@ -51,43 +54,17 @@ export const CanvasViewerContentOverlay = styled.div`
   pointer-events: none;
 `;
 
-export const CanvasViewerControls = styled(ButtonRow)`
-  position: absolute;
-  margin: 0;
-  right: 0.5rem;
-  top: 0;
-  z-index: 10;
-  &[data-position='left'] {
-    left: 0.5rem;
-    right: auto;
-  }
-`;
-
-export const CanvasViewerButton = styled(Button)`
-  border-radius: 3px;
-  padding: 0.65em;
-  font-size: 1em;
-  border: none;
-  background: #fff;
-  display: flex;
-  color: #477af1;
-
-  &:focus {
-    outline: 2px solid orange;
-  }
-
-  &[data-active='true'] {
-    background: #477af1;
-    color: #fff;
-  }
-  &[data-active='true']:disabled {
-    opacity: 1;
-  }
-
-  svg {
-    font-size: 1.3em;
-  }
-`;
+export function CanvasViewerControls({
+  className = '',
+  ...props
+}: React.HTMLAttributes<HTMLDivElement> & { 'data-position'?: 'left' }) {
+  return (
+    <div
+      className={`madoc-canvas-viewer-controls absolute right-2 top-0 z-10 m-0 flex items-start gap-[0.5em] data-[position=left]:left-2 data-[position=left]:right-auto ${className}`}
+      {...props}
+    />
+  );
+}
 
 const CanvasViewerButtonOuterContainer = styled.div`
   position: relative;

@@ -1,7 +1,7 @@
 import { themeVariable } from '../themes/helpers/themeVariable';
 
 export const accent = themeVariable('accent', 'primary', {
-  default: '#4265e9',
+  default: 'var(--madoc-accent, #4265e9)',
 });
 
 export const globalBackground = themeVariable('header', 'globalBackground', {

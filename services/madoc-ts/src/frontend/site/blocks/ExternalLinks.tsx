@@ -1,28 +1,7 @@
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import React from 'react';
-import styled from 'styled-components';
 import { Network } from '@styled-icons/entypo/Network';
 
-const LinkWrapper = styled.div`
-  a {
-    font-size: 14px;
-    text-decoration: none;
-    vertical-align: middle;
-    margin: 0 1em;
-
-    :hover {
-      color: black;
-      text-decoration: underline;
-      cursor: pointer;
-    }
-  }
-
-  svg {
-    color: #056db7;
-    height: 18px;
-    margin-right: 8px;
-  }
-`;
 export const ExternalLinks: React.FC<{
   links?: {
     url?: string;
@@ -30,7 +9,7 @@ export const ExternalLinks: React.FC<{
   }[];
 }> = ({ links }) => {
   return (
-    <LinkWrapper>
+    <div className="[&_a]:mx-[1em] [&_a]:align-middle [&_a]:text-sm [&_a]:no-underline hover:[&_a]:cursor-pointer hover:[&_a]:text-black hover:[&_a]:underline [&_svg]:mr-2 [&_svg]:h-[18px] [&_svg]:text-[var(--madoc-accent-link)]">
       {links
         ? links.map((link, i) => {
             return (
@@ -42,7 +21,7 @@ export const ExternalLinks: React.FC<{
             );
           })
         : null}
-    </LinkWrapper>
+    </div>
   );
 };
 

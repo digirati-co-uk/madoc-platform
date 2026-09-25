@@ -280,7 +280,11 @@ export function CoreModelEditor({
   );
 
   const editorPane = (
-    <CanvasViewerGridSidebar $vertical={isVertical} style={isVertical ? undefined : { width: '100%' }}>
+    <CanvasViewerGridSidebar
+      className="madoc-capture-model"
+      $vertical={isVertical}
+      style={isVertical ? undefined : { width: '100%' }}
+    >
       {postSubmissionMessage ? (
         <div>
           <EditorSlots.PostSubmission stacked messageOnly onContinue={() => setPostSubmissionMessage(false)} />

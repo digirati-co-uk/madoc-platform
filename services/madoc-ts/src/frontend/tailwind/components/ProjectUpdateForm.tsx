@@ -73,7 +73,7 @@ export function ProjectUpdateForm({
           type="button"
           role="tab"
           aria-selected={!isPreview}
-          className={`px-3 py-2 border-b-2 ${!isPreview ? 'border-blue-500' : 'border-transparent'}`}
+          className={`px-3 py-2 border-b-2 ${!isPreview ? 'border-[var(--madoc-accent)]' : 'border-transparent'}`}
           onClick={() => setIsPreview(false)}
         >
           {t('Edit')}
@@ -82,7 +82,7 @@ export function ProjectUpdateForm({
           type="button"
           role="tab"
           aria-selected={isPreview}
-          className={`px-3 py-2 border-b-2 ${isPreview ? 'border-blue-500' : 'border-transparent'}`}
+          className={`px-3 py-2 border-b-2 ${isPreview ? 'border-[var(--madoc-accent)]' : 'border-transparent'}`}
           onClick={() => setIsPreview(true)}
         >
           {t('Preview')}

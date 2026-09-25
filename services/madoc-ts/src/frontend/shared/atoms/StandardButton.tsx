@@ -18,9 +18,9 @@ const variations = {
   primary:
     'border-[var(--madoc-accent,#4265e9)] bg-[var(--madoc-accent,#4265e9)] text-[var(--madoc-accent-text,#fff)] visited:text-[var(--madoc-accent-text,#fff)] hover:brightness-110',
   secondary:
-    'border-[var(--madoc-accent,#4265e9)] bg-transparent text-[var(--madoc-accent,#4265e9)] visited:text-[var(--madoc-accent,#4265e9)] hover:bg-[var(--madoc-accent,#4265e9)] hover:text-[var(--madoc-accent-text,#fff)]',
+    'border-[var(--madoc-accent,#4265e9)] bg-transparent text-[var(--madoc-accent-link,#4265e9)] visited:text-[var(--madoc-accent-link,#4265e9)] hover:bg-[var(--madoc-accent,#4265e9)] hover:text-[var(--madoc-accent-text,#fff)]',
   tertiary:
-    'border-transparent bg-transparent text-[var(--madoc-accent,#4265e9)] visited:text-[var(--madoc-accent,#4265e9)] hover:bg-[var(--madoc-accent,#4265e9)] hover:text-[var(--madoc-accent-text,#fff)]',
+    'border-transparent bg-transparent text-[var(--madoc-accent-link,#4265e9)] visited:text-[var(--madoc-accent-link,#4265e9)] hover:bg-[var(--madoc-accent,#4265e9)] hover:text-[var(--madoc-accent-text,#fff)]',
 };
 
 export function StandardButton({

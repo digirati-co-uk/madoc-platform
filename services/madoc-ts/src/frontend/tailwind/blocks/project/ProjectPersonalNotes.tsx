@@ -43,7 +43,7 @@ export function ProjectPersonalNotes({ toDisplay = 3 }: { toDisplay?: number }) 
                     </div>
                   ) : null}
                   <div className="flex-1 min-w-0">
-                    <h4 className="text-lg text-sky-600">
+                    <h4 className="text-lg text-[var(--madoc-accent-link)]">
                       {note.parentResource ? (
                         <>
                           <LocaleString>{note.parentResource.label}</LocaleString>
@@ -63,10 +63,13 @@ export function ProjectPersonalNotes({ toDisplay = 3 }: { toDisplay?: number }) 
           );
         })}
         {data.notes.length > toDisplay ? (
-          <HrefLink href={createLink({ projectId: project.id, subRoute: 'personal-notes' })}>
+          <HrefLink
+            href={createLink({ projectId: project.id, subRoute: 'personal-notes' })}
+            className="text-[var(--madoc-accent-link)]"
+          >
             <div className="text-sm underline px-2 flex items-center gap-2">
               <span>{t('View all {{count}} notes', { count: data.notes.length })}</span>
-              <span className="text-sky-600">
+              <span className="text-[var(--madoc-accent-link)]">
                 <svg
                   className="w-4 h-4"
                   style={{ transform: 'rotate(90deg)', transformOrigin: 'center' }}

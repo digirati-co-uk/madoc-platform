@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components';
-import { CanvasViewerButton, CanvasViewerControls } from '../atoms/CanvasViewerGrid';
+import React from 'react';
 
 export const OuterLayoutContainer = styled.div`
   display: flex;
@@ -15,81 +15,25 @@ export const OuterLayoutContainer = styled.div`
   min-width: 0;
 `;
 
-export const NavIconContainer = styled.div<{ $active?: boolean; $disabled?: boolean }>`
-  &:hover {
-    background: #eee;
-
-    svg {
-      fill: #4a64e1;
-      color: #4a64e1;
-    }
-  }
-
-  border-radius: 3px;
-  padding: 0.5em;
-  margin: 0.25em;
-  color: #333;
-  width: 2.5em;
-  display: flex;
-  height: 2.5em;
-  cursor: pointer;
-  position: relative;
-
-  svg {
-    fill: #666;
-    color: #666;
-    width: 1.4em;
-    height: 1.4em;
-  }
-
-  &[data-has-label='true'] {
-    width: auto;
-
-    svg {
-      margin-right: 0.3em;
-    }
-  }
-
-  ${props =>
-    props.$active &&
-    css`
-      background: #4a64e1;
-      color: #fff;
-
-      svg {
-        fill: #fff;
-        color: #fff;
-      }
-
-      &:hover {
-        background: #4a64e1;
-        svg {
-          fill: #fff;
-          color: #fff;
-        }
-      }
-    `}
-
-  ${props =>
-    props.$disabled &&
-    css`
-      background: transparent;
-      cursor: not-allowed;
-
-      svg {
-        fill: #ccc;
-        color: #ccc;
-      }
-
-      &:hover {
-        background: transparent;
-        svg {
-          fill: #ccc;
-          color: #ccc;
-        }
-      }
-    `}
-`;
+export function NavIconContainer({
+  $active,
+  $disabled,
+  className = '',
+  ...props
+}: React.HTMLAttributes<HTMLDivElement> & { $active?: boolean; $disabled?: boolean }) {
+  return (
+    <div
+      className={`relative m-[0.25em] flex h-[2.5em] w-[2.5em] cursor-pointer rounded-[3px] p-[0.5em] data-[has-label=true]:w-auto [&_svg]:h-[1.4em] [&_svg]:w-[1.4em] [&_svg]:fill-current data-[has-label=true]:[&_svg]:mr-[0.3em] ${
+        $disabled
+          ? 'cursor-not-allowed text-[#ccc]'
+          : $active
+            ? 'bg-[var(--madoc-accent,#4265e9)] text-[var(--madoc-accent-text,#fff)]'
+            : 'text-[#666] hover:bg-[#eee] hover:text-[var(--madoc-accent-link,#4265e9)]'
+      } ${className}`}
+      {...props}
+    />
+  );
+}
 
 export const NavIconNotifcation = styled.div`
   background: #dd3c3c;
@@ -117,46 +61,23 @@ export const PanelTitle = styled.h5`
   margin: 10px 0;
 `;
 
-export const LayoutContent = styled.div<{ $padding?: boolean; $btnColor?: string }>`
-  background: #fff;
-  flex: 1 1 0;
-  min-width: 0;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-
-  ${props =>
-    props.$padding &&
-    css`
-      padding: 0.5em;
-    `}
-  ${CanvasViewerButton} {
-    background-color: ${props => props.$btnColor};
-  }
-
-  &[data-vertical-btn='true'] {
-    ${CanvasViewerControls} {
-      display: flex;
-      flex-direction: column;
-
-      button:first-child {
-        order: 1;
-      }
-
-      button:nth-child(2) {
-        order: 2;
-      }
-
-      button:nth-child(3) {
-        order: 0;
-      }
-
-      ${CanvasViewerButton} {
-        margin-bottom: 0.5em;
-        margin-left: 0;
-      }
-    }
-`;
+export function LayoutContent({
+  $padding,
+  $btnColor,
+  className = '',
+  style,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement> & { $padding?: boolean; $btnColor?: string; 'data-vertical-btn'?: boolean }) {
+  return (
+    <div
+      className={`madoc-layout-content flex min-w-0 flex-1 flex-col overflow-y-auto bg-white ${
+        $padding ? 'p-[0.5em]' : ''
+      } ${className}`}
+      style={{ ...style, '--madoc-viewer-button-background': $btnColor || '#fff' } as React.CSSProperties}
+      {...props}
+    />
+  );
+}
 
 export const LayoutSidebarMenu = styled.div`
   background: #ffffff;

@@ -135,7 +135,7 @@ const aisResetStyles = `
   }
   .ais-RefinementList-item--selected .ais-RefinementList-labelText {
     font-weight: 600;
-    color: var(--madoc-accent, #4265e9);
+    color: var(--madoc-accent-link, #4265e9);
   }
   .ais-RefinementList-count {
     margin-left: auto;
@@ -151,7 +151,7 @@ const aisResetStyles = `
   .ais-RefinementList-showMore {
     margin-top: 0.5rem;
     font-size: 0.8rem;
-    color: var(--madoc-accent, #4265e9);
+    color: var(--madoc-accent-link, #4265e9);
     background: none;
     border: none;
     padding: 0;
@@ -166,7 +166,7 @@ const aisResetStyles = `
   .ais-Highlight-highlighted,
   .ais-Snippet-highlighted {
     background-color: color-mix(in srgb, var(--madoc-accent, #4265e9) 12%, white);
-    color: var(--madoc-accent, #4265e9);
+    color: var(--madoc-accent-link, #4265e9);
     font-style: normal;
     border-radius: 2px;
     padding: 0 1px;
@@ -465,7 +465,7 @@ function HitCard({ hit, view }: { hit: TypesenseSearchHit; view: SearchView }) {
           }}
         >
           {primaryLink ? (
-            <HrefLink href={primaryLink} className="text-[var(--madoc-accent)] no-underline hover:underline">
+            <HrefLink href={primaryLink} className="text-[var(--madoc-accent-link)] no-underline hover:underline">
               <Highlight hit={hit} attribute="resource_label" />
             </HrefLink>
           ) : (
@@ -541,7 +541,7 @@ function ResourceTypeTabs({
               aria-selected={isActive}
               className={`border-b-2 px-1 pb-2.5 text-sm font-medium transition ${
                 isActive
-                  ? 'border-[var(--madoc-accent)] text-[var(--madoc-accent)]'
+                  ? 'border-[var(--madoc-accent)] text-[var(--madoc-accent-link)]'
                   : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-800'
               }`}
               onClick={() => {
@@ -571,7 +571,7 @@ function ResourceTypeTabs({
             aria-selected={activeCustomIndex === index.id}
             className={`border-b-2 px-1 pb-2.5 text-sm font-medium transition ${
               activeCustomIndex === index.id
-                ? 'border-[var(--madoc-accent)] text-[var(--madoc-accent)]'
+                ? 'border-[var(--madoc-accent)] text-[var(--madoc-accent-link)]'
                 : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-800'
             }`}
             onClick={() => onCustomIndex(index.id)}
@@ -689,7 +689,7 @@ function FacetOptionList({
                 onChange={() => (item.isRefined ? item.refinedValues : item.values).forEach(value => refine(value))}
               />
               <span
-                className={`min-w-0 flex-1 truncate ${item.isRefined ? 'font-semibold text-[var(--madoc-accent)]' : 'text-slate-700'}`}
+                className={`min-w-0 flex-1 truncate ${item.isRefined ? 'font-semibold text-[var(--madoc-accent-link)]' : 'text-slate-700'}`}
               >
                 <LocaleString>{item.label}</LocaleString>
               </span>
@@ -705,7 +705,7 @@ function FacetOptionList({
       {canToggleShowMore ? (
         <button
           type="button"
-          className="mt-2 text-xs font-medium text-[var(--madoc-accent)] underline underline-offset-2"
+          className="mt-2 text-xs font-medium text-[var(--madoc-accent-link)] underline underline-offset-2"
           onClick={() => toggleShowMore()}
         >
           {isShowingMore ? 'Show less' : 'Show more'}
