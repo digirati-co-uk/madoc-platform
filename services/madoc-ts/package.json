@@ -284,6 +284,9 @@
   },
   "jest": {
     "preset": "ts-jest",
+    "moduleNameMapper": {
+      "\\.css$": "<rootDir>/test-utility/style-mock.cjs"
+    },
     "modulePathIgnorePatterns": [
       "dist/",
       "lib/"
