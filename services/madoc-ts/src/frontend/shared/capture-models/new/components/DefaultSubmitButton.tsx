@@ -49,7 +49,6 @@ export const DefaultSubmitButton: EditorRenderingConfig['SubmitButton'] = ({ aft
         } else {
           reset();
         }
-        deselectRevision();
       })
       .catch(() => {});
   };
