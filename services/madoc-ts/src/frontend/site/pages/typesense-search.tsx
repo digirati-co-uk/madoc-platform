@@ -640,7 +640,7 @@ function InfiniteSearchResults({ view }: { view: SearchView }) {
 
 const SidebarSection: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
   <div className="mb-8 last:mb-0">
-    <h4 className="mb-2 text-[0.7rem] font-semibold uppercase tracking-widest text-slate-400">{title}</h4>
+    <h4 className="mb-2 text-sm font-semibold uppercase tracking-widest text-slate-900">{title}</h4>
     {children}
   </div>
 );
@@ -809,7 +809,7 @@ function MetadataFacetSections({ facets, custom }: { facets: TypesenseMetadataFa
       <div className="space-y-6">
         {facets.map(facet => (
           <div key={facet.id}>
-            <p className="mb-2 text-[0.75rem] font-medium capitalize text-slate-500">
+            <p className="mb-2 text-sm font-medium capitalize text-slate-900">
               <LocaleString>{facet.label}</LocaleString>
             </p>
             <div className="space-y-2">
