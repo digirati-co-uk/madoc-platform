@@ -47,7 +47,9 @@ export function TabularNetAlignmentToolbar({
         aria-expanded={expanded}
         aria-pressed={expanded}
         data-tooltip-id={tooltipId}
-        data-tooltip-content={expanded ? t('Hide alignment controls') : t('Show alignment controls')}
+        data-tooltip-content={
+          expanded ? t('Hide table and image alignment controls') : t('Show table and image alignment controls')
+        }
         disabled={disabled}
         onClick={onToggle}
       >
@@ -59,8 +61,8 @@ export function TabularNetAlignmentToolbar({
           {[
             { label: t('Nudge table row tracking up'), rotation: 180, onClick: onUp },
             { label: t('Nudge table row tracking down'), rotation: 0, onClick: onDown },
-            { label: t('Move whole net left'), rotation: 90, onClick: onLeft },
-            { label: t('Move whole net right'), rotation: -90, onClick: onRight },
+            { label: t('Move table outline left'), rotation: 90, onClick: onLeft },
+            { label: t('Move table outline right'), rotation: -90, onClick: onRight },
           ].map(({ label, rotation, onClick }) => (
             <button
               key={label}
@@ -84,7 +86,7 @@ export function TabularNetAlignmentToolbar({
             <button
               type="button"
               className={`${alignmentControlClassName} w-9 px-0`}
-              aria-label={t('Align column edges')}
+              aria-label={t('Align table columns to this image')}
               aria-pressed={previewing}
               data-tooltip-id={tooltipId}
               data-tooltip-content={t('Align the left and right edges; resize all columns proportionally')}

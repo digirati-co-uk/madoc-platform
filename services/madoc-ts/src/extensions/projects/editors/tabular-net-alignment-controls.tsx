@@ -42,14 +42,14 @@ export function TabularNetAlignmentControls({
       }}
     >
       <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-        <strong>{t('Align columns — this image')}</strong>
-        <span>{t('Drag the edge guides or adjust the sliders. All columns resize proportionally.')}</span>
+        <strong>{t('Align table columns to this image')}</strong>
+        <span>{t('Drag the table edge guides or use the sliders to adjust the table margin settings. All columns resize proportionally')}</span>
       </div>
       <div className="flex flex-wrap items-center gap-3">
         {(['left', 'right'] as const).map(edge => (
           <label key={edge} className="flex h-9 min-w-40 flex-1 items-center gap-3">
             <span className={edge === 'left' ? 'font-medium text-blue-700' : 'font-medium text-orange-700'}>
-              {edge === 'left' ? t('Left edge') : t('Right edge')}
+              {edge === 'left' ? t('Left table margin') : t('Right table margin')}
             </span>
             <input
               autoFocus={edge === 'left'}
