@@ -16,11 +16,11 @@ import {
 } from 'react-iiif-vault';
 import { Preset, PopmotionControllerConfig } from '@atlas-viewer/atlas';
 import { ImageServiceContext } from './Atlas.helpers';
-import { Button } from '../../atoms/Button';
+import { StandardButton } from '../../../../atoms/StandardButton';
 import { useTranslation } from 'react-i18next';
 import { CanvasViewerControls } from '../../../../atoms/CanvasViewerGrid';
 import { useSiteConfiguration } from '../../../../../site/features/SiteConfigurationContext';
-import { PolygonControls } from '../../selector-types/PolygonSelector/components/CreateCustomShape';
+import { PolygonControls } from '../../selector-types/PolygonSelector/components/PolygonControls';
 
 export type AtlasCustomOptions = {
   unstable_webglRenderer?: boolean;
@@ -49,15 +49,16 @@ const AtlasAnnotationConfirm: React.FC<{ onConfirm: () => void }> = ({ onConfirm
   const { t } = useTranslation();
 
   return (
-    <Button
-      primary
-      size="small"
+    <StandardButton
+      type="button"
+      $variation="primary"
+      $size="small"
       onClick={() => {
         onConfirm();
       }}
     >
       {t('confirm')}
-    </Button>
+    </StandardButton>
   );
 };
 
@@ -194,7 +195,7 @@ export const AtlasViewer: React.FC<AtlasViewerProps> = props => {
       </CanvasContext>
       <CanvasViewerControls
         id="atlas-controls"
-        data-position="left"
+        data-position="bottom-center"
         data-default-polygon-tool={project.defaultPolygonTool === 'box' ? 'box' : 'pen'}
       >
         {currentSelectorType === 'polygon-selector' ? <PolygonControls /> : null}

@@ -57,10 +57,10 @@ export const CanvasViewerContentOverlay = styled.div`
 export function CanvasViewerControls({
   className = '',
   ...props
-}: React.HTMLAttributes<HTMLDivElement> & { 'data-position'?: 'left' }) {
+}: React.HTMLAttributes<HTMLDivElement> & { 'data-position'?: 'left' | 'bottom-center' }) {
   return (
     <div
-      className={`madoc-canvas-viewer-controls absolute right-2 top-0 z-10 m-0 flex items-start gap-[0.5em] data-[position=left]:left-2 data-[position=left]:right-auto ${className}`}
+      className={`madoc-canvas-viewer-controls absolute right-2 top-0 z-10 m-0 flex items-start gap-[0.5em] data-[position=left]:left-2 data-[position=left]:right-auto data-[position=bottom-center]:bottom-2 data-[position=bottom-center]:left-1/2 data-[position=bottom-center]:right-auto data-[position=bottom-center]:top-auto data-[position=bottom-center]:w-max data-[position=bottom-center]:max-w-[calc(100%-1rem)] data-[position=bottom-center]:-translate-x-1/2 data-[position=bottom-center]:flex-wrap data-[position=bottom-center]:items-end data-[position=bottom-center]:justify-center ${className}`}
       {...props}
     />
   );

@@ -352,7 +352,8 @@ export function TabularProjectCustomEditorCanvas({
       ) : null}
       <ReactTooltip
         id={tooltipId}
-        place="bottom"
+        place="bottom-end"
+        offset={12}
         variant="dark"
         delayShow={0}
         positionStrategy="fixed"

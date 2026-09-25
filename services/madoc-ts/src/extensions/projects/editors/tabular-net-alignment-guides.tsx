@@ -47,7 +47,7 @@ export function TabularNetAlignmentGuides({ value, onChange }: TabularNetAlignme
             x2={value.left + (position / 100) * value.width}
             y1={value.top}
             y2={100}
-            stroke="#2563eb"
+            stroke="var(--madoc-accent, #4265e9)"
             strokeOpacity={0.65}
             strokeWidth={1}
             vectorEffect="non-scaling-stroke"
@@ -62,7 +62,7 @@ export function TabularNetAlignmentGuides({ value, onChange }: TabularNetAlignme
                 x2={position}
                 y1={0}
                 y2={100}
-                stroke={edge === 'left' ? '#2563eb' : '#c2410c'}
+                stroke={edge === 'left' ? 'var(--madoc-accent, #4265e9)' : '#c2410c'}
                 strokeWidth={2}
                 vectorEffect="non-scaling-stroke"
               />

@@ -8,7 +8,7 @@ import {
 } from '@/frontend/shared/utility/tabular-horizontal-alignment';
 
 export const alignmentControlClassName =
-  'inline-flex h-9 shrink-0 items-center justify-center rounded-md border border-gray-200 bg-white text-sm font-medium text-blue-700 shadow-sm transition-colors hover:border-blue-200 hover:bg-blue-50 active:bg-blue-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-default disabled:opacity-40 disabled:hover:border-gray-200 disabled:hover:bg-white aria-pressed:border-blue-600 aria-pressed:bg-blue-600 aria-pressed:text-white data-[primary=true]:border-blue-600 data-[primary=true]:bg-blue-600 data-[primary=true]:text-white data-[primary=true]:hover:bg-blue-700';
+  'inline-flex h-9 shrink-0 items-center justify-center rounded-md border border-gray-200 bg-white text-sm font-medium text-[var(--madoc-accent-link,#4265e9)] shadow-sm transition-colors hover:border-[var(--madoc-accent,#4265e9)] hover:bg-[color-mix(in_srgb,var(--madoc-accent,#4265e9)_8%,white)] active:bg-[color-mix(in_srgb,var(--madoc-accent,#4265e9)_16%,white)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--madoc-accent,#4265e9)] disabled:cursor-default disabled:opacity-40 disabled:hover:border-gray-200 disabled:hover:bg-white aria-pressed:border-[var(--madoc-accent,#4265e9)] aria-pressed:bg-[var(--madoc-accent,#4265e9)] aria-pressed:text-[var(--madoc-accent-text,#fff)] aria-pressed:hover:bg-[var(--madoc-accent,#4265e9)] data-[primary=true]:border-[var(--madoc-accent,#4265e9)] data-[primary=true]:bg-[var(--madoc-accent,#4265e9)] data-[primary=true]:text-[var(--madoc-accent-text,#fff)] data-[primary=true]:hover:brightness-110';
 
 interface TabularNetAlignmentControlsProps {
   tooltipId: string;
@@ -48,13 +48,13 @@ export function TabularNetAlignmentControls({
       <div className="flex flex-wrap items-center gap-3">
         {(['left', 'right'] as const).map(edge => (
           <label key={edge} className="flex h-9 min-w-40 flex-1 items-center gap-3">
-            <span className={edge === 'left' ? 'font-medium text-blue-700' : 'font-medium text-orange-700'}>
+            <span className={edge === 'left' ? 'font-medium text-[var(--madoc-accent-link,#4265e9)]' : 'font-medium text-orange-700'}>
               {edge === 'left' ? t('Left table margin') : t('Right table margin')}
             </span>
             <input
               autoFocus={edge === 'left'}
               type="range"
-              className="h-5 min-w-0 flex-1 cursor-ew-resize accent-blue-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+              className="h-5 min-w-0 flex-1 cursor-ew-resize accent-[var(--madoc-accent,#4265e9)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--madoc-accent,#4265e9)]"
               data-tooltip-id={tooltipId}
               data-tooltip-content={
                 edge === 'left'
