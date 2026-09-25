@@ -25,9 +25,9 @@ export const searchBorder = themeVariable('header', 'searchBorder', {
 });
 
 export const searchBorderFocusColor = themeVariable('header', 'searchBorderFocusColor', {
-  default: accent,
-  midnight: accent,
-  dark: accent,
+  default: 'var(--madoc-accent, #4265e9)',
+  midnight: 'var(--madoc-accent, #4265e9)',
+  dark: 'var(--madoc-accent, #4265e9)',
 });
 
 export const footerBackground = themeVariable('footer', 'background', {
