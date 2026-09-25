@@ -45,6 +45,7 @@ export function ViewProjectUpdate(props: ProjectUpdate) {
           <ProjectUpdateForm
             initialTitle={props.title}
             initialUpdate={props.update}
+            initialOpenInNewTab={props.openInNewTab}
             isLoading={saveUpdateStatus.isLoading}
             error={saveUpdateStatus.isError ? saveUpdateStatus.error : undefined}
             submitLabel={t('Save')}
@@ -54,7 +55,7 @@ export function ViewProjectUpdate(props: ProjectUpdate) {
         ) : (
           <>
             {props.title ? <h3 className="text-xl font-semibold mb-3">{props.title}</h3> : null}
-            <ProjectUpdateMarkdown markdown={props.update} />
+            <ProjectUpdateMarkdown markdown={props.update} openInNewTab={props.openInNewTab} />
           </>
         )}
         {deleteUpdateStatus.isError ? (

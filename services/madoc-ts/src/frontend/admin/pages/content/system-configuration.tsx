@@ -30,6 +30,11 @@ const systemConfigModel = {
     type: 'checkbox-field',
     inlineLabel: 'Disable automatic search indexing tasks after contributions',
   },
+  footerLinksInNewTab: {
+    label: 'Footer links',
+    type: 'checkbox-field',
+    inlineLabel: 'Open footer links in new tab',
+  },
   // Login/Register messages
   loginHeader: {
     label: 'Login header message',
@@ -76,6 +81,7 @@ export const SiteSystemConfiguration: React.FC = () => {
     registerFooter: '',
     disableSearchIndexing: false,
     ...savedConfig,
+    footerLinksInNewTab: !!site.config?.footerLinksInNewTab,
     ...importedConfig,
   };
 

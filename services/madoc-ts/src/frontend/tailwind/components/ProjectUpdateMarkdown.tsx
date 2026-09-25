@@ -1,8 +1,10 @@
 import React, { memo, useMemo } from 'react';
 import { renderToHtml } from 'rich-markdown-editor';
+import { setHtmlLinkTargets } from '../../shared/utility/link-targets';
 
 interface ProjectUpdateMarkdownProps {
   markdown: string;
+  openInNewTab?: boolean;
 }
 
 const markdownStyles = [
@@ -40,8 +42,11 @@ const markdownStyles = [
   '[&_.notice-block.warning]:border-amber-500 [&_.notice-block.warning]:bg-amber-50',
 ].join(' ');
 
-export const ProjectUpdateMarkdown = memo(function ProjectUpdateMarkdown({ markdown }: ProjectUpdateMarkdownProps) {
-  const html = useMemo(() => renderToHtml(markdown), [markdown]);
+export const ProjectUpdateMarkdown = memo(function ProjectUpdateMarkdown({
+  markdown,
+  openInNewTab,
+}: ProjectUpdateMarkdownProps) {
+  const html = useMemo(() => setHtmlLinkTargets(renderToHtml(markdown), !!openInNewTab), [markdown, openInNewTab]);
 
   return <div className={markdownStyles} dangerouslySetInnerHTML={{ __html: html }} />;
 });

@@ -16,6 +16,7 @@ const MarkdownEditor = (
 interface ProjectUpdateFormProps {
   initialTitle?: string;
   initialUpdate?: string;
+  initialOpenInNewTab?: boolean;
   isLoading: boolean;
   error?: unknown;
   submitLabel: string;
@@ -26,6 +27,7 @@ interface ProjectUpdateFormProps {
 export function ProjectUpdateForm({
   initialTitle = '',
   initialUpdate = '',
+  initialOpenInNewTab = false,
   isLoading,
   error,
   submitLabel,
@@ -36,11 +38,12 @@ export function ProjectUpdateForm({
   const inputId = useId();
   const [title, setTitle] = useState(initialTitle);
   const [update, setUpdate] = useState(initialUpdate);
+  const [openInNewTab, setOpenInNewTab] = useState(initialOpenInNewTab);
   const [isPreview, setIsPreview] = useState(false);
 
   const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    onSubmit({ title: title.trim() || undefined, update });
+    onSubmit({ title: title.trim() || undefined, update, openInNewTab });
   };
 
   return (
@@ -59,6 +62,11 @@ export function ProjectUpdateForm({
           onChange={event => setTitle(event.target.value)}
         />
       </div>
+
+      <label className="mb-4 flex items-center gap-2">
+        <input type="checkbox" checked={openInNewTab} onChange={event => setOpenInNewTab(event.target.checked)} />
+        {t('Open links in new tab')}
+      </label>
 
       <div className="flex gap-2 border-b border-gray-300 mb-4" role="tablist">
         <button
@@ -84,7 +92,7 @@ export function ProjectUpdateForm({
       {isPreview ? (
         <div className="min-h-[12rem] rounded border border-gray-300 px-4 py-2 bg-white" role="tabpanel">
           {title.trim() ? <h3 className="text-xl font-semibold mb-3">{title.trim()}</h3> : null}
-          <ProjectUpdateMarkdown markdown={update} />
+          <ProjectUpdateMarkdown markdown={update} openInNewTab={openInNewTab} />
         </div>
       ) : (
         <div role="tabpanel">

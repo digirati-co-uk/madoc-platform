@@ -21,6 +21,7 @@ export type SiteSystemConfig = {
   enableNotifications: boolean;
   autoPublishImport: boolean;
   disableSearchIndexing?: boolean;
+  footerLinksInNewTab?: boolean;
   loginHeader?: string;
   loginFooter?: string;
   registerHeader?: string;
