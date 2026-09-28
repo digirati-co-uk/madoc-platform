@@ -89,7 +89,7 @@ test('mixed canonical and submitted fields retain every column when loaded, fork
 test('legacy rows containing only revision fields still get a canonical template', () => {
   const model = fixture();
   const row = model.document.properties.rows[0] as CaptureModel['document'];
-  row.properties['1'] = [row.properties['1'][1]];
+  row.properties['1'].splice(0, 1);
   row.properties['2'][0].revision = 'submitted';
   fixModelBugs(model);
   expect(model.document.properties.rows).toHaveLength(2);
