@@ -5,7 +5,7 @@ afterEach(() => cache.clear());
 
 test('shares cold loads and serves stale values without waiting for refresh', async () => {
   let finishColdLoad: (value: { version: number }) => void = () => undefined;
-  const coldGetter = jest.fn(
+  const coldGetter = vi.fn(
     () =>
       new Promise<{ version: number }>(resolve => {
         finishColdLoad = resolve;
@@ -21,7 +21,7 @@ test('shares cold loads and serves stale values without waiting for refresh', as
 
   cache.del('locale');
   let finishRefresh: (value: { version: number }) => void = () => undefined;
-  const refreshGetter = jest.fn(
+  const refreshGetter = vi.fn(
     () =>
       new Promise<{ version: number }>(resolve => {
         finishRefresh = resolve;

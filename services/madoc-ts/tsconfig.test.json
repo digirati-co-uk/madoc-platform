@@ -3,7 +3,7 @@
   "compilerOptions": {
     "esModuleInterop": true,
     "resolveJsonModule": true,
-    "emitDeclarationOnly": true,
+    "types": ["node", "vite/client", "vitest/globals"],
   },
   "include": [
     "__tests__"

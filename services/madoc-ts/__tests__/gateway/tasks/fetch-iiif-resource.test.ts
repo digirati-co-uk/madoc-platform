@@ -2,9 +2,9 @@ import fetch from 'node-fetch';
 import type { Response } from 'node-fetch';
 import { fetchIiifResource } from '../../../src/gateway/tasks/fetch-iiif-resource';
 
-jest.mock('node-fetch');
+vi.mock('node-fetch');
 
-const mockedFetch = fetch as jest.MockedFunction<typeof fetch>;
+const mockedFetch = vi.mocked(fetch);
 
 test('retries a transient IIIF response', async () => {
   mockedFetch

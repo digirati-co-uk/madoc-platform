@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import {
@@ -50,8 +50,8 @@ describe('document editor', () => {
     test('it throws when default context already exists', () => {
       const result = addDefaultContext(emptyModel, 'http://example.org/context/1');
 
-      expect(() => addDefaultContext(result, 'http://example.org/context/2')).toThrowErrorMatchingInlineSnapshot(
-        `"Cannot add default context, context already exists"`
+      expect(() => addDefaultContext(result, 'http://example.org/context/2')).toThrowError(
+        'Cannot add default context, context already exists'
       );
     });
 
@@ -72,8 +72,8 @@ describe('document editor', () => {
         },
       };
 
-      expect(() => addDefaultContext(result, 'http://example.org/context/2')).toThrowErrorMatchingInlineSnapshot(
-        `"Cannot add default context, context already exists"`
+      expect(() => addDefaultContext(result, 'http://example.org/context/2')).toThrowError(
+        'Cannot add default context, context already exists'
       );
     });
 
@@ -155,8 +155,8 @@ describe('document editor', () => {
     test('it throws if you add the same alias twice', () => {
       const c1 = addContext(emptyModel, 'http://example.org/context/1', 'c1');
 
-      expect(() => addContext(c1, 'http://example.org/context/2', 'c1')).toThrowErrorMatchingInlineSnapshot(
-        `"Cannot add context c1, context already exists (http://example.org/context/1)"`
+      expect(() => addContext(c1, 'http://example.org/context/2', 'c1')).toThrowError(
+        'Cannot add context c1, context already exists (http://example.org/context/1)'
       );
     });
 

@@ -1,27 +1,27 @@
-/** @jest-environment jsdom */
+/** @vitest-environment jsdom */
 import React, { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { FollowActiveCellOnCanvas } from '../../../../src/frontend/admin/components/tabular/cast-a-net/FollowActiveCellOnCanvas';
 import type { NetConfig } from '../../../../src/frontend/shared/utility/tabular-types';
 
 let mockAfterFrame: () => void;
-jest.mock('@atlas-viewer/atlas', () => ({
+vi.mock('@atlas-viewer/atlas', () => ({
   useAfterFrame: (callback: () => void) => {
     mockAfterFrame = callback;
   },
 }));
 
-jest.mock('react-iiif-vault', () => ({ useCanvas: () => ({ width: 1000, height: 1000 }) }));
+vi.mock('react-iiif-vault', () => ({ useCanvas: () => ({ width: 1000, height: 1000 }) }));
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
 test('tracking follows changed column geometry and a resized viewport, synchronising the controller', () => {
   let screen = { width: 400, height: 400 };
   let viewport = { x: 0, y: 0, width: 400, height: 400 };
-  const setViewport = jest.fn((next: typeof viewport) => {
+  const setViewport = vi.fn((next: typeof viewport) => {
     viewport = next;
   });
-  const stopTransition = jest.fn();
-  const updateControllerPosition = jest.fn();
+  const stopTransition = vi.fn();
+  const updateControllerPosition = vi.fn();
   const runtimeRef = {
     current: {
       getViewport: () => viewport,
@@ -71,9 +71,3 @@ test('tracking follows changed column geometry and a resized viewport, synchroni
     act(() => root.unmount());
   }
 });
-
-jest.mock(
-  '@/frontend/shared/utility/tabular-row-offset-adjustments',
-  () => jest.requireActual('../../../../src/frontend/shared/utility/tabular-row-offset-adjustments'),
-  { virtual: true }
-);

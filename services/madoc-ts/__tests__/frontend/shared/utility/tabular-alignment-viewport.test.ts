@@ -54,9 +54,3 @@ test('zoom focal point uses the aligned column and nudged row coordinates', () =
   expect(cell).toEqual({ x: 350, y: 350, width: 450, height: 200 });
   expect(cell && { x: cell.x + cell.width / 2, y: cell.y + cell.height / 2 }).toEqual({ x: 575, y: 450 });
 });
-
-jest.mock(
-  '@/frontend/shared/utility/tabular-row-offset-adjustments',
-  () => jest.requireActual('../../../../src/frontend/shared/utility/tabular-row-offset-adjustments'),
-  { virtual: true }
-);

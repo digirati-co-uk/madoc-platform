@@ -5,10 +5,10 @@ import { DatabaseMock } from '../../test-utility/database-mock';
 import { createProjectMock, KoaContextMock } from '../../test-utility/mocks';
 import { sqlMock } from '../../test-utility/utils';
 
-beforeEach(() => jest.resetModules());
+beforeEach(() => vi.resetModules());
 
 afterEach(() => {
-  jest.clearAllMocks();
+  vi.clearAllMocks();
 });
 
 describe.skip('Create resource claim', () => {

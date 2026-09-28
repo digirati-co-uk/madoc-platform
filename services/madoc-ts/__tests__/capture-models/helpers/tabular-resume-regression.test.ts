@@ -5,7 +5,7 @@ import {
 import { createRevisionDocument } from '../../../src/frontend/shared/capture-models/helpers/create-revision-document';
 import type { CaptureModel } from '../../../src/frontend/shared/capture-models/types/capture-model';
 
-jest.mock('../../../src/frontend/shared/capture-models/plugin-api/globals', () => ({
+vi.mock('../../../src/frontend/shared/capture-models/plugin-api/globals', () => ({
   pluginStore: { fields: { 'text-field': { defaultValue: '', allowMultiple: true } } },
 }));
 

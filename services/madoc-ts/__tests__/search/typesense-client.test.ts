@@ -3,7 +3,7 @@ import { TypesenseClient } from '../../src/search/typesense/typesense-client';
 const originalApiKey = process.env.TYPESENSE_API_KEY;
 
 afterEach(() => {
-  jest.restoreAllMocks();
+  vi.restoreAllMocks();
   if (originalApiKey) process.env.TYPESENSE_API_KEY = originalApiKey;
   else delete process.env.TYPESENSE_API_KEY;
 });
@@ -19,7 +19,7 @@ function response(body: unknown, status = 200) {
 
 test('accepts a concurrent schema update after re-reading the collection', async () => {
   process.env.TYPESENSE_API_KEY = 'test-key';
-  const fetchMock = jest
+  const fetchMock = vi
     .spyOn(global, 'fetch')
     .mockResolvedValueOnce(response({ fields: [] }))
     .mockResolvedValueOnce(response({ message: 'Field `project_facets` is already part of the schema' }, 400))

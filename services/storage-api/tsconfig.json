@@ -1,14 +1,13 @@
 {
   "compilerOptions": {
-    "baseUrl": "src",
     "lib": ["dom", "es2020"],
     "typeRoots": ["../../node_modules/@types"],
     "target": "es2018",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-    "module": "commonjs",
+    "module": "nodenext",
     "declaration": true,
-    "moduleResolution": "node",
+    "moduleResolution": "nodenext",
     "outDir": "./lib",
     "noEmitOnError": false,
     "strict": true,
@@ -17,10 +16,10 @@
     "jsx": "react",
     "resolveJsonModule": true,
     "noImplicitAny": true,
-    "downlevelIteration": true,
     "noUnusedLocals": false,
     "noFallthroughCasesInSwitch": true
   },
+  "include": ["src/**/*"],
   "exclude": [
     "node_modules",
     "lib/"

@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import * as React from 'react';
@@ -23,10 +23,10 @@ registerField({
   label: '',
 });
 
-jest.mock('.../../../src/frontend/shared/capture-models/helpers/generate-id');
-const { generateId } = require('../../../src/frontend/shared/capture-models/helpers/generate-id');
+vi.mock('../../../src/frontend/shared/capture-models/helpers/generate-id');
+import { generateId } from '../../../src/frontend/shared/capture-models/helpers/generate-id';
 
-generateId.mockImplementation(() => '[--------GENERATED-ID--------]');
+vi.mocked(generateId).mockImplementation(() => '[--------GENERATED-ID--------]');
 
 describe('create revision', () => {
   const captureModel: CaptureModel = require('../../../fixtures/03-revisions/06-model-root.json');

@@ -38,4 +38,9 @@ export default defineConfig({
     include: ['@manifest-editor/iiif-browser-bundle'],
   },
   plugins: [react(), styledComponents()],
+  test: {
+    globals: true,
+    environment: 'node',
+    include: ['__tests__/**/*.{test,tests,spec}.{ts,tsx}'],
+  },
 });

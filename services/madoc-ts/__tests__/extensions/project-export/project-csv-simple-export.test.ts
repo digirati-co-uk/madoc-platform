@@ -1,5 +1,5 @@
 /**
- * @jest-environment node
+ * @vitest-environment node
  */
 
 import { projectCsvSimpleExport } from '../../../src/extensions/project-export/export-configs/project/project-csv-simple-export';

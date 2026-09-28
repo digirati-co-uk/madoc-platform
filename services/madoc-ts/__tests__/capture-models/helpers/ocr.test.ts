@@ -1,4 +1,4 @@
-jest.mock('.../../../src/frontend/shared/capture-models/helpers/generate-id', () => {
+vi.mock('../../../src/frontend/shared/capture-models/helpers/generate-id', () => {
   return {
     __esModule: true,
     generateId() {

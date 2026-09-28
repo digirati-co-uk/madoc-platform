@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 // @ts-ignore
@@ -25,12 +25,12 @@ registerField({
   label: '',
 });
 
-jest.mock('.../../../src/frontend/shared/capture-models/helpers/generate-id');
-const { generateId } = require('../../../src/frontend/shared/capture-models/helpers/generate-id');
+vi.mock('../../../src/frontend/shared/capture-models/helpers/generate-id');
+import { generateId } from '../../../src/frontend/shared/capture-models/helpers/generate-id';
 
 const GENERATED_ID = '[--------GENERATED-ID--------]';
 
-generateId.mockImplementation(() => GENERATED_ID);
+vi.mocked(generateId).mockImplementation(() => GENERATED_ID);
 
 describe('hydratePartialDocument', () => {
   const captureModel: CaptureModel = require('../../../fixtures/03-revisions/06-model-root.json');

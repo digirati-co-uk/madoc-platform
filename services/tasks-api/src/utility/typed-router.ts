@@ -69,7 +69,9 @@ export class TypedRouter<
     params?: GetRoute<MappedRoutes, Route>,
     options?: Router.UrlOptionsQuery
   ): string {
-    return this.router.url(name, params, options);
+    const url = this.router.url(name, params, options);
+    if (url instanceof Error) throw url;
+    return url;
   }
 
   routes() {

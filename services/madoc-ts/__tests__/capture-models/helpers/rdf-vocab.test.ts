@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { parseRdfVocab } from '../../../src/frontend/shared/capture-models/helpers/rdf-vocab/rdf-vocab';
 
