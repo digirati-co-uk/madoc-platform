@@ -43,13 +43,13 @@ services:
       MAIL_FROM_USER: ${MAIL_FROM_USER:-}
       MADOC_INSTALLATION_CODE: ${MADOC_INSTALLATION_CODE:-}
     volumes:
-      - ./var/files:/home/node/app/files
-      - ./var/files/storage-api:/opt/services/storage-api/files
-      - ./var/jwt:/home/node/app/service-jwt-responses
-      - ./var/certs:/home/node/app/openssl-certs
+      - ./var/files:/workspace/services/madoc-ts/files
+      - ./var/files/storage-api:/workspace/services/storage-api/files
+      - ./var/jwt:/workspace/services/madoc-ts/service-jwt-responses
+      - ./var/certs:/workspace/services/madoc-ts/openssl-certs
       - ./var/combined-redis:/data/redis
-      - ./configuration/schemas:/opt/services/config-service/configurator/schemas:ro
-      - ./configuration/defaults:/opt/services/config-service/configurator/default_config:ro
+      - ./configuration/schemas:/workspace/services/config-service/configurator/schemas:ro
+      - ./configuration/defaults:/workspace/services/config-service/configurator/default_config:ro
     depends_on:
       - shared-postgres
       - typesense

@@ -2,6 +2,9 @@
 .run
 theme.zip
 node_modules
+services/config-service/dist/
+services/storage-api/dist/
+services/tasks-api/dist/
 var/*
 key.pub
 .terraform

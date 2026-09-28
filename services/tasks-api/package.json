@@ -13,29 +13,25 @@
   ],
   "scripts": {
     "start": "pm2 install typescript && pm2 start ecosystem.config.js --watch --only tasks-api-dev --no-daemon",
-    "build": "NODE_ENV=production yarn build-es && yarn build-app && yarn generate-create-task-schema && yarn generate-update-task-schema",
-    "build-es": "NODE_ENV=production esbuild src/index.ts --bundle --outfile=dist/server.js --platform=node --external:pg-native --external:bullmq",
-    "build-app": "NODE_ENV=production esbuild src/app.ts --bundle --outfile=dist/app.js --platform=node --external:pg-native --external:bullmq",
+    "build": "NODE_ENV=production pnpm build-es && pnpm build-app && pnpm generate-create-task-schema && pnpm generate-update-task-schema",
+    "build-es": "NODE_ENV=production esbuild src/index.ts --bundle --outfile=dist/server.js --platform=node --external:pg-native --external:pg/* --external:bullmq",
+    "build-app": "NODE_ENV=production esbuild src/app.ts --bundle --outfile=dist/app.js --platform=node --external:pg-native --external:pg/* --external:bullmq",
     "types-app": "tsc ./src/app.ts --emitDeclarationOnly --declaration --esModuleInterop --outDir dist",
     "test": "jest --coverage --runInBand",
-    "prepublishOnly": "yarn build-app && yarn types-app",
+    "prepublishOnly": "pnpm build-app && pnpm types-app",
     "generate-create-task-schema": "typescript-json-schema ./src/schemas/CreateTask.ts CreateTask -o ./schemas/create-task.json --required --noExtraProps",
     "generate-update-task-schema": "typescript-json-schema ./src/schemas/UpdateTask.ts UpdateTask -o ./schemas/update-task.json --required --noExtraProps"
   },
-  "resolutions": {
-    "slonik-sql-tag-raw": "1.0.2"
-  },
   "dependencies": {
-    "pg": "^8.11.3",
-    "pm2": "^5.1.2",
-    "bullmq": "^1.50.3"
+    "pg": "^8.16.3",
+    "pm2": "^5.2.2",
+    "bullmq": "^1.51.2"
   },
   "devDependencies": {
     "@koa/router": "^10.1.1",
     "@slonik/migrator": "^0.2.0",
     "@slonik/typegen": "^0.3.1",
     "ajv": "^8.6.3",
-    "bullmq": "^1.50.3",
     "koa": "^2.13.4",
     "koa-body": "^4.2.0",
     "koa-json": "^2.0.2",

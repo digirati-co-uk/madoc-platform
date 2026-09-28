@@ -29,8 +29,8 @@ services:
 
   madoc-ts-vite:
     build:
-      context: services/madoc-ts
-      dockerfile: Dockerfile.vite
+      context: .
+      dockerfile: services/madoc-ts/Dockerfile.vite
     volumes:
       - ./services/madoc-ts/tailwind.config.js:/home/node/app/tailwind.config.js:delegated
       - ./services/madoc-ts/src:/home/node/app/src
@@ -44,15 +44,15 @@ services:
   madoc-ts:
     tty: true
     build:
-      context: services/madoc-ts
-      dockerfile: Dockerfile.dev
+      context: .
+      dockerfile: services/madoc-ts/Dockerfile.dev
     security_opt:
       - seccomp=unconfined
     volumes:
       - ./services/madoc-ts/dist:/home/node/app/dist:delegated
       - ./services/madoc-ts/src:/home/node/app/src
       - ./services/madoc-ts/package.json:/home/node/app/package.json:delegated
-      - ./services/madoc-ts/pnpm-lock.yaml:/home/node/app/pnpm-lock.yaml:delegated
+      - ./pnpm-lock.yaml:/workspace/pnpm-lock.yaml:delegated
       - ./services/madoc-ts/migrations:/home/node/app/migrations:delegated
       - ./services/madoc-ts/schemas:/home/node/app/schemas:delegated
       - ./services/madoc-ts/ecosystem.config.cjs:/home/node/app/ecosystem.config.cjs
@@ -166,8 +166,8 @@ services:
 
   config-service:
     build:
-      context: services/config-service
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: services/config-service/Dockerfile
     environment:
       - MIGRATE=True
       - POSTGRES_HOST=shared-postgres

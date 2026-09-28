@@ -4,6 +4,8 @@ The new files leave `docker-compose.yml` and `./var/shared-database` unchanged. 
 
 ## Images
 
+The four Node services share the root `pnpm-workspace.yaml` and `pnpm-lock.yaml`. Run `pnpm install` from the repository root with Node 24 and pnpm 11; the combined image uses the same frozen lockfile. The legacy tasks and storage processes still use Node 16 at runtime until their bundles and native dependencies are upgraded.
+
 `Dockerfile` builds Madoc, the imported tasks and storage APIs, and the existing config service into one image. PM2 runs all Node processes plus Redis and nginx. Madoc now handles Okra's four OCR conversion formats in TypeScript at `/api/madoc/ocr/convert/:format`; old hOCR/ALTO URLs return a method-preserving 308. The other two old Okra formats also redirect. Legacy search and crowdsourcing URLs redirect to the migrated Madoc endpoints. They are compatibility redirects, so client code should use the new paths.
 
 `Dockerfile.dev` layers live source, build watchers, Vite, and local TLS on that image. `Dockerfile.standalone` adds PostgreSQL 16 and Typesense 0.25.2 to the same container. PostgreSQL 16 is used only in the isolated standalone setup; the normal combined setup keeps the existing PostgreSQL 12 data directory and image. Redis AOF is persisted in both setups.

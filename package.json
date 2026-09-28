@@ -1,0 +1,11 @@
+{
+  "name": "madoc-platform",
+  "private": true,
+  "packageManager": "pnpm@11.22.0",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "build": "pnpm --filter @madoc.io/tasks-api build-es && pnpm --filter @madoc.io/storage-api build-es && pnpm --filter config-service build && pnpm --filter madoc-ts generate-schema && pnpm --filter madoc-ts build:vite && pnpm --filter madoc-ts build:frontend"
+  }
+}

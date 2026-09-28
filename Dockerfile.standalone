@@ -8,8 +8,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends nginx redis-ser
     && rm -rf /var/lib/apt/lists/*
 COPY --from=madoc-combined:local /usr/local /usr/local
 COPY --from=postgres-base /usr/local/bin/docker-entrypoint.sh /usr/local/bin/postgres-entrypoint.sh
-COPY --from=madoc-combined:local /home/node/app /home/node/app
-COPY --from=madoc-combined:local /opt/services /opt/services
+COPY --from=madoc-combined:local /workspace /workspace
+RUN mkdir -p /home/node /opt/services \
+ && ln -s /workspace/services/madoc-ts /home/node/app \
+ && ln -s /workspace/services/tasks-api /opt/services/tasks-api \
+ && ln -s /workspace/services/storage-api /opt/services/storage-api \
+ && ln -s /workspace/services/config-service /opt/services/config-service
 COPY --from=madoc-combined:local /opt/deployment /opt/deployment
 COPY --from=madoc-combined:local /etc/nginx /etc/nginx
 COPY --from=madoc-combined:local /www /www

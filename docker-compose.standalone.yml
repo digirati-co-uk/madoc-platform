@@ -50,10 +50,10 @@ services:
       - madoc_standalone_postgres:/var/lib/postgresql/data
       - madoc_standalone_typesense:/data/typesense
       - madoc_standalone_redis:/data/redis
-      - madoc_standalone_files:/home/node/app/files
-      - madoc_standalone_storage:/opt/services/storage-api/files
-      - madoc_standalone_jwt:/home/node/app/service-jwt-responses
-      - madoc_standalone_keys:/home/node/app/openssl-certs
+      - madoc_standalone_files:/workspace/services/madoc-ts/files
+      - madoc_standalone_storage:/workspace/services/storage-api/files
+      - madoc_standalone_jwt:/workspace/services/madoc-ts/service-jwt-responses
+      - madoc_standalone_keys:/workspace/services/madoc-ts/openssl-certs
 
 volumes:
   madoc_standalone_postgres:

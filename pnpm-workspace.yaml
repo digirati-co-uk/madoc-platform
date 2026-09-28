@@ -1,9 +1,12 @@
 allowBuilds:
+  '@parcel/watcher': true
   '@swc/core': true
   core-js: false
+  cpu-features: false
   esbuild: true
   msgpackr-extract: true
   sharp: true
+  ssh2: false
   typesense-instantsearch-adapter: false
   unrs-resolver: true
 
@@ -41,6 +44,12 @@ overrides:
   slonik-sql-tag-raw: 1.0.2
   styled-components: 6.3.8
   ws: ^8.21.3
+
+packages:
+  - 'services/madoc-ts'
+  - 'services/config-service'
+  - 'services/tasks-api'
+  - 'services/storage-api'
 
 patchedDependencies:
   react-data-grid@7.0.0-beta.59: patches/react-data-grid@7.0.0-beta.59.patch

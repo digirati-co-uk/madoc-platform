@@ -27,8 +27,8 @@ safe-refactoring and code-assistance at scale. The project also uses eslint.
 ### Preparing for development
 
 Requirements:
-- Node 16+
-- Yarn
+- Node 24+
+- pnpm 11 (via Corepack)
 - Docker (+ compose)
 
 After cloning `madoc-platform`, you will need to create a few folder with the correct permissions:
@@ -43,10 +43,11 @@ chmod 700 var/shared-database
 chmod 777 var/shared-database
 ```
 
-go into the `services/madoc-ts` directory and run the following commands:
+From the repository root, run:
 ```
-yarn
-yarn build
+corepack enable
+pnpm install --frozen-lockfile
+pnpm --filter madoc-ts build
 ```
 
 This will create the initial bundles. You should only have to do this once (for frontend development).
@@ -64,7 +65,7 @@ At this point, any frontend changes should be immediately visible on the site.
 Server-side rendering will not be available and you may not see changes here. If you also want to reload changes
 for SSR you can run:
 ```
-yarn watch:vite-server
+pnpm --filter madoc-ts watch:vite-server
 ```
 These changes may not be reflected immediately (~5-15 seconds). 
 
@@ -77,7 +78,7 @@ bin/madoc up
 
 and then, from the `service/madoc-ts` folder run:
 ```
-yarn watch:vite
+pnpm --filter madoc-ts watch:vite
 ```
 
 This will watch for changes on the server and reload periodically. Madoc currently has a "zero-downtime" reload system,

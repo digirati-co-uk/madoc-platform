@@ -7,11 +7,8 @@
   "files": [
     "dist"
   ],
-  "resolutions": {
-    "ws": "7.4.6"
-  },
   "dependencies": {
-    "pm2": "^5.1.2",
+    "pm2": "^5.2.2",
     "sharp": "^0.29.2"
   },
   "devDependencies": {
@@ -50,7 +47,7 @@
     "build-app": "NODE_ENV=production esbuild src/app.ts --bundle --outfile=dist/app.js --platform=node --external:sharp",
     "types-app": "tsc ./src/app.ts --emitDeclarationOnly --declaration --esModuleInterop --outDir dist",
     "test": "jest --coverage",
-    "prepublishOnly": "yarn build-app && yarn types-app"
+    "prepublishOnly": "pnpm build-app && pnpm types-app"
   },
   "publishConfig": {
     "access": "public"

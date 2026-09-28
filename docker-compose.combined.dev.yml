@@ -13,10 +13,10 @@ services:
       - "3088:3088"
       - "3089:3089"
     volumes:
-      - ./services/madoc-ts/src:/home/node/app/src
-      - ./services/madoc-ts/dist:/home/node/app/dist
-      - ./services/madoc-ts/vite:/home/node/app/vite
-      - ./services/tasks-api/src:/opt/services/tasks-api/src
-      - ./services/storage-api/src:/opt/services/storage-api/src
-      - ./services/config-service/src:/opt/services/config-service/src
+      - ./services/madoc-ts/src:/workspace/services/madoc-ts/src
+      - ./services/madoc-ts/dist:/workspace/services/madoc-ts/dist
+      - ./services/madoc-ts/vite:/workspace/services/madoc-ts/vite
+      - ./services/tasks-api/src:/workspace/services/tasks-api/src
+      - ./services/storage-api/src:/workspace/services/storage-api/src
+      - ./services/config-service/src:/workspace/services/config-service/src
       - ./var/certs:/certs:ro

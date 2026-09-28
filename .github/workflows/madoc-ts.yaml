@@ -9,6 +9,9 @@ on:
       - "services/madoc-ts/translations/**"
       - "services/madoc-ts/schemas/**"
       - "services/madoc-ts/package.json"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
       - "services/madoc-ts/Dockerfile"
       - "services/madoc-ts/ecosystem.config.js"
       - "services/madoc-ts/webpack.config.js"
@@ -23,6 +26,9 @@ on:
       - "services/madoc-ts/translations/**"
       - "services/madoc-ts/schemas/**"
       - "services/madoc-ts/package.json"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
       - "services/madoc-ts/Dockerfile"
       - "services/madoc-ts/ecosystem.config.js"
       - "services/madoc-ts/webpack.config.js"
@@ -37,12 +43,12 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
 
       - name: Setup pnpm
         run: |
           corepack enable
-          corepack prepare pnpm@9.15.9 --activate
+          corepack prepare pnpm@11.22.0 --activate
 
       - name: Get pnpm store
         id: pnpm-cache
@@ -51,12 +57,11 @@ jobs:
       - uses: actions/cache@v4
         with:
           path: ${{ steps.pnpm-cache.outputs.dir }}
-          key: ${{ runner.os }}-pnpm-madoc-ts-${{ hashFiles('services/madoc-ts/package.json') }}
+          key: ${{ runner.os }}-pnpm-madoc-ts-${{ hashFiles('pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-pnpm-madoc-ts-
 
-      - working-directory: services/madoc-ts
-        run: pnpm install --frozen-lockfile
+      - run: pnpm install --frozen-lockfile
 
       - uses: actions/cache@v4
         with:

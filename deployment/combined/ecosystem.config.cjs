@@ -75,8 +75,8 @@ if (dev) {
       name: `watch-${bundle}`, cwd: '/home/node/app', script: 'pnpm', interpreter: 'none',
       args: `watch:vite-${bundle}`, exec_mode: 'fork',
     })),
-    { name: 'watch-tasks', cwd: '/opt/services/tasks-api', script: '/usr/local/bin/node16', interpreter: 'none', args: 'node_modules/esbuild/bin/esbuild src/index.ts --bundle --outfile=dist/server.js --platform=node --external:pg-native --external:bullmq --watch', exec_mode: 'fork' },
-    { name: 'watch-storage', cwd: '/opt/services/storage-api', script: '/usr/local/bin/node16', interpreter: 'none', args: 'node_modules/esbuild/bin/esbuild src/index.ts --bundle --outfile=dist/server.js --platform=node --external:sharp --watch', exec_mode: 'fork' },
+    { name: 'watch-tasks', cwd: '/opt/services/tasks-api', script: 'node_modules/.bin/esbuild', interpreter: 'none', args: 'src/index.ts --bundle --outfile=dist/server.js --platform=node --external:pg-native --external:pg/* --external:bullmq --watch', exec_mode: 'fork' },
+    { name: 'watch-storage', cwd: '/opt/services/storage-api', script: 'node_modules/.bin/esbuild', interpreter: 'none', args: 'src/index.ts --bundle --outfile=dist/server.js --platform=node --external:sharp --watch', exec_mode: 'fork' },
     { name: 'watch-config', cwd: '/opt/services/config-service', script: 'pnpm', interpreter: 'none', args: 'exec tsc -p tsconfig.json --watch', exec_mode: 'fork' },
   );
 }

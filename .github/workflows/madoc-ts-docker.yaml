@@ -15,6 +15,10 @@ on:
       - "services/madoc-ts/schemas/**"
       - "services/madoc-ts/themes/**"
       - "services/madoc-ts/package.json"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
+      - "patches/**"
       - "services/madoc-ts/Dockerfile"
       - "services/madoc-ts/ecosystem.config.js"
       - "services/madoc-ts/webpack.config.js"
@@ -68,7 +72,8 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           builder: ${{ steps.buildx.outputs.name }}
-          context: services/madoc-ts
+          context: .
+          file: services/madoc-ts/Dockerfile
           push: ${{ github.actor != 'dependabot[bot]' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
