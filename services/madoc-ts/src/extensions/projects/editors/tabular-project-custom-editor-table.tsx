@@ -1140,18 +1140,16 @@ export function TabularProjectCustomEditorTable({
                         ? 'Paste failed'
                         : `${selectedCellCount} selected`}
               </span>
-              {selectedCellCount > 1 ? (
-                <button
-                  type="button"
-                  className={`inline-flex h-full w-8 items-center justify-center border-l border-slate-300 transition-colors active:bg-slate-200 ${clipboardFeedback === 'copied' ? 'bg-green-100 text-green-700 hover:bg-green-200' : clipboardFeedback === 'copy-error' ? 'bg-red-100 text-red-700 hover:bg-red-200' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'}`}
-                  title="Copy selected cells"
-                  aria-label="Copy selected cells"
-                  onMouseDown={event => event.preventDefault()}
-                  onClick={copySelectedCells}
-                >
-                  <Copy className="h-4 w-4" />
-                </button>
-              ) : null}
+              <button
+                type="button"
+                className={`inline-flex h-full w-8 items-center justify-center border-l border-slate-300 transition-colors active:bg-slate-200 ${clipboardFeedback === 'copied' ? 'bg-green-100 text-green-700 hover:bg-green-200' : clipboardFeedback === 'copy-error' ? 'bg-red-100 text-red-700 hover:bg-red-200' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'}`}
+                title="Copy selected cells"
+                aria-label="Copy selected cells"
+                onMouseDown={event => event.preventDefault()}
+                onClick={copySelectedCells}
+              >
+                <Copy className="h-4 w-4" />
+              </button>
               <button
                 type="button"
                 className={`inline-flex h-full w-8 items-center justify-center border-l border-slate-300 transition-colors active:bg-slate-200 disabled:cursor-not-allowed disabled:opacity-50 ${clipboardFeedback === 'pasted' ? 'bg-green-100 text-green-700 hover:bg-green-200' : clipboardFeedback === 'paste-error' ? 'bg-red-100 text-red-700 hover:bg-red-200' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'}`}

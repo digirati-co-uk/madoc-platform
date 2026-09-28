@@ -1,4 +1,9 @@
 import { sql } from 'slonik';
+import { CaptureModelRepository } from '../../capture-model-server/capture-model-repository';
+import { generateId } from '../../frontend/shared/capture-models/helpers/generate-id';
+import { traverseDocument } from '../../frontend/shared/capture-models/helpers/traverse-document';
+import { traverseStructure } from '../../frontend/shared/capture-models/helpers/traverse-structure';
+import type { CaptureModel } from '../../frontend/shared/capture-models/types/capture-model';
 import type { RouteMiddleware } from '../../types/route-middleware';
 import type { TabularProjectMetadataUpdate } from '../../types/schemas/tabular-project-metadata';
 import { NotFound } from '../../utility/errors/not-found';
@@ -87,6 +92,31 @@ export function patchTabularProjectMetadata(
   return next;
 }
 
+export function patchTabularBaseModel(model: CaptureModel, update: TabularProjectMetadataUpdate): CaptureModel {
+  const next: CaptureModel = JSON.parse(JSON.stringify(model));
+  const columns = new Map(update.columns?.map(column => [column.id, column]));
+  traverseDocument(next.document, {
+    visitField(field, key) {
+      const column = columns.get(key);
+      if (column) {
+        field.label = column.label.trim();
+        field.description = column.helpText;
+      }
+    },
+  });
+  if (typeof update.crowdsourcingInstructions === 'string') {
+    next.document.instructions = update.crowdsourcingInstructions;
+    // Cloned models share the stored structure. Detach before changing base instructions.
+    next.structure.id = generateId();
+    traverseStructure(next.structure, structure => {
+      if (structure.type === 'model') {
+        structure.instructions = update.crowdsourcingInstructions;
+      }
+    });
+  }
+  return next;
+}
+
 export const patchTabularProjectMetadataRoute: RouteMiddleware<
   { id: string },
   TabularProjectMetadataUpdate
@@ -97,8 +127,8 @@ export const patchTabularProjectMetadataRoute: RouteMiddleware<
     throw new NotFound();
   }
   await context.connection.transaction(async connection => {
-    const project = await connection.maybeOne(sql<{ id: number; template_config: unknown }>`
-      select id, template_config from iiif_project
+    const project = await connection.maybeOne(sql<{ id: number; capture_model_id: string; template_config: unknown }>`
+      select id, capture_model_id, template_config from iiif_project
       where ${projectId ? sql`id = ${projectId}` : sql`slug = ${projectSlug!}`}
         and site_id = ${siteId} and template_name = 'tabular-project'
       for update
@@ -107,6 +137,19 @@ export const patchTabularProjectMetadataRoute: RouteMiddleware<
       throw new NotFound();
     }
     const config = patchTabularProjectMetadata(project.template_config, context.requestBody);
+    // Read the unfiltered base document: never save a contributor/revision projection.
+    const base = await context.captureModels.getCaptureModel(
+      project.capture_model_id,
+      { fullModel: true },
+      siteId,
+      connection
+    );
+    const model = patchTabularBaseModel(base, context.requestBody);
+    await connection.query(CaptureModelRepository.mutations.updateDocument(model.document, siteId, true));
+    if (model.structure.id !== base.structure.id) {
+      await connection.query(CaptureModelRepository.mutations.upsertStructure(model.structure, siteId));
+      await connection.query(CaptureModelRepository.mutations.updateCaptureModel(model, siteId));
+    }
     await connection.query(sql`
       update iiif_project set template_config = ${JSON.stringify(config)}::json
       where id = ${project.id} and site_id = ${siteId}

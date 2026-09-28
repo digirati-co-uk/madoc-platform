@@ -172,7 +172,7 @@ export function TabularProjectMetadataEditor({
                     </div>
                     <div>
                       <label className="mb-2 block text-sm font-semibold" htmlFor={`tabular-column-help-${index}`}>
-                        {t('Column {{number}} help text', { number: index + 1 })}
+                        {t('Help text for {{label}}', { label: column.label || column.id })}
                       </label>
                       <textarea
                         id={`tabular-column-help-${index}`}

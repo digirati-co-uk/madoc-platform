@@ -57,14 +57,18 @@ export function fixModelBugs(captureModel: CaptureModel) {
         if (first && first.allowMultiple) {
           // We need to check if there are any revision in here.
           let hasRevision: string | undefined = undefined;
+          let hasCanonicalField = false;
           traverseDocument(first, {
             visitField(f) {
               if (f.revision) {
                 hasRevision = f.revision;
+              } else {
+                hasCanonicalField = true;
               }
             },
           });
-          if (hasRevision) {
+          // Mixed canonical/revised fields are valid; only repair rows with no canonical fields.
+          if (hasRevision && !hasCanonicalField) {
             const toAdd = forkDocument(first, {
               revisionId: undefined,
               editValues: false,

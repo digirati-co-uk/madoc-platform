@@ -1,6 +1,5 @@
 import { TabularContributorInstructions } from '@/frontend/shared/components/TabularContributorInstructions';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { resolveTabularInstructions } from '@/frontend/shared/utility/tabular-instructions';
 import type { NetConfig, TabularCellRef } from '@/frontend/shared/utility/tabular-types';
 import { DynamicVaultContext } from '@/frontend/shared/capture-models/new/DynamicVaultContext';
 import { RevisionProviderWithFeatures } from '@/frontend/shared/capture-models/new/components/RevisionProviderWithFeatures';
@@ -64,7 +63,6 @@ type TabularProjectCustomEditorContentProps = {
   zoomTrackingDefaultEnabled: boolean;
   initialNetConfig: NetConfig | null;
   modelInstructions?: string;
-  templateInstructions?: string;
 };
 
 const CONTRIBUTOR_NET_NUDGE_STEP = 0.25;
@@ -119,7 +117,6 @@ function TabularProjectCustomEditorContent({
   zoomTrackingDefaultEnabled,
   initialNetConfig,
   modelInstructions,
-  templateInstructions,
 }: TabularProjectCustomEditorContentProps) {
   const {
     enableRotation = false,
@@ -302,14 +299,10 @@ function TabularProjectCustomEditorContent({
     !isLoading && lifecycle.phase !== 'error' && (table.status === 'ready' || useLegacyTopLevelLayout);
   const contributorInstructions = useMemo(() => {
     const fromCurrentView =
-      currentView && currentView.type === 'model' ? currentView.instructions || currentView.description : undefined;
-    const resolvedInstructions = resolveTabularInstructions(templateInstructions, [
-      fromCurrentView,
-      currentRevisionDocumentInstructions,
-      modelInstructions,
-    ]);
+      currentView && currentView.type === 'model' ? (currentView.instructions ?? currentView.description) : undefined;
+    const resolvedInstructions = fromCurrentView ?? currentRevisionDocumentInstructions ?? modelInstructions;
     return resolvedInstructions ? tModel(resolvedInstructions) : '';
-  }, [currentRevisionDocumentInstructions, currentView, modelInstructions, tModel, templateInstructions]);
+  }, [currentRevisionDocumentInstructions, currentView, modelInstructions, tModel]);
 
   useEffect(() => {
     if (!lifecycle.revisionId) {
@@ -749,7 +742,6 @@ export function TabularProjectCustomEditor() {
           zoomTrackingDefaultEnabled={templateConfig?.enableZoomTracking !== false}
           initialNetConfig={initialNetConfig}
           modelInstructions={captureModel?.document?.instructions}
-          templateInstructions={templateConfig?.crowdsourcingInstructions}
         />
       </RevisionProviderWithFeatures>
     </DynamicVaultContext>
