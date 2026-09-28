@@ -1,5 +1,5 @@
-import { Runtime } from '@atlas-viewer/atlas';
-import React, { useCallback, useReducer, useRef, useState } from 'react';
+import { Preset, Runtime } from '@atlas-viewer/atlas';
+import React, { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PARAGRAPHS_PROFILE } from '../../../../extensions/capture-models/Paragraphs/Paragraphs.helpers';
 import { slotConfig } from '../../../../extensions/capture-models/Paragraphs/Paragraphs.slots';
@@ -96,7 +96,7 @@ export interface CoreModelEditorProps {
 
   // Actions.
   updateClaim: (ctx: { revisionRequest: RevisionRequest; context: RouteContext }) => void | Promise<void>;
-  modelRefetch?: (args?: any) => Promise<void> | Promise<any>;
+  modelRefetch?: () => Promise<unknown>;
 
   enableHighlightedRegions?: boolean;
 
@@ -149,7 +149,9 @@ export function CoreModelEditor({
   const [showPanWarning, setShowPanWarning] = useLocalStorage('pan-warning', false);
   const [postSubmission, setPostSubmission] = useState(false);
   const [postSubmissionMessage, setPostSubmissionMessage] = useState(false);
-  const [invalidateKey, invalidate] = useReducer(i => i + 1, 0);
+  const onViewerCreated = useCallback((preset: Preset) => {
+    runtime.current = preset.runtime;
+  }, []);
 
   const onPanInSketchMode = useCallback(() => {
     setShowPanWarning(true);
@@ -234,17 +236,13 @@ export function CoreModelEditor({
         setPostSubmission(true);
       }
     }
-
-    invalidate();
   }
 
   const viewerPane = (
     <CanvasViewerGridContent $vertical={isVertical}>
       <EditorContentViewer
         height={'100%' as any}
-        onCreated={rt => {
-          return ((runtime as any).current = rt.runtime);
-        }}
+        onCreated={onViewerCreated}
         onPanInSketchMode={onPanInSketchMode}
         {...targetProps}
       >
@@ -337,7 +335,7 @@ export function CoreModelEditor({
   return (
     <DynamicVaultContext {...targetProps}>
       <RevisionProviderWithFeatures
-        key={revision + invalidateKey}
+        key={revision}
         features={features}
         revision={isSegmentation ? undefined : revision}
         captureModel={captureModel}

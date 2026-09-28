@@ -19,8 +19,11 @@ import { ImageServiceContext } from './Atlas.helpers';
 import { StandardButton } from '../../../../atoms/StandardButton';
 import { useTranslation } from 'react-i18next';
 import { CanvasViewerControls } from '../../../../atoms/CanvasViewerGrid';
-import { useSiteConfiguration } from '../../../../../site/features/SiteConfigurationContext';
-import { PolygonControls } from '../../selector-types/PolygonSelector/components/PolygonControls';
+import {
+  PolygonControls,
+  PolygonTool,
+  usePolygonTool,
+} from '../../selector-types/PolygonSelector/components/PolygonControls';
 
 export type AtlasCustomOptions = {
   unstable_webglRenderer?: boolean;
@@ -124,9 +127,9 @@ const Canvas: React.FC<{
 };
 
 export const AtlasViewer: React.FC<AtlasViewerProps> = props => {
-  const { project } = useSiteConfiguration();
   const { isLoaded } = useExternalManifest(props.state.manifestId);
   const currentSelector = useCurrentSelector('atlas', undefined);
+  const [preferredTool] = usePolygonTool();
   const currentSelectorId = Revisions.useStoreState(s => s.selector.currentSelectorId);
   const clearSelector = Revisions.useStoreActions(a => a.clearSelector);
   const currentSelectorType = Revisions.useStoreState(s =>
@@ -189,15 +192,15 @@ export const AtlasViewer: React.FC<AtlasViewerProps> = props => {
           // }}
         >
           {selectors}
-          {currentSelector}
+          {currentSelectorType === 'polygon-selector'
+            ? currentSelector?.map(selector =>
+                React.cloneElement(selector as React.ReactElement<{ preferredTool?: PolygonTool }>, { preferredTool })
+              )
+            : currentSelector}
           {props.children}
         </Canvas>
       </CanvasContext>
-      <CanvasViewerControls
-        id="atlas-controls"
-        data-position="bottom-center"
-        data-default-polygon-tool={project.defaultPolygonTool === 'box' ? 'box' : 'pen'}
-      >
+      <CanvasViewerControls id="atlas-controls" data-position="bottom-center">
         {currentSelectorType === 'polygon-selector' ? <PolygonControls /> : null}
       </CanvasViewerControls>
     </div>

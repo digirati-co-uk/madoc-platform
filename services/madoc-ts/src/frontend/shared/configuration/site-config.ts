@@ -39,7 +39,7 @@ const DEFAULT_POLYGON_TOOL_FIELD = {
   label: 'Default polygon tool',
   description: 'Choose the initial drawing tool when defining a polygon region.',
   type: 'dropdown-field',
-  defaultValue: 'pen',
+  defaultValue: 'box',
   options: [
     { value: 'pen', text: 'Polygon (pen)' },
     { value: 'box', text: 'Box' },

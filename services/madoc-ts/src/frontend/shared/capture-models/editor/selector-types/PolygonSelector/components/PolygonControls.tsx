@@ -4,6 +4,8 @@ import { useStore } from 'zustand';
 import { CanvasViewerButton } from '../../../../../atoms/CanvasViewerGrid';
 import { CanvasViewerButtonProps } from '../../../../../atoms/CanvasViewerButton';
 import { useLocalStorage } from '../../../../../hooks/use-local-storage';
+import { useCurrentUser } from '../../../../../hooks/use-current-user';
+import { useSiteConfiguration } from '../../../../../../site/features/SiteConfigurationContext';
 import { DeleteForeverIcon } from '../../../../../icons/DeleteForeverIcon';
 import { DrawIcon } from '../../../../../icons/DrawIcon';
 import { HexagonIcon } from '../../../../../icons/HexagonIcon';
@@ -91,6 +93,29 @@ export const SVG_EDITOR_THEMES: Array<{ name: string; theme: Partial<SVGTheme> }
   },
 ];
 
+const polygonTools = [
+  'hand',
+  'pointer',
+  'box',
+  'pen',
+  'draw',
+  'line',
+  'lineBox',
+  'triangle',
+  'hexagon',
+  'circle',
+] as const;
+export type PolygonTool = (typeof polygonTools)[number];
+
+export function usePolygonTool() {
+  const { user } = useCurrentUser(true);
+  const { project } = useSiteConfiguration();
+  const [storedTool, setStoredTool] = useLocalStorage<PolygonTool | null>(`poly-tool:${user?.id || 'anonymous'}`, null);
+  const tool =
+    storedTool && polygonTools.includes(storedTool) ? storedTool : project.defaultPolygonTool === 'pen' ? 'pen' : 'box';
+  return [tool, setStoredTool] as const;
+}
+
 function PolygonButton(props: CanvasViewerButtonProps) {
   return (
     <CanvasViewerButton
@@ -106,6 +131,7 @@ export function PolygonControls() {
   const state = useStore(store, currentState => currentState.polygonState);
   const switchTool = useStore(store, currentState => currentState.switchTool);
   const polygon = useStore(store, currentState => currentState.polygon);
+  const [, setStoredTool] = usePolygonTool();
   const [storedThemeKey, setStoredThemeKey] = useLocalStorage<number>('poly-theme', 0);
   const themeKey = Number.isFinite(Number(storedThemeKey))
     ? Math.abs(Math.trunc(Number(storedThemeKey))) % SVG_EDITOR_THEMES.length
@@ -118,8 +144,12 @@ export function PolygonControls() {
   const shapeSelected =
     currentTool === 'lineBox' ||
     (currentTool === 'stamp' && ['triangle', 'hexagon', 'circle'].includes(state.selectedStamp?.id || ''));
-  const selectShape = (switchToShape: () => void) => {
-    switchToShape();
+  const selectTool = (tool: PolygonTool, switchToTool: () => void) => {
+    switchToTool();
+    setStoredTool(tool);
+  };
+  const selectShape = (tool: PolygonTool, switchToShape: () => void) => {
+    selectTool(tool, switchToShape);
     setShapesOpen(false);
     shapesRef.current?.querySelector('button')?.focus();
   };
@@ -153,11 +183,16 @@ export function PolygonControls() {
   return (
     <>
       <div role="group" aria-label="Viewer tools" className="flex gap-1 rounded-md bg-white p-1 shadow-md">
-        <PolygonButton onClick={switchTool.hand} data-active={currentTool === 'hand'} title="Pan" aria-label="Pan">
+        <PolygonButton
+          onClick={() => selectTool('hand', switchTool.hand)}
+          data-active={currentTool === 'hand'}
+          title="Pan"
+          aria-label="Pan"
+        >
           <PanIcon />
         </PolygonButton>
         <PolygonButton
-          onClick={switchTool.pointer}
+          onClick={() => selectTool('pointer', switchTool.pointer)}
           data-active={currentTool === 'pointer'}
           title="Select"
           aria-label="Select"
@@ -170,21 +205,36 @@ export function PolygonControls() {
       </div>
       {showShapes ? (
         <div role="group" aria-label="Drawing tools" className="flex gap-1 rounded-md bg-white p-1 shadow-md">
-          <PolygonButton onClick={switchTool.box} data-active={currentTool === 'box'} title="Rectangle" aria-label="Rectangle">
+          <PolygonButton
+            onClick={() => selectTool('box', switchTool.box)}
+            data-active={currentTool === 'box'}
+            title="Rectangle"
+            aria-label="Rectangle"
+          >
             <SquareIcon />
           </PolygonButton>
           <PolygonButton
-            onClick={switchTool.pen}
-            data-active={currentTool === 'pen' && !state.selectedStamp}
+            onClick={() => selectTool('pen', switchTool.pen)}
+            data-active={currentTool === 'pen'}
             title="Polygon"
             aria-label="Polygon"
           >
             <PolygonIcon />
           </PolygonButton>
-          <PolygonButton onClick={switchTool.draw} data-active={currentTool === 'pencil'} title="Draw" aria-label="Draw">
+          <PolygonButton
+            onClick={() => selectTool('draw', switchTool.draw)}
+            data-active={currentTool === 'pencil'}
+            title="Draw"
+            aria-label="Draw"
+          >
             <DrawIcon />
           </PolygonButton>
-          <PolygonButton onClick={switchTool.line} data-active={currentTool === 'line'} title="Line" aria-label="Line">
+          <PolygonButton
+            onClick={() => selectTool('line', switchTool.line)}
+            data-active={currentTool === 'line'}
+            title="Line"
+            aria-label="Line"
+          >
             <LineIcon />
           </PolygonButton>
           <div ref={shapesRef} className="relative">
@@ -199,9 +249,13 @@ export function PolygonControls() {
               <ShapesIcon />
             </PolygonButton>
             {shapesOpen ? (
-              <div role="group" aria-label="More shapes" className="absolute bottom-full left-0 mb-2 flex flex-col gap-1 rounded-md bg-white p-1 shadow-md">
+              <div
+                role="group"
+                aria-label="More shapes"
+                className="absolute bottom-full left-0 mb-2 flex flex-col gap-1 rounded-md bg-white p-1 shadow-md"
+              >
                 <PolygonButton
-                  onClick={() => selectShape(switchTool.lineBox)}
+                  onClick={() => selectShape('lineBox', switchTool.lineBox)}
                   data-active={currentTool === 'lineBox'}
                   title="Line box"
                   aria-label="Line box"
@@ -209,7 +263,7 @@ export function PolygonControls() {
                   <LineBoxIcon />
                 </PolygonButton>
                 <PolygonButton
-                  onClick={() => selectShape(switchTool.triangle)}
+                  onClick={() => selectShape('triangle', switchTool.triangle)}
                   data-active={currentTool === 'stamp' && state.selectedStamp?.id === 'triangle'}
                   title="Triangle"
                   aria-label="Triangle"
@@ -217,7 +271,7 @@ export function PolygonControls() {
                   <TriangleIcon />
                 </PolygonButton>
                 <PolygonButton
-                  onClick={() => selectShape(switchTool.hexagon)}
+                  onClick={() => selectShape('hexagon', switchTool.hexagon)}
                   data-active={currentTool === 'stamp' && state.selectedStamp?.id === 'hexagon'}
                   title="Hexagon"
                   aria-label="Hexagon"
@@ -225,7 +279,7 @@ export function PolygonControls() {
                   <HexagonIcon />
                 </PolygonButton>
                 <PolygonButton
-                  onClick={() => selectShape(switchTool.circle)}
+                  onClick={() => selectShape('circle', switchTool.circle)}
                   data-active={currentTool === 'stamp' && state.selectedStamp?.id === 'circle'}
                   title="Circle"
                   aria-label="Circle"
@@ -238,7 +292,11 @@ export function PolygonControls() {
         </div>
       ) : null}
       <div role="group" aria-label="Theme" className="flex rounded-md bg-white p-1 shadow-md">
-        <PolygonButton onClick={cycleTheme} title={`Theme: ${selectedTheme.name}`} aria-label={`Theme: ${selectedTheme.name}`}>
+        <PolygonButton
+          onClick={cycleTheme}
+          title={`Theme: ${selectedTheme.name}`}
+          aria-label={`Theme: ${selectedTheme.name}`}
+        >
           <ThemeIcon />
         </PolygonButton>
       </div>

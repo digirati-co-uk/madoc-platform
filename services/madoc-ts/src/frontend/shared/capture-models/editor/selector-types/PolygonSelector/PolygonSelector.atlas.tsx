@@ -4,6 +4,7 @@ import { BaseSelector, SelectorTypeProps } from '../../../types/selector-types';
 import { useImageServiceContext } from '../../content-types/Atlas/Atlas.helpers';
 import { useSelectorEvents } from '../../stores/selectors/selector-helper';
 import { CreateCustomShape } from './components/CreateCustomShape';
+import { PolygonTool } from './components/PolygonControls';
 
 export interface PolygonSelectorProps extends BaseSelector {
   id: string;
@@ -16,7 +17,7 @@ export interface PolygonSelectorProps extends BaseSelector {
   };
 }
 
-export function PolygonSelectorAtlas(props: SelectorTypeProps<PolygonSelectorProps>) {
+export function PolygonSelectorAtlas(props: SelectorTypeProps<PolygonSelectorProps> & { preferredTool?: PolygonTool }) {
   const image = useImageServiceContext();
   const { readOnly, id, bucket } = props;
   const { onClick, isHighlighted } = useSelectorEvents(props.id);
@@ -57,6 +58,7 @@ export function PolygonSelectorAtlas(props: SelectorTypeProps<PolygonSelectorPro
       image={image}
       shape={props.state?.shape || { id: props.id, open: true, points: [] }}
       updateShape={updateShape}
+      preferredTool={props.preferredTool || 'box'}
     />
   );
 }

@@ -11,13 +11,14 @@ import { useLocalStorage } from '../../../../../hooks/use-local-storage';
 import { InputShape } from 'polygon-editor';
 import { useStore } from 'zustand';
 
-import { SVG_EDITOR_THEMES } from './PolygonControls';
+import { PolygonTool, SVG_EDITOR_THEMES } from './PolygonControls';
 
 const PROXIMITY_MULTIPLIER = 1.35;
 export interface CreateCustomShapeProps {
   image: { width: number; height: number };
   shape?: InputShape;
   updateShape: (shape: InputShape) => void;
+  preferredTool: PolygonTool;
 }
 
 export function CreateCustomShape(props: CreateCustomShapeProps) {
@@ -25,6 +26,8 @@ export function CreateCustomShape(props: CreateCustomShapeProps) {
   const { image } = props;
   const [controls, setControls] = useState<HTMLElement | null>(null);
   const [storedThemeKey] = useLocalStorage<number>('poly-theme', 0);
+  const preferredToolRef = useRef(props.preferredTool);
+  preferredToolRef.current = props.preferredTool;
   const themeKey = Number.isFinite(Number(storedThemeKey))
     ? Math.abs(Math.trunc(Number(storedThemeKey))) % SVG_EDITOR_THEMES.length
     : 0;
@@ -42,7 +45,6 @@ export function CreateCustomShape(props: CreateCustomShapeProps) {
   const { requestId, requestAnnotation, cancelRequest } = useRequestAnnotation();
   const requestAnnotationRef = useRef(requestAnnotation);
   const cancelRequestRef = useRef(cancelRequest);
-  const defaultTool = controls?.dataset.defaultPolygonTool === 'box' ? 'box' : 'pen';
   const debugLog = useCallback((message: string, payload?: any) => {
     if (typeof window === 'undefined') {
       return;
@@ -154,6 +156,7 @@ export function CreateCustomShape(props: CreateCustomShapeProps) {
       points: initialShape.points || [],
       open: initialShape.open ?? true,
     };
+    const defaultTool = preferredToolRef.current;
     debugLog('requestAnnotation init', {
       selectorId: selectorIdRef.current,
       requestId,
@@ -175,7 +178,7 @@ export function CreateCustomShape(props: CreateCustomShapeProps) {
       debugLog('requestAnnotation cleanup', { selectorId: selectorIdRef.current, requestId });
       cancelRequestRef.current();
     };
-  }, [controls, debugLog, defaultTool, requestId]);
+  }, [controls, debugLog, requestId]);
 
   useEffect(() => {
     const setScaledProximity = () => {
