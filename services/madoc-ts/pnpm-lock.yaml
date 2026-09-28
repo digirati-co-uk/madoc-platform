@@ -146,6 +146,9 @@ importers:
       bullmq:
         specifier: ^1.51.2
         version: 1.91.1(supports-color@8.1.1)
+      cheerio:
+        specifier: 1.0.0-rc.12
+        version: 1.0.0-rc.12
       color-hash:
         specifier: ^1.0.3
         version: 1.1.1

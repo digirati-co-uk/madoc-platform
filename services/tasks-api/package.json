@@ -1,0 +1,71 @@
+{
+  "name": "@madoc.io/tasks-api",
+  "version": "1.0.1",
+  "main": "dist/app.js",
+  "typings": "./dist/app.d.ts",
+  "license": "MIT",
+  "author": "Stephen Fraser <stephen.fraser@digirati.com>",
+  "files": [
+    "dist",
+    "schemas",
+    "migrations",
+    "config.json"
+  ],
+  "scripts": {
+    "start": "pm2 install typescript && pm2 start ecosystem.config.js --watch --only tasks-api-dev --no-daemon",
+    "build": "NODE_ENV=production yarn build-es && yarn build-app && yarn generate-create-task-schema && yarn generate-update-task-schema",
+    "build-es": "NODE_ENV=production esbuild src/index.ts --bundle --outfile=dist/server.js --platform=node --external:pg-native --external:bullmq",
+    "build-app": "NODE_ENV=production esbuild src/app.ts --bundle --outfile=dist/app.js --platform=node --external:pg-native --external:bullmq",
+    "types-app": "tsc ./src/app.ts --emitDeclarationOnly --declaration --esModuleInterop --outDir dist",
+    "test": "jest --coverage --runInBand",
+    "prepublishOnly": "yarn build-app && yarn types-app",
+    "generate-create-task-schema": "typescript-json-schema ./src/schemas/CreateTask.ts CreateTask -o ./schemas/create-task.json --required --noExtraProps",
+    "generate-update-task-schema": "typescript-json-schema ./src/schemas/UpdateTask.ts UpdateTask -o ./schemas/update-task.json --required --noExtraProps"
+  },
+  "resolutions": {
+    "slonik-sql-tag-raw": "1.0.2"
+  },
+  "dependencies": {
+    "pg": "^8.11.3",
+    "pm2": "^5.1.2",
+    "bullmq": "^1.50.3"
+  },
+  "devDependencies": {
+    "@koa/router": "^10.1.1",
+    "@slonik/migrator": "^0.2.0",
+    "@slonik/typegen": "^0.3.1",
+    "ajv": "^8.6.3",
+    "bullmq": "^1.50.3",
+    "koa": "^2.13.4",
+    "koa-body": "^4.2.0",
+    "koa-json": "^2.0.2",
+    "koa-logger": "^3.2.1",
+    "slonik": "^24.1.2",
+    "uuid": "^8.3.2",
+    "@trendyol/jest-testcontainers": "^2.1.0",
+    "@types/jest": "^27.0.2",
+    "@types/koa": "^2.13.4",
+    "@types/koa-json": "^2.0.20",
+    "@types/koa-logger": "^3.1.2",
+    "@types/koa__router": "^8.0.8",
+    "@types/slonik": "^22.1.5",
+    "@types/uuid": "^8.3.1",
+    "@typescript-eslint/eslint-plugin": "^5.1.0",
+    "@typescript-eslint/parser": "^5.1.0",
+    "esbuild": "^0.13.8",
+    "eslint": "^8.0.1",
+    "eslint-plugin-prettier": "^4.0.0",
+    "jest": "^27.3.1",
+    "koa-create-context": "^1.0.2",
+    "mock-req": "^0.2.0",
+    "mock-res": "^0.5.0",
+    "prettier": "^2.4.1",
+    "ts-jest": "^27.0.7",
+    "ts-node": "^10.3.0",
+    "typescript": "^4.4.4",
+    "typescript-json-schema": "^0.51.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

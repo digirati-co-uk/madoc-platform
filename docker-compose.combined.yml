@@ -1,0 +1,91 @@
+services:
+  madoc:
+    image: madoc-combined:local
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "${PORTS_GATEWAY:-8888}:8080"
+    environment:
+      NODE_ENV: production
+      API_GATEWAY: http://127.0.0.1:8080
+      GATEWAY_HOST: ${GATEWAY_HOST}
+      DATABASE_HOST: shared-postgres
+      DATABASE_PORT: ${POSTGRES_PORT}
+      DATABASE_NAME: ${POSTGRES_DB}
+      DATABASE_USER: ${POSTGRES_MADOC_TS_USER}
+      DATABASE_SCHEMA: ${POSTGRES_MADOC_TS_SCHEMA}
+      DATABASE_PASSWORD: ${POSTGRES_MADOC_TS_PASSWORD}
+      POSTGRES_TASKS_API_USER: ${POSTGRES_TASKS_API_USER}
+      POSTGRES_TASKS_API_SCHEMA: ${POSTGRES_TASKS_API_SCHEMA}
+      POSTGRES_TASKS_API_PASSWORD: ${POSTGRES_TASKS_API_PASSWORD}
+      POSTGRES_CONFIG_SERVICE_USER: ${POSTGRES_CONFIG_SERVICE_USER}
+      POSTGRES_CONFIG_SERVICE_SCHEMA: ${POSTGRES_CONFIG_SERVICE_SCHEMA}
+      POSTGRES_CONFIG_SERVICE_PASSWORD: ${POSTGRES_CONFIG_SERVICE_PASSWORD}
+      TASKS_QUEUE_LIST: ${TASKS_QUEUE_LIST}
+      TASKS_MIGRATE: "false"
+      CONFIG_MIGRATE: "false"
+      CAPTURE_MODEL_API_MIGRATED: "true"
+      SEARCH_USE_TYPESENSE: "true"
+      TYPESENSE_PROTOCOL: http
+      TYPESENSE_HOST: typesense
+      TYPESENSE_PORT: "8108"
+      TYPESENSE_API_KEY: ${TYPESENSE_API_KEY:-xyz}
+      TYPESENSE_COLLECTION_PREFIX: ${TYPESENSE_COLLECTION_PREFIX:-madoc}
+      REDIS_HOST: 127.0.0.1
+      PM2_SERVER_INSTANCES: "1"
+      PM2_QUEUE_INSTANCES: "1"
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_SECURITY: ${SMTP_SECURITY:-tls}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      MAIL_FROM_USER: ${MAIL_FROM_USER:-}
+      MADOC_INSTALLATION_CODE: ${MADOC_INSTALLATION_CODE:-}
+    volumes:
+      - ./var/files:/home/node/app/files
+      - ./var/files/storage-api:/opt/services/storage-api/files
+      - ./var/jwt:/home/node/app/service-jwt-responses
+      - ./var/certs:/home/node/app/openssl-certs
+      - ./var/combined-redis:/data/redis
+      - ./configuration/schemas:/opt/services/config-service/configurator/schemas:ro
+      - ./configuration/defaults:/opt/services/config-service/configurator/default_config:ro
+    depends_on:
+      - shared-postgres
+      - typesense
+    restart: unless-stopped
+
+  shared-postgres:
+    build:
+      context: services/shared-postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_MADOC_TS_USER: ${POSTGRES_MADOC_TS_USER}
+      POSTGRES_MADOC_TS_SCHEMA: ${POSTGRES_MADOC_TS_SCHEMA}
+      POSTGRES_MADOC_TS_PASSWORD: ${POSTGRES_MADOC_TS_PASSWORD}
+      POSTGRES_TASKS_API_USER: ${POSTGRES_TASKS_API_USER}
+      POSTGRES_TASKS_API_SCHEMA: ${POSTGRES_TASKS_API_SCHEMA}
+      POSTGRES_TASKS_API_PASSWORD: ${POSTGRES_TASKS_API_PASSWORD}
+      POSTGRES_MODELS_API_USER: ${POSTGRES_MODELS_API_USER}
+      POSTGRES_MODELS_API_SCHEMA: ${POSTGRES_MODELS_API_SCHEMA}
+      POSTGRES_MODELS_API_PASSWORD: ${POSTGRES_MODELS_API_PASSWORD}
+      POSTGRES_CONFIG_SERVICE_USER: ${POSTGRES_CONFIG_SERVICE_USER}
+      POSTGRES_CONFIG_SERVICE_SCHEMA: ${POSTGRES_CONFIG_SERVICE_SCHEMA}
+      POSTGRES_CONFIG_SERVICE_PASSWORD: ${POSTGRES_CONFIG_SERVICE_PASSWORD}
+      POSTGRES_SEARCH_API_USER: ${POSTGRES_SEARCH_API_USER}
+      POSTGRES_SEARCH_API_SCHEMA: ${POSTGRES_SEARCH_API_SCHEMA}
+      POSTGRES_SEARCH_API_PASSWORD: ${POSTGRES_SEARCH_API_PASSWORD}
+    ports:
+      - "${PORTS_SHARED_POSTGRES:-5400}:5432"
+    volumes:
+      - ./var/shared-database:/var/lib/postgresql/data
+
+  typesense:
+    image: typesense/typesense:0.25.2
+    command: "--data-dir /data --api-key=${TYPESENSE_API_KEY:-xyz} --enable-cors"
+    ports:
+      - "${PORTS_TYPESENSE:-8108}:8108"
+    volumes:
+      - ./var/typesense:/data

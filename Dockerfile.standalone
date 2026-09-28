@@ -1,0 +1,27 @@
+# syntax=docker/dockerfile:1.6
+# Standalone uses a new data volume; never mount ./var/shared-database here.
+FROM typesense/typesense:0.25.2 AS typesense
+FROM postgres:16-bookworm AS postgres-base
+FROM postgres-base AS standalone
+RUN apt-get update && apt-get install -y --no-install-recommends nginx redis-server ca-certificates \
+    && mkdir -p /data/redis /data/typesense /var/cache/nginx/asset /var/cache/nginx/media /etc/nginx/conf.d/custom \
+    && rm -rf /var/lib/apt/lists/*
+COPY --from=madoc-combined:local /usr/local /usr/local
+COPY --from=postgres-base /usr/local/bin/docker-entrypoint.sh /usr/local/bin/postgres-entrypoint.sh
+COPY --from=madoc-combined:local /home/node/app /home/node/app
+COPY --from=madoc-combined:local /opt/services /opt/services
+COPY --from=madoc-combined:local /opt/deployment /opt/deployment
+COPY --from=madoc-combined:local /etc/nginx /etc/nginx
+COPY --from=madoc-combined:local /www /www
+COPY --from=typesense /opt/typesense-server /usr/local/bin/typesense-server
+COPY deployment/combined/standalone-init-db.sh /docker-entrypoint-initdb.d/010-madoc-roles.sh
+COPY deployment/combined/ecosystem.config.cjs /opt/deployment/ecosystem.config.cjs
+COPY deployment/combined/nginx.conf /etc/nginx/nginx.conf
+RUN chmod +x /docker-entrypoint-initdb.d/010-madoc-roles.sh
+ENV MADOC_STANDALONE=true NODE_ENV=production API_GATEWAY=http://127.0.0.1:8080 \
+    REDIS_HOST=127.0.0.1 DATABASE_HOST=127.0.0.1 TYPESENSE_HOST=127.0.0.1 \
+    STORAGE_FILE_DIRECTORY=/home/node/app/files
+EXPOSE 8080
+WORKDIR /home/node/app
+ENTRYPOINT []
+CMD ["pm2-runtime", "start", "/opt/deployment/ecosystem.config.cjs"]

@@ -1,6 +1,7 @@
 import { router as activityStreamRoutes } from './activity-streams/router';
 import { getAuthRoutes } from './auth';
 import { router as captureModelRoutes } from './capture-model-server/router';
+import { convertOcrRoute } from './routes/ocr/convert-ocr';
 import {
   awardBadge,
   createBadge,
@@ -494,6 +495,7 @@ export const router = new TypedRouter({
     '/s/:slug/madoc/api/projects/:project/typesense/:indexId/multi_search',
     typesenseProjectProxyMultiSearch,
   ],
+  'convert-ocr': [TypedRouter.POST, '/api/madoc/ocr/convert/:format', convertOcrRoute],
   'search-index-iiif': [TypedRouter.POST, '/api/search/iiif', typesenseIngestIIIF],
   'search-reindex-iiif': [TypedRouter.PUT, '/api/search/iiif/:id', typesenseIngestIIIF],
   'search-list-iiif': [TypedRouter.GET, '/api/search/iiif', typesenseListIIIF],

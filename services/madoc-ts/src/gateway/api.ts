@@ -1325,7 +1325,7 @@ export class ApiClient {
   }
 
   async convertAltoToCaptureModel(alto: string) {
-    return this.request<any>(`/api/okra/convert/mets-alto`, {
+    return this.request<any>(`/api/madoc/ocr/convert/mets-alto`, {
       method: 'POST',
       body: {
         ocr_data: alto,
@@ -1334,7 +1334,7 @@ export class ApiClient {
   }
 
   async convertHOCRToCaptureModel(hocr: string) {
-    return this.request<any>(`/api/okra/convert/hocr`, {
+    return this.request<any>(`/api/madoc/ocr/convert/hocr`, {
       method: 'POST',
       body: {
         ocr_data: hocr,

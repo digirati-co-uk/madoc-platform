@@ -1,0 +1,65 @@
+services:
+  madoc:
+    image: madoc-standalone:local
+    build:
+      context: .
+      dockerfile: Dockerfile.standalone
+    ports:
+      - "${PORTS_GATEWAY:-8888}:8080"
+    environment:
+      MADOC_STANDALONE: "true"
+      NODE_ENV: production
+      API_GATEWAY: http://127.0.0.1:8080
+      GATEWAY_HOST: ${GATEWAY_HOST:-http://localhost:8888}
+      DATABASE_HOST: 127.0.0.1
+      DATABASE_PORT: "5432"
+      DATABASE_NAME: ${POSTGRES_DB:-madoc}
+      DATABASE_USER: ${POSTGRES_MADOC_TS_USER:-madoc_ts}
+      DATABASE_SCHEMA: ${POSTGRES_MADOC_TS_SCHEMA:-madoc_ts}
+      DATABASE_PASSWORD: ${POSTGRES_MADOC_TS_PASSWORD:-madoc_ts}
+      POSTGRES_DB: ${POSTGRES_DB:-madoc}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_MADOC_TS_USER: ${POSTGRES_MADOC_TS_USER:-madoc_ts}
+      POSTGRES_MADOC_TS_SCHEMA: ${POSTGRES_MADOC_TS_SCHEMA:-madoc_ts}
+      POSTGRES_MADOC_TS_PASSWORD: ${POSTGRES_MADOC_TS_PASSWORD:-madoc_ts}
+      POSTGRES_TASKS_API_USER: ${POSTGRES_TASKS_API_USER:-tasks_api}
+      POSTGRES_TASKS_API_SCHEMA: ${POSTGRES_TASKS_API_SCHEMA:-tasks_api}
+      POSTGRES_TASKS_API_PASSWORD: ${POSTGRES_TASKS_API_PASSWORD:-tasks_api}
+      POSTGRES_MODELS_API_USER: ${POSTGRES_MODELS_API_USER:-models_api}
+      POSTGRES_MODELS_API_SCHEMA: ${POSTGRES_MODELS_API_SCHEMA:-models_api}
+      POSTGRES_MODELS_API_PASSWORD: ${POSTGRES_MODELS_API_PASSWORD:-models_api}
+      POSTGRES_CONFIG_SERVICE_USER: ${POSTGRES_CONFIG_SERVICE_USER:-config_service}
+      POSTGRES_CONFIG_SERVICE_SCHEMA: ${POSTGRES_CONFIG_SERVICE_SCHEMA:-config_service}
+      POSTGRES_CONFIG_SERVICE_PASSWORD: ${POSTGRES_CONFIG_SERVICE_PASSWORD:-config_service}
+      POSTGRES_SEARCH_API_USER: ${POSTGRES_SEARCH_API_USER:-search_api}
+      POSTGRES_SEARCH_API_SCHEMA: ${POSTGRES_SEARCH_API_SCHEMA:-search_api}
+      POSTGRES_SEARCH_API_PASSWORD: ${POSTGRES_SEARCH_API_PASSWORD:-search_api}
+      TASKS_QUEUE_LIST: ${TASKS_QUEUE_LIST:-}
+      TASKS_MIGRATE: "true"
+      CONFIG_MIGRATE: "true"
+      CAPTURE_MODEL_API_MIGRATED: "true"
+      SEARCH_USE_TYPESENSE: "true"
+      TYPESENSE_HOST: 127.0.0.1
+      TYPESENSE_PORT: "8108"
+      TYPESENSE_API_KEY: ${TYPESENSE_API_KEY:-xyz}
+      REDIS_HOST: 127.0.0.1
+      PM2_SERVER_INSTANCES: "1"
+      PM2_QUEUE_INSTANCES: "1"
+    volumes:
+      - madoc_standalone_postgres:/var/lib/postgresql/data
+      - madoc_standalone_typesense:/data/typesense
+      - madoc_standalone_redis:/data/redis
+      - madoc_standalone_files:/home/node/app/files
+      - madoc_standalone_storage:/opt/services/storage-api/files
+      - madoc_standalone_jwt:/home/node/app/service-jwt-responses
+      - madoc_standalone_keys:/home/node/app/openssl-certs
+
+volumes:
+  madoc_standalone_postgres:
+  madoc_standalone_typesense:
+  madoc_standalone_redis:
+  madoc_standalone_files:
+  madoc_standalone_storage:
+  madoc_standalone_jwt:
+  madoc_standalone_keys:

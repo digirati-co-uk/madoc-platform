@@ -74,6 +74,9 @@ export const captureModelApi: RouteMiddleware<{ id: string }> = async context =>
   try {
     context.body = await context.captureModels.getCaptureModel(modelId, options, siteId);
   } catch (e) {
+    if (context.captureModels.isMigrated()) {
+      throw e;
+    }
     const model = await userApi.request<CaptureModel>(`/api/crowdsourcing/models/${modelId}`);
     await context.captureModels.createCaptureModel(model, siteId);
     context.body = await context.captureModels.getCaptureModel(modelId, options, siteId);

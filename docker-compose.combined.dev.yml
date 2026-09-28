@@ -1,0 +1,22 @@
+services:
+  madoc:
+    image: madoc-combined-dev:local
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    environment:
+      NODE_ENV: development
+      PM2_SERVER_INSTANCES: "1"
+      PM2_QUEUE_INSTANCES: "1"
+    ports:
+      - "${PORTS_GATEWAY_HTTPS:-443}:443"
+      - "3088:3088"
+      - "3089:3089"
+    volumes:
+      - ./services/madoc-ts/src:/home/node/app/src
+      - ./services/madoc-ts/dist:/home/node/app/dist
+      - ./services/madoc-ts/vite:/home/node/app/vite
+      - ./services/tasks-api/src:/opt/services/tasks-api/src
+      - ./services/storage-api/src:/opt/services/storage-api/src
+      - ./services/config-service/src:/opt/services/config-service/src
+      - ./var/certs:/certs:ro

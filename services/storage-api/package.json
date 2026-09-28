@@ -1,0 +1,58 @@
+{
+  "name": "@madoc.io/storage-api",
+  "license": "MIT",
+  "version": "1.0.1",
+  "main": "./dist/app.js",
+  "typings": "./dist/app.d.ts",
+  "files": [
+    "dist"
+  ],
+  "resolutions": {
+    "ws": "7.4.6"
+  },
+  "dependencies": {
+    "pm2": "^5.1.2",
+    "sharp": "^0.29.2"
+  },
+  "devDependencies": {
+    "@types/node": "^12",
+    "@types/mkdirp": "^1.0.2",
+    "@slynova/flydrive": "1.0.3",
+    "@koa/router": "^10.1.1",
+    "koa": "^2.13.4",
+    "koa-body": "^4.2.0",
+    "koa-json": "^2.0.2",
+    "koa-logger": "^3.2.1",
+    "koa-send": "^5.0.1",
+    "memory-cache": "^0.2.0",
+    "node-stream-zip": "^1.15.0",
+    "esbuild": "^0.13.8",
+    "@types/koa": "^2.13.4",
+    "@types/koa-json": "^2.0.20",
+    "@types/koa-logger": "^3.1.2",
+    "@types/koa__router": "^8.0.8",
+    "@types/koa-send": "^4.1.3",
+    "@types/sharp": "^0.29.2",
+    "@types/memory-cache": "^0.2.1",
+    "@typescript-eslint/eslint-plugin": "^5.1.0",
+    "@typescript-eslint/parser": "^5.1.0",
+    "eslint": "^8.0.1",
+    "eslint-plugin-prettier": "^4.0.0",
+    "prettier": "^2.4.1",
+    "ts-node": "^10.3.0",
+    "typescript": "^4.4.4"
+  },
+  "scripts": {
+    "start": "pm2 start ecosystem.config.js --watch --no-daemon",
+    "watch": "tsc -p . --watch",
+    "build": "NODE_ENV=production tsc -p .",
+    "build-es": "NODE_ENV=production esbuild src/index.ts --bundle --outfile=dist/server.js --platform=node --external:sharp",
+    "build-app": "NODE_ENV=production esbuild src/app.ts --bundle --outfile=dist/app.js --platform=node --external:sharp",
+    "types-app": "tsc ./src/app.ts --emitDeclarationOnly --declaration --esModuleInterop --outDir dist",
+    "test": "jest --coverage",
+    "prepublishOnly": "yarn build-app && yarn types-app"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
