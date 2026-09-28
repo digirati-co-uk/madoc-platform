@@ -744,6 +744,10 @@ export function TabularProjectCustomEditorTable({
         sortable: false,
         resizable: false,
         editable: row => !disabled && row.row.cells[colIndex]?.fieldType !== 'read-only-field',
+        cellClass: row =>
+          !row.row.cells[colIndex] || row.row.cells[colIndex].fieldType === 'read-only-field'
+            ? 'tabular-fill-disabled-cell'
+            : undefined,
         renderHeaderCell: () => {
           const isActiveColumn = tableActiveCell?.col === colIndex;
           const tooltip = showHeaderTooltips ? column.description?.trim() || undefined : undefined;
@@ -1197,7 +1201,7 @@ export function TabularProjectCustomEditorTable({
             width: '100%',
             border: 'none',
             // ['--rdg-border-color' as string]: '#d6d6d6',
-            // ['--rdg-selection-color' as string]: '#34a853',
+            ['--rdg-selection-color' as string]: 'var(--madoc-accent, #4265e9)',
           }}
         />
       </div>
