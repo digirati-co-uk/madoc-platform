@@ -1,4 +1,6 @@
 import { Response } from 'cross-fetch';
+import { vi } from 'vitest';
+import { api } from '../src/gateway/api.server';
 import { ConfigResponse } from '../src/types/schemas/config-response';
 import { ProjectFull } from '../src/types/project-full';
 
@@ -6,6 +8,12 @@ export type ApiMockEndpoint = {
   response: any;
   bodyAssertion?: (body: any) => void;
 };
+
+let activeMock: ApiMock;
+vi.mock('cross-fetch', async importOriginal => ({
+  ...(await importOriginal<typeof import('cross-fetch')>()),
+  default: (url: RequestInfo, options?: RequestInit) => activeMock.handleRequest(url, options),
+}));
 
 export class ApiMock {
   mockStacks: {
@@ -20,19 +28,8 @@ export class ApiMock {
     if (process.env.NODE_ENV !== 'test') {
       throw new Error();
     }
-    jest.mock('cross-fetch', () => {
-      return {
-        __esModule: true,
-        default: async (url: RequestInfo, options?: RequestInit): Promise<Response> => {
-          return this.handleRequest(url, options);
-        },
-      };
-    });
-    const { api } = require('../src/gateway/api.server');
-    api.jwtFunction = () => {
-      return '1234';
-    };
-    api.gateway = 'https://mock';
+    activeMock = this;
+    Object.assign(api, { jwtFunction: () => '1234', gateway: 'https://mock' });
   }
 
   async handleRequest(url: RequestInfo, options: RequestInit = {}): Promise<Response> {

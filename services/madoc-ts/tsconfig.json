@@ -1,18 +1,17 @@
 {
   "compilerOptions": {
     "experimentalDecorators": true,
-    "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["./src/*"]
     },
-    "lib": ["dom", "es2020"],
-    "typeRoots": ["../../node_modules/@types", "node_modules/@types"],
+    "lib": ["dom", "es2022"],
+    "types": ["node", "vite/client"],
     "target": "esnext",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "module": "esnext",
-    "declaration": true,
-    "moduleResolution": "node",
+    "declaration": false,
+    "moduleResolution": "bundler",
     "outDir": "./lib",
     "noEmitOnError": false,
     "strict": true,
@@ -21,7 +20,6 @@
     "jsx": "react-jsx",
     "resolveJsonModule": true,
     "noImplicitAny": true,
-    "downlevelIteration": true,
     "noUnusedLocals": false,
     "noFallthroughCasesInSwitch": true
   },

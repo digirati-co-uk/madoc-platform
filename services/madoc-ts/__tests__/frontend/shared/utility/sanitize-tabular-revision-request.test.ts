@@ -1,5 +1,5 @@
 /**
- * @jest-environment node
+ * @vitest-environment node
  */
 
 import { sanitizeTabularRevisionRequestForSave } from '../../../../src/frontend/shared/utility/sanitize-tabular-revision-request';

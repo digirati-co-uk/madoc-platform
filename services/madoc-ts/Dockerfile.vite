@@ -1,44 +1,18 @@
 # syntax=docker/dockerfile:1.6
-ARG NODE_VERSION=24
-FROM node:${NODE_VERSION}-bullseye as base
-
-ENV PNPM_HOME="/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
-
+FROM node:24-bullseye
+ENV PNPM_HOME=/pnpm PATH=/pnpm:$PATH
 RUN corepack enable
-
-FROM base as build
-
+WORKDIR /workspace
+COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
+COPY patches ./patches
+COPY services/madoc-ts/package.json ./services/madoc-ts/package.json
+COPY services/madoc-ts/npm ./services/madoc-ts/npm
+COPY services/config-service/package.json ./services/config-service/package.json
+COPY services/tasks-api/package.json ./services/tasks-api/package.json
+COPY services/storage-api/package.json ./services/storage-api/package.json
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --filter madoc-ts --frozen-lockfile
+COPY services/madoc-ts ./services/madoc-ts
+RUN mkdir -p /home/node && ln -s /workspace/services/madoc-ts /home/node/app
 WORKDIR /home/node/app
-
-ADD ./package.json /home/node/app/package.json
-COPY ./pnpm-lock.yaml /home/node/app/pnpm-lock.yaml
-COPY ./pnpm-workspace.yaml /home/node/app/pnpm-workspace.yaml
-COPY ./npm /home/node/app/npm
-COPY ./patches /home/node/app/patches
-
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
-
-FROM base
-
-WORKDIR /home/node/app
-
-COPY --from=build /home/node/app/package.json /home/node/app/package.json
-COPY --from=build /home/node/app/pnpm-lock.yaml /home/node/app/pnpm-lock.yaml
-COPY --from=build /home/node/app/pnpm-workspace.yaml /home/node/app/pnpm-workspace.yaml
-COPY --from=build /home/node/app/node_modules /home/node/app/node_modules
-COPY ./schemas /home/node/app/schemas
-COPY ./vite.config.js /home/node/app/vite.config.js
-COPY ./postcss.config.js /home/node/app/postcss.config.js
-COPY ./tailwind.config.js /home/node/app/tailwind.config.js
-COPY ./themes /home/node/app/themes
-COPY ./vite /home/node/app/vite
-COPY ./entrypoint /home/node/app/entrypoint
-COPY ./npm /home/node/app/npm
-COPY ./patches /home/node/app/patches
-COPY ./src /home/node/app/src
-
-EXPOSE 3089
-EXPOSE 3088
-
+EXPOSE 3088 3089
 CMD ["pnpm", "dev:vite"]

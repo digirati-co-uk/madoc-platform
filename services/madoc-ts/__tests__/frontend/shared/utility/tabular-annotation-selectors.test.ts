@@ -1,4 +1,4 @@
-/** @jest-environment node */
+/** @vitest-environment node */
 import { getTabularAnnotationSelectors } from '../../../../src/utility/tabular-annotation-selectors';
 import {
   captureModelFieldToW3CAnnotation,
@@ -107,9 +107,3 @@ it('supports legacy column lists and declines models without sufficient tabular 
   expect(getTabularAnnotationSelectors(model, project, { width: null, height: 1000 }).size).toBe(0);
   expect(getTabularAnnotationSelectors(model, { ...project, template_config: {} }, canvas).size).toBe(0);
 });
-
-jest.mock(
-  '@/frontend/shared/utility/tabular-row-offset-adjustments',
-  () => jest.requireActual('../../../../src/frontend/shared/utility/tabular-row-offset-adjustments'),
-  { virtual: true }
-);

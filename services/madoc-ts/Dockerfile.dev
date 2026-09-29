@@ -1,53 +1,22 @@
 # syntax=docker/dockerfile:1.6
-ARG NODE_VERSION=24
-FROM node:${NODE_VERSION}-bullseye
-
-ENV PNPM_HOME="/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
-
+FROM node:24-bullseye
+ENV PNPM_HOME=/pnpm PATH=/pnpm:$PATH
+RUN corepack enable && npm install -g pm2@5.4.3
+WORKDIR /workspace
+COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
+COPY patches ./patches
+COPY services/madoc-ts/package.json ./services/madoc-ts/package.json
+COPY services/madoc-ts/npm ./services/madoc-ts/npm
+COPY services/config-service/package.json ./services/config-service/package.json
+COPY services/tasks-api/package.json ./services/tasks-api/package.json
+COPY services/storage-api/package.json ./services/storage-api/package.json
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --filter madoc-ts --frozen-lockfile
+COPY services/madoc-ts ./services/madoc-ts
+RUN mkdir -p /home/node && ln -s /workspace/services/madoc-ts /home/node/app
 WORKDIR /home/node/app
-
-RUN npm install -g pm2@5.4.3
-
-COPY ./package.json /home/node/app/package.json
-COPY ./pnpm-lock.yaml /home/node/app/pnpm-lock.yaml
-COPY ./pnpm-workspace.yaml /home/node/app/pnpm-workspace.yaml
-COPY ./npm /home/node/app/npm
-COPY ./patches /home/node/app/patches
-
-RUN corepack enable
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
-
-COPY ./schemas /home/node/app/schemas
-COPY ./src /home/node/app/src
-COPY ./ecosystem.config.cjs /home/node/app/ecosystem.config.cjs
-COPY ./tsconfig.json /home/node/app/tsconfig.json
-COPY ./tsconfig.frontend.json /home/node/app/tsconfig.frontend.json
-COPY ./migrations /home/node/app/migrations
-COPY ./config.json /home/node/app/config.json
-COPY ./generate-schemas.js /home/node/app/generate-schemas.js
-COPY ./postcss.config.js /home/node/app/postcss.config.js
-COPY ./tailwind.config.js /home/node/app/tailwind.config.js
-COPY ./translations /home/node/app/translations
-COPY ./schemas /home/node/app/schemas
-COPY ./themes /home/node/app/themes
-COPY ./vite /home/node/app/vite
-COPY ./entrypoint /home/node/app/entrypoint
-
-ENV SERVER_PORT=3000
-ENV DATABASE_HOST=localhost
-ENV DATABASE_NAME=postgres
-ENV DATABASE_PORT=5400
-ENV DATABASE_USER=postgres
-ENV DATABASE_SCHEMA=public
-ENV DATABASE_PASSWORD=postgres
-ENV NODE_ENV=development
-ENV API_GATEWAY_HOST=http://gateway
-
-RUN pnpm run build:vite
-
-EXPOSE 3000
-EXPOSE 3001
-EXPOSE 9230
-
+ENV SERVER_PORT=3000 DATABASE_HOST=localhost DATABASE_NAME=postgres DATABASE_PORT=5400 \
+    DATABASE_USER=postgres DATABASE_SCHEMA=public DATABASE_PASSWORD=postgres \
+    NODE_ENV=development API_GATEWAY_HOST=http://gateway
+RUN pnpm build:vite
+EXPOSE 3000 3001 9230
 CMD ["pnpm", "dev"]

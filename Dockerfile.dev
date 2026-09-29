@@ -1,0 +1,18 @@
+# syntax=docker/dockerfile:1.6
+# Build Dockerfile first as madoc-combined:local; this layer adds dev tools and watchers.
+FROM madoc-combined:local
+ENV NODE_ENV=development PNPM_HOME=/pnpm PATH=/pnpm:$PATH
+RUN corepack enable
+WORKDIR /home/node/app
+COPY services/madoc-ts/src /workspace/services/madoc-ts/src
+COPY services/madoc-ts/vite /workspace/services/madoc-ts/vite
+COPY services/madoc-ts/npm /workspace/services/madoc-ts/npm
+COPY services/madoc-ts/tsconfig*.json services/madoc-ts/vite.config.js services/madoc-ts/postcss.config.js services/madoc-ts/tailwind.config.js /workspace/services/madoc-ts/
+COPY deployment/combined/dev-ssl.conf /etc/nginx/conf.d/dev-ssl.conf
+COPY services/config-service/src /workspace/services/config-service/src
+COPY services/config-service/tsconfig.json /workspace/services/config-service/
+COPY services/tasks-api/src /workspace/services/tasks-api/src
+COPY services/storage-api/src /workspace/services/storage-api/src
+WORKDIR /home/node/app
+EXPOSE 3088 3089
+CMD ["pm2-runtime", "start", "/opt/deployment/ecosystem.config.cjs"]

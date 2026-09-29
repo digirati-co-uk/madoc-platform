@@ -1,13 +1,11 @@
-mts := services/madoc-ts
-
 mts-dependencies:
-	cd $(mts) && yarn install
+	pnpm install --frozen-lockfile
 
 mts-watch-site:
-	cd $(mts) && yarn build:frontend --watch
+	pnpm --filter madoc-ts build:frontend --watch
 
 mts-watch:
-	cd $(mts) && yarn tsc -p . --watch
+	pnpm --filter madoc-ts exec tsc -p . --watch
 
 watch: mts-dependencies
 	@NODE_ENV=development $(MAKE) -j3 mts-watch-site mts-watch

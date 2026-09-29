@@ -1,5 +1,5 @@
 /**
- * @jest-environment node
+ * @vitest-environment node
  */
 
 import { createRevisionStore } from '../../../../src/frontend/shared/capture-models/editor/stores/revisions/revisions-store';
@@ -94,9 +94,9 @@ describe('capture model contribution lifecycle utility', () => {
   });
 
   test('saveDraft persists with draft status and refreshes', async () => {
-    const ensureRevision = jest.fn().mockResolvedValue('revision-1');
-    const updateClaim = jest.fn().mockResolvedValue(undefined);
-    const refresh = jest.fn().mockResolvedValue(undefined);
+    const ensureRevision = vi.fn().mockResolvedValue('revision-1');
+    const updateClaim = vi.fn().mockResolvedValue(undefined);
+    const refresh = vi.fn().mockResolvedValue(undefined);
 
     await persistContributionRevision({
       status: 'draft',
@@ -116,9 +116,9 @@ describe('capture model contribution lifecycle utility', () => {
   });
 
   test('submit persists with submitted status and refreshes', async () => {
-    const ensureRevision = jest.fn().mockResolvedValue('revision-1');
-    const updateClaim = jest.fn().mockResolvedValue(undefined);
-    const refresh = jest.fn().mockResolvedValue(undefined);
+    const ensureRevision = vi.fn().mockResolvedValue('revision-1');
+    const updateClaim = vi.fn().mockResolvedValue(undefined);
+    const refresh = vi.fn().mockResolvedValue(undefined);
 
     await persistContributionRevision({
       status: 'submitted',
@@ -178,10 +178,10 @@ describe('capture model contribution lifecycle utility', () => {
       persistContributionRevision({
         status: 'draft',
         blocked: true,
-        ensureRevision: jest.fn(),
+        ensureRevision: vi.fn(),
         getCurrentRevision: () => ({ revision: { id: 'revision-1' } } as any),
-        saveRevision: jest.fn(),
-        refresh: jest.fn(),
+        saveRevision: vi.fn(),
+        refresh: vi.fn(),
       })
     ).rejects.toThrow('Contribution is blocked');
   });

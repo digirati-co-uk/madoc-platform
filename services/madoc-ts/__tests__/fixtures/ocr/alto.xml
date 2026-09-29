@@ -1,0 +1,521 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<alto
+  xmlns="http://www.loc.gov/standards/alto/ns-v2#"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/standards/alto/ns-v2# http://www.loc.gov/standards/alto/alto-v2.0.xsd">
+  <Description>
+    <MeasurementUnit>pixel</MeasurementUnit>
+    <sourceImageInformation>
+      <fileName>b18035723_0006.xml</fileName>
+    </sourceImageInformation>
+    <OCRProcessing ID="OCR_1">
+      <preProcessingStep>
+        <processingDateTime>2013-03-13T03:37:30</processingDateTime>
+        <processingAgency>intranda GmbH, www.intranda.com</processingAgency>
+        <processingSoftware>
+          <softwareCreator>intranda GmbH, Germany</softwareCreator>
+          <softwareName>intranda OCR Module for TaskManager</softwareName>
+          <softwareVersion>1.0r42</softwareVersion>
+        </processingSoftware>
+      </preProcessingStep>
+      <ocrProcessingStep>
+        <processingSoftware>
+          <softwareCreator>ABBYY (BIT Software), Russia</softwareCreator>
+          <softwareName>FineReader Engine</softwareName>
+          <softwareVersion>10</softwareVersion>
+        </processingSoftware>
+      </ocrProcessingStep>
+    </OCRProcessing>
+  </Description>
+  <Layout>
+    <Page ID="Page_6" HEIGHT="3372" WIDTH="2411" PHYSICAL_IMG_NR="6">
+      <PrintSpace ID="PrintSpace_145" HPOS="105" VPOS="165" HEIGHT="3120" WIDTH="2256">
+        <TextBlock ID="TextBlock_31" HPOS="105" VPOS="165" HEIGHT="2987" WIDTH="2256">
+          <TextLine ID="TextLine_71" HPOS="111" VPOS="171" HEIGHT="70" WIDTH="2142">
+            <String ID="Word_475" CONTENT="Schon" HPOS="111" VPOS="177" HEIGHT="50" WIDTH="172" />
+            <String ID="Word_476" CONTENT="die" HPOS="324" VPOS="178" HEIGHT="50" WIDTH="85" />
+            <String ID="Word_477" CONTENT="Gelehrten" HPOS="449" VPOS="178" HEIGHT="50" WIDTH="300" />
+            <String ID="Word_478" CONTENT="vergangener" HPOS="789" VPOS="197" HEIGHT="44" WIDTH="376" />
+            <String ID="Word_479" CONTENT="Zeiten" HPOS="1203" VPOS="178" HEIGHT="49" WIDTH="190" />
+            <String ID="Word_480" CONTENT="haben" HPOS="1432" VPOS="176" HEIGHT="50" WIDTH="178" />
+            <String ID="Word_481" CONTENT="sich" HPOS="1650" VPOS="175" HEIGHT="51" WIDTH="106" />
+            <String ID="Word_482" CONTENT="oft" HPOS="1797" VPOS="174" HEIGHT="49" WIDTH="82" />
+            <String ID="Word_483" CONTENT="und" HPOS="1920" VPOS="173" HEIGHT="50" WIDTH="113" />
+            <String ID="Word_484" CONTENT="häufig" HPOS="2071" VPOS="171" HEIGHT="63" WIDTH="182" />
+          </TextLine>
+          <TextLine ID="TextLine_72" HPOS="113" VPOS="246" HEIGHT="68" WIDTH="2141">
+            <String ID="Word_485" CONTENT="den" HPOS="113" VPOS="250" HEIGHT="51" WIDTH="106" />
+            <String ID="Word_486" CONTENT="Kopf" HPOS="257" VPOS="249" HEIGHT="65" WIDTH="156" />
+            <String ID="Word_487" CONTENT="darüber" HPOS="455" VPOS="251" HEIGHT="49" WIDTH="240" />
+            <String ID="Word_488" CONTENT="zerbrochen," HPOS="734" VPOS="250" HEIGHT="60" WIDTH="348" />
+            <String ID="Word_489" CONTENT="wo" HPOS="1123" VPOS="269" HEIGHT="30" WIDTH="80" />
+            <String ID="Word_490" CONTENT="wohl" HPOS="1247" VPOS="249" HEIGHT="49" WIDTH="144" />
+            <String ID="Word_491" CONTENT="das" HPOS="1434" VPOS="249" HEIGHT="49" WIDTH="93" />
+            <String ID="Word_492" CONTENT="Erbgut" HPOS="1568" VPOS="248" HEIGHT="63" WIDTH="211" />
+            <String ID="Word_493" CONTENT="stecken" HPOS="1821" VPOS="246" HEIGHT="50" WIDTH="218" />
+            <String ID="Word_494" CONTENT="möge," HPOS="2077" VPOS="249" HEIGHT="59" WIDTH="177" />
+          </TextLine>
+          <TextLine ID="TextLine_73" HPOS="113" VPOS="315" HEIGHT="64" WIDTH="2142">
+            <String ID="Word_495" CONTENT="das" HPOS="113" VPOS="322" HEIGHT="51" WIDTH="93" />
+            <String ID="Word_496" CONTENT="diese" HPOS="253" VPOS="323" HEIGHT="49" WIDTH="146" />
+            <String ID="Word_497" CONTENT="Ähnlichkeit" HPOS="446" VPOS="316" HEIGHT="56" WIDTH="350" />
+            <String ID="Word_498" CONTENT="von" HPOS="840" VPOS="343" HEIGHT="29" WIDTH="107" />
+            <String ID="Word_499" CONTENT="Großeltern" HPOS="993" VPOS="322" HEIGHT="50" WIDTH="335" />
+            <String ID="Word_500" CONTENT="zu" HPOS="1372" VPOS="342" HEIGHT="28" WIDTH="66" />
+            <String ID="Word_501" CONTENT="Eltern," HPOS="1483" VPOS="321" HEIGHT="58" WIDTH="209" />
+            <String ID="Word_502" CONTENT="zu" HPOS="1737" VPOS="339" HEIGHT="29" WIDTH="66" />
+            <String ID="Word_503" CONTENT="Kindern" HPOS="1846" VPOS="317" HEIGHT="51" WIDTH="253" />
+            <String ID="Word_504" CONTENT="und" HPOS="2142" VPOS="315" HEIGHT="50" WIDTH="113" />
+          </TextLine>
+          <TextLine ID="TextLine_74" HPOS="112" VPOS="389" HEIGHT="70" WIDTH="2143">
+            <String ID="Word_505" CONTENT="Kindeskindern" HPOS="112" VPOS="395" HEIGHT="50" WIDTH="454" />
+            <String ID="Word_506" CONTENT="bewirkt," HPOS="590" VPOS="395" HEIGHT="64" WIDTH="253" />
+            <String ID="Word_507" CONTENT="und" HPOS="868" VPOS="395" HEIGHT="49" WIDTH="113" />
+            <String ID="Word_508" CONTENT="sie" HPOS="1009" VPOS="397" HEIGHT="47" WIDTH="75" />
+            <String ID="Word_509" CONTENT="dachten" HPOS="1112" VPOS="394" HEIGHT="49" WIDTH="230" />
+            <String ID="Word_510" CONTENT="auch" HPOS="1370" VPOS="394" HEIGHT="49" WIDTH="130" />
+            <String ID="Word_511" CONTENT="schon" HPOS="1527" VPOS="393" HEIGHT="49" WIDTH="162" />
+            <String ID="Word_512" CONTENT="darüber" HPOS="1716" VPOS="390" HEIGHT="52" WIDTH="240" />
+            <String ID="Word_513" CONTENT="nach," HPOS="1980" VPOS="390" HEIGHT="59" WIDTH="152" />
+            <String ID="Word_514" CONTENT="auf" HPOS="2161" VPOS="389" HEIGHT="49" WIDTH="94" />
+          </TextLine>
+          <TextLine ID="TextLine_75" HPOS="112" VPOS="461" HEIGHT="68" WIDTH="2143">
+            <String ID="Word_515" CONTENT="welche" HPOS="112" VPOS="466" HEIGHT="51" WIDTH="196" />
+            <String ID="Word_516" CONTENT="Weise" HPOS="353" VPOS="467" HEIGHT="50" WIDTH="178" />
+            <String ID="Word_517" CONTENT="diese" HPOS="577" VPOS="467" HEIGHT="50" WIDTH="147" />
+            <String ID="Word_518" CONTENT="Ähnlichkeit" HPOS="768" VPOS="461" HEIGHT="55" WIDTH="351" />
+            <String ID="Word_519" CONTENT="hervorgebracht" HPOS="1162" VPOS="464" HEIGHT="65" WIDTH="466" />
+            <String ID="Word_520" CONTENT="werde;" HPOS="1670" VPOS="463" HEIGHT="59" WIDTH="207" />
+            <String ID="Word_521" CONTENT="oft" HPOS="1922" VPOS="463" HEIGHT="49" WIDTH="84" />
+            <String ID="Word_522" CONTENT="scheint" HPOS="2050" VPOS="461" HEIGHT="50" WIDTH="205" />
+          </TextLine>
+          <TextLine ID="TextLine_76" HPOS="114" VPOS="534" HEIGHT="69" WIDTH="2140">
+            <String ID="Word_523" CONTENT="das" HPOS="114" VPOS="540" HEIGHT="50" WIDTH="92" />
+            <String ID="Word_524" CONTENT="Erbgut" HPOS="251" VPOS="540" HEIGHT="63" WIDTH="211" />
+            <String ID="Word_525" CONTENT="nämlich" HPOS="506" VPOS="540" HEIGHT="49" WIDTH="230" />
+            <String ID="Word_526" CONTENT="in" HPOS="781" VPOS="542" HEIGHT="46" WIDTH="55" />
+            <String ID="Word_527" CONTENT="geradezu" HPOS="883" VPOS="539" HEIGHT="64" WIDTH="270" />
+            <String ID="Word_528" CONTENT="wunderbarer" HPOS="1198" VPOS="537" HEIGHT="51" WIDTH="396" />
+            <String ID="Word_529" CONTENT="Weise" HPOS="1640" VPOS="536" HEIGHT="50" WIDTH="179" />
+            <String ID="Word_530" CONTENT="ganze" HPOS="1867" VPOS="554" HEIGHT="43" WIDTH="167" />
+            <String ID="Word_531" CONTENT="Gene¬" HPOS="2082" VPOS="534" HEIGHT="50" WIDTH="172" />
+          </TextLine>
+          <TextLine ID="TextLine_77" HPOS="114" VPOS="606" HEIGHT="69" WIDTH="2142">
+            <String ID="Word_532" CONTENT="rationen" HPOS="114" VPOS="615" HEIGHT="47" WIDTH="252" />
+            <String ID="Word_533" CONTENT="zu" HPOS="396" VPOS="632" HEIGHT="29" WIDTH="66" />
+            <String ID="Word_534" CONTENT="überspringen," HPOS="493" VPOS="612" HEIGHT="63" WIDTH="418" />
+            <String ID="Word_535" CONTENT="dann" HPOS="944" VPOS="612" HEIGHT="49" WIDTH="143" />
+            <String ID="Word_536" CONTENT="aber" HPOS="1121" VPOS="612" HEIGHT="49" WIDTH="129" />
+            <String ID="Word_537" CONTENT="läßt" HPOS="1281" VPOS="612" HEIGHT="48" WIDTH="115" />
+            <String ID="Word_538" CONTENT="es" HPOS="1430" VPOS="630" HEIGHT="30" WIDTH="53" />
+            <String ID="Word_539" CONTENT="auf" HPOS="1517" VPOS="611" HEIGHT="48" WIDTH="94" />
+            <String ID="Word_540" CONTENT="einmal" HPOS="1642" VPOS="607" HEIGHT="51" WIDTH="200" />
+            <String ID="Word_541" CONTENT="den" HPOS="1875" VPOS="607" HEIGHT="50" WIDTH="103" />
+            <String ID="Word_542" CONTENT="Urenkel" HPOS="2009" VPOS="606" HEIGHT="51" WIDTH="247" />
+          </TextLine>
+          <TextLine ID="TextLine_78" HPOS="114" VPOS="680" HEIGHT="68" WIDTH="2141">
+            <String ID="Word_543" CONTENT="aufs" HPOS="114" VPOS="686" HEIGHT="49" WIDTH="120" />
+            <String ID="Word_544" CONTENT="verblüffendste" HPOS="282" VPOS="684" HEIGHT="51" WIDTH="436" />
+            <String ID="Word_545" CONTENT="dem" HPOS="768" VPOS="685" HEIGHT="49" WIDTH="122" />
+            <String ID="Word_546" CONTENT="Urahn" HPOS="937" VPOS="684" HEIGHT="50" WIDTH="191" />
+            <String ID="Word_547" CONTENT="gleichen." HPOS="1176" VPOS="682" HEIGHT="66" WIDTH="254" />
+            <String ID="Word_548" CONTENT="Die" HPOS="1480" VPOS="683" HEIGHT="49" WIDTH="102" />
+            <String ID="Word_549" CONTENT="Bildergalerien" HPOS="1631" VPOS="681" HEIGHT="62" WIDTH="436" />
+            <String ID="Word_550" CONTENT="alter" HPOS="2117" VPOS="680" HEIGHT="49" WIDTH="138" />
+          </TextLine>
+          <TextLine ID="TextLine_79" HPOS="115" VPOS="751" HEIGHT="69" WIDTH="2140">
+            <String ID="Word_551" CONTENT="F'amilien" HPOS="115" VPOS="756" HEIGHT="50" WIDTH="262" />
+            <String ID="Word_552" CONTENT="bieten" HPOS="407" VPOS="757" HEIGHT="50" WIDTH="186" />
+            <String ID="Word_553" CONTENT="viele" HPOS="624" VPOS="757" HEIGHT="50" WIDTH="140" />
+            <String ID="Word_554" CONTENT="Beispiele" HPOS="795" VPOS="757" HEIGHT="63" WIDTH="272" />
+            <String ID="Word_555" CONTENT="für" HPOS="1099" VPOS="757" HEIGHT="49" WIDTH="92" />
+            <String ID="Word_556" CONTENT="diese" HPOS="1224" VPOS="757" HEIGHT="49" WIDTH="146" />
+            <String ID="Word_557" CONTENT="Sprunghaftigkeit" HPOS="1403" VPOS="752" HEIGHT="66" WIDTH="519" />
+            <String ID="Word_558" CONTENT="der" HPOS="1956" VPOS="753" HEIGHT="49" WIDTH="95" />
+            <String ID="Word_559" CONTENT="Fami¬" HPOS="2081" VPOS="751" HEIGHT="50" WIDTH="174" />
+          </TextLine>
+          <TextLine ID="TextLine_80" HPOS="114" VPOS="829" HEIGHT="50" WIDTH="463">
+            <String ID="Word_560" CONTENT="lienähnlichkeit." HPOS="114" VPOS="829" HEIGHT="50" WIDTH="463" />
+          </TextLine>
+          <TextLine ID="TextLine_81" HPOS="184" VPOS="901" HEIGHT="64" WIDTH="2074">
+            <String ID="Word_561" CONTENT="Die" HPOS="184" VPOS="902" HEIGHT="49" WIDTH="102" />
+            <String ID="Word_562" CONTENT="Suche" HPOS="325" VPOS="902" HEIGHT="50" WIDTH="168" />
+            <String ID="Word_563" CONTENT="nach" HPOS="530" VPOS="903" HEIGHT="48" WIDTH="132" />
+            <String ID="Word_564" CONTENT="dem" HPOS="702" VPOS="902" HEIGHT="50" WIDTH="122" />
+            <String ID="Word_565" CONTENT="Erbgut" HPOS="860" VPOS="902" HEIGHT="63" WIDTH="211" />
+            <String ID="Word_566" CONTENT="wurde" HPOS="1106" VPOS="902" HEIGHT="50" WIDTH="188" />
+            <String ID="Word_567" CONTENT="nicht" HPOS="1332" VPOS="902" HEIGHT="49" WIDTH="145" />
+            <String ID="Word_568" CONTENT="einfacher," HPOS="1516" VPOS="902" HEIGHT="59" WIDTH="295" />
+            <String ID="Word_569" CONTENT="als" HPOS="1851" VPOS="902" HEIGHT="50" WIDTH="75" />
+            <String ID="Word_570" CONTENT="vor" HPOS="1964" VPOS="923" HEIGHT="29" WIDTH="100" />
+            <String ID="Word_571" CONTENT="mehr" HPOS="2102" VPOS="901" HEIGHT="50" WIDTH="156" />
+          </TextLine>
+          <TextLine ID="TextLine_82" HPOS="115" VPOS="973" HEIGHT="66" WIDTH="2142">
+            <String ID="Word_572" CONTENT="als" HPOS="115" VPOS="974" HEIGHT="50" WIDTH="74" />
+            <String ID="Word_573" CONTENT="hundert" HPOS="237" VPOS="973" HEIGHT="50" WIDTH="240" />
+            <String ID="Word_574" CONTENT="Jahren" HPOS="525" VPOS="974" HEIGHT="54" WIDTH="204" />
+            <String ID="Word_575" CONTENT="die" HPOS="779" VPOS="975" HEIGHT="49" WIDTH="84" />
+            <String ID="Word_576" CONTENT="Forschung" HPOS="910" VPOS="974" HEIGHT="65" WIDTH="313" />
+            <String ID="Word_577" CONTENT="die" HPOS="1272" VPOS="975" HEIGHT="49" WIDTH="84" />
+            <String ID="Word_578" CONTENT="erstaunliche" HPOS="1406" VPOS="975" HEIGHT="50" WIDTH="363" />
+            <String ID="Word_579" CONTENT="Tatsache" HPOS="1817" VPOS="974" HEIGHT="51" WIDTH="261" />
+            <String ID="Word_580" CONTENT="fest¬" HPOS="2125" VPOS="976" HEIGHT="48" WIDTH="132" />
+          </TextLine>
+          <TextLine ID="TextLine_83" HPOS="115" VPOS="1045" HEIGHT="66" WIDTH="2143">
+            <String ID="Word_581" CONTENT="stellte" HPOS="115" VPOS="1046" HEIGHT="50" WIDTH="182" />
+            <String ID="Word_582" CONTENT="und" HPOS="345" VPOS="1048" HEIGHT="48" WIDTH="113" />
+            <String ID="Word_583" CONTENT="immer" HPOS="503" VPOS="1049" HEIGHT="47" WIDTH="194" />
+            <String ID="Word_584" CONTENT="wieder" HPOS="745" VPOS="1047" HEIGHT="50" WIDTH="204" />
+            <String ID="Word_585" CONTENT="bestätigte," HPOS="996" VPOS="1047" HEIGHT="63" WIDTH="317" />
+            <String ID="Word_586" CONTENT="daß" HPOS="1363" VPOS="1048" HEIGHT="49" WIDTH="103" />
+            <String ID="Word_587" CONTENT="genau" HPOS="1518" VPOS="1068" HEIGHT="43" WIDTH="174" />
+            <String ID="Word_588" CONTENT="wie" HPOS="1740" VPOS="1050" HEIGHT="47" WIDTH="101" />
+            <String ID="Word_589" CONTENT="beim" HPOS="1889" VPOS="1047" HEIGHT="50" WIDTH="147" />
+            <String ID="Word_590" CONTENT="Vogel" HPOS="2083" VPOS="1045" HEIGHT="64" WIDTH="175" />
+          </TextLine>
+          <TextLine ID="TextLine_84" HPOS="111" VPOS="1118" HEIGHT="65" WIDTH="2147">
+            <String ID="Word_591" CONTENT="j" HPOS="111" VPOS="1121" HEIGHT="59" WIDTH="18" />
+            <String ID="Word_592" CONTENT="e" HPOS="156" VPOS="1139" HEIGHT="29" WIDTH="26" />
+            <String ID="Word_593" CONTENT="id" HPOS="201" VPOS="1118" HEIGHT="50" WIDTH="39" />
+            <String ID="Word_594" CONTENT="e" HPOS="265" VPOS="1139" HEIGHT="29" WIDTH="26" />
+            <String ID="Word_595" CONTENT="s" HPOS="315" VPOS="1138" HEIGHT="30" WIDTH="20" />
+            <String ID="Word_596" CONTENT="Leben," HPOS="374" VPOS="1119" HEIGHT="61" WIDTH="202" />
+            <String ID="Word_597" CONTENT="jedes" HPOS="616" VPOS="1120" HEIGHT="61" WIDTH="153" />
+            <String ID="Word_598" CONTENT="Lebewesen" HPOS="810" VPOS="1119" HEIGHT="50" WIDTH="327" />
+            <String ID="Word_599" CONTENT="überhaupt" HPOS="1178" VPOS="1120" HEIGHT="63" WIDTH="316" />
+            <String ID="Word_600" CONTENT="mit" HPOS="1535" VPOS="1123" HEIGHT="46" WIDTH="101" />
+            <String ID="Word_601" CONTENT="einem" HPOS="1678" VPOS="1122" HEIGHT="47" WIDTH="179" />
+            <String ID="Word_602" CONTENT="Ei" HPOS="1897" VPOS="1119" HEIGHT="51" WIDTH="64" />
+            <String ID="Word_603" CONTENT="beginne." HPOS="2003" VPOS="1120" HEIGHT="63" WIDTH="255" />
+          </TextLine>
+          <TextLine ID="TextLine_85" HPOS="116" VPOS="1191" HEIGHT="64" WIDTH="2141">
+            <String ID="Word_604" CONTENT="Freilich:" HPOS="116" VPOS="1191" HEIGHT="50" WIDTH="248" />
+            <String ID="Word_605" CONTENT="Fliege" HPOS="414" VPOS="1191" HEIGHT="64" WIDTH="185" />
+            <String ID="Word_606" CONTENT="und" HPOS="647" VPOS="1193" HEIGHT="48" WIDTH="113" />
+            <String ID="Word_607" CONTENT="Spinne," HPOS="808" VPOS="1193" HEIGHT="61" WIDTH="220" />
+            <String ID="Word_608" CONTENT="Krebs" HPOS="1076" VPOS="1192" HEIGHT="51" WIDTH="179" />
+            <String ID="Word_609" CONTENT="und" HPOS="1304" VPOS="1193" HEIGHT="49" WIDTH="113" />
+            <String ID="Word_610" CONTENT="Qualle" HPOS="1464" VPOS="1192" HEIGHT="63" WIDTH="194" />
+            <String ID="Word_611" CONTENT="scheinen" HPOS="1709" VPOS="1192" HEIGHT="50" WIDTH="249" />
+            <String ID="Word_612" CONTENT="nicht" HPOS="2005" VPOS="1193" HEIGHT="48" WIDTH="146" />
+            <String ID="Word_613" CONTENT="so" HPOS="2200" VPOS="1211" HEIGHT="30" WIDTH="57" />
+          </TextLine>
+          <TextLine ID="TextLine_86" HPOS="116" VPOS="1264" HEIGHT="64" WIDTH="2142">
+            <String ID="Word_614" CONTENT="große" HPOS="116" VPOS="1265" HEIGHT="62" WIDTH="167" />
+            <String ID="Word_615" CONTENT="Eier" HPOS="323" VPOS="1265" HEIGHT="49" WIDTH="128" />
+            <String ID="Word_616" CONTENT="zu" HPOS="488" VPOS="1285" HEIGHT="29" WIDTH="65" />
+            <String ID="Word_617" CONTENT="haben" HPOS="593" VPOS="1264" HEIGHT="50" WIDTH="177" />
+            <String ID="Word_618" CONTENT="wie" HPOS="807" VPOS="1268" HEIGHT="47" WIDTH="101" />
+            <String ID="Word_619" CONTENT="Huhn" HPOS="947" VPOS="1265" HEIGHT="49" WIDTH="167" />
+            <String ID="Word_620" CONTENT="und" HPOS="1152" VPOS="1266" HEIGHT="49" WIDTH="113" />
+            <String ID="Word_621" CONTENT="Taube." HPOS="1304" VPOS="1265" HEIGHT="49" WIDTH="202" />
+            <String ID="Word_622" CONTENT="Aber" HPOS="1548" VPOS="1265" HEIGHT="50" WIDTH="149" />
+            <String ID="Word_623" CONTENT="beim" HPOS="1735" VPOS="1265" HEIGHT="50" WIDTH="147" />
+            <String ID="Word_624" CONTENT="gefiederten" HPOS="1923" VPOS="1265" HEIGHT="63" WIDTH="335" />
+          </TextLine>
+          <TextLine ID="TextLine_87" HPOS="115" VPOS="1336" HEIGHT="52" WIDTH="2141">
+            <String ID="Word_625" CONTENT="Volk" HPOS="115" VPOS="1336" HEIGHT="50" WIDTH="145" />
+            <String ID="Word_626" CONTENT="täuscht" HPOS="300" VPOS="1337" HEIGHT="49" WIDTH="212" />
+            <String ID="Word_627" CONTENT="man" HPOS="551" VPOS="1357" HEIGHT="29" WIDTH="126" />
+            <String ID="Word_628" CONTENT="sich" HPOS="718" VPOS="1337" HEIGHT="50" WIDTH="106" />
+            <String ID="Word_629" CONTENT="über" HPOS="864" VPOS="1337" HEIGHT="49" WIDTH="137" />
+            <String ID="Word_630" CONTENT="die" HPOS="1045" VPOS="1338" HEIGHT="49" WIDTH="84" />
+            <String ID="Word_631" CONTENT="wahre" HPOS="1170" VPOS="1338" HEIGHT="49" WIDTH="184" />
+            <String ID="Word_632" CONTENT="Größe" HPOS="1397" VPOS="1338" HEIGHT="49" WIDTH="185" />
+            <String ID="Word_633" CONTENT="des" HPOS="1626" VPOS="1338" HEIGHT="50" WIDTH="91" />
+            <String ID="Word_634" CONTENT="wirklichen" HPOS="1759" VPOS="1337" HEIGHT="49" WIDTH="316" />
+            <String ID="Word_635" CONTENT="Eies." HPOS="2117" VPOS="1337" HEIGHT="49" WIDTH="139" />
+          </TextLine>
+          <TextLine ID="TextLine_88" HPOS="115" VPOS="1408" HEIGHT="65" WIDTH="2144">
+            <String ID="Word_636" CONTENT="Das," HPOS="115" VPOS="1409" HEIGHT="60" WIDTH="127" />
+            <String ID="Word_637" CONTENT="was" HPOS="279" VPOS="1429" HEIGHT="31" WIDTH="107" />
+            <String ID="Word_638" CONTENT="zum" HPOS="425" VPOS="1430" HEIGHT="29" WIDTH="123" />
+            <String ID="Word_639" CONTENT="Beispiel" HPOS="585" VPOS="1408" HEIGHT="64" WIDTH="240" />
+            <String ID="Word_640" CONTENT="dem" HPOS="864" VPOS="1410" HEIGHT="49" WIDTH="123" />
+            <String ID="Word_641" CONTENT="späteren" HPOS="1025" VPOS="1414" HEIGHT="59" WIDTH="256" />
+            <String ID="Word_642" CONTENT="Kücken" HPOS="1319" VPOS="1410" HEIGHT="49" WIDTH="223" />
+            <String ID="Word_643" CONTENT="das" HPOS="1582" VPOS="1410" HEIGHT="51" WIDTH="92" />
+            <String ID="Word_644" CONTENT="Leben" HPOS="1713" VPOS="1409" HEIGHT="50" WIDTH="184" />
+            <String ID="Word_645" CONTENT="vermittelt," HPOS="1934" VPOS="1409" HEIGHT="58" WIDTH="325" />
+          </TextLine>
+          <TextLine ID="TextLine_89" HPOS="115" VPOS="1482" HEIGHT="63" WIDTH="2144">
+            <String ID="Word_646" CONTENT="ist" HPOS="115" VPOS="1484" HEIGHT="48" WIDTH="69" />
+            <String ID="Word_647" CONTENT="beim" HPOS="219" VPOS="1482" HEIGHT="50" WIDTH="146" />
+            <String ID="Word_648" CONTENT="Hühnerei" HPOS="399" VPOS="1482" HEIGHT="50" WIDTH="286" />
+            <String ID="Word_649" CONTENT="nur" HPOS="719" VPOS="1502" HEIGHT="29" WIDTH="104" />
+            <String ID="Word_650" CONTENT="ein" HPOS="861" VPOS="1485" HEIGHT="46" WIDTH="87" />
+            <String ID="Word_651" CONTENT="winziges" HPOS="982" VPOS="1485" HEIGHT="60" WIDTH="255" />
+            <String ID="Word_652" CONTENT="Keimbläschen" HPOS="1273" VPOS="1482" HEIGHT="50" WIDTH="418" />
+            <String ID="Word_653" CONTENT="inmitten" HPOS="1727" VPOS="1484" HEIGHT="48" WIDTH="256" />
+            <String ID="Word_654" CONTENT="der" HPOS="2021" VPOS="1482" HEIGHT="50" WIDTH="96" />
+            <String ID="Word_655" CONTENT="von" HPOS="2152" VPOS="1501" HEIGHT="30" WIDTH="107" />
+          </TextLine>
+          <TextLine ID="TextLine_90" HPOS="117" VPOS="1554" HEIGHT="65" WIDTH="2142">
+            <String ID="Word_656" CONTENT="der" HPOS="117" VPOS="1554" HEIGHT="51" WIDTH="97" />
+            <String ID="Word_657" CONTENT="Schale" HPOS="248" VPOS="1555" HEIGHT="50" WIDTH="184" />
+            <String ID="Word_658" CONTENT="umhüllten" HPOS="466" VPOS="1555" HEIGHT="50" WIDTH="308" />
+            <String ID="Word_659" CONTENT="Eimasse." HPOS="808" VPOS="1555" HEIGHT="50" WIDTH="259" />
+            <String ID="Word_660" CONTENT="Eigelb" HPOS="1102" VPOS="1554" HEIGHT="65" WIDTH="191" />
+            <String ID="Word_661" CONTENT="und" HPOS="1328" VPOS="1556" HEIGHT="48" WIDTH="113" />
+            <String ID="Word_662" CONTENT="Eiweiß" HPOS="1474" VPOS="1555" HEIGHT="50" WIDTH="206" />
+            <String ID="Word_663" CONTENT="selber" HPOS="1717" VPOS="1555" HEIGHT="50" WIDTH="181" />
+            <String ID="Word_664" CONTENT="sind" HPOS="1934" VPOS="1555" HEIGHT="50" WIDTH="121" />
+            <String ID="Word_665" CONTENT="nichts" HPOS="2087" VPOS="1554" HEIGHT="50" WIDTH="172" />
+          </TextLine>
+          <TextLine ID="TextLine_91" HPOS="118" VPOS="1627" HEIGHT="64" WIDTH="2141">
+            <String ID="Word_666" CONTENT="anderes" HPOS="118" VPOS="1628" HEIGHT="50" WIDTH="228" />
+            <String ID="Word_667" CONTENT="als" HPOS="398" VPOS="1627" HEIGHT="51" WIDTH="75" />
+            <String ID="Word_668" CONTENT="sorgfältig" HPOS="523" VPOS="1628" HEIGHT="63" WIDTH="289" />
+            <String ID="Word_669" CONTENT="für" HPOS="860" VPOS="1629" HEIGHT="49" WIDTH="94" />
+            <String ID="Word_670" CONTENT="den" HPOS="1004" VPOS="1627" HEIGHT="50" WIDTH="102" />
+            <String ID="Word_671" CONTENT="heranwachsenden" HPOS="1154" VPOS="1628" HEIGHT="50" WIDTH="530" />
+            <String ID="Word_672" CONTENT="Keimling" HPOS="1733" VPOS="1627" HEIGHT="64" WIDTH="278" />
+            <String ID="Word_673" CONTENT="bereit¬" HPOS="2059" VPOS="1627" HEIGHT="50" WIDTH="200" />
+          </TextLine>
+          <TextLine ID="TextLine_92" HPOS="118" VPOS="1699" HEIGHT="65" WIDTH="2143">
+            <String ID="Word_674" CONTENT="gestellte" HPOS="118" VPOS="1701" HEIGHT="63" WIDTH="250" />
+            <String ID="Word_675" CONTENT="Nahrung," HPOS="400" VPOS="1700" HEIGHT="64" WIDTH="283" />
+            <String ID="Word_676" CONTENT="auf" HPOS="716" VPOS="1702" HEIGHT="48" WIDTH="94" />
+            <String ID="Word_677" CONTENT="daß" HPOS="842" VPOS="1701" HEIGHT="49" WIDTH="103" />
+            <String ID="Word_678" CONTENT="er" HPOS="979" VPOS="1721" HEIGHT="29" WIDTH="57" />
+            <String ID="Word_679" CONTENT="in" HPOS="1066" VPOS="1703" HEIGHT="46" WIDTH="55" />
+            <String ID="Word_680" CONTENT="seiner" HPOS="1153" VPOS="1703" HEIGHT="48" WIDTH="179" />
+            <String ID="Word_681" CONTENT="Kalkschale" HPOS="1362" VPOS="1700" HEIGHT="50" WIDTH="327" />
+            <String ID="Word_682" CONTENT="nicht" HPOS="1720" VPOS="1699" HEIGHT="51" WIDTH="145" />
+            <String ID="Word_683" CONTENT="verhungere," HPOS="1896" VPOS="1700" HEIGHT="63" WIDTH="365" />
+          </TextLine>
+          <TextLine ID="TextLine_93" HPOS="116" VPOS="1773" HEIGHT="64" WIDTH="2146">
+            <String ID="Word_684" CONTENT="bis" HPOS="116" VPOS="1773" HEIGHT="51" WIDTH="81" />
+            <String ID="Word_685" CONTENT="er" HPOS="245" VPOS="1794" HEIGHT="28" WIDTH="58" />
+            <String ID="Word_686" CONTENT="endlich" HPOS="349" VPOS="1773" HEIGHT="50" WIDTH="209" />
+            <String ID="Word_687" CONTENT="ans" HPOS="607" VPOS="1793" HEIGHT="30" WIDTH="93" />
+            <String ID="Word_688" CONTENT="Tageslicht" HPOS="747" VPOS="1773" HEIGHT="64" WIDTH="304" />
+            <String ID="Word_689" CONTENT="schlüpfen" HPOS="1098" VPOS="1773" HEIGHT="63" WIDTH="282" />
+            <String ID="Word_690" CONTENT="und" HPOS="1425" VPOS="1773" HEIGHT="49" WIDTH="113" />
+            <String ID="Word_691" CONTENT="selbst" HPOS="1585" VPOS="1773" HEIGHT="50" WIDTH="168" />
+            <String ID="Word_692" CONTENT="seine" HPOS="1801" VPOS="1775" HEIGHT="48" WIDTH="148" />
+            <String ID="Word_693" CONTENT="Nahrung" HPOS="1996" VPOS="1773" HEIGHT="62" WIDTH="266" />
+          </TextLine>
+          <TextLine ID="TextLine_94" HPOS="117" VPOS="1845" HEIGHT="64" WIDTH="2145">
+            <String ID="Word_694" CONTENT="suchen" HPOS="117" VPOS="1847" HEIGHT="48" WIDTH="195" />
+            <String ID="Word_695" CONTENT="kann." HPOS="343" VPOS="1846" HEIGHT="49" WIDTH="165" />
+            <String ID="Word_696" CONTENT="Die" HPOS="539" VPOS="1847" HEIGHT="49" WIDTH="102" />
+            <String ID="Word_697" CONTENT="Eier" HPOS="672" VPOS="1846" HEIGHT="49" WIDTH="129" />
+            <String ID="Word_698" CONTENT="aller" HPOS="834" VPOS="1847" HEIGHT="48" WIDTH="135" />
+            <String ID="Word_699" CONTENT="geflügelten" HPOS="999" VPOS="1845" HEIGHT="64" WIDTH="333" />
+            <String ID="Word_700" CONTENT="und" HPOS="1364" VPOS="1846" HEIGHT="49" WIDTH="113" />
+            <String ID="Word_701" CONTENT="geschuppten" HPOS="1511" VPOS="1846" HEIGHT="63" WIDTH="371" />
+            <String ID="Word_702" CONTENT="Tiere," HPOS="1913" VPOS="1846" HEIGHT="60" WIDTH="179" />
+            <String ID="Word_703" CONTENT="aller" HPOS="2125" VPOS="1845" HEIGHT="50" WIDTH="137" />
+          </TextLine>
+          <TextLine ID="TextLine_95" HPOS="117" VPOS="1917" HEIGHT="63" WIDTH="2145">
+            <String ID="Word_704" CONTENT="Insekten" HPOS="117" VPOS="1918" HEIGHT="49" WIDTH="260" />
+            <String ID="Word_705" CONTENT="und" HPOS="408" VPOS="1919" HEIGHT="49" WIDTH="114" />
+            <String ID="Word_706" CONTENT="Krebse," HPOS="551" VPOS="1918" HEIGHT="59" WIDTH="233" />
+            <String ID="Word_707" CONTENT="und" HPOS="816" VPOS="1918" HEIGHT="49" WIDTH="113" />
+            <String ID="Word_708" CONTENT="all" HPOS="963" VPOS="1917" HEIGHT="50" WIDTH="69" />
+            <String ID="Word_709" CONTENT="der" HPOS="1065" VPOS="1918" HEIGHT="49" WIDTH="97" />
+            <String ID="Word_710" CONTENT="vielen" HPOS="1193" VPOS="1918" HEIGHT="49" WIDTH="178" />
+            <String ID="Word_711" CONTENT="noch" HPOS="1404" VPOS="1918" HEIGHT="49" WIDTH="134" />
+            <String ID="Word_712" CONTENT="niedrigeren" HPOS="1570" VPOS="1918" HEIGHT="62" WIDTH="350" />
+            <String ID="Word_713" CONTENT="Tierwesen" HPOS="1952" VPOS="1919" HEIGHT="48" WIDTH="310" />
+          </TextLine>
+          <TextLine ID="TextLine_96" HPOS="119" VPOS="1990" HEIGHT="64" WIDTH="2143">
+            <String ID="Word_714" CONTENT="sind" HPOS="119" VPOS="1992" HEIGHT="49" WIDTH="120" />
+            <String ID="Word_715" CONTENT="nichts" HPOS="277" VPOS="1991" HEIGHT="51" WIDTH="172" />
+            <String ID="Word_716" CONTENT="weiter" HPOS="489" VPOS="1994" HEIGHT="46" WIDTH="192" />
+            <String ID="Word_717" CONTENT="als" HPOS="723" VPOS="1992" HEIGHT="49" WIDTH="74" />
+            <String ID="Word_718" CONTENT="eine" HPOS="840" VPOS="1993" HEIGHT="48" WIDTH="120" />
+            <String ID="Word_719" CONTENT="einzige" HPOS="1002" VPOS="1993" HEIGHT="61" WIDTH="208" />
+            <String ID="Word_720" CONTENT="Zelle," HPOS="1252" VPOS="1991" HEIGHT="59" WIDTH="165" />
+            <String ID="Word_721" CONTENT="wie" HPOS="1456" VPOS="1993" HEIGHT="47" WIDTH="101" />
+            <String ID="Word_722" CONTENT="die" HPOS="1601" VPOS="1991" HEIGHT="49" WIDTH="85" />
+            <String ID="Word_723" CONTENT="Wissenschaft" HPOS="1727" VPOS="1990" HEIGHT="50" WIDTH="391" />
+            <String ID="Word_724" CONTENT="den" HPOS="2161" VPOS="1990" HEIGHT="49" WIDTH="101" />
+          </TextLine>
+          <TextLine ID="TextLine_97" HPOS="119" VPOS="2063" HEIGHT="63" WIDTH="2143">
+            <String ID="Word_725" CONTENT="einfachsten" HPOS="119" VPOS="2064" HEIGHT="50" WIDTH="336" />
+            <String ID="Word_726" CONTENT="Baustein" HPOS="484" VPOS="2064" HEIGHT="50" WIDTH="263" />
+            <String ID="Word_727" CONTENT="alles" HPOS="779" VPOS="2064" HEIGHT="49" WIDTH="129" />
+            <String ID="Word_728" CONTENT="Lebendigen" HPOS="937" VPOS="2063" HEIGHT="63" WIDTH="351" />
+            <String ID="Word_729" CONTENT="nennt." HPOS="1316" VPOS="2076" HEIGHT="36" WIDTH="188" />
+            <String ID="Word_730" CONTENT="Nur" HPOS="1534" VPOS="2064" HEIGHT="48" WIDTH="117" />
+            <String ID="Word_731" CONTENT="unter" HPOS="1680" VPOS="2075" HEIGHT="37" WIDTH="164" />
+            <String ID="Word_732" CONTENT="dem" HPOS="1875" VPOS="2063" HEIGHT="49" WIDTH="123" />
+            <String ID="Word_733" CONTENT="Zauber¬" HPOS="2026" VPOS="2063" HEIGHT="49" WIDTH="236" />
+          </TextLine>
+          <TextLine ID="TextLine_98" HPOS="118" VPOS="2131" HEIGHT="67" WIDTH="2143">
+            <String ID="Word_734" CONTENT="glas" HPOS="118" VPOS="2136" HEIGHT="62" WIDTH="112" />
+            <String ID="Word_735" CONTENT="des" HPOS="271" VPOS="2136" HEIGHT="51" WIDTH="91" />
+            <String ID="Word_736" CONTENT="Mikroskops" HPOS="401" VPOS="2131" HEIGHT="67" WIDTH="356" />
+            <String ID="Word_737" CONTENT="erkennt" HPOS="798" VPOS="2135" HEIGHT="50" WIDTH="237" />
+            <String ID="Word_738" CONTENT="man" HPOS="1073" VPOS="2155" HEIGHT="29" WIDTH="125" />
+            <String ID="Word_739" CONTENT="das" HPOS="1240" VPOS="2136" HEIGHT="49" WIDTH="92" />
+            <String ID="Word_740" CONTENT="meist" HPOS="1372" VPOS="2137" HEIGHT="47" WIDTH="160" />
+            <String ID="Word_741" CONTENT="noch" HPOS="1570" VPOS="2136" HEIGHT="48" WIDTH="135" />
+            <String ID="Word_742" CONTENT="nicht" HPOS="1743" VPOS="2134" HEIGHT="49" WIDTH="146" />
+            <String ID="Word_743" CONTENT="stecknadel¬" HPOS="1929" VPOS="2134" HEIGHT="50" WIDTH="332" />
+          </TextLine>
+          <TextLine ID="TextLine_99" HPOS="118" VPOS="2205" HEIGHT="67" WIDTH="2145">
+            <String ID="Word_744" CONTENT="kopfgroße" HPOS="118" VPOS="2208" HEIGHT="64" WIDTH="311" />
+            <String ID="Word_745" CONTENT="Zellgebilde," HPOS="474" VPOS="2208" HEIGHT="64" WIDTH="353" />
+            <String ID="Word_746" CONTENT="ein" HPOS="873" VPOS="2211" HEIGHT="46" WIDTH="88" />
+            <String ID="Word_747" CONTENT="Klümpchen" HPOS="1004" VPOS="2208" HEIGHT="62" WIDTH="342" />
+            <String ID="Word_748" CONTENT="schleimiges-halbflüssiges" HPOS="1391" VPOS="2206" HEIGHT="65" WIDTH="743" />
+            <String ID="Word_749" CONTENT="Ei¬" HPOS="2179" VPOS="2205" HEIGHT="49" WIDTH="84" />
+          </TextLine>
+          <TextLine ID="TextLine_100" HPOS="120" VPOS="2278" HEIGHT="64" WIDTH="2145">
+            <String ID="Word_750" CONTENT="weiß," HPOS="120" VPOS="2283" HEIGHT="59" WIDTH="155" />
+            <String ID="Word_751" CONTENT="in" HPOS="315" VPOS="2287" HEIGHT="45" WIDTH="56" />
+            <String ID="Word_752" CONTENT="dessen" HPOS="415" VPOS="2283" HEIGHT="50" WIDTH="192" />
+            <String ID="Word_753" CONTENT="Innern" HPOS="649" VPOS="2282" HEIGHT="50" WIDTH="204" />
+            <String ID="Word_754" CONTENT="ein" HPOS="896" VPOS="2285" HEIGHT="46" WIDTH="87" />
+            <String ID="Word_755" CONTENT="verdichteter" HPOS="1024" VPOS="2281" HEIGHT="50" WIDTH="371" />
+            <String ID="Word_756" CONTENT="Punkt" HPOS="1437" VPOS="2280" HEIGHT="50" WIDTH="187" />
+            <String ID="Word_757" CONTENT="sichtbar" HPOS="1668" VPOS="2278" HEIGHT="52" WIDTH="236" />
+            <String ID="Word_758" CONTENT="ist" HPOS="1945" VPOS="2282" HEIGHT="47" WIDTH="71" />
+            <String ID="Word_759" CONTENT="—" HPOS="2056" VPOS="2309" HEIGHT="5" WIDTH="70" />
+            <String ID="Word_760" CONTENT="der" HPOS="2169" VPOS="2278" HEIGHT="49" WIDTH="96" />
+          </TextLine>
+          <TextLine ID="TextLine_101" HPOS="118" VPOS="2351" HEIGHT="62" WIDTH="2145">
+            <String ID="Word_761" CONTENT="Zellkern." HPOS="118" VPOS="2355" HEIGHT="51" WIDTH="273" />
+            <String ID="Word_762" CONTENT="Selbst" HPOS="426" VPOS="2355" HEIGHT="51" WIDTH="179" />
+            <String ID="Word_763" CONTENT="die" HPOS="639" VPOS="2356" HEIGHT="49" WIDTH="85" />
+            <String ID="Word_764" CONTENT="höchstentwickelten" HPOS="757" VPOS="2354" HEIGHT="50" WIDTH="574" />
+            <String ID="Word_765" CONTENT="unter" HPOS="1364" VPOS="2365" HEIGHT="37" WIDTH="164" />
+            <String ID="Word_766" CONTENT="den" HPOS="1563" VPOS="2353" HEIGHT="49" WIDTH="102" />
+            <String ID="Word_767" CONTENT="Tieren," HPOS="1698" VPOS="2353" HEIGHT="57" WIDTH="215" />
+            <String ID="Word_768" CONTENT="die" HPOS="1949" VPOS="2351" HEIGHT="50" WIDTH="85" />
+            <String ID="Word_769" CONTENT="Säuge¬" HPOS="2068" VPOS="2351" HEIGHT="62" WIDTH="195" />
+          </TextLine>
+          <TextLine ID="TextLine_102" HPOS="120" VPOS="2423" HEIGHT="64" WIDTH="2148">
+            <String ID="Word_770" CONTENT="tiere" HPOS="120" VPOS="2431" HEIGHT="48" WIDTH="139" />
+            <String ID="Word_771" CONTENT="—" HPOS="283" VPOS="2459" HEIGHT="5" WIDTH="71" />
+            <String ID="Word_772" CONTENT="Pferd" HPOS="376" VPOS="2428" HEIGHT="50" WIDTH="174" />
+            <String ID="Word_773" CONTENT="und" HPOS="574" VPOS="2428" HEIGHT="49" WIDTH="113" />
+            <String ID="Word_774" CONTENT="Löwe," HPOS="711" VPOS="2428" HEIGHT="59" WIDTH="181" />
+            <String ID="Word_775" CONTENT="Maus" HPOS="917" VPOS="2427" HEIGHT="50" WIDTH="157" />
+            <String ID="Word_776" CONTENT="und" HPOS="1100" VPOS="2426" HEIGHT="50" WIDTH="114" />
+            <String ID="Word_777" CONTENT="Elefant," HPOS="1237" VPOS="2426" HEIGHT="58" WIDTH="243" />
+            <String ID="Word_778" CONTENT="Hase" HPOS="1507" VPOS="2426" HEIGHT="49" WIDTH="145" />
+            <String ID="Word_779" CONTENT="und" HPOS="1679" VPOS="2424" HEIGHT="49" WIDTH="113" />
+            <String ID="Word_780" CONTENT="Fledermaus" HPOS="1816" VPOS="2423" HEIGHT="50" WIDTH="357" />
+            <String ID="Word_781" CONTENT="—" HPOS="2197" VPOS="2452" HEIGHT="4" WIDTH="71" />
+          </TextLine>
+          <TextLine ID="TextLine_103" HPOS="119" VPOS="2489" HEIGHT="75" WIDTH="2146">
+            <String ID="Word_782" CONTENT="beginnen" HPOS="119" VPOS="2489" HEIGHT="75" WIDTH="276" />
+            <String ID="Word_783" CONTENT="ihr" HPOS="450" VPOS="2501" HEIGHT="48" WIDTH="88" />
+            <String ID="Word_784" CONTENT="Werden" HPOS="592" VPOS="2500" HEIGHT="49" WIDTH="239" />
+            <String ID="Word_785" CONTENT="mit" HPOS="886" VPOS="2502" HEIGHT="47" WIDTH="101" />
+            <String ID="Word_786" CONTENT="einer" HPOS="1044" VPOS="2501" HEIGHT="47" WIDTH="152" />
+            <String ID="Word_787" CONTENT="so" HPOS="1252" VPOS="2518" HEIGHT="30" WIDTH="56" />
+            <String ID="Word_788" CONTENT="winzigen" HPOS="1365" VPOS="2499" HEIGHT="61" WIDTH="270" />
+            <String ID="Word_789" CONTENT="Eizelle," HPOS="1689" VPOS="2495" HEIGHT="60" WIDTH="226" />
+            <String ID="Word_790" CONTENT="und," HPOS="1967" VPOS="2495" HEIGHT="59" WIDTH="135" />
+            <String ID="Word_791" CONTENT="was" HPOS="2159" VPOS="2513" HEIGHT="30" WIDTH="106" />
+          </TextLine>
+          <TextLine ID="TextLine_104" HPOS="117" VPOS="2567" HEIGHT="68" WIDTH="2149">
+            <String ID="Word_792" CONTENT="noch" HPOS="117" VPOS="2575" HEIGHT="48" WIDTH="135" />
+            <String ID="Word_793" CONTENT="mehr" HPOS="298" VPOS="2573" HEIGHT="49" WIDTH="156" />
+            <String ID="Word_794" CONTENT="überrascht," HPOS="497" VPOS="2572" HEIGHT="60" WIDTH="337" />
+            <String ID="Word_795" CONTENT="sogar" HPOS="880" VPOS="2591" HEIGHT="44" WIDTH="158" />
+            <String ID="Word_796" CONTENT="jede" HPOS="1081" VPOS="2571" HEIGHT="62" WIDTH="125" />
+            <String ID="Word_797" CONTENT="Pflanze:" HPOS="1251" VPOS="2570" HEIGHT="49" WIDTH="243" />
+            <String ID="Word_798" CONTENT="Eine" HPOS="1541" VPOS="2569" HEIGHT="54" WIDTH="137" />
+            <String ID="Word_799" CONTENT="Eizelle" HPOS="1722" VPOS="2568" HEIGHT="50" WIDTH="208" />
+            <String ID="Word_800" CONTENT="steckt" HPOS="1976" VPOS="2567" HEIGHT="51" WIDTH="171" />
+            <String ID="Word_801" CONTENT="im" HPOS="2191" VPOS="2569" HEIGHT="46" WIDTH="75" />
+          </TextLine>
+          <TextLine ID="TextLine_105" HPOS="121" VPOS="2639" HEIGHT="69" WIDTH="2145">
+            <String ID="Word_802" CONTENT="Fruchtknoten" HPOS="121" VPOS="2644" HEIGHT="51" WIDTH="410" />
+            <String ID="Word_803" CONTENT="jeder" HPOS="570" VPOS="2645" HEIGHT="63" WIDTH="156" />
+            <String ID="Word_804" CONTENT="Blüte." HPOS="764" VPOS="2644" HEIGHT="50" WIDTH="179" />
+            <String ID="Word_805" CONTENT="Ob" HPOS="985" VPOS="2643" HEIGHT="50" WIDTH="81" />
+            <String ID="Word_806" CONTENT="Eiche" HPOS="1106" VPOS="2643" HEIGHT="50" WIDTH="161" />
+            <String ID="Word_807" CONTENT="oder" HPOS="1308" VPOS="2643" HEIGHT="49" WIDTH="134" />
+            <String ID="Word_808" CONTENT="Moos," HPOS="1480" VPOS="2641" HEIGHT="61" WIDTH="174" />
+            <String ID="Word_809" CONTENT="ob" HPOS="1695" VPOS="2641" HEIGHT="50" WIDTH="68" />
+            <String ID="Word_810" CONTENT="grüne" HPOS="1806" VPOS="2644" HEIGHT="60" WIDTH="170" />
+            <String ID="Word_811" CONTENT="Alge" HPOS="2017" VPOS="2639" HEIGHT="64" WIDTH="136" />
+            <String ID="Word_812" CONTENT="im" HPOS="2192" VPOS="2641" HEIGHT="46" WIDTH="74" />
+          </TextLine>
+          <TextLine ID="TextLine_106" HPOS="123" VPOS="2711" HEIGHT="69" WIDTH="2142">
+            <String ID="Word_813" CONTENT="Wassertümpel" HPOS="123" VPOS="2717" HEIGHT="63" WIDTH="431" />
+            <String ID="Word_814" CONTENT="oder" HPOS="590" VPOS="2718" HEIGHT="49" WIDTH="133" />
+            <String ID="Word_815" CONTENT="ragende" HPOS="758" VPOS="2717" HEIGHT="63" WIDTH="240" />
+            <String ID="Word_816" CONTENT="Tanne" HPOS="1034" VPOS="2716" HEIGHT="50" WIDTH="187" />
+            <String ID="Word_817" CONTENT="im" HPOS="1256" VPOS="2719" HEIGHT="46" WIDTH="74" />
+            <String ID="Word_818" CONTENT="Gebirge," HPOS="1366" VPOS="2714" HEIGHT="63" WIDTH="255" />
+            <String ID="Word_819" CONTENT="ob" HPOS="1658" VPOS="2713" HEIGHT="50" WIDTH="67" />
+            <String ID="Word_820" CONTENT="leuchtende" HPOS="1761" VPOS="2712" HEIGHT="50" WIDTH="325" />
+            <String ID="Word_821" CONTENT="Rose" HPOS="2123" VPOS="2711" HEIGHT="50" WIDTH="142" />
+          </TextLine>
+          <TextLine ID="TextLine_107" HPOS="120" VPOS="2784" HEIGHT="68" WIDTH="2146">
+            <String ID="Word_822" CONTENT="oder" HPOS="120" VPOS="2791" HEIGHT="50" WIDTH="133" />
+            <String ID="Word_823" CONTENT="bleicher" HPOS="282" VPOS="2791" HEIGHT="49" WIDTH="238" />
+            <String ID="Word_824" CONTENT="Schimmelpilz" HPOS="551" VPOS="2790" HEIGHT="62" WIDTH="396" />
+            <String ID="Word_825" CONTENT="—" HPOS="974" VPOS="2819" HEIGHT="4" WIDTH="72" />
+            <String ID="Word_826" CONTENT="alles" HPOS="1075" VPOS="2787" HEIGHT="52" WIDTH="129" />
+            <String ID="Word_827" CONTENT="pflanzliche" HPOS="1235" VPOS="2787" HEIGHT="64" WIDTH="317" />
+            <String ID="Word_828" CONTENT="Leben" HPOS="1581" VPOS="2785" HEIGHT="50" WIDTH="186" />
+            <String ID="Word_829" CONTENT="hebt" HPOS="1797" VPOS="2784" HEIGHT="50" WIDTH="132" />
+            <String ID="Word_830" CONTENT="genau" HPOS="1961" VPOS="2804" HEIGHT="44" WIDTH="175" />
+            <String ID="Word_831" CONTENT="wie" HPOS="2165" VPOS="2785" HEIGHT="48" WIDTH="101" />
+          </TextLine>
+          <TextLine ID="TextLine_108" HPOS="122" VPOS="2862" HEIGHT="52" WIDTH="1293">
+            <String ID="Word_832" CONTENT="alles" HPOS="122" VPOS="2864" HEIGHT="50" WIDTH="130" />
+            <String ID="Word_833" CONTENT="tierische" HPOS="283" VPOS="2863" HEIGHT="50" WIDTH="252" />
+            <String ID="Word_834" CONTENT="Leben" HPOS="566" VPOS="2863" HEIGHT="50" WIDTH="184" />
+            <String ID="Word_835" CONTENT="mit" HPOS="781" VPOS="2865" HEIGHT="47" WIDTH="99" />
+            <String ID="Word_836" CONTENT="einer" HPOS="912" VPOS="2865" HEIGHT="47" WIDTH="153" />
+            <String ID="Word_837" CONTENT="Eizelle" HPOS="1094" VPOS="2862" HEIGHT="51" WIDTH="204" />
+            <String ID="Word_838" CONTENT="an." HPOS="1333" VPOS="2882" HEIGHT="30" WIDTH="82" />
+          </TextLine>
+          <TextLine ID="TextLine_109" HPOS="190" VPOS="2939" HEIGHT="65" WIDTH="2076">
+            <String ID="Word_839" CONTENT="Mit" HPOS="190" VPOS="2940" HEIGHT="51" WIDTH="104" />
+            <String ID="Word_840" CONTENT="dieser" HPOS="324" VPOS="2941" HEIGHT="50" WIDTH="178" />
+            <String ID="Word_841" CONTENT="Erkenntnis" HPOS="531" VPOS="2940" HEIGHT="51" WIDTH="337" />
+            <String ID="Word_842" CONTENT="ist" HPOS="898" VPOS="2943" HEIGHT="47" WIDTH="70" />
+            <String ID="Word_843" CONTENT="aber" HPOS="1000" VPOS="2939" HEIGHT="51" WIDTH="131" />
+            <String ID="Word_844" CONTENT="die" HPOS="1162" VPOS="2941" HEIGHT="49" WIDTH="85" />
+            <String ID="Word_845" CONTENT="Frage" HPOS="1275" VPOS="2940" HEIGHT="64" WIDTH="174" />
+            <String ID="Word_846" CONTENT="nach" HPOS="1479" VPOS="2940" HEIGHT="50" WIDTH="132" />
+            <String ID="Word_847" CONTENT="dem" HPOS="1642" VPOS="2940" HEIGHT="50" WIDTH="123" />
+            <String ID="Word_848" CONTENT="Erbgut" HPOS="1792" VPOS="2939" HEIGHT="64" WIDTH="212" />
+            <String ID="Word_849" CONTENT="womög¬" HPOS="2032" VPOS="2944" HEIGHT="59" WIDTH="234" />
+          </TextLine>
+          <TextLine ID="TextLine_110" HPOS="120" VPOS="3012" HEIGHT="64" WIDTH="2148">
+            <String ID="Word_850" CONTENT="lich" HPOS="120" VPOS="3013" HEIGHT="51" WIDTH="99" />
+            <String ID="Word_851" CONTENT="nur" HPOS="254" VPOS="3033" HEIGHT="30" WIDTH="106" />
+            <String ID="Word_852" CONTENT="noch" HPOS="391" VPOS="3014" HEIGHT="49" WIDTH="137" />
+            <String ID="Word_853" CONTENT="verzwickter" HPOS="561" VPOS="3013" HEIGHT="50" WIDTH="354" />
+            <String ID="Word_854" CONTENT="geworden:" HPOS="952" VPOS="3013" HEIGHT="63" WIDTH="310" />
+            <String ID="Word_855" CONTENT="Kann" HPOS="1300" VPOS="3013" HEIGHT="49" WIDTH="163" />
+            <String ID="Word_856" CONTENT="man" HPOS="1497" VPOS="3033" HEIGHT="28" WIDTH="126" />
+            <String ID="Word_857" CONTENT="sich" HPOS="1660" VPOS="3013" HEIGHT="50" WIDTH="105" />
+            <String ID="Word_858" CONTENT="beim" HPOS="1799" VPOS="3012" HEIGHT="49" WIDTH="148" />
+            <String ID="Word_859" CONTENT="Hühnerei" HPOS="1981" VPOS="3013" HEIGHT="49" WIDTH="287" />
+          </TextLine>
+          <TextLine ID="TextLine_111" HPOS="120" VPOS="3085" HEIGHT="61" WIDTH="2147">
+            <String ID="Word_860" CONTENT="noch" HPOS="120" VPOS="3088" HEIGHT="49" WIDTH="133" />
+            <String ID="Word_861" CONTENT="vorstellen," HPOS="291" VPOS="3087" HEIGHT="59" WIDTH="317" />
+            <String ID="Word_862" CONTENT="daß" HPOS="646" VPOS="3086" HEIGHT="49" WIDTH="103" />
+            <String ID="Word_863" CONTENT="in" HPOS="786" VPOS="3089" HEIGHT="46" WIDTH="55" />
+            <String ID="Word_864" CONTENT="seinem" HPOS="879" VPOS="3088" HEIGHT="48" WIDTH="206" />
+            <String ID="Word_865" CONTENT="Innern" HPOS="1120" VPOS="3085" HEIGHT="49" WIDTH="204" />
+            <String ID="Word_866" CONTENT="das" HPOS="1362" VPOS="3085" HEIGHT="50" WIDTH="92" />
+            <String ID="Word_867" CONTENT="Kücken," HPOS="1491" VPOS="3085" HEIGHT="60" WIDTH="242" />
+            <String ID="Word_868" CONTENT="wenn" HPOS="1767" VPOS="3104" HEIGHT="30" WIDTH="159" />
+            <String ID="Word_869" CONTENT="auch" HPOS="1965" VPOS="3086" HEIGHT="49" WIDTH="130" />
+            <String ID="Word_870" CONTENT="noch" HPOS="2132" VPOS="3085" HEIGHT="49" WIDTH="135" />
+          </TextLine>
+        </TextBlock>
+        <TextBlock ID="TextBlock_34" HPOS="105" VPOS="165" HEIGHT="3120" WIDTH="2256">
+          <TextLine ID="TextLine_112" HPOS="1178" VPOS="3232" HEIGHT="47" WIDTH="29">
+            <String ID="Word_871" CONTENT="3" HPOS="1178" VPOS="3232" HEIGHT="47" WIDTH="29" />
+          </TextLine>
+        </TextBlock>
+      </PrintSpace>
+    </Page>
+  </Layout>
+</alto>
+

@@ -2,8 +2,8 @@ import { createInternalAwareFetchJson } from '../../src/gateway/internal-fetch-j
 
 describe('internal-aware fetch json', () => {
   test('uses internal runner for local madoc routes', async () => {
-    const networkFetcher = jest.fn();
-    const runner = jest.fn().mockResolvedValue({
+    const networkFetcher = vi.fn();
+    const runner = vi.fn().mockResolvedValue({
       status: 200,
       headers: {
         'content-type': 'application/json',
@@ -57,12 +57,12 @@ describe('internal-aware fetch json', () => {
   });
 
   test('falls back to network for non-local routes', async () => {
-    const networkFetcher = jest.fn().mockResolvedValue({
+    const networkFetcher = vi.fn().mockResolvedValue({
       error: false,
       status: 200,
       data: { from: 'network' },
     });
-    const runner = jest.fn();
+    const runner = vi.fn();
     const fetcher = createInternalAwareFetchJson({
       isEnabled: () => true,
       networkFetcher: networkFetcher as any,
@@ -84,8 +84,8 @@ describe('internal-aware fetch json', () => {
   });
 
   test('blocks internal recursion when max depth is reached', async () => {
-    const networkFetcher = jest.fn();
-    const runner = jest.fn();
+    const networkFetcher = vi.fn();
+    const runner = vi.fn();
     const fetcher = createInternalAwareFetchJson({
       isEnabled: () => true,
       maxDepth: 5,

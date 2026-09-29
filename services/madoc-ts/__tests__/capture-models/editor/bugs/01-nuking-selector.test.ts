@@ -1,5 +1,5 @@
 /**
- * @jest-environment node
+ * @vitest-environment node
  */
 
 import { hydrateRevisionStore } from '../../../../src/frontend/shared/capture-models/editor/stores/revisions/revisions-store';

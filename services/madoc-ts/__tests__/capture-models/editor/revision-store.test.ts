@@ -1,5 +1,5 @@
 /**
- * @jest-environment node
+ * @vitest-environment node
  */
 
 const deepmerge = require('deepmerge');
@@ -221,7 +221,7 @@ describe('Revision store', () => {
           property: 'firstName',
           path: [['person', '56405dc7-b910-45e0-8ade-898594276795']],
         })
-      ).toThrowErrorMatchingInlineSnapshot(`"field does not support multiple values."`);
+      ).toThrowError('field does not support multiple values.');
     });
 
     test('duplicating field - allowMultiple=true', () => {
@@ -337,7 +337,7 @@ describe('Revision store', () => {
           property: 'person',
           path: [],
         })
-      ).toThrowErrorMatchingInlineSnapshot(`"entity does not support multiple values."`);
+      ).toThrowError('entity does not support multiple values.');
     });
     test('duplicating entity - allowMultiple=true', () => {
       const model = require('../../../fixtures/02-nesting/05-nested-model-multiple.json');
@@ -575,7 +575,7 @@ describe('Revision store', () => {
             ['text', text.id],
           ],
         })
-      ).toThrowErrorMatchingInlineSnapshot(`"Cannot delete last item"`);
+      ).toThrowError('Cannot delete last item');
     });
   });
 

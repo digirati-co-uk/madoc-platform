@@ -1,14 +1,13 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
-    "lib": ["dom", "es2020"],
-    "typeRoots": ["../../node_modules/@types", "node_modules/@types"],
+    "lib": ["dom", "es2022"],
+    "types": ["vite/client"],
     "target": "es6",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "module": "es2015",
     "declaration": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "outDir": "./lib",
     "noEmitOnError": false,
     "strict": true,
@@ -17,11 +16,10 @@
     "jsx": "react-jsx",
     "resolveJsonModule": true,
     "noImplicitAny": true,
-    "downlevelIteration": true,
     "noUnusedLocals": false,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["./src/*"]
     }
   },
   "exclude": [

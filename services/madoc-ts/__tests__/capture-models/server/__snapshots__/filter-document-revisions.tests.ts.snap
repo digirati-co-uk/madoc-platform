@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Filter document revisions It can filter out new revision 1`] = `
+exports[`Filter document revisions > It can filter out new revision 1`] = `
 {
   "id": "bb5aa1ec-bdb3-4e99-a47d-12f9bbc01d52",
   "label": "A project with boxes",

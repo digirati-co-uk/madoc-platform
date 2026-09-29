@@ -1,0 +1,64 @@
+{
+  "name": "@madoc.io/tasks-api",
+  "version": "1.0.1",
+  "main": "dist/app.js",
+  "typings": "./dist/app.d.ts",
+  "license": "MIT",
+  "author": "Stephen Fraser <stephen.fraser@digirati.com>",
+  "files": [
+    "dist",
+    "schemas",
+    "migrations",
+    "config.json"
+  ],
+  "scripts": {
+    "start": "pm2 install typescript && pm2 start ecosystem.config.js --watch --only tasks-api-dev --no-daemon",
+    "build": "NODE_ENV=production pnpm build-es && pnpm build-app && pnpm generate-create-task-schema && pnpm generate-update-task-schema",
+    "build-es": "NODE_ENV=production esbuild src/index.ts --bundle --outfile=dist/server.js --platform=node --external:pg-native --external:pg/* --external:bullmq",
+    "build-app": "NODE_ENV=production esbuild src/app.ts --bundle --outfile=dist/app.js --platform=node --external:pg-native --external:pg/* --external:bullmq",
+    "types-app": "tsc -p tsconfig.json --emitDeclarationOnly --declaration --rootDir src --outDir dist",
+    "prepublishOnly": "pnpm build-app && pnpm types-app",
+    "generate-create-task-schema": "typescript-json-schema ./src/schemas/CreateTask.ts CreateTask -o ./schemas/create-task.json --required --noExtraProps",
+    "generate-update-task-schema": "typescript-json-schema ./src/schemas/UpdateTask.ts UpdateTask -o ./schemas/update-task.json --required --noExtraProps"
+  },
+  "dependencies": {
+    "bullmq": "^1.51.2",
+    "pg": "^8.16.3",
+    "pm2": "^5.2.2"
+  },
+  "devDependencies": {
+    "@koa/router": "^10.1.1",
+    "@slonik/migrator": "^0.2.0",
+    "@slonik/typegen": "^0.3.1",
+    "@types/koa": "^2.13.4",
+    "@types/koa-json": "^2.0.20",
+    "@types/koa-logger": "^3.1.2",
+    "@types/koa__router": "^8.0.8",
+    "@types/node": "^24.19.0",
+    "@types/slonik": "^22.1.5",
+    "@types/uuid": "^8.3.1",
+    "@typescript-eslint/eslint-plugin": "^5.1.0",
+    "@typescript-eslint/parser": "^5.1.0",
+    "@typescript/native": "npm:typescript@7.0.2",
+    "ajv": "^8.6.3",
+    "esbuild": "^0.13.8",
+    "eslint": "^8.0.1",
+    "eslint-plugin-prettier": "^4.0.0",
+    "koa": "^2.13.4",
+    "koa-body": "^4.2.0",
+    "koa-create-context": "^1.0.2",
+    "koa-json": "^2.0.2",
+    "koa-logger": "^3.2.1",
+    "mock-req": "^0.2.0",
+    "mock-res": "^0.5.0",
+    "prettier": "^2.4.1",
+    "slonik": "^24.1.2",
+    "ts-node": "^10.3.0",
+    "typescript": "npm:@typescript/typescript6@^6.0.2",
+    "typescript-json-schema": "^0.68.0",
+    "uuid": "^8.3.2"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

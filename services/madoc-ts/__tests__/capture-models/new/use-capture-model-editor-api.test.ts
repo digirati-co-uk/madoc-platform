@@ -1,5 +1,5 @@
 /**
- * @jest-environment node
+ * @vitest-environment node
  */
 
 import { useCaptureModelEditorApi } from '../../../src/frontend/shared/capture-models/new/hooks/use-capture-model-editor-api';

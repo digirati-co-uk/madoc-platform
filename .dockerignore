@@ -1,4 +1,12 @@
+.git
+**/.git
+**/node_modules
+**/dist
+**/.vite
+var
 vendor
 files
-node_modules
-var
+lib
+services/madoc-ts/documentation/screenshots
+services/madoc-ts/__tests__
+services/madoc-ts/sandbox

@@ -1,29 +1,23 @@
-FROM node:22-alpine AS build
-WORKDIR /app
-
+# syntax=docker/dockerfile:1.6
+FROM node:24-alpine AS build
 RUN corepack enable
+WORKDIR /workspace
+COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
+COPY patches ./patches
+COPY services/madoc-ts/package.json ./services/madoc-ts/package.json
+COPY services/madoc-ts/npm ./services/madoc-ts/npm
+COPY services/config-service/package.json ./services/config-service/package.json
+COPY services/tasks-api/package.json ./services/tasks-api/package.json
+COPY services/storage-api/package.json ./services/storage-api/package.json
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --filter config-service --frozen-lockfile
+COPY services/config-service/src ./services/config-service/src
+COPY services/config-service/tsconfig.json ./services/config-service/tsconfig.json
+COPY services/config-service/configurator ./services/config-service/configurator
+RUN pnpm --filter config-service build
 
-COPY package.json pnpm-lock.yaml ./
-RUN pnpm install --frozen-lockfile
-
-COPY tsconfig.json ./
-COPY src ./src
-COPY configurator ./configurator
-
-RUN pnpm run build
-RUN pnpm prune --prod
-
-FROM node:22-alpine AS runtime
-WORKDIR /app
-
-ENV NODE_ENV=production
-ENV PORT=8000
-
-COPY --from=build /app/node_modules ./node_modules
-COPY --from=build /app/dist ./dist
-COPY --from=build /app/configurator ./configurator
-COPY --from=build /app/package.json ./package.json
-
+FROM node:24-alpine
+ENV NODE_ENV=production PORT=8000
+COPY --from=build /workspace /workspace
+WORKDIR /workspace/services/config-service
 EXPOSE 8000
-
 CMD ["node", "dist/index.js"]

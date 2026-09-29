@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "lib": ["dom", "es2020"],
+    "types": ["node"],
+    "target": "es2018",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "module": "nodenext",
+    "declaration": true,
+    "moduleResolution": "nodenext",
+    "outDir": "./lib",
+    "noEmitOnError": false,
+    "strict": true,
+    "sourceMap": true,
+    "skipLibCheck": true,
+    "jsx": "react",
+    "resolveJsonModule": true,
+    "noImplicitAny": true,
+    "noUnusedLocals": false,
+    "noFallthroughCasesInSwitch": true,
+    "paths": {
+      // "PACKAGE_NAME": ["../SERVICE_NAME"]
+    }
+  },
+  "include": ["src/**/*"],
+  "references": [
+    // { "path": "../SERVICE_NAME" }
+  ]
+}

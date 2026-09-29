@@ -4,11 +4,11 @@ import { hydrateCompressedModel } from '../../../src/frontend/shared/capture-mod
 import { captureModelShorthand } from '../../../src/frontend/shared/capture-models/helpers/capture-model-shorthand';
 import { CaptureModel } from '../../../src/frontend/shared/capture-models/types/capture-model';
 
-jest.mock('.../../../src/frontend/shared/capture-models/helpers/generate-id');
-const { generateId } = require('../../../src/frontend/shared/capture-models/helpers/generate-id');
+vi.mock('../../../src/frontend/shared/capture-models/helpers/generate-id');
+import { generateId } from '../../../src/frontend/shared/capture-models/helpers/generate-id';
 const GENERATED_ID = '[--------GENERATED-ID--------]';
 
-generateId.mockImplementation(() => GENERATED_ID);
+vi.mocked(generateId).mockImplementation(() => GENERATED_ID);
 
 describe('capture model hydration', () => {
   const simpleModel: CaptureModel['document'] = {

@@ -1,5 +1,5 @@
 /**
- * @jest-environment node
+ * @vitest-environment node
  */
 
 import React from 'react';
@@ -33,7 +33,7 @@ describe('review renderer context', () => {
       project: undefined,
       mode: 'write',
       isEditing: true,
-      setIsEditing: jest.fn(),
+      setIsEditing: vi.fn(),
       isDone: false,
       isLocked: false,
       canReview: true,

@@ -4,11 +4,7 @@ import { extractRevisionTextFields } from '../../../src/utility/extract-revision
 import { parseMetadataListToValueMap } from '../../../src/utility/iiif-metadata';
 
 describe('Project template: Metadata suggestions', function() {
-  describe('hooks.beforeCloneModel', () => {
-    //
-  });
   describe('hooks.onRevisionApproved', () => {
-    //
 
     describe('extractRevisionTextFields', function() {
       test('It extracts correct fields', () => {
@@ -122,7 +118,7 @@ describe('Project template: Metadata suggestions', function() {
         });
       });
     });
-    describe('parseMetadataListToValueMap', function() {
+    test('parseMetadataListToValueMap', function() {
       const fields: Array<MetadataDefinition & { id: number }> = [
         {
           id: 143308,
