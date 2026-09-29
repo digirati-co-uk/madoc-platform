@@ -16,6 +16,9 @@ type AtlasRuntimeWithTabularHome = {
     | undefined;
   setHomePosition?: (position?: AtlasHomeRect) => void;
   goHome?: () => void;
+  setViewport?: (position: AtlasHomeRect) => void;
+  updateControllerPosition?: () => void;
+  transitionManager?: { stopTransition: () => void };
   updateNextFrame?: () => void;
   world?: {
     width?: number;
@@ -23,6 +26,29 @@ type AtlasRuntimeWithTabularHome = {
     goHome?: () => void;
   };
 };
+
+export function fitTabularAlignment(
+  runtime: AtlasRuntimeWithTabularHome | null | undefined,
+  value: NetConfig | null | undefined
+): boolean {
+  if (!runtime?.setViewport || !value) return false;
+  const position = getTabularHeadingHomeRect(runtime, value);
+  const screen = runtime.getRendererScreenPosition?.();
+  if (!position || !screen || screen.width <= 32) return false;
+
+  // Leave 16 screen pixels on each side so both draggable guides remain reachable.
+  const width = (position.width * screen.width) / (screen.width - 32);
+  runtime.transitionManager?.stopTransition();
+  runtime.setViewport({
+    x: (position.width - width) / 2,
+    y: position.y,
+    width,
+    height: (width * screen.height) / screen.width,
+  });
+  runtime.updateControllerPosition?.();
+  runtime.updateNextFrame?.();
+  return true;
+}
 
 function isPositiveNumber(value: unknown): value is number {
   return typeof value === 'number' && Number.isFinite(value) && value > 0;
@@ -57,7 +83,10 @@ function getFullWidthStartHomeRect(runtime: AtlasRuntimeWithTabularHome): AtlasH
   };
 }
 
-function getTabularHeadingAnchor(runtime: AtlasRuntimeWithTabularHome, value: NetConfig): { x: number; y: number } | null {
+function getTabularHeadingAnchor(
+  runtime: AtlasRuntimeWithTabularHome,
+  value: NetConfig
+): { x: number; y: number } | null {
   const worldWidth = runtime.world?.width;
   const worldHeight = runtime.world?.height;
   if (!isPositiveNumber(worldWidth) || !isPositiveNumber(worldHeight)) {

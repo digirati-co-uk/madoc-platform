@@ -26,7 +26,9 @@ const CarouselSlides = styled.div`
 const CarouselSlide = styled.div`
   opacity: 0;
   width: 0;
-  transition: opacity 0.8s ease, transform 0.8s ease;
+  transition:
+    opacity 0.8s ease,
+    transform 0.8s ease;
   visibility: hidden;
 
   > div {
@@ -48,25 +50,6 @@ const CarouselSlide = styled.div`
   }
 `;
 
-const Indicator = styled.button`
-  height: 12px;
-  width: 64px;
-  background-color: transparent;
-  border: 1px solid #3579f6;
-  align-self: end;
-  margin: 1em;
-
-  :hover {
-    background-color: rgba(59, 59, 93, 0.7);
-  }
-  &[data-is-active='true'] {
-    background-color: #3579f6;
-
-    :hover {
-      background-color: rgba(59, 59, 93, 0.7);
-    }
-  }
-`;
 const IndicatorWrapper = styled.div`
   display: flex;
   justify-content: center;
@@ -119,8 +102,13 @@ export const Carousel = ({ children }: CarouselProps) => {
       </CarouselWrapper>
       <IndicatorWrapper>
         {slides?.map((slide, index) => (
-          <Indicator
-            data-is-active={currentSlide === index}
+          <button
+            type="button"
+            aria-label={`Go to slide ${index + 1}`}
+            aria-current={currentSlide === index ? 'true' : undefined}
+            className={`m-[1em] h-[12px] w-[64px] self-end border border-[var(--madoc-accent)] hover:brightness-90 ${
+              currentSlide === index ? 'bg-[var(--madoc-accent)]' : 'bg-transparent hover:bg-[var(--madoc-accent)]'
+            }`}
             key={index}
             onClick={() => {
               setCurrentSlide(index);

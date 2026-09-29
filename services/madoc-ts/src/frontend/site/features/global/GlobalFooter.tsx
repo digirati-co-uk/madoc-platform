@@ -15,6 +15,7 @@ import { GlobalStyles } from '../../../shared/typography/GlobalStyles';
 import { maxWidth } from '../../variables/global';
 import { footerColor, footerBackground, footerContainerBackground } from '../../../shared/variables';
 import { GlobalMenuStack } from '../../blocks/GlobalMenuStack';
+import { LinkTargetContext } from '../../../shared/utility/link-targets';
 
 const StyledGlobalFooter = styled.div`
   background: ${footerBackground};
@@ -34,6 +35,7 @@ export const GlobalFooter: React.FC = () => {
   const { t, i18n } = useTranslation();
   const siteTheme = useSiteTheme();
   const site = useSite();
+  const footerLinksInNewTab = !!site.config?.footerLinksInNewTab;
 
   const themFooter =
     siteTheme &&
@@ -42,36 +44,38 @@ export const GlobalFooter: React.FC = () => {
       siteTheme.html.footer);
 
   if (themFooter) {
-    return <RenderFragment fragment={themFooter} />;
+    return <RenderFragment fragment={themFooter} openInNewTab={footerLinksInNewTab} />;
   }
 
   return (
-    <GlobalFooterContainer>
-      <AutoSlotLoader fuzzy slots={['global-footer']}>
-        <GlobalStyles />
-        <SiteFooterBackground>
-          <SiteFooter>
-            <Slot name="global-footer" layout="flex-center" source={{ id: 'global-footer', type: 'global' }}>
-              <StyledGlobalFooter>
-                {t('Powered by Madoc')}
-                {site.latestTerms ? (
-                  <span>
-                    <span style={{ margin: '0 1em', display: 'inline-block' }}>|</span>
-                    <HrefLink href="/terms">{t('Terms of use')}</HrefLink>
-                  </span>
-                ) : null}
-              </StyledGlobalFooter>
-              <AvailableBlocks names={['simple-markdown-block']}>
-                <GlobalMenuStack />
-                <FlexSpacer />
-                <FooterImageGrid />
-                <FlexSpacer />
-                <GlobalSearch />
-              </AvailableBlocks>
-            </Slot>
-          </SiteFooter>
-        </SiteFooterBackground>
-      </AutoSlotLoader>
-    </GlobalFooterContainer>
+    <LinkTargetContext.Provider value={footerLinksInNewTab}>
+      <GlobalFooterContainer>
+        <AutoSlotLoader fuzzy slots={['global-footer']}>
+          <GlobalStyles />
+          <SiteFooterBackground>
+            <SiteFooter>
+              <Slot name="global-footer" layout="flex-center" source={{ id: 'global-footer', type: 'global' }}>
+                <StyledGlobalFooter>
+                  {t('Powered by Madoc')}
+                  {site.latestTerms ? (
+                    <span>
+                      <span style={{ margin: '0 1em', display: 'inline-block' }}>|</span>
+                      <HrefLink href="/terms">{t('Terms of use')}</HrefLink>
+                    </span>
+                  ) : null}
+                </StyledGlobalFooter>
+                <AvailableBlocks names={['simple-markdown-block']}>
+                  <GlobalMenuStack />
+                  <FlexSpacer />
+                  <FooterImageGrid />
+                  <FlexSpacer />
+                  <GlobalSearch />
+                </AvailableBlocks>
+              </Slot>
+            </SiteFooter>
+          </SiteFooterBackground>
+        </AutoSlotLoader>
+      </GlobalFooterContainer>
+    </LinkTargetContext.Provider>
   );
 };

@@ -549,6 +549,12 @@ export const revisionStore: RevisionsModel = {
     }
   }),
 
+  setTabularAlignment: action((state, snapshot) => {
+    if (state.currentRevisionId && !state.currentRevisionReadMode) {
+      state.revisions[state.currentRevisionId].revision.tabularAlignment = snapshot;
+    }
+  }),
+
   setRevisionLabel: action((state, { revisionId: customRevisionId, label }) => {
     const revisionId = customRevisionId ? customRevisionId : state.currentRevisionId;
 

@@ -109,7 +109,6 @@ export function createValidEntity(
   }
 
   const validProperties = Object.keys(base.properties);
-  newEntity.properties = {};
   for (const validProperty of validProperties) {
     if (incoming.properties[validProperty]) {
       // Validation for this should be handled elsewhere.
@@ -265,11 +264,11 @@ export function updateRevisionInDocument(
             //   1. If there is an existing entity or field - only apply changes that are allowed
             //   2. If there is a NEW entity or field, first take a clone of an existing, and change permitted fields.
 
+            const existingProperty = entity.properties[mutation.term as any][existing];
             if (experimental) {
-              const existingProperties = entity.properties[mutation.term as any][existing];
               if (mutation.type === 'entity') {
                 if (existing !== -1) {
-                  const existingEntity: CaptureModel['document'] = (existingProperties as any)[existing as any];
+                  const existingEntity = existingProperty as CaptureModel['document'];
                   const newEntity = createValidEntity(existingEntity, mutation.entity, true);
                   if (newEntity) {
                     toPush = newEntity;
@@ -293,7 +292,7 @@ export function updateRevisionInDocument(
 
               if (mutation.type === 'field') {
                 if (existing !== -1) {
-                  const existingField: BaseField = (existingProperties as any)[existing as any];
+                  const existingField = existingProperty as BaseField;
                   const newField = createValidField(existingField, mutation.field, true);
                   if (newField) {
                     toPush = newField;
@@ -310,32 +309,28 @@ export function updateRevisionInDocument(
               }
             }
 
+            // This performs a shallow merge, since the other properties should already be applied
+            // in a previous step.
+            if (!experimental && mutation.type === 'entity' && mutation.shallow && existing !== -1) {
+              if (existingProperty) {
+                toPush = {
+                  ...(toPush as any),
+                  selector: existingProperty.selector,
+                  properties: (existingProperty as CaptureModel['document']).properties,
+                } as any;
+              }
+            }
+
             if (existing !== -1) {
               // Replace with a null value placeholder (filtered out further down) to preserve the index.
               (entity.properties[mutation.term as any][existing] as any) = null;
             }
 
-            // This performs a shallow merge, since the other properties should already be applied
-            // in a previous step.
-            if (!experimental && mutation.type === 'entity' && mutation.shallow && existing !== -1) {
-              const existingProperties = entity.properties[mutation.term as any][existing];
-              if (existingProperties) {
-                toPush = {
-                  ...(toPush as any),
-                  selector: existingProperties.selector,
-                  properties: (existingProperties as any).properties,
-                } as any;
-              }
-            }
-
             // then we are doing an insertion.
             const [beforeId] = mutation.before;
             const beforeIndex = (entity.properties[mutation.term] as any[]).findIndex(r => r && r.id === beforeId);
-            if (beforeIndex !== -1) {
-              (entity.properties[mutation.term as any] as any[]).splice(beforeIndex + 1, 0, toPush);
-            } else {
-              (entity.properties[mutation.term as any] as any[]).push(toPush);
-            }
+            const list = entity.properties[mutation.term as any] as any[];
+            list.splice(beforeIndex !== -1 ? beforeIndex + 1 : existing !== -1 ? existing : list.length, 0, toPush);
 
             // Filter our placeholder used to keep track of the correct beforeIndex.
             (entity.properties[mutation.term as any] as any[]) = (entity.properties[

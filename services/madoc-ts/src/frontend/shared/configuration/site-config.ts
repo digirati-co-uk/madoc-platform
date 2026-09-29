@@ -39,7 +39,7 @@ const DEFAULT_POLYGON_TOOL_FIELD = {
   label: 'Default polygon tool',
   description: 'Choose the initial drawing tool when defining a polygon region.',
   type: 'dropdown-field',
-  defaultValue: 'pen',
+  defaultValue: 'box',
   options: [
     { value: 'pen', text: 'Polygon (pen)' },
     { value: 'box', text: 'Box' },
@@ -347,6 +347,10 @@ export const siteConfigurationModel: {
       {
         label: 'Disable save for later button',
         value: 'disableSaveForLater',
+      },
+      {
+        label: "Show 'Save for later' beside 'Submit'",
+        value: 'showSaveForLaterAlongsideSubmit',
       },
       {
         label: 'Disable preview popup (direct submit)',
@@ -890,6 +894,11 @@ const SUBMISSION_OPTIONS = [
   },
 ];
 
+const SHOW_SAVE_FOR_LATER_ALONGSIDE_SUBMIT_OPTION = {
+  label: "Show 'Save for later' beside 'Submit'",
+  value: 'showSaveForLaterAlongsideSubmit',
+};
+
 const sharedProjectContributionFields = {
   contributionMode: {
     label: 'Contribution mode',
@@ -1088,6 +1097,10 @@ export const ProjectConfigContributions: ProjectConfigTemplate = {
     options: genericContributionModelPageOptions,
   },
   ...sharedProjectContributionTailFields,
+  submissionOptions: {
+    ...sharedProjectContributionTailFields.submissionOptions,
+    options: [SHOW_SAVE_FOR_LATER_ALONGSIDE_SUBMIT_OPTION, ...SUBMISSION_OPTIONS],
+  },
   modelPageShowAnnotations: {
     label: 'Contribution page annotations',
     description: 'Decide when annotations are shown when a user is on the contributing page',

@@ -754,7 +754,7 @@ export const siteManifestBuild: RouteMiddleware<{
           const format = version === '3.0' || version === 'source' ? 'w3c-annotation' : 'open-annotation';
           canvas.addAnnotations({
             id: projectSlug
-              ? `${baseUrl}/madoc/api/canvases/${canvasRow.id}/models?format=${format}&version=${annoVer}&m=${manifestId}&selectors=true&project=${projectSlug}`
+              ? `${baseUrl}/madoc/api/canvases/${canvasRow.id}/models?format=${format}&version=${annoVer}&m=${manifestId}&selectors=true&project_id=${encodeURIComponent(projectSlug)}`
               : `${baseUrl}/madoc/api/canvases/${canvasRow.id}/models?format=${format}&version=${annoVer}&m=${manifestId}&selectors=true`,
             type: 'AnnotationPage',
             label: { none: ['Annotations'] },
@@ -763,7 +763,7 @@ export const siteManifestBuild: RouteMiddleware<{
         if (configOptions.jsonModels) {
           canvas.addSeeAlso({
             id: projectSlug
-              ? `${baseUrl}/madoc/api/canvases/${canvasRow.id}/models?format=json&version=${annoVer}&m=${manifestId}&selectors=true&project=${projectSlug}`
+              ? `${baseUrl}/madoc/api/canvases/${canvasRow.id}/models?format=json&version=${annoVer}&m=${manifestId}&selectors=true&project_id=${encodeURIComponent(projectSlug)}`
               : `${baseUrl}/madoc/api/canvases/${canvasRow.id}/models?format=json&version=${annoVer}&m=${manifestId}&selectors=true`,
             type: 'Dataset',
             format: 'application/json',

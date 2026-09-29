@@ -6,7 +6,7 @@ import { clampDimOpacity } from './utils';
 import { CastANetOverlay } from './CastANetOverlay';
 import type { TabularOverlayColors } from '../../../../shared/utility/tabular-project-config';
 
-type CastANetOverlayAtlasProps = {
+export type CastANetOverlayAtlasProps = {
   value: NetConfig;
   onChange: (next: NetConfig) => void;
   disabled?: boolean;

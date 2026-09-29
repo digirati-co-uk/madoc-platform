@@ -28,7 +28,9 @@ export function MostRecentProjectUpdate({
     );
   }
 
-  const featuredStyle = featured ? 'border-t-2 border-blue-500 bg-blue-100' : '';
+  const featuredStyle = featured
+    ? 'border-t-2 border-[var(--madoc-accent)] bg-[color-mix(in_srgb,var(--madoc-accent)_12%,white)]'
+    : '';
 
   return (
     <div className={`py-4 ${withBackground ? 'bg-slate-100' : featuredStyle}`}>

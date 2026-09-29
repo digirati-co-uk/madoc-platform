@@ -10,6 +10,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Added support for resizing the capture model sidebar on Manifest projects (MAD-1587)
+- Added an optional "Save for later" button beside Submit on contribution pages.
+- Added a configurable site accent colour across site and administration controls, navigation, and search. ([MAD-1571](https://digirati.atlassian.net/browse/MAD-1571))
+- Added settings to open links in new tabs for HTML and Markdown blocks, project updates, and footer links. ([MAD-1588](https://digirati.atlassian.net/browse/MAD-1588))
+- Added cell-range copy/paste controls to the tabular editor, including paste into a single selected cell and brief success or failure feedback.
+- Added tabular image-alignment controls for nudging the grid and adjusting its left and right edges.
+
+### Changed
+
+- Improved Manifest model canvas navigation at narrow widths and added canvas selection and previous/next controls to Manifest review.
+- Improved capture-model submission and review previews, including clearer field layouts and linked autocomplete values.
+- Made search facet labels easier to read and hid facet groups with no available options. ([MAD-1589](https://digirati.atlassian.net/browse/MAD-1589))
+
+### Fixed
+
+- Kept working drafts available after saving and applied the configured short and long contribution expiry times correctly. ([MAD-1586](https://digirati.atlassian.net/browse/MAD-1586))
+- Fixed tabular CSV exports to include the complete column set and preserve blank rows.
+- Fixed tabular cell annotations so published selectors follow the saved image alignment, including older tabular models.
+- Fixed tabular alignment and row tracking when nudging or changing canvas zoom.
+- Fixed capture-model revision updates that could lose nested properties or move fields out of order.
 
 <!--
 

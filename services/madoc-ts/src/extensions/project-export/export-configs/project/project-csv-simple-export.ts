@@ -52,39 +52,6 @@ function getTabularCellReviewColumns(value: unknown): {
   };
 }
 
-const csvMetadataFields = new Set([
-  'model_id',
-  'doc_id',
-  'manifest',
-  'manifest_uri',
-  'manifest_label',
-  'canvas',
-  'canvas_uri',
-  'canvas_label',
-  'tabular_flag_count',
-  'tabular_note_count',
-]);
-
-function isEmptyCsvValue(value: unknown): boolean {
-  if (value === null || typeof value === 'undefined') {
-    return true;
-  }
-
-  if (typeof value === 'string') {
-    return value.trim().length === 0;
-  }
-
-  if (Array.isArray(value)) {
-    return value.length === 0 || value.every(isEmptyCsvValue);
-  }
-
-  return false;
-}
-
-function isEmptyTabularCsvRow(record: Record<string, unknown>): boolean {
-  return Object.entries(record).every(([key, value]) => csvMetadataFields.has(key) || isEmptyCsvValue(value));
-}
-
 async function fetchLabels(api: any, manifestIds: number[], canvasIds: number[]) {
   const uniqueManifestIds = Array.from(new Set(manifestIds.filter(id => id !== undefined)));
   const uniqueCanvasIds = Array.from(new Set(canvasIds.filter(id => id !== undefined)));
@@ -332,9 +299,16 @@ export const projectCsvSimpleExport: ExportConfig = {
         }
         return false;
       })
-      .filter(Boolean)
-      .filter(record => !isTabularProject || !isEmptyTabularCsvRow(record as Record<string, unknown>)) as any[];
+      .filter(Boolean) as any[];
 
-    return [await ExportFile.csv(mappedList, 'project-data/data.csv')];
+    if (!isTabularProject) {
+      return [await ExportFile.csv(mappedList, 'project-data/data.csv')];
+    }
+
+    const columns = [...new Set(['model_id', 'doc_id', ...fieldOrderMap.keys(), ...mappedList.flatMap(Object.keys)])];
+    const completeRows = mappedList.map(record =>
+      Object.fromEntries(columns.map(column => [column, record[column] ?? '']))
+    );
+    return [await ExportFile.csv(completeRows, 'project-data/data.csv')];
   },
 };

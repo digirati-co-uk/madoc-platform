@@ -60,8 +60,9 @@ export function ViewEntity({
   }, [helper, selectorId]);
 
   return (
-    <DocumentSection data-highlighted={isOn} ref={ref}>
+    <DocumentSection data-highlighted={isOn} data-preview-entity data-expanded={!isCollapsed} ref={ref}>
       <DocumentHeading
+        data-preview-entity-heading
         onMouseEnter={() => (selectorId ? helper.highlight(selectorId) : null)}
         onMouseLeave={() => (selectorId ? helper.clearHighlight(selectorId) : null)}
         $interactive={interactive}

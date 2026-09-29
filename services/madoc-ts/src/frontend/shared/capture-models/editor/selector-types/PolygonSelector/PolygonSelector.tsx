@@ -2,7 +2,7 @@ import { InputShape } from 'polygon-editor';
 import { ViewSelector } from '../../../_components/ViewDocument/components/ViewSelector';
 import { BaseSelector, SelectorTypeProps } from '../../../types/selector-types';
 import { useTranslation } from 'react-i18next';
-import { Button } from '../../atoms/Button';
+import { StandardButton } from '../../../../atoms/StandardButton';
 import { ButtonRow } from '../../../../navigation/Button';
 
 export interface PolygonSelectorProps extends BaseSelector {
@@ -58,17 +58,17 @@ export function PolygonSelector({
       if (state && clearSelector) {
         // Show confirm button
         parts.confirmButton = (
-          <Button primary size="small" onClick={() => clearSelector()}>
+          <StandardButton type="button" $variation="primary" $size="small" onClick={() => clearSelector()}>
             {t('confirm')}
-          </Button>
+          </StandardButton>
         );
       }
     } else {
       // Show edit button
       parts.editButton = (
-        <Button primary size="small" onClick={() => chooseSelector(id)}>
+        <StandardButton type="button" $variation="primary" $size="small" onClick={() => chooseSelector(id)}>
           {existingShape ? (isLine ? t('edit line') : t('edit region')) : t('define region')}
-        </Button>
+        </StandardButton>
       );
     }
   }

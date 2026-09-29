@@ -44,6 +44,7 @@ export interface ProjectUpdatesRow {
   created: Date;
   title: string | null;
   update: string;
+  open_in_new_tab: boolean;
   snapshot: ProjectUpdateSnapshot;
   // Joins
   user_name?: string;
@@ -61,12 +62,14 @@ export interface ProjectUpdate {
   created: Date;
   title?: string;
   update: string;
+  openInNewTab?: boolean;
   snapshot: ProjectUpdateSnapshot;
 }
 
 export interface CreateProjectUpdate {
   title?: string | null;
   update: string;
+  openInNewTab?: boolean;
   snapshot?: ProjectUpdateSnapshot;
 }
 

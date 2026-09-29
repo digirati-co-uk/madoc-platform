@@ -1,7 +1,8 @@
-import React, { useMemo } from 'react';
+import React, { useContext, useMemo } from 'react';
 import styled, { createGlobalStyle, css } from 'styled-components';
 
 import { renderToHtml, theme as defaultTheme } from 'rich-markdown-editor';
+import { LinkTargetContext, setHtmlLinkTargets } from '../../../frontend/shared/utility/link-targets';
 
 const theme = {
   ...defaultTheme,
@@ -922,10 +923,14 @@ const MarkdownBlockGlobalStyles = createGlobalStyle`
   }
 ` as any;
 
-export const StaticMarkdownBlock: React.FC<{ markdown: string }> = ({ markdown }) => {
+export const StaticMarkdownBlock: React.FC<{ markdown: string; openInNewTab?: boolean }> = ({
+  markdown,
+  openInNewTab,
+}) => {
+  const footerLinksInNewTab = useContext(LinkTargetContext);
   const htmlContent = useMemo(() => {
-    return renderToHtml(markdown);
-  }, [markdown]);
+    return setHtmlLinkTargets(renderToHtml(markdown), !!openInNewTab || footerLinksInNewTab);
+  }, [markdown, openInNewTab, footerLinksInNewTab]);
 
   return (
     <>

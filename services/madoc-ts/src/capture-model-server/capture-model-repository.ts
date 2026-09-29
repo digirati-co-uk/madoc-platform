@@ -1,3 +1,5 @@
+import { RequestError } from '../utility/errors/request-error';
+import { isTabularAlignmentSnapshot } from '../frontend/shared/utility/tabular-alignment-snapshot';
 import { DatabaseTransactionConnectionType, sql } from 'slonik';
 import invariant from 'tiny-invariant';
 import { createRevisionRequestFromStructure } from '../frontend/shared/capture-models/helpers/create-revision-request';
@@ -240,16 +242,17 @@ export class CaptureModelRepository extends BaseRepository<'capture_model_api_mi
                                       (select p.capture_model_id from iiif_project p where p.id = ${projectId} and p.site_id = ${siteId}))
                    select entity.properties as doc,
                           entity.id         as doc_id,
+                          entity.row_position as row_position,
                           cmd.model_id      as model_id,
                           cmd.target        as target
                    from cmd,
-                        ${entityQuery} as entity(
-                           "id" text,
-                           "label" text,
-                           "properties" jsonb,
-                           "revision" text,
-                           "allowMultiple" bool
-                        ))
+                        rows from (${entityQuery} as (
+                          "id" text,
+                          "label" text,
+                          "properties" jsonb,
+                          "revision" text,
+                          "allowMultiple" bool
+                        )) with ordinality as entity(id, label, properties, revision, "allowMultiple", row_position))
         select d.model_id, r.key, d.doc_id, d.target, field.*
         from d,
              jsonb_each(d.doc) as r,
@@ -257,7 +260,8 @@ export class CaptureModelRepository extends BaseRepository<'capture_model_api_mi
                  left join capture_model_revision cmr on cmr.id = revision::uuid
         where type != 'entity'
           and revision != ''
-          ${approvedQuery};
+          ${approvedQuery}
+        order by d.model_id, d.row_position;
       `;
     },
   };
@@ -427,6 +431,12 @@ export class CaptureModelRepository extends BaseRepository<'capture_model_api_mi
           returning *
       `;
     },
+
+    updateRevisionAlignment: (revision: Revision, site_id: number) => sql`
+      update capture_model_revision
+      set revision_data = (revision_data::jsonb || ${sql.json({ tabularAlignment: revision.tabularAlignment })}::jsonb)::json
+      where id = ${revision.id} and site_id = ${site_id}
+    `,
 
     updateRevisionStatus: (revision: Revision | string, newStatus: Revision['status'], site_id: number) => {
       const id = typeof revision === 'string' ? revision : revision.id;
@@ -867,6 +877,10 @@ export class CaptureModelRepository extends BaseRepository<'capture_model_api_mi
     }
   ) {
     console.log('Update revision =>');
+    if (req.revision.tabularAlignment !== undefined && !isTabularAlignmentSnapshot(req.revision.tabularAlignment)) {
+      throw new RequestError('Invalid tabular alignment snapshot');
+    }
+
     await this.connection.transaction(async transaction => {
       console.log('  Start transaction');
       invariant(req.captureModelId, 'Missing Capture model id');
@@ -909,6 +923,10 @@ export class CaptureModelRepository extends BaseRepository<'capture_model_api_mi
       });
 
       console.log('  Updated revision in document');
+
+      if (req.revision.tabularAlignment !== undefined) {
+        await transaction.query(CaptureModelRepository.mutations.updateRevisionAlignment(req.revision, siteId));
+      }
 
       // Update with the new document.
       await transaction.query(CaptureModelRepository.mutations.updateDocument(captureModel.document, siteId));
@@ -966,6 +984,10 @@ export class CaptureModelRepository extends BaseRepository<'capture_model_api_mi
   ) {
     if (userId) {
       req.author = { id: `urn:madoc:user:${userId}`, type: 'Person' };
+    }
+
+    if (req.revision.tabularAlignment !== undefined && !isTabularAlignmentSnapshot(req.revision.tabularAlignment)) {
+      throw new RequestError('Invalid tabular alignment snapshot');
     }
 
     await this.connection.transaction(async transaction => {

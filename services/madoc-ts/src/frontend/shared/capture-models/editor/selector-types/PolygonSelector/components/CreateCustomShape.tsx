@@ -1,183 +1,24 @@
 import { HTMLPortal, useAtlas } from '@atlas-viewer/atlas';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
-  type SVGTheme,
   useAtlasStore,
   useCurrentAnnotationRequest,
   useEvent,
   useRequestAnnotation,
   useSvgEditor,
 } from 'react-iiif-vault';
-import { CanvasViewerButton } from '../../../../../atoms/CanvasViewerGrid';
 import { useLocalStorage } from '../../../../../hooks/use-local-storage';
-import { DeleteForeverIcon } from '../../../../../icons/DeleteForeverIcon';
-import { DrawIcon } from '../../../../../icons/DrawIcon';
-import { HexagonIcon } from '../../../../../icons/HexagonIcon';
-import { LineBoxIcon } from '../../../../../icons/LineBoxIcon';
-import { LineIcon } from '../../../../../icons/LineIcon';
-import { PolygonIcon } from '../../../../../icons/PolgonIcon';
-import { CircleIcon } from '../../../../../icons/CircleIcon';
-import { TriangleIcon } from '../../../../../icons/TriangleIcon';
-import { ThemeIcon } from '../../../../../icons/ThemeIcon';
 import { InputShape } from 'polygon-editor';
 import { useStore } from 'zustand';
-import { PanIcon } from '../../../../../icons/PanIcon';
-import { CusorIcon } from '../../../../../icons/CursorIcon';
-import { SquareIcon } from '../../../../../icons/SquareIcon';
+
+import { PolygonTool, SVG_EDITOR_THEMES } from './PolygonControls';
 
 const PROXIMITY_MULTIPLIER = 1.35;
-const SVG_EDITOR_THEMES: Array<{ name: string; theme: Partial<SVGTheme> }> = [
-  {
-    name: 'Default',
-    theme: {},
-  },
-  {
-    name: 'High contrast',
-    theme: {
-      shapeStroke: '#fff',
-      lineStroke: '#fff',
-      activeLineStroke: '#000',
-      controlFill: '#000',
-      boundingBoxStroke: '#fff',
-      boundingBoxDottedStroke: '#000',
-    },
-  },
-  {
-    name: 'Lightsaber',
-    theme: {
-      shapeStroke: '#fff',
-      lineStroke: '#fff',
-      activeLineStroke: '#3844ff',
-      controlFill: '#fff',
-      boundingBoxStroke: '#3844ff',
-      boundingBoxDottedStroke: '#fff',
-    },
-  },
-  {
-    name: 'Bright',
-    theme: {
-      shapeStroke: '#25d527',
-      lineStroke: '#25d527',
-      activeLineStroke: '#a916ff',
-      controlFill: '#a916ff',
-      boundingBoxStroke: '#25d527',
-      boundingBoxDottedStroke: '#a916ff',
-    },
-  },
-  {
-    name: 'Pink',
-    theme: {
-      shapeStroke: '#fff',
-      lineStroke: '#fff',
-      activeLineStroke: '#ff00ff',
-      controlFill: '#ff00ff',
-      boundingBoxStroke: '#fff',
-      boundingBoxDottedStroke: '#ff00ff',
-    },
-  },
-  {
-    name: 'Fine (dark)',
-    theme: {
-      shapeStroke: '#000',
-      lineStroke: '#000',
-      activeLineStroke: '#000',
-      controlFill: '#fff',
-      boundingBoxStroke: '#000',
-      boundingBoxDottedStroke: '#000',
-    },
-  },
-  {
-    name: 'Fine (light)',
-    theme: {
-      shapeStroke: '#fff',
-      lineStroke: '#fff',
-      activeLineStroke: '#fff',
-      controlFill: '#000',
-      boundingBoxStroke: '#fff',
-      boundingBoxDottedStroke: '#fff',
-    },
-  },
-];
-
 export interface CreateCustomShapeProps {
   image: { width: number; height: number };
   shape?: InputShape;
   updateShape: (shape: InputShape) => void;
-}
-
-export function PolygonControls() {
-  const store = useAtlasStore();
-  const state = useStore(store, currentState => currentState.polygonState);
-  const switchTool = useStore(store, currentState => currentState.switchTool);
-  const polygon = useStore(store, currentState => currentState.polygon);
-  const [storedThemeKey, setStoredThemeKey] = useLocalStorage<number>('poly-theme', 0);
-  const themeKey = Number.isFinite(Number(storedThemeKey))
-    ? Math.abs(Math.trunc(Number(storedThemeKey))) % SVG_EDITOR_THEMES.length
-    : 0;
-  const selectedTheme = SVG_EDITOR_THEMES[themeKey] || SVG_EDITOR_THEMES[0];
-  const currentTool = state.currentTool;
-  const showShapes = (polygon?.points.length || 0) === 0 || polygon?.open;
-  const cycleTheme = useCallback(() => {
-    setStoredThemeKey(previousThemeKey => {
-      const previous = Number(previousThemeKey);
-      const index = Number.isFinite(previous) ? Math.abs(Math.trunc(previous)) : 0;
-      return (index + 1) % SVG_EDITOR_THEMES.length;
-    });
-  }, [setStoredThemeKey]);
-
-  return (
-    <>
-      <CanvasViewerButton onClick={switchTool.pointer} data-active={currentTool === 'pointer'}>
-        <CusorIcon />
-      </CanvasViewerButton>
-      <CanvasViewerButton onClick={switchTool.hand} data-active={currentTool === 'hand'}>
-        <PanIcon />
-      </CanvasViewerButton>
-      <CanvasViewerButton onClick={cycleTheme} title={`Theme: ${selectedTheme.name}`}>
-        <ThemeIcon />
-      </CanvasViewerButton>
-      {showShapes ? (
-        <>
-          <CanvasViewerButton onClick={switchTool.pen} data-active={currentTool === 'pen' && !state.selectedStamp}>
-            <PolygonIcon />
-          </CanvasViewerButton>
-          <CanvasViewerButton onClick={switchTool.box} data-active={currentTool === 'box'}>
-            <SquareIcon />
-          </CanvasViewerButton>
-          <CanvasViewerButton onClick={switchTool.draw} data-active={currentTool === 'pencil'}>
-            <DrawIcon />
-          </CanvasViewerButton>
-          <CanvasViewerButton onClick={switchTool.line} data-active={currentTool === 'line'}>
-            <LineIcon />
-          </CanvasViewerButton>
-          <CanvasViewerButton onClick={switchTool.lineBox} data-active={currentTool === 'lineBox'}>
-            <LineBoxIcon />
-          </CanvasViewerButton>
-          <CanvasViewerButton
-            onClick={switchTool.triangle}
-            data-active={currentTool === 'stamp' && state.selectedStamp?.id === 'triangle'}
-          >
-            <TriangleIcon />
-          </CanvasViewerButton>
-          <CanvasViewerButton
-            onClick={switchTool.hexagon}
-            data-active={currentTool === 'stamp' && state.selectedStamp?.id === 'hexagon'}
-          >
-            <HexagonIcon />
-          </CanvasViewerButton>
-          <CanvasViewerButton
-            onClick={switchTool.circle}
-            data-active={currentTool === 'stamp' && state.selectedStamp?.id === 'circle'}
-          >
-            <CircleIcon />
-          </CanvasViewerButton>
-        </>
-      ) : null}
-      <CanvasViewerButton onClick={switchTool.remove}>
-        <DeleteForeverIcon style={{ color: 'red' }} />
-      </CanvasViewerButton>
-    </>
-  );
+  preferredTool: PolygonTool;
 }
 
 export function CreateCustomShape(props: CreateCustomShapeProps) {
@@ -185,6 +26,8 @@ export function CreateCustomShape(props: CreateCustomShapeProps) {
   const { image } = props;
   const [controls, setControls] = useState<HTMLElement | null>(null);
   const [storedThemeKey] = useLocalStorage<number>('poly-theme', 0);
+  const preferredToolRef = useRef(props.preferredTool);
+  preferredToolRef.current = props.preferredTool;
   const themeKey = Number.isFinite(Number(storedThemeKey))
     ? Math.abs(Math.trunc(Number(storedThemeKey))) % SVG_EDITOR_THEMES.length
     : 0;
@@ -202,7 +45,6 @@ export function CreateCustomShape(props: CreateCustomShapeProps) {
   const { requestId, requestAnnotation, cancelRequest } = useRequestAnnotation();
   const requestAnnotationRef = useRef(requestAnnotation);
   const cancelRequestRef = useRef(cancelRequest);
-  const defaultTool = controls?.dataset.defaultPolygonTool === 'box' ? 'box' : 'pen';
   const debugLog = useCallback((message: string, payload?: any) => {
     if (typeof window === 'undefined') {
       return;
@@ -314,6 +156,7 @@ export function CreateCustomShape(props: CreateCustomShapeProps) {
       points: initialShape.points || [],
       open: initialShape.open ?? true,
     };
+    const defaultTool = preferredToolRef.current;
     debugLog('requestAnnotation init', {
       selectorId: selectorIdRef.current,
       requestId,
@@ -335,7 +178,7 @@ export function CreateCustomShape(props: CreateCustomShapeProps) {
       debugLog('requestAnnotation cleanup', { selectorId: selectorIdRef.current, requestId });
       cancelRequestRef.current();
     };
-  }, [controls, debugLog, defaultTool, requestId]);
+  }, [controls, debugLog, requestId]);
 
   useEffect(() => {
     const setScaledProximity = () => {

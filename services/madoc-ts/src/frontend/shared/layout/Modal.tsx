@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+import React from 'react';
 import { FullScreenEnterIcon } from '../icons/FullScreenEnterIcon';
 import { CloseIcon } from '../icons/CloseIcon';
 
@@ -67,37 +68,36 @@ export const InnerModalContainer = styled.div<{ size?: keyof typeof sizes; $expa
     `}
 `;
 
-export const ModalHeader = styled.div`
-  background: #3766f2;
-  width: 100%;
-  color: #fff;
-  padding: 1em;
-  display: flex;
-`;
+export function ModalHeader({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex w-full bg-[var(--madoc-accent,#4265e9)] p-[1em] text-[var(--madoc-accent-text,#fff)]">
+      {children}
+    </div>
+  );
+}
 
-export const ModalHeaderTitle = styled.div`
-  color: #fff;
-  font-size: 1.2em;
-  flex: 1 1 0px;
-`;
+export function ModalHeaderTitle({ children }: { children: React.ReactNode }) {
+  return <div className="flex-1 text-[1.2em] text-[var(--madoc-accent-text,#fff)]">{children}</div>;
+}
 
-export const ModalCloseIcon = styled(CloseIcon)`
-  fill: rgba(255, 255, 255, 0.5);
-  cursor: pointer;
-  &:hover {
-    fill: rgba(255, 255, 255, 1);
-  }
-`;
+export function ModalCloseIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <CloseIcon
+      {...props}
+      className="cursor-pointer text-[var(--madoc-accent-text,#fff)] opacity-50 hover:opacity-100"
+      style={{ ...props.style, fill: 'currentColor' }}
+    />
+  );
+}
 
-export const ModalResizeIcon = styled(FullScreenEnterIcon)`
-  fill: rgba(255, 255, 255, 0.5);
-  cursor: pointer;
-  font-size: 1.2em;
-  margin-right: 1em;
-  &:hover {
-    fill: rgba(255, 255, 255, 1);
-  }
-`;
+export function ModalResizeIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <FullScreenEnterIcon
+      {...props}
+      className="mr-[1em] cursor-pointer fill-current text-[1.2em] text-[var(--madoc-accent-text,#fff)] opacity-50 hover:opacity-100"
+    />
+  );
+}
 
 export const ModalBody = styled.div`
   background: #fff;

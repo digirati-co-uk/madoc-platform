@@ -50,7 +50,7 @@ export class CrowdsourcingApi implements BaseExtension {
     return this.dataSources;
   }
 
-  async getCaptureModel(id: string, query?: { author?: string; published?: boolean }) {
+  async getCaptureModel(id: string, query?: { author?: string; published?: boolean; debug?: boolean }) {
     return this.api.request<{ id: string } & CaptureModel>(
       `/api/madoc/crowdsourcing/model/${id}${query ? `?${stringify(query)}` : ''}`
     );

@@ -23,19 +23,21 @@ function createExportOptions(fields: any[], templateConfig: unknown) {
 }
 
 describe('projectCsvSimpleExport', () => {
-  test('trims empty rows for tabular projects', async () => {
+  test('keeps empty rows and configured columns for tabular projects', async () => {
     const files = await projectCsvSimpleExport.exportData(
       { id: 1, type: 'project' } as any,
       createExportOptions(
         [
           { doc_id: 'row-0', model_id: 'model-1', key: 'name', value: 'Alice', id: 'field-0', target: [] },
           { doc_id: 'row-1', model_id: 'model-1', key: 'name', value: '', id: 'field-1', target: [] },
-          { doc_id: 'row-1', model_id: 'model-1', key: 'age', value: '   ', id: 'field-2', target: [] },
+          { doc_id: 'row-1', model_id: 'model-1', key: 'age', value: '', id: 'field-2', target: [] },
           { doc_id: 'row-2', model_id: 'model-1', key: 'name', value: 'Bob', id: 'field-3', target: [] },
+          { doc_id: 'row-2', model_id: 'model-1', key: 'mostlyEmpty', value: 'present', id: 'field-4', target: [] },
         ],
         {
           tabular: {
             model: {
+              columns: [{ id: 'name' }, { id: 'age' }, { id: 'mostlyEmpty' }, { id: 'neverFilled' }],
               captureModelTemplate: {
                 [TABULAR_CELL_FLAGS_PROPERTY]: { type: 'text-field' },
               },
@@ -46,11 +48,12 @@ describe('projectCsvSimpleExport', () => {
     );
 
     const csv = files?.[0].content.value || '';
-    expect(csv).toContain('row-0');
-    expect(csv).toContain('Alice');
-    expect(csv).not.toContain('row-1');
-    expect(csv).toContain('row-2');
-    expect(csv).toContain('Bob');
+    expect(csv.trim().split('\n')).toEqual([
+      'model_id,doc_id,name,age,mostlyEmpty,neverFilled',
+      'model-1,row-0,Alice,,,',
+      'model-1,row-1,,,,',
+      'model-1,row-2,Bob,,present,',
+    ]);
   });
 
   test('keeps empty rows for non-tabular projects', async () => {

@@ -3,46 +3,10 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { stringify } from 'query-string';
 import { Button, LinkButton } from '../navigation/Button';
-import styled from 'styled-components';
 import { HrefLink } from '../utility/href-link';
 import { ChevronFirst, ChevronLast, ChevronLeft, ChevronRight } from '../icons/ChevronIcon';
 
-const PaginationContainer = styled.div`
-  margin: 2em 0;
-  display: flex;
-  background: #eee;
-  padding: 0.3em;
-  border-radius: 5px;
-`;
-
-const PaginationContainerNumbered = styled.div`
-  margin: 2em 0;
-  display: flex;
-  justify-content: flex-end;
-  padding: 0.3em;
-`;
-
-const PaginationDisplay = styled.div`
-  margin-left: auto;
-  margin-right: auto;
-  font-size: 0.8em;
-  align-self: center;
-`;
-
-const PaginationDropdown = styled.select`
-  padding: 0.3em;
-  font-size: 1rem;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  background-color: white;
-  color: #333;
-  cursor: pointer;
-
-  &:focus {
-    outline: none;
-    border-color: #0077cc;
-  }
-`;
+const accentLink = 'var(--madoc-accent-link, #4265e9)';
 
 export const Pagination: React.FC<{
   hash?: string;
@@ -117,43 +81,47 @@ export const Pagination: React.FC<{
   }
 
   return (
-    <PaginationContainer style={{ justifyContent: position }}>
+    <div className="my-[2em] flex rounded-[5px] bg-[#eee] p-[0.3em]" style={{ justifyContent: position }}>
       <LinkButton
         $inherit
         disabled={page === 1 || isLoading}
         as={HrefLink}
         href={`${pathname}${page > 2 ? `?${pageParam}=1&` : q ? '?' : ''}${q}${hash ? `#${hash}` : ''}`}
       >
-        <ChevronFirst fill={page === 1 ? '#666' : '#5071f4'} />
+        <ChevronFirst fill={page === 1 ? '#666' : accentLink} />
       </LinkButton>
 
       <LinkButton
-        style={{ marginLeft: '1em', textDecoration: 'none', verticalAlign: 'middle' }}
+        style={{ marginLeft: '1em', textDecoration: 'none', verticalAlign: 'middle', color: accentLink }}
         disabled={!prevPage || isLoading}
         as={HrefLink}
         href={`${pathname}${page > 2 ? `?${pageParam}=${page - 1}&` : q ? '?' : ''}${q}${hash ? `#${hash}` : ''}`}
       >
-        <ChevronLeft fill={!prevPage || isLoading ? '#666' : '#5071f4'} />
+        <ChevronLeft fill={!prevPage || isLoading ? '#666' : accentLink} />
         {isLoading ? t('loading...') : t('Previous page')}
       </LinkButton>
 
-      <PaginationDisplay style={{ color: isLoading ? '#999' : '#666' }}>
+      <div className="mx-auto self-center text-[0.8em]" style={{ color: isLoading ? '#999' : '#666' }}>
         {t('Page')}{' '}
-        <PaginationDropdown value={page} onChange={handleChange}>
+        <select
+          className="cursor-pointer rounded-md border border-[#ccc] bg-white p-[0.3em] text-base text-[#333] focus:border-[var(--madoc-accent)] focus:outline-none"
+          value={page}
+          onChange={handleChange}
+        >
           {renderOptions()}
-        </PaginationDropdown>{' '}
+        </select>{' '}
         {t('of {{count}}', { count: totalPages })}
-      </PaginationDisplay>
+      </div>
 
       <LinkButton
-        style={{ marginRight: '1em', textDecoration: 'none' }}
+        style={{ marginRight: '1em', textDecoration: 'none', color: accentLink }}
         $noDecoration
         as={HrefLink}
         disabled={!nextPage || isLoading}
         href={`${pathname}?${pageParam}=${page + 1}${q ? `&${q}` : ''}${hash ? `#${hash}` : ''}`}
       >
         {isLoading ? t('loading...') : t('Next page')}
-        <ChevronRight fill={'#5071f4'} />
+        <ChevronRight fill={accentLink} />
       </LinkButton>
 
       <LinkButton
@@ -161,9 +129,9 @@ export const Pagination: React.FC<{
         as={HrefLink}
         href={`${pathname}?${pageParam}=${totalPages}${q ? `&${q}` : ''}${hash ? `#${hash}` : ''}`}
       >
-        <ChevronLast fill={page === totalPages ? '#666' : '#5071f4'} />
+        <ChevronLast fill={page === totalPages ? '#666' : accentLink} />
       </LinkButton>
-    </PaginationContainer>
+    </div>
   );
 };
 
@@ -213,7 +181,7 @@ export const PaginationNumbered: React.FC<{
   }
 
   return (
-    <PaginationContainerNumbered style={{ justifyContent: position }}>
+    <div className="my-[2em] flex justify-end p-[0.3em]" style={{ justifyContent: position }}>
       {prevPage ? (
         <Button as={Link} to={`${pathname}${page > 2 ? `?${pageParam}=${page - 1}&` : q ? '?' : ''}${q}`}>
           {t('Previous page')}
@@ -241,6 +209,6 @@ export const PaginationNumbered: React.FC<{
           {t('Next page')}
         </Button>
       ) : null}
-    </PaginationContainerNumbered>
+    </div>
   );
 };

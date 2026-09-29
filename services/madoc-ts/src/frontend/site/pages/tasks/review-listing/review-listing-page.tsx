@@ -41,21 +41,6 @@ const TaskPreviewContainer = styled.div`
   width: 750px;
 `;
 
-const ReviewListingContainer = styled.div`
-  display: flex;
-  position: relative;
-  background-color: #f7f7f7;
-  margin-bottom: 1em;
-  a {
-    color: #2b669a;
-    text-decoration: none;
-
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-`;
-
 const ThickTableRow = styled(SimpleTable.Row)<{ $active?: boolean }>`
   ${props =>
     props.$active &&
@@ -77,57 +62,31 @@ const ThickTableRow = styled(SimpleTable.Row)<{ $active?: boolean }>`
   }
 `;
 
-const HeaderLink = styled.a`
-  display: flex;
-  align-items: center;
-  gap: 0.5em;
-  color: black;
-
-  svg {
-    fill: #555555;
-    vertical-align: middle;
-    transition:
-      background-color 0.2s,
-      height 0.3s,
-      transform 0.5s;
-    transition-timing-function: ease-in-out;
-    height: 2px;
-    width: 16px;
-    transform: rotatex(0deg);
-    background-color: rgba(85, 85, 85, 1);
-  }
-
-  &[data-no-sort='true'] {
-    & svg {
-      height: 1em;
-      width: 1em;
-      transform: rotatex(180deg);
-      background-color: rgba(85, 85, 85, 0);
-    }
-  }
-
-  &[data-is-active='true'] {
-    color: #3579f6;
-
-    &[data-is-desc='true'] {
-      & svg {
-        height: 1em;
-        width: 1em;
-        transform: rotatex(0deg);
-        background-color: rgba(85, 85, 85, 0);
-      }
-    }
-
-    &[data-is-desc='false'] {
-      & svg {
-        height: 1em;
-        width: 1em;
-        transform: rotatex(180deg);
-        background-color: rgba(85, 85, 85, 0);
-      }
-    }
-  }
-`;
+function HeaderLink({
+  href,
+  children,
+  'data-is-active': active,
+  'data-is-desc': descending,
+  'data-no-sort': noSort,
+}: {
+  href: string;
+  children: React.ReactNode;
+  'data-is-active'?: boolean | string;
+  'data-is-desc'?: boolean | string;
+  'data-no-sort'?: boolean;
+}) {
+  return (
+    <HrefLink
+      href={href}
+      className="madoc-review-sort flex items-center gap-[0.5em]"
+      data-is-active={Boolean(active)}
+      data-is-desc={Boolean(descending)}
+      data-no-sort={Boolean(noSort)}
+    >
+      {children}
+    </HrefLink>
+  );
+}
 
 const ResizeHandle = styled.div`
   position: absolute;
@@ -334,7 +293,7 @@ export function ReviewListingPage() {
         </ButtonRow>
       </div>
 
-      <ReviewListingContainer ref={refs.container as any}>
+      <div ref={refs.container as any} className="madoc-review-listing relative mb-[1em] flex bg-[#f7f7f7]">
         <TaskListContainer ref={refs.resizableDiv as any} style={{ width: widthB }}>
           {!pages ? (
             <>Loading...</>
@@ -361,7 +320,6 @@ export function ReviewListingPage() {
                     <SimpleTable.Header style={{ width: columnWidths.manifest }}>
                       <ResizableHeader>
                         <HeaderLink
-                          as={HrefLink}
                           href={QuerySortToggle('subject')}
                           data-is-active={sort_by && sort_by.includes('subject:')}
                           data-is-desc={sort_by && sort_by.includes('desc')}
@@ -380,7 +338,6 @@ export function ReviewListingPage() {
                     <SimpleTable.Header style={{ width: columnWidths.canvas }}>
                       <ResizableHeader>
                         <HeaderLink
-                          as={HrefLink}
                           href={QuerySortToggle('subject_parent')}
                           data-is-active={sort_by && sort_by.includes('subject_parent')}
                           data-is-desc={sort_by && sort_by.includes('desc')}
@@ -399,7 +356,6 @@ export function ReviewListingPage() {
                     <SimpleTable.Header style={{ width: columnWidths.modified }}>
                       <ResizableHeader>
                         <HeaderLink
-                          as={HrefLink}
                           href={QuerySortToggle('modified_at')}
                           data-is-active={sort_by && sort_by.includes('modified_at')}
                           data-is-desc={sort_by && sort_by.includes('desc')}
@@ -419,7 +375,6 @@ export function ReviewListingPage() {
                     <SimpleTable.Header style={{ width: columnWidths.status }}>
                       <ResizableHeader>
                         <HeaderLink
-                          as={HrefLink}
                           href={QuerySortToggle('status')}
                           data-is-active={sort_by && sort_by.includes('status')}
                           data-is-desc={sort_by && sort_by.includes('desc')}
@@ -438,7 +393,6 @@ export function ReviewListingPage() {
                     <SimpleTable.Header style={{ width: columnWidths.assignee }}>
                       <ResizableHeader>
                         <HeaderLink
-                          as={HrefLink}
                           href={QuerySortToggle('assignee_id')}
                           data-is-active={sort_by && sort_by.includes('assignee_id')}
                           data-is-desc={sort_by && sort_by.includes('desc')}
@@ -503,7 +457,7 @@ export function ReviewListingPage() {
             </EmptyState>
           )}
         </TaskPreviewContainer>
-      </ReviewListingContainer>
+      </div>
     </RefetchProvider>
   );
 }

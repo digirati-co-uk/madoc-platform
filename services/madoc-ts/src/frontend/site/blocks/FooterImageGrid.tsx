@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import { HrefLink } from '../../shared/utility/href-link';
+import { LinkTargetContext } from '../../shared/utility/link-targets';
 
 const isExternalUrl = (url: string) => /^https?:\/\//i.test(url);
 
@@ -30,6 +31,7 @@ interface FooterImageGridProps {
 }
 
 export function FooterImageGrid({ images, colNum, rowNum }: FooterImageGridProps) {
+  const openInNewTab = useContext(LinkTargetContext);
   const Logo = (image: ImageType) => (
     <div
       className={`h-auto w-full ${image.labelOptions?.inline ? 'flex items-end' : ''}`}
@@ -58,7 +60,11 @@ export function FooterImageGrid({ images, colNum, rowNum }: FooterImageGridProps
               <div key={i}>
                 {image.url ? (
                   isExternalUrl(image.url) ? (
-                    <a href={image.url}>
+                    <a
+                      href={image.url}
+                      target={openInNewTab ? '_blank' : undefined}
+                      rel={openInNewTab ? 'noopener noreferrer' : undefined}
+                    >
                       <Logo {...image} />
                     </a>
                   ) : (

@@ -1,8 +1,9 @@
 import React, { useMemo } from 'react';
 import { b64DecodeUnicode } from '../../../utility/base64';
 import { useApi } from '../hooks/use-api';
+import { setHtmlLinkTargets } from '../utility/link-targets';
 
-export const RenderFragment: React.FC<{ fragment: string }> = ({ fragment }) => {
+export const RenderFragment: React.FC<{ fragment: string; openInNewTab?: boolean }> = ({ fragment, openInNewTab }) => {
   const api = useApi();
   const decoded: string = useMemo(() => {
     if (api.getIsServer()) {
@@ -12,5 +13,11 @@ export const RenderFragment: React.FC<{ fragment: string }> = ({ fragment }) => 
     return b64DecodeUnicode(fragment, atob);
   }, [api, fragment]);
 
-  return <div dangerouslySetInnerHTML={{ __html: decoded }} />;
+  return (
+    <div
+      dangerouslySetInnerHTML={{
+        __html: openInNewTab === undefined ? decoded : setHtmlLinkTargets(decoded, openInNewTab),
+      }}
+    />
+  );
 };

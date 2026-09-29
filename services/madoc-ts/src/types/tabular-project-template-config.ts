@@ -1,4 +1,5 @@
 export type TabularProjectTemplateConfig = {
+  crowdsourcingInstructions?: string;
   enableZoomTracking?: boolean;
   iiif?: {
     manifestId?: string;

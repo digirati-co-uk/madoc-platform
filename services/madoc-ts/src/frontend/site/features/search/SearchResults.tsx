@@ -50,12 +50,18 @@ const ResultText = styled.span`
   line-height: 1.3em;
 `;
 
-export const ResultTitle = styled.div`
-  text-decoration: none;
-  color: #2962ff;
-  font-size: 1.25rem;
-  padding-bottom: 0.625rem;
-`;
+export function ResultTitle({
+  as: Component = 'div',
+  className = '',
+  ...props
+}: React.HTMLAttributes<HTMLElement> & { as?: React.ElementType; href?: string }) {
+  return (
+    <Component
+      className={`pb-[0.625rem] text-xl text-[var(--madoc-accent-link)] no-underline ${className}`}
+      {...props}
+    />
+  );
+}
 
 export const TotalResults = styled.div`
   margin: 1em 0;

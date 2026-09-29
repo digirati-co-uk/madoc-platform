@@ -9,13 +9,12 @@ import { HrefLink } from '../../../utility/href-link';
 import { Revisions } from '../../editor/stores/revisions';
 import { useDeselectRevision } from '../hooks/use-deselect-revision';
 import { EditorRenderingConfig, useSlotContext } from './EditorSlots';
-import { ErrorMessage } from '../../../callouts/ErrorMessage';
 
 export const DefaultSubmitButton: EditorRenderingConfig['SubmitButton'] = ({ afterSave, canSubmit = true }) => {
   const { t } = useTranslation();
   const routeContext = useRouteContext();
   const Slots = useSlotContext();
-  const { disableSaveForLater = false } = Slots.configuration;
+  const { disableSaveForLater, showSaveForLaterAlongsideSubmit } = Slots.configuration;
   const { projectId } = routeContext;
   const currentRevision = Revisions.useStoreState(s => s.currentRevision);
   const updateFunction = useViewerSaving(
@@ -30,18 +29,29 @@ export const DefaultSubmitButton: EditorRenderingConfig['SubmitButton'] = ({ aft
   );
   const deselectRevision = useDeselectRevision();
 
-  const [saveRevision, { isLoading, isSuccess, reset, status }] = useMutation(async (status: string) => {
+  const [saveRevision, { isLoading, isSuccess, reset, status }] = useMutation(async (revisionStatus: string) => {
     if (!currentRevision) {
       throw new Error(t('Unable to save your submission'));
     }
 
     try {
-      // Change this to "draft" to save for later.
-      await updateFunction(currentRevision, status);
-    } catch (e) {
+      await updateFunction(currentRevision, revisionStatus);
+    } catch {
       throw new Error(t('Unable to save your submission'));
     }
   });
+
+  const saveDraft = (close?: () => void) => {
+    saveRevision('draft', { throwOnError: true })
+      .then(() => {
+        if (close) {
+          close();
+        } else {
+          reset();
+        }
+      })
+      .catch(() => {});
+  };
 
   if (!currentRevision) {
     return null;
@@ -49,7 +59,17 @@ export const DefaultSubmitButton: EditorRenderingConfig['SubmitButton'] = ({ aft
 
   return (
     <div style={{ padding: '0.5em 1em' }}>
+      {showSaveForLaterAlongsideSubmit && !disableSaveForLater && status === 'error' ? (
+        <div role="alert" style={{ color: '#c74158', marginBottom: '0.5em' }}>
+          {t('Error - Unable to save your submission')}
+        </div>
+      ) : null}
       <ButtonRow>
+        {showSaveForLaterAlongsideSubmit && !disableSaveForLater ? (
+          <Button data-cy="save-later-button" disabled={isLoading} onClick={() => saveDraft()}>
+            {t('Save for later')}
+          </Button>
+        ) : null}
         <ModalButton
           autoHeight
           modalSize={isSuccess ? 'sm' : 'lg'}
@@ -84,16 +104,7 @@ export const DefaultSubmitButton: EditorRenderingConfig['SubmitButton'] = ({ aft
                 ) : (
                   <ButtonRow $noMargin>
                     {!disableSaveForLater ? (
-                      <Button
-                        data-cy="save-later-button"
-                        disabled={isLoading}
-                        onClick={() => {
-                          saveRevision('draft').then(() => {
-                            deselectRevision();
-                            close();
-                          });
-                        }}
-                      >
+                      <Button data-cy="save-later-button" disabled={isLoading} onClick={() => saveDraft(close)}>
                         {t('Save for later')}
                       </Button>
                     ) : null}
@@ -116,7 +127,7 @@ export const DefaultSubmitButton: EditorRenderingConfig['SubmitButton'] = ({ aft
             );
           }}
         >
-          <Button disabled={!canSubmit} $primary>
+          <Button disabled={isLoading || !canSubmit} $primary>
             {t('Submit')}
           </Button>
         </ModalButton>

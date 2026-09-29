@@ -1,3 +1,4 @@
+import { getTabularAnnotationSelectors } from '../../utility/tabular-annotation-selectors';
 import { sql } from 'slonik';
 import { getProject } from '../../database/queries/project-queries';
 import { PARAGRAPHS_PROFILE } from '../../extensions/capture-models/Paragraphs/Paragraphs.helpers';
@@ -45,7 +46,7 @@ export const sitePublishedModels: RouteMiddleware<{ slug: string; id: string }> 
   } = context.query as SitePublishedModelsQuery;
   const selectors = castBool(context.query.selectors);
 
-  const isAdmin = jwt?.scope.indexOf('site.admin') !== -1;
+  const isAdmin = !!jwt?.scope.includes('site.admin');
 
   if (version !== 'source' && !manifestId) {
     throw new RequestError('Cannot request models with version and no manifest ID');
@@ -71,12 +72,22 @@ export const sitePublishedModels: RouteMiddleware<{ slug: string; id: string }> 
           all_derivatives: true,
         });
 
-  const resp = await context.connection.one(sql<{ id: number; source: string }>`
-    select id, source from iiif_resource where id = ${Number(context.params.id)}
+  const resp = await context.connection.one(sql<{
+    id: number;
+    source: string;
+    width: number | null;
+    height: number | null;
+  }>`
+    select id, source, width, height from iiif_resource where id = ${Number(context.params.id)}
   `);
 
-  const projectModels = await context.connection.any(sql<{ id: number; capture_model_id: string }>`
-    select id, capture_model_id from iiif_project where site_id = ${site.id}
+  const projectModels = await context.connection.any(sql<{
+    id: number;
+    capture_model_id: string;
+    template_name: string | null;
+    template_config: unknown;
+  }>`
+    select id, capture_model_id, template_name, template_config from iiif_project where site_id = ${site.id}
   `);
 
   const annotationPages = [];
@@ -109,7 +120,8 @@ export const sitePublishedModels: RouteMiddleware<{ slug: string; id: string }> 
   const published = isAdmin ? !castBool(context.query.reviews) : true;
 
   for (const model of models) {
-    ms.push(siteApi.getCaptureModel(model.id, { published }));
+    // Development API tracing must not override the publication filter.
+    ms.push(siteApi.getCaptureModel(model.id, { published, debug: false }));
   }
 
   const defaultOptions = {
@@ -158,6 +170,11 @@ export const sitePublishedModels: RouteMiddleware<{ slug: string; id: string }> 
       const annotations: any[] = [];
       const resolveModels = await Promise.all(ms);
       for await (const singleModel of resolveModels) {
+        const tabularSelectors = getTabularAnnotationSelectors(
+          singleModel,
+          projectModels.find(projectModel => projectModel.capture_model_id === singleModel.derivedFrom),
+          resp
+        );
         traverseDocument(singleModel.document, {
           beforeVisitEntity(entity, key, parent) {
             if (entity.profile === PARAGRAPHS_PROFILE || (parent && parent.temp && parent.temp.PARAGRAPHS)) {
@@ -214,7 +231,9 @@ export const sitePublishedModels: RouteMiddleware<{ slug: string; id: string }> 
             if ((parent && parent.temp && parent.temp.EXTRACTED) || (field.temp && field.temp.REVISED)) {
               return;
             }
-            const selector = field.selector ? resolveSelector(field.selector, undefined, true) : null;
+            const selector =
+              tabularSelectors.get(field.id) ||
+              (field.selector ? resolveSelector(field.selector, undefined, true) : null);
             const canAddAnnotation = selectors
               ? !!(
                   selector &&

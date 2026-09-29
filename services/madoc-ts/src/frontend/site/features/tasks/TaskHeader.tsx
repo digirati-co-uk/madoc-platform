@@ -58,20 +58,13 @@ const TaskHeaderActions = styled.div`
   margin-top: 0.5em;
 `;
 
-const TaskHeaderAction = styled.div`
-  padding: 0.25em 1em 0.25em 0;
-  font-size: 0.85em;
-
-  & ~ & {
-    padding-left: 1em;
-    border-left: 1px solid #eee;
-  }
-
-  > a {
-    color: #4a67e4;
-    text-decoration: underline;
-  }
-`;
+function TaskHeaderAction({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="py-[0.25em] pr-[1em] text-[0.85em] [&:not(:first-child)]:border-l [&:not(:first-child)]:border-[#eee] [&:not(:first-child)]:pl-[1em] [&>a]:text-[var(--madoc-accent-link)] [&>a]:underline">
+      {children}
+    </div>
+  );
+}
 
 const TaskHeaderStatus = styled.div`
   align-self: start;
@@ -98,14 +91,14 @@ export const TaskHeader: React.FC<{ task: BaseTask; refetch?: () => Promise<void
     subject && subject.type === 'manifest'
       ? createLink({ manifestId: subject.id, taskId: undefined, parentTaskId: undefined, projectId: project?.slug })
       : subject && subject.parent && subject.parent.type === 'manifest'
-      ? createLink({
-          manifestId: subject.parent.id,
-          canvasId: undefined,
-          taskId: undefined,
-          parentTaskId: undefined,
-          projectId: project?.slug,
-        })
-      : null;
+        ? createLink({
+            manifestId: subject.parent.id,
+            canvasId: undefined,
+            taskId: undefined,
+            parentTaskId: undefined,
+            projectId: project?.slug,
+          })
+        : null;
 
   const canvasLink =
     subject && subject.parent && subject.parent.type === 'manifest'

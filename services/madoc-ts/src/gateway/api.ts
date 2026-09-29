@@ -91,6 +91,7 @@ import { SearchIndexTask } from './tasks/search-index-task';
 import { JsonProjectTemplate, ProjectTemplate } from '../extensions/projects/types';
 import { ApiKey } from '../types/api-key';
 import { TabularProjectTemplateConfig } from '../types/tabular-project-template-config';
+import type { TabularProjectMetadataUpdate } from '../types/schemas/tabular-project-metadata';
 import {
   ProjectSearchIndexConfiguration,
   ProjectSearchIndexDefinition,
@@ -953,6 +954,13 @@ export class ApiClient {
     });
   }
 
+  async patchTabularProjectMetadata(id: number, metadata: TabularProjectMetadataUpdate) {
+    return this.request<void>(`/api/madoc/projects/${id}/template-config`, {
+      method: 'PATCH',
+      body: metadata,
+    });
+  }
+
   async updateProjectStatus(id: number, status: number) {
     return this.request<any>(`/api/madoc/projects/${id}/status`, {
       method: 'PUT',
@@ -1665,7 +1673,7 @@ export class ApiClient {
   /**
    * @deprecated use api.crowdsourcing.getCaptureModel() instead
    */
-  async getCaptureModel(id: string, query?: { author?: string; published?: boolean }) {
+  async getCaptureModel(id: string, query?: { author?: string; published?: boolean; debug?: boolean }) {
     return this.crowdsourcing.getCaptureModel(id, query);
   }
 

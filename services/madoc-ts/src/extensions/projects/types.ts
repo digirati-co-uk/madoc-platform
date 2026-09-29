@@ -67,6 +67,13 @@ export type CaptureModelShorthand<Keys extends string | number | symbol> = Recor
 
 export type ProjectTemplateConfig<T extends ProjectTemplate> = T extends ProjectTemplate<any, any, infer R> ? R : never;
 
+export interface ProjectTemplateAdminModelProps {
+  projectId: number;
+  projectSlug: string;
+  captureModel: CaptureModel;
+  templateConfig: unknown;
+}
+
 export type ModelDefinition<Options = any> =
   | { verboseDocument: true; model: CaptureModel['document'] }
   | { verboseDocument: false; model?: CaptureModelShorthand<keyof Options> }
@@ -169,6 +176,7 @@ export type ProjectTemplate<
     upgrade: () => void | Promise<void>;
   }>;
   components?: {
+    customAdminModelEditor?: React.ComponentType<ProjectTemplateAdminModelProps>;
     customEditor?: React.FC<any>;
     customReviewRenderer?: React.FC<any>;
     customAdminPreviewRenderer?: React.FC<any>;

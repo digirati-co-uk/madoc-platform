@@ -337,6 +337,9 @@
                 "disableSaveForLater": {
                   "type": "boolean"
                 },
+                "showSaveForLaterAlongsideSubmit": {
+                  "type": "boolean"
+                },
                 "disablePreview": {
                   "type": "boolean"
                 },

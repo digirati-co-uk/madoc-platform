@@ -1,38 +1,8 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import { HrefLink } from '../utility/href-link';
 import { Tag } from '../capture-models/editor/atoms/Tag';
-
-const TaskItemContainer = styled.div<{ $onDark?: boolean; $selected?: boolean }>`
-  background: #ffffff;
-  border: 1px solid #ddd;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.18);
-  border-radius: 3px;
-  display: flex;
-  justify-content: stretch;
-  padding: 0.4em;
-  margin-bottom: 0.5em;
-  cursor: pointer;
-  letter-spacing: -0.2px;
-
-  &:hover {
-    border-color: #4a67e4;
-  }
-
-  ${props =>
-    props.$onDark &&
-    css`
-      border: 2px solid transparent;
-      box-shadow: 0 1px 2px 0 rgb(0 0 0 / 12%);
-    `}
-
-  ${props =>
-    props.$selected &&
-    css`
-      border-color: #4a67e4;
-    `}
-`;
 
 const error = '#a90e21';
 const statuses = ['#AAA', '#4a67e4', '#ffb187', '#71c873'];
@@ -89,14 +59,6 @@ const TaskItemType = styled.div`
   font-size: 0.7em;
 `;
 
-const TaskItemAssignee = styled.div`
-  font-size: 0.7em;
-  color: #999;
-  a {
-    color: #5677f3;
-  }
-`;
-
 export const TaskItem: React.FC<{
   onClick?: () => void;
   selected?: boolean;
@@ -110,9 +72,10 @@ export const TaskItem: React.FC<{
   const { t } = useTranslation();
 
   return (
-    <TaskItemContainer
-      $onDark={props.$onDark}
-      $selected={props.selected}
+    <div
+      className={`mb-[0.5em] flex cursor-pointer justify-stretch rounded-[3px] bg-white p-[0.4em] tracking-[-0.2px] shadow-sm hover:border-[var(--madoc-accent)] ${
+        props.$onDark ? 'border-2 border-transparent' : 'border border-[#ddd]'
+      } ${props.selected ? '!border-[var(--madoc-accent)]' : ''}`}
       onClick={props.onClick}
       data-cy="task-list-item"
     >
@@ -121,10 +84,10 @@ export const TaskItem: React.FC<{
         <TaskItemLabel title={props.label}>{props.label}</TaskItemLabel>
         <TaskItemType>{props.type}</TaskItemType>
         {props.user ? (
-          <TaskItemAssignee>
+          <div className="text-[0.7em] text-[#999] [&_a]:text-[var(--madoc-accent-link)]">
             {t('assigned to')} <HrefLink href={props.user.link}>{props.user.name}</HrefLink>
             {props.user.automated ? <Tag style={{ marginLeft: '0.5em' }}>bot</Tag> : null}
-          </TaskItemAssignee>
+          </div>
         ) : null}
       </TaskItemBody>
       {props.thumbnail ? (
@@ -132,6 +95,6 @@ export const TaskItem: React.FC<{
           <img src={props.thumbnail} alt={t('task thumbnail')} />
         </TaskItemThumbnail>
       ) : null}
-    </TaskItemContainer>
+    </div>
   );
 };

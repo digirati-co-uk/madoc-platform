@@ -1,3 +1,4 @@
+import type { TabularAlignmentSnapshot } from '../../utility/tabular-alignment-snapshot';
 import { BaseProperty } from './base-property';
 import { BaseField } from './field-types';
 
@@ -8,6 +9,7 @@ export interface ModelFields extends Array<string | NestedModelFields> {}
 
 export interface Document extends BaseProperty {
   id: string;
+  instructions?: string;
   // @todo future implementation of JSON-LD Extension. Added as optional for now.
   '@context'?: string | ({ [key: string]: string } & { '@vocab'?: string });
   type: 'entity';
@@ -17,6 +19,7 @@ export interface Document extends BaseProperty {
 }
 
 export type Revision = {
+  tabularAlignment?: TabularAlignmentSnapshot;
   id: string;
   label?: string;
   status?: StatusTypes;

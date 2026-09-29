@@ -47,11 +47,16 @@ export function ViewField({
   }, [helper, selectorId, trigger]);
 
   if (!selector) {
-    return <FieldPreview key={field.id} field={field} />;
+    return (
+      <div data-preview-value>
+        <FieldPreview field={field} />
+      </div>
+    );
   }
 
   return (
     <FieldSection
+      data-preview-value
       ref={ref}
       key={field.id}
       onMouseEnter={() => (selectorId ? helper.highlight(selectorId) : null)}

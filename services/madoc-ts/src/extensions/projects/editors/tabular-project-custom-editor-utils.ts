@@ -151,7 +151,7 @@ export function createTabularColumnModel(tabularColumns: TabularModelColumn[]): 
     if (column.label?.trim()) {
       labels.set(id, column.label.trim());
     }
-    if (column.helpText?.trim()) {
+    if (typeof column.helpText === 'string') {
       descriptions.set(id, column.helpText.trim());
     } else if (column.description?.trim()) {
       descriptions.set(id, column.description.trim());

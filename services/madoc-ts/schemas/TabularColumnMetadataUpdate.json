@@ -1,0 +1,24 @@
+{
+  "additionalProperties": false,
+  "type": "object",
+  "properties": {
+    "id": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "label": {
+      "minLength": 1,
+      "maxLength": 160,
+      "type": "string"
+    },
+    "helpText": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "helpText",
+    "id",
+    "label"
+  ],
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

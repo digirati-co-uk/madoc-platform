@@ -69,8 +69,8 @@ export const AdminSidebar: React.FC = () => {
   }, [pathname]);
 
   return (
-    <AdminSidebarContainer>
-      <SiteSwitcherContainer>
+    <AdminSidebarContainer className="madoc-admin-sidebar">
+      <SiteSwitcherContainer data-admin-switcher>
         <SiteSwitcherSiteName>{site.title}</SiteSwitcherSiteName>
         <SiteSwitcherBackButton as="a" href={`/s/${site.slug}`}>
           {t('Back to site')}
@@ -79,7 +79,7 @@ export const AdminSidebar: React.FC = () => {
 
       <AdminMenuContainer>
         <AdminMenuItemContainer>
-          <AdminMenuItem as={HrefLink} href={'/'} $active={isDashboard}>
+          <AdminMenuItem as={HrefLink} href={'/'} $active={isDashboard} data-active={isDashboard}>
             <AdminMenuItemIcon>
               <DashboardIcon />
             </AdminMenuItemIcon>
@@ -88,43 +88,64 @@ export const AdminSidebar: React.FC = () => {
         </AdminMenuItemContainer>
 
         <AdminMenuItemContainer>
-          <AdminMenuItem as={HrefLink} href="/manifests" $active={isManageManifests}>
+          <AdminMenuItem as={HrefLink} href="/manifests" $active={isManageManifests} data-active={isManageManifests}>
             <AdminMenuItemIcon>
               <ManageManifestsIcon />
             </AdminMenuItemIcon>
             <AdminMenuItemLabel>{t('Manifests', { count: 2 })}</AdminMenuItemLabel>
           </AdminMenuItem>
 
-          <AdminMenuSubItemContainer $open={isManageManifests}>
-            <AdminMenuSubItem as={HrefLink} href="/import/manifest">
+          <AdminMenuSubItemContainer $open={isManageManifests} data-admin-submenu>
+            <AdminMenuSubItem
+              as={HrefLink}
+              href="/import/manifest"
+              aria-current={pathname === '/import/manifest' ? 'page' : undefined}
+            >
               {t('Import manifest')}
             </AdminMenuSubItem>
-            <AdminMenuSubItem as={HrefLink} href="/enrichment/ocr">
+            <AdminMenuSubItem
+              as={HrefLink}
+              href="/enrichment/ocr"
+              aria-current={pathname === '/enrichment/ocr' ? 'page' : undefined}
+            >
               {t('View manifests with OCR text')}
             </AdminMenuSubItem>
           </AdminMenuSubItemContainer>
         </AdminMenuItemContainer>
 
         <AdminMenuItemContainer>
-          <AdminMenuItem as={HrefLink} href="/collections" $active={isManageCollections}>
+          <AdminMenuItem
+            as={HrefLink}
+            href="/collections"
+            $active={isManageCollections}
+            data-active={isManageCollections}
+          >
             <AdminMenuItemIcon>
               <ManageCollectionsIcon />
             </AdminMenuItemIcon>
             <AdminMenuItemLabel>{t('Collections', { count: 2 })}</AdminMenuItemLabel>
           </AdminMenuItem>
 
-          <AdminMenuSubItemContainer $open={isManageCollections}>
-            <AdminMenuSubItem as={HrefLink} href="/import/collection/create">
+          <AdminMenuSubItemContainer $open={isManageCollections} data-admin-submenu>
+            <AdminMenuSubItem
+              as={HrefLink}
+              href="/import/collection/create"
+              aria-current={pathname === '/import/collection/create' ? 'page' : undefined}
+            >
               {t('Create new collection')}
             </AdminMenuSubItem>
-            <AdminMenuSubItem as={HrefLink} href="/import/collection">
+            <AdminMenuSubItem
+              as={HrefLink}
+              href="/import/collection"
+              aria-current={pathname === '/import/collection' ? 'page' : undefined}
+            >
               {t('Import collection')}
             </AdminMenuSubItem>
           </AdminMenuSubItemContainer>
         </AdminMenuItemContainer>
 
         <AdminMenuItemContainer>
-          <AdminMenuItem as={HrefLink} href="/projects" $active={isProjects}>
+          <AdminMenuItem as={HrefLink} href="/projects" $active={isProjects} data-active={isProjects}>
             <AdminMenuItemIcon>
               <ProjectsIcon />
             </AdminMenuItemIcon>
@@ -133,7 +154,7 @@ export const AdminSidebar: React.FC = () => {
         </AdminMenuItemContainer>
 
         <AdminMenuItemContainer>
-          <AdminMenuItem as={HrefLink} href="/media" $active={isMedia}>
+          <AdminMenuItem as={HrefLink} href="/media" $active={isMedia} data-active={isMedia}>
             <AdminMenuItemIcon>
               <MediaIcon />
             </AdminMenuItemIcon>
@@ -142,7 +163,7 @@ export const AdminSidebar: React.FC = () => {
         </AdminMenuItemContainer>
 
         <AdminMenuItemContainer>
-          <AdminMenuItem as={HrefLink} href="/page-blocks" $active={isPageBlocks}>
+          <AdminMenuItem as={HrefLink} href="/page-blocks" $active={isPageBlocks} data-active={isPageBlocks}>
             <AdminMenuItemIcon>
               <ModelDocumentIcon color="#fff" />
             </AdminMenuItemIcon>
@@ -151,7 +172,7 @@ export const AdminSidebar: React.FC = () => {
         </AdminMenuItemContainer>
 
         <AdminMenuItemContainer>
-          <AdminMenuItem as={HrefLink} href="/i18n" $active={isLocalisation}>
+          <AdminMenuItem as={HrefLink} href="/i18n" $active={isLocalisation} data-active={isLocalisation}>
             <AdminMenuItemIcon>
               <InternationalisationIcon />
             </AdminMenuItemIcon>
@@ -160,54 +181,111 @@ export const AdminSidebar: React.FC = () => {
         </AdminMenuItemContainer>
 
         <AdminMenuItemContainer>
-          <AdminMenuItem as={HrefLink} href="/configure/site" $active={isSiteConfiguration}>
+          <AdminMenuItem
+            as={HrefLink}
+            href="/configure/site"
+            $active={isSiteConfiguration}
+            data-active={isSiteConfiguration}
+          >
             <AdminMenuItemIcon>
-              <SiteConfigurationIcon />
+              <SiteConfigurationIcon data-current-color />
             </AdminMenuItemIcon>
             <AdminMenuItemLabel>{t('Site configuration')}</AdminMenuItemLabel>
           </AdminMenuItem>
 
-          <AdminMenuSubItemContainer $open={isSiteConfiguration}>
-            <AdminMenuSubItem as={HrefLink} href="/site/details">
+          <AdminMenuSubItemContainer $open={isSiteConfiguration} data-admin-submenu>
+            <AdminMenuSubItem
+              as={HrefLink}
+              href="/site/details"
+              aria-current={pathname === '/site/details' ? 'page' : undefined}
+            >
               {t('Site details')}
             </AdminMenuSubItem>
-            <AdminMenuSubItem as={HrefLink} href="/configure/site/system">
+            <AdminMenuSubItem
+              as={HrefLink}
+              href="/configure/site/system"
+              aria-current={pathname === '/configure/site/system' ? 'page' : undefined}
+            >
               {t('Site general configuration')}
             </AdminMenuSubItem>
-            <AdminMenuSubItem as={HrefLink} href="/configure/site/project">
+            <AdminMenuSubItem
+              as={HrefLink}
+              href="/configure/site/project"
+              aria-current={pathname === '/configure/site/project' ? 'page' : undefined}
+            >
               {t('Site default project configuration')}
             </AdminMenuSubItem>
-            <AdminMenuSubItem as={HrefLink} href="/configure/site/metadata">
+            <AdminMenuSubItem
+              as={HrefLink}
+              href="/configure/site/metadata"
+              aria-current={pathname === '/configure/site/metadata' ? 'page' : undefined}
+            >
               {t('Site metadata display configuration')}
             </AdminMenuSubItem>
-            <AdminMenuSubItem as={HrefLink} href="/enrichment/search-indexing">
+            <AdminMenuSubItem
+              as={HrefLink}
+              href="/enrichment/search-indexing"
+              aria-current={pathname === '/enrichment/search-indexing' ? 'page' : undefined}
+            >
               {t('Site search indexing')}
             </AdminMenuSubItem>
-            <AdminMenuSubItem as={HrefLink} href="/enrichment/typesense-playground">
+            <AdminMenuSubItem
+              as={HrefLink}
+              href="/enrichment/typesense-playground"
+              aria-current={pathname === '/enrichment/typesense-playground' ? 'page' : undefined}
+            >
               {t('Typesense playground')}
             </AdminMenuSubItem>
             {isGlobalAdmin ? (
-              <AdminMenuSubItem as={HrefLink} href="/system/themes">
+              <AdminMenuSubItem
+                as={HrefLink}
+                href="/system/themes"
+                aria-current={pathname === '/system/themes' ? 'page' : undefined}
+              >
                 {t('Themes')}
               </AdminMenuSubItem>
             ) : null}
-            <AdminMenuSubItem as={HrefLink} href="/configure/site/terms-and-conditions">
+            <AdminMenuSubItem
+              as={HrefLink}
+              href="/configure/site/terms-and-conditions"
+              aria-current={pathname === '/configure/site/terms-and-conditions' ? 'page' : undefined}
+            >
               {t('Site terms and conditions')}
             </AdminMenuSubItem>
-            <AdminMenuSubItem as={HrefLink} href="/site/invitations">
+            <AdminMenuSubItem
+              as={HrefLink}
+              href="/site/invitations"
+              aria-current={pathname === '/site/invitations' ? 'page' : undefined}
+            >
               {t('User Invitations')}
             </AdminMenuSubItem>
-            <AdminMenuSubItem as={HrefLink} href="/site/permissions">
+            <AdminMenuSubItem
+              as={HrefLink}
+              href="/site/permissions"
+              aria-current={pathname === '/site/permissions' ? 'page' : undefined}
+            >
               {t('Site permissions')}
             </AdminMenuSubItem>
-            <AdminMenuSubItem as={HrefLink} href="/configure/site/terms">
+            <AdminMenuSubItem
+              as={HrefLink}
+              href="/configure/site/terms"
+              aria-current={pathname === '/configure/site/terms' ? 'page' : undefined}
+            >
               {t('External terms list')}
             </AdminMenuSubItem>
-            <AdminMenuSubItem as={HrefLink} href="/site/annotation-styles">
+            <AdminMenuSubItem
+              as={HrefLink}
+              href="/site/annotation-styles"
+              aria-current={pathname === '/site/annotation-styles' ? 'page' : undefined}
+            >
               {t('Annotation styles')}
             </AdminMenuSubItem>
             {isGlobalAdmin ? (
-              <AdminMenuSubItem as={HrefLink} href="/system/plugins">
+              <AdminMenuSubItem
+                as={HrefLink}
+                href="/system/plugins"
+                aria-current={pathname === '/system/plugins' ? 'page' : undefined}
+              >
                 {t('Plugins')}
               </AdminMenuSubItem>
             ) : null}
@@ -216,39 +294,75 @@ export const AdminSidebar: React.FC = () => {
 
         {isGlobalAdmin ? (
           <AdminMenuItemContainer>
-            <AdminMenuItem as={HrefLink} href="/global/sites" $active={isSiteGlobal}>
+            <AdminMenuItem as={HrefLink} href="/global/sites" $active={isSiteGlobal} data-active={isSiteGlobal}>
               <AdminMenuItemIcon>
                 <SiteGlobIcon />
               </AdminMenuItemIcon>
               <AdminMenuItemLabel>{t('Global')}</AdminMenuItemLabel>
             </AdminMenuItem>
 
-            <AdminMenuSubItemContainer $open={isSiteGlobal}>
-              <AdminMenuSubItem as={HrefLink} href="/global/config">
+            <AdminMenuSubItemContainer $open={isSiteGlobal} data-admin-submenu>
+              <AdminMenuSubItem
+                as={HrefLink}
+                href="/global/config"
+                aria-current={pathname === '/global/config' ? 'page' : undefined}
+              >
                 {t('Global config')}
               </AdminMenuSubItem>
-              <AdminMenuSubItem as={HrefLink} href="/global/sites">
+              <AdminMenuSubItem
+                as={HrefLink}
+                href="/global/sites"
+                aria-current={pathname === '/global/sites' ? 'page' : undefined}
+              >
                 {t('All sites')}
               </AdminMenuSubItem>
-              <AdminMenuSubItem as={HrefLink} href="/global/sites/create">
+              <AdminMenuSubItem
+                as={HrefLink}
+                href="/global/sites/create"
+                aria-current={pathname === '/global/sites/create' ? 'page' : undefined}
+              >
                 {t('Create site')}
               </AdminMenuSubItem>
-              <AdminMenuSubItem as={HrefLink} href="/global/users">
+              <AdminMenuSubItem
+                as={HrefLink}
+                href="/global/users"
+                aria-current={pathname === '/global/users' ? 'page' : undefined}
+              >
                 {t('All users')}
               </AdminMenuSubItem>
-              <AdminMenuSubItem as={HrefLink} href="/global/users/create">
+              <AdminMenuSubItem
+                as={HrefLink}
+                href="/global/users/create"
+                aria-current={pathname === '/global/users/create' ? 'page' : undefined}
+              >
                 {t('Create user')}
               </AdminMenuSubItem>
-              <AdminMenuSubItem as={HrefLink} href="/global/status">
+              <AdminMenuSubItem
+                as={HrefLink}
+                href="/global/status"
+                aria-current={pathname === '/global/status' ? 'page' : undefined}
+              >
                 {t('System status')}
               </AdminMenuSubItem>
-              <AdminMenuSubItem as={HrefLink} href="/global/logs">
+              <AdminMenuSubItem
+                as={HrefLink}
+                href="/global/logs"
+                aria-current={pathname === '/global/logs' ? 'page' : undefined}
+              >
                 {t('Process logs')}
               </AdminMenuSubItem>
-              <AdminMenuSubItem as={HrefLink} href="/global/queue">
+              <AdminMenuSubItem
+                as={HrefLink}
+                href="/global/queue"
+                aria-current={pathname === '/global/queue' ? 'page' : undefined}
+              >
                 {t('Queue inspector')}
               </AdminMenuSubItem>
-              <AdminMenuSubItem as={HrefLink} href="/global/api-keys">
+              <AdminMenuSubItem
+                as={HrefLink}
+                href="/global/api-keys"
+                aria-current={pathname === '/global/api-keys' ? 'page' : undefined}
+              >
                 {t('API keys')}
               </AdminMenuSubItem>
             </AdminMenuSubItemContainer>

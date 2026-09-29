@@ -1,5 +1,5 @@
 import { ImageService } from '@iiif/presentation-3';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { webglSupport } from '../../../../utility/webgl-support';
 import { AnnotationStyleProvider, useAnnotationStyles } from '../../../AnnotationStyleContext';
 import { BaseContent, ContentOptions } from '../../../types/content-types';
@@ -16,11 +16,14 @@ import {
 } from 'react-iiif-vault';
 import { Preset, PopmotionControllerConfig } from '@atlas-viewer/atlas';
 import { ImageServiceContext } from './Atlas.helpers';
-import { Button } from '../../atoms/Button';
+import { StandardButton } from '../../../../atoms/StandardButton';
 import { useTranslation } from 'react-i18next';
 import { CanvasViewerControls } from '../../../../atoms/CanvasViewerGrid';
-import { useSiteConfiguration } from '../../../../../site/features/SiteConfigurationContext';
-import { PolygonControls } from '../../selector-types/PolygonSelector/components/CreateCustomShape';
+import {
+  PolygonControls,
+  PolygonTool,
+  usePolygonTool,
+} from '../../selector-types/PolygonSelector/components/PolygonControls';
 
 export type AtlasCustomOptions = {
   unstable_webglRenderer?: boolean;
@@ -49,15 +52,16 @@ const AtlasAnnotationConfirm: React.FC<{ onConfirm: () => void }> = ({ onConfirm
   const { t } = useTranslation();
 
   return (
-    <Button
-      primary
-      size="small"
+    <StandardButton
+      type="button"
+      $variation="primary"
+      $size="small"
       onClick={() => {
         onConfirm();
       }}
     >
       {t('confirm')}
-    </Button>
+    </StandardButton>
   );
 };
 
@@ -123,9 +127,9 @@ const Canvas: React.FC<{
 };
 
 export const AtlasViewer: React.FC<AtlasViewerProps> = props => {
-  const { project } = useSiteConfiguration();
   const { isLoaded } = useExternalManifest(props.state.manifestId);
   const currentSelector = useCurrentSelector('atlas', undefined);
+  const [preferredTool] = usePolygonTool();
   const currentSelectorId = Revisions.useStoreState(s => s.selector.currentSelectorId);
   const clearSelector = Revisions.useStoreActions(a => a.clearSelector);
   const currentSelectorType = Revisions.useStoreState(s =>
@@ -188,30 +192,32 @@ export const AtlasViewer: React.FC<AtlasViewerProps> = props => {
           // }}
         >
           {selectors}
-          {currentSelector}
+          {currentSelectorType === 'polygon-selector'
+            ? currentSelector?.map(selector =>
+                React.cloneElement(selector as React.ReactElement<{ preferredTool?: PolygonTool }>, { preferredTool })
+              )
+            : currentSelector}
           {props.children}
         </Canvas>
       </CanvasContext>
-      <CanvasViewerControls
-        id="atlas-controls"
-        data-position="left"
-        data-default-polygon-tool={project.defaultPolygonTool === 'box' ? 'box' : 'pen'}
-      >
+      <CanvasViewerControls id="atlas-controls" data-position="bottom-center">
         {currentSelectorType === 'polygon-selector' ? <PolygonControls /> : null}
       </CanvasViewerControls>
     </div>
   );
 };
 
-const WrappedViewer: React.FC<AtlasViewerProps> = props => {
+const WrappedViewer = (props: React.PropsWithChildren<AtlasViewerProps>) => {
   const customFetcher =
     props.options && props.options.custom && props.options.custom.customFetcher
       ? props.options.custom.customFetcher
       : undefined;
+  // VaultProvider creates a new vault whenever its options object changes.
+  const vaultOptions = useMemo(() => (customFetcher ? { customFetcher } : undefined), [customFetcher]);
 
   return (
     <AtlasStoreProvider>
-      <VaultProvider vaultOptions={customFetcher ? ({ customFetcher } as any) : undefined}>
+      <VaultProvider vaultOptions={vaultOptions}>
         <AtlasViewer {...props}>{props.children}</AtlasViewer>
       </VaultProvider>
     </AtlasStoreProvider>

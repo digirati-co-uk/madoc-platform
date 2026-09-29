@@ -1,8 +1,8 @@
 import { themeVariable } from '../themes/helpers/themeVariable';
+import { MadocTheme } from '../themes/definitions/types';
 
-export const accent = themeVariable('accent', 'primary', {
-  default: '#5b80b2',
-});
+export const accent = ({ theme }: { theme: object }) =>
+  (theme as Partial<MadocTheme>).custom?.accent?.primary || 'var(--madoc-accent, #4265e9)';
 
 export const globalBackground = themeVariable('header', 'globalBackground', {
   default: '#fff',
@@ -26,9 +26,9 @@ export const searchBorder = themeVariable('header', 'searchBorder', {
 });
 
 export const searchBorderFocusColor = themeVariable('header', 'searchBorderFocusColor', {
-  default: accent,
-  midnight: accent,
-  dark: accent,
+  default: 'var(--madoc-accent, #4265e9)',
+  midnight: 'var(--madoc-accent, #4265e9)',
+  dark: 'var(--madoc-accent, #4265e9)',
 });
 
 export const footerBackground = themeVariable('footer', 'background', {

@@ -105,8 +105,10 @@ export function SlotTabs(props: SlotTabProps) {
                   window.location.hash = tab.name;
                 }
               }}
-              className={`px-2 border-b-2 hover:border-blue-400 ${
-                tab.index === active ? 'text-slate-800 border-blue-500' : 'text-slate-500 border-transparent'
+              className={`px-2 border-b-2 hover:border-[var(--madoc-accent)] ${
+                tab.index === active
+                  ? 'text-slate-800 border-[var(--madoc-accent)]'
+                  : 'text-slate-500 border-transparent'
               } ${tab.empty ? 'text-slate-400' : 'text-slate-900'}`}
             >
               {tab.label}

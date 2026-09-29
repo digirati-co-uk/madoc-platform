@@ -40,6 +40,14 @@ export function TabularDataGridStyles({ scopeClassName, disableRowHover = false 
           border-radius: 6px;
           pointer-events: none;
         }
+        ${selector} .rdg-cell-dragged-over:not(.tabular-fill-disabled-cell) > .group {
+          background: color-mix(in srgb, var(--madoc-accent, #4265e9) 18%, white) !important;
+        }
+        ${selector} .rdg-cell-drag-handle:hover,
+        ${selector} .rdg-cell-drag-handle:active {
+          --rdg-drag-handle-size: 12px;
+          background-color: var(--madoc-accent, #4265e9);
+        }
         ${selector} .rdg-cell-dragging {
           opacity: 0.92;
         }

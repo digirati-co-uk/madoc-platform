@@ -263,8 +263,8 @@ export function useTabularProjectCustomEditorState({
       const column = visibleColumnsById.get(columnKey);
       return {
         key: columnKey,
-        label: columnModel.labels.get(columnKey) || column?.label || columnKey,
-        description: column?.description || columnModel.descriptions.get(columnKey),
+        label: column?.label ?? columnModel.labels.get(columnKey) ?? columnKey,
+        description: column ? column.description : columnModel.descriptions.get(columnKey),
       };
     });
   }, [columnModel.descriptions, columnModel.labels, visibleColumnKeys, visibleColumnsById]);

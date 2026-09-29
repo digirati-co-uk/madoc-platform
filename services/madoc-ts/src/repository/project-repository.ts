@@ -61,8 +61,8 @@ export class ProjectRepository extends BaseRepository {
 
   static mutations = {
     createProjectUpdate: (update: CreateProjectUpdate, userId: number, projectId: number) => sql<ProjectUpdatesRow>`
-      insert into project_updates (project_id, user_id, title, update, snapshot, created)
-      values (${projectId}, ${userId}, ${update.title || null}, ${update.update}, ${sql.json(
+      insert into project_updates (project_id, user_id, title, update, open_in_new_tab, snapshot, created)
+      values (${projectId}, ${userId}, ${update.title || null}, ${update.update}, ${!!update.openInNewTab}, ${sql.json(
         (update.snapshot as Record<string, any>) || {}
       )}, now())
       returning *
@@ -72,7 +72,7 @@ export class ProjectRepository extends BaseRepository {
       delete from project_updates where project_id = ${projectId} and id = ${updateId}
     `,
     updateProjectUpdate: (update: CreateProjectUpdate, updateId: number, projectId: number) => sql<ProjectUpdatesRow>`
-      update project_updates set title = ${update.title || null}, update = ${update.update}
+      update project_updates set title = ${update.title || null}, update = ${update.update}, open_in_new_tab = ${!!update.openInNewTab}
       where project_id = ${projectId} and id = ${updateId} returning *
     `,
 
@@ -128,6 +128,7 @@ export class ProjectRepository extends BaseRepository {
       },
       title: row.title || undefined,
       update: row.update,
+      openInNewTab: row.open_in_new_tab,
       snapshot: row.snapshot,
       created: row.created,
     };

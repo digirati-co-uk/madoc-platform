@@ -34,6 +34,7 @@ export function CanvasSimpleEditor({ revision, isSegmentation }: CanvasSimpleEdi
   const config = useSiteConfiguration();
   const {
     disableSaveForLater = false,
+    showSaveForLaterAlongsideSubmit = false,
     disablePreview = false,
     disableNextCanvas = false,
     enableRotation = false,
@@ -91,6 +92,7 @@ export function CanvasSimpleEditor({ revision, isSegmentation }: CanvasSimpleEdi
         isVertical={isVertical}
         enableEditorResizing={enableEditorResizing}
         disableSaveForLater={disableSaveForLater}
+        showSaveForLaterAlongsideSubmit={showSaveForLaterAlongsideSubmit}
         modelRefetch={modelRefetch}
         markedAsUnusable={markedAsUnusable}
         preventFurtherSubmission={preventFurtherSubmission}

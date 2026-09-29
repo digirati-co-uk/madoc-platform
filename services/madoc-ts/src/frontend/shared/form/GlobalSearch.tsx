@@ -61,7 +61,7 @@ export const GlobalSearch: React.FC = () => {
 
   return (
     <div className="relative w-80 mr-4">
-      <div className="border-2 rounded-full overflow-hidden focus-within:border-blue-500 bg-white">
+      <div className="border-2 rounded-full overflow-hidden focus-within:border-[var(--madoc-accent)] bg-white">
         <form
           className="flex h-10"
           onSubmit={e => {
