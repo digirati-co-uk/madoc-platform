@@ -29,6 +29,7 @@ export const DefaultInlineProperties: EditorRenderingConfig['InlineProperties'] 
     <>
       {props.label && (showTitle || showEmptyMultipleFieldTitle) ? (
         <FieldHeader
+          required={propertyList[0]?.required}
           label={tModel(props.label)}
           labelFor={props.label}
           description={props.description ? tModel(props.description) : undefined}
