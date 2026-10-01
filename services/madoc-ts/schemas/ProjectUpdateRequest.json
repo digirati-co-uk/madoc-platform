@@ -1,6 +1,9 @@
 {
   "type": "object",
   "properties": {
+    "openInNewTab": {
+      "type": "boolean"
+    },
     "title": {
       "type": "string",
       "maxLength": 200
