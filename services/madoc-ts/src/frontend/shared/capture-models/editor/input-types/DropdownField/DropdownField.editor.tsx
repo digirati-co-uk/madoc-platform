@@ -1,14 +1,9 @@
+import { FormikCheckbox } from '../../atoms/FormikCheckbox';
 import { Field } from 'formik';
 import React from 'react';
-import {
-  StyledFormField,
-  StyledFormLabel,
-  StyledFormInput,
-  StyledFormInputElement,
-  StyledCheckbox,
-} from '../../atoms/StyledForm';
+import { StyledFormField, StyledFormLabel, StyledFormInput, StyledFormInputElement } from '../../atoms/StyledForm';
 
-type Props = {
+interface Props {
   allowedTags?: string[];
   enableHistory?: boolean;
   enableExternalImages?: boolean;
@@ -17,9 +12,9 @@ type Props = {
   inline?: boolean;
   optionsAsText: string;
   clearable: boolean;
-};
+}
 
-const DropdownFieldEditor: React.FC<Props> = props => {
+function DropdownFieldEditor(props: Props) {
   return (
     <>
       <StyledFormField>
@@ -48,18 +43,18 @@ const DropdownFieldEditor: React.FC<Props> = props => {
       </StyledFormField>
       <StyledFormField>
         <StyledFormLabel>
-          <Field as={StyledCheckbox} type="checkbox" name="clearable" required={false} />
+          <FormikCheckbox name="clearable" required={false} />
           Allow clearing of selection
         </StyledFormLabel>
       </StyledFormField>
       <StyledFormField>
         <StyledFormLabel>
-          <Field as={StyledCheckbox} type="checkbox" name="inline" required={false} />
+          <FormikCheckbox name="inline" required={false} />
           Use inline variant
         </StyledFormLabel>
       </StyledFormField>
     </>
   );
-};
+}
 
 export default DropdownFieldEditor;

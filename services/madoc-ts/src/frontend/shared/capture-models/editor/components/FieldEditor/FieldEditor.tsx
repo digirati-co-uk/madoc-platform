@@ -1,3 +1,4 @@
+import { FormikCheckbox } from '../../atoms/FormikCheckbox';
 import copy from 'fast-copy';
 import React, { useContext, useState } from 'react';
 import { Field, Form, Formik } from 'formik';
@@ -32,7 +33,7 @@ export type FieldSource = {
   fieldTypes: string[];
 };
 
-export const FieldEditor: React.FC<{
+interface FieldEditorProps {
   field: BaseField;
   term?: string;
   onSubmit: (newProps: BaseField, term?: string) => void;
@@ -41,7 +42,17 @@ export const FieldEditor: React.FC<{
   setSaveHandler?: (handler: () => void) => void;
   sourceTypes?: Array<FieldSource>;
   subtreeFields?: any[];
-}> = ({ onSubmit, onDelete, onChangeFieldType, sourceTypes, field: props, term, subtreeFields }) => {
+}
+
+export function FieldEditor({
+  onSubmit,
+  onDelete,
+  onChangeFieldType,
+  sourceTypes,
+  field: props,
+  term,
+  subtreeFields,
+}: FieldEditorProps) {
   const { t } = useTranslation();
   const ctx = useContext(PluginContext);
   const { fields, selectors } = useContext(PluginContext);
@@ -95,7 +106,7 @@ export const FieldEditor: React.FC<{
         }}
       >
         <Form>
-          <AutoSaveFormik />
+          <AutoSaveFormik hasChanges={selector !== props.selector} />
           <Segment>
             <h3 style={{ textAlign: 'center' }}>{t('Preview')}</h3>
             <FormPreview
@@ -225,13 +236,13 @@ export const FieldEditor: React.FC<{
           ) : null}
           <StyledFormField>
             <StyledFormLabel>
-              <Field as={StyledCheckbox} type="checkbox" name="allowMultiple" style={{ marginRight: 10 }} />
+              <FormikCheckbox name="allowMultiple" style={{ marginRight: 10 }} />
               {t('Allow multiple instances')}
             </StyledFormLabel>
           </StyledFormField>
           <StyledFormField>
             <StyledFormLabel>
-              <Field as={StyledCheckbox} type="checkbox" name="required" style={{ marginRight: 10 }} />
+              <FormikCheckbox name="required" style={{ marginRight: 10 }} />
               {t('Required field')}
             </StyledFormLabel>
           </StyledFormField>
@@ -262,4 +273,4 @@ export const FieldEditor: React.FC<{
       </Formik>
     </BrowserComponent>
   );
-};
+}

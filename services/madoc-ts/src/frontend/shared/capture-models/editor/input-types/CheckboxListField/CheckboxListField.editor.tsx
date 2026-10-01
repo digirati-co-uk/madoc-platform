@@ -1,9 +1,15 @@
+import { FormikCheckbox } from '../../atoms/FormikCheckbox';
 import { Field } from 'formik';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyledCheckbox, StyledFormField, StyledFormInput, StyledFormLabel } from '../../atoms/StyledForm';
+import { StyledFormField, StyledFormInput, StyledFormLabel } from '../../atoms/StyledForm';
 
-const CheckboxListFieldEditor: React.FC<{ optionsAsText?: string; previewList?: boolean }> = props => {
+interface Props {
+  optionsAsText?: string;
+  previewList?: boolean;
+}
+
+function CheckboxListFieldEditor(props: Props) {
   const { t } = useTranslation();
   return (
     <>
@@ -21,12 +27,12 @@ const CheckboxListFieldEditor: React.FC<{ optionsAsText?: string; previewList?: 
       </StyledFormField>
       <StyledFormField>
         <StyledFormLabel>
-          <Field as={StyledCheckbox} type="checkbox" name="clearable" value={props.previewList} required={false} />
+          <FormikCheckbox name="previewList" required={false} />
           {t('Preview as list')}
         </StyledFormLabel>
       </StyledFormField>
     </>
   );
-};
+}
 
 export default CheckboxListFieldEditor;

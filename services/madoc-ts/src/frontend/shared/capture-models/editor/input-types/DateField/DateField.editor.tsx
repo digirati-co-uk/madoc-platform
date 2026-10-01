@@ -1,13 +1,14 @@
+import { FormikCheckbox } from '../../atoms/FormikCheckbox';
 import { Field } from 'formik';
 import React from 'react';
-import { StyledCheckbox, StyledFormField, StyledFormInputElement, StyledFormLabel } from '../../atoms/StyledForm';
+import { StyledFormField, StyledFormInputElement, StyledFormLabel } from '../../atoms/StyledForm';
 
-type Props = {
+interface Props {
   placeholder?: string;
   required?: boolean;
-};
+}
 
-const DateFieldEditor: React.FC<Props> = props => {
+function DateFieldEditor(props: Props) {
   return (
     <>
       <StyledFormField>
@@ -24,12 +25,12 @@ const DateFieldEditor: React.FC<Props> = props => {
       </StyledFormField>
       <StyledFormField>
         <StyledFormLabel>
-          <Field as={StyledCheckbox} type="checkbox" name="required" defaultValue={props.required} required={false} />
+          <FormikCheckbox name="required" required={false} />
           Required
         </StyledFormLabel>
       </StyledFormField>
     </>
   );
-};
+}
 
 export default DateFieldEditor;

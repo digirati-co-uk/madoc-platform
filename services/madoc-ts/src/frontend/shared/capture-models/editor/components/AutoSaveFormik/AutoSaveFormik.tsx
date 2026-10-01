@@ -1,15 +1,14 @@
-import React from 'react';
 import { useFormikContext } from 'formik';
 import { useUnmount } from '../../hooks/useUnmount';
 
-export const AutoSaveFormik: React.FC = () => {
+export function AutoSaveFormik({ hasChanges = false }: { hasChanges?: boolean }) {
   const { submitForm, dirty } = useFormikContext();
 
   useUnmount(() => {
-    if (dirty) {
+    if (dirty || hasChanges) {
       submitForm();
     }
-  }, [dirty, submitForm]);
+  }, [dirty, hasChanges, submitForm]);
 
   return null;
-};
+}

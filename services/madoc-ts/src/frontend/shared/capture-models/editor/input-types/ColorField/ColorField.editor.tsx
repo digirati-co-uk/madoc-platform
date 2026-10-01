@@ -1,12 +1,15 @@
+import { FormikCheckbox } from '../../atoms/FormikCheckbox';
 import { Field } from 'formik';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyledCheckbox, StyledFormField, StyledFormInputElement, StyledFormLabel } from '../../atoms/StyledForm';
+import { StyledFormField, StyledFormInputElement, StyledFormLabel } from '../../atoms/StyledForm';
 
-const ColorFieldEditor: React.FC<{
+interface Props {
   inlineLabel?: string;
   clearable?: boolean;
-}> = ({ inlineLabel }) => {
+}
+
+function ColorFieldEditor({ inlineLabel }: Props) {
   const { t } = useTranslation();
   return (
     <>
@@ -24,12 +27,12 @@ const ColorFieldEditor: React.FC<{
       </StyledFormField>
       <StyledFormField>
         <StyledFormLabel>
-          <Field as={StyledCheckbox} type="checkbox" name="clearable" required={false} />
+          <FormikCheckbox name="clearable" required={false} />
           {t('Allow clearing of selection')}
         </StyledFormLabel>
       </StyledFormField>
     </>
   );
-};
+}
 
 export default ColorFieldEditor;
