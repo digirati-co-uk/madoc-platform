@@ -1,16 +1,17 @@
+import { FormikCheckbox } from '../../atoms/FormikCheckbox';
 import { Field } from 'formik';
 import React from 'react';
-import { StyledCheckbox, StyledFormField, StyledFormInputElement, StyledFormLabel } from '../../atoms/StyledForm';
+import { StyledFormField, StyledFormInputElement, StyledFormLabel } from '../../atoms/StyledForm';
 
-type Props = {
+interface Props {
   placeholder?: string;
   required?: boolean;
   multiline?: boolean;
   previewInline?: boolean;
   minLines?: number;
-};
+}
 
-const TextFieldEditor: React.FC<Props> = ({ children, ...props }) => {
+function TextFieldEditor(props: Props) {
   return (
     <>
       <StyledFormField>
@@ -27,7 +28,7 @@ const TextFieldEditor: React.FC<Props> = ({ children, ...props }) => {
       </StyledFormField>
       <StyledFormField>
         <StyledFormLabel>
-          <Field as={StyledCheckbox} type="checkbox" name="multiline" defaultValue={props.multiline} required={false} />
+          <FormikCheckbox name="multiline" required={false} />
           Allow multiline input
         </StyledFormLabel>
       </StyledFormField>
@@ -45,18 +46,12 @@ const TextFieldEditor: React.FC<Props> = ({ children, ...props }) => {
       </StyledFormField>
       <StyledFormField>
         <StyledFormLabel>
-          <Field
-            as={StyledCheckbox}
-            type="checkbox"
-            name="previewInline"
-            defaultValue={props.previewInline}
-            required={false}
-          />
+          <FormikCheckbox name="previewInline" required={false} />
           Preview text as inline (span)
         </StyledFormLabel>
       </StyledFormField>
     </>
   );
-};
+}
 
 export default TextFieldEditor;
