@@ -26,15 +26,7 @@ export function ListProjectUpdates({ withBackground }: { withBackground?: boolea
       <div className="max-w-4xl mx-auto">
         <h2 className="text-lg font-semibold text-gray-500">{t('Project updates')}</h2>
         {data.updates?.map(update => (
-          <ViewProjectUpdate
-            key={update.id}
-            title={update.title}
-            update={update.update}
-            id={update.id}
-            created={update.created}
-            user={update.user}
-            snapshot={update.snapshot}
-          />
+          <ViewProjectUpdate key={update.id} {...update} />
         ))}
         <Pagination
           page={data ? data.pagination.page : undefined}
