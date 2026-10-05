@@ -27,6 +27,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Reused the active transaction when loading stored revisions and bounded database connection waits to prevent pool starvation.
 - Closed migration database pools after startup migrations finish or fail.
 
+### Added
+
+- Added repeatable diagnostics for API and server-rendering resource lifetimes.
+
 <!--
 
 ### Added
