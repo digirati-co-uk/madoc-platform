@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.4.5...main)
 
+### Changed
+
+- Excluded locally generated diagnostic reports from source control.
+
 <!--
 
 ### Added
