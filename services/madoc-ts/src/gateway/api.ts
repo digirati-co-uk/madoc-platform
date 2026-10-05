@@ -625,13 +625,13 @@ export class ApiClient {
         throw new NotFound(`${method} ${endpoint} not found`);
       }
 
-      if (response.status === 502) {
+      if (response.status === 502 && !this.isServer) {
         this.isDown = true;
         for (const err of this.errorHandlers) {
           err();
         }
         await new Promise(resolve => setTimeout(resolve, 3000));
-        // Always retry this error.
+        // Browser clients can wait for recovery; server requests must release their resources.
         return this.request(endpoint, { method, body, jwt });
       }
 

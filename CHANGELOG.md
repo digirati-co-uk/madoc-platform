@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Prevented plugin route wrappers from accumulating across repeated server renders.
 - Bounded API debug history to the latest 200 requests.
 - Stopped task polling after a failed request instead of retaining an idle polling timer.
+- Stopped server API requests from retrying gateway 502 responses indefinitely.
 
 <!--
 
