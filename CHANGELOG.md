@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Cancelled API work when clients disconnect and bounded non-streaming server API requests to 90 seconds.
 - Released server-rendered API clients, query caches and stylesheets; aborted disconnected or timed-out renders and their prefetch requests.
 - Kept login signing keys consistent across workers during cold startup, legacy key conversion and invalid-key repair.
+- Reported user lookup database failures instead of rendering authenticated users as logged out.
 
 <!--
 

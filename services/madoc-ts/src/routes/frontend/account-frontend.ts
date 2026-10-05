@@ -13,7 +13,7 @@ export const accountFrontend: RouteMiddleware<{ slug: string }> = async context 
   };
   const systemConfig = context.siteManager.getSystemConfig();
   const user = context.state.jwt
-    ? await context.siteManager.getUserFromJwt(site.id, context.state.jwt).catch(() => undefined)
+    ? await context.siteManager.getUserFromJwt(site.id, context.state.jwt)
     : undefined;
   const userId = context.state.jwt?.user?.id;
   const siteApi = api.asUser({ siteId: site.id, userId }, { siteSlug: context.params.slug }, true);
