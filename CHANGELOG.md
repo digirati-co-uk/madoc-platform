@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fixed growing extension registrations and retained API clients, including cleanup after failed requests and automation.
 - Released CSV target caches after each export and expired cached project field ordering.
+- Prevented plugin route wrappers from accumulating across repeated server renders.
 
 <!--
 
