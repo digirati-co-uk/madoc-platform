@@ -20,6 +20,7 @@ Follow `ecosystem.config.cjs` -> `entrypoint/*.cjs` -> the matching bundle and V
 - Keep configuration in the existing config/path layer. Verify new runtime files are copied into the final Docker image.
 - Do not attach long-lived PM2 bus listeners to the imported singleton: status requests call `pm2.disconnect()`. Use an isolated PM2 client or child process and clean it up when the request closes.
 - Server instances share external state. Cron registration in `src/app.ts` is gated to `NODE_APP_INSTANCE === '0'`; preserve that gate to avoid duplicate jobs.
+- When reducing server workers, retain `NODE_APP_INSTANCE === '0'`: PM2 scale-down can delete that worker. Inspect instance numbers with `pm2 jlist` and remove a non-primary worker instead; the primary also initializes shared RSA keys in `src/utility/gen-rsa.ts`.
 
 ## Verify
 

@@ -179,13 +179,14 @@ export async function createApp(config: ExternalConfig, env: EnvConfig) {
     );
   }
 
-  process.on('SIGINT', async () => {
-    console.log('cancelling cron jobs...');
-    app.context.cron.cancelAllJobs();
-
-    console.log('done');
-    process.exit(0);
-  });
+  let jobsFinished: Promise<void> | undefined;
+  app.context.stopJobs = () => {
+    jobsFinished = schedule.gracefulShutdown();
+  };
+  app.context.closeResources = async () => {
+    await jobsFinished;
+    await pool.end();
+  };
 
   await awaiter();
 

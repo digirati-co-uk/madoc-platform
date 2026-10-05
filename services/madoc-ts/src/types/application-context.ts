@@ -50,6 +50,8 @@ declare module 'koa' {
     captcha: CaptchaRepository;
     pluginManager: PluginManager;
     cron: CronJobs;
+    closeResources: () => Promise<void>;
+    stopJobs: () => void;
 
     completions: CompletionsExtension;
     webhookExtension: WebhookServerExtension;

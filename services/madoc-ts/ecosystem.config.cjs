@@ -1,7 +1,7 @@
-/* eslint-disable @typescript-eslint/camelcase */
+/* eslint-disable @typescript-eslint/no-require-imports */
 const os = require('os');
 
-const cpuCount = Math.max(1, os.cpus().length);
+const cpuCount = os.availableParallelism();
 
 function parsePm2Instances(value, fallback) {
   if (!value) {
@@ -29,12 +29,12 @@ function parseMemory(value, fallback) {
   return valid ? value : fallback;
 }
 
-const serverInstances = parsePm2Instances(process.env.PM2_SERVER_INSTANCES, Math.max(2, cpuCount - 1));
-const queueInstances = parsePm2Instances(process.env.PM2_QUEUE_INSTANCES, Math.max(2, Math.ceil(cpuCount / 2)));
+const serverInstances = parsePm2Instances(process.env.PM2_SERVER_INSTANCES, Math.min(4, Math.max(2, cpuCount)));
+const queueInstances = parsePm2Instances(process.env.PM2_QUEUE_INSTANCES, 2);
 const schedulerInstances = parsePm2Instances(process.env.PM2_SCHEDULER_INSTANCES, 1);
 const authInstances = parsePm2Instances(process.env.PM2_AUTH_INSTANCES, 1);
 
-const serverMemory = parseMemory(process.env.PM2_SERVER_MAX_MEMORY, '1536M');
+const serverMemory = parseMemory(process.env.PM2_SERVER_MAX_MEMORY, '768M');
 const queueMemory = parseMemory(process.env.PM2_QUEUE_MAX_MEMORY, '512M');
 const schedulerMemory = parseMemory(process.env.PM2_SCHEDULER_MAX_MEMORY, '256M');
 const authMemory = parseMemory(process.env.PM2_AUTH_MAX_MEMORY, '256M');
@@ -50,8 +50,12 @@ module.exports = {
       autorestart: true,
       watch: false,
       max_memory_restart: serverMemory,
+      wait_ready: true,
+      listen_timeout: 60000,
+      kill_timeout: 120000,
       env: {
         NODE_ENV: process.env.NODE_ENV,
+        POSTGRES_POOL_SIZE: process.env.POSTGRES_POOL_SIZE || '10',
       },
       env_production: {
         NODE_ENV: 'production',

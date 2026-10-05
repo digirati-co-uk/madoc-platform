@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Excluded locally generated diagnostic reports from source control.
+- Defaulted to two to four server workers with 768 MiB memory recycling, readiness checks, graceful request draining and smaller per-worker database pools; kept two queue workers by default.
 
 ### Fixed
 
