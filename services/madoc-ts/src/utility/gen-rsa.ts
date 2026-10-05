@@ -1,30 +1,12 @@
 import { generateKeyPairSync, RSAKeyPairOptions } from 'crypto';
-import { existsSync, readFileSync, writeFileSync } from 'fs';
-import { importPKCS8, importSPKI } from 'jose';
+import { existsSync, writeFileSync } from 'fs';
 import mkdirp from 'mkdirp';
 import * as path from 'path';
 import { OPEN_SSL_KEY_PATH } from '../paths';
 import { clearPemCache } from './get-pem';
 import { clearJoseKeyCache } from './jose-keys';
 import { syncJwtRequests } from './sync-jwt-requests';
-
-async function hasValidKeyPair(publicKeyFile: string, privateKeyFile: string) {
-  try {
-    const privateKey = readFileSync(privateKeyFile, 'utf-8');
-    const publicKey = readFileSync(publicKeyFile, 'utf-8');
-
-    // jose requires PKCS#8 for private keys and SPKI for public keys.
-    await importPKCS8(privateKey, 'RS256');
-    await importSPKI(publicKey, 'RS256');
-    return true;
-  } catch (err) {
-    console.warn('RSA: Existing keys are invalid or not PKCS#8/SPKI, regenerating...');
-    if (err instanceof Error) {
-      console.warn(`RSA: Key validation error: ${err.message}`);
-    }
-    return false;
-  }
-}
+import { hasValidKeyPair, waitForRSA } from './rsa-key-pair';
 
 export async function genRSA(force = false) {
   if (!existsSync(OPEN_SSL_KEY_PATH)) {
@@ -33,6 +15,13 @@ export async function genRSA(force = false) {
 
   const publicKeyFile = path.join(OPEN_SSL_KEY_PATH, 'madoc.pub');
   const privateKeyFile = path.join(OPEN_SSL_KEY_PATH, 'madoc.key');
+
+  // PM2 siblings must not overwrite the primary's keys or cache a different pair.
+  // Explicit administrator rotation still runs in whichever worker handles it.
+  if (!force && process.env.NODE_APP_INSTANCE !== undefined && process.env.NODE_APP_INSTANCE !== '0') {
+    await waitForRSA();
+    return;
+  }
 
   const publicExists = existsSync(publicKeyFile);
   const privateExists = existsSync(privateKeyFile);
