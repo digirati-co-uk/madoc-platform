@@ -456,6 +456,9 @@ export class ApiClient {
     }
 
     this.debugRequests.push(request);
+    if (this.debugRequests.length > 200) {
+      this.debugRequests.shift();
+    }
     for (const handler of this.debugRequestHandlers) {
       handler(request);
     }
