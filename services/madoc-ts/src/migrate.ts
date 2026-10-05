@@ -8,13 +8,16 @@ export async function migrate() {
     `postgres://${process.env.DATABASE_USER}:${process.env.DATABASE_PASSWORD}@${process.env.DATABASE_HOST}:${process.env.DATABASE_PORT}/${process.env.DATABASE_NAME}`
   );
 
-  const migrator = setupSlonikMigrator({
-    migrationsPath: join(ROOT_PATH, '/migrations'),
-    slonik,
-    log: () => {
-      // no-op
-    },
-  });
-
-  return migrator.up() as any;
+  try {
+    const migrator = setupSlonikMigrator({
+      migrationsPath: join(ROOT_PATH, '/migrations'),
+      slonik,
+      log: () => {
+        // no-op
+      },
+    });
+    return await migrator.up();
+  } finally {
+    await slonik.end();
+  }
 }
