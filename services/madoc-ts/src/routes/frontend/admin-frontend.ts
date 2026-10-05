@@ -25,7 +25,10 @@ export const adminFrontend: RouteMiddleware = async context => {
   const [, i18nInstance] = await createBackend(lng || siteLocales.defaultLanguage || 'en', site.id);
 
   context.staticPage = async token => {
+    const renderController = new AbortController();
+    context.res.once('close', () => renderController.abort());
     const result = await renderAdmin({
+      signal: renderController.signal,
       url: context.req.url || '',
       jwt: token,
       basename: `/s/${context.params.slug}/admin`,

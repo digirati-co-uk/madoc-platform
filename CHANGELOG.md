@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Stopped task polling after a failed request instead of retaining an idle polling timer.
 - Stopped server API requests from retrying gateway 502 responses indefinitely.
 - Cancelled API work when clients disconnect and bounded non-streaming server API requests to 90 seconds.
+- Released server-rendered API clients, query caches and stylesheets; aborted disconnected or timed-out renders and their prefetch requests.
 
 <!--
 

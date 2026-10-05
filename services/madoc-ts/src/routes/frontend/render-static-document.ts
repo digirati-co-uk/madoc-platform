@@ -1,4 +1,4 @@
-import { PassThrough } from 'stream';
+import { PassThrough, type Readable } from 'stream';
 import type { StaticPageResponse } from '../../types/static-page';
 
 const ssrHeadToken = '<!--ssr-head-->';
@@ -11,7 +11,7 @@ export interface RenderedStaticDocument {
   body?: string;
   bodyPrefix?: string;
   bodySuffix?: string;
-  bodyStream?: NodeJS.ReadableStream;
+  bodyStream?: Readable;
 }
 
 export function renderStaticDocument(template: string, renderResult: RenderedStaticDocument): StaticPageResponse {
@@ -28,12 +28,14 @@ export function renderStaticDocument(template: string, renderResult: RenderedSta
     const outletIndex = withInjectedHeadAndAttributes.indexOf(ssrOutletToken);
 
     if (outletIndex === -1) {
+      renderResult.bodyStream.destroy();
       return withInjectedHeadAndAttributes;
     }
 
     const beforeOutlet = withInjectedHeadAndAttributes.slice(0, outletIndex);
     const afterOutlet = withInjectedHeadAndAttributes.slice(outletIndex + ssrOutletToken.length);
     const responseStream = new PassThrough();
+    responseStream.once('close', () => renderResult.bodyStream?.destroy());
 
     responseStream.write(beforeOutlet);
     responseStream.write(renderResult.bodyPrefix);

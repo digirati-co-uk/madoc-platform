@@ -35,8 +35,11 @@ export const siteFrontend: RouteMiddleware = async (context, next) => {
   }
 
   context.staticPage = async token => {
+    const renderController = new AbortController();
+    context.res.once('close', () => renderController.abort());
     const [, i18nInstance] = await createBackend(lng || siteLocales.defaultLanguage || 'en', site.id);
     const result = await renderSite({
+      signal: renderController.signal,
       url: context.req.url || '',
       jwt: token,
       basename: `/s/${site.slug}`,
