@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Excluded locally generated diagnostic reports from source control.
 
+### Fixed
+
+- Fixed growing extension registrations and retained API clients, including cleanup after failed requests and automation.
+
 <!--
 
 ### Added

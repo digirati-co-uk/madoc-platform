@@ -21,15 +21,6 @@ export class ProjectExportExtension extends RegistryExtension<ExportConfig> impl
       registryName: ProjectExportExtension.REGISTRY,
     });
     this.api = api;
-    // List of default export options.
-    ProjectExportExtension.register(canvasApiExport);
-    ProjectExportExtension.register(canvasModelExport);
-    ProjectExportExtension.register(canvasPlaintextExport);
-    ProjectExportExtension.register(canvasAnnotationExport);
-    ProjectExportExtension.register(manifestApiExport);
-    ProjectExportExtension.register(projectApiExport);
-    ProjectExportExtension.register(projectCsvSimpleExport);
-    ProjectExportExtension.register(projectCsvContributionsExport);
   }
 
   dispose() {
@@ -49,3 +40,13 @@ export class ProjectExportExtension extends RegistryExtension<ExportConfig> impl
     RegistryExtension.emitter.emit(`plugin-${ProjectExportExtension.REGISTRY}`, event);
   }
 }
+
+// Register built-ins once; each client replays the current registry.
+ProjectExportExtension.register(canvasApiExport);
+ProjectExportExtension.register(canvasModelExport);
+ProjectExportExtension.register(canvasPlaintextExport);
+ProjectExportExtension.register(canvasAnnotationExport);
+ProjectExportExtension.register(manifestApiExport);
+ProjectExportExtension.register(projectApiExport);
+ProjectExportExtension.register(projectCsvSimpleExport);
+ProjectExportExtension.register(projectCsvContributionsExport);

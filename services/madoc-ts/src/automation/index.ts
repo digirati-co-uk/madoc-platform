@@ -31,8 +31,12 @@ export async function execBot(
         if (events.indexOf(event) !== -1) {
           // @todo this might be better is the API actually used a signed JWT
           const botApi = api.asUser({ userId: user.id, userName: user.name, siteId }, {}, true);
-          const bot = new Bot(user, botApi);
-          await bot.handleTaskEvent(task as any, event);
+          try {
+            const bot = new Bot(user, botApi);
+            await bot.handleTaskEvent(task as any, event);
+          } finally {
+            botApi.dispose();
+          }
         }
       }
     }

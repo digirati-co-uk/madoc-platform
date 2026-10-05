@@ -2,15 +2,44 @@ import mitt from 'mitt';
 
 const GLOBAL_EMITTER = mitt();
 
-const PRE_EVENTS: Array<{ type: string; data: any }> = [];
+interface RegistryDefinition {
+  type: string;
+  source?: { type: string; id?: string; name: string };
+}
 
-// We want to catch events before construct potentially.
+interface PluginRegistration {
+  pluginId: string;
+  siteId?: number;
+  definition: RegistryDefinition;
+}
+
+interface PluginRemoval {
+  pluginId: string;
+  siteId?: number;
+  type: string;
+}
+
+const PRE_EVENTS = new Map<string, { type: string; data: RegistryDefinition | PluginRegistration }>();
+
+// Retain current registrations for future clients, not every historical update.
 GLOBAL_EMITTER.on('*', (type, data) => {
-  PRE_EVENTS.push({ type, data } as any);
+  if (typeof type !== 'string') {
+    return;
+  }
+  if (type.startsWith('remove-plugin-')) {
+    const event = data as PluginRemoval;
+    PRE_EVENTS.delete(JSON.stringify([type.slice('remove-'.length), event.type, event.pluginId, event.siteId]));
+  } else if (type.startsWith('plugin-')) {
+    const event = data as PluginRegistration;
+    PRE_EVENTS.set(JSON.stringify([type, event.definition.type, event.pluginId, event.siteId]), { type, data: event });
+  } else {
+    const definition = data as RegistryDefinition;
+    PRE_EVENTS.set(JSON.stringify([type, definition.type]), { type, data: definition });
+  }
 });
 
 export abstract class RegistryExtension<
-  ExtensionDefinition extends { type: string; source?: { type: string; id?: string; name: string } } = any
+  ExtensionDefinition extends { type: string; source?: { type: string; id?: string; name: string } } = any,
 > {
   static emitter = GLOBAL_EMITTER;
 
@@ -79,16 +108,13 @@ export abstract class RegistryExtension<
     RegistryExtension.emitter.on(`plugin-${config.registryName}`, this.createPlugin as any);
     RegistryExtension.emitter.on(`remove-plugin-${config.registryName}`, this.removePlugin as any);
 
-    for (const preEvent of PRE_EVENTS) {
+    for (const preEvent of PRE_EVENTS.values()) {
       switch (preEvent.type) {
         case config.registryName:
-          this.create(preEvent.data);
+          this.create(preEvent.data as ExtensionDefinition);
           break;
         case `plugin-${config.registryName}`:
-          this.createPlugin(preEvent.data);
-          break;
-        case `remove-plugin-${config.registryName}`:
-          this.removePlugin(preEvent.data);
+          this.createPlugin(preEvent.data as PluginRegistration & { definition: ExtensionDefinition });
           break;
         default:
           break;

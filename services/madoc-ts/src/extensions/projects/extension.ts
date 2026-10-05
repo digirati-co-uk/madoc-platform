@@ -18,11 +18,6 @@ export class ProjectTemplateExtension extends RegistryExtension<ProjectTemplate>
       registryName: ProjectTemplateExtension.REGISTRY,
     });
     this.api = api;
-    ProjectTemplateExtension.register(metadataSuggestions);
-    ProjectTemplateExtension.register(customProject);
-    ProjectTemplateExtension.register(crowdsourcedTranscription);
-    ProjectTemplateExtension.register(ocrCorrection);
-    ProjectTemplateExtension.register(tabularProject);
   }
 
   dispose() {
@@ -42,3 +37,10 @@ export class ProjectTemplateExtension extends RegistryExtension<ProjectTemplate>
     RegistryExtension.emitter.emit(`plugin-${ProjectTemplateExtension.REGISTRY}`, event);
   }
 }
+
+// Register built-ins once; each client replays the current registry.
+ProjectTemplateExtension.register(metadataSuggestions);
+ProjectTemplateExtension.register(customProject);
+ProjectTemplateExtension.register(crowdsourcedTranscription);
+ProjectTemplateExtension.register(ocrCorrection);
+ProjectTemplateExtension.register(tabularProject);

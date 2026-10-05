@@ -252,17 +252,21 @@ export class ApiClient {
   }
 
   dispose() {
-    this.pageBlocks.dispose();
-    this.media.dispose();
+    this.pageBlocks?.dispose();
+    this.media?.dispose();
     this.tasks.dispose();
-    this.system.dispose();
-    this.themes.dispose();
+    this.system?.dispose();
+    this.themes?.dispose();
     this.notifications.dispose();
-    this.siteManager.dispose();
-    this.projectTemplates.dispose();
+    this.siteManager?.dispose();
+    this.projectTemplates?.dispose();
+    this.projectExport?.dispose();
+    this.webhooks?.dispose();
     this.crowdsourcing.dispose();
     this.errorHandlers = [];
     this.errorRecoveryHandlers = [];
+    this.debugRequestHandlers = [];
+    this.debugRequests = [];
   }
 
   private getJwt() {
@@ -732,9 +736,11 @@ export class ApiClient {
     options: { siteSlug?: string } = {}
   ): Promise<T> {
     const userApi = this.asUser(user, options, true);
-    const resp = await callback(userApi as any);
-    userApi.dispose(); // Need to make sure extensions unregister their events properly.
-    return resp as T;
+    try {
+      return await callback(userApi);
+    } finally {
+      userApi.dispose();
+    }
   }
 
   async listApiKeys() {
