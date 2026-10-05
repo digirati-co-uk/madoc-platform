@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Released server-rendered API clients, query caches and stylesheets; aborted disconnected or timed-out renders and their prefetch requests.
 - Kept login signing keys consistent across workers during cold startup, legacy key conversion and invalid-key repair.
 - Reported user lookup database failures instead of rendering authenticated users as logged out.
+- Reused the active transaction when loading stored revisions and bounded database connection waits to prevent pool starvation.
 
 <!--
 

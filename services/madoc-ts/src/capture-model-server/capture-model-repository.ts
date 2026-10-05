@@ -783,9 +783,9 @@ export class CaptureModelRepository extends BaseRepository<'capture_model_api_mi
     await this.connection.query(CaptureModelRepository.mutations.deleteRevision(revision, siteId));
   }
 
-  async getRevisionRow(id: string, siteId: number) {
+  async getRevisionRow(id: string, siteId: number, transaction?: DatabaseTransactionConnectionType) {
     return CaptureModelRepository.parseRevisionRow(
-      await this.connection.one(CaptureModelRepository.queries.getRevisionById(id, siteId))
+      await (transaction || this.connection).one(CaptureModelRepository.queries.getRevisionById(id, siteId))
     );
   }
 
@@ -896,7 +896,7 @@ export class CaptureModelRepository extends BaseRepository<'capture_model_api_mi
 
       console.log('  Loaded capture model', captureModel.id);
 
-      const [storedRevision] = await this.getRevisionRow(req.revision.id, siteId);
+      const [storedRevision] = await this.getRevisionRow(req.revision.id, siteId, transaction);
 
       console.log('  Loaded stored revision', storedRevision);
 
