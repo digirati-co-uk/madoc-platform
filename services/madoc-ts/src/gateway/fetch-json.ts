@@ -14,6 +14,7 @@ export async function fetchJson<Return>(
     returnText,
     headers: additionalHeaders = {},
     raw,
+    signal,
   }: {
     method?: 'GET' | 'PUT' | 'POST' | 'PATCH' | 'DELETE' | 'OPTIONS' | 'HEAD';
     body?: any;
@@ -25,6 +26,7 @@ export async function fetchJson<Return>(
     formData?: boolean;
     headers?: any;
     raw?: boolean;
+    signal?: AbortSignal;
   }
 ): Promise<
   | { error: true; data: { error: string }; status: number; debugResponse?: any }
@@ -66,6 +68,7 @@ export async function fetchJson<Return>(
     method,
     body: body ? (xml || plaintext || formData ? body : JSON.stringify(body)) : undefined,
     credentials: 'omit',
+    signal,
   });
 
   if (resp.ok) {
@@ -91,6 +94,7 @@ export async function fetchJson<Return>(
         data: await resp.json(),
       };
     } catch (err) {
+      if (signal?.aborted) throw err;
       if (resp.statusText === 'OK') {
         return {
           error: false,
@@ -111,6 +115,7 @@ export async function fetchJson<Return>(
       };
     }
   } catch (e) {
+    if (signal?.aborted) throw e;
     // fall through to the default unknown error.
   }
 
