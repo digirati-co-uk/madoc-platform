@@ -1,4 +1,5 @@
 import { parseUrn } from '../../../../utility/parse-urn';
+import { cachePromise } from '../../../../utility/cache-helper';
 import { ExportFile } from '../../server-export';
 import { ExportConfig } from '../../types';
 import {
@@ -15,8 +16,6 @@ type NormalizedTabularCellReview = {
   column: string;
   comment?: string;
 };
-
-const projectFieldOrderMapCache = new Map<number, Promise<Map<string, number>>>();
 
 function toNormalizedReview(flag: TabularCellFlag): NormalizedTabularCellReview {
   const trimmedComment = typeof flag.comment === 'string' ? flag.comment.trim() : '';
@@ -163,6 +162,7 @@ export const canvasModelExport: ExportConfig = {
   },
 
   async exportData(subject, options) {
+    const projectFieldOrderMapCache = new Map<number, Promise<Map<string, number>>>();
     const project = options.config && options.config.project_id ? parseUrn(options.config.project_id.uri) : undefined;
     const contextProjectId = getProjectIdFromContext(options.context);
     const configuredProjectId = toNumericProjectId(project?.id);
@@ -187,8 +187,10 @@ export const canvasModelExport: ExportConfig = {
 
       const loadFieldOrderMap = (async () => {
         try {
-          const projectDetails = await options.api.getProject(projectId);
-          return getTabularFieldOrderMap(projectDetails?.template_config);
+          return await cachePromise(`canvas-model-field-order:${projectId}`, async () => {
+            const projectDetails = await options.api.getProject(projectId);
+            return getTabularFieldOrderMap(projectDetails?.template_config);
+          }, 5 * 60 * 1000);
         } catch (err) {
           console.warn('Canvas model export: failed to load project template config for field ordering', {
             projectId,

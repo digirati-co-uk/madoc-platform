@@ -77,14 +77,6 @@ function safeParseModelTarget(target: unknown) {
   }
 }
 
-const cache: {
-  manifests: Record<string, CachedManifest>;
-  canvases: Record<string, CachedTarget>;
-} = {
-  manifests: {},
-  canvases: {},
-};
-
 function extractOriginalUri(resource: any): string | undefined {
   if (!resource) return undefined;
 
@@ -206,6 +198,10 @@ function getContributorId(item: any): string | number | null {
 }
 
 async function fetchTargets(api: any, manifestIds: number[], canvasIds: number[]) {
+  const cache: { manifests: Record<string, CachedManifest>; canvases: Record<string, CachedTarget> } = {
+    manifests: {},
+    canvases: {},
+  };
   const uniqueManifestIds = Array.from(new Set(manifestIds.filter(id => id !== undefined)));
   const uniqueCanvasIds = Array.from(new Set(canvasIds.filter(id => id !== undefined)));
 
