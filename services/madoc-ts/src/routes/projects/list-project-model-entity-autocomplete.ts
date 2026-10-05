@@ -6,6 +6,7 @@ import { userWithScope } from '../../utility/user-with-scope';
 export const listProjectModelEntityAutocomplete: RouteMiddleware = async context => {
   const { siteId } = userWithScope(context, ['site.admin']);
   const useApi = api.asUser({ siteId }, {}, true);
+  context.disposableApis.push(useApi);
   const project = await useApi.getProject(context.params.id);
   const model = await useApi.crowdsourcing.getCaptureModel(project.capture_model_id);
   const latestRevisionId = model.revisions?.[model.revisions.length - 1]?.id || 'none';

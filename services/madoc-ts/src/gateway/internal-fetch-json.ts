@@ -1,5 +1,6 @@
 import type { Context } from 'koa';
 import { castBool } from '../utility/cast-bool';
+import { combineAbortSignals } from '../utility/combine-abort-signals';
 import { fetchJson } from './fetch-json';
 import { getInternalRequestContext } from './internal-request-context';
 import { getInternalRequestRunner, InternalRequestRunner } from './internal-request';
@@ -99,6 +100,12 @@ export function createInternalAwareFetchJson({
 
     const internalRoutingEnabled = isEnabled();
     const internalRunner = getRunner();
+    const context = getCurrentContext();
+    const signals = [requestOptions.signal, context?.state?.apiAbortSignal as AbortSignal | undefined].filter(
+      (signal): signal is AbortSignal => !!signal
+    );
+    if (!raw) signals.push(AbortSignal.timeout(90000));
+    const signal = signals.length ? combineAbortSignals(signals) : undefined;
 
     // Current Madoc routes served by this process are `/api/madoc/*` and `/s/*`.
     // Prefixes such as `/api/tasks`, `/api/search`, `/api/storage`, and `/api/configurator`
@@ -117,7 +124,7 @@ export function createInternalAwareFetchJson({
         log(`mode=network method=${method} endpoint=${endpoint}`);
       }
 
-      return networkFetcher(apiGateway, endpoint, requestOptions as any);
+      return networkFetcher(apiGateway, endpoint, { ...requestOptions, signal });
     }
 
     const headers: any = {
@@ -151,7 +158,6 @@ export function createInternalAwareFetchJson({
       }
     }
 
-    const context = getCurrentContext();
     const normalizedHeaders = toStringHeaders(headers);
 
     const cookieHeader = context?.request?.headers?.cookie;
@@ -189,6 +195,7 @@ export function createInternalAwareFetchJson({
       path: endpoint,
       headers: normalizedHeaders,
       body: internalBody,
+      signal,
     });
     const responseText = internalResponse.body.toString('utf-8');
 
@@ -207,7 +214,7 @@ export function createInternalAwareFetchJson({
           status: internalResponse.status,
           data: JSON.parse(responseText),
         };
-      } catch (err) {
+      } catch {
         if (internalResponse.status === 200) {
           return {
             error: false,
@@ -227,7 +234,7 @@ export function createInternalAwareFetchJson({
           data: { error: parsedError.error },
         };
       }
-    } catch (e) {
+    } catch {
       // fall through to unknown error.
     }
 

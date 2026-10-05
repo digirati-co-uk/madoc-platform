@@ -12,7 +12,6 @@ export const captureModelApi: RouteMiddleware<{ id: string }> = async context =>
   const { id, siteId } = optionalUserWithScope(context, ['models.view_published']);
   const canSeeFullModel = userCan('models.create', context.state);
   const canDebug = userCan('models.admin', context.state);
-  const userApi = api.asUser({ siteId, userId: id }, {}, true);
   const modelId = context.params.id;
 
   // Migration specific.
@@ -74,6 +73,7 @@ export const captureModelApi: RouteMiddleware<{ id: string }> = async context =>
   try {
     context.body = await context.captureModels.getCaptureModel(modelId, options, siteId);
   } catch (e) {
+    const userApi = api.asUser({ siteId, userId: id });
     const model = await userApi.request<CaptureModel>(`/api/crowdsourcing/models/${modelId}`);
     await context.captureModels.createCaptureModel(model, siteId);
     context.body = await context.captureModels.getCaptureModel(modelId, options, siteId);

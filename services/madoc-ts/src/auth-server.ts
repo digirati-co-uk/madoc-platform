@@ -1,6 +1,7 @@
 // Small auth server for validating tokens.
 import { createServer, RequestListener, ServerResponse } from 'http';
 import { verifySignedToken } from './utility/verify-signed-token';
+import { waitForRSA } from './utility/rsa-key-pair';
 
 const host = '0.0.0.0';
 const port = 3001;
@@ -52,6 +53,13 @@ const requestListener: RequestListener = (req, res) => {
 
 const server = createServer(requestListener);
 
-server.listen(port, host, () => {
-  console.log(`Auth server is running on http://${host}:${port}`);
-});
+waitForRSA()
+  .then(() => {
+    server.listen(port, host, () => {
+      console.log(`Auth server is running on http://${host}:${port}`);
+    });
+  })
+  .catch(error => {
+    console.error(error);
+    process.exit(1);
+  });

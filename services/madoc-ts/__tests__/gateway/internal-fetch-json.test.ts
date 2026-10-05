@@ -1,3 +1,5 @@
+import type { Context } from 'koa';
+import type { fetchJson } from '../../src/gateway/fetch-json';
 import { createInternalAwareFetchJson } from '../../src/gateway/internal-fetch-json';
 
 describe('internal-aware fetch json', () => {
@@ -98,7 +100,7 @@ describe('internal-aware fetch json', () => {
               'x-madoc-subrequest-depth': '5',
             },
           },
-        } as any),
+        }) as any,
     });
 
     const response = await fetcher('http://gateway', '/api/madoc/projects/1', {
@@ -116,4 +118,60 @@ describe('internal-aware fetch json', () => {
     expect(runner).not.toHaveBeenCalled();
     expect(networkFetcher).not.toHaveBeenCalled();
   });
+});
+
+test.each([
+  [true, 'caller'],
+  [true, 'parent'],
+  [true, 'timeout'],
+  [false, 'caller'],
+  [false, 'parent'],
+  [false, 'timeout'],
+] as const)('propagates cancellation with internal routing=%s from %s', async (internal, source) => {
+  const caller = new AbortController();
+  const parent = new AbortController();
+  const timeout = new AbortController();
+  const timeoutSpy = jest.spyOn(AbortSignal, 'timeout').mockReturnValue(timeout.signal);
+  const runner = jest.fn().mockResolvedValue({ status: 200, headers: {}, body: Buffer.from('{"ok":true}') });
+  const network = jest.fn().mockResolvedValue({ error: false, status: 200, data: { ok: true } });
+  const fetcher = createInternalAwareFetchJson({
+    isEnabled: () => internal,
+    getRunner: () => runner,
+    networkFetcher: network as typeof fetchJson,
+    getCurrentContext: () =>
+      ({ state: { apiAbortSignal: parent.signal }, request: { headers: {} } }) as unknown as Context,
+  });
+  try {
+    await fetcher('http://gateway', '/api/madoc/projects/1', { signal: caller.signal });
+    const signal: AbortSignal = internal ? runner.mock.calls[0][0].signal : network.mock.calls[0][2].signal;
+    expect(timeoutSpy).toHaveBeenLastCalledWith(90000);
+    expect(signal.aborted).toBe(false);
+    const controller = { caller, parent, timeout }[source];
+    controller.abort(new Error('request cancelled'));
+    expect(signal.aborted).toBe(true);
+    expect(signal.reason).toBe(controller.signal.reason);
+  } finally {
+    timeoutSpy.mockRestore();
+  }
+});
+
+test('raw network responses inherit cancellation without the JSON request timeout', async () => {
+  const parent = new AbortController();
+  const network = jest.fn().mockResolvedValue({ error: false, status: 200, data: { stream: true } });
+  const timeoutSpy = jest.spyOn(AbortSignal, 'timeout');
+  const fetcher = createInternalAwareFetchJson({
+    isEnabled: () => true,
+    getRunner: () => jest.fn(),
+    networkFetcher: network as typeof fetchJson,
+    getCurrentContext: () => ({ state: { apiAbortSignal: parent.signal } }) as unknown as Context,
+  });
+  try {
+    await fetcher('http://gateway', '/api/madoc/stream', { raw: true });
+    expect(timeoutSpy).not.toHaveBeenCalled();
+    const signal: AbortSignal = network.mock.calls[0][2].signal;
+    parent.abort();
+    expect(signal.aborted).toBe(true);
+  } finally {
+    timeoutSpy.mockRestore();
+  }
 });

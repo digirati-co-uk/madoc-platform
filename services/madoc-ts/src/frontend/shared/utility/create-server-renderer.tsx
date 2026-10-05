@@ -6,6 +6,7 @@ import { CurrentUserWithScope, SystemConfig, Site } from '../../../extensions/si
 import { ApiClient } from '../../../gateway/api';
 import { parse } from 'query-string';
 import { api } from '../../../gateway/api.server';
+import { createInternalAwareFetchJson } from '../../../gateway/internal-fetch-json';
 import { ListLocalisationsResponse } from '../../../routes/admin/localisation';
 import { GetSlots } from '../../../types/get-slots';
 import { BlockCollector } from '../../../types/block-collector';
@@ -17,7 +18,8 @@ import { PageLoader } from '../../site/pages/loaders/page-loader';
 import { defaultTheme } from '../capture-models/editor/themes';
 import { PluginManager } from '../plugins/plugin-manager';
 import { queryConfig } from './query-config';
-import { renderToPipeableStream } from 'react-dom/server.node';
+import { renderToStream } from './render-to-stream';
+import type { Readable } from 'stream';
 import { I18nextProvider } from 'react-i18next';
 import { matchRoutes, RouteObject, StaticRouter } from 'react-router';
 import React from 'react';
@@ -26,7 +28,8 @@ import { Helmet } from 'react-helmet';
 import localeCodes from 'locale-codes';
 import '../required-modules';
 import { Spinner } from '../icons/Spinner';
-import { PassThrough } from 'stream';
+
+const serverFetcher = createInternalAwareFetchJson();
 
 function makeRoutes(routeComponents: any) {
   return [
@@ -44,6 +47,7 @@ export function createServerRenderer(
     site: Site;
     user?: CurrentUserWithScope;
     systemConfig: SystemConfig;
+    signal?: AbortSignal;
     supportedLocales: Array<{ label: string; code: string }>;
     contentLanguages: Array<{ label: string; code: string }>;
     displayLanguages: Array<{ label: string; code: string }>;
@@ -79,6 +83,7 @@ export function createServerRenderer(
     theme,
     reactFormResponse,
     systemConfig,
+    signal,
   }: {
     url: string;
     basename: string;
@@ -98,6 +103,7 @@ export function createServerRenderer(
     plugins?: SitePlugin[];
     reactFormResponse?: any;
     systemConfig: SystemConfig;
+    signal?: AbortSignal;
   }) {
     const prefetchCache = makeQueryCache();
     const sheet = new ServerStyleSheet(); // <-- creating out stylesheet
@@ -105,340 +111,316 @@ export function createServerRenderer(
       gateway: apiGateway,
       jwt,
       publicSiteSlug: siteSlug,
+      customerFetcher: (gateway, endpoint, options) => serverFetcher(gateway, endpoint, { ...options, signal }),
     });
-    const site = await sitePromise;
-    const routes =
-      Array.isArray(createRoutes) || !pluginManager || !site
-        ? defaultRoutes
-        : pluginManager.makeRoutes(createRoutes(pluginManager.hookComponents(components, site.id)), site.id);
-
-    const context: any = {};
-    const [urlPath, urlQuery] = url.split('?');
-    const path = urlPath.slice(urlPath.indexOf(basename) + basename.length);
-    const queryString = urlQuery ? parse(urlQuery) : {};
-    const matches = matchRoutes(routes, path) || [];
-    const blockCollector: BlockCollector = { blocks: [] };
-    const requests = [];
-    const routeContext: EditorialContext = {};
-    const themeOverrides: any = {};
-    let projectApplied = false;
-
-    for (const _match of matches) {
-      const isExact = _match.pathnameBase === path || _match.pathname === path;
-      const params = _match.params;
-      const component = _match.route.element?.type;
-      const route = { ..._match.route, component };
-      const match = {
-        params,
-        isExact,
-      };
-
-      if (match.isExact && match.params) {
-        // Extract project.
-        routeContext.collection = match.params.collectionId ? Number(match.params.collectionId) : undefined;
-        routeContext.manifest = match.params.manifestId ? Number(match.params.manifestId) : undefined;
-        routeContext.canvas = match.params.canvasId ? Number(match.params.canvasId) : undefined;
-        routeContext.project = match.params.slug ? match.params.slug : undefined;
-      }
-
-      if (route.component && route.component.getKey && route.component.getData && route.component.noSsr !== true) {
-        requests.push(
-          prefetchCache.prefetchQuery(
-            route.component.getKey(match.params, queryString, path),
-            (key: any, vars: any) => {
-              const data = route.component.getData
-                ? route.component.getData(key, vars, userApi, path)
-                : (undefined as any);
-
-              // Hook for page loader.
-              if (route.component === PageLoader) {
-                data.then((resp: any) => {
-                  if (resp && resp.page && resp.page.slots) {
-                    for (const slotId of Object.keys(resp.page.slots)) {
-                      const slot = resp.page.slots[slotId];
-                      if (slot && slot.blocks) {
-                        blockCollector.blocks.push(...slot.blocks);
-                      }
-                    }
-                  }
-
-                  return resp;
-                });
-              }
-
-              // Hack for server-side theme from template.
-              if (!projectApplied && key === 'getSiteProject' && site) {
-                data.then((resp: any) => {
-                  try {
-                    if (resp?.template) {
-                      const definition = api.projectTemplates.getDefinition(resp?.template, site.id);
-                      if (definition?.theme) {
-                        themeOverrides[`project-template(${definition.type})`] = definition.theme;
-                      }
-                      projectApplied = true;
-                    }
-                  } catch {
-                    // no-op.
-                  }
-                });
-              }
-              return data;
-            }
-          )
-        );
-      }
-      const hooks = route.component ? route.component.hooks || [] : [];
-      for (const hook of hooks) {
-        const args = hook.creator(match.params, queryString);
-        if (typeof args !== 'undefined') {
-          requests.push(prefetchCache.prefetchQuery([hook.name, args], () => (userApi as any)[hook.name](...args)));
-        }
-      }
-
-      const customTheme = route.component ? route.component.theme : null;
-      if (customTheme && customTheme.name) {
-        themeOverrides[customTheme.name] = customTheme;
-      }
-    }
-
-    if (getSlots) {
-      const slotRequest = prefetchCache.prefetchQuery(['slot-request', routeContext], () =>
-        getSlots(routeContext, { collector: blockCollector })
-      );
-      const headerSlotRequest = prefetchCache.prefetchQuery(['slot-request', { slotIds: ['global-header'] }], () =>
-        getSlots({ slotIds: ['global-header'] }, { collector: blockCollector })
-      );
-      const footerSlotRequest = prefetchCache.prefetchQuery(['slot-request', { slotIds: ['global-footer'] }], () =>
-        getSlots({ slotIds: ['global-footer'] }, { collector: blockCollector })
-      );
-
-      requests.push(slotRequest);
-      requests.push(headerSlotRequest);
-      requests.push(footerSlotRequest);
-
-      if (user) {
-        const notificationsSlotRequest = prefetchCache.prefetchQuery(['notifications-count'], () =>
-          userApi.notifications.getNotificationCount()
-        );
-        requests.push(notificationsSlotRequest);
-      }
-
-      if (site) {
-        const processedWithHooks = [];
-        for (const block of blockCollector.blocks) {
-          const definition = userApi.pageBlocks.getDefinition(block.type, site.id);
-          if (
-            processedWithHooks.indexOf(block.id) === -1 &&
-            definition &&
-            definition.hooks &&
-            definition.hooks.length
-          ) {
-            for (const hook of definition.hooks) {
-              processedWithHooks.push(block.id);
-              const args = hook.creator(block.static_data);
-              if (typeof args !== 'undefined') {
-                requests.push(
-                  prefetchCache.prefetchQuery([hook.name, args], () => (userApi as any)[hook.name](...args))
-                );
-              }
-            }
-          }
-        }
-      }
-    }
-
-    await Promise.all(requests);
-
-    const dehydratedState = dehydrate(prefetchCache);
-    const mapLocalCodes = (ln: string) => {
-      let label = localeCodes.getByTag(ln).local || localeCodes.getByTag(ln).name;
-      if (label === 'Welsh') {
-        label = 'Cymraeg';
-      }
-      if (label === 'Dutch') {
-        label = 'Nederlands';
-      }
-
-      return { label: label, code: ln };
-    };
-    const supportedLocales = siteLocales.localisations.map(ln => {
-      return mapLocalCodes(ln.code);
-    });
-    const displayLanguages = (siteLocales.displayLanguages || []).map(mapLocalCodes);
-    const contentLanguages = (siteLocales.contentLanguages || []).map(mapLocalCodes);
-
-    if (matches.length === 0) {
-      return {
-        type: 'redirect',
-        status: 404,
-      } as const;
-    }
-
-    const resolvedSystemConfig = {
-      ...(systemConfig || {}),
-      ...(site?.config || {}),
-    };
-
-    const application = sheet.collectStyles(
-      <ReactQueryConfigProvider config={{ ...extraConfig, ...queryConfig }}>
-        <ReactQueryCacheProvider>
-          <Hydrate state={dehydratedState}>
-            <I18nextProvider i18n={i18next}>
-              <StaticRouter basename={basename} location={url}>
-                <ThemeProvider theme={defaultTheme}>
-                  <React.Suspense fallback={<Spinner />}>
-                    <RootApplication
-                      api={api}
-                      routes={routes}
-                      theme={theme}
-                      site={site as any}
-                      user={user}
-                      defaultLocale={siteLocales.defaultLanguage || 'en'}
-                      contentLanguages={contentLanguages}
-                      displayLanguages={displayLanguages}
-                      supportedLocales={supportedLocales}
-                      themeOverrides={themeOverrides}
-                      navigationOptions={navigationOptions}
-                      formResponse={reactFormResponse}
-                      systemConfig={resolvedSystemConfig}
-                    />
-                  </React.Suspense>
-                </ThemeProvider>
-              </StaticRouter>
-            </I18nextProvider>
-          </Hydrate>
-        </ReactQueryCacheProvider>
-      </ReactQueryConfigProvider>
-    );
-
-    let markupStream: NodeJS.ReadableStream;
-
     try {
-      markupStream = await new Promise<NodeJS.ReadableStream>((resolve, reject) => {
-        let hasResolved = false;
-        const stream = new PassThrough();
-        const fail = (error: Error) => {
-          if (hasResolved) {
-            return;
-          }
-          hasResolved = true;
-          stream.destroy(error);
-          reject(new ReactServerError(error));
+      const site = await sitePromise;
+      const routes =
+        Array.isArray(createRoutes) || !pluginManager || !site
+          ? defaultRoutes
+          : pluginManager.makeRoutes(createRoutes(pluginManager.hookComponents(components, site.id)), site.id);
+
+      const context: any = {};
+      const [urlPath, urlQuery] = url.split('?');
+      const path = urlPath.slice(urlPath.indexOf(basename) + basename.length);
+      const queryString = urlQuery ? parse(urlQuery) : {};
+      const matches = matchRoutes(routes, path) || [];
+      const blockCollector: BlockCollector = { blocks: [] };
+      const requests = [];
+      const routeContext: EditorialContext = {};
+      const themeOverrides: any = {};
+      let projectApplied = false;
+
+      for (const _match of matches) {
+        const isExact = _match.pathnameBase === path || _match.pathname === path;
+        const params = _match.params;
+        const component = _match.route.element?.type;
+        const route = { ..._match.route, component };
+        const match = {
+          params,
+          isExact,
         };
 
-        const { pipe } = renderToPipeableStream(application, {
-          onAllReady() {
-            if (hasResolved) {
-              return;
+        if (match.isExact && match.params) {
+          // Extract project.
+          routeContext.collection = match.params.collectionId ? Number(match.params.collectionId) : undefined;
+          routeContext.manifest = match.params.manifestId ? Number(match.params.manifestId) : undefined;
+          routeContext.canvas = match.params.canvasId ? Number(match.params.canvasId) : undefined;
+          routeContext.project = match.params.slug ? match.params.slug : undefined;
+        }
+
+        if (route.component && route.component.getKey && route.component.getData && route.component.noSsr !== true) {
+          requests.push(
+            prefetchCache.prefetchQuery(
+              route.component.getKey(match.params, queryString, path),
+              (key: any, vars: any) => {
+                const data = route.component.getData
+                  ? route.component.getData(key, vars, userApi, path)
+                  : (undefined as any);
+
+                // Hook for page loader.
+                if (route.component === PageLoader) {
+                  data.then((resp: any) => {
+                    if (resp && resp.page && resp.page.slots) {
+                      for (const slotId of Object.keys(resp.page.slots)) {
+                        const slot = resp.page.slots[slotId];
+                        if (slot && slot.blocks) {
+                          blockCollector.blocks.push(...slot.blocks);
+                        }
+                      }
+                    }
+
+                    return resp;
+                  });
+                }
+
+                // Hack for server-side theme from template.
+                if (!projectApplied && key === 'getSiteProject' && site) {
+                  data.then((resp: any) => {
+                    try {
+                      if (resp?.template) {
+                        const definition = api.projectTemplates.getDefinition(resp?.template, site.id);
+                        if (definition?.theme) {
+                          themeOverrides[`project-template(${definition.type})`] = definition.theme;
+                        }
+                        projectApplied = true;
+                      }
+                    } catch {
+                      // no-op.
+                    }
+                  });
+                }
+                return data;
+              }
+            )
+          );
+        }
+        const hooks = route.component ? route.component.hooks || [] : [];
+        for (const hook of hooks) {
+          const args = hook.creator(match.params, queryString);
+          if (typeof args !== 'undefined') {
+            requests.push(prefetchCache.prefetchQuery([hook.name, args], () => (userApi as any)[hook.name](...args)));
+          }
+        }
+
+        const customTheme = route.component ? route.component.theme : null;
+        if (customTheme && customTheme.name) {
+          themeOverrides[customTheme.name] = customTheme;
+        }
+      }
+
+      if (getSlots) {
+        const slotRequest = prefetchCache.prefetchQuery(['slot-request', routeContext], () =>
+          getSlots(routeContext, { collector: blockCollector })
+        );
+        const headerSlotRequest = prefetchCache.prefetchQuery(['slot-request', { slotIds: ['global-header'] }], () =>
+          getSlots({ slotIds: ['global-header'] }, { collector: blockCollector })
+        );
+        const footerSlotRequest = prefetchCache.prefetchQuery(['slot-request', { slotIds: ['global-footer'] }], () =>
+          getSlots({ slotIds: ['global-footer'] }, { collector: blockCollector })
+        );
+
+        requests.push(slotRequest);
+        requests.push(headerSlotRequest);
+        requests.push(footerSlotRequest);
+
+        if (user) {
+          const notificationsSlotRequest = prefetchCache.prefetchQuery(['notifications-count'], () =>
+            userApi.notifications.getNotificationCount()
+          );
+          requests.push(notificationsSlotRequest);
+        }
+
+        if (site) {
+          const processedWithHooks = [];
+          for (const block of blockCollector.blocks) {
+            const definition = userApi.pageBlocks.getDefinition(block.type, site.id);
+            if (
+              processedWithHooks.indexOf(block.id) === -1 &&
+              definition &&
+              definition.hooks &&
+              definition.hooks.length
+            ) {
+              for (const hook of definition.hooks) {
+                processedWithHooks.push(block.id);
+                const args = hook.creator(block.static_data);
+                if (typeof args !== 'undefined') {
+                  requests.push(
+                    prefetchCache.prefetchQuery([hook.name, args], () => (userApi as any)[hook.name](...args))
+                  );
+                }
+              }
             }
-            hasResolved = true;
-            pipe(stream);
-            resolve(stream);
-          },
-          onShellError(error) {
-            fail(error as Error);
-          },
-          onError(error) {
-            if (process.env.NODE_ENV !== 'production') {
-              console.error(error);
-            }
-          },
-        });
+          }
+        }
+      }
+
+      await Promise.all(requests);
+
+      const dehydratedState = dehydrate(prefetchCache);
+      const mapLocalCodes = (ln: string) => {
+        let label = localeCodes.getByTag(ln).local || localeCodes.getByTag(ln).name;
+        if (label === 'Welsh') {
+          label = 'Cymraeg';
+        }
+        if (label === 'Dutch') {
+          label = 'Nederlands';
+        }
+
+        return { label: label, code: ln };
+      };
+      const supportedLocales = siteLocales.localisations.map(ln => {
+        return mapLocalCodes(ln.code);
       });
-    } catch (e) {
-      throw new ReactServerError(e as any);
-    }
+      const displayLanguages = (siteLocales.displayLanguages || []).map(mapLocalCodes);
+      const contentLanguages = (siteLocales.contentLanguages || []).map(mapLocalCodes);
 
-    const helmet = Helmet.renderStatic();
+      if (matches.length === 0) {
+        return {
+          type: 'redirect',
+          status: 404,
+        } as const;
+      }
 
-    if (context.url) {
+      const resolvedSystemConfig = {
+        ...(systemConfig || {}),
+        ...(site?.config || {}),
+      };
+
+      const application = sheet.collectStyles(
+        <ReactQueryConfigProvider config={{ ...extraConfig, ...queryConfig }}>
+          <ReactQueryCacheProvider>
+            <Hydrate state={dehydratedState}>
+              <I18nextProvider i18n={i18next}>
+                <StaticRouter basename={basename} location={url}>
+                  <ThemeProvider theme={defaultTheme}>
+                    <React.Suspense fallback={<Spinner />}>
+                      <RootApplication
+                        api={api}
+                        routes={routes}
+                        theme={theme}
+                        site={site as any}
+                        user={user}
+                        defaultLocale={siteLocales.defaultLanguage || 'en'}
+                        contentLanguages={contentLanguages}
+                        displayLanguages={displayLanguages}
+                        supportedLocales={supportedLocales}
+                        themeOverrides={themeOverrides}
+                        navigationOptions={navigationOptions}
+                        formResponse={reactFormResponse}
+                        systemConfig={resolvedSystemConfig}
+                      />
+                    </React.Suspense>
+                  </ThemeProvider>
+                </StaticRouter>
+              </I18nextProvider>
+            </Hydrate>
+          </ReactQueryCacheProvider>
+        </ReactQueryConfigProvider>
+      );
+
+      let markupStream: Readable;
+
+      try {
+        markupStream = await renderToStream(application, signal);
+      } catch (e) {
+        throw new ReactServerError(e as any);
+      }
+
+      const helmet = Helmet.renderStatic();
+
+      if (context.url) {
+        markupStream.destroy();
+        return {
+          type: 'redirect',
+          status: context.statusCode,
+          to: context.url,
+        } as const;
+      }
+
+      const styles = sheet.getStyleTags(); // <-- getting all the tags from the sheet
+
+      const routeData = `
+        <script type="application/json" id="react-site-data">${JSON.stringify(
+          {
+            site: site,
+            user,
+            locales: supportedLocales,
+            defaultLocale: siteLocales.defaultLanguage || 'en',
+            navigationOptions: navigationOptions,
+            contentLanguages,
+            displayLanguages,
+            plugins,
+            theme,
+            themeOverrides,
+            reactFormResponse,
+            systemConfig: resolvedSystemConfig,
+          },
+          null,
+          process.env.NODE_ENV === 'production' ? undefined : 2
+        )}</script>
+        <script type="application/json" id="react-query-cache">${JSON.stringify(
+          dehydratedState,
+          null,
+          process.env.NODE_ENV === 'production' ? undefined : 2
+        )}</script>
+      `;
+
+      const devLoadingScript =
+        process.env.NODE_ENV === 'production' || renderOptions.disableDevLoading
+          ? ''
+          : `
+        <script>document.body.classList.add('dev-loading');</script>
+        <style>
+        body > * {
+          transition: opacity 200ms;
+        }
+        .dev-loading > * {
+          opacity: 0.5;
+          pointer-events: none;
+        }
+        .dev-loading:after {
+          position: fixed;
+          display: flex;
+          text-align: center;
+          justify-content: center;
+          place-items: center;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 36px;
+          background: #000;
+          background: -webkit-linear-gradient( 120deg, #bd34fe 30%, #41d1ff );
+          color: #fff;
+          content: '⚡️ Vite bundling...';
+          z-index: 9999999;
+        }
+        </style>
+      `;
+
       return {
-        type: 'redirect',
-        status: context.statusCode,
-        to: context.url,
+        type: 'document',
+        htmlAttributes: helmet.htmlAttributes.toString(),
+        bodyAttributes: helmet.bodyAttributes.toString(),
+        head: `
+            ${helmet.title.toString()}
+            ${helmet.meta.toString()}
+            ${helmet.link.toString()}
+            <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
+            ${styles}
+          `,
+        bodyPrefix: `<div id="react-component">`,
+        bodyStream: markupStream,
+        bodySuffix: `</div>
+            <script type="application/json" id="react-data">${JSON.stringify({ basename })}</script>
+            ${routeData}
+            ${devLoadingScript}
+          `,
       } as const;
+    } finally {
+      userApi.dispose();
+      prefetchCache.clear();
+      sheet.seal();
     }
-
-    const styles = sheet.getStyleTags(); // <-- getting all the tags from the sheet
-
-    // sheet.seal();
-
-    const routeData = `
-      <script type="application/json" id="react-site-data">${JSON.stringify(
-        {
-          site: site,
-          user,
-          locales: supportedLocales,
-          defaultLocale: siteLocales.defaultLanguage || 'en',
-          navigationOptions: navigationOptions,
-          contentLanguages,
-          displayLanguages,
-          plugins,
-          theme,
-          themeOverrides,
-          reactFormResponse,
-          systemConfig: resolvedSystemConfig,
-        },
-        null,
-        process.env.NODE_ENV === 'production' ? undefined : 2
-      )}</script>
-      <script type="application/json" id="react-query-cache">${JSON.stringify(
-        dehydratedState,
-        null,
-        process.env.NODE_ENV === 'production' ? undefined : 2
-      )}</script>
-    `;
-
-    const devLoadingScript =
-      process.env.NODE_ENV === 'production' || renderOptions.disableDevLoading
-        ? ''
-        : `
-      <script>document.body.classList.add('dev-loading');</script>
-      <style>
-      body > * {
-        transition: opacity 200ms;
-      }
-      .dev-loading > * {
-        opacity: 0.5;
-        pointer-events: none;
-      }
-      .dev-loading:after {
-        position: fixed;
-        display: flex;
-        text-align: center;
-        justify-content: center;
-        place-items: center;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 36px;
-        background: #000;
-        background: -webkit-linear-gradient( 120deg, #bd34fe 30%, #41d1ff );
-        color: #fff;
-        content: '⚡️ Vite bundling...';
-        z-index: 9999999;
-      }
-      </style>
-    `;
-
-    return {
-      type: 'document',
-      htmlAttributes: helmet.htmlAttributes.toString(),
-      bodyAttributes: helmet.bodyAttributes.toString(),
-      head: `
-          ${helmet.title.toString()}
-          ${helmet.meta.toString()}
-          ${helmet.link.toString()}
-          <script src="https://cdn.jsdelivr.net/npm/@cap.js/widget"></script>
-          ${styles}
-        `,
-      bodyPrefix: `<div id="react-component">`,
-      bodyStream: markupStream,
-      bodySuffix: `</div>
-          <script type="application/json" id="react-data">${JSON.stringify({ basename })}</script>
-          ${routeData}
-          ${devLoadingScript}
-        `,
-    } as const;
   };
 }

@@ -252,17 +252,21 @@ export class ApiClient {
   }
 
   dispose() {
-    this.pageBlocks.dispose();
-    this.media.dispose();
+    this.pageBlocks?.dispose();
+    this.media?.dispose();
     this.tasks.dispose();
-    this.system.dispose();
-    this.themes.dispose();
+    this.system?.dispose();
+    this.themes?.dispose();
     this.notifications.dispose();
-    this.siteManager.dispose();
-    this.projectTemplates.dispose();
+    this.siteManager?.dispose();
+    this.projectTemplates?.dispose();
+    this.projectExport?.dispose();
+    this.webhooks?.dispose();
     this.crowdsourcing.dispose();
     this.errorHandlers = [];
     this.errorRecoveryHandlers = [];
+    this.debugRequestHandlers = [];
+    this.debugRequests = [];
   }
 
   private getJwt() {
@@ -452,6 +456,9 @@ export class ApiClient {
     }
 
     this.debugRequests.push(request);
+    if (this.debugRequests.length > 200) {
+      this.debugRequests.shift();
+    }
     for (const handler of this.debugRequestHandlers) {
       handler(request);
     }
@@ -490,50 +497,55 @@ export class ApiClient {
           return;
         }
         loading = true;
-        this.getTask(taskId, { all: true, root_statistics: root }).then(latestTask => {
-          loading = false;
-          if (latestTask.status === 3) {
-            clearInterval(intervalId);
-            resolve(after(latestTask as any));
-            return;
-          }
-          if (latestTask.status === -1) {
-            clearInterval(intervalId);
-            reject(latestTask);
-          }
-
-          if (setRootStatistics) {
-            if (latestTask.root_statistics) {
-              setRootStatistics(latestTask.root_statistics);
+        this.getTask(taskId, { all: true, root_statistics: root })
+          .then(latestTask => {
+            loading = false;
+            if (latestTask.status === 3) {
+              clearInterval(intervalId);
+              resolve(after(latestTask as any));
+              return;
             }
-          }
+            if (latestTask.status === -1) {
+              clearInterval(intervalId);
+              reject(latestTask);
+            }
 
-          if (percent) {
-            if (latestTask.root_statistics) {
-              const remaining = latestTask.root_statistics.done + latestTask.root_statistics.error;
-              const total =
-                remaining +
-                latestTask.root_statistics.progress +
-                latestTask.root_statistics.accepted +
-                latestTask.root_statistics.not_started;
+            if (setRootStatistics) {
+              if (latestTask.root_statistics) {
+                setRootStatistics(latestTask.root_statistics);
+              }
+            }
 
-              if (total > 0) {
+            if (percent) {
+              if (latestTask.root_statistics) {
+                const remaining = latestTask.root_statistics.done + latestTask.root_statistics.error;
+                const total =
+                  remaining +
+                  latestTask.root_statistics.progress +
+                  latestTask.root_statistics.accepted +
+                  latestTask.root_statistics.not_started;
+
+                if (total > 0) {
+                  percent(remaining / total);
+                }
+              } else if (latestTask.subtasks) {
+                const remaining = latestTask.subtasks.filter(t => t.status === 3 || t.status === -1).length || 0;
+                const total = latestTask.subtasks.length;
+
                 percent(remaining / total);
               }
-            } else if (latestTask.subtasks) {
-              const remaining = latestTask.subtasks.filter(t => t.status === 3 || t.status === -1).length || 0;
-              const total = latestTask.subtasks.length;
-
-              percent(remaining / total);
             }
-          }
 
-          if (progress) {
-            const remaining = latestTask.subtasks?.filter(t => t.status !== 3).length || 0;
+            if (progress) {
+              const remaining = latestTask.subtasks?.filter(t => t.status !== 3).length || 0;
 
-            progress(remaining);
-          }
-        });
+              progress(remaining);
+            }
+          })
+          .catch(error => {
+            clearInterval(intervalId);
+            reject(error);
+          });
       };
 
       intervalId = setInterval(tryReturn, interval) as any;
@@ -613,13 +625,13 @@ export class ApiClient {
         throw new NotFound(`${method} ${endpoint} not found`);
       }
 
-      if (response.status === 502) {
+      if (response.status === 502 && !this.isServer) {
         this.isDown = true;
         for (const err of this.errorHandlers) {
           err();
         }
         await new Promise(resolve => setTimeout(resolve, 3000));
-        // Always retry this error.
+        // Browser clients can wait for recovery; server requests must release their resources.
         return this.request(endpoint, { method, body, jwt });
       }
 
@@ -732,9 +744,11 @@ export class ApiClient {
     options: { siteSlug?: string } = {}
   ): Promise<T> {
     const userApi = this.asUser(user, options, true);
-    const resp = await callback(userApi as any);
-    userApi.dispose(); // Need to make sure extensions unregister their events properly.
-    return resp as T;
+    try {
+      return await callback(userApi);
+    } finally {
+      userApi.dispose();
+    }
   }
 
   async listApiKeys() {

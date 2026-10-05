@@ -15,8 +15,9 @@ export const siteState: RouteMiddleware = async (context, next) => {
     context.state.cachedApi = cachedApiHelper(context.state.siteApi, site.id);
   }
 
-  await next();
-  if (siteApi) {
-    siteApi.dispose();
+  try {
+    await next();
+  } finally {
+    siteApi?.dispose();
   }
 };

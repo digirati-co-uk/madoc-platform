@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.4.5...main)
 
+### Changed
+
+- Excluded locally generated diagnostic reports from source control.
+- Defaulted to two to four server workers with 768 MiB memory recycling, readiness checks, graceful request draining and smaller per-worker database pools; kept two queue workers by default.
+
+### Fixed
+
+- Fixed growing extension registrations and retained API clients, including cleanup after failed requests and automation.
+- Released CSV target caches after each export and expired cached project field ordering.
+- Prevented plugin route wrappers from accumulating across repeated server renders.
+- Bounded API debug history to the latest 200 requests.
+- Stopped task polling after a failed request instead of retaining an idle polling timer.
+- Stopped server API requests from retrying gateway 502 responses indefinitely.
+- Cancelled API work when clients disconnect and bounded non-streaming server API requests to 90 seconds.
+- Released server-rendered API clients, query caches and stylesheets; aborted disconnected or timed-out renders and their prefetch requests.
+- Kept login signing keys consistent across workers during cold startup, legacy key conversion and invalid-key repair.
+- Reported user lookup database failures instead of rendering authenticated users as logged out.
+- Reused the active transaction when loading stored revisions and bounded database connection waits to prevent pool starvation.
+- Closed migration database pools after startup migrations finish or fail.
+
+### Added
+
+- Added repeatable diagnostics for API and server-rendering resource lifetimes.
+
 <!--
 
 ### Added

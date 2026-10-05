@@ -13,7 +13,7 @@ export const accountFrontend: RouteMiddleware<{ slug: string }> = async context 
   };
   const systemConfig = context.siteManager.getSystemConfig();
   const user = context.state.jwt
-    ? await context.siteManager.getUserFromJwt(site.id, context.state.jwt).catch(() => undefined)
+    ? await context.siteManager.getUserFromJwt(site.id, context.state.jwt)
     : undefined;
   const userId = context.state.jwt?.user?.id;
   const siteApi = api.asUser({ siteId: site.id, userId }, { siteSlug: context.params.slug }, true);
@@ -28,7 +28,10 @@ export const accountFrontend: RouteMiddleware<{ slug: string }> = async context 
   const [, i18nInstance] = await createBackend(lng || siteLocales.defaultLanguage || 'en', site.id);
 
   context.staticPage = async token => {
+    const renderController = new AbortController();
+    context.res.once('close', () => renderController.abort());
     const result = await renderAccount({
+      signal: renderController.signal,
       url: context.req.url || '',
       jwt: token,
       basename: `/account/${site.slug}`,

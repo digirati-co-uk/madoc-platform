@@ -264,11 +264,12 @@ export class PluginManager {
       if (plugin.module.hookRoutes && plugin.siteId === siteId) {
         const hooked = plugin.module.hookRoutes(routes, components);
         for (const hookedRoute of hooked) {
-          if (hookedRoute.element) {
-            hookedRoute.element = createPluginWrapperFromElement(hookedRoute.element, plugin.definition.name);
-          }
+          newRoutes.push(
+            hookedRoute.element
+              ? { ...hookedRoute, element: createPluginWrapperFromElement(hookedRoute.element, plugin.definition.name) }
+              : hookedRoute
+          );
         }
-        newRoutes.push(...hooked);
       }
     }
 

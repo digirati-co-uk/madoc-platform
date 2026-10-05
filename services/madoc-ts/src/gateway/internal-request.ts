@@ -6,6 +6,7 @@ export interface InternalRequestParams {
   path: string;
   headers?: Record<string, string>;
   body?: string | Buffer;
+  signal?: AbortSignal;
 }
 
 export interface InternalRequestResult {
@@ -37,6 +38,7 @@ class InternalReadableRequest extends Readable {
   httpVersion = '1.1';
   private readonly body?: Buffer;
   private sent = false;
+  apiAbortSignal?: AbortSignal;
 
   constructor({
     method,
@@ -155,8 +157,8 @@ function normalizeHeaders(headers: Record<string, string> = {}) {
 
 export function createKoaInternalRequestRunner(app: Koa): InternalRequestRunner {
   const callback = app.callback();
-
-  return async function runInternalRequest({ method, path, headers = {}, body }: InternalRequestParams) {
+  return async function runInternalRequest({ method, path, headers = {}, body, signal }: InternalRequestParams) {
+    signal?.throwIfAborted();
     const requestBody = body === undefined ? undefined : Buffer.isBuffer(body) ? body : Buffer.from(body, 'utf-8');
     const normalizedHeaders = normalizeHeaders(headers);
 
@@ -174,22 +176,32 @@ export function createKoaInternalRequestRunner(app: Koa): InternalRequestRunner 
       headers: normalizedHeaders,
       body: requestBody,
     });
+    request.apiAbortSignal = signal;
     const response = new InternalWritableResponse();
 
     await new Promise<void>((resolve, reject) => {
       let settled = false;
       const finish = () => {
+        signal?.removeEventListener('abort', aborted);
         if (!settled) {
           settled = true;
           resolve();
         }
       };
       const fail = (error: Error) => {
+        signal?.removeEventListener('abort', aborted);
         if (!settled) {
           settled = true;
           reject(error);
         }
       };
+      const aborted = () => {
+        const error = new Error('Internal request aborted');
+        response.destroy(error);
+        request.destroy(error);
+        fail(error);
+      };
+      signal?.addEventListener('abort', aborted, { once: true });
 
       response.once('finish', finish);
       response.once('error', fail);
