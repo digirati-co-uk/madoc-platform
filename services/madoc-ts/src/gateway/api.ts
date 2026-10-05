@@ -497,50 +497,55 @@ export class ApiClient {
           return;
         }
         loading = true;
-        this.getTask(taskId, { all: true, root_statistics: root }).then(latestTask => {
-          loading = false;
-          if (latestTask.status === 3) {
-            clearInterval(intervalId);
-            resolve(after(latestTask as any));
-            return;
-          }
-          if (latestTask.status === -1) {
-            clearInterval(intervalId);
-            reject(latestTask);
-          }
-
-          if (setRootStatistics) {
-            if (latestTask.root_statistics) {
-              setRootStatistics(latestTask.root_statistics);
+        this.getTask(taskId, { all: true, root_statistics: root })
+          .then(latestTask => {
+            loading = false;
+            if (latestTask.status === 3) {
+              clearInterval(intervalId);
+              resolve(after(latestTask as any));
+              return;
             }
-          }
+            if (latestTask.status === -1) {
+              clearInterval(intervalId);
+              reject(latestTask);
+            }
 
-          if (percent) {
-            if (latestTask.root_statistics) {
-              const remaining = latestTask.root_statistics.done + latestTask.root_statistics.error;
-              const total =
-                remaining +
-                latestTask.root_statistics.progress +
-                latestTask.root_statistics.accepted +
-                latestTask.root_statistics.not_started;
+            if (setRootStatistics) {
+              if (latestTask.root_statistics) {
+                setRootStatistics(latestTask.root_statistics);
+              }
+            }
 
-              if (total > 0) {
+            if (percent) {
+              if (latestTask.root_statistics) {
+                const remaining = latestTask.root_statistics.done + latestTask.root_statistics.error;
+                const total =
+                  remaining +
+                  latestTask.root_statistics.progress +
+                  latestTask.root_statistics.accepted +
+                  latestTask.root_statistics.not_started;
+
+                if (total > 0) {
+                  percent(remaining / total);
+                }
+              } else if (latestTask.subtasks) {
+                const remaining = latestTask.subtasks.filter(t => t.status === 3 || t.status === -1).length || 0;
+                const total = latestTask.subtasks.length;
+
                 percent(remaining / total);
               }
-            } else if (latestTask.subtasks) {
-              const remaining = latestTask.subtasks.filter(t => t.status === 3 || t.status === -1).length || 0;
-              const total = latestTask.subtasks.length;
-
-              percent(remaining / total);
             }
-          }
 
-          if (progress) {
-            const remaining = latestTask.subtasks?.filter(t => t.status !== 3).length || 0;
+            if (progress) {
+              const remaining = latestTask.subtasks?.filter(t => t.status !== 3).length || 0;
 
-            progress(remaining);
-          }
-        });
+              progress(remaining);
+            }
+          })
+          .catch(error => {
+            clearInterval(intervalId);
+            reject(error);
+          });
       };
 
       intervalId = setInterval(tryReturn, interval) as any;
