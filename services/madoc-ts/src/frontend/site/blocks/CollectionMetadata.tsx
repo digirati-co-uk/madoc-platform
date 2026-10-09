@@ -5,20 +5,20 @@ import { useRelativeLinks } from '../hooks/use-relative-links';
 import { useRouteContext } from '../hooks/use-route-context';
 import { usePaginatedData } from '../../shared/hooks/use-data';
 import { CollectionLoader } from '../pages/loaders/collection-loader';
-import { useSiteMetadataConfiguration } from '../../shared/hooks/use-site-metadata-configuration';
 import { MetaDataDisplay } from '../../shared/components/MetaDataDisplay';
 
-export const CollectionMetadata: React.FC<{ compact?: boolean; showEmptyMessage?: boolean }> = ({
-  compact,
-  showEmptyMessage,
-}) => {
+interface CollectionMetadataProps {
+  compact?: boolean;
+  showEmptyMessage?: boolean;
+}
+
+export function CollectionMetadata({ compact, showEmptyMessage }: CollectionMetadataProps) {
   const { collectionId } = useRouteContext();
   const { resolvedData: data } = usePaginatedData(CollectionLoader, undefined, { enabled: !!collectionId });
-  const { data: metadataConfig } = useSiteMetadataConfiguration();
   const createLink = useRelativeLinks();
   const { collection } = useMetadataSuggestionConfiguration();
 
-  if (!data || !metadataConfig) {
+  if (!data) {
     return null;
   }
 
@@ -31,15 +31,14 @@ export const CollectionMetadata: React.FC<{ compact?: boolean; showEmptyMessage?
   return (
     <MetaDataDisplay
       variation={compact ? 'list' : 'table'}
-      config={undefined}
-      metadata={metadata || []}
+      metadata={metadata}
       showEmptyMessage={showEmptyMessage}
       suggestEdit={
         collection ? createLink({ canvasId: undefined, manifestId: undefined, subRoute: `metadata/edit` }) : undefined
       }
     />
   );
-};
+}
 
 blockEditorFor(CollectionMetadata, {
   type: 'default.CollectionMetadata',

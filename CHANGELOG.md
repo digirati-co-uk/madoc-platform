@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.4.6...main)
 
+### Fixed
+
+- Fixed collection metadata not appearing in the site sidebar when metadata display configuration was not loaded.
+
 <!--
 
 ### Added
