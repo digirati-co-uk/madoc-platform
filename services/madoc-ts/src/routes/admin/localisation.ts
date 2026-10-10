@@ -291,7 +291,8 @@ async function loadLocaleTemplate(userApi: ApiClientWithoutExtensions, namespace
         emptyJson[key] = '';
       }
     } catch (e) {
-      // ignore.
+      // Without the English keys, updateLocalisation keeps none of the submitted strings.
+      console.error(`Could not read ${filePath}; translations for "${namespace}" cannot be saved`, e);
     }
   }
   return emptyJson;

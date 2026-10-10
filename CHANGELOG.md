@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Fixed `translations/en/madoc.json` being invalid JSON (since v2.4.1), which made the admin localisation screen silently discard saved translations in the default namespace.
+- Made development-mode saving of missing translation keys write the file atomically, so concurrent server workers can no longer corrupt it.
+
+### Fixed
+
 - Fixed collection metadata not appearing in the site sidebar when metadata display configuration was not loaded.
 
 <!--
