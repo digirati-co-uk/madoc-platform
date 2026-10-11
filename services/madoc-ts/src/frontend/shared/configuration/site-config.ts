@@ -632,6 +632,26 @@ export const NonProjectOptions: ProjectConfigTemplate = {
 };
 
 export const ProjectConfigInterface: ProjectConfigTemplate = {
+  trainingVideoPage: {
+    label: 'Training video help page',
+    description:
+      "Path of the help page that holds this project's Training video block, for example /help/my-project. Leave empty for no training video.",
+    type: 'text-field',
+  },
+  trainingVideoOptions: {
+    label: 'Training video options',
+    type: 'checkbox-list-field',
+    options: [
+      {
+        label: 'Show the training video on the contribution page until the volunteer marks it as watched',
+        value: 'showOnContributionPage',
+      },
+      {
+        label: 'Hide the training video button in the site header',
+        value: 'hideHeaderButton',
+      },
+    ],
+  },
   projectPageOptions: {
     label: 'Project page options',
     description: 'UI customisations for the default page blocks on the project page',

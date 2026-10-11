@@ -335,6 +335,7 @@ import { updatePassword } from './routes/user/update-password';
 import { updateProfilePage } from './routes/user/update-profile';
 import { userAutocomplete } from './routes/user/user-autocomplete';
 import { userSettingsModel } from './routes/user/user-settings-model';
+import { getTrainingVideoWatched, markTrainingVideoWatchedRoute } from './routes/user/training-video';
 import { TypedRouter } from './utility/typed-router';
 import { router as webhookRoutes } from './webhooks/router';
 
@@ -514,6 +515,13 @@ export const router = new TypedRouter({
   // User.
   'get-user-settings-model': [TypedRouter.GET, '/api/madoc/me/settings', userSettingsModel],
   'update-user-settings-model': [TypedRouter.POST, '/api/madoc/me/settings', saveUserSettings],
+  'get-training-video-watched': [TypedRouter.GET, '/api/madoc/me/training-video', getTrainingVideoWatched],
+  'mark-training-video-watched': [
+    TypedRouter.POST,
+    '/api/madoc/me/training-video',
+    markTrainingVideoWatchedRoute,
+    { schemaName: 'TrainingVideoWatchedRequest' },
+  ],
 
   // Badges
   'create-badge': [TypedRouter.POST, '/api/madoc/badges', createBadge],

@@ -516,6 +516,12 @@
             }
           }
         },
+        "trainingVideoPage": {
+          "type": "string"
+        },
+        "trainingVideoOptions": {
+          "$ref": "#/definitions/TrainingVideoOptions"
+        },
         "shadow": {
           "type": "object",
           "properties": {

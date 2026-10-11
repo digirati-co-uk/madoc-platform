@@ -41,6 +41,11 @@
     "canvasPageShowAnnotations": "when-open",
     "canvasPageShowDocument": "when-open",
     "forkMode": false,
+    "trainingVideoPage": "",
+    "trainingVideoOptions": {
+      "showOnContributionPage": false,
+      "hideHeaderButton": false
+    },
     "reviewOptions": {
       "allowMerging": false
     },

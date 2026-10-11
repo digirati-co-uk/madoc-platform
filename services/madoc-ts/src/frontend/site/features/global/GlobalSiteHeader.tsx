@@ -10,6 +10,7 @@ import { Slot } from '../../../shared/page-blocks/slot';
 import { GlobalMenuStack } from '../../blocks/GlobalMenuStack';
 import { GABlock } from '../../../shared/atoms/GABlock';
 import { AvailableBlocks } from '../../../shared/page-blocks/available-blocks';
+import { TrainingVideoButton } from '../training-video/TrainingVideoButton';
 
 export const GlobalSiteHeader: React.FC<{ menu?: any }> = () => {
   const api = useApi();
@@ -24,6 +25,7 @@ export const GlobalSiteHeader: React.FC<{ menu?: any }> = () => {
           <Slot name="global-header" noSurface layout="flex-center" source={{ id: 'global-header', type: 'global' }}>
             <GlobalMenuStack />
             <FlexSpacer />
+            <TrainingVideoButton followHeaderSetting />
             <GlobalSearch />
             <AvailableBlocks>
               <GABlock gtag="" />
