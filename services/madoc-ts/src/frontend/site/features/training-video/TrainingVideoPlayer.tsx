@@ -31,7 +31,6 @@ export function TrainingVideoPlayer({ link, title }: TrainingVideoPlayerProps) {
       loading="lazy"
       referrerPolicy="strict-origin-when-cross-origin"
       allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
-      allowFullScreen
     />
   );
 }
