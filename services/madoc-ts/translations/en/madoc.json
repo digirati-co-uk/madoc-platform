@@ -200,6 +200,7 @@
   "Choose selector (optional)": "Choose selector (optional)",
   "Choose source": "Choose source",
   "Choose style": "Choose style",
+  "Choose the initial drawing tool when defining a polygon region.": "Choose the initial drawing tool when defining a polygon region.",
   "Choose which resource tabs and resource types are available in Typesense search.": "Choose which resource tabs and resource types are available in Typesense search.",
   "Claim granularity": "Claim granularity",
   "Claim manifest": "Claim manifest",
@@ -1412,5 +1413,4 @@
   "{{feature}} is an experimental feature": "{{feature}} is an experimental feature",
   "{{page}} of {{count}}": "{{page}} of {{count}}",
   "{{page}} of {{count}}_plural": "{{page}} of {{count}}"
-}": "{{page}} of {{count}}"
 }
