@@ -5,16 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.4.6...main)
-
-### Fixed
-
-- Fixed `translations/en/madoc.json` being invalid JSON (since v2.4.1), which made the admin localisation screen silently discard saved translations in the default namespace.
-- Made development-mode saving of missing translation keys write the file atomically, so concurrent server workers can no longer corrupt it.
-
-### Fixed
-
-- Fixed collection metadata not appearing in the site sidebar when metadata display configuration was not loaded.
+## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.4.7...main)
 
 <!--
 
@@ -27,6 +18,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 -->
+
+## [v2.4.7](https://github.com/digirati-co-uk/madoc-platform/compare/v2.4.6...v2.4.7)
+
+### Fixed
+
+- Fixed `translations/en/madoc.json` being invalid JSON (since v2.4.1), which made the admin localisation screen silently discard saved translations in the default namespace.
+- Made development-mode saving of missing translation keys write the file atomically, so concurrent server workers can no longer corrupt it.
+- Fixed collection metadata not appearing in the site sidebar when metadata display configuration was not loaded.
 
 ## [v2.4.6](https://github.com/digirati-co-uk/madoc-platform/compare/v2.4.5...v2.4.6)
 
