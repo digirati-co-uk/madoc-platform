@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- NS-92: Fixed duplicate capture model field labels and descriptions in the simple review panel for models with nested entities.
+- NS-92: Fixed duplicate capture model field labels and descriptions in the simple review panel for models with nested entities, preserving read-only field region details and crop previews.
 
 <!--
 

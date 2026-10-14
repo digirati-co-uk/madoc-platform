@@ -7,6 +7,7 @@ import { FieldSet } from '../../../form/FieldSet';
 import { useResolvedSelector } from '../hooks/use-resolved-selector';
 import { useResolvedDependant } from '../hooks/use-resolved-dependant';
 import { useTwoLevelInlineMode } from '../hooks/use-two-level-inline-mode';
+import { VerboseSelector } from '../../VerboseSelector';
 
 interface DefaultFieldInstanceProps {
   field: BaseField;
@@ -57,7 +58,12 @@ export function DefaultFieldInstance({ field, property, path, hideHeader }: Defa
     return null;
   }
   if (twoLevelInlineMode && !allowEditing) {
-    return <Slots.InlineField field={field} property={property} path={path} canRemove={false} readonly />;
+    return (
+      <>
+        {selector ? <VerboseSelector selector={selector} readOnly isTopLevel={false} /> : null}
+        <Slots.InlineField field={field} property={property} path={path} canRemove={false} readonly />
+      </>
+    );
   }
   return (
     <FieldSet
