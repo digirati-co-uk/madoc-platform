@@ -196,16 +196,25 @@ export const Select = React.forwardRef<SelectRef, SelectProps>(function SafeFunc
   );
 
   const normalizedOptions = useMemo<NormalizedOption[]>(() => {
-    return (options || []).map((option, index) => {
+    const seenKeys = new Set<string>();
+    return (options || []).flatMap((option, index) => {
+      const key = String(getResolvedOptionValue(option, index));
+      // Duplicate keys can create cycles in React Aria's collection while editing options.
+      if (seenKeys.has(key)) {
+        return [];
+      }
+      seenKeys.add(key);
       const optionLabel = getOptionLabel ? getOptionLabel(option) : valueToText(option);
       const textValue = valueToText(optionLabel) || valueToText(option);
 
-      return {
-        key: String(getResolvedOptionValue(option, index)),
-        option,
-        textValue,
-        renderLabel: renderOptionLabel ? renderOptionLabel(option) : optionLabel,
-      };
+      return [
+        {
+          key,
+          option,
+          textValue,
+          renderLabel: renderOptionLabel ? renderOptionLabel(option) : optionLabel,
+        },
+      ];
     });
   }, [getOptionLabel, getResolvedOptionValue, options, renderOptionLabel]);
   const menuTriggerMode = !searchable || normalizedOptions.length > 0 ? 'focus' : 'input';

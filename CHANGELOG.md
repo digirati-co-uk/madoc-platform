@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.4.7...main)
 
+### Fixed
+
+- Fixed the capture model editor freezing or crashing when dropdown options contain repeated values, including repeated blank lines.
+
 <!--
 
 ### Added
