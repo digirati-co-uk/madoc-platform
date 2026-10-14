@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fixed the capture model editor freezing or crashing when dropdown options contain repeated values, including repeated blank lines.
+- NS-92: Fixed duplicate capture model field labels and descriptions in the simple review panel for models with nested entities, preserving read-only field region details and crop previews.
 
 <!--
 
