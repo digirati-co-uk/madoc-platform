@@ -2,20 +2,26 @@ import React, { useEffect, useState } from 'react';
 import { FieldInstance } from '../../editor/connected-components/FieldInstance';
 import { useSelectorHelper } from '../../editor/stores/selectors/selector-helper';
 import { BaseField } from '../../types/field-types';
-import { useSlotConfiguration } from './EditorSlots';
+import { useSlotContext } from './EditorSlots';
 import { FieldSet } from '../../../form/FieldSet';
 import { useResolvedSelector } from '../hooks/use-resolved-selector';
 import { useResolvedDependant } from '../hooks/use-resolved-dependant';
+import { useTwoLevelInlineMode } from '../hooks/use-two-level-inline-mode';
+import { VerboseSelector } from '../../VerboseSelector';
 
-export const DefaultFieldInstance: React.FC<{
+interface DefaultFieldInstanceProps {
   field: BaseField;
   property: string;
   path: Array<[string, string]>;
   hideHeader?: boolean;
-}> = ({ field, property, path, hideHeader }) => {
+}
+
+export function DefaultFieldInstance({ field, property, path, hideHeader }: DefaultFieldInstanceProps) {
   const helper = useSelectorHelper();
   const [isHighlighted, setIsHighlighted] = useState(false);
-  const { immutableFields = [] } = useSlotConfiguration();
+  const Slots = useSlotContext();
+  const { immutableFields = [], allowEditing } = Slots.configuration;
+  const twoLevelInlineMode = useTwoLevelInlineMode();
   const immutable = immutableFields.indexOf(property) !== -1;
   const [selector, { isBlockingForm }] = useResolvedSelector(field);
   const dependantValue = useResolvedDependant(field);
@@ -51,6 +57,14 @@ export const DefaultFieldInstance: React.FC<{
   if (!dependantValue) {
     return null;
   }
+  if (twoLevelInlineMode && !allowEditing) {
+    return (
+      <>
+        {selector ? <VerboseSelector selector={selector} readOnly isTopLevel={false} /> : null}
+        <Slots.InlineField field={field} property={property} path={path} canRemove={false} readonly />
+      </>
+    );
+  }
   return (
     <FieldSet
       onFocus={onFocus}
@@ -70,4 +84,4 @@ export const DefaultFieldInstance: React.FC<{
       />
     </FieldSet>
   );
-};
+}
