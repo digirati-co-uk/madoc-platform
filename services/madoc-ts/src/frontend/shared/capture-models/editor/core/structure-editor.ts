@@ -68,6 +68,7 @@ export function structureToFlatStructureDefinition(
         modelField.fullLabel = `${document.label} / ${fullField.label}`;
       }
       acc.push(modelField);
+      return acc;
     }
 
     const [modelKey, fields] = field as [string, ModelFields];
@@ -75,7 +76,8 @@ export function structureToFlatStructureDefinition(
     // @todo validation?
     if (!fullFieldList || !fullFieldList.length) return acc;
 
-    const nestedModel = fullFieldList[0] as CaptureModel['document'];
+    const nestedModel = fullFieldList[0];
+    if (!isEntity(nestedModel)) return acc;
 
     // for  [a, [b, c]]
     // We want to get [a, b] and [a, c] extracted

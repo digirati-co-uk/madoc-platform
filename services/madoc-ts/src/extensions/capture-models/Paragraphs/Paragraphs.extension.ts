@@ -1,7 +1,9 @@
 import { traverseDocument } from '../../../frontend/shared/capture-models/helpers/traverse-document';
+import { generateId } from '../../../frontend/shared/capture-models/helpers/generate-id';
 import { traverseStructure } from '../../../frontend/shared/capture-models/helpers/traverse-structure';
 import { CaptureModel, NestedModelFields } from '../../../frontend/shared/capture-models/types/capture-model';
 import { BaseField } from '../../../frontend/shared/capture-models/types/field-types';
+import { documentToDefaultStructure } from '../../../frontend/shared/capture-models/utility/document-to-default-structure';
 import { ApiClient } from '../../../gateway/api';
 import { parseModelTarget } from '../../../utility/parse-model-target';
 import { defaultDispose } from '../../extension-manager';
@@ -80,6 +82,7 @@ export class Paragraphs implements CaptureModelExtension {
 
     //   4.2 - Make wrapper document and traverse the fields, minting new IDs
     const documentWrapper = preprocessCaptureModel(data);
+    if (!documentWrapper.paragraph?.length) return captureModel;
 
     // 4.3 - add profile
     documentWrapper.paragraph.forEach((paragraph: CaptureModel['document'] | BaseField) => {
@@ -103,8 +106,11 @@ export class Paragraphs implements CaptureModelExtension {
 
     // 5. Update the structure with the paragraph structure.
     //   5.1 - Extract path to all fields from document
-    const structureTarget: NestedModelFields = [state.key, [['lines', ['text']]]];
+    const structureTarget: NestedModelFields = [state.key, documentToDefaultStructure(resources[0])];
     const structureCurrent = state.key;
+
+    // Clones share their template's structure until OCR changes its fields.
+    captureModel.structure = { ...captureModel.structure, id: generateId() };
 
     //   5.2 - Find leaf nodes in the structures that reference the placeholder
     traverseStructure(captureModel.structure, structure => {
