@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Added anonymous site analytics (NS-86)
 - Preserved additional IIIF manifest and canvas properties through import and export, and added storage and administration of embedded and remote annotation pages. ([MAD-1527](https://digirati.atlassian.net/browse/MAD-1527), [MAD-1528](https://digirati.atlassian.net/browse/MAD-1528))
 - Added imported annotations to the Madoc viewer on project and standalone manifest pages, with region highlighting and zoom controls.
 - Added annotation plaintext to transcriptions, search and capture-model prefilling, and displayed plaintext `seeAlso` resources as viewer transcriptions.

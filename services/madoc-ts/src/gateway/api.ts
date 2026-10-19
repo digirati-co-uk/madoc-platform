@@ -1,5 +1,7 @@
 import { AnnotationPageInput, CompleteAnnotationPageRequest } from '../types/schemas/annotations';
 import { AnnotationPageRecord, JsonObject } from '../iiif/types';
+import type { AnalyticsQuery, AnalyticsReport } from '../types/analytics';
+import type { RecordPageViewRequest } from '../types/schemas/analytics';
 import invariant from 'tiny-invariant';
 import {
   ActivityOptions,
@@ -831,6 +833,14 @@ export class ApiClient {
     return this.request<{ values: Array<{ value: string; label: string; language: string; total_items: number }> }>(
       `/api/madoc/iiif/metadata-values?label=${label}`
     );
+  }
+
+  async getAnalytics(query: AnalyticsQuery = {}) {
+    return this.request<AnalyticsReport>(`/api/madoc/analytics?${stringify(query)}`);
+  }
+
+  async recordPageView(body: RecordPageViewRequest) {
+    return this.publicRequest<void>('/madoc/api/analytics/page-view', undefined, { method: 'POST', body });
   }
 
   async getStatistics() {
