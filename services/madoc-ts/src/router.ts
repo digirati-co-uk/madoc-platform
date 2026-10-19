@@ -309,6 +309,7 @@ import { siteProjectRecent } from './routes/site/site-project-recent';
 import { siteProjectUpdates } from './routes/site/site-project-updates';
 import { siteProjects } from './routes/site/site-projects';
 import { sitePublishedModels } from './routes/site/site-published-models';
+import { iiifBackfillStatus, startIIIFBackfill } from './routes/admin/iiif-backfill';
 import { siteSearch } from './routes/site/site-search';
 import { siteTaskMetadata } from './routes/site/site-task-metadata';
 import { termListProxy } from './routes/site/site-term-proxy';
@@ -702,6 +703,8 @@ export const router = new TypedRouter({
     { schemaName: 'ImportIIIFPropertiesRequest' },
   ],
   'backfill-iiif-properties': [TypedRouter.POST, '/api/madoc/iiif/resources/:id/iiif-backfill', backfillProperties],
+  'backfill-all-iiif-properties': [TypedRouter.POST, '/api/madoc/system/iiif-backfill', startIIIFBackfill],
+  'backfill-all-iiif-properties-status': [TypedRouter.GET, '/api/madoc/system/iiif-backfill', iiifBackfillStatus],
 
   // Import API
   'import-manifest': [TypedRouter.POST, '/api/madoc/iiif/import/manifest', importManifest],

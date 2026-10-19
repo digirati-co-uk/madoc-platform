@@ -1,5 +1,6 @@
 import * as annotationPage from '../gateway/tasks/import-annotation-page';
 import * as iiifBackfill from '../gateway/tasks/backfill-iiif-properties';
+import * as allIIIFBackfill from '../gateway/tasks/backfill-all-iiif-properties';
 import { Job, Worker, WorkerOptions } from 'bullmq';
 import { ApiClient } from '../gateway/api';
 import * as manifest from '../gateway/tasks/import-manifest';
@@ -88,6 +89,8 @@ const worker = new Worker(
           return await annotationPage.jobHandler(job.name, job.data.taskId, contextualApi);
         case iiifBackfill.type:
           return await iiifBackfill.jobHandler(job.name, job.data.taskId, contextualApi);
+        case allIIIFBackfill.type:
+          return await allIIIFBackfill.jobHandler(job.name, job.data.taskId, contextualApi);
         case collection.type:
           return await collection.jobHandler(job.name, job.data.taskId, contextualApi).catch(err => {
             throw err;
@@ -189,10 +192,15 @@ worker.on('failed', async (job: Job) => {
     }
 
     try {
-      await (contextualApi || api).updateTask(job.data.taskId, {
+      const taskApi = contextualApi || api;
+      const state =
+        job.data.type === allIIIFBackfill.type
+          ? (await taskApi.getTask<allIIIFBackfill.IIIFBackfillTask>(job.data.taskId)).state
+          : {};
+      await taskApi.updateTask(job.data.taskId, {
         status: -1,
         status_text: 'Failed',
-        state: { error: job.failedReason || 'Task failed without an error message' },
+        state: { ...state, error: job.failedReason || 'Task failed without an error message' },
       });
     } finally {
       if (contextualApi) {

@@ -1,20 +1,15 @@
 import { RouteMiddleware } from '../types/route-middleware';
 
-export type SlowRequests = Record<
-  string,
-  {
-    key: string;
-    count: number;
-    avg: number;
-    slowest: number;
-  }
->;
+import { SlowRequests } from '../types/slow-requests';
+export type { SlowRequests } from '../types/slow-requests';
 
 const slowRequestStore: SlowRequests = {};
 
 export const slowRequests: RouteMiddleware<{ slug: string }> = async (context, next) => {
   const requestStart = Date.now();
   await next();
+
+  if (!context._matchedRoute) return;
 
   const routeKey = `${context.method} ${context._matchedRoute}`;
 

@@ -44,7 +44,8 @@ import {
 import { PublicUserProfile, Site, SiteUser, UserInformationRequest } from '../extensions/site-manager/types';
 import { ProjectManifestTasks } from '../types/manifest-tasks';
 import { NoteListResponse } from '../types/personal-notes';
-import { Pm2Status } from '../types/pm2';
+import { Pm2StatusResponse } from '../types/pm2';
+import type { IIIFBackfillTask } from './tasks/backfill-all-iiif-properties';
 import { CreateProjectUpdate, ProjectFeedback, ProjectMember, ProjectUpdate } from '../types/projects';
 import { BullMqCancelSearchIndexResult, BullMqResumeQueueResult, BullMqSnapshot } from '../types/bullmq-status';
 import { ResourceLinkResponse } from '../types/schemas/linking';
@@ -780,7 +781,15 @@ export class ApiClient {
   }
 
   async getPm2Status() {
-    return this.request<{ list: Pm2Status[]; build: any; slowRequests: any }>(`/api/madoc/pm2/list`);
+    return this.request<Pm2StatusResponse>(`/api/madoc/pm2/list`);
+  }
+
+  async startIIIFBackfill() {
+    return this.request<IIIFBackfillTask & { id: string }>(`/api/madoc/system/iiif-backfill`, { method: 'POST' });
+  }
+
+  async getIIIFBackfillStatus() {
+    return this.request<{ task?: IIIFBackfillTask & { id: string } }>(`/api/madoc/system/iiif-backfill`);
   }
 
   getPm2LogsUrl(processId: number, lines = 100) {

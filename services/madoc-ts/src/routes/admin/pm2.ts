@@ -8,7 +8,7 @@ import { Pm2LogEvent } from '../../types/pm2';
 import { RouteMiddleware } from '../../types/route-middleware';
 import { RequestError } from '../../utility/errors/request-error';
 import { onlyGlobalAdmin } from '../../utility/user-with-scope';
-import { getSlowRequests } from '../../middleware/slow-requests';
+import { getClusterSlowRequests } from '../../utility/cluster-slow-requests';
 
 const DEFAULT_TAIL_LINES = 100;
 const MAX_TAIL_LINES = 500;
@@ -39,9 +39,12 @@ async function pm2List() {
 
 export async function pm2Restart(process: string) {
   return new Promise<void>((resolve, reject) => {
-    const timeout = setTimeout(() => {
-      reject(new Error('Restart timed out'));
-    }, 5 * 60 * 1000); // 5 minutes
+    const timeout = setTimeout(
+      () => {
+        reject(new Error('Restart timed out'));
+      },
+      5 * 60 * 1000
+    ); // 5 minutes
     pm2.reload(process, err => {
       if (err) {
         clearTimeout(timeout);
@@ -141,7 +144,7 @@ export const pm2Status: RouteMiddleware = async context => {
   // Connect.
   await pm2Connect();
 
-  const list = await pm2List();
+  const list = await pm2List().finally(() => pm2.disconnect());
 
   context.response.body = {
     build: config.build,
@@ -157,10 +160,8 @@ export const pm2Status: RouteMiddleware = async context => {
         uptime: (item as any)?.pm2_env?.pm_uptime,
       };
     }),
-    slowRequests: getSlowRequests(),
+    ...(await getClusterSlowRequests()),
   };
-
-  pm2.disconnect();
 };
 
 export const pm2RestartAuth: RouteMiddleware = async context => {

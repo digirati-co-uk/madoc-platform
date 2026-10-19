@@ -113,6 +113,7 @@ export function createConfig(name, entry) {
           'async_hooks',
           'node:assert',
           'node:async_hooks',
+          'node:os',
           'debug',
           'csv-stringify',
           'react/jsx-runtime',

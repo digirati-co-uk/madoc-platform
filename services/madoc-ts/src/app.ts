@@ -37,6 +37,8 @@ import schedule from 'node-schedule';
 import passport from 'koa-passport';
 import { WebhookServerExtension } from './webhooks/webhook-server-extension';
 import { slowRequests } from './middleware/slow-requests';
+import { startSlowRequestReporting } from './utility/cluster-slow-requests';
+import { closeSystemRedis } from './utility/system-redis';
 import { requestDebugResponse, requestDebugSetup, withRequestDebugTiming } from './middleware/request-debug';
 
 const { readFile, readdir } = promises;
@@ -180,11 +182,17 @@ export async function createApp(config: ExternalConfig, env: EnvConfig) {
   }
 
   let jobsFinished: Promise<void> | undefined;
+  const stopSlowRequests =
+    !env.flags.disable_slow_request_tracking && process.env.NODE_ENV !== 'test'
+      ? startSlowRequestReporting()
+      : () => {};
   app.context.stopJobs = () => {
+    stopSlowRequests();
     jobsFinished = schedule.gracefulShutdown();
   };
   app.context.closeResources = async () => {
     await jobsFinished;
+    await closeSystemRedis();
     await pool.end();
   };
 
