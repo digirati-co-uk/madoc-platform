@@ -7,10 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased](https://github.com/digirati-co-uk/madoc-platform/compare/v2.4.7...main)
 
+### Added
+
+- Preserved additional IIIF manifest and canvas properties through import and export, and added storage and administration of embedded and remote annotation pages. ([MAD-1527](https://digirati.atlassian.net/browse/MAD-1527), [MAD-1528](https://digirati.atlassian.net/browse/MAD-1528))
+- Added imported annotations to the Madoc viewer on project and standalone manifest pages, with region highlighting and zoom controls.
+- Added annotation plaintext to transcriptions, search and capture-model prefilling, and displayed plaintext `seeAlso` resources as viewer transcriptions.
+- Added source-property restoration for existing manifests and a global-administrator-only backfill across all sites from System status, with progress and failure reporting.
+
+### Changed
+
+- Refreshed System status with migration and restart selectors, grouped service cards and access to each process instance's logs.
+- Combined slow-request statistics across server instances and added route search, sorting and reporting-instance details.
+
 ### Fixed
 
 - Fixed the capture model editor freezing or crashing when dropdown options contain repeated values, including repeated blank lines.
 - NS-92: Fixed duplicate capture model field labels and descriptions in the simple review panel for models with nested entities, preserving read-only field region details and crop previews.
+- Accepted remote annotation pages that omit empty `items` arrays, including Wellcome manifests, and isolated malformed embedded pages so they do not fail the resource import.
+- Preserved local annotation edits and removals during backfill, retained Presentation 2 extension properties and transcription text, and enforced publication restrictions when displaying imported annotations and plaintext.
 
 <!--
 
