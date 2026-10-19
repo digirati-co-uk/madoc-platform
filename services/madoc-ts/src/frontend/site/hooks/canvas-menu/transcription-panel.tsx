@@ -8,16 +8,18 @@ import { useRouteContext } from '../use-route-context';
 
 export function useTranscriptionMenu(isOpen = false): CanvasMenuHook {
   const { canvasId } = useRouteContext();
-  const { data } = useApiCanvas(isOpen ? canvasId : undefined, true, { plaintext: true });
+  const { data, isLoading, isError } = useApiCanvas(isOpen ? canvasId : undefined, true, { plaintext: true });
   const { t } = useTranslation();
   const plaintext = data?.plaintext;
 
   const content = (
     <>
       {plaintext ? (
-        <CanvasPlaintext />
+        <CanvasPlaintext plaintext={plaintext} />
       ) : (
-        <MetadataEmptyState style={{ marginTop: 100 }}>No plaintext</MetadataEmptyState>
+        <MetadataEmptyState style={{ marginTop: 100 }}>
+          {isLoading ? t('Loading transcription…') : isError ? t('Could not load transcription') : t('No plaintext')}
+        </MetadataEmptyState>
       )}
     </>
   );
