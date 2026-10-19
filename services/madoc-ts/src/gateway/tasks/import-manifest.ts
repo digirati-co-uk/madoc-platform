@@ -1,3 +1,4 @@
+import { presentation3 } from '../../iiif/properties';
 import fs from 'fs';
 import { dirname } from 'path';
 import { generateId } from '../../frontend/shared/capture-models/helpers/generate-id';
@@ -78,7 +79,8 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
       const subject = decodeURI(task.subject);
       const text = await fetchIiifResource(subject);
       const json = JSON.parse(text);
-      const iiifManifest = await vault.loadManifest(subject, json);
+      const rawManifest = presentation3(json);
+      const iiifManifest = await vault.loadManifest(subject, structuredClone(json));
 
       if (!iiifManifest) {
         throw new Error(`Error loading manifest ${subject}`);
@@ -107,6 +109,9 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
         let manifestToAdd: any;
         try {
           manifestToAdd = {
+            ...rawManifest,
+            // Canvas documents are submitted separately by the canvas import tasks.
+            items: undefined,
             id: iiifManifest.id,
             label: label ? trimInternationalString(label) : { none: ['Untitled Manifest'] },
             summary: summary ? trimInternationalString(summary) : undefined,

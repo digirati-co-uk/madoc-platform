@@ -1,3 +1,9 @@
+import {
+  listAnnotationPages,
+  saveAnnotationDocument,
+  invalidateIIIF,
+  requireIIIFResource,
+} from '../../../repository/iiif-annotations';
 import { sql } from 'slonik';
 import { RouteMiddleware } from '../../../types/route-middleware';
 import { UpdateStructureList } from '../../../types/schemas/item-structure-list';
@@ -10,6 +16,7 @@ export const updateManifestStructure: RouteMiddleware<{ id: number }, UpdateStru
 
   const manifestId = context.params.id;
   const canvasIds = context.requestBody.item_ids;
+  await requireIIIFResource(context.connection, siteId, Number(manifestId));
   const itemFilter = sql`site_id = ${siteId} and resource_id = ${manifestId}`;
 
   // Find the originals.
@@ -41,6 +48,17 @@ export const updateManifestStructure: RouteMiddleware<{ id: number }, UpdateStru
             ${userUrn}
       )
     `);
+  });
+
+  await context.connection.transaction(async connection => {
+    // Serialize text rebuilding with annotation edits, deletion, and download completion.
+    await connection.query(sql`select id from iiif_linking
+      where site_id = ${siteId} and resource_id = ${manifestId} and property = 'annotations'
+      order by id for update`);
+    for (const page of await listAnnotationPages(connection, siteId, Number(manifestId))) {
+      if (page.properties.document) await saveAnnotationDocument(connection, siteId, page, page.properties.document);
+    }
+    await invalidateIIIF(connection, siteId, Number(manifestId));
   });
 
   // Background task.

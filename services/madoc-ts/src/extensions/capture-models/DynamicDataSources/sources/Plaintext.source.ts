@@ -4,7 +4,7 @@ import { DynamicData, DynamicDataLoader } from '../types';
 const plaintextSourceDefinition: FieldSource = {
   id: 'plaintext-source',
   name: 'Plaintext',
-  description: 'Source plain-text from seeAlso fields in IIIF resources.',
+  description: 'Source plaintext from linked files or stored annotation transcriptions.',
   defaultProps: {},
   fieldTypes: ['text-field', 'html-field', 'tagged-text-field'],
 };
@@ -19,13 +19,11 @@ const plainTextSourceLoader: DynamicDataLoader = async (field, key, canvas, api)
       return singleLink.property === 'seeAlso' && singleLink.link.format === 'text/plain';
     });
 
-    if (!matchingPlaintext) {
-      return field;
-    }
-
-    // 2. Look for suitable plain text and load it
-    const plaintextUrl = matchingPlaintext.file ? api.resolveUrl(matchingPlaintext.link.id) : matchingPlaintext.link.id;
-    const plaintext = await fetch(plaintextUrl).then(t => t.text());
+    const plaintext = matchingPlaintext
+      ? await fetch(
+          matchingPlaintext.file ? api.resolveUrl(matchingPlaintext.link.id) : matchingPlaintext.link.id
+        ).then(response => response.text())
+      : (await api.getCanvasPlaintext(canvas.id)).transcription;
 
     if (!plaintext) {
       return field;
@@ -34,7 +32,12 @@ const plainTextSourceLoader: DynamicDataLoader = async (field, key, canvas, api)
     // 3. Add plain text to value of field.
     if (field.type === 'html-field') {
       // @todo maybe make this configurable.
-      field.value = plaintext.split('\n').join('<br />');
+      field.value = plaintext
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .split('\n')
+        .join('<br />');
     } else {
       // 3. Add plain text to value of field.
       field.value = plaintext;

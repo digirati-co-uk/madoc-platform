@@ -78,6 +78,7 @@ describe('buildManifestTypesenseDocument', () => {
       item_index: 2,
       source: null,
       rights: 'cc-by',
+      annotation_text: ['Imported annotation transcription'],
       nav_date: null,
       thumbnail: 'https://example.org/thumb.jpg',
       default_thumbnail: null,
@@ -143,7 +144,9 @@ describe('buildManifestTypesenseDocument', () => {
       ])
     );
     expect(document.capture_model_ocr).toEqual(['Extracted OCR']);
-    expect(document.search_text).toEqual(expect.arrayContaining(['Canvas label', 'John Doe', 'Extracted OCR']));
+    expect(document.search_text).toEqual(
+      expect.arrayContaining(['Canvas label', 'John Doe', 'Extracted OCR', 'Imported annotation transcription'])
+    );
     expect(document.search_context).toEqual(['Transcription']);
     expect(document.metadata_creator).toEqual(['John Doe']);
     expect(document.metadata_pairs).toContain('creator:John Doe');

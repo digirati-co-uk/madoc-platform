@@ -1,16 +1,24 @@
+import { getAnnotationPlaintext, requireIIIFResource } from '../../../repository/iiif-annotations';
 import {
   paragraphsToPlaintext,
   PARAGRAPHS_PROFILE,
 } from '../../../extensions/capture-models/Paragraphs/Paragraphs.helpers';
 import { traverseDocument } from '../../../frontend/shared/capture-models/helpers/traverse-document';
 import { api } from '../../../gateway/api.server';
-import { RouteMiddleware } from '../../../types/route-middleware';
+import { RouteMiddleware, ServerContext } from '../../../types/route-middleware';
 import { isLinkCaptureModelParagraphs, isLinkPlaintext } from '../../../utility/linking-property-types';
 import { optionalUserWithScope } from '../../../utility/user-with-scope';
+import { fetchAnnotationResource } from '../../../iiif/fetch-annotation-page';
 
-export const getCanvasPlaintext: RouteMiddleware<{ id: string }> = async context => {
-  const { siteId } = optionalUserWithScope(context, []);
-  const siteApi = api.asUser({ siteId });
+export async function loadCanvasPlaintext(
+  context: Pick<ServerContext, 'connection' | 'captureModels' | 'disposableApis'>,
+  siteId: number,
+  canvasId: number,
+  admin = false
+) {
+  await requireIIIFResource(context.connection, siteId, canvasId, admin);
+  const siteApi = api.asUser({ siteId }, {}, true);
+  context.disposableApis.push(siteApi);
 
   // Get all capture models.
   const models = await context.captureModels.listCaptureModels(
@@ -18,7 +26,7 @@ export const getCanvasPlaintext: RouteMiddleware<{ id: string }> = async context
       all: true,
       page: 1,
       perPage: 20,
-      target: `urn:madoc:canvas:${context.params.id}`,
+      target: `urn:madoc:canvas:${canvasId}`,
     },
     siteId
   );
@@ -32,14 +40,6 @@ export const getCanvasPlaintext: RouteMiddleware<{ id: string }> = async context
   if (models.length) {
     for (const model of models) {
       if (state.found) break;
-      context.body = await context.captureModels.getCaptureModel(
-        model.id,
-        {
-          includeCanonical: true,
-          revisionStatus: 'accepted',
-        },
-        siteId
-      );
       const loadedModel = await siteApi.getCaptureModel(model.id, { published: true });
       traverseDocument(loadedModel.document, {
         visitField(field) {
@@ -72,18 +72,25 @@ export const getCanvasPlaintext: RouteMiddleware<{ id: string }> = async context
   }
 
   if (!state.found) {
-    const linkingProperties = await siteApi.getCanvasLinking(Number(context.params.id));
+    const linkingProperties = await siteApi.getCanvasLinking(canvasId);
 
     for (const linkingProperty of linkingProperties.linking) {
+      if (state.found) break;
       if (linkingProperty.property === 'seeAlso' && isLinkPlaintext(linkingProperty)) {
-        if (linkingProperty.file) {
-          const resolvedParagraphs = api.resolveUrl(linkingProperty.link.id);
-          const transcription = await fetch(resolvedParagraphs).then(r => r.text());
-
+        try {
+          const transcription = linkingProperty.file
+            ? await fetch(api.resolveUrl(linkingProperty.link.id)).then(r => {
+                if (!r.ok) throw new Error(`Plaintext fetch failed (${r.status})`);
+                return r.text();
+              })
+            : await fetchAnnotationResource(linkingProperty.link.id);
           if (transcription) {
             state.found = true;
             state.transcription = transcription;
+            state.source = linkingProperty.link.id;
           }
+        } catch {
+          // An unavailable link must not hide another transcription or stored annotation text.
         }
       }
       if (linkingProperty.property === 'seeAlso' && isLinkCaptureModelParagraphs(linkingProperty)) {
@@ -105,5 +112,24 @@ export const getCanvasPlaintext: RouteMiddleware<{ id: string }> = async context
     }
   }
 
-  context.response.body = state;
+  if (!state.found) {
+    const texts = await getAnnotationPlaintext(context.connection, siteId, canvasId, admin);
+    if (texts.length) {
+      state.found = true;
+      state.transcription = texts.map(text => text.text).join('\n');
+      state.source = texts[0].source;
+    }
+  }
+
+  return state;
+}
+
+export const getCanvasPlaintext: RouteMiddleware<{ id: string }> = async context => {
+  const { siteId } = optionalUserWithScope(context, []);
+  context.response.body = await loadCanvasPlaintext(
+    context,
+    siteId,
+    Number(context.params.id),
+    !!context.state.jwt?.scope.includes('site.admin')
+  );
 };

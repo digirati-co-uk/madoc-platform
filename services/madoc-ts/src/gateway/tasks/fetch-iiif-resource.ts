@@ -1,5 +1,9 @@
-import fetch from 'node-fetch';
+import type NodeFetch from 'node-fetch';
 import type { Response } from 'node-fetch';
+import { createRequire } from 'module';
+
+// The backend library build otherwise uses a browser shim that ignores timeout.
+const fetch: typeof NodeFetch = createRequire(`${process.cwd()}/package.json`)('node-fetch');
 
 export async function fetchIiifResource(
   url: string,

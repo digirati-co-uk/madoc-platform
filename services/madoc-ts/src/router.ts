@@ -1,3 +1,14 @@
+import {
+  listAnnotations,
+  addAnnotation,
+  updateAnnotation,
+  deleteAnnotation,
+  refreshAnnotation,
+  completeAnnotation,
+  importProperties,
+  backfillProperties,
+} from './routes/iiif/annotations/manage-annotations';
+import { getStoredAnnotationPage } from './routes/iiif/annotations/get-annotation-page';
 import { router as activityStreamRoutes } from './activity-streams/router';
 import { getAuthRoutes } from './auth';
 import { router as captureModelRoutes } from './capture-model-server/router';
@@ -659,6 +670,39 @@ export const router = new TypedRouter({
   ],
   'delete-canvas': [TypedRouter.DELETE, '/api/madoc/iiif/canvases/:id', deleteCanvasEndpoint],
 
+  'list-annotation-pages': [TypedRouter.GET, '/api/madoc/iiif/resources/:id/annotations', listAnnotations],
+  'add-annotation-page': [
+    TypedRouter.POST,
+    '/api/madoc/iiif/resources/:id/annotations',
+    addAnnotation,
+    { schemaName: 'AnnotationPageInput' },
+  ],
+  'update-annotation-page': [
+    TypedRouter.PUT,
+    '/api/madoc/iiif/resources/:id/annotations/:pageId',
+    updateAnnotation,
+    { schemaName: 'AnnotationPageInput' },
+  ],
+  'delete-annotation-page': [TypedRouter.DELETE, '/api/madoc/iiif/resources/:id/annotations/:pageId', deleteAnnotation],
+  'refresh-annotation-page': [
+    TypedRouter.POST,
+    '/api/madoc/iiif/resources/:id/annotations/:pageId/refresh',
+    refreshAnnotation,
+  ],
+  'complete-annotation-page': [
+    TypedRouter.POST,
+    '/api/madoc/iiif/resources/:id/annotations/:pageId/complete',
+    completeAnnotation,
+    { schemaName: 'CompleteAnnotationPageRequest' },
+  ],
+  'import-iiif-properties': [
+    TypedRouter.POST,
+    '/api/madoc/iiif/resources/:id/iiif-properties',
+    importProperties,
+    { schemaName: 'ImportIIIFPropertiesRequest' },
+  ],
+  'backfill-iiif-properties': [TypedRouter.POST, '/api/madoc/iiif/resources/:id/iiif-backfill', backfillProperties],
+
   // Import API
   'import-manifest': [TypedRouter.POST, '/api/madoc/iiif/import/manifest', importManifest],
   'import-manifest-bulk': [TypedRouter.POST, '/api/madoc/iiif/import/manifest/bulk', importBulkManifests],
@@ -681,11 +725,7 @@ export const router = new TypedRouter({
   'create-project': [TypedRouter.POST, '/api/madoc/projects', createNewProject],
   'list-projects': [TypedRouter.GET, '/api/madoc/projects', listProjects],
   'get-project': [TypedRouter.GET, '/api/madoc/projects/:id', getProject],
-  'get-project-search-indexes': [
-    TypedRouter.GET,
-    '/api/madoc/projects/:id/search-indexes',
-    listProjectSearchIndexes,
-  ],
+  'get-project-search-indexes': [TypedRouter.GET, '/api/madoc/projects/:id/search-indexes', listProjectSearchIndexes],
   'create-project-search-index': [
     TypedRouter.POST,
     '/api/madoc/projects/:id/search-indexes',
@@ -1047,6 +1087,16 @@ export const router = new TypedRouter({
     '/s/:slug/madoc/api/manifests/:id/export/:version',
     siteManifestBuildOptions,
     { isPublic: true },
+  ],
+  'stored-annotation-page-options': [
+    TypedRouter.OPTIONS,
+    '/s/:slug/madoc/api/resources/:id/annotations/:pageId/:version',
+    siteManifestBuildOptions,
+  ],
+  'stored-annotation-page': [
+    TypedRouter.GET,
+    '/s/:slug/madoc/api/resources/:id/annotations/:pageId/:version',
+    getStoredAnnotationPage,
   ],
   'manifest-build': [TypedRouter.GET, '/s/:slug/madoc/api/manifests/:id/export/:version', siteManifestBuild],
   'collection-build-options': [

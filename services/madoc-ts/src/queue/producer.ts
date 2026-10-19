@@ -1,3 +1,5 @@
+import * as annotationPage from '../gateway/tasks/import-annotation-page';
+import * as iiifBackfill from '../gateway/tasks/backfill-iiif-properties';
 import { Job, Worker, WorkerOptions } from 'bullmq';
 import { ApiClient } from '../gateway/api';
 import * as manifest from '../gateway/tasks/import-manifest';
@@ -82,6 +84,10 @@ const worker = new Worker(
 
     try {
       switch (job.data.type) {
+        case annotationPage.type:
+          return await annotationPage.jobHandler(job.name, job.data.taskId, contextualApi);
+        case iiifBackfill.type:
+          return await iiifBackfill.jobHandler(job.name, job.data.taskId, contextualApi);
         case collection.type:
           return await collection.jobHandler(job.name, job.data.taskId, contextualApi).catch(err => {
             throw err;

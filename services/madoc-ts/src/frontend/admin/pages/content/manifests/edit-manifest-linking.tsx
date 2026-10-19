@@ -1,7 +1,6 @@
+import { AnnotationPages } from '../../../features/annotations/AnnotationPages';
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { ResourceLinkResponse } from '../../../../../types/schemas/linking';
-import { EmptyState } from '../../../../shared/layout/EmptyState';
 import { LinkingProperty } from '../../../../shared/atoms/LinkingProperty';
 import { Spinner } from '../../../../shared/icons/Spinner';
 import { UniversalComponent } from '../../../../types';
@@ -17,36 +16,35 @@ type EditManifestLinkingType = {
   variables: { id: number };
 };
 
-export const EditManifestLinking: UniversalComponent<EditManifestLinkingType> = createUniversalComponent<
-  EditManifestLinkingType
->(
-  props => {
-    const { t } = useTranslation();
-    const { id } = useParams<{ id: string }>();
-    const { data, refetch, isFetching } = useData(EditManifestLinking);
+export const EditManifestLinking: UniversalComponent<EditManifestLinkingType> =
+  createUniversalComponent<EditManifestLinkingType>(
+    props => {
+      const { id } = useParams<{ id: string }>();
+      const { data, refetch, isFetching } = useData(EditManifestLinking);
 
-    if (isFetching) {
-      return <Spinner />;
-    }
+      if (isFetching) {
+        return <Spinner />;
+      }
 
-    if (data && data.linking.length === 0) {
-      return <EmptyState>{t('No linking properties')}</EmptyState>;
-    }
-
-    return (
-      <TableContainer style={{ background: '#EEEEEE' }}>
-        {data?.linking.map(item => {
-          return <LinkingProperty linkProps={{ manifestId: id }} key={item.link.id} link={item} refetch={refetch} />;
-        })}
-      </TableContainer>
-    );
-  },
-  {
-    getKey(params) {
-      return ['manifest-linking', { id: Number(params.id) }];
+      return (
+        <>
+          <TableContainer style={{ background: '#EEEEEE' }}>
+            <AnnotationPages resourceId={Number(id)} allowBackfill={true} />
+            {data?.linking.map(item => {
+              return (
+                <LinkingProperty linkProps={{ manifestId: id }} key={item.link.id} link={item} refetch={refetch} />
+              );
+            })}
+          </TableContainer>
+        </>
+      );
     },
-    getData(key, vars, api) {
-      return api.getManifestLinking(vars.id);
-    },
-  }
-);
+    {
+      getKey(params) {
+        return ['manifest-linking', { id: Number(params.id) }];
+      },
+      getData(key, vars, api) {
+        return api.getManifestLinking(vars.id);
+      },
+    }
+  );
