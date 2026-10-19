@@ -1,3 +1,4 @@
+import { getAnalytics, recordPageView } from './routes/analytics';
 import { router as activityStreamRoutes } from './activity-streams/router';
 import { getAuthRoutes } from './auth';
 import { router as captureModelRoutes } from './capture-model-server/router';
@@ -671,6 +672,8 @@ export const router = new TypedRouter({
   'update-linking': [TypedRouter.PUT, '/api/madoc/iiif/linking/:id', updateLinking],
 
   // Stats.
+  'get-analytics': [TypedRouter.GET, '/api/madoc/analytics', getAnalytics],
+  'record-page-view': [TypedRouter.POST, '/s/:slug/madoc/api/analytics/page-view', recordPageView, { schemaName: 'RecordPageViewRequest' }],
   'get-statistics': [TypedRouter.GET, '/api/madoc/iiif/statistics', statistics],
   'post-batch-index': [TypedRouter.POST, '/api/madoc/iiif/batch-index', batchIndex],
   'post-full-index': [TypedRouter.POST, '/api/madoc/iiif/reindex', fullReindex],
