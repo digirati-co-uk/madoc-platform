@@ -1,3 +1,4 @@
+import { recordContributionAnalytics } from '../repository/analytics-repository';
 import { RequestError } from '../utility/errors/request-error';
 import { isTabularAlignmentSnapshot } from '../frontend/shared/utility/tabular-alignment-snapshot';
 import { DatabaseTransactionConnectionType, sql } from 'slonik';
@@ -957,6 +958,7 @@ export class CaptureModelRepository extends BaseRepository<'capture_model_api_mi
       } catch (err) {
         console.log('ERR', err);
       }
+      await recordContributionAnalytics(transaction, req.revision.id, siteId);
     });
 
     console.log('  Updated revision fields');
@@ -1038,6 +1040,7 @@ export class CaptureModelRepository extends BaseRepository<'capture_model_api_mi
       await transaction.query(
         CaptureModelRepository.mutations.updateRevisionStatus(req.revision, req.revision.status, siteId)
       );
+      await recordContributionAnalytics(transaction, req.revision.id, siteId, true);
     });
 
     return this.getRevision(req.revision.id, siteId, { userId, showRevised });

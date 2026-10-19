@@ -1,3 +1,4 @@
+import { AnalyticsPage } from './pages/analytics';
 import React from 'react';
 import { RouteObject } from 'react-router-dom';
 import { annotationStylesRoutes } from './pages/annotation-styles/index';
@@ -127,6 +128,7 @@ export const routes: RouteObject[] = [
     path: '/',
     element: <Homepage />,
   },
+  { path: '/analytics', element: <AnalyticsPage /> },
   // Aggregations.
   ...annotationStylesRoutes,
 

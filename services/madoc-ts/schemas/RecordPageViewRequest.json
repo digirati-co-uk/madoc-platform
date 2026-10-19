@@ -1,0 +1,10 @@
+{
+  "type": "object",
+  "properties": {
+    "project": {
+      "description": "Project ID or slug only. Never send a URL or visitor identifier.",
+      "type": "string"
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

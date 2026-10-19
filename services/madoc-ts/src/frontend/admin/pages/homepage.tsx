@@ -1,9 +1,9 @@
 import React from 'react';
-import { useSite, useUser } from '../../shared/hooks/use-site';
-import { UniversalComponent } from '../../types';
-import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { AnalyticsReport } from '../../../types/analytics';
+import { useUser } from '../../shared/hooks/use-site';
+import { UniversalComponent } from '../../types';
 import { AdminHeader } from '../molecules/AdminHeader';
 import { WidePage } from '../../shared/layout/WidePage';
 import { createUniversalComponent } from '../../shared/utility/create-universal-component';
@@ -15,51 +15,33 @@ import {
   StatisticLink,
   StatisticNumber,
 } from '../../shared/atoms/Statistics';
+import { AnalyticsOverview } from '../features/analytics/AnalyticsOverview';
 
-const AdminSection = styled.div`
-  width: 33.3333%;
-`;
+function MenuSection({ title, subtitle, children }: { title: string; subtitle: string; children: React.ReactNode }) {
+  return (
+    <div className="min-w-0">
+      <h4 className="text-base font-semibold mb-0">{title}</h4>
+      <p className="text-xs font-medium text-gray-500 mt-1 mb-2.5">{subtitle}</p>
+      <ul className="list-none m-0 p-0 space-y-3 text-sm">{children}</ul>
+    </div>
+  );
+}
 
-const AdminSectionGrid = styled.div`
-  display: flex;
-  gap: 0.5em;
-`;
-
-const MenuTitle = styled.h4`
-  margin-bottom: 0em;
-  font-size: 1.2em;
-`;
-
-const MenuSubTitle = styled.p`
-  margin-bottom: 0.7em;
-  margin-top: 0.2em;
-  font-size: 0.8em;
-  color: #666;
-  font-weight: 500;
-`;
-
-const MenuList = styled.div`
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  font-size: 1em;
-  a {
-    color: #4157bb;
-    text-decoration: none;
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-  li {
-    margin-bottom: 0.8em;
-  }
-`;
+function MenuLink({ to, children }: { to: string; children: React.ReactNode }) {
+  return (
+    <li>
+      <Link to={to} className="text-[#4157bb] no-underline hover:underline">
+        {children}
+      </Link>
+    </li>
+  );
+}
 
 type HomepageType = {
-  query: {};
-  params: {};
-  variables: {};
-  data: { collections: number; manifests: number; canvases: number; projects: number };
+  query: Record<string, never>;
+  params: Record<string, never>;
+  variables: Record<string, never>;
+  data: { collections: number; manifests: number; canvases: number; projects: number; analytics?: AnalyticsReport };
 };
 
 export const Homepage: UniversalComponent<HomepageType> = createUniversalComponent<HomepageType>(
@@ -73,6 +55,8 @@ export const Homepage: UniversalComponent<HomepageType> = createUniversalCompone
       <div>
         <AdminHeader breadcrumbs={[{ label: t('Admin dashboard'), link: '/', active: true }]} title={t('Site admin')} />
         <WidePage>
+          <AnalyticsOverview data={stats?.analytics} />
+
           {stats ? (
             <StatisticContainer>
               <StatisticLink
@@ -99,100 +83,45 @@ export const Homepage: UniversalComponent<HomepageType> = createUniversalCompone
               />
             </StatisticContainer>
           ) : null}
-          <AdminSectionGrid style={{ maxWidth: '70vw', margin: '0 auto' }}>
-            <AdminSection>
-              <MenuTitle>{t('Content')}</MenuTitle>
-              <MenuSubTitle>{t('Create and manage site content')}</MenuSubTitle>
-              <MenuList>
-                <li>
-                  <Link to="/manifests">{t('Manifests')}</Link>
-                </li>
-                <li>
-                  <Link to="/collections">{t('Collections')}</Link>
-                </li>
-                <li>
-                  <Link to="/media">{t('Media')}</Link>
-                </li>
-                <li>
-                  <Link to="/page-blocks">{t('Site pages')}</Link>
-                </li>
-                <li>
-                  <Link to="/i18n">{t('Localisation')}</Link>
-                </li>
-              </MenuList>
-            </AdminSection>
-            <AdminSection>
-              <MenuTitle>{t('Crowdsourcing')}</MenuTitle>
-              <MenuSubTitle>{t(' Public contribution and enrichment')}</MenuSubTitle>
-              <MenuList>
-                <li>
-                  <Link to="/projects">{t('Projects')}</Link>
-                </li>
-                <li>
-                  <Link to={`/enrichment/ocr`}>{t('OCR')}</Link>
-                </li>
-                <li>
-                  <Link to="/system/activity-streams">{t('Activity streams')}</Link>
-                </li>
-              </MenuList>
-            </AdminSection>
-            <AdminSection>
-              <MenuTitle>{t('Configuration')}</MenuTitle>
-              <MenuSubTitle>{t('Configure how this site works and appears')}</MenuSubTitle>
-              <MenuList>
-                <li>
-                  <Link to="/configure/site/details">{t('Site details')}</Link>
-                </li>
-                <li>
-                  <Link to="/configure/site/system">{t('Site general configuration')}</Link>
-                </li>
-                <li>
-                  <Link to="/configure/site/project">{t('Site Project configuration')}</Link>
-                </li>
-                <li>
-                  <Link to="/enrichment/search-indexing">{t('Site search indexing')}</Link>
-                </li>
-                <li>
-                  <Link to="/enrichment/typesense-playground">{t('Typesense playground')}</Link>
-                </li>
-                <li>
-                  <Link to="/site/permissions">{t('Site permissions')}</Link>
-                </li>
-                <li>
-                  <Link to="/system/themes">{t('Themes')}</Link>
-                </li>
-              </MenuList>
-            </AdminSection>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mx-auto">
+            <MenuSection title={t('Content')} subtitle={t('Create and manage site content')}>
+              <MenuLink to="/analytics">{t('Analytics')}</MenuLink>
+              <MenuLink to="/manifests">{t('Manifests')}</MenuLink>
+              <MenuLink to="/collections">{t('Collections')}</MenuLink>
+              <MenuLink to="/media">{t('Media')}</MenuLink>
+              <MenuLink to="/page-blocks">{t('Site pages')}</MenuLink>
+              <MenuLink to="/i18n">{t('Localisation')}</MenuLink>
+            </MenuSection>
+
+            <MenuSection title={t('Crowdsourcing')} subtitle={t(' Public contribution and enrichment')}>
+              <MenuLink to="/projects">{t('Projects')}</MenuLink>
+              <MenuLink to="/enrichment/ocr">{t('OCR')}</MenuLink>
+              <MenuLink to="/system/activity-streams">{t('Activity streams')}</MenuLink>
+            </MenuSection>
+
+            <MenuSection title={t('Configuration')} subtitle={t('Configure how this site works and appears')}>
+              <MenuLink to="/configure/site/details">{t('Site details')}</MenuLink>
+              <MenuLink to="/configure/site/system">{t('Site general configuration')}</MenuLink>
+              <MenuLink to="/configure/site/project">{t('Site Project configuration')}</MenuLink>
+              <MenuLink to="/enrichment/search-indexing">{t('Site search indexing')}</MenuLink>
+              <MenuLink to="/enrichment/typesense-playground">{t('Typesense playground')}</MenuLink>
+              <MenuLink to="/site/permissions">{t('Site permissions')}</MenuLink>
+              <MenuLink to="/system/themes">{t('Themes')}</MenuLink>
+            </MenuSection>
+
             {isGlobal ? (
-              <AdminSection>
-                <MenuTitle>{t('Global')}</MenuTitle>
-                <MenuSubTitle>{t('System-wide administration')}</MenuSubTitle>
-                <MenuList>
-                  <li>
-                    <Link to="/global/sites">{t('All Sites')}</Link>
-                  </li>
-                  <li>
-                    <Link to="/global/users">{t('Users')}</Link>
-                  </li>
-                  <li>
-                    <Link to="/global/status">{t('System status')}</Link>
-                  </li>
-                  <li>
-                    <Link to="/global/logs">{t('Process logs')}</Link>
-                  </li>
-                  <li>
-                    <Link to="/global/queue">{t('Queue inspector')}</Link>
-                  </li>
-                  <li>
-                    <Link to="/global/config">{t('Global config')}</Link>
-                  </li>
-                  <li>
-                    <Link to="/global/api-keys">{t('API keys')}</Link>
-                  </li>
-                </MenuList>
-              </AdminSection>
+              <MenuSection title={t('Global')} subtitle={t('System-wide administration')}>
+                <MenuLink to="/global/sites">{t('All Sites')}</MenuLink>
+                <MenuLink to="/global/users">{t('Users')}</MenuLink>
+                <MenuLink to="/global/status">{t('System status')}</MenuLink>
+                <MenuLink to="/global/logs">{t('Process logs')}</MenuLink>
+                <MenuLink to="/global/queue">{t('Queue inspector')}</MenuLink>
+                <MenuLink to="/global/config">{t('Global config')}</MenuLink>
+                <MenuLink to="/global/api-keys">{t('API keys')}</MenuLink>
+              </MenuSection>
             ) : null}
-          </AdminSectionGrid>
+          </div>
         </WidePage>
       </div>
     );
@@ -200,7 +129,11 @@ export const Homepage: UniversalComponent<HomepageType> = createUniversalCompone
   {
     getKey: () => ['statistics', {}],
     getData: async (key, vars, api) => {
-      return api.getStatistics();
+      const [statistics, analytics] = await Promise.all([
+        api.getStatistics(),
+        api.getAnalytics({ days: 30 }).catch(() => undefined),
+      ]);
+      return { ...statistics, analytics };
     },
   }
 );
