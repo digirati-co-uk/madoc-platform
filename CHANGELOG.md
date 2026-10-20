@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - NS-92: Fixed duplicate capture model field labels and descriptions in the simple review panel for models with nested entities, preserving read-only field region details and crop previews.
 - Accepted remote annotation pages that omit empty `items` arrays, including Wellcome manifests, and isolated malformed embedded pages so they do not fail the resource import.
 - Preserved local annotation edits and removals during backfill, retained Presentation 2 extension properties and transcription text, and enforced publication restrictions when displaying imported annotations and plaintext.
+- NS-93: fixed CSS and styling issues from continued Tailwind migration
 
 <!--
 
