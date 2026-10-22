@@ -19,7 +19,23 @@ Validated on `feature/misc-fixes` against the local application on 2026-10-22. T
 
 The independent export review identified the task service's all-siblings terminal-event semantics, duplicate ZIP finalization, and stale entity filters when switching projects. Browser execution also reproduced `ReferenceError: Buffer is not defined` in the shared CSV serializer. The implementation and independent second review resolved all four findings. The correction runtime check also exposed superseded blank fields and a hydrated-cache refetch failure; both received focused regressions and passed the final browser check.
 
-## Environment and limits
+## CSV table preview follow-up
+
+Commit `dade49bb` renders CSV previews as accessible tables, preserving original download content and non-CSV text previews. All 31 focused tests passed under Node 24; independent review found no new blockers and checked 20 additional row-limit boundaries. The preview shows at most 100 data rows with an explicit truncation message. It is not a complete CSV validator or a total memory bound; later malformed rows, unlimited column counts and large cells remain outside that guarantee. The existing lazy-preview cache key still uses filename alone and does not distinguish replacement loaders with the same filename.
+
+Live verification on manifest 37702/project 1 displayed all 15 headers and the two expected canvas contribution rows. Horizontal scrolling reached 500 pixels within a 958-pixel preview while the page remained 1280 pixels wide; table headers computed as sticky and cells retained multiline whitespace. Downloaded content was byte-identical to the earlier raw-preview download (SHA-256 `29a6f9d8c0312e5f08941bd25638be7d2529ee1223820bfaa3e92afdd915509c`). Switching to Manifest API retained the JSON text preview. Frontend and server bundles built successfully. Screenshot capture timed out; the alternate computer-use browser inventory exposed no browser tabs, so visual evidence is limited to browser DOM/computed layout checks.
+
+## Guided format follow-up
+
+The default-field Save fix (`d262a9c0`) passed seven focused tests, two independent review rounds and live Save/reload checks on project 21. Its tests exclude diagnostics only for the pre-existing Dropdown theme-type error.
+
+The redesigned format controls (`25ad5527`) passed 114 tests across six focused suites, scoped lint and scoped TypeScript checks. These cover masks, calendar rules, Unicode strings, paste/caret/deletion/composition, settings validation, preview/default isolation and real i18next labels. Independent review found historical replacement, Unicode deletion, custom correction paste and Unicode composition boundary defects; each received a focused fix and regression. The third review found no remaining issues in the final Unicode fix and reran all 114 tests successfully. This is scoped evidence, not a passing repository-wide type check.
+
+Live checks on project 21 verified that keyboard entry `25122024` becomes `25-12-2024`, unfinished focused input retains a visible remaining template without a red error, and `31-02-2024` reports the calendar problem. Date and custom settings persisted; invalid custom patterns failed both clicked Save and navigation-triggered autosave. Switching a populated Try-it sample to `MS-####` reset it correctly and entry `1234` became `MS-1234`. Replacing `999-01-01` with `2024-01-01`, deleting an astral Unicode letter, and pasting `AB1234` after mixed-slot deletion behaved correctly. The final Unicode diff helper was also exercised in the browser for emoji and astral-letter replacements. Temporary fields were removed, preserving the existing `date` and `test` fields.
+
+Current frontend and server production bundles built successfully after the Unicode composition fix. The server was restarted with the existing migration override, all PM2 applications were online, and the site returned HTTP 200. Real mobile IME ordering and native undo history remain unverified; composition is covered by component regressions. The input controls provide feedback and validate settings, while contribution/review/API submission policy and the separate tabular editor remain unchanged. See [submission validation](NS-30-submission-validation.md) for that deferred work.
+
+## Runtime environment and limits
 
 The Docker app had a stale single-file mount for `config.json`. Recreating only the app container restored that mount. Its database also records a migration from a different branch whose file is absent here; the server was started with `MIGRATE=false` for this session. No migration files or database schema were changed. Future container recreation on this branch may require the same runtime override until the branch and local migration history agree.
 

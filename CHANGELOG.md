@@ -9,12 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- [NS-30](https://digirati.atlassian.net/browse/NS-30) Fix saving the default capture field type, including fields registered while the editor is open ([d262a9c0](https://github.com/digirati-co-uk/madoc-platform/commit/d262a9c0)).
 - [NS-10](https://digirati.atlassian.net/browse/NS-10) Allow updating transcription instructions and descriptions ([512549af](https://github.com/digirati-co-uk/madoc-platform/commit/512549af)).
 - Fixed the capture model editor freezing or crashing when dropdown options contain repeated values, including repeated blank lines.
 - NS-92: Fixed duplicate capture model field labels and descriptions in the simple review panel for models with nested entities, preserving read-only field region details and crop previews.
 
 ### Added
 
+- [NS-30](https://digirati.atlassian.net/browse/NS-30) Add guided capture formats with visible templates, automatic separators, examples and custom patterns ([25ad5527](https://github.com/digirati-co-uk/madoc-platform/commit/25ad5527)).
+- [NS-73](https://digirati.atlassian.net/browse/NS-73) [NS-78](https://digirati.atlassian.net/browse/NS-78) Show CSV export previews as tables with sticky headers and a 100-row preview limit ([dade49bb](https://github.com/digirati-co-uk/madoc-platform/commit/dade49bb)).
 - [NS-30](https://digirati.atlassian.net/browse/NS-30) Add numeric, time and date-time formats to capture text fields ([90623bc2](https://github.com/digirati-co-uk/madoc-platform/commit/90623bc2)).
 - [NS-49](https://digirati.atlassian.net/browse/NS-49) Allow bounded approved-contribution corrections with preserved attribution and search refresh ([56fb805c](https://github.com/digirati-co-uk/madoc-platform/commit/56fb805c)).
 - [NS-53](https://digirati.atlassian.net/browse/NS-53) Add a paginated crowdsourcing overview with status filters, sorting and cached canvas counts ([c3a9bbb0](https://github.com/digirati-co-uk/madoc-platform/commit/c3a9bbb0)).

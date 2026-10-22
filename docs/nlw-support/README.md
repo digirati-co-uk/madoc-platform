@@ -22,12 +22,12 @@ Implementation commits use ticket-first summaries. Changelog entries link the re
 | Ticket | Scope on this branch | Further work |
 | --- | --- | --- |
 | [NS-10](NS-10.md) | Editable transcription instructions and description through existing project configuration. | Historic review metadata remains unchanged. |
-| [NS-30](NS-30.md) | Numeric, time and date-time hints for text fields; existing date-only field retained. | Tabular format changes and mandatory validation remain outside scope. |
+| [NS-30](NS-30.md) | Guided numeric/date/time formats, visible templates, automatic separators, custom patterns and reliable default-field Save. | Tabular format changes and [submission enforcement](NS-30-submission-validation.md) remain outside scope. |
 | [NS-33](NS-33.md) | Current deletion behavior assessed and staged plan written. | Individual deletion, reopening and shared-review cleanup need lifecycle decisions and broader verification. |
 | [NS-49](NS-49.md) | Bounded corrections of existing approved values/box regions; approval and attribution preserved. | Deletion, tabular/custom renderers, schema editing and server concurrency protection remain deferred. |
 | [NS-53](NS-53.md) | Paginated task overview with status filters, sorting and cached canvas counts. | Latest contributor, annotation totals and true latest-contribution dates need a batched data contract. |
 | [NS-73](NS-73.md) | Contributions CSV per manifest, with partial ZIP completion and idempotent archive publication. | Failed resources require a fresh export; publication and notification are not transactional. |
-| [NS-78](NS-78.md) | Manifest admin CSV preview/download for one selected project. | Multi-project/bulk downloads and additional format variants remain planned. |
+| [NS-78](NS-78.md) | Manifest admin CSV table preview/download for one selected project; table previews show up to 100 rows. | Multi-project/bulk downloads and additional format variants remain planned. |
 | [NS-79](NS-79.md) | Full resource-model correction page assessed and staged plan written. | Separate editor and persistence design required. |
 
 [Integration verification](verification.md) records tests, reviews, live checks and known environment limits. Ticket plans distinguish implementation from later acceptance checks; they do not imply that the entire Jira ticket is closed.
