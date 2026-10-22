@@ -186,6 +186,8 @@ export type UserPreferences = {
     'email' | 'contributions' | 'contributionStatistics' | 'awards' | 'gravitar' | string,
     'public' | 'staff' | 'only-me'
   >;
+  /** Site id → project id → date the training video was marked as watched. */
+  trainingVideo?: Record<string, Record<string, string>>;
 };
 export type UserInformation = Record<string, any>;
 

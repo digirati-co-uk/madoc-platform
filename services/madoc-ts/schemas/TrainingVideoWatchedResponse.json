@@ -1,0 +1,13 @@
+{
+  "description": "Project id → date the user marked the project's training video as watched.",
+  "type": "object",
+  "properties": {
+    "watched": {
+      "$ref": "#/definitions/Record%3Cstring%2Cstring%3E"
+    }
+  },
+  "required": [
+    "watched"
+  ],
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

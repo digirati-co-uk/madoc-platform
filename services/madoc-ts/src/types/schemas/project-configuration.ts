@@ -22,6 +22,11 @@ export type TypesenseSearchOptions = {
   canvases?: boolean;
 };
 
+export interface TrainingVideoOptions {
+  showOnContributionPage?: boolean;
+  hideHeaderButton?: boolean;
+}
+
 export type ProjectConfiguration = TabularProjectConfigurationFields & {
   _version?: 1;
   _source?: {
@@ -141,6 +146,10 @@ export type ProjectConfiguration = TabularProjectConfigurationFields & {
     collection?: boolean;
     canvas?: boolean;
   };
+
+  // Training video, shown from the project's help page.
+  trainingVideoPage?: string;
+  trainingVideoOptions?: TrainingVideoOptions;
 
   // Configuration that's not available from the editor.
   shadow?: {
@@ -293,6 +302,10 @@ export type ProjectConfigurationNEW = TabularProjectConfigurationFields & {
     curated?: boolean;
     published?: boolean;
   };
+
+  // Training video, shown from the project's help page.
+  trainingVideoPage?: string;
+  trainingVideoOptions?: TrainingVideoOptions;
 
   // Configuration that's not available from the editor.
   shadow?: {

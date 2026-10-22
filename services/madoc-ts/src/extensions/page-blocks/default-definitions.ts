@@ -10,6 +10,8 @@ import currentManifest from './current-manifest-snippet-block';
 import simpleMarkdownBlock from './simple-markdown-block/simple-markdown-block';
 import { EmbedItem } from '../../frontend/site/blocks/EmbedItem';
 import { GABlock } from '../../frontend/shared/atoms/GABlock';
+import { TrainingVideoBlock } from '../../frontend/site/features/training-video/TrainingVideoBlock';
+import { TrainingVideoButton } from '../../frontend/site/features/training-video/TrainingVideoButton';
 
 export function getDefaultPageBlockDefinitions(): PageBlockDefinition<any, any, any, any>[] {
   return [
@@ -23,6 +25,8 @@ export function getDefaultPageBlockDefinitions(): PageBlockDefinition<any, any, 
     (FeaturedItem as any)[Symbol.for('slot-model')] as any,
     (EmbedItem as any)[Symbol.for('slot-model')] as any,
     (GABlock as any)[Symbol.for('slot-model')] as any,
+    (TrainingVideoBlock as any)[Symbol.for('slot-model')] as any,
+    (TrainingVideoButton as any)[Symbol.for('slot-model')] as any,
     simpleMarkdownBlock,
   ];
 }

@@ -8,8 +8,9 @@ import { useCanvasNavigation } from '../hooks/use-canvas-navigation';
 import { useProject } from '../hooks/use-project';
 import { useProjectStatus } from '../hooks/use-project-status';
 import { CanvasSimpleEditor } from '../features/canvas/CanvasSimpleEditor';
+import { TrainingVideoContributionPrompt } from '../features/training-video/TrainingVideoContributionPrompt';
 
-export const CanvasModelEditor: React.FC = () => {
+export const CanvasModelEditor = () => {
   const { showCanvasNavigation } = useCanvasNavigation();
   const { revision } = useLocationQuery();
   const user = useUser();
@@ -23,11 +24,16 @@ export const CanvasModelEditor: React.FC = () => {
     return null;
   }
 
-  if (CustomEditor) {
-    return <CustomEditor />;
-  }
-
-  return <CanvasSimpleEditor revision={revision} isSegmentation={isSegmentation && isPreparing} />;
+  return (
+    <>
+      {CustomEditor ? (
+        <CustomEditor />
+      ) : (
+        <CanvasSimpleEditor revision={revision} isSegmentation={isSegmentation && isPreparing} />
+      )}
+      <TrainingVideoContributionPrompt />
+    </>
+  );
 };
 
 blockEditorFor(CanvasModelEditor, {

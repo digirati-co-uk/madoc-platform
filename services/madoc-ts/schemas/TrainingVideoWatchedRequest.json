@@ -1,0 +1,14 @@
+{
+  "type": "object",
+  "properties": {
+    "projectId": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    }
+  },
+  "required": [
+    "projectId"
+  ],
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
