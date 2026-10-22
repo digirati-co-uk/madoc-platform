@@ -209,10 +209,12 @@ export class CaptureModelRepository extends BaseRepository<'capture_model_api_mi
       projectId,
       siteId,
       entity,
+      manifestId,
       status = 'approved',
     }: {
       siteId: number;
       projectId: number;
+      manifestId?: number;
       entity?: string;
       status?: 'all' | 'drafts' | 'approved';
     }) {
@@ -240,7 +242,8 @@ export class CaptureModelRepository extends BaseRepository<'capture_model_api_mi
                                 from capture_model cm
                                          left join capture_model_document cmd on cmd.id = cm.document_id
                                 where derived_from =
-                                      (select p.capture_model_id from iiif_project p where p.id = ${projectId} and p.site_id = ${siteId}))
+                                      (select p.capture_model_id from iiif_project p where p.id = ${projectId} and p.site_id = ${siteId})
+                                  ${manifestId === undefined ? sql`` : sql`and cm.target @> ${sql.json([{ id: `urn:madoc:manifest:${manifestId}` }])}::jsonb`})
                    select entity.properties as doc,
                           entity.id         as doc_id,
                           entity.row_position as row_position,
@@ -1200,6 +1203,7 @@ export class CaptureModelRepository extends BaseRepository<'capture_model_api_mi
   async getModelFieldRevisionsByProject(options: {
     siteId: number;
     projectId: number;
+    manifestId?: number;
     entity?: string;
     status?: 'all' | 'drafts' | 'approved';
   }) {

@@ -20,10 +20,21 @@ export const getProjectRawData: RouteMiddleware = async context => {
     throw new RequestError('Invalid entity');
   }
 
+  const manifestId = context.query.manifest_id === undefined ? undefined : Number(context.query.manifest_id);
+  if (
+    context.query.manifest_id !== undefined &&
+    (typeof context.query.manifest_id !== 'string' ||
+      !/^[1-9]\d*$/.test(context.query.manifest_id) ||
+      !Number.isSafeInteger(manifestId))
+  ) {
+    throw new RequestError('Invalid manifest ID');
+  }
+
   context.response.body = await context.captureModels.getModelFieldRevisionsByProject({
     projectId,
+    manifestId,
     entity: context.query.entity,
     siteId,
-    status: context.query.status,
+    status: context.query.status === 'all' ? 'all' : context.query.status === 'drafts' ? 'drafts' : 'approved',
   });
 };

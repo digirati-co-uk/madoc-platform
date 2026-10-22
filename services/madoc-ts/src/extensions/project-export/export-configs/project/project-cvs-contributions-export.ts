@@ -1,6 +1,6 @@
 import { parseModelTarget } from '../../../../utility/parse-model-target';
 import { ExportFile } from '../../server-export';
-import { ExportConfig, ExportDataOptions, ExportFileDefinition, SupportedExportResource } from '../../types';
+import { ExportConfig, ExportDataOptions, ExportFileDefinition } from '../../types';
 import { getValue } from '@iiif/helpers';
 import {
   isTabularCellFlagged,
@@ -309,120 +309,133 @@ export const projectCsvContributionsExport: ExportConfig = {
     }
     return config;
   },
-  async exportData(
-    subject: SupportedExportResource,
-    options: ExportDataOptions<any>
-  ): Promise<ExportFileDefinition[] | undefined> {
-    let fieldOrderMap = new Map<string, number>();
-    try {
-      const project = await options.api.getProject(subject.id);
-      fieldOrderMap = getTabularFieldOrderMap(project?.template_config);
-    } catch (err) {
-      console.warn('CSV export: failed to load project template config for field ordering', {
-        projectId: subject.id,
-        err: String(err),
-      });
-    }
-
-    const entity = isBlankString(options.config.entity) ? null : options.config.entity;
-    const statusFilter = options.config.reviews ? 'all' : 'approved';
-    const allPublished = await options.api.getProjectFieldsRaw(subject.id, {
-      status: statusFilter,
-      ...(entity ? { entity } : {}),
-    });
-    const docOrder = new Map<string, number>();
-    let docOrderIndex = 0;
-
-    for (const item of allPublished) {
-      const docId = typeof item.doc_id === 'string' ? item.doc_id : '';
-      if (!docId || docOrder.has(docId)) {
-        continue;
-      }
-      docOrder.set(docId, docOrderIndex++);
-    }
-
-    const orderedPublished = allPublished
-      .map((item, index) => ({ item, index }))
-      .sort((left, right) => {
-        const leftDocId = typeof left.item.doc_id === 'string' ? left.item.doc_id : '';
-        const rightDocId = typeof right.item.doc_id === 'string' ? right.item.doc_id : '';
-
-        const leftDocOrder = leftDocId ? (docOrder.get(leftDocId) ?? Number.MAX_SAFE_INTEGER) : Number.MAX_SAFE_INTEGER;
-        const rightDocOrder = rightDocId
-          ? (docOrder.get(rightDocId) ?? Number.MAX_SAFE_INTEGER)
-          : Number.MAX_SAFE_INTEGER;
-
-        if (leftDocOrder !== rightDocOrder) {
-          return leftDocOrder - rightDocOrder;
-        }
-
-        const fieldOrderDiff = compareFieldKeysByTabularOrder(left.item.key, right.item.key, fieldOrderMap);
-        if (fieldOrderDiff !== 0) {
-          return fieldOrderDiff;
-        }
-
-        return left.index - right.index;
-      })
-      .map(({ item }) => item);
-
-    const manifestIds: number[] = [];
-    const canvasIds: number[] = [];
-
-    for (const item of orderedPublished) {
-      const t = safeParseModelTarget((item as any).target);
-      if (typeof t.manifest?.id === 'number') manifestIds.push(t.manifest.id);
-      if (typeof t.canvas?.id === 'number') canvasIds.push(t.canvas.id);
-    }
-
-    const { manifests, canvases } = await fetchTargets(options.api, manifestIds, canvasIds);
-
-    const rows = orderedPublished.map(item => {
-      const t = safeParseModelTarget((item as any).target);
-      const tabular = getTabularContributionNormalization(item.key, (item as any).value);
-
-      const manifestInternalId = t.manifest?.id;
-      const canvasInternalId = t.canvas?.id;
-
-      const manifest = manifestInternalId !== undefined ? manifests[String(manifestInternalId)] : undefined;
-      const canvas = canvasInternalId !== undefined ? canvases[String(canvasInternalId)] : undefined;
-
-      const manifestUri = manifest?.uri ?? extractOriginalUri((t as any).manifest) ?? null;
-      const canvasUri =
-        canvas?.uri ?? extractOriginalUri((t as any).canvas) ?? extractOriginalUri((item as any).target) ?? null;
-
-      const row: any = {
-        original_manifest_id: manifestUri,
-        original_canvas_id: canvasUri,
-        madoc_canvas_id: canvasInternalId ?? null,
-        madoc_contribution_id: item.id ?? null,
-
-        contribution_data: (() => {
-          if (tabular.normalizedContributionData !== null) {
-            return tabular.normalizedContributionData;
-          }
-          if (typeof (item as any).value === 'string') return (item as any).value;
-          try {
-            return JSON.stringify((item as any).value);
-          } catch {
-            return String((item as any).value);
-          }
-        })(),
-        tabular_flag_count: tabular.tabular_flag_count,
-        tabular_note_count: tabular.tabular_note_count,
-        tabular_flags: tabular.tabular_flags,
-        tabular_notes: tabular.tabular_notes,
-        capture_model_number: item.model_id ?? null,
-
-        status: getContributionStatus(item) ?? (statusFilter !== 'all' ? statusFilter : null),
-        contributor_id: getContributorId(item) ?? null,
-
-        doc_id: item.doc_id ?? null,
-        field_key: item.key ?? null,
-        revises: item.revises ?? null,
-      };
-      return row;
-    });
-
-    return [await ExportFile.csv(rows, 'project-data/contributions.csv')];
+  async exportData(subject, options) {
+    return exportContributionsCsv(subject.id, options);
   },
 };
+
+/** Shared rendering keeps project and manifest contribution/revision semantics identical. */
+export async function exportContributionsCsv(
+  projectId: number,
+  options: ExportDataOptions,
+  manifestId?: number
+): Promise<ExportFileDefinition[]> {
+  let fieldOrderMap = new Map<string, number>();
+  try {
+    const project = await options.api.getProject(projectId);
+    fieldOrderMap = getTabularFieldOrderMap(project?.template_config);
+  } catch (err) {
+    console.warn('CSV export: failed to load project template config for field ordering', {
+      projectId,
+      err: String(err),
+    });
+  }
+
+  const entity = isBlankString(options.config.entity) ? null : options.config.entity;
+  const statusFilter = options.config.reviews ? 'all' : 'approved';
+  const allPublished = (
+    await options.api.getProjectFieldsRaw(projectId, {
+      status: statusFilter,
+      ...(entity ? { entity } : {}),
+      ...(manifestId === undefined ? {} : { manifest_id: manifestId }),
+    })
+  ).filter(item => manifestId === undefined || safeParseModelTarget(item.target).manifest?.id === manifestId);
+  const docOrder = new Map<string, number>();
+  let docOrderIndex = 0;
+
+  for (const item of allPublished) {
+    const docId = typeof item.doc_id === 'string' ? item.doc_id : '';
+    if (!docId || docOrder.has(docId)) {
+      continue;
+    }
+    docOrder.set(docId, docOrderIndex++);
+  }
+
+  const orderedPublished = allPublished
+    .map((item, index) => ({ item, index }))
+    .sort((left, right) => {
+      const leftDocId = typeof left.item.doc_id === 'string' ? left.item.doc_id : '';
+      const rightDocId = typeof right.item.doc_id === 'string' ? right.item.doc_id : '';
+
+      const leftDocOrder = leftDocId ? (docOrder.get(leftDocId) ?? Number.MAX_SAFE_INTEGER) : Number.MAX_SAFE_INTEGER;
+      const rightDocOrder = rightDocId
+        ? (docOrder.get(rightDocId) ?? Number.MAX_SAFE_INTEGER)
+        : Number.MAX_SAFE_INTEGER;
+
+      if (leftDocOrder !== rightDocOrder) {
+        return leftDocOrder - rightDocOrder;
+      }
+
+      const fieldOrderDiff = compareFieldKeysByTabularOrder(left.item.key, right.item.key, fieldOrderMap);
+      if (fieldOrderDiff !== 0) {
+        return fieldOrderDiff;
+      }
+
+      return left.index - right.index;
+    })
+    .map(({ item }) => item);
+
+  const manifestIds: number[] = [];
+  const canvasIds: number[] = [];
+
+  for (const item of orderedPublished) {
+    const t = safeParseModelTarget((item as any).target);
+    if (typeof t.manifest?.id === 'number') manifestIds.push(t.manifest.id);
+    if (typeof t.canvas?.id === 'number') canvasIds.push(t.canvas.id);
+  }
+
+  const { manifests, canvases } = await fetchTargets(options.api, manifestIds, canvasIds);
+
+  const rows = orderedPublished.map(item => {
+    const t = safeParseModelTarget((item as any).target);
+    const tabular = getTabularContributionNormalization(item.key, (item as any).value);
+
+    const manifestInternalId = t.manifest?.id;
+    const canvasInternalId = t.canvas?.id;
+
+    const manifest = manifestInternalId !== undefined ? manifests[String(manifestInternalId)] : undefined;
+    const canvas = canvasInternalId !== undefined ? canvases[String(canvasInternalId)] : undefined;
+
+    const manifestUri = manifest?.uri ?? extractOriginalUri((t as any).manifest) ?? null;
+    const canvasUri =
+      canvas?.uri ?? extractOriginalUri((t as any).canvas) ?? extractOriginalUri((item as any).target) ?? null;
+
+    const row: any = {
+      original_manifest_id: manifestUri,
+      original_canvas_id: canvasUri,
+      madoc_canvas_id: canvasInternalId ?? null,
+      madoc_contribution_id: item.id ?? null,
+
+      contribution_data: (() => {
+        if (tabular.normalizedContributionData !== null) {
+          return tabular.normalizedContributionData;
+        }
+        if (typeof (item as any).value === 'string') return (item as any).value;
+        try {
+          return JSON.stringify((item as any).value);
+        } catch {
+          return String((item as any).value);
+        }
+      })(),
+      tabular_flag_count: tabular.tabular_flag_count,
+      tabular_note_count: tabular.tabular_note_count,
+      tabular_flags: tabular.tabular_flags,
+      tabular_notes: tabular.tabular_notes,
+      capture_model_number: item.model_id ?? null,
+
+      status: getContributionStatus(item) ?? (statusFilter !== 'all' ? statusFilter : null),
+      contributor_id: getContributorId(item) ?? null,
+
+      doc_id: item.doc_id ?? null,
+      field_key: item.key ?? null,
+      revises: item.revises ?? null,
+    };
+    return row;
+  });
+
+  const path =
+    manifestId === undefined
+      ? 'project-data/contributions.csv'
+      : `/manifests/${manifestId}/csv/${projectId}/contributions.csv`;
+  return [await ExportFile.csv(rows, path)];
+}
