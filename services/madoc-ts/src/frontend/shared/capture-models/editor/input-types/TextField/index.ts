@@ -13,7 +13,7 @@ declare module '../../../types/field-types' {
 const specification: FieldSpecification<TextFieldProps> = {
   label: 'Text field',
   type: 'text-field',
-  description: 'Simple text field for plain text',
+  description: 'Plain text with optional number, time or date and time format guidance',
   Component: TextField,
   defaultValue: '',
   allowMultiple: true,
