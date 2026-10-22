@@ -1,6 +1,7 @@
+import type { GuidedFormatId } from './guided-formats';
 import { isValidDateFieldValue } from './date-field-format';
 
-export type TextFieldInputFormat = 'text' | 'number' | 'time' | 'date-time';
+export type TextFieldInputFormat = 'text' | 'number' | 'time' | 'date-time' | GuidedFormatId;
 
 export function getTextFieldFormatHint(format?: TextFieldInputFormat): string | undefined {
   switch (format) {
