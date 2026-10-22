@@ -1,4 +1,9 @@
 export interface TrainingVideoWatchedRequest {
+  /**
+   * @TJS-type integer
+   * @minimum 1
+   * @maximum 9007199254740991
+   */
   projectId: number;
 }
 

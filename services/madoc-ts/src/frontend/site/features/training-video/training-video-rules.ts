@@ -41,7 +41,10 @@ export function toPageApiPath(path: string | undefined): string | undefined {
 }
 
 /** The main training video on a help page, using the block language rules (a fallback block is the master). */
-export function findTrainingVideoBlock(page: SitePage | undefined, language: string): SiteBlock | undefined {
+export function findTrainingVideoBlock(
+  page: Pick<SitePage, 'slots'> | undefined,
+  language: string
+): SiteBlock | undefined {
   if (!page?.slots) {
     return undefined;
   }

@@ -1468,6 +1468,26 @@ export class SiteUserRepository extends BaseRepository {
     }
   }
 
+  /** Merge at the database row so simultaneous watched updates cannot replace each other. */
+  async markTrainingVideoWatched(userId: number, siteId: number, projectId: number): Promise<Record<string, string>> {
+    const siteKey = String(siteId);
+    const { watched } = await this.connection.one(sql<{ watched: Record<string, string> }>`
+      update "user"
+      set user_preferences = jsonb_set(
+        coalesce(user_preferences, '{}'::jsonb),
+        '{trainingVideo}',
+        coalesce(user_preferences->'trainingVideo', '{}'::jsonb) || jsonb_build_object(
+          ${siteKey}::text,
+          coalesce(user_preferences->'trainingVideo'->${siteKey}, '{}'::jsonb)
+            || jsonb_build_object(${String(projectId)}::text, ${new Date().toISOString()}::text)
+        )
+      )
+      where id = ${userId}
+      returning user_preferences->'trainingVideo'->${siteKey} as watched
+    `);
+    return watched;
+  }
+
   async updateUserPreferences(userId: number, request: Record<string, any>) {
     const { user_preferences } = await this.connection.one(SiteUserRepository.query.getProtectedUserDetails(userId));
 

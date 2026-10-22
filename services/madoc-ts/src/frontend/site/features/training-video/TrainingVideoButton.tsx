@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { blockEditorFor } from '../../../../extensions/page-blocks/block-editor-for';
 import { TrainingVideoDialog } from './TrainingVideoDialog';
@@ -18,7 +19,8 @@ export function TrainingVideoButton({ label, followHeaderSetting }: TrainingVide
   const projectSlug = useTrainingVideoProjectSlug();
   const state = useTrainingVideo(projectSlug);
   const isContributionPage = useIsContributionPage();
-  const [open, setOpen] = useState(false);
+  const location = useLocation();
+  const [openFor, setOpenFor] = useState<string>();
   const [withTracking, setWithTracking] = useState(false);
 
   if (!state.video || (followHeaderSetting && state.hideHeaderButton)) {
@@ -27,7 +29,7 @@ export function TrainingVideoButton({ label, followHeaderSetting }: TrainingVide
 
   const openVideo = () => {
     setWithTracking(isContributionPage && state.isLoggedIn && !state.isWatched);
-    setOpen(true);
+    setOpenFor(location.key);
   };
 
   return (
@@ -35,12 +37,25 @@ export function TrainingVideoButton({ label, followHeaderSetting }: TrainingVide
       <button
         type="button"
         onClick={openVideo}
-        className="inline-flex items-center gap-2 whitespace-nowrap rounded-full border border-current bg-transparent px-3 py-1.5 text-sm font-semibold text-inherit hover:opacity-80"
+        className={
+          'inline-flex items-center min-h-11 gap-2 whitespace-nowrap rounded-full border-0 ' +
+          'bg-[var(--madoc-accent,#005cc5)] text-[var(--madoc-accent-text,#ffffff)] px-4 py-1.5 text-sm font-semibold cursor-pointer ' +
+          'transition-colors duration-200 ease-out motion-reduce:transition-none ' +
+          'hover:bg-[var(--madoc-accent-selected,#004a9e)] hover:text-[var(--madoc-accent-selected-text,#ffffff)] ' +
+          'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--madoc-accent-text,#ffffff)] ' +
+          'focus-visible:shadow-[0_0_0_2px_var(--madoc-accent,#005cc5),0_0_0_4px_var(--madoc-accent-text,#ffffff)]' +
+          (followHeaderSetting ? ' mr-4' : '')
+        }
       >
         <TrainingVideoIcon />
         <span>{label || t('Training video')}</span>
       </button>
-      <TrainingVideoDialog state={state} open={open} withTracking={withTracking} onClose={() => setOpen(false)} />
+      <TrainingVideoDialog
+        state={state}
+        open={openFor === location.key}
+        withTracking={withTracking}
+        onClose={() => setOpenFor(undefined)}
+      />
     </>
   );
 }

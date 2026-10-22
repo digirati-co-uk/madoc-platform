@@ -1,13 +1,25 @@
 import React, { useEffect, useState } from 'react';
-import { useSite } from '../../../shared/hooks/use-site';
+import { useLocation } from 'react-router-dom';
+import { useSite, useUser } from '../../../shared/hooks/use-site';
 import { useRouteContext } from '../../hooks/use-route-context';
 import { TrainingVideoDialog } from './TrainingVideoDialog';
 import { shouldAutoOpenTrainingVideo } from './training-video-rules';
 import { useTrainingVideo } from './use-training-video';
+import { useIsContributionPage } from './use-training-video-location';
 import { getWatchLaterUntil } from './watch-later-storage';
 
 /** Opens the training video on the contribution page until the volunteer marks it as watched. */
 export function TrainingVideoContributionPrompt() {
+  const { projectId } = useRouteContext();
+  const site = useSite();
+  const user = useUser();
+  const location = useLocation();
+  const isContributionPage = useIsContributionPage();
+  if (!isContributionPage) return null;
+  return <ContributionPrompt key={`${site.id}:${user?.id}:${projectId}:${location.key}`} />;
+}
+
+function ContributionPrompt() {
   const { projectId: projectSlug } = useRouteContext();
   const site = useSite();
   const state = useTrainingVideo(projectSlug);

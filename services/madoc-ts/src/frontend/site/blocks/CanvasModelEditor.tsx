@@ -10,7 +10,7 @@ import { useProjectStatus } from '../hooks/use-project-status';
 import { CanvasSimpleEditor } from '../features/canvas/CanvasSimpleEditor';
 import { TrainingVideoContributionPrompt } from '../features/training-video/TrainingVideoContributionPrompt';
 
-export const CanvasModelEditor: React.FC = () => {
+export const CanvasModelEditor = () => {
   const { showCanvasNavigation } = useCanvasNavigation();
   const { revision } = useLocationQuery();
   const user = useUser();

@@ -12,7 +12,7 @@ import { GABlock } from '../../../shared/atoms/GABlock';
 import { AvailableBlocks } from '../../../shared/page-blocks/available-blocks';
 import { TrainingVideoButton } from '../training-video/TrainingVideoButton';
 
-export const GlobalSiteHeader: React.FC<{ menu?: any }> = () => {
+export const GlobalSiteHeader = () => {
   const api = useApi();
   const restarting = useIsApiRestarting(api);
 

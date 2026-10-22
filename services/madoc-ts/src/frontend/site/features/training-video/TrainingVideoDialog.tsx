@@ -21,7 +21,7 @@ export function TrainingVideoDialog({ state, open, withTracking, onClose }: Trai
   }
 
   const tracking =
-    withTracking && projectId
+    withTracking && state.isLoggedIn && projectId
       ? {
           onWatchLater: () => {
             setWatchLater(site.slug, projectId, Date.now());

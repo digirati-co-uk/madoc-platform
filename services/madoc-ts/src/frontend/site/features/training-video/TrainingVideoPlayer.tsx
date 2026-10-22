@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { resolveTrainingVideoSource } from './training-video-rules';
 
@@ -10,27 +10,46 @@ interface TrainingVideoPlayerProps {
 export function TrainingVideoPlayer({ link, title }: TrainingVideoPlayerProps) {
   const { t } = useTranslation();
   const source = resolveTrainingVideoSource(link);
+  const [failedSource, setFailedSource] = useState<string>();
 
   if (!source) {
-    return (
-      <div className="flex aspect-video w-full items-center justify-center rounded-lg bg-neutral-100 p-4 text-center text-sm text-gray-600">
-        {t('This video link can’t be played. Check the link in the Training video block.')}
-      </div>
-    );
-  }
-
-  if (source.kind === 'file') {
-    return <video className="aspect-video w-full rounded-lg bg-black" src={source.src} controls preload="metadata" />;
+    return <p className="rounded-lg bg-gray-100 p-4 text-gray-700">{t('This video can’t be played right now.')}</p>;
   }
 
   return (
-    <iframe
-      className="aspect-video w-full rounded-lg border-0 bg-black"
-      src={source.src}
-      title={title || t('Training video')}
-      loading="lazy"
-      referrerPolicy="strict-origin-when-cross-origin"
-      allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
-    />
+    <div className="flex flex-col gap-2">
+      {failedSource === source.src ? (
+        <p role="alert" className="m-0 rounded-lg bg-gray-100 p-4 text-gray-700">
+          {t('This video can’t be played right now.')}
+        </p>
+      ) : source.kind === 'file' ? (
+        <video
+          key={source.src}
+          className="aspect-video w-full rounded-lg bg-black"
+          src={source.src}
+          aria-label={title || t('Training video')}
+          controls
+          playsInline
+          preload="metadata"
+          onError={() => setFailedSource(source.src)}
+        />
+      ) : (
+        <iframe
+          className="aspect-video w-full rounded-lg border-0 bg-black"
+          src={source.src}
+          title={title || t('Training video')}
+          referrerPolicy="strict-origin-when-cross-origin"
+          allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
+        />
+      )}
+      <a
+        href={source.src}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="self-start rounded text-sm text-gray-700 underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+      >
+        {t('Open video in a new tab')}
+      </a>
+    </div>
   );
 }
