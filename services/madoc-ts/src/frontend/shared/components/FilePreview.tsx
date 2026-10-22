@@ -1,11 +1,16 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useQuery } from 'react-query';
-import styled from 'styled-components';
 import { createDownload } from '../../../utility/create-download';
 import { ArrowDownIcon } from '../icons/ArrowDownIcon';
 import { EmptyState } from '../layout/EmptyState';
+import { isCsvFile } from '../utility/csv-preview';
+import { CsvPreview } from './CsvPreview';
 
-type SupportedFile = { type: string; value: string };
+interface SupportedFile {
+  type: string;
+  value: string;
+  contentType?: string;
+}
 
 interface FilePreviewProps {
   fileName: string;
@@ -17,101 +22,7 @@ interface FilePreviewProps {
   lazyLoad?: () => Promise<SupportedFile | undefined | null> | undefined | SupportedFile | null;
 }
 
-const Container = styled.div`
-  background: #fff;
-  border: 1px solid #eee;
-  border-radius: 5px;
-  overflow: auto;
-  font-family:
-    ui-monospace,
-    SFMono-Regular,
-    SF Mono,
-    Menlo,
-    Consolas,
-    Liberation Mono,
-    monospace;
-  font-size: 0.875em;
-  white-space: pre;
-  max-height: 600px;
-
-  & ~ & {
-    margin-top: 10px;
-  }
-`;
-
-const Header = styled.div`
-  background: #f7f8fa;
-  display: flex;
-  align-items: center;
-  position: sticky;
-  top: 0;
-  line-height: 1.9em;
-  z-index: 3;
-`;
-
-const FileName = styled.div`
-  color: #000;
-  padding: 0.5em 1em;
-  margin-right: auto;
-`;
-
-const DownloadButton = styled.button`
-  margin: 10px;
-`;
-
-const Line = styled.span`
-  background: #fff;
-  display: flex;
-  line-height: 1.3em;
-  text-wrap: avoid;
-  max-width: 100%;
-  position: relative;
-  white-space: pre-wrap;
-  &:before {
-    color: #999;
-    text-align: right;
-    margin-right: 0.5em;
-    counter-increment: lines;
-    content: counter(lines);
-    width: 2em;
-    min-width: 2em;
-    user-select: none;
-    display: block;
-    z-index: 2;
-    place-self: flex-start;
-    background: #fff;
-  }
-  &:after {
-    content: '';
-    background: #eee;
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    width: 2em;
-    z-index: 1;
-  }
-`;
-
-const Body = styled.div`
-  counter-reset: lines;
-  min-width: 0;
-`;
-
-const Icon = styled.div`
-  margin-left: 0.5em;
-  padding: 0 0.2em;
-  font-size: 1.2em;
-  transform: translateY(2px);
-
-  & ~ ${FileName}:hover {
-    text-decoration: underline;
-    cursor: pointer;
-  }
-`;
-
 export function FilePreview(props: FilePreviewProps) {
-  const container = useRef<HTMLDivElement>(null);
   const [enabled, setEnabled] = useState(false);
   const isLazy = !!props.lazyLoad;
   const { data, isFetched } = useQuery(
@@ -123,55 +34,65 @@ export function FilePreview(props: FilePreviewProps) {
     },
     { enabled: (enabled || props.preFetch) && !!props.lazyLoad }
   );
-
-  const lines = useMemo(() => {
-    if (isLazy) {
-      return data ? data.value.split('\n') : [];
-    }
-    return props.children ? props.children.value.split('\n') : [];
-  }, [isLazy, data, props.children]);
+  const file = isLazy ? data : props.children;
+  const isCsv = isCsvFile(props.fileName, props.contentType, file?.contentType, file?.type);
+  const lines = useMemo(() => (isCsv ? [] : file?.value.split('\n') || []), [isCsv, file]);
 
   function toggle() {
     setEnabled(e => !e);
   }
 
   return (
-    <Container ref={container}>
-      <Header>
-        {props.lazyLoad ? (
-          enabled ? (
-            <Icon onClick={toggle}>
-              <ArrowDownIcon />
-            </Icon>
-          ) : (
-            <Icon onClick={toggle}>
-              <ArrowDownIcon style={{ transform: 'rotate(-90deg)' }} />
-            </Icon>
-          )
-        ) : null}
-        <FileName onClick={toggle}>{props.fileName}</FileName>
+    <div className="file-preview max-h-[600px] min-w-0 max-w-full overflow-auto whitespace-pre rounded-[5px] border border-[#eee] bg-white font-mono text-[0.875em] [&~.file-preview]:mt-[10px]">
+      <div className="sticky top-0 z-[3] flex items-center bg-[#f7f8fa] leading-[1.9em]">
+        {isLazy ? (
+          <button
+            type="button"
+            onClick={toggle}
+            aria-expanded={enabled}
+            className="group flex min-w-0 flex-1 items-center text-left text-black"
+          >
+            <span className="ml-[0.5em] translate-y-[2px] px-[0.2em] text-[1.2em]">
+              <ArrowDownIcon className={enabled ? undefined : '-rotate-90'} />
+            </span>
+            <span className="mr-auto px-[1em] py-[0.5em] group-hover:underline">{props.fileName}</span>
+          </button>
+        ) : (
+          <div className="mr-auto px-[1em] py-[0.5em] text-black">{props.fileName}</div>
+        )}
         {(!isLazy || (data && (enabled || props.preFetch))) && props.download !== false ? (
-          <DownloadButton
+          <button
+            type="button"
+            className="m-[10px]"
             onClick={() =>
               createDownload(
-                (data || props.children)?.value || '',
+                file?.value || '',
                 props.fileName.split('/').pop() || 'unknown.json',
-                props.contentType as any
+                props.contentType || file?.contentType
               )
             }
           >
             Download
-          </DownloadButton>
+          </button>
         ) : null}
-      </Header>
+      </div>
       {!isLazy || (data && enabled) ? (
-        <Body>
-          {lines.map((line, k) => (
-            <Line key={k}>{line}</Line>
-          ))}
-        </Body>
+        isCsv ? (
+          <CsvPreview fileName={props.fileName} value={file?.value || ''} />
+        ) : (
+          <div className="min-w-0 [counter-reset:lines]">
+            {lines.map((line, k) => (
+              <span
+                key={k}
+                className="relative flex max-w-full whitespace-pre-wrap bg-white leading-[1.3em] before:z-[2] before:mr-[0.5em] before:block before:w-[2em] before:min-w-[2em] before:select-none before:place-self-start before:bg-white before:text-right before:text-[#999] before:content-[counter(lines)] before:[counter-increment:lines] after:absolute after:inset-y-0 after:left-0 after:z-[1] after:w-[2em] after:bg-[#eee] after:content-['']"
+              >
+                {line}
+              </span>
+            ))}
+          </div>
+        )
       ) : null}
       {props.lazyLoad && isFetched && !data && enabled ? <EmptyState $noMargin>No file found</EmptyState> : null}
-    </Container>
+    </div>
   );
 }
