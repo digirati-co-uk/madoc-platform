@@ -1,9 +1,10 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { PluginContext } from '../../../plugin-api/context';
 import { FieldSpecification } from '../../../types/field-types';
 import { SelectorSpecification } from '../../../types/selector-types';
 import { Button } from '../../atoms/Button';
 import { ChooseFieldButton } from '../ChooseFieldButton/ChooseFieldButton';
+import { resolveFieldType } from '../ChooseFieldButton/resolve-field-type';
 import { ChooseSelectorButton } from '../ChooseSelectorButton/ChooseSelectorButton';
 import { ErrorMessage } from '../../atoms/Message';
 import { StyledForm, StyledFormField, StyledFormInput, StyledFormLabel } from '../../atoms/StyledForm';
@@ -20,49 +21,47 @@ type Props = {
   }) => void;
 };
 
-export const NewFieldForm: React.FC<Props> = ({ existingTerms, onSave }) => {
+export function NewFieldForm({ existingTerms, onSave }: Props) {
   const { t } = useTranslation();
   const [term, setTerm] = useState('');
   const { fields, selectors } = useContext(PluginContext);
-  const [fieldType, setFieldType] = useState<string>('');
+  const [fieldType, setFieldType] = useState<string | undefined>();
+  const selectedFieldType = resolveFieldType(
+    Object.values(fields)
+      .filter((field): field is FieldSpecification => !!field)
+      .map(field => field.type),
+    fieldType
+  );
   const [selectorType, setSelectorType] = useState<keyof typeof selectors | ''>('');
-  const [error, setError] = useState('');
+  const error = existingTerms.includes(term) ? t('The key "{{term}}" already exists in this item', { term }) : '';
 
-  const onSubmit = (e: any) => {
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (fieldType === '') return;
-    const field = fields[fieldType];
+    if (!selectedFieldType || !term || error) return;
+    const field = fields[selectedFieldType];
     if (!field) return;
     const selector = selectorType ? selectors[selectorType] : undefined;
     onSave({
       term,
-      fieldType,
+      fieldType: selectedFieldType,
       field: field,
       selectorType,
       selector,
     });
   };
 
-  useEffect(() => {
-    if (existingTerms.indexOf(term) !== -1) {
-      setError(t('The key "{{term}}" already exists in this item', { term }));
-    } else {
-      setError('');
-    }
-  }, [existingTerms, term]);
-
   return (
     <StyledForm onSubmit={onSubmit} autoComplete="off">
       <StyledFormField>
         <StyledFormLabel>
           {t('Choose field type')}
-          <ChooseFieldButton onChange={type => setFieldType(type as any)} />
+          <ChooseFieldButton fieldType={selectedFieldType} onChange={setFieldType} />
         </StyledFormLabel>
       </StyledFormField>
       <StyledFormField>
         <StyledFormLabel>
           {t('Choose selector (optional)')}
-          <ChooseSelectorButton onChange={type => setSelectorType(type as any)} />
+          <ChooseSelectorButton onChange={type => setSelectorType(type || '')} />
         </StyledFormLabel>
       </StyledFormField>
       <StyledFormField>
@@ -78,9 +77,9 @@ export const NewFieldForm: React.FC<Props> = ({ existingTerms, onSave }) => {
         </StyledFormLabel>
       </StyledFormField>
       {error ? <ErrorMessage>{error}</ErrorMessage> : null}
-      <Button disabled={error !== '' || term === ''} primary>
+      <Button type="submit" disabled={!selectedFieldType || error !== '' || term === ''} primary>
         {t('Save')}
       </Button>
     </StyledForm>
   );
-};
+}
