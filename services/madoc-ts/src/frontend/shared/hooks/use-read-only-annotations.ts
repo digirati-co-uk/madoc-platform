@@ -13,6 +13,7 @@ import { annotationPageToRegions } from '../utility/annotation-page-to-regions';
 import { useLoadedCaptureModel } from './use-loaded-capture-model';
 import { useCanvasModel } from '../../site/hooks/use-canvas-model';
 import { useUser } from './use-site';
+import { useApiCanvas } from './use-api-canvas';
 import { PolygonSelectorProps } from '../capture-models/editor/selector-types/PolygonSelector/PolygonSelector';
 export interface ReadOnlyAnnotation {
   id: string;
@@ -32,6 +33,7 @@ export function useReadOnlyAnnotations(isModelPage = false): ReadOnlyAnnotation[
   const config = useSiteConfiguration();
 
   const { data: canvasModel } = useCanvasModel();
+  const { data: canvasData } = useApiCanvas(canvasId, true, { annotations: true });
   const { data } = apiHooks.getSiteCanvasPublishedModels(
     () =>
       canvasId
@@ -63,8 +65,11 @@ export function useReadOnlyAnnotations(isModelPage = false): ReadOnlyAnnotation[
     const regions: ReadOnlyAnnotation[] = [];
     const ids: string[] = [];
 
-    if (showAnnotations && data?.annotations && !styles.contributedAnnotations?.hidden) {
-      const annotationRegions = annotationPageToRegions(data.annotations);
+    if (showAnnotations && !styles.contributedAnnotations?.hidden) {
+      const annotationRegions = [
+        ...annotationPageToRegions(data?.annotations, canvasData?.canvas),
+        ...(canvasData?.canvas.annotations || []).flatMap(page => annotationPageToRegions(page, canvasData?.canvas)),
+      ];
 
       for (const region of annotationRegions) {
         if (ids.indexOf(region.id) !== -1) continue;
@@ -81,7 +86,15 @@ export function useReadOnlyAnnotations(isModelPage = false): ReadOnlyAnnotation[
     }
 
     return { regions, ids };
-  }, [data, highlighted, highlightedAnnotation, showAnnotations, styles.contributedAnnotations, styles.highlighted]);
+  }, [
+    data,
+    canvasData,
+    highlighted,
+    highlightedAnnotation,
+    showAnnotations,
+    styles.contributedAnnotations,
+    styles.highlighted,
+  ]);
 
   const unstyledDocumentRegions = useMemo(() => {
     const regions: ReadOnlyAnnotation[] = [];

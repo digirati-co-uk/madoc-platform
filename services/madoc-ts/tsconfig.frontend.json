@@ -1,14 +1,14 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
-    "lib": ["dom", "es2020"],
+    "lib": ["dom", "es2022"],
     "typeRoots": ["../../node_modules/@types", "node_modules/@types"],
     "target": "es6",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "module": "es2015",
     "declaration": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "outDir": "./lib",
     "noEmitOnError": false,
     "strict": true,

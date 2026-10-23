@@ -181,7 +181,7 @@ export function buildManifestTypesenseDocument(
     project_facets: row.project_facets,
     collection_ids: row.collection_ids.map(collectionId => `${collectionId}`),
     contexts,
-    search_text: uniq([label, ...metadataValues, ...(captureModel?.searchText || [])]),
+    search_text: uniq([label, ...metadataValues, ...(captureModel?.searchText || []), ...(row.annotation_text || [])]),
     search_context: captureModel?.labels || [],
     metadata_keys: uniq(metadataKeys),
     metadata_pairs: uniq(metadataPairs),

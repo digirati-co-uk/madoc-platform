@@ -1,0 +1,44 @@
+{
+  "anyOf": [
+    {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "type": "string",
+          "const": "external"
+        },
+        "url": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "position": {
+          "type": "number"
+        }
+      },
+      "required": ["mode", "url"]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "type": "string",
+          "const": "json"
+        },
+        "page": {
+          "type": "object",
+          "additionalProperties": {}
+        },
+        "label": {
+          "type": "string"
+        },
+        "position": {
+          "type": "number"
+        }
+      },
+      "required": ["mode", "page"]
+    }
+  ],
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

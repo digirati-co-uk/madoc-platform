@@ -1,3 +1,5 @@
+import { AnnotationPageInput, CompleteAnnotationPageRequest } from '../types/schemas/annotations';
+import { AnnotationPageRecord, JsonObject } from '../iiif/types';
 import type { AnalyticsQuery, AnalyticsReport } from '../types/analytics';
 import type { RecordPageViewRequest } from '../types/schemas/analytics';
 import invariant from 'tiny-invariant';
@@ -44,7 +46,8 @@ import {
 import { PublicUserProfile, Site, SiteUser, UserInformationRequest } from '../extensions/site-manager/types';
 import { ProjectManifestTasks } from '../types/manifest-tasks';
 import { NoteListResponse } from '../types/personal-notes';
-import { Pm2Status } from '../types/pm2';
+import { Pm2StatusResponse } from '../types/pm2';
+import type { IIIFBackfillTask } from './tasks/backfill-all-iiif-properties';
 import { CreateProjectUpdate, ProjectFeedback, ProjectMember, ProjectUpdate } from '../types/projects';
 import { BullMqCancelSearchIndexResult, BullMqResumeQueueResult, BullMqSnapshot } from '../types/bullmq-status';
 import { ResourceLinkResponse } from '../types/schemas/linking';
@@ -780,7 +783,15 @@ export class ApiClient {
   }
 
   async getPm2Status() {
-    return this.request<{ list: Pm2Status[]; build: any; slowRequests: any }>(`/api/madoc/pm2/list`);
+    return this.request<Pm2StatusResponse>(`/api/madoc/pm2/list`);
+  }
+
+  async startIIIFBackfill() {
+    return this.request<IIIFBackfillTask & { id: string }>(`/api/madoc/system/iiif-backfill`, { method: 'POST' });
+  }
+
+  async getIIIFBackfillStatus() {
+    return this.request<{ task?: IIIFBackfillTask & { id: string } }>(`/api/madoc/system/iiif-backfill`);
   }
 
   getPm2LogsUrl(processId: number, lines = 100) {
@@ -1393,6 +1404,52 @@ export class ApiClient {
     return this.request<{ manifests: number; canvases: number }>(`/api/madoc/iiif/collections/${id}/statistics`);
   }
 
+  async getAnnotationPages(resourceId: number, summary = false) {
+    return this.request<{ pages: AnnotationPageRecord[] }>(`/api/madoc/iiif/resources/${resourceId}/annotations${summary ? '?summary=true' : ''}`);
+  }
+
+  async addAnnotationPage(resourceId: number, body: AnnotationPageInput) {
+    return this.request<AnnotationPageRecord>(`/api/madoc/iiif/resources/${resourceId}/annotations`, {
+      method: 'POST',
+      body,
+    });
+  }
+
+  async updateAnnotationPage(resourceId: number, pageId: number, body: AnnotationPageInput) {
+    return this.request<AnnotationPageRecord>(`/api/madoc/iiif/resources/${resourceId}/annotations/${pageId}`, {
+      method: 'PUT',
+      body,
+    });
+  }
+
+  async deleteAnnotationPage(resourceId: number, pageId: number) {
+    return this.request(`/api/madoc/iiif/resources/${resourceId}/annotations/${pageId}`, { method: 'DELETE' });
+  }
+
+  async refreshAnnotationPage(resourceId: number, pageId: number) {
+    return this.request<AnnotationPageRecord>(`/api/madoc/iiif/resources/${resourceId}/annotations/${pageId}/refresh`, {
+      method: 'POST',
+    });
+  }
+
+  async completeAnnotationPage(resourceId: number, pageId: number, body: CompleteAnnotationPageRequest) {
+    return this.request(`/api/madoc/iiif/resources/${resourceId}/annotations/${pageId}/complete`, {
+      method: 'POST',
+      body,
+    });
+  }
+
+  async importIIIFProperties(resourceId: number, resource: JsonObject, includeCanvases = false) {
+    return this.request(`/api/madoc/iiif/resources/${resourceId}/iiif-properties`, {
+      method: 'POST',
+      body: { resource, includeCanvases },
+    });
+  }
+
+  async backfillIIIFProperties(resourceId: number) {
+    return this.request<BaseTask>(`/api/madoc/iiif/resources/${resourceId}/iiif-backfill`, { method: 'POST' });
+  }
+
   async createManifest(manifest: Partial<Manifest>, taskId?: string) {
     return this.request<{ id: number }, CreateManifest>(`/api/madoc/iiif/manifests`, {
       method: 'POST',
@@ -1568,7 +1625,9 @@ export class ApiClient {
   }
 
   async getCanvasPlaintext(id: number) {
-    return this.request<{ found: boolean; transcription: string }>(`/api/madoc/iiif/canvases/${id}/plaintext`);
+    return this.request<{ found: boolean; transcription?: string; source?: string }>(
+      `/api/madoc/iiif/canvases/${id}/plaintext`
+    );
   }
 
   async getCanvasDeletionSummary(id: number) {

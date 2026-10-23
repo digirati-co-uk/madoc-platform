@@ -69,6 +69,7 @@ export const adminFrontend: RouteMiddleware = async context => {
           <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
           <meta http-equiv="X-UA-Compatible" content="ie=edge">
           <!--ssr-head-->
+          <link rel="stylesheet" href="${viteProtocol}://${hostname}:3088/src/frontend/admin/index.css" />
           <script type="module">
             import RefreshRuntime from '${viteProtocol}://${hostname}:3088/@react-refresh'
             RefreshRuntime.injectIntoGlobalHook(window)

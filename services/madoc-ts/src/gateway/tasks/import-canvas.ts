@@ -1,3 +1,4 @@
+import { presentation3, object, identifier } from '../../iiif/properties';
 import { BaseTask } from './base-task';
 import * as tasks from './task-helpers';
 import { iiifGetLabel } from '../../utility/iiif-get-label';
@@ -64,7 +65,16 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
 
       const [userId, pathToManifest, manifestId, siteId] = task.parameters;
 
-      const { manifest, canvas, vault } = await tasks.tryGetManifest(manifestId, pathToManifest, task.subject);
+      const { manifest, canvas, vault, unmodifiedManifest } = await tasks.tryGetManifest(
+        manifestId,
+        pathToManifest,
+        task.subject
+      );
+
+      const rawManifest = presentation3(unmodifiedManifest);
+      const rawCanvas = Array.isArray(rawManifest.items)
+        ? rawManifest.items.find(item => identifier(item) === canvas.id)
+        : undefined;
 
       const idList = (manifest.items || []).map(r => r.id);
       const canvasOrder = idList.indexOf(canvas.id);
@@ -77,7 +87,7 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
       while (retries > 0) {
         let canvasToAdd: any;
         try {
-          canvasToAdd = vault.toPresentation3<Canvas>(canvas);
+          canvasToAdd = { ...vault.toPresentation3<Canvas>(canvas), ...(object(rawCanvas) ? rawCanvas : {}) };
           canvasToAdd.label = canvasToAdd.label || { none: ['Untitled canvas'] };
         } catch (err) {
           console.log('Could not import linking properties.');
