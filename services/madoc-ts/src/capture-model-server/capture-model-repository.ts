@@ -24,6 +24,7 @@ import { parseUrn } from '../utility/parse-urn';
 import { upsert } from '../utility/slonik-helpers';
 import { BaseRepository } from '../repository/base-repository';
 import { cloneModel } from './server-filters/clone-model';
+import { migrateOcrStructure } from './migration/migrate-ocr-structure';
 import { filterModelGetOptions } from './server-filters/filter-model-get-options';
 import { updateRevisionInDocument } from './server-filters/update-revision-in-document';
 import { CaptureModelGetOptions } from './types';
@@ -586,7 +587,7 @@ export class CaptureModelRepository extends BaseRepository<'capture_model_api_mi
       [{}, {}] as [Record<string, Revision>, Record<string, Contributor>]
     );
     const document = CaptureModelRepository.parseDocumentRow(row);
-    const structure = CaptureModelRepository.parseStructureRow(row);
+    const structure = migrateOcrStructure(CaptureModelRepository.parseStructureRow(row), document);
 
     return {
       id: row.id,
