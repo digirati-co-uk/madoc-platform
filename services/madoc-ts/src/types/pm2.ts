@@ -1,3 +1,14 @@
+import { EnvConfig } from './env-config';
+import { SlowRequestInstance, SlowRequests } from './slow-requests';
+
+export interface Pm2StatusResponse {
+  list: Pm2Status[];
+  build: EnvConfig['build'];
+  slowRequests: SlowRequests;
+  slowRequestInstances: SlowRequestInstance[];
+  slowRequestsError?: string;
+}
+
 export type Pm2Status = {
   id: number;
   name: string;

@@ -1,5 +1,7 @@
 import { RouteMiddleware } from '../../types/route-middleware';
 import { castBool } from '../../utility/cast-bool';
+import { getCanvasAnnotationPages } from '../../repository/iiif-annotations';
+import { loadCanvasPlaintext } from '../iiif/canvases/get-canvas-plaintext';
 
 export type SiteCanvasQuery = {
   manifest_id?: number;
@@ -7,6 +9,7 @@ export type SiteCanvasQuery = {
   parent_collection_ids?: number[];
   project_id?: number;
   plaintext?: boolean;
+  annotations?: boolean;
 };
 
 export const siteCanvas: RouteMiddleware<{ slug: string; id: string }> = async context => {
@@ -14,6 +17,8 @@ export const siteCanvas: RouteMiddleware<{ slug: string; id: string }> = async c
 
   const canvasId = context.params.id;
   const { siteApi } = context.state;
+  const siteId = context.state.site.id;
+  const admin = context.state.jwt?.site.id === siteId && !!context.state.jwt.scope.includes('site.admin');
 
   const backUpBody = {
     canvas: {
@@ -32,9 +37,18 @@ export const siteCanvas: RouteMiddleware<{ slug: string; id: string }> = async c
     context.response.status = 200;
     context.response.body = canvas;
 
+    if (castBool(context.query.annotations)) {
+      context.response.body.canvas.annotations = await getCanvasAnnotationPages(
+        context.connection,
+        siteId,
+        Number(canvasId),
+        admin
+      );
+    }
+
     if (castBool(context.query.plaintext)) {
       try {
-        const plaintext = await siteApi.getCanvasPlaintext(Number(canvasId));
+        const plaintext = await loadCanvasPlaintext(context, siteId, Number(canvasId), admin);
         if (plaintext && plaintext.found) {
           context.response.body.plaintext = plaintext.transcription;
         }

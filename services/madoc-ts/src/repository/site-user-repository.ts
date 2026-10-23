@@ -1610,7 +1610,7 @@ export class SiteUserRepository extends BaseRepository {
 
     const { payload } = response;
 
-    const exp = payload.exp * 1000;
+    const exp = (payload.exp ?? Number.POSITIVE_INFINITY) * 1000;
     const time = new Date().getTime();
     const allowedTime = exp + refreshWindow * 1000;
     const canRefresh = allowedTime - time > 0;

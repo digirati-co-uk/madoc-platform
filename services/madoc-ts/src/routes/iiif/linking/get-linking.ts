@@ -22,6 +22,6 @@ export const getLinking: RouteMiddleware<{ id: string }> = async context => {
 
   // Returns some linking.
   context.response.body = {
-    linking: links.map(mapLink),
+    linking: links.filter(link => link.property !== 'annotations').map(mapLink),
   };
 };

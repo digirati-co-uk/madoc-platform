@@ -24,6 +24,7 @@ export interface ManifestSearchExportRow {
   project_facets: string[];
   collection_ids: number[];
   metadata: SearchExportMetadataField[];
+  annotation_text?: string[];
 }
 
 export interface SearchExportCaptureModelRow {
@@ -193,6 +194,10 @@ export function getManifestResourcesForSearchExport(manifestId: number, siteId: 
       rb.project_ids,
       rb.project_facets,
       rb.collection_ids,
+      array(select t.text from iiif_annotation_text t join iiif_linking l on l.id = t.page_id and l.site_id = t.site_id
+        join iiif_derived_resource owner on owner.resource_id = l.resource_id and owner.site_id = l.site_id
+        where t.site_id = ${siteId} and t.canvas_id = rb.resource_id and (owner.resource_type = 'canvas' or owner.published = true)
+        order by coalesce((l.properties->>'position')::int, 0), l.id, t.language) as annotation_text,
       coalesce(
         jsonb_agg(
           jsonb_build_object(
@@ -280,6 +285,10 @@ export function getCollectionResourceForSearchExport(collectionId: number, siteI
       rb.project_ids,
       rb.project_facets,
       rb.collection_ids,
+      array(select t.text from iiif_annotation_text t join iiif_linking l on l.id = t.page_id and l.site_id = t.site_id
+        join iiif_derived_resource owner on owner.resource_id = l.resource_id and owner.site_id = l.site_id
+        where t.site_id = ${siteId} and t.canvas_id = rb.resource_id and (owner.resource_type = 'canvas' or owner.published = true)
+        order by coalesce((l.properties->>'position')::int, 0), l.id, t.language) as annotation_text,
       coalesce(
         jsonb_agg(
           jsonb_build_object(
@@ -366,6 +375,10 @@ export function getCanvasResourceForSearchExport(canvasId: number, siteId: numbe
       rb.project_ids,
       rb.project_facets,
       rb.collection_ids,
+      array(select t.text from iiif_annotation_text t join iiif_linking l on l.id = t.page_id and l.site_id = t.site_id
+        join iiif_derived_resource owner on owner.resource_id = l.resource_id and owner.site_id = l.site_id
+        where t.site_id = ${siteId} and t.canvas_id = rb.resource_id and (owner.resource_type = 'canvas' or owner.published = true)
+        order by coalesce((l.properties->>'position')::int, 0), l.id, t.language) as annotation_text,
       coalesce(
         jsonb_agg(
           jsonb_build_object(

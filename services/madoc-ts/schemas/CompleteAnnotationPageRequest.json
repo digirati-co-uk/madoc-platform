@@ -1,0 +1,26 @@
+{
+  "type": "object",
+  "properties": {
+    "page": {
+      "type": "object",
+      "additionalProperties": {}
+    },
+    "error": {
+      "type": "string"
+    },
+    "textError": {
+      "type": "string"
+    },
+    "textBodies": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "generation": {
+      "type": "number"
+    }
+  },
+  "required": ["generation"],
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

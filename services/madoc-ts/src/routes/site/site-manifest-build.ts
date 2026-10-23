@@ -1,3 +1,7 @@
+import { presentation2Properties, restoreNormalizedProperties } from '../../iiif/export-properties';
+import { requireIIIFResource } from '../../repository/iiif-annotations';
+import { reconstructionProperties } from '../../iiif/reconstruct-properties';
+import { JsonObject } from '../../iiif/types';
 import { AnnotationPage } from '@iiif/presentation-3';
 import { Vault } from '@iiif/helpers/vault';
 import { sql } from 'slonik';
@@ -126,7 +130,7 @@ function injectMadocIds(payload: any, madocIdsByResourceId: Map<string, number>)
   }
 }
 
-function setManifestCorsHeaders(context: Context) {
+export function setManifestCorsHeaders(context: Context) {
   const requestOrigin = context.get('Origin') || '';
   const allowOrigin = requestOrigin || '*';
   const requestedHeaders = context.get('Access-Control-Request-Headers');
@@ -201,28 +205,34 @@ export const siteManifestBuild: RouteMiddleware<{
     };
   };
 
+  const resourceInfo = await requireIIIFResource(
+    context.connection,
+    context.state.site.id,
+    Number(context.params.id),
+    context.state.jwt?.site.id === context.state.site.id && !!context.state.jwt?.scope.includes('site.admin')
+  );
   const cacheKey = `build-manifest-${context.params.slug}-${context.params.id}-${context.params.version}-${context.params.projectSlug}`;
   const cacheLookupStart = process.hrtime.bigint();
-  const cached = cache.get(cacheKey);
+  const cached = cache.get(cacheKey) as { revision: string; data: unknown } | null;
   captureStep('cache_lookup', cacheLookupStart);
   const noCacheHeader = (context.get('Cache-Control') || '').toLowerCase();
 
   setManifestCorsHeaders(context as unknown as Context);
 
-  if (!debugEnabled && cached && !noCacheHeader.includes('no-cache')) {
-    context.set('Cache-Control', 'public, max-age=3600');
+  if (!debugEnabled && cached?.revision === resourceInfo.revision && !noCacheHeader.includes('no-cache')) {
+    context.set('Cache-Control', 'public, no-cache');
     context.set('X-Cache', 'HIT');
-    context.response.body = cached;
+    context.response.body = cached.data;
     return;
   }
 
-  const updateCache = (data: any) => {
+  const updateCache = (data: unknown) => {
     if (debugEnabled) {
       context.set('Cache-Control', 'no-store');
       return;
     }
-    cache.put(cacheKey, data, 60 * 60 * 24);
-    context.set('Cache-Control', 'public, max-age=3600');
+    cache.put(cacheKey, { revision: resourceInfo.revision, data }, 60 * 60 * 24);
+    context.set('Cache-Control', 'public, no-cache');
   };
 
   const vault = new Vault();
@@ -282,7 +292,7 @@ export const siteManifestBuild: RouteMiddleware<{
       -- get metadata
       left join iiif_metadata metadata on iiif.id = metadata.resource_id and metadata.site_id = ${site.id}
       -- get linking
-      left join iiif_linking linking on iiif.id = linking.resource_id and linking.site_id = ${site.id}
+      left join iiif_linking linking on iiif.id = linking.resource_id and linking.site_id = ${site.id} and linking.property <> 'annotations'
 
       where derived_manifest.resource_id = ${manifestId}
         and derived_manifest.site_id = ${site.id}
@@ -751,7 +761,7 @@ export const siteManifestBuild: RouteMiddleware<{
         const annoVer = configOptions.sourceIds ? 'source' : version;
 
         if (configOptions.addUniversalAnnotations) {
-          const format = version === '3.0' || version === 'source' ? 'w3c-annotation' : 'open-annotation';
+          const format = version !== '2.1' ? 'w3c-annotation' : 'open-annotation';
           canvas.addAnnotations({
             id: projectSlug
               ? `${baseUrl}/madoc/api/canvases/${canvasRow.id}/models?format=${format}&version=${annoVer}&m=${manifestId}&selectors=true&project_id=${encodeURIComponent(projectSlug)}`
@@ -806,21 +816,48 @@ export const siteManifestBuild: RouteMiddleware<{
   });
   captureStep('build_manifest', buildManifestStart);
 
+  const decorate = await reconstructionProperties(
+    context.connection,
+    site.id,
+    Object.values(table.Resource).map(row => row.id),
+    baseUrl,
+    version
+  );
+  const reconstructed = decorate(
+    builder.toPresentation3({ id: newManifest.id, type: 'Manifest' }) as unknown as JsonObject,
+    manifestId
+  );
+
   switch (version) {
-    case 'normalized':
-      injectMadocIds(vault.getState().iiif, madocIdsByResourceId);
+    case 'normalized': {
+      const normalizedVault = new Vault();
+      normalizedVault.loadSync(newManifest.id, structuredClone(reconstructed));
+      const normalized = normalizedVault.getState().iiif;
+      const manifestEntities = { ...normalized.entities.Manifest };
+      manifestEntities[newManifest.id] = restoreNormalizedProperties(manifestEntities[newManifest.id], reconstructed);
+      const canvasEntities = { ...normalized.entities.Canvas };
+      for (const canvas of (reconstructed.items || []) as JsonObject[]) {
+        const id = canvas.id as string;
+        canvasEntities[id] = restoreNormalizedProperties(canvasEntities[id], canvas);
+      }
+      const store = {
+        ...normalized,
+        entities: { ...normalized.entities, Manifest: manifestEntities, Canvas: canvasEntities },
+      };
+      injectMadocIds(store, madocIdsByResourceId);
       context.response.body = {
         manifestId: newManifest.id,
         madocId: manifestRow.id,
-        store: vault.getState().iiif,
+        store,
       };
       break;
+    }
     case '3.0':
     case 'source': {
       context.response.status = 200;
       const serializeManifestStart = process.hrtime.bigint();
-      const manifestJson: any = builder.toPresentation3({ id: newManifest.id, type: 'Manifest' });
-      manifestJson['@context'] = 'http://iiif.io/api/presentation/3/context.json';
+      const manifestJson = reconstructed;
+      manifestJson['@context'] = manifestJson['@context'] || 'http://iiif.io/api/presentation/3/context.json';
       injectMadocIds(manifestJson, madocIdsByResourceId);
       captureStep('serialize_source', serializeManifestStart);
       addDebugReport(manifestJson);
@@ -830,8 +867,13 @@ export const siteManifestBuild: RouteMiddleware<{
     }
     case '2.1': {
       context.response.status = 200;
-      const manifestJson: any = builder.toPresentation2({ id: newManifest.id, type: 'Manifest' });
-      manifestJson['@context'] = 'http://iiif.io/api/presentation/2/context.json';
+      const exportVault = new Vault();
+      exportVault.loadSync(newManifest.id, structuredClone(reconstructed));
+      const manifestJson = presentation2Properties(
+        exportVault.toPresentation2({ id: newManifest.id, type: 'Manifest' }) as JsonObject,
+        reconstructed
+      );
+      manifestJson['@context'] = manifestJson['@context'] || 'http://iiif.io/api/presentation/2/context.json';
       injectMadocIds(manifestJson, madocIdsByResourceId);
       context.response.body = manifestJson;
       updateCache(manifestJson);

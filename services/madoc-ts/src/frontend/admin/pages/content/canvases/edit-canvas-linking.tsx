@@ -1,7 +1,6 @@
+import { AnnotationPages } from '../../../features/annotations/AnnotationPages';
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { ResourceLinkResponse } from '../../../../../types/schemas/linking';
-import { EmptyState } from '../../../../shared/layout/EmptyState';
 import { Spinner } from '../../../../shared/icons/Spinner';
 import { UniversalComponent } from '../../../../types';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
@@ -20,7 +19,6 @@ type EditCanvasLinking = {
 
 export const EditCanvasLinking: UniversalComponent<EditCanvasLinking> = createUniversalComponent<EditCanvasLinking>(
   () => {
-    const { t } = useTranslation();
     const { id, manifestId } = useParams<{ id: string; manifestId: string }>();
     const { data, refetch, isFetching } = useData(EditCanvasLinking);
 
@@ -28,23 +26,22 @@ export const EditCanvasLinking: UniversalComponent<EditCanvasLinking> = createUn
       return <Spinner />;
     }
 
-    if (data && data.linking.length === 0) {
-      return <EmptyState>{t('No linking properties')}</EmptyState>;
-    }
-
     return (
-      <TableContainer style={{ background: '#EEEEEE' }}>
-        {data?.linking.map(item => {
-          return (
-            <LinkingProperty
-              linkProps={{ canvasId: id, manifestId }}
-              key={item.link.id}
-              link={item}
-              refetch={refetch}
-            />
-          );
-        })}
-      </TableContainer>
+      <>
+        <TableContainer style={{ background: '#EEEEEE' }}>
+          <AnnotationPages resourceId={Number(id)} allowBackfill={false} />
+          {data?.linking.map(item => {
+            return (
+              <LinkingProperty
+                linkProps={{ canvasId: id, manifestId }}
+                key={item.link.id}
+                link={item}
+                refetch={refetch}
+              />
+            );
+          })}
+        </TableContainer>
+      </>
     );
   },
   {

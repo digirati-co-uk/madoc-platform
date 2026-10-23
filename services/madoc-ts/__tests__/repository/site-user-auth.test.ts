@@ -1,5 +1,7 @@
 import { DatabasePoolConnectionType, NotFoundError } from 'slonik';
 import { SiteUserRepository } from '../../src/repository/site-user-repository';
+import { parseJWT } from '../../src/utility/parse-jwt';
+import { verifySignedToken } from '../../src/utility/verify-signed-token';
 
 jest.mock('../../src/utility/parse-jwt', () => ({ parseJWT: jest.fn() }));
 jest.mock('../../src/utility/verify-signed-token', () => ({ verifySignedToken: jest.fn() }));
@@ -21,4 +23,18 @@ test('an authenticated token for a missing user still resolves anonymously', asy
   const connection = { one: jest.fn().mockRejectedValue(new NotFoundError()) };
   const repository = new SiteUserRepository(connection as unknown as DatabasePoolConnectionType);
   await expect(repository.getUserFromJwt(1, jwt)).resolves.toBeUndefined();
+});
+
+test('a signed token without an expiry is not expired and cannot be refreshed', async () => {
+  (verifySignedToken as jest.Mock).mockResolvedValue({ payload: {} });
+  (parseJWT as jest.Mock).mockReturnValue({ ...jwt, site: { id: 1 } });
+  const connection = { one: jest.fn() };
+  const repository = new SiteUserRepository(connection as unknown as DatabasePoolConnectionType);
+  await expect(repository.refreshExpiredToken('signed-token', 3600)).resolves.toEqual({
+    canRefresh: false,
+    hasExpired: false,
+    siteId: 1,
+    details: null,
+  });
+  expect(connection.one).not.toHaveBeenCalled();
 });

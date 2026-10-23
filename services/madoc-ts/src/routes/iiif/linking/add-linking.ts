@@ -10,7 +10,9 @@ export const addLinking: RouteMiddleware<
   { link: any; property: string; source?: string; label?: string; resource_id: string }
 > = async context => {
   const { siteId } = userWithScope(context, ['site.admin']);
-  const { link, property, source, label, resource_id } = context.request.body;
+  const { link, property, source, label, resource_id } = context.requestBody;
+
+  if (property === 'annotations') throw new RequestError('Use the annotation page API');
 
   if (!link || !link.id || !property) {
     throw new Error('Invalid link');
@@ -20,7 +22,7 @@ export const addLinking: RouteMiddleware<
   if (!extracted.length || extracted.length > 1) {
     throw new RequestError('Invalid link');
   }
-  const linkQuery = addLinks(extracted, resource_id, siteId);
+  const linkQuery = addLinks(extracted, Number(resource_id), siteId);
 
   if (!linkQuery) {
     throw new RequestError('Invalid link');
@@ -30,7 +32,7 @@ export const addLinking: RouteMiddleware<
 
   context.response.body = mapLink(
     await context.connection.one(
-      sql<ResourceLinkRow>`select * from iiif_linking where site_id=${siteId} and uri=${link.id}`
+      sql<ResourceLinkRow>`select * from iiif_linking where site_id=${siteId} and uri=${link.id} and resource_id=${Number(resource_id)} and property=${property}`
     )
   );
 
