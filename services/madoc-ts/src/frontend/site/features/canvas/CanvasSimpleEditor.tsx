@@ -17,16 +17,22 @@ import { useRouteContext } from '../../hooks/use-route-context';
 import { useSiteConfiguration } from '../SiteConfigurationContext';
 import { useModelPageConfiguration } from '../../hooks/use-model-page-configuration';
 import '../../../shared/capture-models/editor/bundle';
+import type { CaptureModel } from '../../../shared/capture-models/types/capture-model';
 
 export interface CanvasSimpleEditorProps {
   revision?: string;
   isComplete?: boolean;
   isSegmentation?: boolean;
+  transformCaptureModel?: (model: CaptureModel) => CaptureModel;
 }
-export function CanvasSimpleEditor({ revision, isSegmentation }: CanvasSimpleEditorProps) {
+export function CanvasSimpleEditor({ revision, isSegmentation, transformCaptureModel }: CanvasSimpleEditorProps) {
   const { projectId, canvasId } = useRouteContext();
   const { data: projectModel } = useCanvasModel();
   const [{ captureModel }, , modelRefetch] = useLoadedCaptureModel(projectModel?.model?.id, undefined, canvasId);
+  const displayModel = useMemo(
+    () => (captureModel && transformCaptureModel ? transformCaptureModel(captureModel) : captureModel),
+    [captureModel, transformCaptureModel]
+  );
   const { updateClaim, preventFurtherSubmission, canContribute, markedAsUnusable } = useCanvasUserTasks();
   const { isPreparing } = useProjectStatus();
   const annotationTheme = useProjectAnnotationStyles();
@@ -77,7 +83,7 @@ export function CanvasSimpleEditor({ revision, isSegmentation }: CanvasSimpleEdi
         enableHighlightedRegions
         annotationTheme={annotationTheme}
         isSegmentation={isSegmentation}
-        captureModel={captureModel}
+        captureModel={displayModel}
         isPreparing={isPreparing}
         revision={revision}
         canContribute={canContribute}

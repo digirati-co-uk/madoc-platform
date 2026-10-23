@@ -1,14 +1,16 @@
-import { useMutation } from 'react-query';
+import { useMutation, usePaginatedQuery } from 'react-query';
 import { CrowdsourcingTask } from '../../../../../gateway/tasks/crowdsourcing-task';
 import { ProjectFull } from '../../../../../types/project-full';
 import { SuccessMessage } from '../../../../shared/callouts/SuccessMessage';
 import { WarningMessage } from '../../../../shared/callouts/WarningMessage';
 import { useApi } from '../../../../shared/hooks/use-api';
-import { EmptyState } from '../../../../shared/layout/EmptyState';
+import { ErrorMessage } from '../../../../shared/callouts/ErrorMessage';
+import { ProjectTaskOverview } from './project-task-overview';
+import { loadProjectTaskOverview, overviewKey, overviewTaskLink, OverviewQuery } from './project-task-query';
+import { useParams } from 'react-router-dom';
 import { UniversalComponent } from '../../../../types';
 import { createUniversalComponent } from '../../../../shared/utility/create-universal-component';
 import React from 'react';
-import { BaseTask } from '../../../../../gateway/tasks/base-task';
 import { useData } from '../../../../shared/hooks/use-data';
 import { TableRow, TableRowLabel } from '../../../../shared/layout/Table';
 import { Status } from '../../../../shared/atoms/Status';
@@ -20,13 +22,15 @@ import { ViewCrowdsourcingCanvasTask } from '../../tasks/crowdsourcing-canvas-ta
 import { Project } from './project';
 import { Button, ButtonRow } from '../../../../shared/navigation/Button';
 import { useSite } from '../../../../shared/hooks/use-site';
+import { useLocationQuery } from '../../../../shared/hooks/use-location-query';
+import { CrowdsourcingCanvasTask } from '../../../../../gateway/tasks/crowdsourcing-canvas-task';
 
 type ProjectTasksType = {
   params: { id: number; taskId?: string };
-  query: { page?: string };
-  variables: { id: number; taskId?: string; page: number; project?: any };
-  data: BaseTask;
-  context: { project: any };
+  query: { page?: string; status?: string; sort_by?: string };
+  variables: OverviewQuery & { id: number; taskId?: string };
+  data: Awaited<ReturnType<typeof loadProjectTaskOverview>>;
+  context: { project: ProjectFull };
 };
 
 export const ProjectTasks: UniversalComponent<ProjectTasksType> = createUniversalComponent<ProjectTasksType>(
@@ -34,8 +38,15 @@ export const ProjectTasks: UniversalComponent<ProjectTasksType> = createUniversa
     const site = useSite();
     const { data: project } = useData(Project);
     const { t } = useTranslation();
-    const { data: task } = useData(ProjectTasks);
+    const params = useParams<{ id: string; taskId?: string }>();
+    const query = useLocationQuery();
     const api = useApi();
+    const [key, vars] = overviewKey({ id: Number(params.id), taskId: params.taskId }, query);
+    // The shared wrapper always throws into a boundary; this page needs its own load-error state.
+    const { resolvedData: data, status } = usePaginatedQuery([key, vars], () => loadProjectTaskOverview(api, vars), {
+      useErrorBoundary: false,
+    });
+    const task = data?.parent;
     const selectedReviewer = project?.config?.manuallyAssignedReviewer;
     const [assignAllReviews, assignAllReviewsStatus] = useMutation(async () => {
       if (selectedReviewer) {
@@ -65,6 +76,8 @@ export const ProjectTasks: UniversalComponent<ProjectTasksType> = createUniversa
       }
     });
 
+    if (!project) return <>Loading...</>;
+
     const goToReviews = (
       <ButtonRow>
         <Button as="a" href={`/s/${site.slug}/projects/${project.id}/reviews`}>
@@ -73,7 +86,9 @@ export const ProjectTasks: UniversalComponent<ProjectTasksType> = createUniversa
       </ButtonRow>
     );
 
-    if (!task || !project) {
+    if (status === 'error') return <ErrorMessage>{t('Could not load tasks for this project')}</ErrorMessage>;
+
+    if (!task || !project || !data || data.query.id !== vars.id || data.query.taskId !== vars.taskId) {
       return <>Loading...</>;
     }
 
@@ -81,7 +96,7 @@ export const ProjectTasks: UniversalComponent<ProjectTasksType> = createUniversa
       return (
         <>
           {goToReviews}
-          <ViewCrowdsourcingCanvasTask projectId={project.id} task={task as any} />
+          <ViewCrowdsourcingCanvasTask projectId={project.id} task={task as CrowdsourcingCanvasTask} />
         </>
       );
     }
@@ -109,26 +124,23 @@ export const ProjectTasks: UniversalComponent<ProjectTasksType> = createUniversa
     return (
       <div>
         {goToReviews}
-        {task.parent_task ? <Link to={`/projects/${project.id}/tasks/${task.parent_task}`}>Back</Link> : null}
+        {task.parent_task ? <Link to={overviewTaskLink(project.id, task.parent_task, data.query)}>Back</Link> : null}
         {task.root_task ? (
           <>
             <h2>{task.name}</h2>
             <SubjectSnippet subject={task.subject} />
           </>
         ) : null}
-        {Object.keys(task.state).length ? <pre>{JSON.stringify(task.state, null, 2)}</pre> : null}
-        {task.subtasks?.length === 0 ? <EmptyState>{t('Nothing contributed yet')}</EmptyState> : null}
-        {(task.subtasks || []).map(subtask => (
-          <TableRow key={subtask.id}>
-            <TableRowLabel>
-              <Status status={subtask.status || 0} text={t(subtask.status_text || 'unknown')} />
-            </TableRowLabel>
-            <TableRowLabel>{subtask.type}</TableRowLabel>
-            <TableRowLabel>
-              <Link to={`/projects/${project.id}/tasks/${subtask.id}`}>{subtask.name}</Link>
-            </TableRowLabel>
-          </TableRow>
-        ))}
+        {data.listing ? (
+          <ProjectTaskOverview
+            projectId={project.id}
+            parentId={params.taskId}
+            tasks={data.listing.tasks}
+            pagination={data.listing.pagination}
+            query={data.query}
+            stale={status === 'loading'}
+          />
+        ) : null}
 
         <ButtonRow>
           {selectedReviewer ? (
@@ -150,17 +162,7 @@ export const ProjectTasks: UniversalComponent<ProjectTasksType> = createUniversa
     );
   },
   {
-    getKey: (params, query) => {
-      return ['project-tasks', { id: params.id, page: query.page ? Number(query.page) : 0, taskId: params.taskId }];
-    },
-    getData: async (key, vars, api) => {
-      if (vars.taskId) {
-        return api.getTaskById<BaseTask>(vars.taskId, true);
-      }
-
-      const project = vars.project ? vars.project : await api.getProject(vars.id);
-
-      return api.getTaskById<BaseTask>(project.task_id, true);
-    },
+    getKey: overviewKey,
+    getData: (key, vars, api) => loadProjectTaskOverview(api, vars),
   }
 );

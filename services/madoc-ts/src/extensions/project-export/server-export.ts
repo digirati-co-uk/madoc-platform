@@ -36,6 +36,16 @@ function json(value: any, path: string, pretty = false, metadata?: any): ExportF
 }
 
 export async function csv(input: any, path: string, metadata?: any): Promise<ExportFileDefinition> {
+  if (typeof window !== 'undefined') {
+    // The default stream entry requires Node's Buffer, even with a Vite dev server.
+    const { stringify } = await import('csv-stringify/browser/esm/sync');
+    return {
+      content: { type: 'text', value: stringify(input, { header: true }), contentType: 'text/csv' },
+      text: true,
+      metadata,
+      path,
+    };
+  }
   const { stringify } = await import('csv-stringify'); // Avoid bundling.
   const csvData: string = await new Promise((resolve, reject) => {
     stringify(input, { header: true }, (err, output) => {

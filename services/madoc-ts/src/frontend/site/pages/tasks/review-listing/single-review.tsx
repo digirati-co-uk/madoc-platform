@@ -65,9 +65,13 @@ import {
   CustomReviewRendererProps,
   getReviewRendererMode,
   ReviewDefaultControlsComponent,
+  ReviewRendererContextValue,
 } from '../review-renderers/types';
 import { useModelPageConfiguration } from '../../../hooks/use-model-page-configuration';
 import { HorizontalEditorSplit } from '../../../../shared/components/HorizontalEditorSplit';
+import { ApprovedValueCorrection } from './ApprovedValueCorrection';
+import { canCorrectApprovedValues } from './correction-policy';
+import { NotFound } from '../../../../../utility/errors/not-found';
 
 function ReviewContainer(props: React.HTMLAttributes<HTMLDivElement>) {
   return (
@@ -196,6 +200,81 @@ function ViewOptionsDropdown({
   );
 }
 
+function ReviewContextWithActions({
+  context,
+  children,
+}: {
+  context: Omit<ReviewRendererContextValue, 'actions'>;
+  children: React.ReactNode;
+}) {
+  const { task, review, project, canReview, isDone, setIsEditing } = context;
+  const api = useApi();
+  const refetch = useRefetch();
+  const site = useSite();
+  const { currentRevision } = Revisions.useStoreState(state => {
+    return {
+      currentRevision: state.currentRevision,
+    };
+  });
+  const deselectRevision = Revisions.useStoreActions(a => a.deselectRevision);
+
+  return (
+    <ReviewRendererContextProvider
+      value={{
+        ...context,
+        actions: {
+          reject: async () => {
+            if (!currentRevision || !canReview || isDone) {
+              return;
+            }
+            await api.reviewRejectSubmission({
+              revisionRequest: currentRevision,
+              userTaskId: task.id,
+              message: '',
+            });
+            deselectRevision({ revisionId: currentRevision.revision.id });
+            await refetch();
+          },
+          requestChanges: async () => {
+            if (!currentRevision || !canReview || isDone) {
+              return;
+            }
+            await api.reviewRequestChanges({
+              revisionRequest: currentRevision,
+              userTaskId: task.id,
+              message: task.state?.changesRequested || '',
+            });
+            await refetch();
+          },
+          approve: async () => {
+            if (!currentRevision || !canReview || !review || isDone) {
+              return;
+            }
+            const definition =
+              project && project.template ? api.projectTemplates.getDefinition(project.template, site.id) : null;
+            await api.crowdsourcing.reviewApproveSubmission({
+              revisionRequest: currentRevision,
+              userTaskId: task.id,
+              projectTemplate:
+                definition && project
+                  ? {
+                      template: definition,
+                      config: project.template_config,
+                    }
+                  : undefined,
+            });
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            await refetch();
+          },
+          toggleEditing: () => setIsEditing(r => !r),
+        },
+      }}
+    >
+      {children}
+    </ReviewRendererContextProvider>
+  );
+}
+
 function ViewSingleReview({
   task,
   taskId,
@@ -206,10 +285,10 @@ function ViewSingleReview({
   task: CrowdsourcingTask & { id: string };
   taskId?: string;
   review: (CrowdsourcingReview & { id: string }) | null;
-  toggle: any;
+  toggle: () => void;
   isOpen: boolean;
 }) {
-  const { captureModel, revisionId, wasRejected, canvas, project, canvasLink, editLink, manifestLink } =
+  const { captureModel, revisionId, wasRejected, canvas, project, canvasLink, editLink, manifestLink, refetchModel } =
     useCrowdsourcingTaskDetails(task);
 
   const refetch = useRefetch();
@@ -218,6 +297,10 @@ function ViewSingleReview({
   const reviewListLink = createLink({ taskId: undefined, subRoute: 'reviews', query });
   const metadata = useTaskMetadata<{ subject?: SubjectSnippet }>(task);
   const [isEditing, setIsEditing] = useState(false);
+  const [isCorrecting, setIsCorrecting] = useState(false);
+  const [correctionSession, setCorrectionSession] = useState(0);
+  const [correctionSaved, setCorrectionSaved] = useState(false);
+  const correctionButton = useRef<HTMLButtonElement>(null);
   // const isLocked = props.lockedTasks && props.lockedTasks.indexOf(props.task.id) !== -1;
   const user = useCurrentUser(true);
   const scope = user?.scope || [];
@@ -233,14 +316,38 @@ function ViewSingleReview({
   const canReview = limitedReviewer ? review?.assignee?.id === user.user?.id : reviewer;
   const isDone = task?.status === 3;
   const { t } = useTranslation();
-  const gridRef = useRef<any>(undefined);
+  const gridRef = useRef<HTMLDivElement>(null);
   const runtime = useRef<Runtime>(undefined);
   const { enableRotation = false, enableEditorResizing = true } = useModelPageConfiguration();
   const annotationTheme = useProjectAnnotationStyles();
   const api = useApi();
   const template = useProjectTemplate(project?.template);
   const CustomReviewRenderer = template?.components?.customReviewRenderer as
-    React.FC<CustomReviewRendererProps> | undefined;
+    React.ComponentType<CustomReviewRendererProps> | undefined;
+
+  const canCorrect = canCorrectApprovedValues({
+    scope,
+    taskStatus: task.status,
+    model: captureModel,
+    revisionId,
+    activeMerge: !!(task.state.mergeId || review?.state.currentMerge),
+    customRenderer: !!CustomReviewRenderer,
+    tabular: project?.template === 'tabular-project',
+  });
+  const setReviewEditing: React.Dispatch<React.SetStateAction<boolean>> = next => {
+    if (!isDone) setIsEditing(next);
+  };
+  const closeCorrection = async (saved: boolean) => {
+    if (saved) {
+      await refetchModel();
+      await refetch();
+    }
+    setIsCorrecting(false);
+    setCorrectionSession(session => session + 1);
+    setCorrectionSaved(saved);
+    // The action remains mounted while the bounded form is open.
+    requestAnimationFrame(() => correctionButton.current?.focus());
+  };
 
   const [unassignUser] = useMutation(
     async () => {
@@ -317,14 +424,31 @@ function ViewSingleReview({
   };
 
   const DefaultReviewControls: ReviewDefaultControlsComponent = () => {
+    if (isDone) {
+      return (
+        <div className="flex flex-wrap items-center gap-2">
+          <ReviewActionMessage>{t('This review is complete')}</ReviewActionMessage>
+          {canCorrect ? (
+            <button
+              ref={correctionButton}
+              type="button"
+              disabled={isCorrecting}
+              onClick={() => {
+                setCorrectionSaved(false);
+                setIsCorrecting(true);
+              }}
+              className="rounded border border-slate-400 px-3 py-2 text-sm disabled:opacity-50"
+            >
+              {t('Correct values')}
+            </button>
+          ) : null}
+        </div>
+      );
+    }
     if (!review || wasRejected || !canReview) {
       return !isDone || !wasRejected ? (
         <ReviewActionMessage>{t('You do not have the correct permissions to review this task')}</ReviewActionMessage>
       ) : null;
-    }
-
-    if (isDone) {
-      return <ReviewActionMessage>{t('This review is complete')}</ReviewActionMessage>;
     }
 
     return (
@@ -383,7 +507,7 @@ function ViewSingleReview({
     </HrefLink>
   );
 
-  if (!review) {
+  if (!review && !isDone) {
     if (task.status === -1) {
       // Task has been rejected
       return (
@@ -543,7 +667,7 @@ function ViewSingleReview({
     project,
     mode: getReviewRendererMode(isEditing),
     isEditing,
-    setIsEditing,
+    setIsEditing: setReviewEditing,
     isDone,
     isLocked: false,
     canReview: !!canReview,
@@ -552,72 +676,6 @@ function ViewSingleReview({
     assigneeName: task.assignee?.name,
     reviewAssigneeName: review?.assignee?.name,
   } as const;
-
-  const ReviewContextWithActions: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const site = useSite();
-    const { currentRevision } = Revisions.useStoreState(state => {
-      return {
-        currentRevision: state.currentRevision,
-      };
-    });
-    const deselectRevision = Revisions.useStoreActions(a => a.deselectRevision);
-
-    return (
-      <ReviewRendererContextProvider
-        value={{
-          ...reviewContextBase,
-          actions: {
-            reject: async () => {
-              if (!currentRevision || !canReview || isDone) {
-                return;
-              }
-              await api.reviewRejectSubmission({
-                revisionRequest: currentRevision,
-                userTaskId: task.id,
-                message: '',
-              });
-              deselectRevision({ revisionId: currentRevision.revision.id });
-              await refetch();
-            },
-            requestChanges: async () => {
-              if (!currentRevision || !canReview || isDone) {
-                return;
-              }
-              await api.reviewRequestChanges({
-                revisionRequest: currentRevision,
-                userTaskId: task.id,
-                message: task.state?.changesRequested || '',
-              });
-              await refetch();
-            },
-            approve: async () => {
-              if (!currentRevision || !canReview || !review || isDone) {
-                return;
-              }
-              const definition =
-                project && project.template ? api.projectTemplates.getDefinition(project.template, site.id) : null;
-              await api.crowdsourcing.reviewApproveSubmission({
-                revisionRequest: currentRevision,
-                userTaskId: task.id,
-                projectTemplate:
-                  definition && project
-                    ? {
-                        template: definition,
-                        config: project.template_config,
-                      }
-                    : undefined,
-              });
-              await new Promise(resolve => setTimeout(resolve, 1000));
-              await refetch();
-            },
-            toggleEditing: () => setIsEditing(r => !r),
-          },
-        }}
-      >
-        {children}
-      </ReviewRendererContextProvider>
-    );
-  };
 
   const reviewHeaderActions = (
     <ReviewActionBar>
@@ -639,6 +697,7 @@ function ViewSingleReview({
 
   return (
     <RevisionProviderWithFeatures
+      key={`${task.id}-${correctionSession}`}
       revision={revisionId}
       captureModel={captureModel}
       features={{
@@ -648,12 +707,12 @@ function ViewSingleReview({
         directEdit: true,
       }}
       slotConfig={{
-        editor: { allowEditing: isEditing, deselectRevisionAfterSaving: false, saveOnNavigate: false },
+        editor: { allowEditing: isEditing && !isDone, deselectRevisionAfterSaving: false, saveOnNavigate: false },
         components: { SubmitButton: DirectEditButton },
       }}
       annotationTheme={annotationTheme}
     >
-      <ReviewContextWithActions>
+      <ReviewContextWithActions context={reviewContextBase}>
         <ReviewContainer id={'review-container'} data-is-max-window={isOpen}>
           <ReviewHeader>
             {backToReviewListButton}
@@ -674,10 +733,10 @@ function ViewSingleReview({
 
           {CustomReviewRenderer ? (
             <CustomReviewRenderer
-              mode={getReviewRendererMode(isEditing)}
+              mode={getReviewRendererMode(isEditing && !isDone)}
               subjectType={subjectType}
               viewer={viewerNode}
-              saveControl={isEditing ? <EditorSlots.SubmitButton captureModel={captureModel} /> : null}
+              saveControl={isEditing && !isDone ? <EditorSlots.SubmitButton captureModel={captureModel} /> : null}
               controls={reviewHeaderActions}
               DefaultControls={DefaultReviewControls}
             />
@@ -692,10 +751,28 @@ function ViewSingleReview({
                 className="flex-1 overflow-y-auto p-[0.6em]"
                 resizablePane={
                   <div className="h-full overflow-x-auto w-full">
-                    <CanvasViewerEditorStyleReset>
-                      <EditorSlots.TopLevelEditor />
-                    </CanvasViewerEditorStyleReset>
-                    <EditorSlots.SubmitButton captureModel={captureModel} />
+                    {correctionSaved ? (
+                      <p role="status" className="mb-3 rounded bg-green-50 p-2 text-sm text-green-800">
+                        {t('Corrections saved')}
+                      </p>
+                    ) : null}
+                    {isCorrecting && captureModel?.id && revisionId ? (
+                      <ApprovedValueCorrection
+                        key={`${task.id}-${correctionSession}`}
+                        taskId={task.id}
+                        modelId={captureModel.id}
+                        revisionId={revisionId}
+                        scope={scope}
+                        onClose={closeCorrection}
+                      />
+                    ) : (
+                      <>
+                        <CanvasViewerEditorStyleReset>
+                          <EditorSlots.TopLevelEditor />
+                        </CanvasViewerEditorStyleReset>
+                        {!isDone ? <EditorSlots.SubmitButton captureModel={captureModel} /> : null}
+                      </>
+                    )}
                   </div>
                 }
                 flexiblePane={viewerNode}
@@ -721,6 +798,7 @@ export function SingleReview() {
           return (
             <RefetchProvider refetch={refetch}>
               <ViewSingleReview
+                key={data.task.id}
                 taskId={params.taskId}
                 task={data.task}
                 review={data.review}
@@ -746,9 +824,12 @@ serverRendererFor(SingleReview, {
         task,
       };
     }
-    return {
-      review: await api.getTask(task.state.reviewTask),
-      task,
-    };
+    try {
+      return { review: await api.getTask(task.state.reviewTask), task };
+    } catch (error) {
+      // Completed contributions can outlive their review task. Other failures stay visible.
+      if (task.status === 3 && error instanceof NotFound) return { review: null, task };
+      throw error;
+    }
   },
 });

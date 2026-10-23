@@ -2881,7 +2881,7 @@ export class ApiClient {
 
   async getProjectFieldsRaw(
     projectId: string | number,
-    query: { entity?: string; status?: 'approved' | 'drafts' | 'all' }
+    query: { entity?: string; status?: 'approved' | 'drafts' | 'all'; manifest_id?: number }
   ) {
     return this.request<
       Array<{
