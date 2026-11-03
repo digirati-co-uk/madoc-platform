@@ -1,3 +1,5 @@
+import type { TextFieldProps } from '../../input-types/TextField/TextField';
+import { validateTextFieldSettings } from '../../../../utility/guided-formats';
 import { FormikCheckbox } from '../../atoms/FormikCheckbox';
 import copy from 'fast-copy';
 import React, { useContext, useState } from 'react';
@@ -77,6 +79,7 @@ export function FieldEditor({
     <BrowserComponent fallback="loading...">
       <Formik
         initialValues={props}
+        validate={values => (values.type === 'text-field' ? validateTextFieldSettings(values as TextFieldProps) : {})}
         onSubmit={newProps => {
           if (field.onEditorSubmit) {
             onSubmit(

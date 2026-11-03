@@ -1,6 +1,10 @@
 import { DropdownFieldProps } from '../../../frontend/shared/capture-models/editor/input-types/DropdownField/DropdownField';
 import { captureModelShorthand } from '../../../frontend/shared/capture-models/helpers/capture-model-shorthand';
 import { ProjectTemplate } from '../types';
+import {
+  TranscriptionProjectEditorLoader,
+  TranscriptionProjectMetadataEditorLoader,
+} from '../editors/transcription-project-loaders';
 
 type CrowdsourcedTranscriptionOptions = {
   modelLabel: string;
@@ -11,6 +15,10 @@ type CrowdsourcedTranscriptionOptions = {
 
 export const crowdsourcedTranscription: ProjectTemplate<CrowdsourcedTranscriptionOptions> = {
   type: '@madoc.io/crowdsourced-transcription',
+  components: {
+    customAdminModelEditor: TranscriptionProjectMetadataEditorLoader,
+    customEditor: TranscriptionProjectEditorLoader,
+  },
   metadata: {
     label: 'Plaintext transcription project',
     actionLabel: 'Start transcribing',

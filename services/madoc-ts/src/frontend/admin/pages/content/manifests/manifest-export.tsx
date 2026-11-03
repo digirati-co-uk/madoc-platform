@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { ExportConfig, SupportedExportResource } from '../../../../../extensions/project-export/types';
+import { resetManifestCsvProjectConfiguration } from '../../../../../extensions/project-export/export-configs/manifest/manifest-csv-contributions-export';
 import { EditShorthandCaptureModel } from '../../../../shared/capture-models/EditorShorthandCaptureModel';
 import { EditorSlots } from '../../../../shared/capture-models/new/components/EditorSlots';
 import { FilePreview } from '../../../../shared/components/FilePreview';
@@ -24,21 +25,22 @@ export function ManifestExport() {
   const [config, setConfig] = useState<any>();
   const [selectedType, setSelected] = useState<string>('');
   const subjects: SupportedExportResource[] = data?.manifest.items.map(r => ({ id: r.id, type: 'canvas' })) || [];
-  const [expectedCanvasFiles, selected] = useExportResources(selectedType, {
+  const [expectedCanvasFiles, selectedCanvas] = useExportResources(selectedType, {
     subjects,
     subjectsType: 'canvas',
     subjectParent: data ? { id: data.manifest.id, type: 'manifest' } : undefined,
     allProjects: allProjectsData?.projects.map(p => p.id),
     config,
   });
-  const [{ data: manifestData }, , expectedManifestFiles] = useExportResourcePreview(selectedType, {
+  const [{ data: manifestData }, selectedManifest, expectedManifestFiles] = useExportResourcePreview(selectedType, {
     subject: { id: Number(params.id), type: 'manifest' },
     config,
   });
+  const selected = selectedManifest || selectedCanvas;
   const editorConfig = useMemo<ExportConfig['configuration'] | undefined>(() => {
     if (selected?.hookConfig) {
       const hooked = selected.hookConfig(
-        { id: Number(params.id), type: 'canvas' },
+        { id: Number(params.id), type: selectedManifest ? 'manifest' : 'canvas' },
         {
           config,
           api,
@@ -52,14 +54,19 @@ export function ManifestExport() {
     }
 
     return selected?.configuration;
-  }, [api, params.id, params.manifestId, selectedType]);
+  }, [api, config, params.id, selected, selectedManifest]);
 
   return (
     <div>
       <h2>Manifest export</h2>
       <RichSelectionGrid
         selected={[selectedType]}
-        onSelect={id => setSelected(id)}
+        onSelect={id => {
+          setSelected(id);
+          setConfig(
+            [...manifestOptions, ...canvasOptions].find(item => item.type === id)?.configuration?.defaultValues
+          );
+        }}
         items={[...manifestOptions, ...canvasOptions].map(item => ({
           id: item.type,
           label: item.metadata.label,
@@ -69,10 +76,17 @@ export function ManifestExport() {
 
       {selected && selected.configuration && editorConfig ? (
         <EditShorthandCaptureModel
+          key={`${selectedType}-${typeof config?.project_id === 'string' ? config.project_id : config?.project_id?.uri || ''}`}
           slotConfig={{}}
           data={config || selected?.configuration?.defaultValues}
           template={editorConfig.editor}
-          onSave={newData => setConfig(newData)}
+          onSave={newData =>
+            setConfig(
+              selectedType === 'manifest-csv-contributions-export'
+                ? resetManifestCsvProjectConfiguration(config, newData)
+                : newData
+            )
+          }
           saveLabel="Update"
           // fullDocument={!!document}
           keepExtraFields

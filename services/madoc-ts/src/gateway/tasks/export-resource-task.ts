@@ -15,6 +15,7 @@ import { parseUrn } from '../../utility/parse-urn';
 import { ApiClient, ApiClientWithoutExtensions } from '../api';
 import { getSiteApi } from '../helpers/get-site-api';
 import { BaseTask } from './base-task';
+import { publishCsvArchive } from '../../extensions/project-export/publish-csv-archive';
 
 export const type = 'export-resource-task';
 
@@ -38,6 +39,9 @@ export interface ExportResourceTask extends BaseTask {
     empty?: boolean;
     didError?: boolean;
     errorMessage?: string;
+    expectedSubtasks?: number;
+    failedResources?: string[];
+    outputPaths?: string[];
   };
 }
 
@@ -81,9 +85,11 @@ export function createTask(
 
       // For sub-tasks.
       'madoc-ts.subtask_type_status.export-resource-task.3',
+      'madoc-ts.subtask_type_status.export-resource-task.-1',
 
       // When it's complete
       'madoc-ts.status.3',
+      ...(hasManifestCsv(request.exportPlan) ? ['madoc-ts.status.-1'] : []),
     ],
   };
 }
@@ -145,6 +151,57 @@ async function directoryHasFiles(directory: string): Promise<boolean> {
   }
 
   return false;
+}
+
+function hasManifestCsv(plan?: ExportPlan): boolean {
+  return !!plan?.manifest?.some(([exportType]) => exportType === 'manifest-csv-contributions-export');
+}
+
+/** A partial archive is ready only after every expected child has settled. */
+export function getManifestCsvCompletion(task: ExportResourceTask): { failedResources: string[] } | undefined {
+  const children = task.subtasks || [];
+  if (
+    task.state.expectedSubtasks === undefined ||
+    children.length !== task.state.expectedSubtasks ||
+    children.some(child => child.status !== 3 && child.status !== -1)
+  ) {
+    return undefined;
+  }
+  return {
+    failedResources: children
+      .filter(child => {
+        if (child.status === -1 || child.state?.didError) return true;
+        const subject = parseUrn<SupportedExportResource>(child.subject);
+        const context = task.parameters[0].context;
+        // Explicitly report completed manifest children with missing CSV output as partial failures.
+        return (
+          subject?.type === 'manifest' &&
+          context.type === 'project' &&
+          !child.state?.outputPaths?.includes(`/manifests/${subject.id}/csv/${context.id}/contributions.csv`)
+        );
+      })
+      .map(child => child.subject),
+  };
+}
+
+async function reconcileManifestCsvTask(taskId: string, api: ApiClient): Promise<void> {
+  const task = await api.getTask<ExportResourceTask>(taskId, { all: true, detail: true });
+  if (task.status === 3 || !hasManifestCsv(task.parameters[0].exportPlan)) return;
+  const result = getManifestCsvCompletion(task);
+  if (!result) return;
+  const didError = result.failedResources.length > 0;
+  await api.updateTask(taskId, {
+    status: 3,
+    status_text: didError ? 'completed with errors' : 'completed',
+    state: {
+      ...task.state,
+      didError,
+      failedResources: result.failedResources,
+      ...(didError
+        ? { errorMessage: 'Some resources failed or have missing output. See the subtasks and README-errors.txt.' }
+        : {}),
+    },
+  });
 }
 
 export const jobHandler = async (name: string, taskId: string, api: ApiClient) => {
@@ -270,7 +327,9 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
             // 1. Handle subtasks.
             if (subtasks.length) {
               console.log(`=> found ${subtasks.length} sub tasks to add`);
-              await api.addSubtasks(subtasks, task.id);
+              if (!hasManifestCsv(plan)) {
+                await api.addSubtasks(subtasks, task.id);
+              }
             }
 
             // 2. Handle files
@@ -339,17 +398,40 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
               }
             }
 
+            // Publish our output before children can complete and finalize the archive.
+            if (hasManifestCsv(plan)) {
+              await api.updateTask(task.id, {
+                state: {
+                  ...task.state,
+                  expectedSubtasks: subtasks.length,
+                  outputPaths: files.map(file => file.path),
+                },
+              });
+              if (subtasks.length) {
+                await api.addSubtasks(subtasks, task.id);
+              }
+            }
+
             // 3. Mark as done if there are no subtasks.
             if (subtasks.length === 0) {
               await api.updateTask(task.id, { status: 3, status_text: 'completed' });
             }
           }
-        } catch (e) {
+        } catch (error) {
+          // The generic worker treats HTTP 404 as handled. CSV failures must reach its failed-task listener.
+          if (
+            hasManifestCsv(request.exportPlan) &&
+            typeof error === 'object' &&
+            error !== null &&
+            'status' in error &&
+            error.status === 404
+          ) {
+            throw new Error(`CSV export resource not found: ${error instanceof Error ? error.message : String(error)}`);
+          }
+          throw error;
+        } finally {
           siteApi.dispose();
-          throw e;
         }
-
-        siteApi.dispose();
 
         return;
       }
@@ -357,70 +439,115 @@ export const jobHandler = async (name: string, taskId: string, api: ApiClient) =
       break;
     }
 
+    case 'subtask_type_status.export-resource-task.-1':
     case 'subtask_type_status.export-resource-task.3': {
       // There MIGHT be things we need to do to aggregate these in the future.
       // For now the only supported aggregation is the zip + files.
       // Only thing we can do is mark the task as complete, so it falls into the next step.
-      const task = await api.getTask<ExportResourceTask>(taskId);
+      const task = await api.getTask<ExportResourceTask>(taskId, { all: true, detail: true });
+      if (hasManifestCsv(task.parameters[0].exportPlan)) {
+        await reconcileManifestCsvTask(taskId, api);
+        return;
+      }
+      if (name === 'subtask_type_status.export-resource-task.-1') return;
       await api.updateTask(task.id, { status: 3, status_text: 'completed' });
       return;
     }
 
+    case 'status.-1':
     case 'status.3': {
       const task = await api.getTask<ExportResourceTask>(taskId);
       const [request, { siteId, userId }] = task.parameters;
+      // The task API emits own-status events for each child, but only emits its
+      // aggregate subtask_type_status event when ALL siblings share one status.
+      if (hasManifestCsv(request.exportPlan) && task.parent_task) {
+        await reconcileManifestCsvTask(task.parent_task, api);
+      }
+      if (name === 'status.-1') return;
       if (siteId) {
         const userApi = api.asUser({ siteId, userId });
-
-        if (request.output.type === 'zip') {
-          const outputDir = join(STORAGE_API_PATH, `urn:madoc:site:${siteId}`, 'export', request.output.path);
-          if (!existsSync(outputDir)) {
-            await fs.mkdir(outputDir, { recursive: true });
-          }
-          const outputFile = join(outputDir, request.output.fileName);
-          const tempDir = join(EXPORT_PATH, request.output.options.tempDir);
-          const zip = new AdmZip();
-          const folderPath = basename(request.output.fileName, '.zip');
-          if (await directoryHasFiles(tempDir)) {
-            zip.addLocalFolder(tempDir, folderPath);
-          } else {
-            await api.updateTask(task.id, {
-              state: {
-                ...(task.state || {}),
-                empty: true,
-              },
-            });
-
-            // Keep the zip readable in desktop unzip tools.
-            zip.addFile(
-              `${folderPath}/README.txt`,
-              Buffer.from(
-                'No files were generated for this export.\n\nThe selected export options may not have matched any data for the selected resources.\n',
-                'utf-8'
-              )
-            );
-          }
-
-          await new Promise(resolve => zip.writeZip(outputFile, resolve));
-
-          try {
-            if (tempDir && existsSync(tempDir)) {
-              await fs.rm(tempDir, { recursive: true, force: true });
+        try {
+          if (request.output.type === 'zip') {
+            const outputDir = join(STORAGE_API_PATH, `urn:madoc:site:${siteId}`, 'export', request.output.path);
+            if (!existsSync(outputDir)) {
+              await fs.mkdir(outputDir, { recursive: true });
             }
-          } catch (e) {
-            // ignore error.
-          }
+            const outputFile = join(outputDir, request.output.fileName);
+            const tempDir = join(EXPORT_PATH, request.output.options.tempDir);
+            if (hasManifestCsv(request.exportPlan)) {
+              const published = await publishCsvArchive({
+                outputFile,
+                tempDir,
+                folderPath: basename(request.output.fileName, '.zip'),
+                didError: task.state.didError,
+                failedResources: task.state.failedResources,
+              });
+              if (!published) return;
+              if (published.empty) await api.updateTask(taskId, { state: { empty: true } });
+              await fs.rm(tempDir, { recursive: true, force: true }).catch(() => undefined);
+              await userApi.notifications.createNotification({
+                id: generateId(),
+                title: 'Finished exporting',
+                summary: task.subject,
+                action: { id: 'task:admin', link: `urn:madoc:task:${taskId}` },
+                user: userId,
+              });
+              return;
+            }
+            const zip = new AdmZip();
+            const folderPath = basename(request.output.fileName, '.zip');
+            if (task.state.didError) {
+              zip.addFile(
+                `${folderPath}/README-errors.txt`,
+                Buffer.from(
+                  `This is a partial export. Some resources failed; their data may be missing.\n\n${(task.state.failedResources || []).join('\n')}\n\nSee the failed subtasks for details. Start a fresh export to recover missing files.\n`,
+                  'utf-8'
+                )
+              );
+            }
+            if (await directoryHasFiles(tempDir)) {
+              zip.addLocalFolder(tempDir, folderPath);
+            } else {
+              await api.updateTask(task.id, {
+                state: {
+                  ...(task.state || {}),
+                  empty: true,
+                },
+              });
 
-          await userApi.notifications.createNotification({
-            id: generateId(),
-            title: 'Finished exporting',
-            summary: task.subject,
-            action: {
-              id: 'task:admin',
-              link: `urn:madoc:task:${taskId}`,
-            },
-            user: userId,
-          });
+              // Keep the zip readable in desktop unzip tools.
+              zip.addFile(
+                `${folderPath}/README.txt`,
+                Buffer.from(
+                  'No files were generated for this export.\n\nThe selected export options may not have matched any data for the selected resources.\n',
+                  'utf-8'
+                )
+              );
+            }
+
+            await new Promise(resolve => zip.writeZip(outputFile, resolve));
+
+            try {
+              if (tempDir && existsSync(tempDir)) {
+                await fs.rm(tempDir, { recursive: true, force: true });
+              }
+            } catch {
+              // ignore error.
+            }
+
+            await userApi.notifications.createNotification({
+              id: generateId(),
+              title: 'Finished exporting',
+              summary: task.subject,
+              action: {
+                id: 'task:admin',
+                link: `urn:madoc:task:${taskId}`,
+              },
+              user: userId,
+            });
+          }
+        } finally {
+          userApi.dispose();
         }
       }
 

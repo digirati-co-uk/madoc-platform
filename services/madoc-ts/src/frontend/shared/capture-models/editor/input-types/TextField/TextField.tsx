@@ -1,7 +1,9 @@
 import React from 'react';
 import { BaseField, FieldComponent } from '../../../types/field-types';
-import { StyledFormInputElement, StyledFormMultilineInputElement } from '../../atoms/StyledForm';
+import TextareaAutosize from 'react-textarea-autosize';
 import { useModelTranslation } from '../../../hooks/use-model-translation';
+import type { TextFieldInputFormat } from '../../../../utility/text-field-format';
+import { FormattedTextInput, textInputClass } from './FormattedTextInput';
 
 export interface TextFieldProps extends BaseField {
   id: string;
@@ -13,6 +15,9 @@ export interface TextFieldProps extends BaseField {
   minLines?: number;
   value: string;
   disabled?: boolean;
+  inputFormat?: TextFieldInputFormat;
+  formatTemplate?: string;
+  allowNegative?: boolean;
 }
 
 export const TextField: FieldComponent<TextFieldProps> = ({
@@ -24,13 +29,17 @@ export const TextField: FieldComponent<TextFieldProps> = ({
   updateValue,
   disabled,
   required,
+  inputFormat,
+  formatTemplate,
+  allowNegative,
 }) => {
   const { t: tModel } = useModelTranslation();
   const tPlaceholder = placeholder ? tModel(placeholder) : ' ';
 
   if (multiline) {
     return (
-      <StyledFormMultilineInputElement
+      <TextareaAutosize
+        className={`${textInputClass} bg-white border-[rgba(5,42,68,0.2)]`}
         name={id}
         id={id}
         placeholder={tPlaceholder}
@@ -38,20 +47,22 @@ export const TextField: FieldComponent<TextFieldProps> = ({
         required={required}
         disabled={disabled}
         onChange={e => updateValue(e.currentTarget.value)}
-        minRows={Number(minLines)}
+        minRows={Number(minLines) || undefined}
       />
     );
   }
 
   return (
-    <StyledFormInputElement
-      name={id}
+    <FormattedTextInput
       id={id}
-      placeholder={tPlaceholder}
       value={value || ''}
+      onChange={updateValue}
+      placeholder={tPlaceholder}
       disabled={disabled}
       required={required}
-      onChange={e => updateValue(e.currentTarget.value)}
+      inputFormat={inputFormat}
+      formatTemplate={formatTemplate}
+      allowNegative={allowNegative}
     />
   );
 };

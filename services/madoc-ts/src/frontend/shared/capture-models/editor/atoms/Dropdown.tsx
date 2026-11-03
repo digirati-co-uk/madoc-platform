@@ -38,7 +38,7 @@ function getLabel(option: DropdownOption) {
   return option.text;
 }
 
-export const Dropdown: React.FC<DropdownProps> = ({
+export function Dropdown({
   id,
   placeholder,
   isClearable,
@@ -46,7 +46,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
   disabled,
   options,
   onChange,
-}) => {
+}: DropdownProps) {
   const onOptionChange = useCallback(
     (option: DropdownOption | null): void => {
       onChange(option ? option.value : undefined);
@@ -65,14 +65,11 @@ export const Dropdown: React.FC<DropdownProps> = ({
           primary: '#005cc5',
         },
         control: {
-          boxShadow: '0 0 0 0',
           focusedBorderColor: '#005cc5',
-          selectedBgColor: '#005cc5',
           backgroundColor: '#fff',
           borderRadius: '3px',
         },
       }}
-      menuPosition="auto"
       inputId={id}
       initialValue={initialValue}
       placeholder={placeholder}
@@ -83,7 +80,6 @@ export const Dropdown: React.FC<DropdownProps> = ({
       getOptionValue={getValue}
       getOptionLabel={getLabel}
       renderOptionLabel={renderOptionLabel}
-      scrollMenuIntoView={false}
     />
   );
-};
+}

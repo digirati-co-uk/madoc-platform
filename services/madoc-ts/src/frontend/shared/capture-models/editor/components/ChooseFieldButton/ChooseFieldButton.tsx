@@ -1,6 +1,8 @@
-import React, { useContext, useMemo } from 'react';
+import React, { useContext } from 'react';
 import { PluginContext } from '../../../plugin-api/context';
+import type { FieldSpecification } from '../../../types/field-types';
 import { Dropdown } from '../../atoms/Dropdown';
+import { resolveFieldType } from './resolve-field-type';
 
 type Props = {
   onChange: (term?: string) => void;
@@ -8,34 +10,32 @@ type Props = {
   allowedFieldTypes?: string[];
 };
 
-export const ChooseFieldButton: React.FC<Props> = ({ onChange, fieldType, allowedFieldTypes }) => {
+export function ChooseFieldButton({ onChange, fieldType, allowedFieldTypes }: Props) {
   const { fields } = useContext(PluginContext);
-  const options = useMemo(
-    () =>
-      Object.values(fields)
-        .filter((field): field is { type: string; label: string } => !!field)
-        .filter(field => !allowedFieldTypes || allowedFieldTypes.includes(field.type))
-        .map(field => ({
-          key: field.type,
-          value: field.type,
-          text: field.label,
-          label: field.type,
-        })),
-    [allowedFieldTypes, fields]
-  );
-  const fallbackType = options.find(option => option.value === 'text-field')?.value || options[0]?.value;
-  const selectedValue = options.find(option => option.value === fieldType)?.value || fallbackType;
+  // Field registration mutates this registry in place, so read its current entries on each render.
+  const options = Object.values(fields)
+    .filter((field): field is FieldSpecification => !!field)
+    .filter(field => !allowedFieldTypes || allowedFieldTypes.includes(field.type))
+    .map(field => ({
+      key: field.type,
+      value: field.type,
+      text: field.label,
+      label: field.type,
+    }));
+  const availableTypes = options.map(option => option.value);
+  const selectedValue = resolveFieldType(availableTypes, fieldType);
 
   return (
     <Dropdown
       placeholder="Select input"
       fluid
       selection
+      disabled={options.length === 0}
       value={selectedValue}
       onChange={v => {
-        onChange(v || fallbackType || undefined);
+        onChange(resolveFieldType(availableTypes, v || undefined));
       }}
       options={options}
     />
   );
-};
+}
