@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Refreshed System status with migration and restart selectors, grouped service cards and access to each process instance's logs.
 - Combined slow-request statistics across server instances and added route search, sorting and reporting-instance details.
+- Added a Clear all filters button to Typesense search. It keeps the search text and scope and resets pagination. ([MAD-1614](https://digirati.atlassian.net/browse/MAD-1614))
 
 ### Fixed
 
