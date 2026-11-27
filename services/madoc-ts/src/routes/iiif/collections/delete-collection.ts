@@ -18,11 +18,13 @@ import { buildCollectionDeletionSummary } from './delete-collection-summary';
 import { DatabasePoolConnectionType, sql } from 'slonik';
 import { deleteManifest } from '../manifests/delete-manifest';
 import { castBool } from '../../../utility/cast-bool';
+import { requireCollection } from './require-collection';
 
 export const deleteCollectionEndpoint: RouteMiddleware<{ id: number }> = async context => {
   const { siteId } = userWithScope(context, ['site.admin']);
   const collectionId = context.params.id;
 
+  await requireCollection(context.connection, collectionId, siteId);
   await deleteCollection(collectionId, siteId, () => context.connection, castBool(context.query.recursive));
 
   context.response.status = 204;

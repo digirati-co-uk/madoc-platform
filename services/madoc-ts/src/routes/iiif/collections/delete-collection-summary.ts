@@ -2,11 +2,13 @@ import { DatabasePoolConnectionType, sql } from 'slonik';
 import { api } from '../../../gateway/api.server';
 import { RouteMiddleware } from '../../../types/route-middleware';
 import { userWithScope } from '../../../utility/user-with-scope';
+import { requireCollection } from './require-collection';
 
 export const getCollectionDeletionSummary: RouteMiddleware<{ id: number }> = async context => {
   const { siteId } = userWithScope(context, ['site.admin']);
   const collectionId = context.params.id;
 
+  await requireCollection(context.connection, collectionId, siteId);
   context.response.body = await buildCollectionDeletionSummary(collectionId, siteId, () => context.connection);
 };
 

@@ -6,6 +6,7 @@ import { userWithScope } from '../../../utility/user-with-scope';
 import { SQL_INT_ARRAY } from '../../../utility/postgres-tags';
 import { RequestError } from '../../../utility/errors/request-error';
 import { createTask as createSearchIndexTask } from '../../../gateway/tasks/search-index-task';
+import { requireCollection } from './require-collection';
 
 async function getManifestIds(collectionId: number, siteId: number, connection: DatabasePoolConnectionType) {
   return (
@@ -20,6 +21,8 @@ export const updateCollectionStructure: RouteMiddleware<{ id: number }, UpdateSt
   const { siteId, userUrn } = userWithScope(context, ['site.admin']);
 
   const collectionId = context.params.id;
+  await requireCollection(context.connection, collectionId, siteId);
+
   const manifestIds = context.requestBody.item_ids;
   const itemFilter = sql`site_id = ${siteId} and resource_id = ${collectionId}`;
 

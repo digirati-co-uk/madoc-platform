@@ -30,6 +30,47 @@ type CollectionAggregate = TaggedTemplateLiteralInvocationType<{
   placeholder_image?: string;
 }>;
 
+type CollectionChildrenOptions = {
+  collectionId: number;
+  siteId: number;
+  type?: 'manifest' | 'collection';
+  onlyPublished?: boolean;
+  excludeManifests?: number[];
+};
+
+function getCollectionChildren({
+  collectionId,
+  siteId,
+  type,
+  onlyPublished,
+  excludeManifests,
+}: CollectionChildrenOptions) {
+  return sql`
+    select links.item_id, links.item_index, resource.type
+    from iiif_derived_resource_items links
+    join iiif_resource resource on resource.id = links.item_id
+    where links.site_id = ${siteId}
+      and links.resource_id = ${collectionId}
+      ${type ? sql`and resource.type = ${type}` : SQL_EMPTY}
+      ${
+        excludeManifests
+          ? sql`and links.item_id = any(${sql.array(excludeManifests, SQL_INT_ARRAY)}) is false`
+          : SQL_EMPTY
+      }
+      ${
+        onlyPublished
+          ? sql`and exists (
+            select 1 from iiif_derived_resource child
+            where child.site_id = links.site_id
+              and child.resource_id = links.item_id
+              and child.resource_type = resource.type
+              and child.published = true
+          )`
+          : SQL_EMPTY
+      }
+  `;
+}
+
 export function getSingleCollection({
   collectionId,
   siteId,
@@ -38,23 +79,14 @@ export function getSingleCollection({
   type,
   onlyPublished,
   excludeManifests,
-}: {
-  collectionId: number;
-  siteId: number;
+}: CollectionChildrenOptions & {
   page?: number;
   perPage?: number;
-  type?: 'manifest' | 'collection';
-  onlyPublished?: boolean;
-  excludeManifests?: number[];
 }) {
   if (page < 1) {
     page = 1;
   }
   const offset = (page - 1) * perPage;
-
-  const manifestExclusion = excludeManifests
-    ? sql`and manifest_links.item_id = any(${sql.array(excludeManifests, SQL_INT_ARRAY)}) is false`
-    : SQL_EMPTY;
 
   return sql<{
     collection_id: number;
@@ -70,23 +102,18 @@ export function getSingleCollection({
              manifest_links.item_id                                as manifest_id,
              canvas_count.item_total                               as manifest_canvas_count,
              manifest_count.item_total                             as collection_manifest_count,
-             resource.type                                         as resource_type,
-             resource.id                                           as resource_id,
+             manifest_links.type                                   as resource_type,
              manifest_thumbnail(${siteId}, manifest_links.item_id) as manifest_thumbnail,
              single_collection.published                           as published,
              single_collection.placeholder_image                   as placeholder_image
       
       from iiif_derived_resource single_collection
-               left join iiif_derived_resource_items manifest_links 
-                        on  manifest_links.site_id = ${siteId}
-                        and manifest_links.resource_id = single_collection.resource_id
-                        ${manifestExclusion}
-               left join iiif_resource resource
-                        on resource.id = manifest_links.item_id
-               left join iiif_derived_resource derived_manifest
-                         on derived_manifest.resource_id = manifest_links.item_id
-                         and derived_manifest.site_id = ${siteId}
-                         and derived_manifest.resource_type = resource.type
+               left join (
+                 ${getCollectionChildren({ collectionId, siteId, type, onlyPublished, excludeManifests })}
+                 order by links.item_index
+                 limit ${perPage}
+                 offset ${offset}
+               ) manifest_links on true
                left join iiif_derived_resource_item_counts canvas_count
                          on canvas_count.resource_id = manifest_links.item_id and canvas_count.site_id = ${siteId}
                left join iiif_derived_resource_item_counts manifest_count
@@ -95,17 +122,16 @@ export function getSingleCollection({
       where single_collection.site_id = ${siteId}
         and single_collection.resource_id = ${collectionId}
         and single_collection.resource_type = 'collection'
-      ${onlyPublished ? sql`and derived_manifest.published = true` : SQL_EMPTY}
       ${
-        type
-          ? type === 'collection'
-            ? sql`and resource.type = 'collection'`
-            : sql`and resource.type = 'manifest'`
-          : sql``
+        onlyPublished
+          ? sql`and (
+              single_collection.published = true
+              or manifest_links.item_id is not null
+              or exists (${getCollectionChildren({ collectionId, siteId, onlyPublished })})
+            )`
+          : SQL_EMPTY
       }
       order by manifest_links.item_index
-      limit ${perPage}
-      offset ${offset}
   `;
 }
 
@@ -115,41 +141,16 @@ export function getSingleCollectionCount({
   type,
   onlyPublished,
   excludeManifests,
-}: {
-  collectionId: number;
-  siteId: number;
-  type?: 'manifest' | 'collection';
-  onlyPublished?: boolean;
-  excludeManifests?: number[];
-}) {
-  const manifestExclusion = excludeManifests
-    ? sql`and manifest_links.item_id = any(${sql.array(excludeManifests, SQL_INT_ARRAY)}) is false`
-    : SQL_EMPTY;
-
+}: CollectionChildrenOptions) {
   return sql<{ total: number }>`
-      select count(*) as total
+      select count(manifest_links.item_id) as total
       from iiif_derived_resource single_collection
-               left join iiif_derived_resource_items manifest_links
-                         on manifest_links.site_id = ${siteId}
-                         and manifest_links.resource_id = single_collection.resource_id
-                         ${manifestExclusion}
-               left join iiif_resource resource
-                         on resource.id = manifest_links.item_id
-               left join iiif_derived_resource derived_manifest
-                         on derived_manifest.resource_id = manifest_links.item_id
-                         and derived_manifest.site_id = ${siteId}
-                         and derived_manifest.resource_type = resource.type
+               left join (
+                 ${getCollectionChildren({ collectionId, siteId, type, onlyPublished, excludeManifests })}
+               ) manifest_links on true
       where single_collection.site_id = ${siteId}
         and single_collection.resource_id = ${collectionId}
         and single_collection.resource_type = 'collection'
-      ${onlyPublished ? sql`and derived_manifest.published = true` : SQL_EMPTY}
-      ${
-        type
-          ? type === 'collection'
-            ? sql`and resource.type = 'collection'`
-            : sql`and resource.type = 'manifest'`
-          : sql``
-      }
   `;
 }
 

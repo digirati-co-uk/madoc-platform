@@ -26,7 +26,7 @@ export const CollectionView: UniversalComponent<CollectionViewType> = createUniv
     const site = useSite();
     const { resolvedData, status } = usePaginatedData(CollectionView);
 
-    if (status === 'error') {
+    if (status === 'error' || resolvedData?.collection.source === 'not-found') {
       return <ErrorPage />;
     }
 
