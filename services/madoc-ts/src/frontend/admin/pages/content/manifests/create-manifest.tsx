@@ -207,7 +207,6 @@ export const CreateManifest: React.FC = () => {
               page={data ? data.pagination.page : 1}
               totalPages={data ? data.pagination.totalPages : 1}
               stale={!data}
-              extraQuery={{ query }}
             />
           </>
         )}
