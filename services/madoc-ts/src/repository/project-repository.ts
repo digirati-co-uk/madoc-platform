@@ -73,7 +73,8 @@ export class ProjectRepository extends BaseRepository {
     `,
     updateProjectUpdate: (update: CreateProjectUpdate, updateId: number, projectId: number) => sql<ProjectUpdatesRow>`
       update project_updates set title = ${update.title || null}, update = ${update.update}, open_in_new_tab = ${!!update.openInNewTab}
-      where project_id = ${projectId} and id = ${updateId} returning *
+      where project_id = ${projectId} and id = ${updateId}
+      returning *, (select u.name from "user" u where u.id = project_updates.user_id) as user_name
     `,
 
     createProjectFeedback: (feedback: string, userId: number, projectId: number) => sql<ProjectFeedbackRow>`
