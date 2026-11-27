@@ -1,185 +1,141 @@
-import React, { ComponentPropsWithRef, forwardRef } from 'react';
-import { Helmet as _Helmet } from 'react-helmet';
-import styled, { css } from 'styled-components';
+import React, { ComponentPropsWithoutRef, CSSProperties, forwardRef } from 'react';
+import { Helmet } from 'react-helmet';
 import { blockEditorFor } from '../../../extensions/page-blocks/block-editor-for';
 import { convertComponentToText } from '../../../utility/convert-component-to-text';
-import { MaxWidthBackground, MaxWidthBackgroundContainer } from '../atoms/MaxWidthBackground';
 import { useAccessibleColor } from '../hooks/use-accessible-color';
 import { useSite } from '../hooks/use-site';
 
-const Helmet = _Helmet as any;
-
-export const _Heading1 = styled.h1<{ $margin?: boolean }>`
-  font-size: 2em;
-  font-weight: 600;
-  margin-top: 0.5em;
-  margin-bottom: 0.5em;
-  width: 100%;
-  position: relative;
-  z-index: 3;
-  ${props =>
-    props.$margin &&
-    css`
-      margin-bottom: 1em;
-    `}
-
-  &[data-size='sm'] {
-    font-size: 1.6em;
-  }
-  &[data-size='lg'] {
-    font-size: 3.4em;
-  }
-  &[data-size='xl'] {
-    font-size: 5em;
-  }
-`;
-
-const backgroundShadow = css`
-  position: absolute;
-  content: '';
-  width: 100%;
-  height: 50%;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background-image: linear-gradient(rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.65) 100%);
-`;
-
-const Heading1Background = styled(MaxWidthBackground)`
-  &:has(img)::after {
-    ${backgroundShadow}
-  }
-
-  &[data-align-right='false'] img {
-    position: absolute;
-    right: 0;
-  }
-
-  &[data-image-style='oct'] img {
-    width: auto;
-    clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
-    aspect-ratio: 1 / 1;
-    max-width: 100%;
-  }
-
-  &[data-image-style='bgh'] img {
-    width: 50%;
-  }
-
-  &[data-image-style='dim'] img {
-    width: auto;
-    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
-    aspect-ratio: 1 / 1;
-    max-width: 100%;
-  }
-
-  &[data-image-style='cir'] img {
-    width: auto;
-    clip-path: circle(40%);
-    aspect-ratio: 1 / 1;
-    max-width: 100%;
-  }
-`;
-
-const Heading1Container = styled(MaxWidthBackgroundContainer)`
-  display: flex;
-  align-items: flex-end;
-  padding-bottom: 1.5em;
-  margin-left: -2em;
-  margin-right: -2em;
-  padding-left: 2em;
-  padding-right: 2em;
-
-  &[data-align-start='true'] {
-    align-items: flex-start;
-  }
-  &[data-align-center='true'] {
-    align-items: center;
-  }
-
-  &[data-has-background='true']::before {
-    ${backgroundShadow}
-  }
-`;
-
-export const Heading1: React.FC<{
+interface Heading1Props extends ComponentPropsWithoutRef<'h1'> {
   background?: string;
   fullWidth?: boolean;
   backgroundHeight?: number;
   alignBackground?: 'start' | 'center' | 'end';
-  textAlign?: string;
-  fontSize?: 'sm' | 'lg' | 'md' | 'xl';
+  textAlign?: CSSProperties['textAlign'];
+  fontSize?: 'sm' | 'md' | 'lg' | 'xl';
   imageStyle?: 'bgf' | 'bgh' | 'dim' | 'cir' | 'oct';
   backgroundImage?: {
     id: string;
     image: string;
     thumbnail: string;
   } | null;
-} & ComponentPropsWithRef<typeof _Heading1>> = forwardRef(function Heading1(
+  $margin?: boolean;
+}
+
+interface Heading1EditorProps extends Omit<Heading1Props, 'backgroundHeight' | 'children'> {
+  text: string;
+  backgroundHeight?: number | string;
+}
+
+const fontSizes = {
+  sm: 'text-[1.6em]',
+  md: 'text-[2em]',
+  lg: 'text-[3.4em]',
+  xl: 'text-[5em]',
+};
+
+const verticalAlignments = {
+  start: 'items-start',
+  center: 'items-center',
+  end: 'items-end',
+};
+
+const imageStyles = {
+  bgf: 'w-full',
+  bgh: 'w-1/2',
+  dim: 'aspect-square w-auto max-w-full [clip-path:polygon(50%_0%,100%_50%,50%_100%,0%_50%)]',
+  cir: 'aspect-square w-auto max-w-full [clip-path:circle(40%)]',
+  oct: 'aspect-square w-auto max-w-full [clip-path:polygon(30%_0%,70%_0%,100%_30%,100%_70%,70%_100%,30%_100%,0%_70%,0%_30%)]',
+};
+
+export const Heading1 = forwardRef<HTMLHeadingElement, Heading1Props>(function Heading1(
   {
     fullWidth,
     background,
     textAlign,
     backgroundHeight = 200,
-    fontSize,
-    imageStyle,
+    fontSize = 'md',
+    imageStyle = 'bgf',
     backgroundImage,
     alignBackground = 'end',
+    $margin,
+    children,
+    className,
+    style,
     ...props
-  }: any,
+  },
   ref
 ) {
   const site = useSite();
-  const _color = useAccessibleColor(background);
-  const color = imageStyle === 'bgf' ? '#fff' : _color;
-  const component = (
+  const imageUrl = backgroundImage?.image;
+  const containedImage = !fullWidth ? imageUrl : undefined;
+  const fontSizeClass = fontSizes[fontSize] ?? fontSizes.md;
+  const alignmentClass = verticalAlignments[alignBackground] ?? verticalAlignments.end;
+  const imageClass = imageStyles[imageStyle] ?? imageStyles.bgf;
+  const backgroundColor = useAccessibleColor(background || '');
+  const color = containedImage || (imageUrl && imageStyle === 'bgf') ? '#fff' : backgroundColor || undefined;
+  const heading = (
     <>
-      {typeof props.children === 'string' && site ? (
+      {typeof children === 'string' && site ? (
         <Helmet>
           <title>
-            {site.title} - {props.children}
+            {site.title} - {children}
           </title>
         </Helmet>
       ) : null}
-      <_Heading1 ref={ref} data-size={fontSize} style={{ textAlign, color: background ? color : '' }} {...props} />
+      <h1
+        {...props}
+        ref={ref}
+        data-size={fontSize}
+        className={`madoc-heading-1 relative z-[3] mt-[0.5em] w-full font-semibold ${fontSizeClass} ${$margin ? 'mb-[1em]' : 'mb-[0.5em]'}${className ? ` ${className}` : ''}`}
+        style={{ textAlign, color, ...style }}
+      >
+        {children}
+      </h1>
     </>
   );
 
-  if (background || fullWidth) {
-    return (
-      <>
-        {fullWidth ? (
-          <>
-            <Heading1Background
-              data-image-style={imageStyle}
-              data-align-right={textAlign === 'right'}
-              style={{ '--max-bg-height': `${backgroundHeight}px`, backgroundColor: background } as any}
-            >
-              {backgroundImage ? <img src={backgroundImage.image} alt="" /> : null}
-            </Heading1Background>
-          </>
-        ) : null}
-        <Heading1Container
-          data-align-start={alignBackground === 'start'}
-          data-align-center={alignBackground === 'center'}
-          data-has-background={!fullWidth && !!backgroundImage}
-          style={
-            {
-              background: fullWidth ? '' : backgroundImage ? `url(${backgroundImage.image})` : background,
-              '--max-bg-height': backgroundHeight ? `${backgroundHeight}px` : '',
-            } as any
-          }
-        >
-          {component}
-        </Heading1Container>
-      </>
-    );
+  if (!background && !imageUrl && !fullWidth) {
+    return heading;
   }
 
-  return component;
-}) as any;
+  return (
+    <>
+      {fullWidth ? (
+        <div
+          className="absolute inset-x-0 z-[1] block overflow-hidden bg-white"
+          data-image-style={imageStyle}
+          data-align-right={textAlign === 'right'}
+          style={{ height: backgroundHeight, backgroundColor: background }}
+        >
+          {imageUrl ? (
+            <>
+              <img
+                src={imageUrl}
+                alt=""
+                className={`h-full object-cover ${imageClass}${textAlign === 'right' ? '' : ' absolute right-0'}`}
+              />
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 [background-image:linear-gradient(transparent_50%,rgba(0,0,0,0.65)_100%)]" />
+            </>
+          ) : null}
+        </div>
+      ) : null}
+      <div
+        className={`relative z-[2] -mx-[2em] flex px-[2em] pb-[1.5em] ${alignmentClass}${containedImage ? ' bg-cover bg-center bg-no-repeat' : ''}`}
+        data-has-background={Boolean(containedImage)}
+        style={{
+          height: backgroundHeight || 500,
+          backgroundColor: fullWidth ? undefined : background,
+          backgroundImage: containedImage ? `url(${JSON.stringify(containedImage)})` : undefined,
+        }}
+      >
+        {containedImage ? <div className="pointer-events-none absolute inset-0 bg-black/50" /> : null}
+        {heading}
+      </div>
+    </>
+  );
+});
 
-blockEditorFor(Heading1, {
+blockEditorFor<Heading1Props, Heading1EditorProps>(Heading1, {
   type: 'heading-1',
   label: 'Heading 1',
   editor: {
@@ -197,7 +153,7 @@ blockEditorFor(Heading1, {
       ],
     },
     textAlign: {
-      label: 'Align title (vertical)',
+      label: 'Align title (horizontal)',
       type: 'dropdown-field',
       options: [
         { value: 'left', text: 'Left' },
@@ -252,28 +208,22 @@ blockEditorFor(Heading1, {
       </svg>
     );
   },
-  mapFromProps: props =>
-    ({
-      ...props,
-      text: convertComponentToText(props.children),
-    } as any),
-  mapToProps: props =>
-    ({
-      ...props,
-      children: <>{props.text}</>,
-      backgroundHeight:
-        Number.isFinite(Number(props.backgroundHeight)) && !Number.isNaN(Number(props.backgroundHeight))
-          ? Number(props.backgroundHeight)
-          : 200,
-    } as any),
+  mapFromProps: ({ children, ...props }) => ({ ...props, text: convertComponentToText(children) }),
+  mapToProps: ({ text, backgroundHeight, ...props }) => {
+    const height = Number(backgroundHeight);
+    return { ...props, children: <>{text}</>, backgroundHeight: Number.isFinite(height) ? height : 200 };
+  },
 });
 
-export const Subheading1 = styled.p`
-  font-size: 1em;
-  opacity: 0.8;
-  margin-bottom: 1em;
-  & a {
-    color: #5071f4;
-    font-size: 0.85em;
-  }
-`;
+export const Subheading1 = forwardRef<HTMLParagraphElement, ComponentPropsWithoutRef<'p'>>(function Subheading1(
+  { className, ...props },
+  ref
+) {
+  return (
+    <p
+      {...props}
+      ref={ref}
+      className={`mb-[1em] text-[1em] opacity-80 [&_a]:text-[#5071f4] [&_a]:text-[0.85em]${className ? ` ${className}` : ''}`}
+    />
+  );
+});
