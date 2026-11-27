@@ -43,32 +43,35 @@ export function SingleProjectItem({ data, project, customButtonLabel }: SinglePr
 
   return (
     <div className="flex bg-white p-5 border gap-10 rounded-md">
-      <div className="flex-1 flex flex-col justify-between">
-        <LocaleString as="h2" className="text-xl mb-0 mt-0">
-          {label}
-        </LocaleString>
-        <LocaleString as="p" className="text-md mb-0 mt-0">
-          {summary}
-        </LocaleString>
-        {/* <pre>{JSON.stringify({ data, taskStats, collectionStats }, null, 2)}</pre> */}
-        {collectionStats && taskStats ? (
-          <div className="h-3 bg-slate-100 rounded-full overflow-hidden">
-            <div
-              className="bg-slate-500 h-3 overflow-hidden rounded-full"
-              style={{ width: `${(taskStats.total / collectionStats?.canvases) * 100}%` }}
-            />
+      <div className="flex min-w-0 flex-1 flex-col gap-4">
+        <div className="break-words">
+          <LocaleString as="h2" className="text-xl mb-0 mt-0">
+            {label}
+          </LocaleString>
+          <LocaleString as="p" className="text-md mb-0 mt-0">
+            {summary}
+          </LocaleString>
+        </div>
+        <div className="mt-auto flex flex-col gap-3">
+          {collectionStats && taskStats ? (
+            <div className="h-3 bg-slate-100 rounded-full overflow-hidden">
+              <div
+                className="bg-slate-500 h-3 overflow-hidden rounded-full"
+                style={{ width: `${(taskStats.total / collectionStats?.canvases) * 100}%` }}
+              />
+            </div>
+          ) : (
+            <div className="h-3 bg-slate-100" />
+          )}
+          <div>
+            <Button $primary as={Link} to={createLink({ projectId: project.id })}>
+              {customButtonLabel ? <LocaleString>{customButtonLabel}</LocaleString> : t('Go to project')}
+            </Button>
           </div>
-        ) : (
-          <div className="h-3 bg-slate-100" />
-        )}
-        <div>
-          <Button $primary as={Link} to={createLink({ projectId: project.id })}>
-            {customButtonLabel ? <LocaleString>{customButtonLabel}</LocaleString> : t('Go to project')}
-          </Button>
         </div>
       </div>
       <div
-        className={`${thumbnail ? 'aspect-video' : 'aspect-square h-32'} w-64 justify-center flex rounded-xl overflow-hidden`}
+        className={`${thumbnail ? 'aspect-video' : 'aspect-square h-32'} w-64 max-w-[40%] justify-center flex rounded-xl overflow-hidden`}
       >
         {thumbnail ? (
           <HrefLink className="w-full h-full" href={createLink({ projectId: project.id })}>
