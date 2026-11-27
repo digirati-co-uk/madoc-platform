@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import type { InternationalString } from '@iiif/presentation-3';
+import { useTranslation } from 'react-i18next';
 import { useQuery } from 'react-query';
 import {
   Configure,
@@ -661,6 +662,32 @@ function SidebarSection({
   );
 }
 
+function ClearSearchFilters({ defaultResourceType }: { defaultResourceType?: TypesenseResourceType }) {
+  const { t } = useTranslation();
+  const { indexUiState, setIndexUiState } = useInstantSearch();
+  const hasRefinements = Object.entries(indexUiState.refinementList || {}).some(
+    ([attribute, values]) =>
+      values.length > 0 && (attribute !== 'resource_type' || values.length !== 1 || values[0] !== defaultResourceType)
+  );
+
+  return (
+    <button
+      type="button"
+      className="mb-4 rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:cursor-default disabled:opacity-50"
+      disabled={!hasRefinements}
+      onClick={() =>
+        setIndexUiState(current => ({
+          ...current,
+          page: 1,
+          refinementList: defaultResourceType ? { resource_type: [defaultResourceType] } : {},
+        }))
+      }
+    >
+      {t('Clear all filters')}
+    </button>
+  );
+}
+
 function FacetOptionList({
   items,
   refine,
@@ -1103,6 +1130,7 @@ export function TypesenseSearch() {
         <div className="flex flex-col items-start gap-6 md:flex-row">
           {/* Sidebar */}
           <aside className="w-full shrink-0 pr-2 md:sticky md:top-4 md:max-h-[calc(100vh-2rem)] md:w-64 md:overflow-y-auto">
+            <ClearSearchFilters defaultResourceType={defaultResourceType} />
             {!projectSlug ? <ProjectFacet /> : null}
             {((!activeCustomIndex && metadataFacetsLoading) ||
               visibleFacets.length > 0 ||
