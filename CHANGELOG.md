@@ -22,6 +22,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Fixed project collection listings showing a single manifest as a collection. Collection administration also rejects manifest IDs. ([MAD-1604](https://digirati.atlassian.net/browse/MAD-1604))
+- Fixed navigation and reloads on later pages of manifest import history. ([MAD-1601](https://digirati.atlassian.net/browse/MAD-1601))
+- Preserved the original author’s byline when another administrator edits a project update. ([MAD-1549](https://digirati.atlassian.net/browse/MAD-1549))
+- Sorted project contributor statistics by completed submissions, highest first, with a stable order for ties. ([MAD-1552](https://digirati.atlassian.net/browse/MAD-1552))
 - [NS-30](https://digirati.atlassian.net/browse/NS-30) Fix saving the default capture field type, including fields registered while the editor is open ([d262a9c0](https://github.com/digirati-co-uk/madoc-platform/commit/d262a9c0)).
 - [NS-10](https://digirati.atlassian.net/browse/NS-10) Allow updating transcription instructions and descriptions ([512549af](https://github.com/digirati-co-uk/madoc-platform/commit/512549af)).
 - Fixed the capture model editor freezing or crashing when dropdown options contain repeated values, including repeated blank lines.
