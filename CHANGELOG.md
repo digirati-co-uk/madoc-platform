@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [NS-30](https://digirati.atlassian.net/browse/NS-30) Fix saving the default capture field type, including fields registered while the editor is open ([d262a9c0](https://github.com/digirati-co-uk/madoc-platform/commit/d262a9c0)).
 - [NS-10](https://digirati.atlassian.net/browse/NS-10) Allow updating transcription instructions and descriptions ([512549af](https://github.com/digirati-co-uk/madoc-platform/commit/512549af)).
+- Kept the progress bar and action button aligned across project grid cards with different description lengths. ([MAD-1603](https://digirati.atlassian.net/browse/MAD-1603))
 - Fixed the capture model editor freezing or crashing when dropdown options contain repeated values, including repeated blank lines.
 - NS-92: Fixed duplicate capture model field labels and descriptions in the simple review panel for models with nested entities, preserving read-only field region details and crop previews.
 
