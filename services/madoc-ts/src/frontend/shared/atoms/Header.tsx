@@ -1,14 +1,21 @@
-import styled from 'styled-components';
-import { _Heading1 } from '../typography/Heading1';
+import React, { ComponentPropsWithoutRef, forwardRef } from 'react';
 
-export const Header = styled.div`
-  margin-top: 0.5em;
-  margin-bottom: 2.5em;
-`;
+export const Header = forwardRef<HTMLDivElement, ComponentPropsWithoutRef<'div'>>(function Header(
+  { className, ...props },
+  ref
+) {
+  return <div {...props} ref={ref} className={`mt-[0.5em] mb-[2.5em]${className ? ` ${className}` : ''}`} />;
+});
 
-export const ContextHeading = styled.div`
-  font-size: 12px;
-  & ~ ${_Heading1} {
-    margin-top: 0.3em;
-  }
-`;
+export const ContextHeading = forwardRef<HTMLDivElement, ComponentPropsWithoutRef<'div'>>(function ContextHeading(
+  { className, ...props },
+  ref
+) {
+  return (
+    <div
+      {...props}
+      ref={ref}
+      className={`text-xs [&~.madoc-heading-1]:mt-[0.3em]${className ? ` ${className}` : ''}`}
+    />
+  );
+});
