@@ -10,36 +10,26 @@ import {
 import { getResourceCount } from '../../../database/queries/count-queries';
 import { castBool } from '../../../utility/cast-bool';
 
-export const getCollection: RouteMiddleware<{ id: number }> = async context => {
+export const getCollection: RouteMiddleware<{ id: number }, { excluded?: number[] | string }> = async context => {
   const { siteId } = optionalUserWithScope(context, ['site.view']);
   const collectionId = Number(context.params.id);
 
   const manifestsPerPage = 24;
-  const excludeManifests = context.query.excluded;
-  let excluded = Array.isArray(excludeManifests)
-    ? excludeManifests
-    : excludeManifests
-      ? excludeManifests.split(',')
-      : undefined;
-
-  if (context.requestBody && context.requestBody.excluded) {
-    excluded = Array.isArray(context.requestBody.excluded)
-      ? context.requestBody.excluded
-      : context.requestBody.excluded.split(',');
-  }
+  const exclusions = context.requestBody?.excluded || context.query.excluded;
+  const excluded = (typeof exclusions === 'string' ? exclusions.split(',') : exclusions)?.map(Number);
 
   const onlyPublished = context.query.published ? castBool(context.query.published) : false;
-  const requestedType = context.query.type || undefined;
-  const { total = 0 } =
-    (await context.connection.maybeOne(
-      getSingleCollectionCount({
-        collectionId,
-        siteId: Number(siteId),
-        type: requestedType,
-        onlyPublished,
-        excludeManifests: excluded,
-      })
-    )) || { total: 0 };
+  const requestedType =
+    context.query.type === 'collection' ? 'collection' : context.query.type ? 'manifest' : undefined;
+  const { total = 0 } = (await context.connection.maybeOne(
+    getSingleCollectionCount({
+      collectionId,
+      siteId: Number(siteId),
+      type: requestedType,
+      onlyPublished,
+      excludeManifests: excluded,
+    })
+  )) || { total: 0 };
   const adjustedTotal = total;
   let totalPages = Math.ceil(adjustedTotal / manifestsPerPage) || 1;
   if (totalPages < 1) {
@@ -47,7 +37,6 @@ export const getCollection: RouteMiddleware<{ id: number }> = async context => {
   }
   const requestedPage = Number(context.query.page) || 1;
   const page = requestedPage < totalPages ? requestedPage : totalPages;
-  const type = adjustedTotal === 0 ? undefined : requestedType;
 
   const rows = await context.connection.any(
     getCollectionSnippets(
@@ -56,7 +45,7 @@ export const getCollection: RouteMiddleware<{ id: number }> = async context => {
         siteId: Number(siteId),
         perPage: manifestsPerPage,
         page,
-        type,
+        type: requestedType,
         onlyPublished,
         excludeManifests: excluded,
       }),
