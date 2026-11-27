@@ -18,6 +18,10 @@ export function ProjectContributorStatistics() {
     return <p>No contributions to this project yet</p>;
   }
 
+  const rankedStats = data.submissions.stats?.slice().sort((a, b) => {
+    const submissionsOrder = b.submissions - a.submissions;
+    return submissionsOrder || (a.user?.id ?? Number.MAX_SAFE_INTEGER) - (b.user?.id ?? Number.MAX_SAFE_INTEGER);
+  });
   const graphScale = Math.ceil(data.submissions.total / 10) * 10;
 
   const getPercentage = (a: number) => {
@@ -39,12 +43,12 @@ export function ProjectContributorStatistics() {
     <div className="container mx-auto px-5 max-w-5xl my-5">
       <div className="overflow-hidden">
         <h3 className="text-xl font-semibold mb-4">{t('All contributions')}</h3>
-        {!data.submissions.stats ? (
+        {!rankedStats ? (
           <p>No contributions to this project yet</p>
         ) : (
           <dl>
-            {data.submissions.stats.map((stat, i) => (
-              <dd key={i} className="flex">
+            {rankedStats.map((stat, i) => (
+              <dd key={stat.user?.id ?? `unknown-${i}`} className="flex">
                 <div className="w-1/2 sm:w-1/5 flex items-center">
                   <div className="w-10">
                     <img
